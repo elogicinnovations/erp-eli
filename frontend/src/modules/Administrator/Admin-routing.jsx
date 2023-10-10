@@ -1,15 +1,15 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import MasterList from "./sub-modules/User Master Data/MasterList";
-import UserRole from "./sub-modules/User Master Data/UserRole";
+import MasterList from "./sub-modules/UserMasterData/MasterList";
+import UserRole from "./sub-modules/UserMasterData/UserRole";
 
 
 const AdminRouting = () => {
   return (
     <Routes>
       <Route
-        path="/admin/masterList"
+        path="/master"
         element={<MasterList />}
       />
         <Route

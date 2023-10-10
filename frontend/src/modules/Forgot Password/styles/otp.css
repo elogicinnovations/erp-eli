@@ -1,0 +1,18 @@
+/* Hide the up and down arrow buttons for number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-clear-button {
+  display: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.forgot-password-gQ1 .sign-in-mBo .auto-group-t1kf-hiy .dont-receive-code-re-send-pob .dont-receive-code-re-send-pob-sub-1{
+  color: rgb(0, 0, 0);
+}
+
+.forgot-password-gQ1 .sign-in-mBo .auto-group-t1kf-hiy .dont-receive-code-re-send-pob{
+  max-width: 260px;
+  margin: 0.7rem 1.8rem 0rem -19rem;
+}

@@ -12,9 +12,15 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import SettingsRouting from "./modules/settings/settings-routing";
 
 import Login from "./modules/Login/login";
-import AdminRouting from "./modules/Administrator/Admin-routing";
+import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
+import OTP from "./modules/Forgot Password/sub-modules/otp";
+
+import AdminRouting from "./modules/Administrator/Admin-routing"
 import Sidebar from "./modules/Sidebar/sidebar";
 
+
+
+import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
 function App() {
   return (
@@ -31,16 +37,27 @@ function App() {
         <div className="container">
           {/* <Sidebar /> */}
 
-          <Routes>
-            <Route
-              path="/admin/masterList"
-              element={<AdminRouting />}
-            />
 
-          
-            
-          </Routes>
-          
+          <DataProvider>
+
+            <Routes>
+              <Route
+                path="/admin"
+                element={<AdminRouting />}
+              />
+
+              <Route
+                path="/forgotpass"
+                element={<ForgotPass />}
+              />
+
+              <Route
+                path="/OTP"
+                element={<OTP />}
+              />
+              
+            </Routes>
+          </DataProvider>
          
         </div>
       </div>

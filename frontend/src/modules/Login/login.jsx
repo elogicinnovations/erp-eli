@@ -28,7 +28,7 @@ const Login = () => {
             button: 'OK',
           }).then(() => {
             // login();
-            navigate('/admin/masterList');
+            navigate('/admin/master/');
           });
         } else if (response.status === 202) {
           swal({
@@ -98,7 +98,7 @@ const Login = () => {
                 <FaEye className="password-toggle-icon fa-eye" onClick={togglePasswordVisibility} />
               )}
             </div>
-            <Link to="/forgotPass" style={{display: 'contents'}}>
+            <Link to="/forgotpass" style={{display: 'contents'}}>
               <p className="forgot-password-oGm">Forgot Password?</p>
             </Link>
             <button className="LoginBtn loginiconbtn" type="submit" onClick={handleLogin}>
