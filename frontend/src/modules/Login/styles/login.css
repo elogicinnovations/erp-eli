@@ -1,0 +1,28 @@
+.inputext{
+    padding-right: 80px;
+    font-size: 20px
+}
+
+.envelope-icon {
+    font-size: 40px;
+    position: absolute;
+    top: 65px;
+    right: 25px;
+    color: #5A3092;
+  }
+
+  .password-toggle-icon.fa-eye {
+    font-size: 40px;
+    position: absolute;
+    bottom: 180px;
+    right: 25px;
+    color: #5A3092;
+  }
+  
+  .password-toggle-icon.fa-eye-slash {
+    font-size: 40px;
+    position: absolute;
+    bottom: 180px;
+    right: 25px;
+    color: #5A3092;
+  }
