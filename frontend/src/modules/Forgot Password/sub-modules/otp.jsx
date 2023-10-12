@@ -5,10 +5,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios'
 // import { useParams } from 'react-router-dom';
 import { useDataContext } from './data/dataPost';
-import { useNavigate   } from 'react-router-dom';
+import { useNavigate, Link    } from 'react-router-dom';
+
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 import  '../styles/otp.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // input
 import Input from '@mui/material/Input';
 
@@ -29,17 +32,17 @@ const CustomButton = styled(Button)`
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 2rem;
   line-height: 1.5;
-  background-color: White;
-  color: Black;
+  background-color: #333;
+  color: #ffffff;
   border-radius: 8px;
   font-weight: 600;
-  padding: 25px 60px;
+  padding: 15px 259px;
   cursor: pointer;
   transition: all 150ms ease;
   border: none;
 
   &:hover {
-    background-color: #f6f6f6;
+    background-color: #FFA500;
   }
 
   &.${buttonClasses.active} {
@@ -102,7 +105,7 @@ const StyledInputElement = styled('input')(
   text-align: center;
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
   background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  // border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
   box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
 
   &:hover {
@@ -306,148 +309,97 @@ function OTP() {
 
   return (
 
-    <div class="container">
+<div class="container-otp">
 
+    <div className="otp-right-content">
+        <div className="otp-blur-background">
+            <div className="otpbox-container">
+                  <div className="box-content">
+                     <p className="otpverify">OTP Verification</p>
+                     <p className="entercode">Enter the OTP sent to ***</p>
 
-<div class="forgot-password-gQ1">
-  <div class="rectangle-1-Qau">
-  </div>
-  <p class="copyright-2023-slashtech-all-rights-reserved-LzM">
-  Copyright © 2023 Slashtech, All Rights Reserved.
-  <br/>
-  
-  </p>
-  <div class="rectangle-7-QzD">
-  </div>
-  <p class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm">
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-0">
-    Important Information
-    <br/>
-    
-    </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-1">Please </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-2">read</span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-3">
-     the information below and then
-    <br/>
-    kindly 
-    </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-4">share</span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-5">
-     the requested information. 
-    <br/>
-    
-    </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-6">
-    
-    <br/>
-    
-    </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-7">Do </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-8">not</span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-9">
-     reveal your password to anybody
-    <br/>
-    Do 
-    </span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-10">not</span>
-    <span class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-vSm-sub-11">
-     reuse passwords
-    <br/>
-    Use Alphanumeric passwords
-    <br/>
-    Your Login ID. and security answer are required
-    <br/>
-    Login IDs are case sensitive
-    </span>
-  </p>
-  <div class="sign-in-mBo">
-    <p class="otp-verification-gZf">OTP VERIFICATION</p>
-    <div class="auto-group-mnid-NxH">
-      <div class="auto-group-gtgy-hDs">
-        <div class="otp-r6m">
-          <div class="auto-group-yz2r-a2m">
-            <span class="auto-group-yz2r-a2m-sub-0">Enter the OTP sent to </span>
-            <span>&nbsp;</span>
-            <span class="auto-group-yz2r-a2m-sub-1"> </span>
-            <span class="auto-group-yz2r-a2m-sub-2">{email}</span>
-          </div>
-          
+                    <div className="timeremain">
+                        <p className="Time-content">
+                        Time Remaining: {Math.floor(remainingTime / 60)}:{remainingTime % 60}
+                        </p>
+                    </div>
 
-                 
-        <div class="auto-group-h5ff-d9T">
-          <CustomInput
-            ref={inputRef1}
-            class="rectangle-40-jLu"
-            type="text"
-            value={value1}
-            onChange={handleInputChange1}
-            placeholder="0"
-          ></CustomInput>
+                     <div className="code-box">
+                        <div className="firstbox">
+                        <CustomInput
+                              ref={inputRef1}
+                              class="rectangle-40-jLu"
+                              type="text"
+                              value={value1}
+                              onChange={handleInputChange1}
+                              placeholder="0"
+                            ></CustomInput>
+                        </div>
 
-          <div class="auto-group-puvb-QJd">
-            <div class="second-code">
-              <CustomInput
-                ref={inputRef2}
-                class="rectangle-40-jLu"
-                aria-label="Demo input"
-                type="text"
-                value={value2}
-                onChange={handleInputChange2}
-                placeholder="0"
-              ></CustomInput>
+                          <div className="secondbox">
+                            <CustomInput
+                              ref={inputRef2}
+                              class="rectangle-40-jLu"
+                              aria-label="Demo input"
+                              type="text"
+                              value={value2}
+                              onChange={handleInputChange2}
+                              placeholder="0"
+                            ></CustomInput>
+                          </div>
+
+                          <div className="thirdbox">
+                            <CustomInput
+                              ref={inputRef3}
+                              class="rectangle-40-jLu"
+                              aria-label="Demo input"
+                              type="text"
+                              value={value3}
+                              onChange={handleInputChange3}
+                              placeholder="0"
+                              ></CustomInput>
+                          </div>
+
+                          <div className="fourthbox">
+                              <CustomInput
+                                ref={inputRef4}
+                                class="rectangle-40-jLu"
+                                aria-label="Demo input"
+                                type="text"
+                                value={value4}
+                                onChange={handleInputChange4}
+                                placeholder="0"
+                              ></CustomInput>
+                          </div>
+                     </div> {/*codebox close div*/}
+                    
+                    <div className="continuebutton">
+                    <CustomButton onClick={handlesubmitCode} class="auto-group-bxvo-fSq">Submit</CustomButton>
+                    </div>
+
+                    <div className="dontreceive-container">
+                        <span class="dontreceive-content">
+                        Didn’t receive code ? 
+                        </span>
+                        
+                        <div className="btn-resend">
+                        <p className="resendButton" onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</p>
+                        </div>
+                    </div>
+
+                    <div className="back-forgot">
+                          <Link to="/forgotpass"  style={{display: 'contents', fontSize: 15, color: 'orange'}}>
+                          <FontAwesomeIcon icon={faArrowLeft} /> Back to forgot password
+                          </Link>
+                    </div>
+
+                  </div>
             </div>
-
-            <div class="rectangle-41-3Mb">
-              <CustomInput
-                ref={inputRef3}
-                class="rectangle-40-jLu"
-                aria-label="Demo input"
-                type="text"
-                value={value3}
-                onChange={handleInputChange3}
-                placeholder="0"
-              ></CustomInput>
-            </div>
-            <p className="sec-kvD">
-              Time Remaining: {Math.floor(remainingTime / 60)}:{remainingTime % 60}
-            </p>
-          </div>
-          <CustomInput
-            ref={inputRef4}
-            class="rectangle-40-jLu"
-            aria-label="Demo input"
-            type="text"
-            value={value4}
-            onChange={handleInputChange4}
-            placeholder="0"
-          ></CustomInput>
         </div>
-
-
-
-        </div>
-      </div>
     </div>
-    <div class="auto-group-t1kf-hiy">
-      <p class="dont-receive-code-re-send-pob">
-        <span class="dont-receive-code-re-send-pob-sub-0">
-        Don’t receive code ? 
-        <br/>
-        
-        </span>
-        <button type="button" class="btn btn-info" onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</button>
-      </p>
-      <CustomButton onClick={handlesubmitCode} class="auto-group-bxvo-fSq">Continue</CustomButton>
-   
-    </div>
-  </div>
-  <div class="group-5-ury">
-    <p class="slashtech-solution-T7o">SLASHTECH SOLUTION</p>
-    <p class="corporation-A2D">CORPORATION</p>
-  </div>
-</div>
-</div>
+
+
+</div> 
 
   );
 }

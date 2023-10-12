@@ -1,6 +1,6 @@
 // import './App.css';
 // import './style.css';
-import mailicon from '../../../assets/icon/mailicon.png';
+import mailicon from '../../../assets/icon/mailsend.png';
 import '../styles/fg.css'
 import React, { useState } from 'react';
 import BASE_URL from '../../../assets/global/url';
@@ -8,7 +8,8 @@ import swal from 'sweetalert';
 import {  useNavigate, Link   } from 'react-router-dom';
 import { useDataContext } from './data/dataPost';
 import axios from 'axios';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // input
 import Input from '@mui/material/Input';
 
@@ -29,17 +30,18 @@ const CustomButton = styled(Button)`
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 1.8rem;
   line-height: 1.5;
-  background-color: ${blue[500]};
+  background-color: #333;
   color: white;
   border-radius: 8px;
   font-weight: 600;
-  padding: 30px 70px;
+  padding: 20px 255px;
   cursor: pointer;
   transition: all 150ms ease;
   border: none;
+  
 
   &:hover {
-    background-color: ${blue[600]};
+    background-color: #FFA500;
   }
 
   &.${buttonClasses.active} {
@@ -91,22 +93,27 @@ const StyledInputElement = styled('input')(
   font-family: IBM Plex Sans, sans-serif;
   font-size: 2rem;
   font-weight: 400;
-  line-height: 1.5;
   padding: 8px 12px;
   border-radius: 8px;
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
   background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  // border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+  border: 2px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+ 
 
-  &:hover {
-    border-color: ${inputblue[400]};
-  }
+  background-image: url(${mailicon}); /* Add the background image */
+  background-position: right center; /* Position the image on the right */
+  background-repeat: no-repeat; /* Prevent image repetition */
+  background-size: 65px 50px;
+
+  // &:hover {
+  //   border-color: #333;
+  // }
 
   &:focus {
-    border-color: ${inputblue[400]};
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? inputblue[500] : inputblue[200]};
+    border-color: #333;
+    box-shadow: #333;
   }
+  
 
   // firefox
   &:focus-visible {
@@ -114,6 +121,7 @@ const StyledInputElement = styled('input')(
   }
 `,
 );
+
 function ForgotPass() {
   const [email, setEmail] = useState('');
   const navigate  = useNavigate();
@@ -121,17 +129,15 @@ function ForgotPass() {
   const {setEmailPOst, setVerificationCode } = useDataContext();
 
 
-
-  
   const sendEmail = () => {
+    console.log(email)
     axios
-      .post(BASE_URL + '/masterList/emailForgotPass', { email })
+      .post(BASE_URL + '/masterList/emailForgotPass', {email})
       .then((response) => {
         if (response.status === 200) {
-          const responseBody = response.data;
+          const responseBody = response.json();
           const verificationcode = responseBody.code;
-          console.log(verificationcode);
-  
+
           swal({
             title: 'Email Sent Successfully!',
             text: 'Please check your email',
@@ -204,7 +210,7 @@ function ForgotPass() {
   // };
   return (
 
-    <div class="container">
+<div class="container">
 
 <head>
   <meta charset="utf-8" />
@@ -217,79 +223,49 @@ function ForgotPass() {
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Radio+Canada%3A600"/>
  
 </head>
-<div class="forgot-password-cJM">
-  <div class="rectangle-1-x7K">
-  </div>
-  <p class="copyright-2023-slashtech-all-rights-reserved-HQV">
-  Copyright © 2023 Slashtech, All Rights Reserved.
-  <br/>
-  
-  </p>
-  <div class="rectangle-7-k3B">
-  </div>
-  <p class="-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-euF">
-    <span>
-    Important Information
-    </span>
-    <div class="important-information-please-read-the-information-below-and-then-kindly-share-the-requested-information-do-not-reveal-your-password-to-anybody-do-not-reuse-passwords-use-alphanumeric-passwords-your-login-id-and-security-answer-are-required-login-ids-are-case-sensitive-u1j-sub-3">
-     the information below and then
-    kindly 
+<div class="forgot-password-left">
+      <div class="forgot-left-child">
+
+          {/* <div class="copyright-footer">
+            <p class="copyright-2023-text">
+            Copyright © 2023 Slashtech, All Rights Reserved.
+            <br/>
+            </p>
+          </div> */}
+
+      </div>
+    </div>
+
+    <div class="forgot-pass-right">
+          <div class="box-input">
+                <div class="box-container">
+
+                    <p class="forgot-text">
+                      Forgot Password?
+                    </p>
+                </div>
+
+                <div class="email-input">
+                  <CustomInput class="" aria-label="Demo input" placeholder="Please fill in your email address"  value={email}
+                    onChange={(e) => setEmail(e.target.value)} ></CustomInput>
+                </div>
+
+                <div class="submit-btn">
+                  <CustomButton className="submit-btn" onClick={sendEmail} slots={{ root: 'span' }}>Submit</CustomButton>
+                </div>
+
+                <div class="remembered-text">
+                  <span>Remember Your Password?</span>
+                  </div>
+
+                  <div class="back-login">
+                    <Link to="/"  style={{display: 'contents', fontSize: 25, color: 'orange'}}>
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back to login
+                    </Link>
+                  </div>
+          </div>
     </div>
     
-  </p>
-  <div class="sign-in-ZVj">
-    <div class="auto-group-p7xf-VeH">
-      <div class="auto-group-jous-28R">
-        <CustomInput class="rectangle-3-AkR" aria-label="Demo input" placeholder="Please fill in your email address"  value={email}
-            onChange={(e) => setEmail(e.target.value)}> </CustomInput>
-       
-        <img class="image-1-4au" src={mailicon}/>
-
-
-        {/* <CustomInput class="please-fill-in-your-email-address-PdB">Please fill in your email address</CustomInput> */}
-      </div>
-    </div>
-    <div class="auto-group-pha9-5W1">
-    </div>
-    <div class="auto-group-fdp7-cF3">
-      <div class="rememberd-your-password-back-to-login-iYy">
-        <span class="remembered-your-password-back-to-login-iYy-sub-0">
-        Remembered your password?
-        
-        </span>
-        
-        <div class="">
-          <Link to="/"  style={{display: 'contents', color: 'orange', fontWeight: 500}}>
-            
-            <i class="fa-solid fa-arrow-left">Back to login</i>
-          </Link>
-
-        </div>
-       
-
-      </div>
-
-      <Stack spacing={2} direction="row">
-      <div >
-
-     <CustomButton disabled={!email} onClick={sendEmail} slots={{ root: 'span' }} >Continue</CustomButton>
-    
-      </div>
-
-    </Stack>
-    </div>
-    <p class="dont-wory-we-can-help-XHT">Dont wory. We can help.</p>
-    <p class="forgot-password-DRB">
-    Forgot 
-    <br/>
-    password?
-    </p>
-  </div>
-  <div class="group-5-vKb">
-    <p class="slashtech-solution-rU9">Infinity Eight Trading And Marketing</p>
-    <p class="corporation-Mvh">CORPORATION</p>
-  </div>
-</div>
 </div>
   );
 }
