@@ -130,14 +130,14 @@ function ForgotPass() {
 
 
   const sendEmail = () => {
-    console.log(email)
     axios
-      .post(BASE_URL + '/masterList/emailForgotPass', {email})
+      .post(BASE_URL + '/masterList/emailForgotPass', { email })
       .then((response) => {
         if (response.status === 200) {
-          const responseBody = response.json();
+          const responseBody = response.data;
           const verificationcode = responseBody.code;
-
+          console.log(verificationcode);
+  
           swal({
             title: 'Email Sent Successfully!',
             text: 'Please check your email',
