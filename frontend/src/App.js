@@ -14,53 +14,67 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./modules/Login/login";
 import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
 import OTP from "./modules/Forgot Password/sub-modules/otp";
-
-import AdminRouting from "./modules/Administrator/Admin-routing"
-import Sidebar from "./modules/Sidebar/sidebar";
-
-
+import ConfirmPass from "./modules/Forgot Password/sub-modules/cpass";
+import RBAC from "./modules/Administrator/sub-modules/UserMasterData/UserRole"
+import CreateRole from "./modules/Administrator/sub-modules/UserMasterData/CreateRole"
+import EditRole from "./modules/Administrator/sub-modules/UserMasterData/EditRole"
+import MasterList from "./modules/Administrator/sub-modules/UserMasterData/MasterList"
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={<Login />}
-        />
-      </Routes>
-       
-      <div className="app">
-        {/* <Header /> */}
-        <div className="container">
-          {/* <Sidebar /> */}
+      <DataProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={<Login />}
+          />
 
 
-          <DataProvider>
+          {/* Forgot PAssword*/}
 
-            <Routes>
-              <Route
-                path="/admin"
-                element={<AdminRouting />}
-              />
 
-              <Route
-                path="/forgotpass"
-                element={<ForgotPass />}
-              />
+          <Route
+            path="/forgotpass"
+            element={<ForgotPass />}
+          />
+          <Route
+            path="/OTP"
+            element={<OTP />}
+          />
+            <Route
+            path="/ConfirmPassword/:email?"
+            element={<ConfirmPass />}
+          />
 
-              <Route
-                path="/OTP"
-                element={<OTP />}
-              />
-              
-            </Routes>
-          </DataProvider>
-         
-        </div>
-      </div>
+          {/* User Master Data */}
+
+          <Route
+            path="/userRole"
+            element={<RBAC />}
+          />
+
+          <Route
+            path="/createRole"
+            element={<CreateRole />}
+          />
+
+          <Route
+            path="/editRole/:id"
+            element={<EditRole />}
+          />
+
+
+
+          <Route
+            path="/masterList"
+            element={<MasterList/>}
+          />
+           
+        </Routes>
+      </DataProvider>
     </Router>
   );
 }

@@ -101,7 +101,7 @@ const Login = () => {
             <Link to="/forgotpass" style={{display: 'contents'}}>
               <p className="forgot-password-oGm">Forgot Password?</p>
             </Link>
-            <button className="LoginBtn loginiconbtn" type="submit" onClick={handleLogin}>
+            <button className="LoginBtn loginiconbtn" type="submit" disabled={!username || !password} onClick={handleLogin}>
               Login
             </button>
           </div>

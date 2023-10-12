@@ -202,7 +202,7 @@ function OTP() {
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch(BASE_URL + '/emailResendCode', {
+      const response = await fetch(BASE_URL + '/masterList/emailResendCode', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

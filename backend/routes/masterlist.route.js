@@ -51,7 +51,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// //DELETE:
+
   router.route("/emailForgotPass").post(async (req, res) => {
     const { email } = req.body;
 
@@ -93,6 +93,56 @@ const transporter = nodemailer.createTransport({
       res.status(500).json({ success: false, error: "Internal server error" });
     });
 });
+
+
+router.route("/emailResendCode").post(async (req, res) => {
+  
+  const toEmail = req.body.toEmail;
+  console.log(gmailEmail)
+  console.log('wala:' + toEmail)
+
+  const code = Math.floor(1000 + Math.random() * 9000); // Generate a random code
+
+  const mailOptions = {
+    from: gmailEmail,
+    to: toEmail,
+    subject: 'Verification Code',
+    text: `Your verification code is: ${code}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Email sending failed' });
+    } else {
+      console.log('Email sent: ' + info.response);
+      res.status(200).json({ success: true, code: code });
+    }
+  });
+});
+
+
+
+//UPDATE
+router.route('/resetPass').post(async (req, res) => {
+    await masterlist.update(req.body,{
+        where: {
+            col_email : req.body.email
+        }
+    }).then((update) => {
+        if(update) {
+            res.json({success:true})
+        }
+        else{
+            res.status(400).json({success:false})
+        }
+    }).catch((err) => {
+        console.error(err)
+        res.status(409).json({errorMessage:err})
+    });
+});
+
+
 
 
 //CREATE
