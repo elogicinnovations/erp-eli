@@ -1,3 +1,72 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body{
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  
+}
+
+#container{
+  width: 100%;
+}
+
+body p{
+  color: #fff;
+}
+
+.welcome-container{
+  width: 40%;
+}
+
+
+
+#welcome-company p:nth-child(1){
+  font-size: 5em;
+  font-family: sans-serif;
+  font-weight: 700;
+}
+
+
+#welcome-company p:nth-child(2){
+  font-size: 4.5em;
+  font-family: sans-serif;
+}
+
+
+.container-fluid{
+  background-color: #000;
+  height: 100vh;
+  width: 100vw;
+}
+
+#login-logo{
+  height: 100%;
+  width: 50%;
+  /* margin-right: 2em; */
+}
+
+#login-credential{
+  height: 100%;
+  width: 53%;
+  background-color: #fff;
+  border-top-left-radius: 5em;
+  border-bottom-left-radius: 5em;
+  z-index: 2;
+  margin-right: -1%;
+}
+
+#login-credential p{
+  color: #000;
+}
+
+#login-credential-container{
+  width: 80%;
+}
+
 .inputext{
     padding-right: 80px;
     font-size: 20px
@@ -26,3 +95,214 @@
     right: 25px;
     color: #5A3092;
   }
+
+  .credential-company{
+    height: 10%;
+    width: 45%;
+  }
+
+  .company-title{
+    width: 48%;
+  }
+
+  .line{
+    width: 1px;
+  
+  }
+
+  .cms{
+    width: 48%;
+  }
+
+  .cms h1{
+    font-size: 5em;
+  }
+
+  .welcome-user{
+    height: 10%;
+  }
+
+  .credentials{
+    height: 100%;
+    width: 60%;
+  }
+
+  .credentials label{
+    color: purple;
+    font-size: 1.4em;
+  }
+  .credentials input{
+    border: #cecece 1px solid;
+    font-size: 1.5em;
+  }
+
+  .btn-container{
+    height: 6em;
+  }
+
+  .btn-container button{
+    width: 45%;
+    height: 100%;
+    border-radius: 3em;
+    background-color: #5A3092;
+    border: none;
+  }
+
+  .btn-container button:hover{
+    background-color: #968f8f;
+    border: none;
+  }
+
+  .fa-envelope{
+    position: absolute;
+    right: 4%;
+    font-size: 3.5em;
+    top: 10%;
+    color: #968f8f;
+    /* font-weight: 500; */
+  }
+
+  .eye{
+    position: absolute;
+    right: 4%;
+    font-size: 3.5em;
+    top: 10%;
+    color: #968f8f;
+    /* font-weight: 500; */
+    cursor: pointer;
+  }
+
+  .fa-circle-arrow-right{
+    font-size: 3em;
+  }
+
+  /* tablet, landscape iPad, lo-res laptops ands desktops */
+  @media (max-width:1025px)  { 
+  
+
+    .welcome-container{
+      width: 43%;
+    }
+
+    #login-logo{
+      width: 43%;
+    }
+      
+    #login-credential{
+      width: 80%;
+      margin-right: -5%;
+    }
+    
+    #login-welcome{
+      width: 100%;
+    }
+
+    #welcome-company{
+      width: 80% !important;
+  
+    
+    }
+
+    #welcome-company p{
+      font-size: 2.6em !important;
+    
+    }
+  
+    #login-footer{
+      width: 90% !important;
+    }
+
+    .footer-msg{
+      font-size: 1.3em !important;
+      margin: auto;
+    }
+
+    .credential-company {
+      width: 50% !important;
+      /* border: black 1px solid; */
+    }
+
+    .company-name{
+      font-size: 1.5em !important;
+    }
+    .company-name2{
+      font-size: 1.1em !important;
+    }
+
+    .cms h1{
+      font-size: 4em;
+      margin-top: 2%;
+    }
+
+    .welcome-user p{
+      font-size: 1.8em !important;
+    }
+
+    .credentials {
+      width: 80% !important;
+    }
+
+   }
+
+ /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+   @media (max-width:641px)  { 
+    .btn-container button{
+      /* background-color: red; */
+      border: none;
+    }
+
+    #login-welcome{
+      width: 100%;
+    }
+
+    #welcome-company{
+      width: 80% !important;
+  
+    
+    }
+
+    #welcome-company p{
+      font-size: 1.3em !important;
+    
+    }
+
+     
+    #login-footer{
+      width: 90% !important;
+    }
+
+    .footer-msg{
+      font-size: 0.7em !important;
+      margin: auto;
+    }
+    .credential-company {
+      width: 70% !important;
+    }
+
+    .company-name{
+      font-size: 1.2em !important;
+    }
+    .company-name2{
+      font-size: 1em !important;
+    }
+
+    .cms h1{
+      font-size: 4em;
+      margin-top: 2%;
+    }
+
+    .welcome-user p{
+      font-size: 1.4em !important;
+    }
+
+    .credentials {
+      width: 90% !important;
+    }
+
+    .forgot-pass{
+      font-size: 1.3em;
+    }
+    .btn-container button{
+      width: 60% !important;
+    }
+   }
