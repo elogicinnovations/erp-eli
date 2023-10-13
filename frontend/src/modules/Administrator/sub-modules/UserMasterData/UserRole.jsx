@@ -71,13 +71,13 @@ function UserRole() {
   const displayedData = filteredRole.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="container-fluid page-body-wrapper">
+    <div className="page-body-wrapper">
       <Sidebar />
       <Header />
       <div className='main-panel'>
         <div className='content-wrapper'>
           <div className="col-lg-12 grid-margin stretch-card">
-            <div className="card">
+            <div className="card ">
               <div className="card-body">
                 <div className='head-search-create'>
                   <h2 className="card-title">USER ROLE LIST</h2>
