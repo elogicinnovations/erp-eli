@@ -303,32 +303,303 @@ const handleCheckboxChange = (value) => {
                                         <div className='input-group'>
                                           <input
                                               type="checkbox"
-                                              id="vehicle2"
+                                              id="Commodity Settings - Categories Add"
                                               name="vehicle2"
                                               value="Commodity Settings - Categories Add"
                                               checked={selectedCheckboxes.some(item => item.value === 'Commodity Settings - Categories Add')}
                                               onChange={() => handleCheckboxChange('Commodity Settings - Categories Add')}
                                             />
-                                          <label className='p-1' for="vehicle1">Commodity Settings - Categories Add</label>
+                                          <label className='p-1' for="Commodity Settings - Categories Add">Commodity Settings - Categories Add</label>
                                         </div>
                                       </Col>
                                       <Col>
                                         <div className='input-group'>
                                           <input
                                               type="checkbox"
-                                              id="vehicle2"
+                                              id="Sub Branch Interface - Log-in"
                                               name="vehicle2"
                                               value="Sub Branch Interface - Log-in"
                                               checked={selectedCheckboxes.some(item => item.value === 'Sub Branch Interface - Log-in')}
                                               onChange={() => handleCheckboxChange('Sub Branch Interface - Log-in')}
                                             />
-                                          <label className='p-1' for="vehicle1">Sub Branch Interface - Log-in</label>
+                                          <label className='p-1' for="Sub Branch Interface - Log-in">Sub Branch Interface - Log-in</label>
                                         </div>
                                       </Col>
                                 </Row>
 
                               </div>
 
+
+
+                              <div className='p-2'>
+                                <Row>
+                                      <Col>
+                                        <div className='input-group'>
+                                          <input
+                                              type="checkbox"
+                                              id="RBAC (Role-based Access Control) List"
+                                              name="vehicle2"
+                                              value="RBAC (Role-based Access Control) List"
+                                              checked={selectedCheckboxes.some(item => item.value === 'RBAC (Role-based Access Control) List')}
+                                              onChange={() => handleCheckboxChange('RBAC (Role-based Access Control) List')}
+                                            />
+                                          <label className='p-1' for="RBAC (Role-based Access Control) List">RBAC (Role-based Access Control) List</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Commodity Settings - Categories Edit"
+                                              name="vehicle2"
+                                              value="Commodity Settings - Categories Edit"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Commodity Settings - Categories Edit')}
+                                              onChange={() => handleCheckboxChange('Commodity Settings - Categories Edit')}
+                                            />
+                                          <label className='p-1' for="Commodity Settings - Categories Edit">Commodity Settings - Categories Edit</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Sub Branch interface - Dashboard"
+                                              name="vehicle2"
+                                              value="Sub Branch interface - Dashboard"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Sub Branch interface - Dashboard')}
+                                              onChange={() => handleCheckboxChange('Sub Branch interface - Dashboard')}
+                                            />
+                                          <label className='p-1' for="Sub Branch interface - Dashboard">Sub Branch interface - Dashboard</label>
+                                        </div>
+                                      </Col>
+                                </Row>
+
+                              </div>
+
+                              <div className='p-2'>
+                                <Row>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="BP Master Data - Customer Add"
+                                              name="vehicle2"
+                                              value="BP Master Data - Customer Add"
+                                              checked={selectedCheckboxes.some(item => item.value === 'BP Master Data - Customer Add')}
+                                              onChange={() => handleCheckboxChange('BP Master Data - Customer Add')}
+                                            />
+                                          <label className='p-1' for="BP Master Data - Customer Add">BP Master Data - Customer Add</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Commodity Settings - Categories Delete"
+                                              name="vehicle2"
+                                              value="Commodity Settings - Categories Delete"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Commodity Settings - Categories Delete')}
+                                              onChange={() => handleCheckboxChange('Commodity Settings - Categories Delete')}
+                                            />
+                                          <label className='p-1' for="Commodity Settings - Categories Delete">Commodity Settings - Categories Delete</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Sub Branch interface - Batch List"
+                                              name="vehicle2"
+                                              value="Sub Branch interface - Batch List"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Sub Branch interface - Batch List')}
+                                              onChange={() => handleCheckboxChange('Sub Branch interface - Batch List')}
+                                            />
+                                          <label className='p-1' for="Sub Branch interface - Batch List">Sub Branch interface - Batch List</label>
+                                        </div>
+                                      </Col>
+                                </Row>
+
+                              </div>
+
+                              <div className='p-2'>
+                                <Row>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="BP Master Data - Customer Edit"
+                                              name="vehicle2"
+                                              value="BP Master Data - Customer Edit"
+                                              checked={selectedCheckboxes.some(item => item.value === 'BP Master Data - Customer Edit')}
+                                              onChange={() => handleCheckboxChange('BP Master Data - Customer Edit')}
+                                            />
+                                          <label className='p-1' for="BP Master Data - Customer Edit">BP Master Data - Customer Edit</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Commodities Interface - Batch List Add"
+                                              name="vehicle2"
+                                              value="Commodities Interface - Batch List Add"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Commodities Interface - Batch List Add')}
+                                              onChange={() => handleCheckboxChange('Commodities Interface - Batch List Add')}
+                                            />
+                                          <label className='p-1' for="Commodities Interface - Batch List Add">Commodities Interface - Batch List Add</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Sub Branch interface - Type Sorting"
+                                              name="vehicle2"
+                                              value="Sub Branch interface - Type Sorting"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Sub Branch interface - Type Sorting')}
+                                              onChange={() => handleCheckboxChange('Sub Branch interface - Type Sorting')}
+                                            />
+                                          <label className='p-1' for="Sub Branch interface - Type Sorting">Sub Branch interface - Type Sorting</label>
+                                        </div>
+                                      </Col>
+                                </Row>
+
+                              </div>
+
+                              <div className='p-2'>
+                                <Row>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="BP Master Data - Customer Delete"
+                                              name="vehicle2"
+                                              value="BP Master Data - Customer Delete"
+                                              checked={selectedCheckboxes.some(item => item.value === 'BP Master Data - Customer Delete')}
+                                              onChange={() => handleCheckboxChange('BP Master Data - Customer Delete')}
+                                            />
+                                          <label className='p-1' for="BP Master Data - Customer Delete">BP Master Data - Customer Delete</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Commodities Interface - Type Sorting<"
+                                              name="vehicle2"
+                                              value="Commodities Interface - Type Sorting"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Commodities Interface - Type Sorting')}
+                                              onChange={() => handleCheckboxChange('Commodities Interface - Type Sorting')}
+                                            />
+                                          <label className='p-1' for="Commodities Interface - Type Sorting<">Commodities Interface - Type Sorting</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Sub Branch interface - Shredding"
+                                              name="vehicle2"
+                                              value="Sub Branch interface - Shredding"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Sub Branch interface - Shredding')}
+                                              onChange={() => handleCheckboxChange('Sub Branch interface - Shredding')}
+                                            />
+                                          <label className='p-1' for="Sub Branch interface - Shredding">Sub Branch interface - Shredding</label>
+                                        </div>
+                                      </Col>
+                                </Row>
+
+                              </div>
+
+                              <div className='p-2'>
+                                <Row>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="BP Master Data - Supplier Add"
+                                              name="vehicle2"
+                                              value="BP Master Data - Supplier Add"
+                                              checked={selectedCheckboxes.some(item => item.value === 'BP Master Data - Supplier Add')}
+                                              onChange={() => handleCheckboxChange('BP Master Data - Supplier Add')}
+                                            />
+                                          <label className='p-1' for="BP Master Data - Supplier Add">BP Master Data - Supplier Add</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Inventory Interface View"
+                                              name="vehicle2"
+                                              value="Inventory Interface View"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Inventory Interface View')}
+                                              onChange={() => handleCheckboxChange('Inventory Interface View')}
+                                            />
+                                          <label className='p-1' for="Inventory Interface View">Inventory Interface View</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Transfer Out Interface"
+                                              name="vehicle2"
+                                              value="Transfer Out Interface"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Transfer Out Interface')}
+                                              onChange={() => handleCheckboxChange('Transfer Out Interface')}
+                                            />
+                                          <label className='p-1' for="Transfer Out Interface">Transfer Out Interface</label>
+                                        </div>
+                                      </Col>
+                                </Row>
+
+                              </div>
+
+                              <div className='p-2'>
+                                <Row>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="BP Master Data - Supplier Edit"
+                                              name="vehicle2"
+                                              value="BP Master Data - Supplier Edit"
+                                              checked={selectedCheckboxes.some(item => item.value === 'BP Master Data - Supplier Edit')}
+                                              onChange={() => handleCheckboxChange('BP Master Data - Supplier Edit')}
+                                            />
+                                          <label className='p-1' for="BP Master Data - Supplier Edit">BP Master Data - Supplier Edit</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Warehouse master list"
+                                              name="vehicle2"
+                                              value="Warehouse master list"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Warehouse master list')}
+                                              onChange={() => handleCheckboxChange('Warehouse master list')}
+                                            />
+                                          <label className='p-1' for="Warehouse master list">Warehouse master list</label>
+                                        </div>
+                                      </Col>
+                                      <Col>
+                                        <div className='input-group'>
+                                            <input
+                                              type="checkbox"
+                                              id="Report Interface"
+                                              name="vehicle2"
+                                              value="Report Interface"
+                                              checked={selectedCheckboxes.some(item => item.value === 'Report Interface')}
+                                              onChange={() => handleCheckboxChange('Report Interface')}
+                                            />
+                                          <label className='p-1' for="Report Interface">Report Interface</label>
+                                        </div>
+                                      </Col>
+                                </Row>
+
+                              </div> 
 
                              
 

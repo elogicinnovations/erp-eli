@@ -28,7 +28,7 @@ const Login = () => {
             button: 'OK',
           }).then(() => {
             // login();
-            navigate('/admin/master/');
+            navigate('/dashboard');
           });
         } else if (response.status === 202) {
           swal({

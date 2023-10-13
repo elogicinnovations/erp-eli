@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import SettingsRouting from "./modules/settings/settings-routing";
 
 import Login from "./modules/Login/login";
+import Dashboard from "./modules/Dashboard/dashboard";
 import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
 import OTP from "./modules/Forgot Password/sub-modules/otp";
 import ConfirmPass from "./modules/Forgot Password/sub-modules/cpass";
@@ -30,6 +31,11 @@ function App() {
           <Route
             path="/"
             element={<Login />}
+          />
+
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
           />
 
 

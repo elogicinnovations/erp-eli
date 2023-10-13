@@ -129,6 +129,11 @@ input[type="number"] {
   cursor: pointer;
   font-size: large;
   color: #FFA500;
+  background-color: inherit;
+  border: none;
+}
+.resendButton:hover{
+  text-decoration: underline;
 }
 
 .back-forgot{

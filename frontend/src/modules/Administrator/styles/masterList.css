@@ -1,0 +1,11 @@
+.form-group label.userstatus{
+    position: absolute;
+    left: 70px;
+    bottom: 85px;
+}
+
+.search-create .btn.btn-black {
+    position: relative;
+    left: 80px;
+}
+  

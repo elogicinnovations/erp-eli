@@ -316,10 +316,9 @@ function OTP() {
             <div className="otpbox-container">
                   <div className="box-content">
                      <p className="otpverify">OTP Verification</p>
-                     <p className="entercode">Enter the OTP sent to ***</p>
-
+                     <p className="entercode">Enter the OTP sent to {email}</p>
                     <div className="timeremain">
-                        <p className="Time-content">
+                        <p className="Time-content" style={{color: '#5A5D5A'}}>
                         Time Remaining: {Math.floor(remainingTime / 60)}:{remainingTime % 60}
                         </p>
                     </div>
@@ -383,7 +382,8 @@ function OTP() {
                         </span>
                         
                         <div className="btn-resend">
-                        <p className="resendButton" onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</p>
+                        {/* <p className="resendButton" onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</p> */}
+                        <button type="button" className="resendButton"  onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</button>
                         </div>
                     </div>
 

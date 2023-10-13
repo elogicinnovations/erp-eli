@@ -1,8 +1,8 @@
 const router = require('express').Router()
 const {where} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const userRole = require('../db/models/userRole.model')
-
+// const userRole = require('../db/models/userRole.model')
+const { MasterList, UserRole } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -16,7 +16,7 @@ router.use(session({
 router.route("/fetchuserrole").get(async (req, res) => {
     // const departmentName = req.query.departmentName;
    
-    userRole.findAll({
+    UserRole.findAll({
     attributes: [
       'col_roleID',
       'col_rolename',
@@ -41,7 +41,7 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
   const roleId = req.params.id;
 
     try {
-        const data = await userRole.findOne({
+        const data = await UserRole.findOne({
         where: {
             col_roleID: roleId,
         },
@@ -67,7 +67,7 @@ router.post('/editUserrole/:id/:rolename', async (req, res) => {
     const selectedCheckboxes = req.body.selectedCheckboxes;
   
     try {
-      const existingRole = await userRole.findOne({
+      const existingRole = await UserRole.findOne({
         where: {
           col_rolename: rolename,
           col_roleID: { [sequelize]: roleId },
@@ -78,7 +78,7 @@ router.post('/editUserrole/:id/:rolename', async (req, res) => {
         return res.status(202).send('Exist');
       } else {
         // Delete existing role authorizations
-        await userRole.destroy({
+        await UserRole.destroy({
           where: {
             col_roleID: roleId,
           },
@@ -106,7 +106,7 @@ router.route('/deleteRole/:param_id').delete(async (req, res) => {
     const id = req.params.param_id;
 
   try {
-    const deletedUserRole = await userRole.destroy({
+    const deletedUserRole = await UserRole.destroy({
       where: {
         col_roleID: id,
       },
@@ -133,12 +133,12 @@ router.post('/createUserrole/:rolename', async (req, res) => {
     const param_rolename = req.params.rolename;
   
     try {
-      const existingRole = await userRole.findOne({ where: { col_rolename: param_rolename } });
+      const existingRole = await UserRole.findOne({ where: { col_rolename: param_rolename } });
   
       if (existingRole) {
         return res.status(202).send('Exist');
       } else {
-        const lastRoleIDResult = await userRole.findOne({
+        const lastRoleIDResult = await UserRole.findOne({
           order: [['col_roleID', 'DESC']],
           attributes: ['col_roleID'],
         });
@@ -147,7 +147,7 @@ router.post('/createUserrole/:rolename', async (req, res) => {
   
         const createdRoles = await Promise.all(
           selectedCheckboxes.map(item => {
-            return userRole.create({
+            return UserRole.create({
               col_roleID: lastRoleID,
               col_rolename: item.rolename,
               col_desc: item.desc,
