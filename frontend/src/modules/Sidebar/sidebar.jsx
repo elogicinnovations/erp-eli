@@ -72,11 +72,12 @@ function Sidebar() {
         <div className="head-sidebar">
           <img src="../../assets/image/Slash.png" alt="LOGO" />
         </div>
-
-        <ListItem button className="menu-item">
-            <SquaresFour size={20}/>
-            <ListItemText primary="DASHBOARD" />
-          </ListItem>
+        <Link to={'/dashboard'}>
+          <ListItem button className="menu-item">
+              <SquaresFour size={20}/>               
+                <ListItemText primary="DASHBOARD" />
+            </ListItem>
+          </Link>
         <List>
 
           <ListItem button className="menu-item" onClick={toggleAdministrator}>
@@ -94,15 +95,19 @@ function Sidebar() {
               
               <Collapse in={openEmployeeData}>
                 <List component="div" disablePadding>
-                  <ListItem button className='Employeesub-menu'>
-                    <ListItemText primary="Master List" />
-                  </ListItem>
+                  <Link to={'/masterList'}>
+                    <ListItem button className='Employeesub-menu'>                   
+                        <ListItemText primary="Master List" />
+                    </ListItem>
+                  </Link>
                   <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Employee Type" />
                   </ListItem>
-                  <ListItem button className='Employeesub-menu'>
-                    <ListItemText primary="RBAC List" />
-                  </ListItem>
+                  <Link to={'/userRole'}>
+                    <ListItem button className='Employeesub-menu'>                  
+                      <ListItemText primary="RBAC List" />                 
+                    </ListItem>
+                  </Link>
                 </List>
               </Collapse>
 

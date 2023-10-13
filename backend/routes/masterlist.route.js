@@ -129,6 +129,8 @@ router.route('/resetPass').post(async (req, res) => {
         }
     }).then((update) => {
         if(update) {
+          console.log(req.body.email);
+          console.log(update);
             res.json({success:true})
         }
         else{
