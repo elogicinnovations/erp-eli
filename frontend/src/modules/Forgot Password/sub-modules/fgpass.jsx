@@ -1,7 +1,7 @@
 // import './App.css';
 // import './style.css';
 import mailicon from '../../../assets/icon/mailsend.png';
-import '../styles/fg.css'
+import '../../styles/react-style.css'
 import React, { useState } from 'react';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';

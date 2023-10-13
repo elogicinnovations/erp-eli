@@ -9,7 +9,7 @@ import { useNavigate, Link    } from 'react-router-dom';
 
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
-import  '../styles/otp.css'
+import  '../../styles/react-style.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // input

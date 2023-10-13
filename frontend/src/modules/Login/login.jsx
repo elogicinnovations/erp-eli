@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../../assets/global/style.css';
-import './styles/login.css';
+import '../styles/react-style.css';
 import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../../assets/global/url';
 import swal from 'sweetalert';

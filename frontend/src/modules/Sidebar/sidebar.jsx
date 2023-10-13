@@ -1,248 +1,210 @@
 import React, { useState } from 'react';
 import '../../assets/global/style.css'
-import './styles/sidebar.css';
+import '../styles/react-style.css'
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import {
+  SquaresFour,
+  Users, 
+  Archive,
+  ClipboardText,
+  Warehouse,
+  Coins,
+  ChartLineUp,
+  SignOut,
+  Files,
+  CaretRight,
+} from "@phosphor-icons/react";
 import { Link } from 'react-router-dom';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Collapse from '@mui/material/Collapse';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import ExpandLess from '@mui/icons-material/ExpandLess';
 
-const Sidebar = ({ onModuleChange }) => {
-/* ---------------------------- Administrator MOdule ---------------------*/
-  const [showAdminDropdown, setShowAdminDropdown] = useState(false);
-  const [showUserMasterDataDropdown, setShowUserMasterDataDropdown] = useState(false);
-  const [showBPMasterDataDropdown, setShowBPMasterDataDropdown] = useState(false);
-  const [showCommodityMasterDataDropdown, setShowCommodityMasterDataDropdown] = useState(false);
+function Sidebar() {
+  const [openAdministrator, setOpenAdministrator] = useState(false);
+  const [openEmployeeData, setOpenEmployeeData] = useState(false);
+  const [openProductSettings, setOpenProductSettings] = useState(false);
+  const [openBPData, setOpenBPData] = useState(false);
+  const [openAssetSetup, setOpenAssetSetup] = useState(false);
 
-
-/* ------------------------------- Commodity MOdule -----------------------------*/
-  const [showComodityDropdown, setShowCommodityDropdown] = useState(false);
-
-
-/* ------------------------------- FILE UPLOAD MOdule -----------------------------*/
-const [showFileUploadDropdown, setShowFileUploadDropdown] = useState(false);
-
-/* ------------------------------- Report MOdule -----------------------------*/
-const [showReportDropdown, setShowReportDropdown] = useState(false);
-const [showBPReportsDropdown, setBPReportDropdown] = useState(false);
-
-
-  /* TO Close the other Dropdown if other is clicked*/
-  const closeAllDropdowns = () => { 
-    setShowUserMasterDataDropdown(false);
-    setShowBPMasterDataDropdown(false);
-    setShowCommodityMasterDataDropdown(false);
+  const toggleAdministrator = () => {
+    setOpenAdministrator(!openAdministrator);
+    if (openEmployeeData) setOpenEmployeeData(false);
+    if (openProductSettings) setOpenProductSettings(false);
+    if (openBPData) setOpenBPData(false);
+    if (openAssetSetup) setOpenAssetSetup(false);
   };
 
-  
-
-  const toggleAdminDropdown = () => {
-    setShowAdminDropdown(!showAdminDropdown);
-    closeAllDropdowns();
-
-    setShowCommodityDropdown(false);
-    setShowFileUploadDropdown(false);
-    setShowReportDropdown(false);
-
-    
+  const toggleEmployeeData = () => {
+    setOpenEmployeeData(!openEmployeeData);
+    if (openProductSettings) setOpenProductSettings(false);
+    if (openBPData) setOpenBPData(false);
+    if (openAssetSetup) setOpenAssetSetup(false);
   };
 
-  const toggleUserMasterDataDropdown = () => {
-    closeAllDropdowns();
-    setShowUserMasterDataDropdown(!showUserMasterDataDropdown);
+  const toggleProductSettings = () => {
+    setOpenProductSettings(!openProductSettings);
+    if (openEmployeeData) setOpenEmployeeData(false);
+    if (openBPData) setOpenBPData(false);
+    if (openAssetSetup) setOpenAssetSetup(false);
   };
 
-  const toggleBPMasterDataDropdown = () => {
-    closeAllDropdowns();
-    setShowBPMasterDataDropdown(!showBPMasterDataDropdown);
+  const toggleBPData = () => {
+    setOpenBPData(!openBPData);
+    if (openEmployeeData) setOpenEmployeeData(false);
+    if (openProductSettings) setOpenProductSettings(false);
+    if (openAssetSetup) setOpenAssetSetup(false);
   };
 
-  const toggleCommodityMasterDataDropdown = () => {
-    closeAllDropdowns();
-    setShowCommodityMasterDataDropdown(!showCommodityMasterDataDropdown);
+  const toggleAssetSetup = () => {
+    setOpenAssetSetup(!openAssetSetup);
+    if (openEmployeeData) setOpenEmployeeData(false);
+    if (openProductSettings) setOpenProductSettings(false);
+    if (openBPData) setOpenBPData(false);
   };
-
-
-
-/* ------------------------------- Commodity MOdule -----------------------------*/
-
-const toggleCommodityDropdown = () => {
-  setShowCommodityDropdown(!showComodityDropdown);
-  setShowAdminDropdown(false);
-  setShowFileUploadDropdown(false);
-  setShowReportDropdown(false);
-
-  
-};
-
-
-/* ------------------------------- FILE UPLOAD MOdule -----------------------------*/
-
-
-const toggleFileUploadDropdown = () => {
-  setShowFileUploadDropdown(!showFileUploadDropdown);
-  setShowAdminDropdown(false);
-  setShowCommodityDropdown(false);
-  setShowReportDropdown(false);
-  
-
-  
-};
-
-
-/* ------------------------------- Report MOdule -----------------------------*/
-
-
-const toggleReportDropdown = () => {
-  setShowReportDropdown(!showReportDropdown);
-  setShowAdminDropdown(false);
-  setShowCommodityDropdown(false);
-  setShowFileUploadDropdown(false);
-};
-
-const toggleBPReportDropdown = () => {
-
-  setBPReportDropdown(!showBPReportsDropdown);
-};
-
-
 
   return (
-    <div className="sidebar sidebar-offcanvas" id="sidebar">
-      <div className="header">
-        <img src="path_to_your_image.jpg" alt="Logo" />
-        <div className="welcome">
-          <p>Welcome back!</p>
-          <i className="settings-icon">Settings Icon</i>
+    <div className='sidebar'>
+        <div className="head-sidebar">
+          <img src="../../assets/image/Slash.png" alt="LOGO" />
         </div>
-      </div>
-      <ul className="menu">
-        
-            <Link className="nav-link" to={'/dashboard'}>
-                <li className='module' >
-                  <i className="" ></i> 
-                  Dashboard
-                </li>
-            </Link>
 
-            
-        <li className='module' onClick={toggleAdminDropdown}>Administrator</li>
-              <ul className={`dropdown ${showAdminDropdown ? 'expanded' : ''}`}>
+        <ListItem button className="menu-item">
+            <SquaresFour size={20}/>
+            <ListItemText primary="DASHBOARD" />
+          </ListItem>
+        <List>
 
-                    <li className='submodule' onClick={toggleUserMasterDataDropdown}>Employee Data</li>
-                    <ul className={`sub-dropdown ${showUserMasterDataDropdown ? 'expanded' : ''}`}>
-                        <Link className="nav-link" to={'/masterList'}>
-                            <li className='nest-submodule'>MasterList</li>
-                        </Link>
-                      
-                        <Link className="nav-link" to={'/userRole'}>
-                            <li className='nest-submodule'>Employee Type</li>
-                        </Link>
+          <ListItem button className="menu-item" onClick={toggleAdministrator}>
+            <Users size={20}/>
+            <ListItemText primary="ADMINISTRATOR" />
+            {openAdministrator ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
 
-                        <Link className="nav-link" to={'/userRole'}>
-                            <li className='nest-submodule'>RBAC List</li>
-                        </Link>
-                    </ul>
-                          {/* ----------------------BREAK--------------------------*/}
+          <Collapse in={openAdministrator}>
+            <List component="div" disablePadding>
+              <ListItem button className='adminsub-menu' onClick={toggleEmployeeData}>
+                <ListItemText primary="Employee Data" />
+                {openEmployeeData ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              
+              <Collapse in={openEmployeeData}>
+                <List component="div" disablePadding>
+                  <ListItem button className='Employeesub-menu'>
+                    <ListItemText primary="Master List" />
+                  </ListItem>
+                  <ListItem button className='Employeesub-menu'>
+                    <ListItemText primary="Employee Type" />
+                  </ListItem>
+                  <ListItem button className='Employeesub-menu'>
+                    <ListItemText primary="RBAC List" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
+              <ListItem button className='adminsub-menu' onClick={toggleProductSettings}>
+                <ListItemText primary="Product Settings" />
+                {openProductSettings ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
 
-                           {/* ----------------------BREAK--------------------------*/}
+              <Collapse in={openProductSettings}>
+                <List component="div" disablePadding>
+                  <ListItem button className='Productsub-menu'>
+                    <ListItemText primary="Product Categories" />
+                  </ListItem>
+                  <ListItem button className='Productsub-menu'>
+                    <ListItemText primary="Product Brands" />
+                  </ListItem>
+                  <ListItem button className='Productsub-menu'>
+                    <ListItemText primary="Product Variants" />
+                  </ListItem>
+                  <ListItem button className='Productsub-menu'>
+                    <ListItemText primary="Price Options" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
-                            <li className='submodule' onClick={toggleBPMasterDataDropdown}>Product Settings</li>
-                            <ul className={`sub-dropdown ${showBPMasterDataDropdown ? 'expanded' : ''}`}>
-                              <Link className="nav-link" to={'/customer'}>
-                                <li className='nest-submodule'>Product Categories</li>
-                              </Link>
+              <ListItem button className='adminsub-menu' onClick={toggleBPData}>
+                <ListItemText primary="BP Master Data" />
+                {openBPData ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
 
-                              <Link className="nav-link" to={'/supplier'}>
-                                <li className='nest-submodule'>Product Brands</li>
-                              </Link>        
+              <Collapse in={openBPData}>
+                <List component="div" disablePadding>
+                  <ListItem button className='BPsub-menu'> 
+                    <ListItemText primary="Cost Centre" />
+                  </ListItem>
+                  <ListItem button className='BPsub-menu'>
+                    <ListItemText primary="Suppliers" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
-                               <Link className="nav-link" to={'/supplier'}>
-                                <li className='nest-submodule'>Product Variants</li>
-                              </Link>   
+              <ListItem button className='adminsub-menu' onClick={toggleAssetSetup}>
+                <ListItemText primary="Asset Setup" />
+                {openAssetSetup ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
 
+              <Collapse in={openAssetSetup}>
+                <List component="div" disablePadding>
+                  <ListItem button className='Assetsub-menu'>
+                    <ListItemText primary="Category" />
+                  </ListItem>
+                  <ListItem button className='Assetsub-menu'>
+                    <ListItemText primary="Manufacturer" />
+                  </ListItem>
+                  <ListItem button className='Assetsub-menu'>
+                    <ListItemText primary="Location" />
+                  </ListItem>
+                  <ListItem button className='Assetsub-menu'>
+                    <ListItemText primary="Department" />
+                  </ListItem>
+                  <ListItem button className='Assetsub-menu'>
+                    <ListItemText primary="Model" />
+                  </ListItem>
+                </List>
+              </Collapse>
 
-                               <Link className="nav-link" to={'/supplier'}>
-                                <li className='nest-submodule'>Product Options</li>
-                              </Link>                
-                            </ul>
+            </List>
+          </Collapse>
 
-                          {/* ----------------------BREAK--------------------------*/}
+          <ListItem button className="menu-item" activeClassName="active">
+            <Archive size={20}/>
+            <ListItemText primary="INVENTORY" />
+          </ListItem>
+          <ListItem button className="menu-item">
+            <ClipboardText size={20}/>
+            <ListItemText primary="PURCHASE ORDER" />
+          </ListItem>
+          <ListItem button className="menu-item">
+            <Warehouse size={20}/>
+            <ListItemText primary="WAREHOUSE" />
+          </ListItem>
+          <ListItem button className="menu-item">
+            <Coins size={20}/>
+            <ListItemText primary="ASSET MANAGEMENT" />
+          </ListItem>
+          <ListItem button className="menu-item">
+            <ChartLineUp size={20}/>
+            <ListItemText primary="REPORTS" />
+          </ListItem>
+          <ListItem button className="menu-item">
+            <Files size={20}/>
+            <ListItemText primary="ACTIVITY LOGS" />
+          </ListItem>
+        </List>
 
-                    <li className='submodule' onClick={toggleBPMasterDataDropdown}>BP Master Data</li>
-                    <ul className={`sub-dropdown ${showBPMasterDataDropdown ? 'expanded' : ''}`}>
-                      <Link className="nav-link" to={'/customer'}>
-                        <li className='nest-submodule'>Cost Centre</li>
-                      </Link>
-
-                      <Link className="nav-link" to={'/supplier'}>
-                        <li className='nest-submodule'>Supplier</li>
-                      </Link>                     
-                    </ul>
-
-                          {/* ----------------------BREAK--------------------------*/}
-
-                    <li  className='submodule' onClick={toggleCommodityMasterDataDropdown}>Asset Setup</li>
-                    <ul className={`sub-dropdown ${showCommodityMasterDataDropdown ? 'expanded' : ''}`}>
-                      <Link to={'/category'}><li className='nest-submodule'>Category</li></Link>
-                      <Link to={'/subCategory'}><li className='nest-submodule'>Manufacturer</li></Link>
-                      <Link to={'/subCategory'}><li className='nest-submodule'>Location</li></Link>
-                      <Link to={'/subCategory'}><li className='nest-submodule'>Department</li></Link>
-                      <Link to={'/subCategory'}><li className='nest-submodule'>Model</li></Link>
-                    </ul>
-              </ul> {/* END of className={`dropdown ${showAdminDropdown ? 'expanded' : ''} */}
-
-              <Link to={'/'} className="nav-link"><li className='module'>Inventory</li></Link>
-              <Link to={'/'} className="nav-link"><li className='module'>Purchase Order</li></Link>
-              <Link to={'/'} className="nav-link"><li className='module'>Warehouse</li></Link>
-              <Link to={'/'} className="nav-link"><li className='module'>Asset Management</li></Link>
-              <Link to={'/'} className="nav-link"><li className='module'>Reports</li></Link>
-              <Link to={'/'} className="nav-link"><li className='module'>Logout</li></Link>
-
-        {/* <li className='module' onClick={toggleCommodityDropdown}>Commodities</li>
-              <ul className={`dropdown ${showComodityDropdown ? 'expanded' : ''}`}>
-
-                <li className='submodule'>Receiving (Batch)</li>
-                <li className='submodule'>Commodity Sorting</li>
-                <li className='submodule'>Categorize</li>
-                <li className='submodule'>Press</li>
-                <li className='submodule'>Shredding </li>
-                <li className='submodule'>Grinding</li>
-                <li className='submodule'>Pelletizing</li>
-                
-              </ul>  */}
-
-
-        <Link to={'/'} className="nav-link"><li className='module'>Inventory</li></Link>
-
-
-        {/* <li className='module' onClick={toggleFileUploadDropdown}>File Upload</li>
-              <ul className={`dropdown ${showFileUploadDropdown ? 'expanded' : ''}`}>
-
-                <li className='submodule'>Upload Master Data</li>
-                <li className='submodule'>Commodity Data Update</li>
-                
-                
-              </ul>  */}
-
-        {/* <li className='module' >Branch</li>
-        <Link to={'/warehouse'} className="nav-link"><li className='module' >Warehouse</li></Link>
-        <li className='module' >Transfer History</li>
-
-
-        <li className='module' onClick={toggleReportDropdown}>Report</li>
-        <ul className={`dropdown ${showReportDropdown ? 'expanded' : ''}`}>
-                <li className='submodule' onClick={toggleBPReportDropdown}>BP Reports</li>
-                    <ul className={`sub-dropdown ${showBPReportsDropdown ? 'expanded' : ''}`}>
-                      <li className='nest-submodule'>Supplier Report</li>
-                      <li className='nest-submodule'>Customer Report</li>
-                    </ul>
-                <li className='submodule'>Custom Billing Report</li>
-                <li className='submodule'>Losses Reports</li>
-                <li className='submodule'>Inventory Report</li>
-                <li className='submodule'>Batch In Reports</li>
-                <li className='submodule'>Transfer Out Reports</li>
-        </ul>  */}
-      </ul>  {/* END of menu */}
+          <div className="logout-container">
+              <Link className='logout'>
+                <SignOut size={20}/>  Logout
+              </Link>
+          </div>
     </div>
   );
-};
+}
 
 export default Sidebar;
