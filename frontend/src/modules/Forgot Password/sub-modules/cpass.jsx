@@ -226,8 +226,9 @@ const handleSubmit = () => {
   } else {
     // Passwords match, proceed with API call
   
+    console.log("ito pass new" + password)
     axios
-    .post(BASE_URL + '/masterList/resetPass', { password, email })
+    .put(BASE_URL + '/masterList/resetPassword', { password, email })
       .then((response) => {
         if (response.status === 200) {
           swal({
@@ -235,7 +236,7 @@ const handleSubmit = () => {
             text: 'You successfully updated your password',
             icon: 'success',
           }).then(() => {
-            navigate('/');
+            // navigate('/');
           });
         } else {
           swal({

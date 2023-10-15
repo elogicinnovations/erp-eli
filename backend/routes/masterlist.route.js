@@ -122,16 +122,23 @@ router.route("/emailResendCode").post(async (req, res) => {
 });
 
 //UPDATE
-router.route('/resetPass').post(async (req, res) => {
-    await MasterList.update(req.body,{
+router.route('/resetPassword').put(async (req, res) => {
+    await MasterList.update(
+      {
+        col_Pass : req.body.password,
+      },
+      
+      {
         where: {
-            col_email : req.body.email
+          col_email : req.body.email
         }
-    }).then((update) => {
+      }
+    )
+    .then((update) => {
         if(update) {
           console.log(req.body.email);
           console.log(update);
-            res.json({success:true})
+            res.status(200).json({success:true})
         }
         else{
             res.status(400).json({success:false})
@@ -147,13 +154,13 @@ router.route('/resetPass').post(async (req, res) => {
 // FOR USER MASTERLIST MODULE
 router.route('/masterTable').get(async (req, res) => {
   try {
-    const data = await MasterList.findAll({
-      include: {
-        model: UserRole,
-        as: 'userRole', // Use the alias you defined in associations.js
-        required: true,
-      },
-    });
+    // const data = await MasterList.findAll({
+    //   include: {
+    //     model: UserRole,
+    //     required: true,
+    //   },
+    // });
+    const data = await MasterList.findAll();
 
     if (data) {
       // console.log(data);

@@ -19,13 +19,12 @@ function EditRole() {
   const [rolename, setRolename] = useState(''); // Initialize the state for Role Name
   const [desc, setDesc] = useState(''); // Initialize the state for Description
 
-
   useEffect(() => {
-    axios.get(BASE_URL + `/fetchuserroleEDIT/${id}`)
+    axios.get(BASE_URL + `/userRole/fetchuserroleEDIT/${id}`)
       .then(res => {
-        setRole(res.data); // Assuming the response is an array with a single object
-        setRolename(res.data.col_rolename); // Set the Role Name
-        setDesc(res.data.col_desc); // Set the Description
+        setRole(res.data[0]); // Assuming the response is an array with a single object
+        setRolename(res.data[0].col_rolename); // Set the Role Name
+        setDesc(res.data[0].col_desc); // Set the Description
         // Assuming res.data is an array with the role data
         // You can then set your selectedCheckboxes state based on the retrieved role data
         const selectedCheckboxes = res.data.map(item => ({
@@ -38,15 +37,15 @@ function EditRole() {
       })
       .catch(err => console.log(err));
   }, [id]);
-  
-  
-  
-  console.log('dasd' + role)
+  console.log(role);
 
 
 // Inserting to database checkboxes
 
 const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+
+  
+console.log('dasd' + selectedCheckboxes)
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -284,6 +283,7 @@ const handleCheckboxChange = (value) => {
                               </div>
 
 
+                              
                               <div className='p-2'>
                                 <Row>
                                       <Col>
@@ -600,6 +600,7 @@ const handleCheckboxChange = (value) => {
                                 </Row>
 
                               </div> 
+
 
                              
 

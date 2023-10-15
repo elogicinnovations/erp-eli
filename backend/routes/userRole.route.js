@@ -41,7 +41,7 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
   const roleId = req.params.id;
 
     try {
-        const data = await UserRole.findOne({
+        const data = await UserRole.findAll({
         where: {
             col_roleID: roleId,
         },
@@ -50,10 +50,11 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
         if (!data) {
         // No record found
         return res.status(404).json({ message: 'User role not found' });
-        console.log('wala')
+        
         }
-
+        // console.log(data)
         return res.json(data);
+        
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'An error occurred' });
@@ -85,7 +86,7 @@ router.post('/editUserrole/:id/:rolename', async (req, res) => {
         });
   
         // Insert new role authorizations
-        await userRole.bulkCreate(selectedCheckboxes.map(item => ({
+        await UserRole.bulkCreate(selectedCheckboxes.map(item => ({
           col_roleID: roleId,
           col_rolename: item.rolename,
           col_desc: item.desc,

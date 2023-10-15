@@ -349,7 +349,8 @@ function MasterList() {
                       {filteredStudent.map((data, i) => (
                         <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                           <td>{data.col_id}</td>
-                          <td>{data.userRole.col_rolename}</td>
+                          {/* <td>{data.userRole.col_rolename}</td> */}
+                          <td>{data.col_role_name}</td>
                           <td>{data.col_Fname}</td>
                           <td>{data.col_email}</td>
                           <td>{data.col_status}</td>
