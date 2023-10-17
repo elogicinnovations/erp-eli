@@ -18,7 +18,8 @@ import '../../../../assets/skydash/vendors/js/vendor.bundle.base';
 import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
 import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
 import '../../../../assets/skydash/js/off-canvas';
-import $ from 'jquery';
+
+import * as $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -542,11 +543,25 @@ function MasterList() {
                 <div className="master-cardbody">
                       <div className="master-card">
 
-
-
+                          <div className="table-responsive">
+                              <table id="order-listing" className='table'>
+                                    <thead>
+                                      <tr>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td>Joseph</td>
+                                        <td>23</td>
+                                      </tr>
+                                    </tbody>
+                              </table>
+                          </div>
 
                     </div>
-              </div>
+                </div>
           </div>
 
     </div>
