@@ -1,12 +1,9 @@
-// import './App.css';
-// import './style.css';
-// import mailicon from '../../icons/mailicon.png';
+
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios'
-// import { useParams } from 'react-router-dom';
 import { useDataContext } from './data/dataPost';
 import { useNavigate, Link    } from 'react-router-dom';
-
+import Slash from '../../../assets/image/Slash.png';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 import  '../../styles/react-style.css'
@@ -36,10 +33,11 @@ const CustomButton = styled(Button)`
   color: #ffffff;
   border-radius: 8px;
   font-weight: 600;
-  padding: 15px 259px;
+  padding: 15px 234px;
   cursor: pointer;
   transition: all 150ms ease;
   border: none;
+  margin-left: 12rem;
 
   &:hover {
     background-color: #FFA500;
@@ -301,29 +299,32 @@ function OTP() {
   };
 
 
-
-
-
-
-
-
   return (
 
-<div class="container-otp">
+<div class="main-onetimepass">
+      <div className="otpass-blurd">
+      </div>
 
-    <div className="otp-right-content">
-        <div className="otp-blur-background">
-            <div className="otpbox-container">
-                  <div className="box-content">
-                     <p className="otpverify">OTP Verification</p>
-                     <p className="entercode">Enter the OTP sent to {email}</p>
-                    <div className="timeremain">
-                        <p className="Time-content" style={{color: '#5A5D5A'}}>
-                        Time Remaining: {Math.floor(remainingTime / 60)}:{remainingTime % 60}
-                        </p>
+      <div className="otp-lefts">
+
+      </div>
+
+      <div className="right-otpass">
+            <div className="otp-rightbox">
+                <div className="otp-slashlogo">
+                    <img className='slashlogo' src={Slash}/>
+                </div>
+
+                <div className="verificationstext">
+                    <div className='otpverify-text'>
+                    OTP Verification
                     </div>
+                    <div className="remain-times">
+                    Time Remaining: {Math.floor(remainingTime / 60)}:{remainingTime % 60}
+                    </div>
+                </div>
 
-                     <div className="code-box">
+                <div className="code-box">
                         <div className="firstbox">
                         <CustomInput
                               ref={inputRef1}
@@ -371,34 +372,26 @@ function OTP() {
                               ></CustomInput>
                           </div>
                      </div> {/*codebox close div*/}
-                    
-                    <div className="continuebutton">
-                    <CustomButton onClick={handlesubmitCode} class="auto-group-bxvo-fSq">Submit</CustomButton>
+                      
+                    <div className='button-otp-submit'>
+                        <CustomButton onClick={handlesubmitCode} class="continue-submit">Submit</CustomButton>
                     </div>
 
-                    <div className="dontreceive-container">
-                        <span class="dontreceive-content">
-                        Didn’t receive code ? 
-                        </span>
-                        
-                        <div className="btn-resend">
-                        {/* <p className="resendButton" onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</p> */}
+                    <div className="resendcodes-content">
+                        <p className="notreceive">
+                          Didn’t receive code ? 
+                        </p>
                         <button type="button" className="resendButton"  onClick={handleResendCode}  disabled={isResendDisabled}>Re-send</button>
-                        </div>
+                    </div>  
+
+                    <div className="backtofg">
+                      <Link to="/forgotpass"  style={{display: 'contents', fontSize: 15, color: 'orange'}}>
+                        <FontAwesomeIcon icon={faArrowLeft} /> Back to forgot password
+                      </Link>
                     </div>
 
-                    <div className="back-forgot">
-                          <Link to="/forgotpass"  style={{display: 'contents', fontSize: 15, color: 'orange'}}>
-                          <FontAwesomeIcon icon={faArrowLeft} /> Back to forgot password
-                          </Link>
-                    </div>
-
-                  </div>
             </div>
-        </div>
-    </div>
-
-
+      </div>
 </div> 
 
   );

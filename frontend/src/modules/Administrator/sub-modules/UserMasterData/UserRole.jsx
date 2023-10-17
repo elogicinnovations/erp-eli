@@ -72,7 +72,7 @@ function UserRole() {
 
   return (
     <div className="page-body-wrapper">
-      <Sidebar />
+      {/* <Sidebar />
       <Header />
       <div className='main-panel'>
         <div className='content-wrapper'>
@@ -152,7 +152,7 @@ function UserRole() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

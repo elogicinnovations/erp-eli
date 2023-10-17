@@ -12,7 +12,6 @@ import {
   ChartLineUp,
   SignOut,
   Files,
-  CaretRight,
 } from "@phosphor-icons/react";
 import { Link } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
@@ -25,6 +24,12 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 
 function Sidebar() {
+  const [activeMenu, setActiveMenu] = useState(null);
+
+  const handleMenuClick = (menuName) => {
+    setActiveMenu(menuName);
+  };
+
   const [openAdministrator, setOpenAdministrator] = useState(false);
   const [openEmployeeData, setOpenEmployeeData] = useState(false);
   const [openProductSettings, setOpenProductSettings] = useState(false);
@@ -68,23 +73,39 @@ function Sidebar() {
   };
 
   return (
-    <div className='sidebar'>
+    <div className='sidebar-main-content'>
         <div className="head-sidebar">
-          <img src="../../assets/image/Slash.png" alt="LOGO" />
+          {/* <img className='logo' src="../../assets/image/Slash.png" alt="LOGO" /> */}
         </div>
-        <Link to={'/dashboard'}>
-          <ListItem button className="menu-item">
-              <SquaresFour size={20}/>               
-                <ListItemText primary="DASHBOARD" />
-            </ListItem>
-          </Link>
-        <List>
 
-          <ListItem button className="menu-item" onClick={toggleAdministrator}>
-            <Users size={20}/>
-            <ListItemText primary="ADMINISTRATOR" />
-            {openAdministrator ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
+          <div className="spacefor-sidebar">
+            {/* add highlight color on bottom */}
+          </div>
+           <Link
+              to='/dashboard'
+              style={{ textDecoration: 'none', color: 'inherit' }}
+              onClick={() => handleMenuClick('DASHBOARD')}>
+              <ListItem
+                button
+                className={`menu-item ${activeMenu === 'DASHBOARD' ? 'active' : ''}`}>
+                <SquaresFour size={20} />
+                <ListItemText primary="DASHBOARD" />
+              </ListItem>
+          </Link>
+
+        <List>
+        <ListItem
+          button
+          className={`menu-item ${activeMenu === 'ADMINISTRATOR' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveMenu(activeMenu === 'ADMINISTRATOR' ? '' : 'ADMINISTRATOR');
+            toggleAdministrator();
+          }}
+        >
+          <Users size={20} />
+          <ListItemText primary="ADMINISTRATOR" />
+          {openAdministrator ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
 
           <Collapse in={openAdministrator}>
             <List component="div" disablePadding>
@@ -95,7 +116,7 @@ function Sidebar() {
               
               <Collapse in={openEmployeeData}>
                 <List component="div" disablePadding>
-                  <Link to={'/masterList'}>
+                  <Link to='/masterList'  style={{ textDecoration: 'none', color: 'inherit' }}>
                     <ListItem button className='Employeesub-menu'>                   
                         <ListItemText primary="Master List" />
                     </ListItem>
@@ -103,11 +124,11 @@ function Sidebar() {
                   <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Employee Type" />
                   </ListItem>
-                  <Link to={'/userRole'}>
+                  {/* <Link to={'/userRole'}> */}
                     <ListItem button className='Employeesub-menu'>                  
                       <ListItemText primary="RBAC List" />                 
                     </ListItem>
-                  </Link>
+                  {/* </Link> */}
                 </List>
               </Collapse>
 
@@ -177,34 +198,60 @@ function Sidebar() {
             </List>
           </Collapse>
 
-          <ListItem button className="menu-item" activeClassName="active">
+          <ListItem button 
+           className={`menu-item ${activeMenu === 'INVENTORY' ? 'active' : ''}`} 
+           onClick={() => {
+            setActiveMenu(activeMenu === 'INVENTORY' ? '' : 'INVENTORY');
+          }}
+           activeClassName="active">
             <Archive size={20}/>
             <ListItemText primary="INVENTORY" />
           </ListItem>
-          <ListItem button className="menu-item">
+
+          <ListItem button 
+            className={`menu-item ${activeMenu === 'PURCHASE ORDER' ? 'active' : ''}`} 
+            onClick={() => {
+              setActiveMenu(activeMenu === 'PURCHASE ORDER' ? '' : 'PURCHASE ORDER');
+            }}>
             <ClipboardText size={20}/>
             <ListItemText primary="PURCHASE ORDER" />
           </ListItem>
-          <ListItem button className="menu-item">
+
+          <ListItem button className={`menu-item ${activeMenu === 'WAREHOUSE' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveMenu(activeMenu === 'WAREHOUSE' ? '' : 'WAREHOUSE');
+            }}>
             <Warehouse size={20}/>
             <ListItemText primary="WAREHOUSE" />
           </ListItem>
-          <ListItem button className="menu-item">
+
+          <ListItem button className={`menu-item ${activeMenu === 'ASSET MANAGEMENT' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveMenu(activeMenu === 'ASSET MANAGEMENT' ? '' : 'ASSET MANAGEMENT');
+            }}>
             <Coins size={20}/>
             <ListItemText primary="ASSET MANAGEMENT" />
           </ListItem>
-          <ListItem button className="menu-item">
+
+          <ListItem button className={`menu-item ${activeMenu === 'REPORTS' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveMenu(activeMenu === 'REPORTS' ? '' : 'REPORTS');
+            }}>
             <ChartLineUp size={20}/>
             <ListItemText primary="REPORTS" />
           </ListItem>
-          <ListItem button className="menu-item">
+
+          <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveMenu(activeMenu === 'ACTIVITY LOGS' ? '' : 'ACTIVITY LOGS');
+              }}>
             <Files size={20}/>
             <ListItemText primary="ACTIVITY LOGS" />
           </ListItem>
         </List>
 
           <div className="logout-container">
-              <Link className='logout'>
+              <Link to={'/'} className='logout'>
                 <SignOut size={20}/>  Logout
               </Link>
           </div>
