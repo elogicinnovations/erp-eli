@@ -542,7 +542,8 @@ function MasterList() {
           <div className="masterlist-content">
                 <div className="master-cardbody">
                       <div className="master-card">
-
+                        <div className="card">
+                          <div className="card-body">
                           <div className="table-responsive">
                               <table id="order-listing" className='table'>
                                     <thead>
@@ -559,6 +560,9 @@ function MasterList() {
                                     </tbody>
                               </table>
                           </div>
+                          </div>
+                        </div>
+                          
 
                     </div>
                 </div>
