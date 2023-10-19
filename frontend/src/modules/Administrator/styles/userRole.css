@@ -34,4 +34,24 @@
 }
 .btn_saveCancel{
     width: 200px;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
+.tableHead{
+    font-size: large;
+}
+
+/* h3{
+    color: #FFFFFF;
+ 
+} */
+ /* .module{
+    color: black;
+    font-size: medium;
+    margin-left: 10px;
+} */
+/* .module-checkbox{
+    color: black;
+    font-size: medium;
+    margin-left: 25px;
+} */ 

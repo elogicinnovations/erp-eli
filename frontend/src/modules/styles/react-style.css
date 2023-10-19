@@ -35,10 +35,24 @@
   
   
   .container-fluid{
-    background-color: #000;
-    height: 100vh;
+    background-color: #ffffff;
+    /* height: 100vh;*/
+    /* width: 100vw;  */
+    
+  }
+  .content-wrapper{
+    background-color: #F4F5F7;
     width: 100vw;
   }
+
+.card-body{
+  background-color: #ffffff;
+  width: 80%;
+  position: absolute;
+  right: 40px;
+  border-radius: 20px;
+
+}
   
   #login-logo{
     height: 100%;
@@ -778,7 +792,9 @@ input[type="number"] {
     background-color: #0e0f13;
     color: white;
     width: 250px;
-    position: relative;
+    /* height: 100vh; */
+    position: fixed;
+    
   }
   
   
