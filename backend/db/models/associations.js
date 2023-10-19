@@ -1,9 +1,7 @@
-const UserRole = require  ("./userRole.model");
-const MasterList = require ("./masterlist.model");
+const UserRole = require("./userRole.model");
+const MasterList = require("./masterlist.model");
 
-MasterList.belongsTo(UserRole, { foreignKey: "col_role_name"});
-UserRole.hasMany(MasterList, { foreignKey: "col_role_name"});
-
-
+MasterList.belongsTo(UserRole, { foreignKey: "col_roleID" }); // Change the foreignKey to col_roleID
+UserRole.hasMany(MasterList, { foreignKey: "col_roleID" }); // Change the foreignKey to col_roleID
 
 module.exports = { MasterList, UserRole };

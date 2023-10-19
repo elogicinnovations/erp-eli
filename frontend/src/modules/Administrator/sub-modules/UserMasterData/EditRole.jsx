@@ -232,7 +232,6 @@ const handleCheckboxChange = (value) => {
   return (
     <div className="container-fluid page-body-wrapper">
       <Sidebar/>
-      <Header/>
       <div className='main-panel'>
         <div className='content-wrapper'>
             <div className="col-lg-12 grid-margin stretch-card">

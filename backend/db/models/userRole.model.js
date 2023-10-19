@@ -9,7 +9,7 @@ const UserRole = sequelize.define('userRole', {
     autoIncrement: true,
   },
   col_roleID: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER, // Change the column name to col_roleID
     allowNull: true,
     unique: false,
   },

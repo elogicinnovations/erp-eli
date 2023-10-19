@@ -154,13 +154,13 @@ router.route('/resetPassword').put(async (req, res) => {
 // FOR USER MASTERLIST MODULE
 router.route('/masterTable').get(async (req, res) => {
   try {
-    // const data = await MasterList.findAll({
-    //   include: {
-    //     model: UserRole,
-    //     required: true,
-    //   },
-    // });
-    const data = await MasterList.findAll();
+    const data = await MasterList.findAll({
+      include: {
+        model: UserRole,
+        required: true,
+      },
+    });
+    // const data = await MasterList.findAll();
 
     if (data) {
       // console.log(data);
@@ -192,14 +192,17 @@ router.route('/createMaster').post(async (req, res) => {
     } else {
       // Convert boolean status to "Active" or "Inactive"
       const status = req.body.cstatus ? 'Active' : 'Inactive';
-
+      // console.log('tyr: ' + req.body.crole)
       // Insert a new record into the table
       const newData = await MasterList.create({
-        col_role_name: req.body.crole,
-        col_Fname: req.body.cname,
+        col_address: req.body.caddress,
+        col_phone: req.body.cnum,
+        col_username: req.body.cuname,
+        col_roleID: req.body.crole,
         col_email: req.body.cemail,
         col_Pass: req.body.cpass,
         col_status: status,
+        col_Fname: req.body.cname,
       });
 
       res.status(200).json(newData);
@@ -235,10 +238,13 @@ router.route('/updateMaster/:param_id').put(async (req, res) => {
       // Update the record in the table
       const [affectedRows] = await MasterList.update(
         {
-          col_role_name: req.body.col_role_name,
+          col_roleID: req.body.col_roleID,
           col_Fname: req.body.col_Fname,
           col_email: req.body.col_email,
           col_Pass: req.body.col_Pass,
+          col_phone: req.body.col_phone,
+          col_address: req.body.col_address,
+          col_username: req.body.col_username,
           col_status: status,
         },
         {

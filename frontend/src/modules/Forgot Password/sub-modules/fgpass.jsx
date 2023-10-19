@@ -4,6 +4,7 @@ import mailicon from '../../../assets/icon/mailsend.png';
 import '../../styles/react-style.css'
 import React, { useState } from 'react';
 import BASE_URL from '../../../assets/global/url';
+import Slash from '../../../assets/image/Slash.png';
 import swal from 'sweetalert';
 import {  useNavigate, Link   } from 'react-router-dom';
 import { useDataContext } from './data/dataPost';
@@ -89,11 +90,10 @@ const grey = {
 const StyledInputElement = styled('input')(
   ({ theme }) => `
   width: 570px;
-  height: 8rem;
   font-family: IBM Plex Sans, sans-serif;
   font-size: 2rem;
   font-weight: 400;
-  padding: 8px 12px;
+  padding: 18px 12px;
   border-radius: 8px;
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
   background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
@@ -210,7 +210,7 @@ function ForgotPass() {
   // };
   return (
 
-<div class="container">
+<div className="forgot-content-main">
 
 <head>
   <meta charset="utf-8" />
@@ -223,49 +223,49 @@ function ForgotPass() {
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Radio+Canada%3A600"/>
  
 </head>
-<div class="forgot-password-left">
-      <div class="forgot-left-child">
-
-          {/* <div class="copyright-footer">
-            <p class="copyright-2023-text">
-            Copyright © 2023 Slashtech, All Rights Reserved.
-            <br/>
-            </p>
-          </div> */}
-
-      </div>
-    </div>
-
-    <div class="forgot-pass-right">
-          <div class="box-input">
-                <div class="box-container">
-
-                    <p class="forgot-text">
-                      Forgot Password?
-                    </p>
-                </div>
-
-                <div class="email-input">
-                  <CustomInput class="" aria-label="Demo input" placeholder="Please fill in your email address"  value={email}
-                    onChange={(e) => setEmail(e.target.value)} ></CustomInput>
-                </div>
-
-                <div class="submit-btn">
-                  <CustomButton className="submit-btn" onClick={sendEmail} slots={{ root: 'span' }}>Submit</CustomButton>
-                </div>
-
-                <div class="remembered-text">
-                  <span>Remember Your Password?</span>
-                  </div>
-
-                  <div class="back-login">
-                    <Link to="/"  style={{display: 'contents', fontSize: 25, color: 'orange'}}>
-                    <FontAwesomeIcon icon={faArrowLeft} /> Back to login
-                    </Link>
-                  </div>
-          </div>
+    <div className="blurbg-forgot">
+          
     </div>
     
+    <div className="fgpass-lefts">
+
+    </div>
+
+    <div className="fgpass-rights">
+          <div className="right-fg-content">
+
+             <div className="bglogo">
+                <img className='slashlogo' src={Slash}/>
+            </div>
+
+              <div className="forgot-text-question">
+                  Forgot Password?
+              </div>
+
+              <div className="emailandinput">
+                    <div className="emailfonts">
+                      Email
+                    </div>
+                     <div class="email-input">
+                        <CustomInput class="" aria-label="Demo input" placeholder="Please fill in your email address"  value={email}
+                          onChange={(e) => setEmail(e.target.value)} ></CustomInput>
+                      </div>
+                     <div className="fg-submitbutton">
+                        <CustomButton className="fg-button" onClick={sendEmail} slots={{ root: 'span' }}>Submit</CustomButton>
+                     </div>
+
+                     <div class="remembered-text">
+                        Remember Your Password?
+                      </div>
+
+                      <div class="back-login">
+                        <Link to="/"  style={{display: 'contents', fontSize: 20, color: 'orange'}}>
+                        <FontAwesomeIcon icon={faArrowLeft} /> Back to login
+                        </Link>
+                  </div>
+              </div>
+          </div>
+    </div>
 </div>
   );
 }

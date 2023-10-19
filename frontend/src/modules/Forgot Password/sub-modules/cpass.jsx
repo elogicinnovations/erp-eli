@@ -236,7 +236,7 @@ const handleSubmit = () => {
             text: 'You successfully updated your password',
             icon: 'success',
           }).then(() => {
-            // navigate('/');
+            navigate('/');
           });
         } else {
           swal({
@@ -257,7 +257,7 @@ const handleSubmit = () => {
   
   return (
 
-<div class="container">
+<div class="container-cpass">
 
 <head>
   <meta charset="utf-8" />

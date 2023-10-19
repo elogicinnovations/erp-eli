@@ -16,11 +16,20 @@ import Dashboard from "./modules/Dashboard/dashboard";
 import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
 import OTP from "./modules/Forgot Password/sub-modules/otp";
 import ConfirmPass from "./modules/Forgot Password/sub-modules/cpass";
-import RBAC from "./modules/Administrator/sub-modules/UserMasterData/UserRole"
+import Rbac from "./modules/Administrator/sub-modules/UserMasterData/UserRole"
 import CreateRole from "./modules/Administrator/sub-modules/UserMasterData/CreateRole"
 import EditRole from "./modules/Administrator/sub-modules/UserMasterData/EditRole"
 import MasterList from "./modules/Administrator/sub-modules/UserMasterData/MasterList"
-
+// import './assets/skydash/vendors/feather/feather.css';
+// import './assets/skydash/vendors/css/vendor.bundle.base.css';
+// import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
+// import './assets/skydash/vendors/datatables.net/jquery.dataTables';
+// import './assets/skydash/vendors/ti-icons/css/themify-icons.css';
+// import './assets/skydash/css/vertical-layout-light/style.css';
+// import './assets/skydash/vendors/js/vendor.bundle.base';
+// import './assets/skydash/vendors/datatables.net/jquery.dataTables';
+// import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
+// import './assets/skydash/js/off-canvas.js';
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
 function App() {
@@ -59,7 +68,7 @@ function App() {
 
           <Route
             path="/userRole"
-            element={<RBAC />}
+            element={<Rbac />}
           />
 
           <Route

@@ -8,13 +8,28 @@ const MasterList = sequelize.define('masterlist', {
     primaryKey: true,
     autoIncrement: true,
   },
-  col_role_name: {
+  col_roleID: { // Change the column name to col_roleID
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false,
   },
   col_Fname: {
     type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  col_address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  col_username: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  col_phone: {
+    type: DataTypes.INTEGER(BigInt),
     allowNull: true,
     unique: false,
   },
