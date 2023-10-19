@@ -293,9 +293,6 @@
   flex-direction: column;
 }
 
-.header-bag {
-  height: 7.5vh;
-}
 
 .sidebar-bag {
   width: 260px;
@@ -305,7 +302,7 @@
   left: 0;
 }
   
-.Dashboard-content {
+/* .Dashboard-content {
   height: 92.5vh;
   margin-left: 260px;
   display: flex;
@@ -326,51 +323,246 @@
   border: 1px solid red;
   height: 88vh;
   width: 98%;
-}
+} */
 
 /*Master List css*/
-.Masterlist-main{
+.Masterlist-main {
   height: 100vh;
   display: flex;
-  flex-direction: column;
 }
 
-.masterlist-header {
+/* .masterlist-header {
   height: 7.5vh;
-  /* border: 1px solid red; */
-}
+  border: 1px solid red;
+} */
 
 .masterlist-sidebar {
-  width: 260px;
+  width: 13.6%;
   height: 100vh;
-  position: fixed;
   top: 0;
   left: 0;
 }
 
 .masterlist-content {
-  height: 92.5vh;
-  margin-left: 260px;
+  height: 100vh;
+  background-color: #E9EBED;
+  width: 86.4%;
+} 
+
+.master-cardbody {
+  width: 100%;
+  height: 100vh;
+  background-color: #ffffff;
+  margin-left: 2rem;
+}
+
+.settings-search-master {
+  height: 12vh;
+  width: 100%;  
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+}
+
+.dropdown-search-cont{
+  width: 50%;
+  height: 15vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.dropdownss{
+  padding-left: 5rem;
+  padding-top: 4rem;
+}
+
+.dropdownmaster{
+  height: 5vh;
+  width: 200px;
+  font-size: 1.5rem;
+  font-family: Poppins, 'Source Sans Pro';
+  border-color: #DDDDDD;
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+}
+
+.searchesbar{
+  padding-top: 4rem;
+  display: flex;
+}
+
+.searchInput{
+  height: 5vh;
+  width: 350px;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+  border: 1px solid #DDDDDD;
+  font-size: 1.7rem;
+  border-color: #DDDDDD;
+  padding-left: 5rem;
+  font-family: Poppins, 'Source Sans Pro';
+  
+}
+
+.searchButton {
+  width: 150px;
+  height: 5vh;
+  border: none;
+  font-size: 1.7rem;
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  margin-left: 1rem;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.settings-bellss-users{
+  width: 50%;
+  height: 15vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.gear-notif-circless-content{
+  display: flex;
+  width: 80%;
+  padding-left: 40rem;
+  padding-top: 4rem;
+  justify-content: space-between;
+  height: 12vh;
+}
+
+.gearsettings{
+  cursor: pointer;
+}
+
+.notifset{
+  cursor: pointer;
+}
+
+.usercircless{
+  cursor: pointer;
+}
+
+.Employeetext-button{
+  height: 11vh;
+  width: 100%;  
+  display: flex;
+  padding-top: 2rem;
+  justify-content: space-between;
+}
+
+.emptext p{
+  font-family: Poppins, 'Source Sans Pro';
+  font-size: 4rem;
+  color: #000000;
+  padding-left: 5rem;
+}
+
+.Buttonmodal-new{
+  width: 50%;
+}
+
+.Newemp-btn{  
+  height: 5rem;
+  font-size: 2rem;
+  width: 30%;
+  border: none;
+  margin-left: 60%;
+  background-color: #161A23;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+.Newemp-btn:hover{
+  background-color: #FFA500;
+}
+
+.sortingplacess {
+  height: 5vh;
+  padding: 1rem 5rem;
+  display: flex;
+  align-items: center; /* to vertically center elements */
+}
+
+.sortingboxess {
+  height: 100%;
+  width: 30%;
+  display: flex;
+  align-items: center; /* to vertically center elements */
+}
+
+.entriesselect {
+  width: 10%;
+  height: 100%;
+  margin-left: 0.2rem; /* added margin */
+  margin-right: 0.2rem;
+  font-size: 12px; /* adjust the font size as needed */
+}
+
+.sortingboxess span {
+  font-size: 1.5rem;
+}
+
+.tablecontains{
+  height: 65vh;
+}
+
+.master-data-table {
+  width: 100%;
+}
+
+
+.tabless {
+  width: 100%;
+}
+
+.tabless th{
+  border-bottom: 1px solid #DDDDDD;
+  border-top: 1px solid #DDDDDD;
+  font-size: 2rem;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5rem;
+  background-color: #F9F9FB;
+  font-family: Poppins, 'Source Sans Pro';
+  font-weight: normal;
+}
+
+.tabless td {
+  font-size: 1.8rem;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 5rem;
+  border-bottom: 1px solid #DDDDDD;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.footers-pages{
+  height: 7vh;
+  padding-top: 1rem;
+  padding-left: 5rem;
+  display: flex;
+  justify-content: space-between; 
   align-items: center; 
 }
 
-.master-cardbody {
+/* .textshowpages {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 90vh;
+  align-items: center; 
 }
 
-.master-card{
-  height: 88vh;
-  width: 98%;
-  background-color: white;
-  border-radius: 15px; /* You can adjust the value of the radius as needed */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+.showingentry{
+  font-size: 1.5rem;
 }
+
+.paginatesss {
+  display: flex; 
+  align-items: center; 
+} */
+
+.custom-btn {
+  font-size: 16px; /* Set your desired font size here */
+}
+
 
 
 /*forgot password css*/
@@ -809,7 +1001,7 @@ input[type="number"]::-webkit-clear-button {
 
 /*Sidebar CSS*/
 .sidebar-main-content {
-    background-color: #0e0f13;
+    background-color: #161A23;
     color: white;
     width: 260px;
     position: relative;
@@ -818,7 +1010,7 @@ input[type="number"]::-webkit-clear-button {
   
   .head-sidebar{
     height: 7.5vh;
-    background-color: white;
+    background-color: #161A23;
     background-image: url('../../assets/image/Slash.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -907,7 +1099,7 @@ input[type="number"]::-webkit-clear-button {
     position: absolute;
     bottom: 0;
     width: 100%;
-    background-color: #0e0f13;
+    background-color: #161A23;
     box-shadow: 0px -5px 5px -5px rgba(0, 0, 0, 0.75);
     padding: 20px;
     
