@@ -16,7 +16,8 @@ const Login = () => {
   const navigate = useNavigate();
   // const { login } = useAuth();
 
-  const handleLogin = () => {
+  const handleLogin = async e => {
+    e.preventDefault()
     axios
       .post(BASE_URL + '/masterList/login', { username, password })
       .then((response) => {
@@ -79,7 +80,8 @@ const Login = () => {
                     <div>Welcome Back!</div>
                     <div className='logintextaccount'>Login to your account</div>
                   </div>
-                  
+
+                  <form onSubmit={handleLogin}>
                   <div className="email-pass-input">
                       <div className="email-content">
                         <label>EMAIL ADDRESS</label>
@@ -132,12 +134,13 @@ const Login = () => {
                           </div>
 
                           <div className="button-login">
-                            <button className="loginnow" style={{ fontSize: '1.8em' }} type="submit" onClick={handleLogin}>
+                            <button className="loginnow" style={{ fontSize: '1.8em' }} type="submit" >
                               Login now
                             </button>
                           </div>
                       
-                  </div>
+                    </div>
+                  </form>
               </div>
           </div>
 

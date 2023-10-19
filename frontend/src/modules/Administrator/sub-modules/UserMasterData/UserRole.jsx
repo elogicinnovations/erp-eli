@@ -9,13 +9,25 @@ import swal from 'sweetalert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Pagination from 'react-bootstrap/Pagination';
+import {
+  MagnifyingGlass,
+  Gear, 
+  Bell,
+  UserCircle,
+  Plus,
+  Trash,
+  NotePencil,
+} from "@phosphor-icons/react";
 
 function UserRole() {
+  // handleClick = () => {
+  //   this.props.history.push('/createRole');
+  // };
   const [role, setRole] = useState([]);
   const [filteredRole, setFilteredRole] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
-
+  const [searchQuery, setSearchQuery] = useState('');
   useEffect(() => {
     axios.get(BASE_URL + '/userRole/fetchuserrole')
       .then(res => {
@@ -71,89 +83,131 @@ function UserRole() {
   const displayedData = filteredRole.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="page-body-wrapper">
+    <div className="Masterlist-main">
+    <div className="masterlist-sidebar">
+      {/* Assuming Sidebar is defined */}
       <Sidebar />
-      <Header />
-      <div className='main-panel'>
-        <div className='content-wrapper'>
-          <div className="col-lg-12 grid-margin stretch-card">
-            <div className="card ">
-              <div className="card-body">
-                <div className='head-search-create'>
-                  <h2 className="card-title">USER ROLE LIST</h2>
-                  <div className='search-create'>
-                    <button type="submit" class="btn btn-gray"><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
-                    <input
-                      type="search"
-                      class="form-control"
-                      placeholder="Search Role"
-                      onChange={Filter}
-                    ></input>
-                    <Link to="/createRole" className='btn btn-primary'>Add New Role</Link>
-                  </div>
-                </div>
-                <div className='table-responsive'>
-                  <table className='table'>
-                    <thead>
-                      <tr className='masterlist-table-row'>
-                        <th className='content-row'>Role Name</th>
-                        <th className='content-row'>Features</th>
-                        <th className='content-row'> Description</th>
-                        <th className='content-row'>Date Created</th>
-                        <th className='content-row'>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {displayedData.map((data, i) => (
-                        <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
-                          <td>{data.col_rolename}</td>
-                          <td>{data.consolidated_authorizations}</td>
-                          <td>{data.col_desc}</td>
-                          <td>{data.createdAt}</td>
-                          <td>
-                            <button className='btn'>
-                              <Link to={`/editRole/${data.col_roleID}`} style={{ color: "black" }}><FontAwesomeIcon icon={faPenToSquare} /></Link>
-                            </button>
-                            <button className='btn' onClick={() => handleDelete(data.col_roleID)}><FontAwesomeIcon icon={faTrash} /></button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <Pagination>
-                    <Pagination.First onClick={() => setCurrentPage(1)} />
-                    <Pagination.Prev
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
-                      disabled={currentPage === 1}
-                    />
-                    {Array.from({ length: Math.ceil(filteredRole.length / itemsPerPage) }).map(
-                      (_, index) => (
-                        <Pagination.Item
-                          key={index}
-                          active={currentPage === index + 1}
-                          onClick={() => setCurrentPage(index + 1)}
-                        >
-                          {index + 1}
-                        </Pagination.Item>
-                      )
-                    )}
-                    <Pagination.Next
-                      onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
-                      disabled={currentPage === Math.ceil(filteredRole.length / itemsPerPage)}
-                    />
-                    <Pagination.Last
-                      onClick={() =>
-                        setCurrentPage(Math.ceil(filteredRole.length / itemsPerPage))
-                      }
-                    />
-                  </Pagination>
-                </div>
+    </div>
+
+    <div className="masterlist-content">
+      <div className="master-cardbody">
+      <div className="settings-search-master">
+          <div className="dropdown-search-cont">
+            <div className="dropdownss">
+              <select name="" id="" className="dropdownmaster">
+                <option value="">Name</option>
+                <option value="">Age</option>
+                <option value="">Id</option>
+              </select>
+            </div>
+            <div className="searchesbar">
+              <div style={{ position: "relative" }}>
+                <input
+                  type="search"
+                  placeholder="Search"
+                  className="searchInput"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                ></input>
+                <MagnifyingGlass
+                  size={23}
+                  style={{
+                    position: "absolute",
+                    top: "23%",
+                    left: "0.9rem",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                  }}
+                />
+              </div>
+              <button className="searchButton">Search</button>
+            </div>
+          </div>
+          
+          <div className="settings-bellss-users">
+            <div className="gear-notif-circless-content">
+              <div className="gearsettings">
+                <Gear size={35}/>
+              </div>
+
+              <div className="notifset">
+              <Bell size={35}/>
+              </div>
+
+              <div className="usercircless">
+                <UserCircle size={35}/>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+
+        </div> {/*settings-search-master*/}
+        <div className="Employeetext-button">
+               <div className="emptext">
+                    <p>User Role</p>
+                </div> 
+
+                <div className="Buttonmodal-new">
+                <Link to="/createRole" >
+                  <button className='Newemp-btn'>
+                    <span style={{ }}>
+                        <Plus size={25} />
+                      </span>
+                      Create New
+                  </button>
+                  </Link>
+                </div>
+          </div> {/*Employeetext-button*/}
+          
+          <div className="sortingplacess">
+              <div className="sortingboxess">
+                  <span>Show</span>
+                  <select name="" id="" className='entriesselect'>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="All">All</option>
+                  </select>
+                  <span className='userstexts'>Entries</span>
+              </div>
+          </div>
+
+          <div className="tablecontains">
+                  <div className="master-data-table">
+                      <table className="tabless">
+                        <thead>
+                          <tr>
+                            <th className='tableh'>Role Name</th>
+                            <th className='tableh'>Features</th>
+                            <th className='tableh'> Description</th>
+                            <th className='tableh'>Date Created</th>
+                            <th className='tableh'>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                              {displayedData.map((data, i) => (
+                              <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                                <td>{data.col_rolename}</td>
+                                <td>{data.consolidated_authorizations}</td>
+                                <td>{data.col_desc}</td>
+                                <td>{data.createdAt}</td>
+                                <td>
+                                  <button className='btn'>
+                                    <Link to={`/editRole/${data.col_roleID}`} style={{ color: "black" }}><NotePencil size={32} /></Link>
+                                  </button>
+                                  <button className='btn' onClick={() => handleDelete(data.col_roleID)}><Trash size={32} color="#e60000" /></button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+     </div>
+    </div>   
+    
+  </div>
+
   )
 }
 
