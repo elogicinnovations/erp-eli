@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../Sidebar/sidebar';
-import Header from '../../../Sidebar/header';
+// import Header from '../../../Sidebar/header';
 import '../../../../assets/global/style.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import BASE_URL from '../../../../assets/global/url';
 import swal from 'sweetalert';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
-import Pagination from 'react-bootstrap/Pagination';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+// import Pagination from 'react-bootstrap/Pagination';
 import {
   MagnifyingGlass,
   Gear, 
@@ -20,14 +20,11 @@ import {
 } from "@phosphor-icons/react";
 
 function UserRole() {
-  // handleClick = () => {
-  //   this.props.history.push('/createRole');
-  // };
   const [role, setRole] = useState([]);
   const [filteredRole, setFilteredRole] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
-  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     axios.get(BASE_URL + '/userRole/fetchuserrole')
       .then(res => {
@@ -106,8 +103,7 @@ function UserRole() {
                   type="search"
                   placeholder="Search"
                   className="searchInput"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={Filter}
                 ></input>
                 <MagnifyingGlass
                   size={23}
@@ -120,7 +116,7 @@ function UserRole() {
                   }}
                 />
               </div>
-              <button className="searchButton">Search</button>
+              {/* <button className="searchButton">Search</button> */}
             </div>
           </div>
           
@@ -193,9 +189,9 @@ function UserRole() {
                                 <td>{data.createdAt}</td>
                                 <td>
                                   <button className='btn'>
-                                    <Link to={`/editRole/${data.col_roleID}`} style={{ color: "black" }}><NotePencil size={32} /></Link>
+                                    <Link to={`/editRole/${data.col_roleID}`} style={{ color: "black" }}><NotePencil size={25} /></Link>
                                   </button>
-                                  <button className='btn' onClick={() => handleDelete(data.col_roleID)}><Trash size={32} color="#e60000" /></button>
+                                  <button className='btn' onClick={() => handleDelete(data.col_roleID)}><Trash size={25} color="#e60000" /></button>
                                 </td>
                               </tr>
                             ))}

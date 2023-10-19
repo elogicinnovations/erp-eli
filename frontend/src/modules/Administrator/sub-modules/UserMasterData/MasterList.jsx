@@ -411,7 +411,7 @@ function MasterList() {
                     }}
                   />
                 </div>
-                <button className="searchButton">Search</button>
+                {/* <button className="searchButton">Search</button> */}
               </div>
             </div>
             

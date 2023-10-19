@@ -110,7 +110,7 @@ function Sidebar() {
           <Collapse in={openAdministrator}>
             <List component="div" disablePadding>
               <ListItem button className='adminsub-menu' onClick={toggleEmployeeData}>
-                <ListItemText primary="Employee Data" />
+                <ListItemText primary="User Master Data" />
                 {openEmployeeData ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
               
