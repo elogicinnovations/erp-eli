@@ -198,6 +198,7 @@ function MasterList() {
   const handleFormSubmit = async e => {
     e.preventDefault();
     try {
+      console.log(formData)
       const status = formData.cstatus ? 'Active' : 'Inactive';
       const response = await axios.post(BASE_URL + '/masterList/createMaster', formData);
       setShowModal(false);
@@ -435,7 +436,7 @@ function MasterList() {
 
           <div className="Employeetext-button">
                <div className="emptext">
-                    <p>Employee Master Data</p>
+                    <p>User Master Data</p>
                 </div> 
 
                 <div className="Buttonmodal-new">
@@ -468,7 +469,7 @@ function MasterList() {
                         <thead>
                           <tr>
                             <th className='tableh'>ID</th>
-                            <th className='tableh'>User</th>
+                            <th className='tableh'>Role Type</th>
                             <th className='tableh'>Name</th>
                             <th className='tableh'>Email</th>
                             <th className='tableh'>Status</th>
@@ -499,7 +500,18 @@ function MasterList() {
 
               <Modal show={showModal} onHide={handleClose} size="xl">
                 <Modal.Header closeButton>
-                  <Modal.Title style={{ fontSize: '24px' }}>New Employee</Modal.Title>            
+                  <Modal.Title style={{ fontSize: '24px' }}>New Employee</Modal.Title>    
+                  <div className="form-group d-flex flex-row ">
+                    <React.Fragment>
+                            <input
+                              type="checkbox"
+                              name="cstatus"
+                              onChange={handleFormChange}
+                              defaultChecked={FormData.ustatus} // Set defaultChecked based on ustatus
+                            />
+                            <label className='userstatus'>User Status</label>
+                          </React.Fragment>
+                        </div>    
                 </Modal.Header>
                 <form onSubmit={handleFormSubmit}>
                       <Modal.Body>
@@ -616,17 +628,6 @@ function MasterList() {
                           </div>
                         </Form>
 
-                        <div className="form-group">
-                        <React.Fragment>
-                            <input
-                              type="checkbox"
-                              name="cstatus"
-                              onChange={handleFormChange}
-                              defaultChecked={FormData.cstatus} 
-                            />
-                            <label className='userstatus'>User Status</label>
-                          </React.Fragment>
-                        </div>
                       </Modal.Body>
                   <Modal.Footer>
                     <Button type="submit" variant="primary" size="md" style={{ fontSize: '20px' }}>
@@ -643,6 +644,18 @@ function MasterList() {
                 <form onSubmit={handleUpdateSubmit}>
                   <Modal.Header closeButton>
                     <Modal.Title className='modal-titles' style={{ fontSize: '24px' }}>Update User</Modal.Title>
+
+                    <div className="form-group d-flex flex-row ">
+                    <React.Fragment >
+                      <input
+                        type="checkbox"
+                        name="ustatus"
+                        onChange={handleUpdateFormChange}
+                        defaultChecked={updateFormData.ustatus} // Set defaultChecked based on ustatus
+                      />
+                      <label className='userstatus'>User Status</label>
+                    </React.Fragment>
+                  </div>        
                   </Modal.Header>
                   <Modal.Body>
                   <div className="gen-info" style={{ fontSize: '20px', position: 'relative' }}>
@@ -760,32 +773,8 @@ function MasterList() {
                   </Form>
 
 
-                  <div className="form-group">
-                    <React.Fragment>
-                      <input
-                        type="checkbox"
-                        name="ustatus"
-                        onChange={handleUpdateFormChange}
-                        defaultChecked={updateFormData.ustatus} // Set defaultChecked based on ustatus
-                      />
-                      <label className='userstatus'>User Status</label>
-                    </React.Fragment>
-                  </div>
+                  
 
-                  {/* name="uarole" value={updateFormData.uarole} onChange={handleUpdateFormChange} required
-
-                    <option disabled value="">Role</option>
-                    {roles.map(role => (
-                      <option key={role.col_roleID} value={role.col_roleID}>
-                        {role.col_rolename}
-                      </option>
-                    ))}
-
-                    <input type="text" className="form-control"  />
-
-                    <input type="email" className="form-control"  />
-
-                    <input type="password" className="form-control"  /> */}
                   </Modal.Body>
                   <Modal.Footer>
                     <Button type="submit" variant="primary" className='' style={{ fontSize: '20px' }}>

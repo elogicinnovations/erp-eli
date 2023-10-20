@@ -29,7 +29,7 @@ const MasterList = sequelize.define('masterlist', {
     unique: false,
   },
   col_phone: {
-    type: DataTypes.INTEGER(BigInt),
+    type: DataTypes.BIGINT,
     allowNull: true,
     unique: false,
   },

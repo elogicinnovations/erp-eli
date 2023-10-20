@@ -2,8 +2,8 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const nodemailer = require('nodemailer');
 //master Model
-// const masterlist = require('../db/models/masterlist.model')
-const { MasterList, UserRole } = require("../db/models/associations"); 
+const MasterList = require('../db/models/masterlist.model')
+// const { MasterList, UserRole } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -154,13 +154,13 @@ router.route('/resetPassword').put(async (req, res) => {
 // FOR USER MASTERLIST MODULE
 router.route('/masterTable').get(async (req, res) => {
   try {
-    const data = await MasterList.findAll({
-      include: {
-        model: UserRole,
-        required: true,
-      },
-    });
-    // const data = await MasterList.findAll();
+    // const data = await MasterList.findAll({
+      // include: {
+      //   model: UserRole,
+      //   required: true,
+      // },
+    // });
+    const data = await MasterList.findAll();
 
     if (data) {
       // console.log(data);

@@ -272,8 +272,8 @@ const handleUnselectAll = () => {
                                   </div>
                                   <div className="col-6">
                                     <Form.Group controlId="exampleForm.ControlInput2">
-                                      <Form.Label style={{ fontSize: '20px' }}>Address: </Form.Label>
-                                      <Form.Control type="text" placeholder="Slashtech, Valenzuela City 164" style={{height: '40px', fontSize: '15px',  width: '500px'}} 
+                                      <Form.Label style={{ fontSize: '20px' }}>Description: </Form.Label>
+                                      <Form.Control type="text" placeholder="Description ..." style={{height: '40px', fontSize: '15px',  width: '500px'}} 
                                       maxLength={200} className="form-control" name="desc" required />
                                     </Form.Group>
                                   </div>
