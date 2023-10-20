@@ -42,50 +42,70 @@ const handleSubmit = async (e) => {
   const rolename = document.getElementsByName("rolename")[0].value;
   const desc = document.getElementsByName("desc")[0].value;
 
-  try {
-    const response = await fetch(BASE_URL + `/userRole/createUserrole/${rolename}`, {
-      rolename,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        selectedCheckboxes: selectedCheckboxes.map(item => ({
-          ...item,
-          rolename,
-          desc
-        }))
-      }),
-    });
-
-
-    if (response.status === 200) {
-      swal({
-        icon: 'success',
-        title: 'Success!',
-        text: 'User roles created successfully!',
-      })
-      .then(() => {
-        navigate("/userRole");
-      });
-  } 
-  else if (response.status === 202) {
-      swal({
-        icon: 'error',
-        title: 'Rolename already exist',
-        text: 'Please input another rolename',
-      });
-  } 
-  else {
-      swal({
+  if(rolename === ''){
+    swal({
+      title: 'Required Field',
+      text: 'Rolename is required',
       icon: 'error',
-      title: 'Oops...',
-      text: 'Something went wrong!',
+      button: 'OK'
+    })  
+  }
+  else if(desc === ''){
+    swal({
+      title: 'Required Field',
+      text: 'Description is required',
+      icon: 'error',
+      button: 'OK'
+    })  
+  }
+  else{
+    try {
+      const response = await fetch(BASE_URL + `/userRole/createUserrole/${rolename}`, {
+        rolename,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          selectedCheckboxes: selectedCheckboxes.map(item => ({
+            ...item,
+            rolename,
+            desc
+          }))
+        }),
       });
+  
+  
+      if (response.status === 200) {
+        swal({
+          icon: 'success',
+          title: 'Success!',
+          text: 'User roles created successfully!',
+        })
+        .then(() => {
+          navigate("/userRole");
+        });
+    } 
+    else if (response.status === 202) {
+        swal({
+          icon: 'error',
+          title: 'Rolename already exist',
+          text: 'Please input another rolename',
+        });
+    } 
+    // else {
+    //     swal({
+    //     icon: 'error',
+    //     title: 'Oops...',
+    //     text: 'Something went wrong!',
+    //     });
+    // }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   }
-  } catch (error) {
-    console.error('Error submitting form:', error);
-  }
+
+  
 };
 
 // Inserting to database checkboxes

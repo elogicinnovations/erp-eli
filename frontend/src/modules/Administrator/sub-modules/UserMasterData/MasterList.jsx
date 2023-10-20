@@ -50,6 +50,7 @@ function MasterList() {
     cuname: '',
     crole: '',
     cpass: '',
+    cpass2: '',
     cstatus: false,
   });
 
@@ -117,6 +118,7 @@ function MasterList() {
       cuname: '',
       crole: '',
       cpass: '',
+      cpass2: '',
       cstatus: false,
     });
   };
@@ -198,8 +200,87 @@ function MasterList() {
   const handleFormSubmit = async e => {
     e.preventDefault();
     try {
-      console.log(formData)
-      const status = formData.cstatus ? 'Active' : 'Inactive';
+      // console.log(formData)
+
+      if(formData.cname === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Name is Required',
+          icon: 'error',
+          button: 'OK'
+        })
+      }
+      else if(formData.caddress === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Address is Required',
+          icon: 'error',
+          button: 'OK'
+        })
+        
+      }
+      else if(formData.cnum === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Contact is Required',
+          icon: 'error',
+          button: 'OK'
+        })
+        
+      }
+      else if(formData.cemail === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Email is Required',
+          icon: 'error',
+          button: 'OK'
+        })
+        
+      }
+      else if(formData.cemail === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Email is Required',
+          icon: 'error',
+          button: 'OK'
+        })
+        
+      }
+      else if(formData.cuname === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Username is Required',
+          icon: 'error',
+          button: 'OK'
+        })  
+      }
+      else if(formData.crole === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Access Role is Required',
+          icon: 'error',
+          button: 'OK'
+        })  
+      }
+
+      else if(formData.cpass === ''){
+        swal({
+          title: 'Required Field',
+          text: 'Password is Required',
+          icon: 'error',
+          button: 'OK'
+        })  
+      }
+      else if(formData.cpass != formData.cpass2){
+        swal({
+          title: 'Password error',
+          text: 'Please confirm your password',
+          icon: 'error',
+          button: 'OK'
+        })  
+      }
+      else{
+        const status = formData.cstatus ? 'Active' : 'Inactive';
       const response = await axios.post(BASE_URL + '/masterList/createMaster', formData);
       setShowModal(false);
 
@@ -234,6 +315,7 @@ function MasterList() {
             cuname: '',
             crole: '',
             cpass: '',
+            cpass2: '',
             cstatus: false,
           });
         });
@@ -250,6 +332,8 @@ function MasterList() {
           text: 'Please contact our support'
         });
       }
+      }
+      
     } catch (err) {
       console.log(err);
     }
@@ -344,7 +428,7 @@ function MasterList() {
           // console.log(param_id)
           await axios.delete(BASE_URL + `/masterList/deleteMaster/${param_id}`);
           setmasterListt(prevStudent => prevStudent.filter(data => data.col_id !== param_id));
-          swal("Poof! The User has been deleted!", {
+          swal("The User has been deleted!", {
             icon: "success",
           });
         } catch (err) {
@@ -622,7 +706,9 @@ function MasterList() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                                 <Form.Label style={{ fontSize: '20px' }}>Confirm Password: </Form.Label>
-                                <Form.Control type="password" placeholder="Confirm your password" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control type="password"
+                                value={formData.cpass2} onChange={handleFormChange} required name="cpass2"
+                                placeholder="Confirm your password" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                           </div>

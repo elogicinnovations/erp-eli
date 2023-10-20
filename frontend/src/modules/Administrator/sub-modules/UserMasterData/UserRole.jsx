@@ -59,7 +59,7 @@ function UserRole() {
           // Update both role and filteredRole after deletion
           setRole(prevRole => prevRole.filter(data => data.col_roleID !== param_id));
           setFilteredRole(prevFilteredRole => prevFilteredRole.filter(data => data.col_roleID !== param_id));
-          swal("Poof! The Role has been deleted!", {
+          swal("The Role has been deleted!", {
             icon: "success",
           });
         } catch (err) {

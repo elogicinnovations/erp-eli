@@ -155,10 +155,10 @@ router.route('/resetPassword').put(async (req, res) => {
 router.route('/masterTable').get(async (req, res) => {
   try {
     // const data = await MasterList.findAll({
-      // include: {
-      //   model: UserRole,
-      //   required: true,
-      // },
+    //   include: {
+    //     model: UserRole,
+    //     required: false,
+    //   },
     // });
     const data = await MasterList.findAll();
 

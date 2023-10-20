@@ -11,8 +11,6 @@ router.use(session({
     saveUninitialized: true
 }));
 
-
-
 router.route("/fetchuserrole").get(async (req, res) => {
     // const departmentName = req.query.departmentName;
    
@@ -124,10 +122,6 @@ router.route('/deleteRole/:param_id').delete(async (req, res) => {
     return res.status(500).json({ message: 'An error occurred' });
   }
 });
-
-
-
-
 
 router.post('/createUserrole/:rolename', async (req, res) => {
     const selectedCheckboxes = req.body.selectedCheckboxes;
