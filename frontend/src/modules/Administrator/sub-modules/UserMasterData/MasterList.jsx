@@ -458,98 +458,104 @@ function MasterList() {
 
 
   return (
-    <div className="Masterlist-main">
-      <div className="masterlist-sidebar">
-        {/* Assuming Sidebar is defined */}
+    <div className="main-of-containers">
+      <div className="left-of-main-containers">
         <Sidebar />
       </div>
 
-      <div className="masterlist-content">
-        <div className="master-cardbody">
+      <div className="mid-of-main-containers">
+      </div>
 
-          <div className="settings-search-master">
-            <div className="dropdown-search-cont">
-              <div className="dropdownss">
-                <select name="" id="" className="dropdownmaster">
-                  <option value="">Name</option>
-                  <option value="">Age</option>
-                  <option value="">Id</option>
-                </select>
-              </div>
-              <div className="searchesbar">
-                <div style={{ position: "relative" }}>
-                  <input
-                    type="search"
-                    placeholder="Search"
-                    className="searchInput"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  ></input>
-                  <MagnifyingGlass
-                    size={23}
-                    style={{
-                      position: "absolute",
-                      top: "23%",
-                      left: "0.9rem",
-                      transform: "translateY(-50%)",
-                      pointerEvents: "none",
-                    }}
-                  />
+      <div className="right-of-main-containers">
+          <div className="right-body-contents">
+
+            <div className="settings-search-master">
+
+                <div className="dropdown-and-iconics">
+                    <div className="dropdown-side">
+                        <div className="dropdownsss">
+                            <select name="" id="">
+                              <option value="All">All</option>
+                            </select>
+                        </div>
+                        <div className="searcher-side">
+                            <div style={{ position: "relative" }}>
+                              <input
+                                type="search"
+                                placeholder="Search"
+                                className="searchInput"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              ></input>
+                              <MagnifyingGlass
+                                size={23}
+                                style={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: "0.9rem",
+                                  transform: "translateY(-50%)",
+                                  pointerEvents: "none",
+                                }}
+                              />
+                            </div>
+                        </div>
+
+                        <div className="search-buttons">
+                          <button>Search</button>
+                        </div>
+                    </div>
+                    <div className="iconic-side">
+                          <div className="gearsides">
+                            <Gear size={35}/>
+                          </div>
+                          <div className="bellsides">
+                            <Bell size={35}/>
+                          </div>
+                          <div className="usersides">
+                            <UserCircle size={35}/>
+                        </div>
+                    </div>
                 </div>
-                {/* <button className="searchButton">Search</button> */}
-              </div>
+
             </div>
-            
-            <div className="settings-bellss-users">
-              <div className="gear-notif-circless-content">
-                <div className="gearsettings">
-                  <Gear size={35}/>
-                </div>
 
-                <div className="notifset">
-                <Bell size={35}/>
-                </div>
+            <div className="Employeetext-button">
+                <div className="employee-and-button">
+                    <div className="emp-text-side">
+                        <p>Employee Master Data</p>
+                    </div>
 
-                <div className="usercircless">
-                  <UserCircle size={35}/>
+                    <div className="button-create-side">
+                      <div className="Buttonmodal-new">
+                          <button onClick={handleShow}>
+                            <span style={{ }}>
+                              <Plus size={25} />
+                            </span>
+                            New Employee
+                          </button>
+                        </div>
+                    </div>
+
                 </div>
-              </div>
             </div>
 
-          </div> {/*settings-search-master*/}
-
-          <div className="Employeetext-button">
-               <div className="emptext">
-                    <p>User Master Data</p>
-                </div> 
-
-                <div className="Buttonmodal-new">
-                  <button className='Newemp-btn' onClick={handleShow}>
-                    <span style={{ }}>
-                      <Plus size={25} />
-                    </span>
-                    New Employee
-                  </button>
-                </div>
-          </div> {/*Employeetext-button*/}
-
-          <div className="sortingplacess">
-              <div className="sortingboxess">
+            <div className="sortingplacess">
+                <div className="sortingboxess">
                   <span>Show</span>
-                  <select name="" id="" className='entriesselect'>
+                  <select name="" id="">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                     <option value="All">All</option>
                   </select>
-                  <span className='userstexts'>Entries</span>
+                  <span>Entries</span>
               </div>
-          </div>
-          
-          <div className="tablecontains">
-                  <div className="master-data-table">
-                      <table className="tabless">
+            </div>
+
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                  <table>
                         <thead>
                           <tr>
                             <th className='tableh'>ID</th>
@@ -574,15 +580,18 @@ function MasterList() {
                                 </td>
                               </tr>
                             ))}
-                        </tbody>
-                      </table>
-                    </div>
-             </div>
-        </div>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+
+            <div className="pagination-contains">
+
+            </div>
+
+          </div>
       </div>
-
-
-              <Modal show={showModal} onHide={handleClose} size="xl">
+      <Modal show={showModal} onHide={handleClose} size="xl">
                 <Modal.Header closeButton>
                   <Modal.Title style={{ fontSize: '24px' }}>New Employee</Modal.Title>    
                   <div className="form-group d-flex flex-row ">
@@ -872,9 +881,7 @@ function MasterList() {
                   </Modal.Footer>
                 </form>
               </Modal>
-
     </div>
-
   );
 }
 export default MasterList;

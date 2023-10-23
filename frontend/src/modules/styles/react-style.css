@@ -287,288 +287,232 @@ color: #ffffff;
 }
 
 /*Dashboard Css*/
-.Dashboard-container {
-height: 100vh;
-display: flex;
-flex-direction: column;
+.main-of-containers{
+  display: flex;
+  height: 100vh;
+  background-color: #E9EBED;
 }
 
-
-.sidebar-bag {
-width: 260px;
-height: 100vh;
-position: fixed;
-top: 0;
-left: 0;
+.left-of-main-containers,
+.mid-of-main-containers,
+.right-of-main-containers{
+  height: 100%;
 }
 
-/* .Dashboard-content {
-height: 92.5vh;
-margin-left: 260px;
-display: flex;
-justify-content: center;
-align-items: center; 
+.left-of-main-containers {
+  flex: 0 0 13.8%;
+  background-color: blue;
 }
 
-.bodyof-card {
-display: flex;
-justify-content: center;
-align-items: center;
-width: 100%;
-height: 90vh;
-border: 1px solid rgb(0, 0, 0);
+.mid-of-main-containers {
+  flex: 0 0 0.5%;
+  background-color: #EAEAEB;
 }
 
-.dash-card{
-border: 1px solid red;
-height: 88vh;
-width: 98%;
-} */
-
-/*Master List css*/
-.Masterlist-main {
-height: 100vh;
-display: flex;
+.right-of-main-containers {
+  flex: 0 0 85.7%;
+  background-color: #ffffff;
 }
 
-/* .masterlist-header {
-height: 7.5vh;
-border: 1px solid red;
-} */
-
-.masterlist-sidebar {
-width: 13.6%;
-height: 100vh;
-top: 0;
-left: 0;
-}
-
-.masterlist-content {
-height: 100vh;
-background-color: #E9EBED;
-width: 86.4%;
-} 
-
-.master-cardbody {
-width: 100%;
-height: 100vh;
-background-color: #ffffff;
-margin-left: 2rem;
-overflow-y: auto;
-
+.right-body-contents {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding-top: 10px; 
+  padding-bottom: 10px; 
+  padding-left: 10px; 
+  padding-right: 10px; 
+  display: flex;
+  flex-direction: column;
+  
 }
 
 .settings-search-master {
-height: 12vh;
-width: 100%;  
-display: flex;
-flex-direction: row;
+  flex: 10; 
+  display: flex;
 }
 
-.dropdown-search-cont{
-width: 50%;
-height: 15vh;
-display: flex;
-flex-direction: row;
+.dropdown-and-iconics {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
-.dropdownss{
-padding-left: 5rem;
-padding-top: 4rem;
+.dropdown-side {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  padding-left: 40px;
 }
 
-.dropdownmaster{
-height: 5vh;
-width: 200px;
-font-size: 1.5rem;
-font-family: Poppins, 'Source Sans Pro';
-border-color: #DDDDDD;
-border-bottom-left-radius: 4px;
-border-top-left-radius: 4px;
+.search-buttons {
+  flex: 1;
+  padding: 5px;
 }
 
-.searchesbar{
-padding-top: 4rem;
-display: flex;
+.dropdownsss select {
+  width: 200px;
+  border: 1px solid #ccc;
+  height: 60px;
+  font-size: 16px;
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+  font-family: Poppins, 'Source Sans Pro';
 }
 
-.searchInput{
-height: 5vh;
-width: 350px;
-border-bottom-right-radius: 4px;
-border-top-right-radius: 4px;
-border: 1px solid #DDDDDD;
-font-size: 1.7rem;
-border-color: #DDDDDD;
-padding-left: 5rem;
-font-family: Poppins, 'Source Sans Pro';
-
+.searcher-side input[type="search"] {
+  width: 300px;
+  border: 1px solid #ccc;
+  height: 60px;
+  padding-left: 35px;
+  font-size: 16px;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+  font-family: Poppins, 'Source Sans Pro';
 }
 
-.searchButton {
-width: 150px;
-height: 5vh;
-border: none;
-font-size: 1.7rem;
-background-color: #f2f2f2;
-border-radius: 4px;
-margin-left: 1rem;
-font-family: Poppins, 'Source Sans Pro';
+.search-buttons button {
+  padding: 10px 20px;
+  background-color: #f2f2f2;
+  border: none;
+  font-family: Poppins, 'Source Sans Pro';
+  font-size: 16px;
+  height: 60px;
+  width: 150px;
+  border-radius: 4px;
+  color: #000000;
 }
 
-.settings-bellss-users{
-width: 50%;
-height: 15vh;
-display: flex;
-flex-direction: row;
+
+.iconic-side {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
-.gear-notif-circless-content{
-display: flex;
-width: 80%;
-padding-left: 40rem;
-padding-top: 4rem;
-justify-content: space-between;
-height: 12vh;
+.Employeetext-button {
+  flex: 10;
+  display: flex;
+  padding-left: 40px;
 }
 
-.gearsettings{
-cursor: pointer;
+.employee-and-button {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
-.notifset{
-cursor: pointer;
+.emp-text-side{
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  align-items: center;
 }
 
-.usercircless{
-cursor: pointer;
+.emp-text-side p {
+  font-size: 30px;
+  font-family: Poppins, 'Source Sans Pro';
+  color: #000000;
 }
 
-.Employeetext-button{
-height: 11vh;
-width: 100%;  
-display: flex;
-padding-top: 2rem;
-justify-content: space-between;
+.button-create-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.emptext p{
-font-family: Poppins, 'Source Sans Pro';
-font-size: 4rem;
-color: #000000;
-padding-left: 5rem;
+.Buttonmodal-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
 }
 
-.Buttonmodal-new{
-width: 50%;
+.Buttonmodal-new button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 60px;
+  background-color: #2D2F39;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  font-family: Poppins, 'Source Sans Pro';
 }
 
-.Newemp-btn{  
-height: 5rem;
-font-size: 2rem;
-width: 30%;
-border: none;
-margin-left: 60%;
-background-color: #161A23;
-color: #ffffff;
-border-radius: 5px;
-text-decoration: none;
+.Buttonmodal-new button:hover{
+  background-color: #FFA500;
 }
 
-.Newemp-btn:hover{
-background-color: #FFA500;
-}
 
 .sortingplacess {
-height: 5vh;
-padding: 1rem 5rem;
-display: flex;
-align-items: center; /* to vertically center elements */
+  flex: 5;
+  padding-left: 40px;
 }
 
-.sortingboxess {
-height: 100%;
-width: 30%;
-display: flex;
-align-items: center; /* to vertically center elements */
+.sortingboxess{
+  display: flex;
+  align-items: center;
 }
 
-.entriesselect {
-width: 10%;
-height: 100%;
-margin-left: 0.2rem; /* added margin */
-margin-right: 0.2rem;
-font-size: 12px; /* adjust the font size as needed */
+.sortingboxess span{
+  font-size: 20px;
+  font-family: Poppins, 'Source Sans Pro';
 }
 
-.sortingboxess span {
-font-size: 1.5rem;
+.sortingboxess select{
+  width: 40px;
+  height: 30px;
+  font-size: 15px;
 }
 
-.tablecontains{
-height: 65vh;
-width: 85vw;
-/* border: 1px solid black; */
+.table-containss {
+  flex: 70;
 }
 
-.master-data-table {
+.main-of-all-tables{
   width: 100%;
+  height: 100%;
+}
 
+.main-of-all-tables table {
+  width: 100%;
+  font-size: 20px;
+  font-family: Poppins, 'Source Sans Pro';
+  justify-content: center;
+  align-items: center;
+}
+
+.main-of-all-tables th{
+  background-color: #F9F9FB;
+  font-family: Poppins, 'Source Sans Pro';
+  font-weight: normal;
+  height: 50px;
+  padding-left: 40px;
+}
+
+.main-of-all-tables td{
+  padding-left: 40px;
+  border-bottom: 1px solid #DDDDDD;
+  font-family: Poppins, 'Source Sans Pro';
 }
 
 
-.tabless {
-width: 100%;
+.pagination-contains {
+  flex: 5;
 }
-
-.tabless th{
-border-bottom: 1px solid #DDDDDD;
-border-top: 1px solid #DDDDDD;
-font-size: 2rem;
-padding-top: 10px;
-padding-bottom: 10px;
-padding-left: 5rem;
-background-color: #F9F9FB;
-font-family: Poppins, 'Source Sans Pro';
-font-weight: normal;
-}
-
-.tabless td {
-font-size: 1.8rem;
-padding-top: 7px;
-padding-bottom: 7px;
-padding-left: 5rem;
-border-bottom: 1px solid #DDDDDD;
-font-family: Poppins, 'Source Sans Pro';
-}
-
-.footers-pages{
-height: 7vh;
-padding-top: 1rem;
-padding-left: 5rem;
-display: flex;
-justify-content: space-between; 
-align-items: center; 
-}
-
-/* .textshowpages {
-display: flex;
-align-items: center; 
-}
-
-.showingentry{
-font-size: 1.5rem;
-}
-
-.paginatesss {
-display: flex; 
-align-items: center; 
-} */
-
-.custom-btn {
-font-size: 16px; /* Set your desired font size here */
-}
-
 
 
 /*forgot password css*/
@@ -1006,20 +950,42 @@ left: 12rem;
 }
 
 /*Sidebar CSS*/
+.containers-of-sidebard {
+  position: relative;
+  height: 100%;
+  overflow-y: hidden; /* Para sa scrollbar sa panig */
+}
+
 .sidebar-main-content {
   background-color: #161A23;
   color: white;
-  width: 260px;
+  width: 100%;
   position: relative;
-  height: 100vh;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.head-sidebar{
+.sidebar-main-content::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+.sidebar-main-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sidebar-main-content::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.sidebar-main-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.logo-head-sidebars{
   height: 7.5vh;
   background-color: #161A23;
-  /* background-image: url('../../assets/image/Slash.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat; */
+  box-shadow: 0px -5px 5px -5px rgba(0, 0, 0, 0.75);
 }
 
 .spacefor-sidebar{
@@ -1041,13 +1007,13 @@ left: 12rem;
 }
 
 .sidebar-main-content .menu-item .MuiListItemText-primary{
-  font-size: 1.5rem;
+  font-size: 2em;
   font-family: Poppins, 'Source Sans Pro';
-  margin-left: 1.5rem;
+  margin-left: 1em;
 }
 
 .sidebar-main-content .adminsub-menu .MuiListItemText-primary{
-  font-size: 1.3rem;
+  font-size: 1.5em;
   font-family: Poppins, 'Source Sans Pro';
   margin-left: 4rem;
 }
@@ -1108,7 +1074,7 @@ left: 12rem;
   background-color: #161A23;
   box-shadow: 0px -5px 5px -5px rgba(0, 0, 0, 0.75);
   padding: 20px;
-  
+  z-index: 1; /* Siguraduhing nasa ibabaw ito ng content */
 }
 
 .logout{
@@ -1118,3 +1084,30 @@ left: 12rem;
   color: white;
   font-weight: lighter;
 }
+
+
+
+@media screen and (max-width: 768px) {
+  .left-of-main-containers {
+    flex: 0 0 20%;
+  }
+  .mid-of-main-containers {
+    flex: 0 0 10%;
+  }
+  .right-of-main-containers {
+    flex: 0 0 70%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .left-of-main-containers {
+    flex: 0 0 30%;
+  }
+  .mid-of-main-containers {
+    flex: 0 0 20%;
+  }
+  .right-of-main-containers {
+    flex: 0 0 50%;
+  }
+}
+

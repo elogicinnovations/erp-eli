@@ -73,15 +73,17 @@ function Sidebar() {
   };
 
   return (
-    <div className='sidebar-main-content'>
-        <div className="head-sidebar">
-          {/* <img className='logo' src="../../assets/image/Slash.png" alt="LOGO" /> */}
+    <div className="containers-of-sidebard">
+      <div className='sidebar-main-content'>
+        
+        <div className="logo-head-sidebars">
         </div>
 
           <div className="spacefor-sidebar">
-            {/* add highlight color on bottom */}
           </div>
-           <Link
+
+          <List>
+        <Link
               to='/dashboard'
               style={{ textDecoration: 'none', color: 'inherit' }}
               onClick={() => handleMenuClick('DASHBOARD')}>
@@ -93,7 +95,6 @@ function Sidebar() {
               </ListItem>
           </Link>
 
-        <List>
         <ListItem
           button
           className={`menu-item ${activeMenu === 'ADMINISTRATOR' ? 'active' : ''}`}
@@ -249,12 +250,14 @@ function Sidebar() {
             <ListItemText primary="ACTIVITY LOGS" />
           </ListItem>
         </List>
+        </div>
 
           <div className="logout-container">
-              <Link to={'/'} className='logout'>
-                <SignOut size={20}/>  Logout
-              </Link>
-          </div>
+                <Link to={'/'} className='logout'>
+                  <SignOut size={20}/>  Logout
+                </Link>
+            </div>  
+        
     </div>
   );
 }
