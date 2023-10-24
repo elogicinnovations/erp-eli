@@ -5,27 +5,11 @@ import '../../../styles/react-style.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Sidebar from '../../../Sidebar/sidebar';
-// import Header from '../../../Sidebar/header';
 import swal from 'sweetalert';
 import BASE_URL from '../../../../assets/global/url';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from 'react-bootstrap/Form';
-// import '../../../../assets/skydash/vendors/feather/feather.css';
-// import '../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
-// import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-// import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-// import '../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
-// import '../../../../assets/skydash/css/vertical-layout-light/style.css';
-// import '../../../../assets/skydash/vendors/js/vendor.bundle.base';
-// import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-// import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-// import '../../../../assets/skydash/js/off-canvas';
 
-// import * as $ from 'jquery';
-// import Input from '@mui/material/Input';
-// import inputClasses from '@mui/material/Input';
 import {
   MagnifyingGlass,
   Gear, 
@@ -522,7 +506,7 @@ function MasterList() {
             <div className="Employeetext-button">
                 <div className="employee-and-button">
                     <div className="emp-text-side">
-                        <p>Employee Master Data</p>
+                        <p>User Master Data</p>
                     </div>
 
                     <div className="button-create-side">
@@ -531,7 +515,7 @@ function MasterList() {
                             <span style={{ }}>
                               <Plus size={25} />
                             </span>
-                            New Employee
+                            New User
                           </button>
                         </div>
                     </div>
@@ -593,7 +577,7 @@ function MasterList() {
       </div>
       <Modal show={showModal} onHide={handleClose} size="xl">
                 <Modal.Header closeButton>
-                  <Modal.Title style={{ fontSize: '24px' }}>New Employee</Modal.Title>    
+                  <Modal.Title style={{ fontSize: '24px' }}>New User</Modal.Title>    
                   <div className="form-group d-flex flex-row ">
                     <React.Fragment>
                             <input

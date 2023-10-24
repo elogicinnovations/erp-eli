@@ -11,7 +11,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import PiecerateRouting from "./modules/piecerate/piecerate-routing";
 // import SettingsRouting from "./modules/settings/settings-routing";
 
-import Login from "./modules/Login/login";
+// import Login from "./modules/Login/login";
+import CreateSupplier from "./modules/Administrator/sub-modules/BPMasterData/CreateSupplier";
 import Dashboard from "./modules/Dashboard/dashboard";
 import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
 import OTP from "./modules/Forgot Password/sub-modules/otp";
@@ -37,9 +38,13 @@ function App() {
     <Router>
       <DataProvider>
         <Routes>
-          <Route
+          {/* <Route
             path="/"
             element={<Login />}
+          /> */}
+          <Route
+            path="/"
+            element={<CreateSupplier />}
           />
 
           <Route
