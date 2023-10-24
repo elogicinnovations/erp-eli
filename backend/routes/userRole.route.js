@@ -1,8 +1,8 @@
 const router = require('express').Router()
 const {where} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const UserRole = require('../db/models/userRole.model')
-// const { MasterList, UserRole } = require("../db/models/associations"); 
+// const UserRole = require('../db/models/userRole.model')
+const { MasterList, UserRole } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
