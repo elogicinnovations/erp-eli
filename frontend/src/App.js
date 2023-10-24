@@ -21,6 +21,7 @@ import Rbac from "./modules/Administrator/sub-modules/UserMasterData/UserRole"
 import CreateRole from "./modules/Administrator/sub-modules/UserMasterData/CreateRole"
 import EditRole from "./modules/Administrator/sub-modules/UserMasterData/EditRole"
 import MasterList from "./modules/Administrator/sub-modules/UserMasterData/MasterList"
+import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer"
 // import './assets/skydash/vendors/feather/feather.css';
 // import './assets/skydash/vendors/css/vendor.bundle.base.css';
 // import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -51,7 +52,6 @@ function App() {
             path="/dashboard"
             element={<Dashboard />}
           />
-
 
           {/* Forgot PAssword*/}
 
@@ -91,6 +91,11 @@ function App() {
           <Route
             path="/masterList"
             element={<MasterList/>}
+          />
+
+          <Route
+            path="/ProductManu"
+            element={<ProductManu />}
           />
            
         </Routes>

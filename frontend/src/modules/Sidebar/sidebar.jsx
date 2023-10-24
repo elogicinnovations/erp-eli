@@ -146,9 +146,11 @@ function Sidebar() {
                   <ListItem button className='Productsub-menu'>
                     <ListItemText primary="Product Brands" />
                   </ListItem>
-                  <ListItem button className='Productsub-menu'>
-                    <ListItemText primary="Product Variants" />
-                  </ListItem>
+                  <Link to={'/ProductManu'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='Productsub-menu'>
+                      <ListItemText primary="Product Variants" />
+                    </ListItem>
+                  </Link>
                   <ListItem button className='Productsub-menu'>
                     <ListItemText primary="Price Options" />
                   </ListItem>
