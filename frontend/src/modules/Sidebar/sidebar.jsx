@@ -140,9 +140,11 @@ function Sidebar() {
 
               <Collapse in={openProductSettings}>
                 <List component="div" disablePadding>
-                  <ListItem button className='Productsub-menu'>
-                    <ListItemText primary="Product Categories" />
-                  </ListItem>
+                  <Link to='/productCategory'  style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='Productsub-menu'>                   
+                        <ListItemText primary="Product Categories" />
+                    </ListItem>
+                  </Link>
                   <ListItem button className='Productsub-menu'>
                     <ListItemText primary="Product Brands" />
                   </ListItem>
