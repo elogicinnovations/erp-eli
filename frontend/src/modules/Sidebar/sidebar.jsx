@@ -134,7 +134,7 @@ function Sidebar() {
               </Collapse>
 
               <ListItem button className='adminsub-menu' onClick={toggleProductSettings}>
-                <ListItemText primary="Product Settings" />
+                <ListItemText primary="Product Management" />
                 {openProductSettings ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
 
@@ -146,11 +146,11 @@ function Sidebar() {
                     </ListItem>
                   </Link>
                   <ListItem button className='Productsub-menu'>
-                    <ListItemText primary="Product Brands" />
+                    <ListItemText primary="Bin Location" />
                   </ListItem>
                   <Link to={'/ProductManu'} style={{ textDecoration: 'none', color: 'inherit' }}>
                     <ListItem button className='Productsub-menu'>
-                      <ListItemText primary="Product Variants" />
+                      <ListItemText primary="Product Manufacturer" />
                     </ListItem>
                   </Link>
                   <ListItem button className='Productsub-menu'>

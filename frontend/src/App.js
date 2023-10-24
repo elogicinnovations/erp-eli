@@ -11,7 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import PiecerateRouting from "./modules/piecerate/piecerate-routing";
 // import SettingsRouting from "./modules/settings/settings-routing";
 
-// import Login from "./modules/Login/login";
+import Login from "./modules/Login/login";
 import CreateSupplier from "./modules/Administrator/sub-modules/BPMasterData/CreateSupplier";
 import Dashboard from "./modules/Dashboard/dashboard";
 import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
@@ -40,14 +40,11 @@ function App() {
     <Router>
       <DataProvider>
         <Routes>
-          {/* <Route
-            path="/"
-            element={<Login />}
-          /> */}
           <Route
             path="/"
-            element={<CreateSupplier />}
+            element={<Login />}
           />
+          
 
           <Route
             path="/dashboard"
@@ -94,12 +91,17 @@ function App() {
             element={<MasterList/>}
           />
 
-
+          <Route
+            path="/createSupplier"
+            element={<CreateSupplier />}
+          />
 
           <Route
             path="/productCategory"
             element={<ProductCategory/>}
           />
+
+          
           <Route
             path="/ProductManu"
             element={<ProductManu />}
