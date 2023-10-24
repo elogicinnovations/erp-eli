@@ -48,8 +48,38 @@ function CreateSupplier() {
           });
         }
         else{
-            // if required fields has value
-             console.log('good')
+            // if required fields has value (GOOD)
+              console.log(suppCperson)
+
+             axios
+             .post(BASE_URL + '/supplier/create', 
+                { 
+                    suppName, suppCode, suppTin, suppEmail, 
+                    suppAdd, suppCity, suppPcode, suppCperson,
+                    suppCnum, suppTelNum, suppTerms
+                })
+             .then((response) => {
+                if (response.status === 200) {
+                    swal({
+                        title: 'Creation successful!',
+                        text: 'You successfully added a new supplier.',
+                        icon: 'success',
+                        button: 'OK'
+                      })
+                    .then(() => {
+                        
+                    })
+                }
+                else if (response.status === 201){
+                    swal({
+                        title: 'Supplier Code Exist',
+                        text: 'Supplier code is already exist please fill other supplier',
+                        icon: 'error',
+                        button: 'OK'
+                      });
+                }
+               
+             })
         }
 
         setValidated(true); //for validations
@@ -80,23 +110,24 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <Form.Label style={{fontSize: 20}} >Supplier Name: </Form.Label>
-                            <Form.Control className='p-3  fs-3' placeholder='Supplier Name' required/>
+                            <Form.Control className='p-3  fs-3' placeholder='Supplier Name' onChange={e => setsuppName(e.target.value)} required/>
                             
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Code: </label>
-                            <Form.Control className='p-3 fs-3' required placeholder='Supplier Code'/>
+                            <Form.Control className='p-3 fs-3' onChange={e => setsuppCode(e.target.value)} required placeholder='Supplier Code'/>
+                            
                         </Col>
                     </Row>
 
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>TIN: </label>
-                            <Form.Control className='p-3  fs-3'  placeholder='TIN'/>
+                            <Form.Control className='p-3  fs-3' type="number" onChange={e => setsuppTin(e.target.value)}   placeholder='TIN'/>
                         </Col>
                         <Col>
-                        <label htmlFor="" className='label-head' style={{fontSize: 20}}>Email: </label>
-                            <Form.Control className='p-3 fs-3' required placeholder='Enter your email...'/>
+                            <label htmlFor="" className='label-head' style={{fontSize: 20}}>Terms: </label>
+                            <Form.Control className='p-3 fs-3' type="number"   onChange={e => setsuppTerms(e.target.value)}  placeholder='0'/>
                         </Col>
                     </Row>
                     
@@ -108,18 +139,18 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>Address: </label>
-                            <Form.Control className='p-3  fs-3' required placeholder='Enter Address...'/>
+                            <Form.Control className='p-3  fs-3' onChange={e => setsuppAdd(e.target.value)}  required placeholder='Enter Address...'/>
                         </Col>
                     </Row>
 
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>City: </label>
-                            <Form.Control className='p-3 fs-3' required placeholder='City'/>
+                            <Form.Control className='p-3 fs-3'  onChange={e => setsuppCity(e.target.value)}  required placeholder='City'/>
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Zipcode/Postcode: </label>
-                            <Form.Control className='p-3 fs-3' required placeholder='0000'/>
+                            <Form.Control className='p-3 fs-3' type="number"   onChange={e => setsuppPcode(e.target.value)} required placeholder='0000'/>
                         </Col>
                     </Row>
 
@@ -129,24 +160,25 @@ function CreateSupplier() {
 
                     <Row>
                         <Col>
-                            <label htmlFor="" className='label-head' style={{fontSize: 20}}>Contact Person: </label>
-                            <Form.Control className='p-3  fs-3' required placeholder='Contact Person'/>
+                            <label htmlFor="" className='label-head'  style={{fontSize: 20}}>Contact Person: </label>
+                            <Form.Control className='p-3  fs-3' onChange={e => setsuppCperson(e.target.value)} required placeholder='Contact Person'/>
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Mobile Number: </label>
-                            <Form.Control className='p-3 fs-3' required placeholder='+63'/>
+                            <Form.Control className='p-3 fs-3' type="number"  onChange={e => setsuppCnum(e.target.value)} required placeholder='09xxxxxxxx'/>
                         </Col>
                     </Row>
 
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>Tel. # </label>
-                            <Form.Control className='p-3  fs-3'  required placeholder='xxxxxxxxx'/>
+                            <Form.Control className='p-3  fs-3' type="number"  onChange={e => setsuppTelNum(e.target.value)} placeholder='xxxxxxxxx'/>
                         </Col>
                         <Col>
-                        <label htmlFor="" className='label-head' style={{fontSize: 20}}>Terms: </label>
-                            <Form.Control className='p-3 fs-3' placeholder='0'/>
+                        <label htmlFor="" className='label-head' style={{fontSize: 20}}>Email: </label>
+                            <Form.Control className='p-3 fs-3' type="email"  onChange={e => setsuppEmail(e.target.value)}  required placeholder='Enter your email...'/>
                         </Col>
+                       
                     </Row>
 
                     <Row>
