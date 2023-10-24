@@ -319,10 +319,7 @@ color: #ffffff;
   height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
-  padding-top: 10px; 
-  padding-bottom: 10px; 
-  padding-left: 10px; 
-  padding-right: 10px; 
+  padding: 30px;
   display: flex;
   flex-direction: column;
   
@@ -399,7 +396,6 @@ color: #ffffff;
 .Employeetext-button {
   flex: 10;
   display: flex;
-  padding-left: 40px;
 }
 
 .employee-and-button {
@@ -433,7 +429,7 @@ color: #ffffff;
 .Buttonmodal-new {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: right;
   width: 100%;
   height: 100px;
 }
@@ -444,16 +440,16 @@ color: #ffffff;
   justify-content: center;
   width: 220px;
   height: 60px;
-  background-color: #2D2F39;
+  background-color: #E91868;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   color: white;
   font-size: 16px;
   font-family: Poppins, 'Source Sans Pro';
 }
 
 .Buttonmodal-new button:hover{
-  background-color: #FFA500;
+  background-color: #ea4c89;
 }
 
 
@@ -1111,3 +1107,30 @@ left: 12rem;
   }
 }
 
+/* Jerome's CSS */
+
+a.paginate_button.current{
+  background-color: #3d4e76;
+  color: white;
+  border-radius: 20px;
+}
+
+a.paginate_button{
+  padding: 5px;
+}
+
+a#order-listing_previous{
+  padding: 0px 30px;
+}
+
+a#order-listing_next{
+  padding: 0px 30px;
+}
+
+div#order-listing_length{
+  position: absolute;
+}
+
+.dataTables_wrapper label{
+  font-size: 15px;
+}
