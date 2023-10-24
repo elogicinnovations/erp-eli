@@ -440,7 +440,7 @@ color: #ffffff;
   justify-content: center;
   width: 220px;
   height: 60px;
-  background-color: #E91868;
+  background-color: #FFA500;
   border: none;
   border-radius: 10px;
   color: white;
@@ -449,7 +449,7 @@ color: #ffffff;
 }
 
 .Buttonmodal-new button:hover{
-  background-color: #ea4c89;
+  background-color: #2D2F39;
 }
 
 
