@@ -23,6 +23,7 @@ import EditRole from "./modules/Administrator/sub-modules/UserMasterData/EditRol
 import MasterList from "./modules/Administrator/sub-modules/UserMasterData/MasterList"
 import ProductCategory from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductCategory"
 import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer"
+import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
 // import './assets/skydash/vendors/feather/feather.css';
 // import './assets/skydash/vendors/css/vendor.bundle.base.css';
 // import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -105,6 +106,10 @@ function App() {
           <Route
             path="/ProductManu"
             element={<ProductManu />}
+             />
+          <Route
+            path="/binLocation"
+            element={<BinLocation/>}
           />
            
         </Routes>

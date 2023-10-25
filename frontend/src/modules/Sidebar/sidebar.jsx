@@ -145,6 +145,11 @@ function Sidebar() {
                         <ListItemText primary="Product Categories" />
                     </ListItem>
                   </Link>
+                  <Link to='/binLocation'  style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='Productsub-menu'>                   
+                        <ListItemText primary="Bin Location" />
+                    </ListItem>
+                  </Link>
                   <ListItem button className='Productsub-menu'>
                     <ListItemText primary="Bin Location" />
                   </ListItem>
