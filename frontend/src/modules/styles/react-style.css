@@ -1109,6 +1109,10 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+.form-control, .asColorPicker-input, .dataTables_wrapper select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text], .jsgrid .jsgrid-table .jsgrid-filter-row select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=number], .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint{
+  border: 1px solid #b5b5b5;
+}
+
 a.paginate_button.current{
   background-color: #3d4e76;
   color: white;
