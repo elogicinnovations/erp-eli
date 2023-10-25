@@ -34,48 +34,20 @@ function BinLocation() {
 
 // Artifitial data
 
-      const aData = [
-        {
-          cat_id: '1',
-          cat_name: 'Bin Location A',
-          cat_remarks: 'Remarks A',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '2',
-          cat_name: 'Bin Location B',
-          cat_remarks: 'Remarks B',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '3',
-          cat_name: 'Bin Location C',
-          cat_remarks: 'Remarks C',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '4',
-          cat_name: 'Bin Location D',
-          cat_remarks: 'Remarks D',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '5',
-          cat_name: 'Bin Location e',
-          cat_remarks: 'Remarks E',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-      ]
-
+      
 // Artifitial data
+
+    
+    const [binLocation, setbinLocation] = useState([]); // for table
+    const [validated, setValidated] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
     const [updateModalShow, setUpdateModalShow] = useState(false);
+  
+    const [binLocationName, setbinLocationName] = useState('');
+    const [binLocationSubName, setbinLocationSubName] = useState('');
+    const [binLocationRemarks, setbinLocationRemarks] = useState('');
+   
   
     const handleClose = () => {
       setShowModal(false);
@@ -83,11 +55,196 @@ function BinLocation() {
   
     const handleShow = () => setShowModal(true);
   
-    const handleModalToggle = () => {
+  
+    useEffect(() => {
+      axios.get(BASE_URL + '/binLocation/fetchTable')
+        .then(res => setbinLocation(res.data))
+        .catch(err => console.log(err));
+    }, []);
+
+    function formatDate(isoDate) {
+      const date = new Date(isoDate);
+      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+    }
+    
+    function padZero(num) {
+      return num.toString().padStart(2, '0');
+    }
+
+      
+    const [updateFormData, setUpdateFormData] = useState({
+      bin_name: '',
+      bin_subname: '',
+      bin_remarks: '',
+      updatedAt: '',
+      bin_id: null,
+    });
+
+
+    const handleModalToggle = (updateData = null) => {
       setUpdateModalShow(!updateModalShow);
+      if (updateData) {
+        
+        setUpdateFormData({
+        
+          bin_name: updateData.bin_name,
+          bin_subname: updateData.bin_subname,
+          bin_remarks: updateData.bin_remarks,
+          // updatedAt: updateData.updatedAt,
+          bin_id: updateData.bin_id,
+        });
+      } else {
+        setUpdateFormData({
+          bin_name: '',
+          bin_subname: '',
+          bin_remarks: '',
+          // updatedAt: '',
+          bin_id: null,
+        });
+      }
     };
   
-    const handleDelete = async param_id => {
+    const handleUpdateFormChange = e => {
+      const { name, value} = e.target;
+      setUpdateFormData(prevData => ({
+        ...prevData,
+        [name]: value
+      }));
+    };
+  
+    const handleFormSubmit = async e => {
+      e.preventDefault();
+
+      const form = e.currentTarget;
+      if (form.checkValidity() === false) {
+        e.preventDefault();
+        e.stopPropagation();
+      // if required fields has NO value
+      //    console.log('requried')
+          swal({
+              icon: 'error',
+              title: 'Fields are required',
+              text: 'Please fill the red text fields'
+            });
+      }
+      else{
+          // if required fields has value (GOOD)
+            // console.log(suppCperson)
+
+           axios
+           .post(BASE_URL + '/binLocation/create', 
+              { 
+                binLocationName, binLocationSubName, binLocationRemarks
+              })
+           .then((response) => {
+              if (response.status === 200) {
+                  swal({
+                      title: 'Creation successful!',
+                      text: 'You successfully added a new Bin Location.',
+                      icon: 'success',
+                      button: 'OK'
+                    })
+                  .then(() => {
+
+                    const newId = response.data.bin_id;
+                    console.log(newId)
+                    setbinLocation(prev => [...prev, {
+                      bin_id: newId,
+                      bin_name: response.data.bin_name,
+                      bin_remarks: response.data.bin_remarks,
+                      bin_subname: response.data.bin_subname,
+                      createdAt: response.data.createdAt,
+                      updatedAt: response.data.updatedAt,
+                    }]);
+                   
+                    setShowModal(false);
+
+
+                  })
+              }
+              else if (response.status === 201){
+                  swal({
+                      title: 'Supplier Code Exist',
+                      text: 'Bin Location is already exist please fill other Bin Location',
+                      icon: 'error',
+                      button: 'OK'
+                    });
+              }
+             
+           })
+      }
+
+      setValidated(true); //for validations
+  };
+
+  
+    const handleUpdateSubmit = async e => {
+      e.preventDefault();
+          try {
+
+            const id = updateFormData.bin_id;
+            console.log(id)
+            const response = await axios.put(
+              BASE_URL + `/binLocation/update/${updateFormData.bin_id}`,
+              {
+                bin_name: updateFormData.bin_name,
+                bin_subname: updateFormData.bin_subname,
+                bin_remarks: updateFormData.bin_remarks
+              }
+            );
+      
+            if (response.status === 200) {
+              swal({
+                title: 'Update successful!',
+                text: 'The Bin Location has been updated successfully.',
+                icon: 'success',
+                button: 'OK'
+              }).then(() => {
+                // const newId = response.data.bin_id;
+                // window.location.reload();
+                handleModalToggle();
+                setbinLocation(prev => prev.map(data =>
+                  data.bin_id === updateFormData.bin_id
+                    ? {
+                      ...data,
+                      bin_id: updateFormData.bin_id,
+                      bin_name: updateFormData.bin_name,
+                      bin_subname: updateFormData.bin_subname,
+                      bin_remarks: updateFormData.bin_remarks,
+                      // updatedAt: updateFormData.data.updatedAt
+                    
+                    }
+                    : data
+                ));
+      
+                // Reset the form fields
+                setUpdateFormData({
+                  bin_name: '',
+                  bin_subname: '',
+                  bin_remarks: '',
+                  updatedAt: '',
+                  bin_id: null,
+                });
+              });
+            } else if (response.status === 202) {
+              swal({
+                icon: 'error',
+                title: 'Bin Location is already exists',
+                text: 'Please input another Bin Location'
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
+          } catch (err) {
+            console.log(err);
+          }
+    };
+  
+    const handleDelete = async table_id => {
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this user file!",
@@ -97,6 +254,38 @@ function BinLocation() {
       }).then(async (willDelete) => {
         if (willDelete) {
           try {
+
+            const response = await axios.delete(BASE_URL + `/binLocation/delete/${table_id}`);
+           
+            // swal("The User has been deleted!", {
+            //   icon: "success",
+            // });
+
+            if (response.status === 200) {
+              swal({
+                title: 'The Location has been deleted!',
+                text: 'The Location has been updated successfully.',
+                icon: 'success',
+                button: 'OK'
+              }).then(() => {
+                setbinLocation(prev => prev.filter(data => data.bin_id !== table_id));
+                
+              });
+            } else if (response.status === 202) {
+              swal({
+                icon: 'error',
+                title: 'Delete Prohibited',
+                text: 'You cannot delete Bin Location that is used'
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
+
+
           } catch (err) {
             console.log(err);
           }
@@ -110,6 +299,7 @@ function BinLocation() {
       });
     };
   
+   
   
     React.useEffect(() => {
       $(document).ready(function () {
@@ -177,6 +367,7 @@ function BinLocation() {
                                 <tr>
                                     <th className='tableh'>ID</th>
                                     <th className='tableh'>Bin Name</th>
+                                    <th className='tableh'>Bin Sub-Name</th>
                                     <th className='tableh'>Bin Remarks</th>
                                     <th className='tableh'>Date Added</th>
                                     <th className='tableh'>Date Modified</th>
@@ -184,16 +375,17 @@ function BinLocation() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {aData.map((data,i) =>(
+                                      {binLocation.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.cat_id}</td>
-                                          <td>{data.cat_name}</td>
-                                          <td>{data.cat_remarks}</td>
-                                          <td>{data.cat_added}</td>
-                                          <td>{data.cat_modified}</td>
+                                          <td>{data.bin_id}</td>
+                                          <td>{data.bin_name}</td>
+                                          <td>{data.bin_subname	}</td>
+                                          <td>{data.bin_remarks}</td>
+                                          <td>{formatDate(data.createdAt)}</td>
+                                          <td>{formatDate(data.updatedAt)}</td>
                                           <td>
-                                          <button className='btn' onClick={() => handleModalToggle()}><NotePencil size={32} /></button>
-                                          <button className='btn' onClick={() => handleDelete()}><Trash size={32} color="#e60000" /></button>
+                                          <button className='btn' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
+                                          <button className='btn' onClick={() => handleDelete(data.bin_id)}><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}
@@ -205,40 +397,45 @@ function BinLocation() {
 
         </div>
         <Modal show={showModal} onHide={handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title style={{ fontSize: '24px' }}>New Bin Location</Modal.Title>     
-                </Modal.Header>
-                <form>
-                    <Modal.Body>
-                        <Form>
-                            <div>
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Bin Location Name: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required/>
-                              </Form.Group>
-                            </div>
-                            <div>
-                              <Form.Group controlId="exampleForm.ControlInput2">
-                                <Form.Label style={{ fontSize: '20px' }}>Bin Location Remarks: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter Bin Location Remarks..." style={{height: '40px', fontSize: '15px'}} required />
-                              </Form.Group>
-                          </div>
-                        </Form>
+          <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontSize: '24px' }}>New Bin Location</Modal.Title>     
+            </Modal.Header>
+              <Modal.Body>
+                <div>
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: '20px' }}>Bin Location Name: </Form.Label>
+                    <Form.Control type="text" placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}}required onChange={e => setbinLocationName(e.target.value)}/>
+                  </Form.Group>
+                </div>
+                <div>
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: '20px' }}>Bin Location Sub-Name: </Form.Label>
+                    <Form.Control type="text" placeholder="Enter Sub-Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required onChange={e => setbinLocationSubName(e.target.value)} />
+                  </Form.Group>
+                </div>
+                <div>
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: '20px' }}>Bin Location Remarks: </Form.Label>
+                    <Form.Control type="text" placeholder="Enter Bin Location Remarks..." style={{height: '40px', fontSize: '15px'}} onChange={e => setbinLocationRemarks(e.target.value)} />
+                  </Form.Group>
+              </div>
+                    
 
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button type="submit" variant="primary" size="md" style={{ fontSize: '20px' }}>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button type="submit" variant="primary" size="md" style={{ fontSize: '20px' }}>
                         Add
-                        </Button>
-                        <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                    </Button>
+                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
                         Cancel
-                        </Button>
-                    </Modal.Footer>
-                </form>
-            </Modal>
+                    </Button>
+                </Modal.Footer>
+            </Form>
+          </Modal>
 
             <Modal show={updateModalShow} onHide={() => handleModalToggle()}>
-                <form>
+                <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
                   <Modal.Header closeButton>
                     <Modal.Title className='modal-titles' style={{ fontSize: '24px' }}>Update Bin Location</Modal.Title>
 
@@ -246,32 +443,41 @@ function BinLocation() {
                     </div>        
                   </Modal.Header>
                   <Modal.Body>
-                  <Form>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput1">
                           <Form.Label style={{ fontSize: '20px' }}>Bin Location Name: </Form.Label>
                           <Form.Control type="text"
-                          placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}}/>
+                          value={updateFormData.bin_name} onChange={handleUpdateFormChange} name="bin_name"
+                          placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required/>
+                        </Form.Group>
+                      </div>
+                      <div>
+                        <Form.Group controlId="exampleForm.ControlInput1">
+                          <Form.Label style={{ fontSize: '20px' }}>Bin Location Sub-Name: </Form.Label>
+                          <Form.Control type="text"
+                          value={updateFormData.bin_subname} onChange={handleUpdateFormChange} name="bin_subname"
+                          placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required/>
                         </Form.Group>
                       </div>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: '20px' }}>Bin Location Remarks: </Form.Label>
-                          <Form.Control type="text"
+                          <Form.Control type="text" value={updateFormData.bin_remarks} onChange={handleUpdateFormChange} name="bin_remarks"
                           placeholder="Enter Bin Location Remarks..." style={{height: '40px', fontSize: '15px'}}/>
                         </Form.Group>
                       </div>
-                  </Form>
+                  
                   </Modal.Body>
                   <Modal.Footer>
-                    <Button type="submit" variant="primary" style={{ fontSize: '20px' }}>
+                    <Button type="submit" variant="primary" className='' style={{ fontSize: '20px' }}>
                       Update
                     </Button>
                     <Button variant="secondary" onClick={() => setUpdateModalShow(!updateModalShow)} style={{ fontSize: '20px' }}>
                       Close
                     </Button>
+                    
                   </Modal.Footer>
-                </form>
+                </Form>
               </Modal>
     </div>
   )
