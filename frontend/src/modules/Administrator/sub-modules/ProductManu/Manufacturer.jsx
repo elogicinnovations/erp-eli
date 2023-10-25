@@ -19,34 +19,38 @@ import {
   Trash,
   NotePencil,
 } from "@phosphor-icons/react";
+import '../../../../assets/skydash/vendors/feather/feather.css';
+import '../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
+import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
+import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
+import '../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
+import '../../../../assets/skydash/css/vertical-layout-light/style.css';
+import '../../../../assets/skydash/vendors/js/vendor.bundle.base';
+import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
+import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
+import '../../../../assets/skydash/js/off-canvas';
+
+import * as $ from 'jquery';
 
 
 function Productvariants(){
-  const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState([
     { id: 1001, name: 'ePson', code: 'ESPN', date: '09/20/2023' },
     // Add more data here
   ]);
 
-  const handleSearch = () => {
-    if (searchQuery.trim() === '') {
-      // Reset to original data when search is empty
-      setData([
-        { id: 1001, name: 'ePson', code: 'ESPN', date: '09/20/2023' },
-        // Add more data here
-      ]);
-    } else {
-      const filteredData = data.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setData(filteredData.length > 0 ? filteredData : []);
-    }
-  };
 
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  
+  React.useEffect(() => {
+    $(document).ready(function () {
+      $('#order-listing').DataTable();
+    });
+  }, []);
 
   return(
   <div className="main-of-containers">
@@ -63,31 +67,6 @@ function Productvariants(){
 
                         <div className="dropdown-and-iconics">
                             <div className="dropdown-side">
-                                <div className="searcher-side">
-                                    <div style={{ position: "relative" }}>
-                                      <input
-                                        type="search"
-                                        placeholder="Search"
-                                        className="searchInput"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                      ></input>
-                                      <MagnifyingGlass
-                                        size={23}
-                                        style={{
-                                          position: "absolute",
-                                          top: "50%",
-                                          left: "0.9rem",
-                                          transform: "translateY(-50%)",
-                                          pointerEvents: "none",
-                                        }}
-                                      />
-                                    </div>
-                                </div>
-
-                                <div className="search-buttons">
-                                  <button onClick={handleSearch}>Search</button>
-                                </div>
                             </div>
                             <div className="iconic-side">
                                   <div className="gearsides">
@@ -99,6 +78,7 @@ function Productvariants(){
                                   <div className="usersides">
                                     <UserCircle size={35}/>
                                 </div>
+                              <h3>User Name</h3>
                             </div>
                         </div>
 
@@ -123,25 +103,9 @@ function Productvariants(){
 
                     </div>
                 </div>
-
-
-                <div className="sortingplacess">
-                    <div className="sortingboxess">
-                      <span>Show</span>
-                      <select name="" id="">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="All">All</option>
-                      </select>
-                      <span>Entries</span>
-                  </div>
-                </div>
-
                 <div className="table-containss">
               <div className="main-of-all-tables">
-                <table>
+                <table id='order-listing'>
                     <thead>
                       <tr>
                         <th className='tableh'>ID</th>

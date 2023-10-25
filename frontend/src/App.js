@@ -24,6 +24,10 @@ import MasterList from "./modules/Administrator/sub-modules/UserMasterData/Maste
 import ProductCategory from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductCategory"
 import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer"
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
+import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
+import CreateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/CreateProduct"
+import UpdateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/UpdateProduct"
+import ProductSupplier from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductSupplier"
 // import './assets/skydash/vendors/feather/feather.css';
 // import './assets/skydash/vendors/css/vendor.bundle.base.css';
 // import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -106,11 +110,28 @@ function App() {
           <Route
             path="/ProductManu"
             element={<ProductManu />}
-             />
+          />
           <Route
             path="/binLocation"
             element={<BinLocation/>}
           />
+          <Route
+            path="/productList"
+            element={<ProductList/>}
+          />
+              <Route
+                path="/createProduct"
+                element={<CreateProduct/>}
+              />
+              <Route
+                path="/updateProduct"
+                element={<UpdateProduct/>}
+              />
+              <Route
+                path="/productSupplier"
+                element={<ProductSupplier/>}
+              />
+
            
         </Routes>
       </DataProvider>

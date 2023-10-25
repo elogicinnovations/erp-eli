@@ -19,6 +19,18 @@ import {
   Trash,
   NotePencil,
 } from "@phosphor-icons/react";
+import '../../../../assets/skydash/vendors/feather/feather.css';
+import '../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
+import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
+import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
+import '../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
+import '../../../../assets/skydash/css/vertical-layout-light/style.css';
+import '../../../../assets/skydash/vendors/js/vendor.bundle.base';
+import '../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
+import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
+import '../../../../assets/skydash/js/off-canvas';
+
+import * as $ from 'jquery';
 
 
 function MasterList() {
@@ -56,9 +68,6 @@ function MasterList() {
     updateId: null,
   });
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredstudent, setFilteredStudent] = useState([]);
-
   useEffect(() => {
     axios.get(BASE_URL + '/masterList/masterTable')
       .then(res => setmasterListt(res.data))
@@ -67,29 +76,6 @@ function MasterList() {
 
   console.log(masterListt)
 
-  useEffect(() => {
-    const filtered = masterListt.filter(data =>
-      data.col_Fname.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-//   Pagination
-    setPagination(filtered);
-    setCurrentPage(1);
-    //   Pagination
-
-    setFilteredStudent(filtered);
-  }, [searchQuery, masterListt]);
-
-//   Pagination
-  const [pagination, setPagination] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const filteredStudent = pagination.slice(indexOfFirstItem, indexOfLastItem);
-
-//   Pagination
 
   const handleClose = () => {
     setShowModal(false);
@@ -440,6 +426,14 @@ function MasterList() {
       });
   }, []);
 
+  
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($('#order-listing').length > 0 && masterListt.length > 0) {
+      $('#order-listing').DataTable();
+    }
+  }, [masterListt]);
+
 
   return (
     <div className="main-of-containers">
@@ -457,36 +451,6 @@ function MasterList() {
 
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
-                        <div className="dropdownsss">
-                            <select name="" id="">
-                              <option value="All">All</option>
-                            </select>
-                        </div>
-                        <div className="searcher-side">
-                            <div style={{ position: "relative" }}>
-                              <input
-                                type="search"
-                                placeholder="Search"
-                                className="searchInput"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                              ></input>
-                              <MagnifyingGlass
-                                size={23}
-                                style={{
-                                  position: "absolute",
-                                  top: "50%",
-                                  left: "0.9rem",
-                                  transform: "translateY(-50%)",
-                                  pointerEvents: "none",
-                                }}
-                              />
-                            </div>
-                        </div>
-
-                        <div className="search-buttons">
-                          <button>Search</button>
-                        </div>
                     </div>
                     <div className="iconic-side">
                           <div className="gearsides">
@@ -500,7 +464,6 @@ function MasterList() {
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div className="Employeetext-button">
@@ -523,23 +486,9 @@ function MasterList() {
                 </div>
             </div>
 
-            <div className="sortingplacess">
-                <div className="sortingboxess">
-                  <span>Show</span>
-                  <select name="" id="">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="All">All</option>
-                  </select>
-                  <span>Entries</span>
-              </div>
-            </div>
-
             <div className="table-containss">
               <div className="main-of-all-tables">
-                  <table>
+                  <table id="order-listing">
                         <thead>
                           <tr>
                             <th className='tableh'>ID</th>
@@ -551,7 +500,7 @@ function MasterList() {
                           </tr>
                         </thead>
                         <tbody>
-                              {filteredStudent.map((data, i) => (
+                              {masterListt.map((data, i) => (
                               <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                                 <td>{data.col_id}</td>
                                 <td>{data.col_roleID}</td>

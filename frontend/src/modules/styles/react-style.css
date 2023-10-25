@@ -432,6 +432,7 @@ color: #ffffff;
   justify-content: right;
   width: 100%;
   height: 100px;
+  z-index: 1;
 }
 
 .Buttonmodal-new button {
@@ -479,6 +480,8 @@ color: #ffffff;
 }
 
 .main-of-all-tables{
+  position: relative;
+  top: -40px;
   width: 100%;
   height: 100%;
 }
@@ -1109,30 +1112,88 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+.supplier-table{
+  padding-top: 50px;
+}
+
+.save-cancel{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 20px;
+}
+
+.right-body-contents-a{
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+a.button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 60px;
+    background-color: #FFA500;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-family: Poppins, 'Source Sans Pro';
+}
+
+a.button:hover{
+  text-decoration: none;
+  background-color: #2D2F39;
+  color: white;
+}
+
+div#order-listing_length{
+  position: relative;
+  top: 45px;
+  width: 50%;
+}
+
 .form-control, .asColorPicker-input, .dataTables_wrapper select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text], .jsgrid .jsgrid-table .jsgrid-filter-row select, .jsgrid .jsgrid-table .jsgrid-filter-row input[type=number], .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint{
   border: 1px solid #b5b5b5;
 }
 
 a.paginate_button.current{
-  background-color: #3d4e76;
+  background-color: #FFA500;
   color: white;
-  border-radius: 20px;
+}
+
+a.paginate_button.current:hover{
+  background-color: #FFA500;
+  color: white;
 }
 
 a.paginate_button{
   padding: 5px;
+  border: solid 1px gray;
+  color: #000000;
+  border-radius: 5px;
+  margin: 0px 2px;
+  cursor: pointer;
+}
+
+a.paginate_button:hover{
+  background-color: #2D2F39;
+  color: #ffffff;
 }
 
 a#order-listing_previous{
-  padding: 0px 30px;
+  margin: 0px 15px;
 }
 
 a#order-listing_next{
-  padding: 0px 30px;
-}
-
-div#order-listing_length{
-  position: absolute;
+  margin: 0px 15px;
 }
 
 .dataTables_wrapper label{

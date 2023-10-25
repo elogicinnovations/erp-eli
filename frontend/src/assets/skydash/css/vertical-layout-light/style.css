@@ -9235,6 +9235,7 @@ pre code {
   flex-wrap: wrap;
   margin-right: -15px;
   margin-left: -15px;
+  padding-top: 10px;
 }
 
 .no-gutters {
@@ -11083,35 +11084,35 @@ fieldset:disabled .wizard > .actions a,
 
 .btn-primary, .wizard > .actions a {
   color: #fff;
-  background-color: #E91868;
-  border-color: #ea4c89;
+  background-color: #FFA500;
+  border-color: #ebb656;
 }
 
 .btn-primary:hover, .wizard > .actions a:hover {
   color: #fff;
-  background-color: #ea4c89;
-  border-color: #ea4c89;
+  background-color: #ebb656;
+  border-color: #ebb656;
 }
 
 .btn-primary:focus, .wizard > .actions a:focus, .btn-primary.focus, .wizard > .actions a.focus {
   color: #fff;
-  background-color: #ed0c62;
-  border-color: #ed0c62;
-  box-shadow: 0 0 0 0.2rem rgba(227, 4, 119, 0.5);
+  background-color: #c78100;
+  border-color: #c78100;
+  box-shadow: 0 0 0 0.2rem rgba(227, 175, 4, 0.5);
 }
 
 .btn-primary.disabled, .wizard > .actions a.disabled, .btn-primary:disabled, .wizard > .actions a:disabled {
   color: #fff;
-  background-color: #e56797;
-  border-color: #E91868;
+  background-color: #ebb656;
+  border-color: #ebb656;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active, .wizard > .actions a:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .wizard > .actions a:not(:disabled):not(.disabled).active,
 .show > .btn-primary.dropdown-toggle,
 .wizard > .actions .show > a.dropdown-toggle {
   color: #fff;
-  background-color: #E91868;
-  border-color: #E91868;
+  background-color: #c17e02;
+  border-color: #c17e02;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active:focus, .wizard > .actions a:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .wizard > .actions a:not(:disabled):not(.disabled).active:focus,

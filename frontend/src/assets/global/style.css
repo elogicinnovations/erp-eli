@@ -9331,7 +9331,6 @@
       margin-top: calc(var(--bs-gutter-y) * -1);
       margin-right: calc(var(--bs-gutter-x) * -8);
       margin-left: calc(var(--bs-gutter-x) * -.5);
-      padding-right: 5rem;
   }
   
   .row > * {
@@ -10892,7 +10891,6 @@
       border-radius: 0.25rem;
       transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
       appearance: none;
-      margin: 0rem 0rem 2.742rem 0.224rem;
     width: 32rem;
     font-family: IBM Plex Sans,sans-serif;
     font-size: 1.3rem;
@@ -22828,9 +22826,6 @@
       font-weight: 400;
       font-size: 0.875rem;
       border-radius: 4px;
-
-      
-      margin: 0rem 0rem 2.742rem 0.224rem;
     width: 32rem;
     font-family: IBM Plex Sans,sans-serif;
     font-size: 1.3rem;
