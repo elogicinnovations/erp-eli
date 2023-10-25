@@ -32,77 +32,165 @@ import {
 
 function ProductCategory() {
 
-// Artifitial data
 
-      const aData = [
-        {
-          cat_id: '1',
-          cat_name: 'Category A',
-          cat_remarks: 'Remarks A',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '2',
-          cat_name: 'Category B',
-          cat_remarks: 'Remarks B',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '3',
-          cat_name: 'Category C',
-          cat_remarks: 'Remarks C',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '4',
-          cat_name: 'Category D',
-          cat_remarks: 'Remarks D',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-        {
-          cat_id: '5',
-          cat_name: 'hello',
-          cat_remarks: 'Remarks E',
-          cat_added: 'Added Date',
-          cat_modified: 'Modified Date',
-        },
-      ]
+    const [category, setcategory] = useState([]); // for table
+    const [validated, setValidated] = useState(false);
 
-// Artifitial data
-
-    const [masterListt, setmasterListt] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [updateModalShow, setUpdateModalShow] = useState(false);
-  
-    const [formData, setFormData] = useState({
-      cname: '',
-      cremarks: '',
+
+
+    const [categoryCode, setcategoryCode] = useState('');
+    const [categoryName, setcategoryName] = useState('');
+    const [categoryRemarks, setcategoryRemarks] = useState('');
+
+
+    useEffect(() => {
+      axios.get(BASE_URL + '/category/fetchTable')
+        .then(res => setcategory(res.data))
+        .catch(err => console.log(err));
+    }, []);
+
+    function formatDate(isoDate) {
+      const date = new Date(isoDate);
+      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+    }
+    
+    function padZero(num) {
+      return num.toString().padStart(2, '0');
+    }
+    
+
+    const handleFormSubmit = async e => {
+      e.preventDefault();
+
+      const form = e.currentTarget;
+      if (form.checkValidity() === false) {
+        e.preventDefault();
+        e.stopPropagation();
+      // if required fields has NO value
+      //    console.log('requried')
+          swal({
+              icon: 'error',
+              title: 'Fields are required',
+              text: 'Please fill the red text fields'
+            });
+      }
+      else{
+          // if required fields has value (GOOD)
+            // console.log(suppCperson)
+
+           axios
+           .post(BASE_URL + '/category/create', 
+              { 
+                
+                categoryCode, categoryName, categoryRemarks
+              })
+           .then((response) => {
+              if (response.status === 200) {
+                  swal({
+                      title: 'Creation successful!',
+                      text: 'You successfully added a new Category.',
+                      icon: 'success',
+                      button: 'OK'
+                    })
+                  .then(() => {
+
+                    const newId = response.data.category_code;
+                    // console.log(newId)
+                    setcategory(prev => [...prev, {
+                      category_code: newId,
+                      category_name: response.data.category_name,
+                      category_remarks: response.data.category_remarks,
+                      createdAt: response.data.createdAt,
+                      updatedAt: response.data.updatedAt,
+                    }]);
+                   
+                    setShowModal(false);
+
+
+                  })
+              }
+              else if (response.status === 201){
+                  swal({
+                      title: 'CategoryExist',
+                      text: 'Category is already exist please fill other supplier',
+                      icon: 'error',
+                      button: 'OK'
+                    });
+              }
+             
+           })
+      }
+
+      setValidated(true); //for validations
+  };
+
+   
+  const handleDelete = async table_id => {
+
+
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this user file!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        try {
+          const  response = await axios.delete(BASE_URL + `/category/delete/${table_id}`);
+         
+          if (response.status === 200) {
+            swal({
+              title: 'The Location has been deleted!',
+              text: 'The Location has been updated successfully.',
+              icon: 'success',
+              button: 'OK'
+            }).then(() => {
+              setcategory(prev => prev.filter(data => data.category_code !== table_id));
+              
+            });
+          } else if (response.status === 202) {
+            swal({
+              icon: 'error',
+              title: 'Delete Prohibited',
+              text: 'You cannot delete Bin Location that is used'
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: 'Something went wrong',
+              text: 'Please contact our support'
+            });
+          }
+
+        } catch (err) {
+          console.log(err);
+        }
+
+       
+      } else {
+        swal({
+          title: "Cancelled Successfully",
+          text: "Category not Deleted!",
+          icon: "warning",
+        });
+      }
     });
+  };
+
   
     const [updateFormData, setUpdateFormData] = useState({
-      // uarole: '',
-      // uaname: '',
-      // uaemail: '',
-      // uapass: '',
-      // ustatus: false,
-  
-      uaname: '',
-      uaremarks: '',
-      updateId: null,
+      category_name: '',
+      category_remarks: '',
+      category_code: null,
     });
    
   
     const handleClose = () => {
       setShowModal(false);
-      // Clear the form fields
-      setFormData({
-        cname: '',
-        cremarks: '',
-      });
+   
     };
   
     const handleShow = () => setShowModal(true);
@@ -113,123 +201,93 @@ function ProductCategory() {
         
         setUpdateFormData({
         
-          uaname: updateData.col_Fname,
-          uaremarks: updateData.col_remarks,
-          updateId: updateData.col_id,
+          category_code: updateData.category_code,
+          category_name: updateData.category_name,
+          category_remarks: updateData.category_remarks,
         });
       } else {
         setUpdateFormData({
-          uaname: '',
-          uaremarks: '',
-          updateId: null,
+          category_code: '',
+          category_name: '',
+          category_remarks: '',
         });
       }
     };
-  
-    const handleFormChange = e => {
-      const { name, value, type, checked } = e.target;
-  
-      if (type === 'checkbox') {
-        setFormData(prevData => ({
-          ...prevData,
-          [name]: checked
-        }));
-      } else if (name === 'cname') {
-        // Check if the value contains invalid characters
-        const isValid = /^[a-zA-Z\s',.\-]*$/.test(value);
-  
-        if (isValid) {
-          setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-          }));
-        }
-      } else {
-        setFormData(prevData => ({
-          ...prevData,
-          [name]: value
-        }));
-      }
-    };
+
   
     const handleUpdateFormChange = e => {
-      const { name, value, type, checked } = e.target;
-      if (type === 'checkbox') {
-        setUpdateFormData(prevData => ({
-          ...prevData,
-          [name]: checked
-        }));
-      } else {
-        setUpdateFormData(prevData => ({
-          ...prevData,
-          [name]: value
-        }));
-      }
+      const { name, value } = e.target;
+
+      setUpdateFormData(prevData => ({
+        ...prevData,
+        [name]: value
+      }));
+
     };
   
-    const handleFormSubmit = async e => {
-      e.preventDefault();
-      try {
-        // console.log(formData)
-  
-        if(formData.cname === ''){
-          swal({
-            title: 'Required Field',
-            text: 'Category Name is Required',
-            icon: 'error',
-            button: 'OK'
-          })
-        }
-        else if(formData.cremarks === ''){
-          swal({
-            title: 'Required Field',
-            text: 'Remarks is Required',
-            icon: 'error',
-            button: 'OK'
-          })
-          
-        }
-        else{
-        setShowModal(false);
-        }
-        
-      } catch (err) {
-        console.log(err);
-      }
-    };
   
     const handleUpdateSubmit = async e => {
       e.preventDefault();
       try {
+
+        const updaemasterID = updateFormData.category_code;
+        console.log(updaemasterID)
+        const response = await axios.put(
+          BASE_URL + `/category/update/${updateFormData.category_code}`,
+          {
+            category_name: updateFormData.category_name,
+            category_remarks: updateFormData.category_remarks
+          }
+        );
+  
+        if (response.status === 200) {
+          swal({
+            title: 'Update successful!',
+            text: 'The Category has been updated successfully.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+  
+            // window.location.reload();
+            handleModalToggle();
+            setcategory(prev => prev.map(data =>
+              data.category_code === updateFormData.category_code
+                ? {
+                  ...data,
+                  category_name: updateFormData.category_name,
+                  category_remarks: updateFormData.category_remarks
+                  
+                }
+                : data
+            ));
+  
+            // Reset the form fields
+            setUpdateFormData({
+              category_name: '',
+              category_remarks: '',
+            
+              category_code: null,
+            });
+          });
+        } else if (response.status === 202) {
+          swal({
+            icon: 'error',
+            title: 'Category already exists',
+            text: 'Please input another Category'
+          });
+        } else {
+          swal({
+            icon: 'error',
+            title: 'Something went wrong',
+            text: 'Please contact our support'
+          });
+        }
       } catch (err) {
         console.log(err);
       }
     };
-  
-    const handleDelete = async param_id => {
-      swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this user file!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      }).then(async (willDelete) => {
-        if (willDelete) {
-          try {
-          } catch (err) {
-            console.log(err);
-          }
-        } else {
-          swal({
-            title: "Cancelled Successfully",
-            text: "Category not Deleted!",
-            icon: "warning",
-          });
-        }
-      });
-    };
-  
-    const [roles, setRoles] = useState([]);
+ 
+   
   
     React.useEffect(() => {
       $(document).ready(function () {
@@ -295,7 +353,7 @@ function ProductCategory() {
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>ID</th>
+                                    <th className='tableh'>Category ID</th>
                                     <th className='tableh'>Category Name</th>
                                     <th className='tableh'>Category Remarks</th>
                                     <th className='tableh'>Date Added</th>
@@ -304,16 +362,16 @@ function ProductCategory() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {aData.map((data,i) =>(
+                                      {category.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.cat_id}</td>
-                                          <td>{data.cat_name}</td>
-                                          <td>{data.cat_remarks}</td>
-                                          <td>{data.cat_added}</td>
-                                          <td>{data.cat_modified}</td>
+                                          <td>{data.category_code}</td>
+                                          <td>{data.category_name}</td>
+                                          <td>{data.category_remarks}</td>
+                                          <td>{formatDate(data.createdAt)}</td>
+                                          <td>{formatDate(data.updatedAt)}</td>
                                           <td>
-                                          <button className='btn' onClick={() => handleModalToggle()}><NotePencil size={32} /></button>
-                                          <button className='btn' onClick={() => handleDelete()}><Trash size={32} color="#e60000" /></button>
+                                            <button className='btn'  type='button' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
+                                            <button className='btn' type='button' onClick={() => handleDelete(data.category_code)}><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}
@@ -325,40 +383,49 @@ function ProductCategory() {
 
         </div>
         <Modal show={showModal} onHide={handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title style={{ fontSize: '24px' }}>New Category</Modal.Title>     
-                </Modal.Header>
-                <form onSubmit={handleFormSubmit}>
-                    <Modal.Body>
-                        <Form>
-                            <div>
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Category Name: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter Name of the Category..." style={{height: '40px', fontSize: '15px'}} value={formData.cname} onChange={handleFormChange} name="cname" required/>
-                              </Form.Group>
-                            </div>
-                            <div>
-                              <Form.Group controlId="exampleForm.ControlInput2">
-                                <Form.Label style={{ fontSize: '20px' }}>Category Remarks: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter Category Remarks..." style={{height: '40px', fontSize: '15px'}} value={formData.cremarks} onChange={handleFormChange} name="cremarks" required />
-                              </Form.Group>
-                          </div>
-                        </Form>
+          <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontSize: '24px' }}>New Category</Modal.Title>     
+            </Modal.Header>
+                
+            <Modal.Body>
+                    <div>
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: '20px' }}>Category Code: </Form.Label>
+                        <Form.Control type="text" placeholder="Enter Name of the Category Code..." style={{height: '40px', fontSize: '15px'}}   onChange={e => setcategoryCode(e.target.value)} required/>
+                      </Form.Group>
+                    </div>
+                
+                    <div>
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: '20px' }}>Category Name: </Form.Label>
+                        <Form.Control type="text" placeholder="Enter Name of the Category Name..." style={{height: '40px', fontSize: '15px'}}  onChange={e => setcategoryName(e.target.value)} required/>
+                      </Form.Group>
+                    </div>
+                    <div>
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: '20px' }}>Category Remarks: </Form.Label>
+                        <Form.Control type="text" placeholder="Enter Category Remarks..." style={{height: '40px', fontSize: '15px'}}   onChange={e => setcategoryRemarks(e.target.value)}/>
+                      </Form.Group>
+                  </div>
+                
 
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button type="submit" variant="primary" size="md" style={{ fontSize: '20px' }}>
-                        Add
-                        </Button>
-                        <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                        Cancel
-                        </Button>
-                    </Modal.Footer>
-                </form>
-            </Modal>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button type="submit" variant="primary" size="md" style={{ fontSize: '20px' }}>
+                  Add
+                </Button>
+                <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                  Cancel
+                </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
 
             <Modal show={updateModalShow} onHide={() => handleModalToggle()}>
-                <form onSubmit={handleUpdateSubmit}>
+
+            <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
+                
                   <Modal.Header closeButton>
                     <Modal.Title className='modal-titles' style={{ fontSize: '24px' }}>Update Category</Modal.Title>
 
@@ -366,23 +433,30 @@ function ProductCategory() {
                     </div>        
                   </Modal.Header>
                   <Modal.Body>
-                  <Form>
+                      <div>
+                        <Form.Group controlId="exampleForm.ControlInput1">
+                          <Form.Label style={{ fontSize: '20px' }}>Category Code: </Form.Label>
+                          <Form.Control type="text"
+                          value={updateFormData.category_code} onChange={handleUpdateFormChange} name="category_code"
+                          placeholder="Enter Name of the Category..." style={{height: '40px', fontSize: '15px'}} required readOnly/>
+                        </Form.Group>
+                      </div>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput1">
                           <Form.Label style={{ fontSize: '20px' }}>Category Name: </Form.Label>
                           <Form.Control type="text"
-                          value={updateFormData.uaname} onChange={handleUpdateFormChange} name="uaname"
-                          placeholder="Enter Name of the Category..." style={{height: '40px', fontSize: '15px'}}/>
+                          value={updateFormData.category_name} onChange={handleUpdateFormChange} name="category_name"
+                          placeholder="Enter Name of the Category..." style={{height: '40px', fontSize: '15px'}} required/>
                         </Form.Group>
                       </div>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: '20px' }}>Category Remarks: </Form.Label>
-                          <Form.Control type="text" value={updateFormData.uaremarks} onChange={handleUpdateFormChange} name="uaremarks"
-                          placeholder="Enter Category Remarks..." style={{height: '40px', fontSize: '15px'}}/>
+                          <Form.Control type="text" value={updateFormData.category_remarks} onChange={handleUpdateFormChange} name="category_remarks"
+                          placeholder="Enter Category Remarks..." style={{height: '40px', fontSize: '15px'}} required/>
                         </Form.Group>
                       </div>
-                  </Form>
+                  
                   </Modal.Body>
                   <Modal.Footer>
                     <Button type="submit" variant="primary" className='' style={{ fontSize: '20px' }}>
@@ -392,7 +466,7 @@ function ProductCategory() {
                       Close
                     </Button>
                   </Modal.Footer>
-                </form>
+                </Form>
               </Modal>
     </div>
   )
