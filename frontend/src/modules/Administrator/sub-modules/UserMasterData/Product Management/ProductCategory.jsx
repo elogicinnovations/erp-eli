@@ -289,11 +289,12 @@ function ProductCategory() {
  
    
   
-    React.useEffect(() => {
-      $(document).ready(function () {
+    useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && category.length > 0) {
         $('#order-listing').DataTable();
-      });
-    }, []);
+      }
+    }, [category]);
 
   return (
     <div className="main-of-containers">

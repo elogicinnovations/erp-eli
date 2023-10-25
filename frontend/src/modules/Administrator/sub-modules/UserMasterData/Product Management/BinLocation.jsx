@@ -302,10 +302,11 @@ function BinLocation() {
    
   
     React.useEffect(() => {
-      $(document).ready(function () {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && binLocation.length > 0) {
         $('#order-listing').DataTable();
-      });
-    }, []);
+      }
+    }, [binLocation]);
 
   return (
     <div className="main-of-containers">
