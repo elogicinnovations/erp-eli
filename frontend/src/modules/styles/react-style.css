@@ -322,7 +322,6 @@ color: #ffffff;
   padding: 30px;
   display: flex;
   flex-direction: column;
-  
 }
 
 .settings-search-master {
@@ -1198,4 +1197,151 @@ a#order-listing_next{
 
 .dataTables_wrapper label{
   font-size: 15px;
+  padding: 10px;
 }
+
+.headers-text {
+  height: 10%;
+  display: flex;
+  border-bottom: 3px solid #CCCCCC;
+}
+
+.arrowandtitle{
+  display: flex;
+  width: 50%;
+}
+
+.arrowandtitle h1{
+  font-size: 35px;
+  font-family: Poppins, 'Source Sans Pro';
+  padding: 4px;
+  
+}
+
+.home-supplier-tag{
+  display: flex;
+  flex-direction: row;
+}
+
+.home-supplier-tag p{
+  font-size: 15px;
+  font-family: Poppins, 'Source Sans Pro';
+  color: black;
+  padding: 5px;
+}
+
+.searches-sidebars {
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.searchbars-right {
+  display: flex;
+  flex-direction: row;
+}
+
+.searchbars-right input[type="search"] {
+  width: 300px;
+  border: 1px solid #ccc;
+  height: 50px;
+  padding-left: 35px;
+  font-size: 16px;
+  border-radius: 4px;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.searchbars-right button {
+  height: 50px;
+  width: 100px;
+  border: none;
+  background-color: #CCCCCC;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+.tabbutton-sides {
+  height: 80%;
+}
+
+
+
+.productandprint{
+  display: flex;
+  padding: 15px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+
+.printbtns button{
+  height: 40px;
+  width: 120px;
+  background-color: #FFA500;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.printbtns button:hover{
+  background-color: #161A23;
+}
+
+
+.tabproduct-table{
+  border: 1px solid black;
+  height: 570px;
+}
+
+.orderhistory-side{
+  display: flex;
+  padding: 15px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.printersbtn button{
+  height: 40px;
+  width: 120px;
+  background-color: #FFA500;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.printersbtn button:hover{
+  background-color: #161A23;
+}
+
+a#ordered-listing_previous{
+  padding: 0px 30px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a#ordered-listing_next{
+  padding: 0px 30px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+div#ordered-listing_length{
+  position: absolute;
+}
+
+div#ordered-listing_length label{
+  padding: 10px;
+  font-size: 15px;
+}
+
+li.paginate_button.page-item.active{
+    background-color: red;
+}
+
