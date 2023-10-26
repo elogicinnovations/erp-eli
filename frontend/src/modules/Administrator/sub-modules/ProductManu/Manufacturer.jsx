@@ -140,44 +140,44 @@ function Productvariants(){
                 </div>
 
                 <div className="table-containss">
-              <div className="main-of-all-tables">
-                <table>
-                    <thead>
-                      <tr>
-                        <th className='tableh'>ID</th>
-                        <th className='tableh'>NAME</th>
-                        <th className='tableh'>CODE</th>
-                        <th className='tableh'>DATE CREATE</th>
-                        <th className='tableh'>ACTION</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.length === 0 ? (
-                        <tr>
-                          <td colSpan={5} style={{ textAlign: 'center', paddingTop: '20px' }}>No data matche(s) found</td>
-                        </tr>
-                      ) : (
-                        data.map((item) => (
-                          <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.name}</td>
-                            <td>{item.code}</td>
-                            <td>{item.date}</td>
-                            <td>
-                              <button className="btn">
-                                <NotePencil size={32} />
-                              </button>
-                              <button className="btn">
-                                <Trash size={32} color="#e60000" />
-                              </button>
-                            </td>
+                  <div className="main-of-all-tables">
+                    <table>
+                        <thead>
+                          <tr>
+                            <th className='tableh'>ID</th>
+                            <th className='tableh'>NAME</th>
+                            <th className='tableh'>CODE</th>
+                            <th className='tableh'>DATE CREATE</th>
+                            <th className='tableh'>ACTION</th>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                        </thead>
+                        <tbody>
+                          {data.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} style={{ textAlign: 'center', paddingTop: '20px' }}>No data matche(s) found</td>
+                            </tr>
+                          ) : (
+                            data.map((item) => (
+                              <tr key={item.id}>
+                                <td>{item.id}</td>
+                                <td>{item.name}</td>
+                                <td>{item.code}</td>
+                                <td>{item.date}</td>
+                                <td>
+                                  <button className="btn">
+                                    <NotePencil size={32} />
+                                  </button>
+                                  <button className="btn">
+                                    <Trash size={32} color="#e60000" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                  </div>
               </div>
-            </div>
 
           </div>
       </div>

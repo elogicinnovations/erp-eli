@@ -512,7 +512,7 @@ function MasterList() {
                     <div className="button-create-side">
                       <div className="Buttonmodal-new">
                           <button onClick={handleShow}>
-                            <span style={{ }}>
+                            <span>
                               <Plus size={25} />
                             </span>
                             New User

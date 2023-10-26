@@ -174,9 +174,11 @@ function Sidebar() {
                   <ListItem button className='BPsub-menu'> 
                     <ListItemText primary="Cost Centre" />
                   </ListItem>
-                  <ListItem button className='BPsub-menu'>
-                    <ListItemText primary="Suppliers" />
-                  </ListItem>
+                  <Link to={'/supplier'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='BPsub-menu'>
+                      <ListItemText primary="Suppliers" />
+                    </ListItem>
+                  </Link>
                 </List>
               </Collapse>
 
