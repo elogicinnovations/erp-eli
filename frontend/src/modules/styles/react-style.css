@@ -1341,7 +1341,7 @@ div#ordered-listing_length label{
   font-size: 15px;
 }
 
-li.paginate_button.page-item.active{
-    background-color: red;
+div#ordered-listing_wrapper{
+  margin-top: 40px
 }
 
