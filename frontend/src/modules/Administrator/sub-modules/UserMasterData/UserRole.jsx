@@ -124,13 +124,11 @@ function UserRole() {
 
                     <div className="button-create-side">
                       <div className="Buttonmodal-new">
-                          <Link to="/createRole" >
-                          <button className='Newemp-btn'>
+                          <Link to="/createRole" className='button'>
                             <span style={{ }}>
                                 <Plus size={25} />
                               </span>
                               Create New
-                          </button>
                           </Link>
                         </div>
                     </div>

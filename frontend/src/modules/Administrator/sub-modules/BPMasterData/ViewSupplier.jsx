@@ -57,7 +57,7 @@ function ViewSupplier() {
                     <div className="right-body-contents">
                         <div className="headers-text">
                             <div className="arrowandtitle">
-                                <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                                <Link to='/supplier'><ArrowCircleLeft size={50} color="#60646c" weight="fill" /></Link>
                                 <div className="titletext">
                                     <h1>KINGKONG INCO</h1>
                                         <div className="home-supplier-tag">
@@ -82,20 +82,20 @@ function ViewSupplier() {
                                 id="noanim-tab-example"
                                 >
                                 <Tab eventKey="profile" title={<span style={{...tabStyle, fontSize: '20px', overflowY: 'auto'}}>Profile</span>}>
-                                    <div style={{ maxHeight: '650px', overflowY: 'auto', paddingLeft: '15px', overflowX: 'hidden' }}>
+                                    <div style={{ maxHeight: '540px', overflowY: 'auto', paddingLeft: '15px', overflowX: 'hidden', paddingBottom: '40px' }}>
                                     <Form style={{paddingLeft: '15px'}}>
                                         <h1>Details</h1>
                                         <div className="row">
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Supplier Name: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Code: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -103,13 +103,13 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>TIN: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Terms: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly/>
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly/>
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -120,20 +120,20 @@ function ViewSupplier() {
                                         <div className="">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Address: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '1355px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                         </div>
                                         <div className="row">
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>City: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>ZipCode: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -145,13 +145,13 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Contact Person: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Mobile No.: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -159,13 +159,13 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Telephone No.: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly />
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Terms (no. of days) </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '600px'}} readOnly/>
+                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly/>
                                             </Form.Group>
                                             </div>
                                         </div>

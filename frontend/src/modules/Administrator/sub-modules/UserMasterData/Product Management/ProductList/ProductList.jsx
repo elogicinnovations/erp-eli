@@ -159,10 +159,10 @@ function ProductList() {
                                 <tbody>
                                       {aData.map((data,i) =>(
                                         <tr key={i}>
-                                          <td  onClick={() => navigate('/productSupplier')}>{data.cat_id}</td>
-                                          <td  onClick={() => navigate('/productSupplier')}>{data.cat_name}</td>
-                                          <td  onClick={() => navigate('/productSupplier')}>{data.cat_remarks}</td>
-                                          <td  onClick={() => navigate('/productSupplier')}>{data.cat_added}</td>
+                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_id}</td>
+                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_name}</td>
+                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_remarks}</td>
+                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_added}</td>
                                           <td>
                                           <Link to='/updateProduct' className='btn'><NotePencil size={32} /></Link>
                                           <button className='btn'><Trash size={32} color="#e60000" /></button>
