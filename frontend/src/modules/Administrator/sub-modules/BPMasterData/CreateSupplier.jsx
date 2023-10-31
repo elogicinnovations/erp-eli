@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
     ArrowCircleLeft
@@ -96,10 +97,13 @@ function CreateSupplier() {
         <div className="right-of-main-containers">
           <div className="right-body-contents">
             <div className='create-head-back' style={{display: 'flex', alignItems: 'center', borderBottom: '1px solid #5A5D5A', padding: 15}}>
-                <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+               
+                <Link style={{ fontSize: '1.5rem' }} to="/Supplier">
+                    <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+                </Link>
                 <h1>
                     Supplier
-                </h1>
+                </h1>              
             </div>
 
             <Container className='mt-5'>

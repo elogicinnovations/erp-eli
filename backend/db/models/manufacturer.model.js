@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 
 const Manufacturer = sequelize.define('manufacturer', {
     manufacturer_code: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
         primaryKey: true,
     },
@@ -16,5 +16,6 @@ const Manufacturer = sequelize.define('manufacturer', {
         allowNull: true,
     }
 });
+
 
 module.exports = Manufacturer;

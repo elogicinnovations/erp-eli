@@ -21,6 +21,11 @@ const Product = sequelize.define('product', {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,
+  },
+  product_manufacturer: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
   }
 });
 
