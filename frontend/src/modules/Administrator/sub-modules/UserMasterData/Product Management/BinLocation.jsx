@@ -425,7 +425,7 @@ function BinLocation() {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button type="submit" variant="primary" size="md" style={{ fontSize: '20px' }}>
+                    <Button type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>
                         Add
                     </Button>
                     <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
@@ -470,7 +470,7 @@ function BinLocation() {
                   
                   </Modal.Body>
                   <Modal.Footer>
-                    <Button type="submit" variant="primary" className='' style={{ fontSize: '20px' }}>
+                    <Button type="submit" variant="warning" className='' style={{ fontSize: '20px' }}>
                       Update
                     </Button>
                     <Button variant="secondary" onClick={() => setUpdateModalShow(!updateModalShow)} style={{ fontSize: '20px' }}>

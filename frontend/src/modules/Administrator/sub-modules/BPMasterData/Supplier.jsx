@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../../Sidebar/sidebar';
+import { useNavigate } from 'react-router';
 import axios from 'axios';
 import BASE_URL from '../../../../assets/global/url';
 import swal from 'sweetalert';
@@ -39,6 +40,8 @@ function Supplier() {
           $('#order-listing').DataTable();
         });
       }, []);
+      
+    const navigate = useNavigate();
     return(
 
         <div className="main-of-containers">
@@ -111,11 +114,11 @@ function Supplier() {
                                     </thead>
                                     <tbody>
                                             <tr>
-                                            <td>035</td>
-                                            <td><Link to="/viewsupplier" title="Click to view supplier details">JOSEPH</Link></td>
-                                            <td>0922tutunogtunog</td>
-                                            <td>ACTIVE</td>
-                                            <td>MURA LANG</td>
+                                            <td onClick={() => navigate('/viewsupplier')}>035</td>
+                                            <td onClick={() => navigate('/viewsupplier')}>JOSEPH</td>
+                                            <td onClick={() => navigate('/viewsupplier')}>0922tutunogtunog</td>
+                                            <td onClick={() => navigate('/viewsupplier')}>ACTIVE</td>
+                                            <td onClick={() => navigate('/viewsupplier')}>MURA LANG</td>
                                             <td>
                                             <button className='btn'><NotePencil size={32} /></button>
                                             <button className='btn'><Trash size={32} color="#e60000" /></button>

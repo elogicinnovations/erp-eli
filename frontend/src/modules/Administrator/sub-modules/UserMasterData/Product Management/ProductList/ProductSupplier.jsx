@@ -181,7 +181,7 @@ function ProductSupplier() {
                           </div>
                         </Form>
                         <div className='save-cancel'>
-                        <Link to='/productList' className='btn btn-primary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Apply</Link>
+                        <Link to='/productList' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Apply</Link>
                         </div>
 
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
@@ -225,7 +225,7 @@ function ProductSupplier() {
                             </div>
                         </div>
                         <div className='save-cancel'>
-                        <Link to='/productList' className='btn btn-primary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
+                        <Link to='/productList' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
                         <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Close
                         </Link>

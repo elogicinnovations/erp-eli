@@ -7,7 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Sidebar from '../../../Sidebar/sidebar';
 import swal from 'sweetalert';
 import BASE_URL from '../../../../assets/global/url';
-import 'bootstrap/dist/css/bootstrap.min.css'
+// import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from 'react-bootstrap/Form';
 
 import {
@@ -461,6 +461,9 @@ function MasterList() {
                           </div>
                           <div className="usersides">
                             <UserCircle size={35}/>
+                        </div>
+                        <div className="username">
+                          <h3>User Name</h3>
                         </div>
                     </div>
                 </div>

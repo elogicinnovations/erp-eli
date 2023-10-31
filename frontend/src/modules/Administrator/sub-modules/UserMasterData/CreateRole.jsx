@@ -17,6 +17,7 @@ import {
   Bell,
   UserCircle,
 } from "@phosphor-icons/react";
+import { border } from '@mui/system';
 
 function Create_role() {
   const navigate = useNavigate();
@@ -349,10 +350,10 @@ const handleUnselectAll = () => {
                             </Form>
 
                             <div className="d-flex"  style={{ marginLeft: '50px' }}>
-                              <Button style={{ width: '100px', marginRight: '10px', fontSize: '1.5rem' }} onClick={handleSelectAll}>
+                              <Button variant="warning" style={{ width: '100px', marginRight: '10px', fontSize: '1.5rem' }} onClick={handleSelectAll}>
                                 Select All
                               </Button>
-                              <Button style={{ width: '100px', fontSize: '1.5rem' }} onClick={handleUnselectAll}>
+                              <Button variant="warning" style={{ width: '100px', fontSize: '1.5rem' }} onClick={handleUnselectAll}>
                                 Unselect All
                               </Button>
                             </div>
@@ -372,9 +373,10 @@ const handleUnselectAll = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      <td className='role-head'><h3 className='role-head'>Dashboard</h3></td>
                       <tr>
-                        <td><h3>Dashboard</h3>
-                          <td>Analytic Dashboard</td>
+                        <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Analytic Dashboard</td>
                         </td>
                         <td>
                           <div className='input-group'>
@@ -440,9 +442,10 @@ const handleUnselectAll = () => {
 
                       {/* --------------------------------------BREAK ------------------------------*/}
 
+                      <td><h3 className='role-head'>Administrator</h3></td>
                       <tr>
-                      <td><h3>Administrator</h3>
-                          <td>Master List</td>
+                      <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Master List</td>
                         </td>
 
                         <td> 
@@ -509,7 +512,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Employee Position
                           </td> 
                         </td>
@@ -579,7 +582,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             User Access Role
                           </td>
                         </td>
@@ -648,7 +651,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                           <td>
-                            <td>
+                            <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                               Product List
                             </td>
 
@@ -718,7 +721,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Product Categories
                           </td>
                         </td>
@@ -788,7 +791,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Bin Location
                           </td>
                         </td>
@@ -857,7 +860,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Cost Centre
                           </td>
                         </td>
@@ -926,7 +929,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Supplier
                           </td>
                         </td>
@@ -995,7 +998,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Asset Monitoring
                           </td>
                           
@@ -1063,9 +1066,10 @@ const handleUnselectAll = () => {
                         </td>
                       </tr>
 
+                      <td><h3 className='role-head'>Inventory</h3></td>
                       <tr>
-                        <td><h3>Inventory</h3>
-                          <td>Item Master Data</td>
+                        <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Item Master Data</td>
                         </td>
 
                         <td> 
@@ -1132,7 +1136,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Inventory Type
                           </td>
                         </td>
@@ -1199,9 +1203,10 @@ const handleUnselectAll = () => {
                         </td>
                       </tr>
 
+                      <td><h3 className='role-head'>Purchase Order Interface</h3></td>
                       <tr>
-                        <td><h3>Purchase Order Interface</h3>
-                          <td>
+                        <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             PO Transaction
                           </td>
                         </td>
@@ -1270,7 +1275,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>Invoice</td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Invoice</td>
                         </td>
 
                         <td> 
@@ -1335,9 +1340,10 @@ const handleUnselectAll = () => {
                         </td>
                       </tr>
 
+                      <td><h3 className='role-head'>Warehouse</h3></td>
                       <tr>
-                        <td> <h3>Warehouse</h3>
-                          <td>Warehouse Master List</td>
+                        <td> 
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Warehouse Master List</td>
                         </td>
 
                         <td> 
@@ -1404,7 +1410,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>Quality Check</td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Quality Check</td>
                         </td>
 
                           <td> 
@@ -1471,7 +1477,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>Receiving</td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Receiving</td>
                         </td>
 
                         <td> 
@@ -1538,7 +1544,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                         <td>
-                          <td>Stock Management</td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Stock Management</td>
                         </td>
 
                         <td> 
@@ -1603,9 +1609,10 @@ const handleUnselectAll = () => {
                         </td>
                       </tr>
 
+                      <td><h3 className='role-head'>Asset Monitoring</h3></td>
                       <tr>
-                        <td><h3>Asset Monitoring</h3>
-                          <td>
+                        <td>
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>
                             Asset List
                           </td>
                         </td>
@@ -1672,9 +1679,10 @@ const handleUnselectAll = () => {
                         </td>
                       </tr>
 
+                      <td><h3 className='role-head'>Activity Module</h3></td>
                       <tr>
-                        <td> <h3>Activity Module</h3>
-                          <td>Activity Log</td>
+                        <td> 
+                          <td className='role' style={{ border: '0px', fontSize: '15px'}}>Activity Log</td>
                         </td>
 
                             <td> 
@@ -1741,7 +1749,7 @@ const handleUnselectAll = () => {
 
                       <tr>
                           <td>
-                            <td>Audit Trail</td>
+                            <td className='role' style={{ border: '0px', fontSize: '15px'}}>Audit Trail</td>
                           </td>
 
                           <td> 
@@ -1822,7 +1830,7 @@ const handleUnselectAll = () => {
                     </Col>
                     <Col>
                       <div >
-                        <Button style={{ fontSize: '1.5rem' }} type="submit" className='btn_saveCancel' variant="primary border-secondary"  disabled = {selectedCheckboxes.length === 0}>
+                        <Button style={{ fontSize: '1.5rem' }} type="submit" className='btn_saveCancel' variant="warning"  disabled = {selectedCheckboxes.length === 0}>
                           Save
                         </Button>
                       </div>

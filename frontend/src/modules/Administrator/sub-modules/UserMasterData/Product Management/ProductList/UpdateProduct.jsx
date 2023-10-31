@@ -121,7 +121,7 @@ function UpdateProduct() {
                           </div>
                         </Form>
                         <div className='save-cancel'>
-                        <Link to='/productList' className='btn btn-primary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Link>
+                        <Link to='/productList' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Link>
                         <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Close
                         </Link>

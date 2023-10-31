@@ -14582,10 +14582,10 @@
       border: 0;
       border-radius: 8px;
       opacity: 0.5;
-       
       position: absolute;
-      left: 119rem;
-      top:215px;
+      top: 15px;
+      right: 15px;
+  
     
 
   }
@@ -31324,7 +31324,6 @@ padding: 2px 10px;
         display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
         left: 0;
         top: 0;
         width: 100%; /* Full width */
