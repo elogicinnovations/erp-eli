@@ -107,8 +107,6 @@ router.route('/update/:param_id').put(async (req, res) => {
 
 router.route('/delete/:table_id').delete(async (req, res) => {
     const id = req.params.table_id;
-
-
     await Product.findAll({
       where: {
         product_category: id,
