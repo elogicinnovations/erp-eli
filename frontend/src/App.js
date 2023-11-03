@@ -15,6 +15,7 @@ import Login from "./modules/Login/login";
 import Supplier from "./modules/Administrator/sub-modules/BPMasterData/Supplier"
 import ViewSupplier from "./modules/Administrator/sub-modules/BPMasterData/ViewSupplier"
 import CreateSupplier from "./modules/Administrator/sub-modules/BPMasterData/CreateSupplier"
+import EditSupplier from "./modules/Administrator/sub-modules/BPMasterData/EditSupplier"
 import Dashboard from "./modules/Dashboard/dashboard";
 import ForgotPass from "./modules/Forgot Password/sub-modules/fgpass";
 import OTP from "./modules/Forgot Password/sub-modules/otp";
@@ -103,20 +104,24 @@ function App() {
           />
 
           <Route
-            path="/viewsupplier"
-            element={<ViewSupplier />}
+            path="/createSupplier"
+            element={<CreateSupplier />}
           />
 
           <Route
-            path="/createSupplier"
-            element={<CreateSupplier />}
+            path="/editSupp/:id"
+            element={<EditSupplier/>}
+          />
+
+          <Route
+            path="/viewsupplier"
+            element={<ViewSupplier />}
           />
 
           <Route
             path="/productCategory"
             element={<ProductCategory/>}
           />
-
           
           <Route
             path="/ProductManu"

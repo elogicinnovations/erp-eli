@@ -5,13 +5,7 @@ import { useNavigate } from 'react-router';
 import axios from 'axios';
 import BASE_URL from '../../../../assets/global/url';
 import swal from 'sweetalert';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import {
-    MagnifyingGlass,
     Gear, 
     Bell,
     UserCircle,
@@ -35,11 +29,86 @@ import * as $ from 'jquery';
 
 
 function Supplier() {
-    React.useEffect(() => {
-        $(document).ready(function () {
-          $('#order-listing').DataTable();
-        });
+
+    const [supplier, setsupplier] = useState([]);
+
+    useEffect(() => {
+        axios.get(BASE_URL + '/supplier/fetchTable')
+          .then(res => setsupplier(res.data))
+          .catch(err => console.log(err));
       }, []);
+  
+      function formatDate(isoDate) {
+        const date = new Date(isoDate);
+        return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+      }
+      
+      function padZero(num) {
+        return num.toString().padStart(2, '0');
+      }
+
+
+      const handleDelete = async table_id => {
+
+
+        swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this user file!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        }).then(async (willDelete) => {
+          if (willDelete) {
+            try {
+              const  response = await axios.delete(BASE_URL + `/supplier/delete/${table_id}`);
+             
+              if (response.status === 200) {
+                swal({
+                  title: 'The Supplier has been deleted!',
+                  text: 'The Supplier has been updated successfully.',
+                  icon: 'success',
+                  button: 'OK'
+                }).then(() => {
+                  setsupplier(prev => prev.filter(data => data.supplier_code !== table_id));
+                  
+                });
+              } else if (response.status === 202) {
+                swal({
+                  icon: 'error',
+                  title: 'Delete Prohibited',
+                  text: 'You cannot delete Supplier that is used'
+                });
+              } else {
+                swal({
+                  icon: 'error',
+                  title: 'Something went wrong',
+                  text: 'Please contact our support'
+                });
+              }
+    
+            } catch (err) {
+              console.log(err);
+            }
+    
+           
+          } else {
+            swal({
+              title: "Cancelled Successfully",
+              text: "Supplier not Deleted!",
+              icon: "warning",
+            });
+          }
+        });
+      };
+
+
+
+      useEffect(() => {
+        // Initialize DataTable when role data is available
+        if ($('#order-listing').length > 0 && supplier.length > 0) {
+          $('#order-listing').DataTable();
+        }
+      }, [supplier]);
       
     const navigate = useNavigate();
     return(
@@ -104,26 +173,32 @@ function Supplier() {
                             <table id='order-listing'>
                                     <thead>
                                     <tr>
-                                        <th className='tableh'>SUPPLIER ID</th>
+                                        <th className='tableh'>SUPPLIER Code</th>
                                         <th className='tableh'>SUPPLIER NAME</th>
                                         <th className='tableh'>CONTACT</th>
-                                        <th className='tableh'>STATUS</th>
-                                        <th className='tableh'>VATABLE</th>
+                                        <th className='tableh'>Date Created</th>
+                                        <th className='tableh'>Date Modified</th>
                                         <th className='tableh'>ACTION</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                            <tr>
-                                            <td onClick={() => navigate('/viewsupplier')}>035</td>
-                                            <td onClick={() => navigate('/viewsupplier')}>JOSEPH</td>
-                                            <td onClick={() => navigate('/viewsupplier')}>0922tutunogtunog</td>
-                                            <td onClick={() => navigate('/viewsupplier')}>ACTIVE</td>
-                                            <td onClick={() => navigate('/viewsupplier')}>MURA LANG</td>
-                                            <td>
-                                            <button className='btn'><NotePencil size={32} /></button>
-                                            <button className='btn'><Trash size={32} color="#e60000" /></button>
-                                            </td>
+                                        {supplier.map((data,i) =>(
+                                            <tr key={i}>
+                                                <td>{data.supplier_code}</td>
+                                                <td>{data.supplier_name}</td>
+                                                <td>{data.supplier_contactPerson}</td>
+                                                <td>{formatDate(data.createdAt)}</td>
+                                                <td>{formatDate(data.updatedAt)}</td>
+                                                <td>
+                                                    <button className='btn'  type='button' >
+                                                        <Link to={`/editSupp/${data.supplier_code}`} ><NotePencil size={32} /></Link>
+                                                    </button>
+                                                    <button className='btn' type='button' onClick={() => handleDelete(data.supplier_code)}>
+                                                        <Trash size={32} color="#e60000" />
+                                                    </button>
+                                                </td>
                                             </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>

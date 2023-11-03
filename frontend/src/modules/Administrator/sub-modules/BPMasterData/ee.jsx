@@ -8,14 +8,14 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams} from 'react-router-dom';
 import '../../../styles/react-style.css';
-import receiving from "../../../../assets/global/receiving";
+
 import {
     ArrowCircleLeft
   } from "@phosphor-icons/react";
 
-function CreateSupplier() {
+function EditSupplier() {
 
     const [validated, setValidated] = useState(false);
 
@@ -31,27 +31,47 @@ function CreateSupplier() {
     const [suppTelNum, setsuppTelNum] = useState('');
     const [suppTerms, setsuppTerms] = useState('');
     const [suppVat, setsuppVat] = useState('');
-    const [suppReceving, setsuppReceving] = useState('');
-    const [suppStatus, setsuppStatus] = useState('Active');
 
 
- // Handle the checkbox change event for toggle button VAtable textbox
     const [isChecked, setIsChecked] = useState(false);
+
+    // Handle the checkbox change event
     const handleCheckboxChange = (event) => {
       setIsChecked(event.target.checked);
     };
 
-
-
-
-
     const navigate = useNavigate();
 
+    const { id } = useParams();
+// console.log('yes' + id)
 
 
+    useEffect(() => {
+        // console.log('ssss' + id)
+        axios.get(BASE_URL + `/supplier/edit/${id}`)
+          .then(res => {
+            console.log('ssss' + res.data.supplier_name)
+            // setRole(res.data[0]); // Assuming the response is an array with a single object
+            // setRolename(res.data[0].col_rolename); // Set the Role Name
+            // setDesc(res.data[0].col_desc); // Set the Description
+            setsuppName(res.data[0].supplier_name);
+            setsuppCode(res.data[0].supplier_code);
+            setsuppTin(res.data[0].supplier_tin);
+            setsuppEmail(res.data[0].supplier_email);
+            setsuppAdd(res.data[0].supplier_address);
+            setsuppCity(res.data[0].supplier_city);
+            setsuppPcode(res.data[0].supplier_postcode);
+            setsuppCperson(res.data[0].supplier_contactPerson);
+            setsuppCnum(res.data[0].supplier_number);
+            setsuppTelNum(res.data[0].supplier_Telnumber);
+            setsuppTerms(res.data[0].supplier_terms);
+            setsuppVat(res.data[0].supplier_vat);
+          })
+          .catch(err => console.log(err));
+      }, [id]);
 
     const [countries, setCountries] = useState([]);
-    const [selectedCountry, setSelectedCountry] = useState('PH');
+    const [selectedCountry, setSelectedCountry] = useState('');
   
     useEffect(() => {
         // Fetch the list of countries from the API
@@ -72,21 +92,12 @@ function CreateSupplier() {
           });
       }, []);
     
-
-      // for country on change function
       const handleChange = (event) => {
         setSelectedCountry(event.target.value);
       };
 
-      // for Receiving on change function
-      const handleChangeReceiving = (event) => {
-        setsuppReceving(event.target.value);
-      };
-
     const handleFormSubmit = async e => {
         e.preventDefault();
-
-       
 
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
@@ -105,12 +116,11 @@ function CreateSupplier() {
               console.log(suppCperson)
 
              axios
-             .post(BASE_URL + '/supplier/create', 
+             .post(BASE_URL + '/supplier/edit', 
                 { 
                     suppName, suppCode, suppTin, suppEmail, 
                     suppAdd, suppCity, suppPcode, suppCperson,
-                    suppCnum, suppTelNum, suppTerms, suppVat, 
-                    selectedCountry , suppStatus, suppReceving
+                    suppCnum, suppTelNum, suppTerms, suppVat, selectedCountry
                 })
              .then((response) => {
                 if (response.status === 200) {
@@ -138,19 +148,6 @@ function CreateSupplier() {
 
         setValidated(true); //for validations
     }
-
-    const handleActiveStatus= e => {
-
-        if(suppStatus === 'Active'){
-            setsuppStatus('Inactive')
-        }
-        else{
-            setsuppStatus('Active')
-        }
-
-        // console.log('set now' + suppStatus)
-    }
-    // console.log(suppStatus)
   return (
     <div className="main-of-containers">
         <div className="left-of-main-containers">
@@ -168,51 +165,27 @@ function CreateSupplier() {
                     <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                 </Link>
                 <h1>
-                    Supplier
+                    Edit Supplier
                 </h1>              
             </div>
 
             <Container className='mt-5'>
                 <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-
-                    <Row>
-
-                        <Col>
-                            <label style={{fontSize: 30, fontWeight: 'bold'}}>
-                                Details
-                            </label>
-                        </Col>
-
-                        <Col>
-                            <div className="form-group d-flex flex-row justify-content-center align-items-center">
-                                <React.Fragment>
-                                <label className='userstatus'  style={{fontSize: 15, marginRight: 10}}>Supplier Status</label>
-                                    <input
-                                        type="checkbox"
-                                        name="cstatus"
-                                        
-                                        style={{fontSize: 20}}
-                                        onChange={handleActiveStatus}
-                                        defaultChecked={suppStatus}
-                                    />
-                                    
-                                </React.Fragment>
-                            </div>    
-                        </Col>
-
-                    </Row>
-
-                   
-                    
+                    <label style={{fontSize: 30, fontWeight: 'bold'}}>
+                        Details
+                    </label>
                     <Row>
                         <Col>
                             <Form.Label style={{fontSize: 20}} >Supplier Name: </Form.Label>
-                            <Form.Control className='p-3  fs-3' placeholder='Supplier Name' onChange={e => setsuppName(e.target.value)} required/>
+                            <Form.Control className='p-3  fs-3' placeholder='Supplier Name' onChange={e => setsuppName(e.target.value)} required
+                            value={suppName}
+                            />
                             
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Code: </label>
-                            <Form.Control className='p-3 fs-3' onChange={e => setsuppCode(e.target.value)} required placeholder='Supplier Code'/>
+                            <Form.Control className='p-3 fs-3' onChange={e => setsuppCode(e.target.value)} required placeholder='Supplier Code'
+                            value={suppCode}/>
                             
                         </Col>
                     </Row>
@@ -220,7 +193,8 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>TIN: </label>
-                            <Form.Control className='p-3  fs-3' type="number" onChange={e => setsuppTin(e.target.value)}   placeholder='TIN'/>
+                            <Form.Control className='p-3  fs-3' type="number" onChange={e => setsuppTin(e.target.value)}   placeholder='TIN'
+                            value={suppTin}/>
                         </Col>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>Terms: </label>
@@ -315,36 +289,15 @@ function CreateSupplier() {
                        
                         </Col>
                         <Col>
-
-                            <label htmlFor="" className='label-head mt-5' style={{ fontSize: 20 }}>Select a Receiving City: </label>
-                            <Form.Select
-                                aria-label=""
-                                required
-                                style={{ fontSize: 15 }}
-                                defaultValue=''
-                                onChange={handleChangeReceiving}
-                            >
-                                <option disabled value=''>
-                                    Select City ...
-                                </option>
-                                {receiving.map((city, index) => (
-                                <option key={index} value={city}>
-                                    {city}
-                                </option>
-                                ))}
-                            </Form.Select>
-                       
                         </Col>
-
-                    
                        
                     </Row>
-                       
+
                     <Row>
                    
                         <Col>
                             <Button type='submit' variant="success" size="lg" className="fs-5">
-                                Save
+                                Update
                             </Button>
                         </Col>
                     
@@ -357,4 +310,4 @@ function CreateSupplier() {
   )
 }
 
-export default CreateSupplier
+export default EditSupplier

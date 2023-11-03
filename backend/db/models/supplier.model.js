@@ -57,6 +57,26 @@ const Supplier = sequelize.define('supplier', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false,
+  },
+  supplier_vat: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    unique: false,
+  },
+  supplier_country: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  supplier_receiving: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  supplier_status: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
   }
 });
 

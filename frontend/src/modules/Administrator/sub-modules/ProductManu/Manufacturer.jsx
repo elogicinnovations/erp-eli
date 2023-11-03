@@ -105,10 +105,10 @@ function Productvariants(){
           ErrorInserted();
         }
       })
-      .catch((err) => {
-        console.error(err);
-        ErrorInserted();
-      });
+      // .catch((err) => {
+      //   console.error(err);
+      //   // ErrorInserted();
+      // });
     }
 
     setValidated(true); //for validations
@@ -433,7 +433,7 @@ function Productvariants(){
                       }}
                     ></span>
                   </div>
-                  <Form style={{marginLeft: '10px', marginTop: '10px'}}>
+
                     <div className="row">
                       <div className="col-6">
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -452,16 +452,13 @@ function Productvariants(){
                         </Form.Group>
                       </div>
                     </div>
-                    </Form>
 
-                    <Form style={{marginLeft: '10px', marginTop: '10px'}}>
                       <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                         <Form.Label style={{ fontSize: '18px' }}>Description</Form.Label>
                         <Form.Control value={descManu}
                         onChange={(e) => setDescription(e.target.value)}
                         as="textarea" rows={3} style={{fontSize: '16px', height: '200px', maxHeight: '200px', resize: 'none', overflowY: 'auto'}} />
                       </Form.Group>
-                    </Form>
           </Modal.Body>
           <Modal.Footer>
           <Button type="submit" variant="warning" size="md" style={{ fontSize: '20px' }} >Save</Button>
