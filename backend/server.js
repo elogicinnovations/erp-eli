@@ -17,7 +17,7 @@ const category = require("./routes/category.route");
 const binLocation = require("./routes/binLocation.route");
 const product = require("./routes/product.route");
 const manufacturer = require("./routes/manufacturer.route");
-
+const subPart = require("./routes/subPart.route");
 
 app.use("/masterList", masterRoute);
 app.use("/userRole", userRoute);
@@ -26,6 +26,8 @@ app.use("/category", category);
 app.use("/binLocation", binLocation);
 app.use("/product", product);
 app.use("/manufacturer", manufacturer);
+app.use("/subpart", subPart);
+
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);

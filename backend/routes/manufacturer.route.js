@@ -3,6 +3,10 @@ const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Manufacturer = require('../db/models/manufacturer.model');
 const { Manufacturer, Product } = require("../db/models/associations"); 
+
+
+
+
 router.route('/add').post(async (req, res) => {
 
     try {
