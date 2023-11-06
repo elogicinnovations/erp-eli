@@ -28,6 +28,13 @@ import ProductCategory from "./modules/Administrator/sub-modules/UserMasterData/
 import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer"
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
+import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts"
+import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
+import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
+import UpdateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/UpdateSpareParts"
+import AssemblyForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/AssemblyForm"
+import CreateAssemblyForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/CreateAssemblyForm"
+import UpdateAssemblyForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/UpdateAssemblyForm"
 import CreateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/CreateProduct"
 import UpdateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/UpdateProduct"
 import ProductSupplier from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductSupplier"
@@ -132,21 +139,57 @@ function App() {
             element={<BinLocation/>}
           />
           <Route
+            path="/binLocation"
+            element={<BinLocation/>}
+          />
+          <Route
             path="/productList"
             element={<ProductList/>}
           />
-              <Route
-                path="/createProduct"
-                element={<CreateProduct/>}
-              />
-              <Route
-                path="/updateProduct"
-                element={<UpdateProduct/>}
-              />
-              <Route
-                path="/productSupplier"
-                element={<ProductSupplier/>}
-              />
+                  <Route
+                    path="/createProduct"
+                    element={<CreateProduct/>}
+                  />
+                  <Route
+                    path="/updateProduct"
+                    element={<UpdateProduct/>}
+                  />
+                  <Route
+                    path="/productSupplier"
+                    element={<ProductSupplier/>}
+                  />
+                  <Route
+                    path="/productSupplier"
+                    element={<ProductSupplier/>}
+                  />
+          <Route
+            path="/subParts"
+            element={<SubParts/>}
+          />
+          <Route
+            path="/spareParts"
+            element={<SpareParts/>}
+          />
+                  <Route
+                    path="/createSpareParts"
+                    element={<CreateSpareParts/>}
+                  />
+                  <Route
+                    path="/updateSpareParts"
+                    element={<UpdateSpareParts/>}
+                  />
+          <Route
+            path="/assemblyForm"
+            element={<AssemblyForm/>}
+          />
+                  <Route
+                    path="/createAssemblyForm"
+                    element={<CreateAssemblyForm/>}
+                  />
+                  <Route
+                    path="/updateAssemblyForm"
+                    element={<UpdateAssemblyForm/>}
+                  />
 
            
         </Routes>

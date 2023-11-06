@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
-import '../../../../../styles/react-style.css';
+import '../../../../styles/react-style.css';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
@@ -32,16 +32,18 @@ import {
   
   import * as $ from 'jquery';
 
-function ProductList() {
+function AssemblyForm() {
+    
 
 // Artifitial data
 
       const aData = [
         {
           cat_id: '2434',
-          cat_name: 'Product A',
-          cat_remarks: 'Supplier A',
-          cat_added: '--',
+          cat_name: 'Assembly A',
+          cat_supplier: 'Supplier A',
+          cat_sub: '--',
+          cat_details: '--',
         },
       ]
 
@@ -77,7 +79,7 @@ function ProductList() {
         } else {
           swal({
             title: "Cancelled Successfully",
-            text: "Bin Location not Deleted!",
+            text: "Spare Part not Deleted!",
             icon: "warning",
           });
         }
@@ -128,12 +130,12 @@ function ProductList() {
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
                         <div className="emp-text-side">
-                            <p>Product List</p>
+                            <p>Assembly Form</p>
                         </div>
 
                         <div className="button-create-side">
                         <div className="Buttonmodal-new">
-                            <Link to="/createProduct" className='button'>
+                            <Link to='/createAssemblyForm' onClick={handleShow} className='button'>
                                 <span style={{ }}>
                                 <Plus size={25} />
                                 </span>
@@ -150,22 +152,24 @@ function ProductList() {
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Product Code</th>
-                                    <th className='tableh'>Item Name</th>
+                                    <th className='tableh'>Assemble Name</th>
                                     <th className='tableh'>Supplier</th>
-                                    <th className='tableh'>U/M</th>
+                                    <th className='tableh'>Spare Part</th>
+                                    <th className='tableh'>Details</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                       {aData.map((data,i) =>(
                                         <tr key={i}>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_id}</td>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_name}</td>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_remarks}</td>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_added}</td>
+                                          <td>{data.cat_id}</td>
+                                          <td>{data.cat_name}</td>
+                                          <td>{data.cat_supplier}</td>
+                                          <td>{data.cat_sub}</td>
+                                          <td>{data.cat_details}</td>
                                           <td>
-                                          <Link to='/updateProduct' className='btn'><NotePencil size={32} /></Link>
-                                          <button className='btn'><Trash size={32} color="#e60000" /></button>
+                                          <Link to='/updateAssemblyForm' onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></Link>
+                                          <button onClick={() => handleDelete(data.bin_id)} className='btn'><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}
@@ -179,4 +183,4 @@ function ProductList() {
   )
 }
 
-export default ProductList
+export default AssemblyForm

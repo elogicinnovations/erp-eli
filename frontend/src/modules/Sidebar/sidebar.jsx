@@ -163,7 +163,22 @@ function Sidebar() {
                   <ListItem button className='Productsub-menu'>
                     <ListItemText primary="Price Options" />
                   </ListItem>
-                </List>
+                  </List>
+                  <Link to={'/subParts'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='Productsub-menu'>
+                      <ListItemText primary="Sub Parts" />
+                    </ListItem>
+                  </Link>
+                  <Link to={'/spareParts'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='Productsub-menu'>
+                      <ListItemText primary="Spare Parts" />
+                    </ListItem>
+                  </Link>
+                  <Link to={'/assemblyForm'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <ListItem button className='Productsub-menu'>
+                      <ListItemText primary="Assembly Form" />
+                    </ListItem>
+                  </Link>
               </Collapse>
 
               <ListItem button className='adminsub-menu' onClick={toggleBPData}>
