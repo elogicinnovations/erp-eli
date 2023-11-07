@@ -316,7 +316,7 @@ function CreateSupplier() {
                         </Col>
                         <Col>
 
-                            <label htmlFor="" className='label-head mt-5' style={{ fontSize: 20 }}>Select a Receiving City: </label>
+                            <label htmlFor="" className='label-head mt-5' style={{ fontSize: 20 }}>Select a Receiving Area: </label>
                             <Form.Select
                                 aria-label=""
                                 required

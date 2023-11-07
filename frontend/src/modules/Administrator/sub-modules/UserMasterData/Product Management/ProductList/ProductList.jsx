@@ -6,12 +6,8 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
-import Button from 'react-bootstrap/Button';
 import swal from 'sweetalert';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
 import {
-    MagnifyingGlass,
     Gear, 
     Bell,
     UserCircle,
@@ -34,50 +30,68 @@ import {
 
 function ProductList() {
 
-// Artifitial data
-
-      const aData = [
-        {
-          cat_id: '2434',
-          cat_name: 'Product A',
-          cat_remarks: 'Supplier A',
-          cat_added: '--',
-        },
-      ]
-
-// Artifitial data
-
-    const [showModal, setShowModal] = useState(false);
-    const [updateModalShow, setUpdateModalShow] = useState(false);
     const navigate = useNavigate();
   
-    const handleClose = () => {
-      setShowModal(false);
-    };
+    const [product, setproduct] = useState([]);
+
+    useEffect(() => {
+        axios.get(BASE_URL + '/product/fetchTable')
+          .then(res => setproduct(res.data))
+          .catch(err => console.log(err));
+      }, []);
   
-    const handleShow = () => setShowModal(true);
-  
-    const handleModalToggle = () => {
-      setUpdateModalShow(!updateModalShow);
-    };
-  
-    const handleDelete = async param_id => {
+      function formatDate(isoDate) {
+        const date = new Date(isoDate);
+        return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+      }
+      
+      function padZero(num) {
+        return num.toString().padStart(2, '0');
+      }
+
+
+    const handleDelete = async table_id => {
       swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this user file!",
+        text: "Once deleted, you will not be able to recover this product data!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
           try {
+            const  response = await axios.delete(BASE_URL + `/product/delete/${table_id}`);
+             
+            if (response.status === 200) {
+              swal({
+                title: 'The Supplier has been deleted!',
+                text: 'The Supplier has been updated successfully.',
+                icon: 'success',
+                button: 'OK'
+              }).then(() => {
+                setproduct(prev => prev.filter(data => data.product_code !== table_id));
+                
+              });
+            } else if (response.status === 202) {
+              swal({
+                icon: 'error',
+                title: 'Delete Prohibited',
+                text: 'You cannot delete product that is used'
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
           } catch (err) {
             console.log(err);
           }
         } else {
           swal({
             title: "Cancelled Successfully",
-            text: "Bin Location not Deleted!",
+            text: "Product not Deleted!",
             icon: "warning",
           });
         }
@@ -85,11 +99,12 @@ function ProductList() {
     };
   
   
-    React.useEffect(() => {
-      $(document).ready(function () {
+    useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && product.length > 0) {
         $('#order-listing').DataTable();
-      });
-    }, []);
+      }
+    }, [product]);
 
   return (
     <div className="main-of-containers">
@@ -153,19 +168,23 @@ function ProductList() {
                                     <th className='tableh'>Item Name</th>
                                     <th className='tableh'>Supplier</th>
                                     <th className='tableh'>U/M</th>
+                                    <th className='tableh'>Date Created</th>
+                                    <th className='tableh'>Date Modified</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {aData.map((data,i) =>(
-                                        <tr key={i}>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_id}</td>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_name}</td>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_remarks}</td>
-                                          <td onClick={() => navigate('/productSupplier')}>{data.cat_added}</td>
+                                      {product.map((data,i) =>(
+                                        <tr key={i} >
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_code}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_name}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>--</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_unitMeasurement}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{formatDate(data.createdAt)}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{formatDate(data.updatedAt)}</td>
                                           <td>
-                                          <Link to='/updateProduct' className='btn'><NotePencil size={32} /></Link>
-                                          <button className='btn'><Trash size={32} color="#e60000" /></button>
+                                          <Link to={`/updateProduct/${data.product_code}`}className='btn'><NotePencil size={32}/></Link>
+                                          <button className='btn' type="button" onClick={() => handleDelete(data.product_code)}><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}

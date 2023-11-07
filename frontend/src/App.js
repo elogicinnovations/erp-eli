@@ -109,21 +109,18 @@ function App() {
             path="/Supplier"
             element={<Supplier />}
           />
-
-          <Route
-            path="/createSupplier"
-            element={<CreateSupplier />}
-          />
-
-          <Route
-            path="/editSupp/:id"
-            element={<EditSupplier/>}
-          />
-
-          <Route
-            path="/viewsupplier"
-            element={<ViewSupplier />}
-          />
+                <Route
+                  path="/createSupplier"
+                  element={<CreateSupplier />}
+                />
+                <Route
+                  path="/editSupp/:id"
+                  element={<EditSupplier/>}
+                />
+                <Route
+                  path="/viewsupplier"
+                  element={<ViewSupplier />}
+                />
 
           <Route
             path="/productCategory"
@@ -138,10 +135,7 @@ function App() {
             path="/binLocation"
             element={<BinLocation/>}
           />
-          <Route
-            path="/binLocation"
-            element={<BinLocation/>}
-          />
+         
           <Route
             path="/productList"
             element={<ProductList/>}
@@ -151,15 +145,11 @@ function App() {
                     element={<CreateProduct/>}
                   />
                   <Route
-                    path="/updateProduct"
+                    path="/updateProduct/:id"
                     element={<UpdateProduct/>}
                   />
                   <Route
-                    path="/productSupplier"
-                    element={<ProductSupplier/>}
-                  />
-                  <Route
-                    path="/productSupplier"
+                    path="/productSupplier/:id"
                     element={<ProductSupplier/>}
                   />
           <Route

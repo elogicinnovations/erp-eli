@@ -3,12 +3,24 @@ const { DataTypes } = require('sequelize');
 
 const Product = sequelize.define('product', {
   product_code: {
-    type: DataTypes.STRING,
+    // type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
+    autoIncrement: true,
     primaryKey: true,
   },
   product_name: {
     type: DataTypes.STRING, // Change the column name to col_roleID
+    allowNull: true,
+    unique: false,
+  },
+  product_category: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  product_unit: {
+    type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },
@@ -17,7 +29,26 @@ const Product = sequelize.define('product', {
     allowNull: true,
     unique: false,
   },
-  product_category: {
+  product_unitMeasurement: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  product_details: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  product_threshold: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: false,
+  },
+  product_image: {
+    type: DataTypes.BLOB('long'),
+    allowNull: true,
+  },
+  product_imageType: {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,

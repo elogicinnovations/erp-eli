@@ -248,69 +248,6 @@ router.route('/delete/:table_id').delete(async (req, res) => {
           res.status(409)
       }
   );
-
-
-
-// router.route("/fetchsuppEDIT").get(async (req, res) => {
-   
-//   const suppCOde = req.body.id;
-//   console.log('wala: ' + suppCOde)
-
-//     try {
-//         const data = await Supplier.findAll({
-//         where: {
-//             supplier_code: suppCOde,
-//         },
-//         });
-
-//         if (!data) {
-//         // No record found
-//         return res.status(404).json({ message: 'User role not found' });
-        
-//         }
-//         // console.log(data)
-//         return res.json(data);
-        
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ message: 'An error occurred' });
-//     }
-// });
-
-
-  // await Product.findAll({
-  //   where: {
-  //     supplier_code: id,
-  //   },
-  // })
-  //   .then((check) => {
-  //     if (check && check.length > 0) {
-  //       res.status(202).json({ success: true });
-  //     }
-
-  //     else{
-  //        Supplier.destroy({
-  //         where : {
-  //           supplier_code: id
-  //         }
-  //       }).then(
-  //           (del) => {
-  //               if(del){
-  //                   res.json({success : true})
-  //               }
-  //               else{
-  //                   res.status(400).json({success : false})
-  //               }
-  //           }
-  //       ).catch(
-  //           (err) => {
-  //               console.error(err)
-  //               res.status(409)
-  //           }
-  //       );
-  //     }
-  //   })
- 
 });
 
 

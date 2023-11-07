@@ -53,7 +53,7 @@ function Supplier() {
 
         swal({
           title: "Are you sure?",
-          text: "Once deleted, you will not be able to recover this user file!",
+          text: "Once deleted, you will not be able to recover this supplier data!",
           icon: "warning",
           buttons: true,
           dangerMode: true,
@@ -94,7 +94,7 @@ function Supplier() {
           } else {
             swal({
               title: "Cancelled Successfully",
-              text: "Supplier not Deleted!",
+              text: "Product not Deleted!",
               icon: "warning",
             });
           }

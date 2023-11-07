@@ -57,14 +57,14 @@ function Productvariants(){
   function padZero(num) {
     return num.toString().padStart(2, '0');
   }
-   function formatDate(isoDate) {
-      const date = new Date(isoDate);
-      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
-    }
+  //  function formatDate(isoDate) {
+  //     const date = new Date(isoDate);
+  //     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+  //   }
     
-    function padZero(num) {
-      return num.toString().padStart(2, '0');
-    }
+  //   function padZero(num) {
+  //     return num.toString().padStart(2, '0');
+  //   }
 
   const [validated, setValidated] = useState(false);
   const [code, setCode] = useState();
@@ -524,7 +524,7 @@ function Productvariants(){
                     </Form>
           </Modal.Body>
           <Modal.Footer>
-          <Button  type="submit" variant="warning" size="md" style={{ fontSize: '20px' }} >Save</Button>
+            <Button  type="submit" variant="warning" size="md" style={{ fontSize: '20px' }} >Save</Button>
             <Button variant="secondary" size="md" style={{ fontSize: '20px' }} onClick={() => setUpdateModalShow(!updateModalShow)}>
               Close
             </Button>
