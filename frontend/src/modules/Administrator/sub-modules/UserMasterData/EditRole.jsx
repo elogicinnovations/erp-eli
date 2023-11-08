@@ -56,7 +56,7 @@ function EditRole() {
 const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
 
   
-console.log('dasd' + selectedCheckboxes)
+// console.log('dasd' + selectedCheckboxes)
 
 const handleSubmit = async (e) => {
   e.preventDefault();

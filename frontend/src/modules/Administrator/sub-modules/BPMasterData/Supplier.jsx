@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../../../Sidebar/sidebar';
-import { useNavigate } from 'react-router';
 import axios from 'axios';
 import BASE_URL from '../../../../assets/global/url';
 import swal from 'sweetalert';
@@ -176,6 +175,7 @@ function Supplier() {
                                         <th className='tableh'>SUPPLIER Code</th>
                                         <th className='tableh'>SUPPLIER NAME</th>
                                         <th className='tableh'>CONTACT</th>
+                                        <th className='tableh'>STATUS</th>
                                         <th className='tableh'>Date Created</th>
                                         <th className='tableh'>Date Modified</th>
                                         <th className='tableh'>ACTION</th>
@@ -184,11 +184,12 @@ function Supplier() {
                                     <tbody>
                                         {supplier.map((data,i) =>(
                                             <tr key={i}>
-                                                <td>{data.supplier_code}</td>
-                                                <td>{data.supplier_name}</td>
-                                                <td>{data.supplier_contactPerson}</td>
-                                                <td>{formatDate(data.createdAt)}</td>
-                                                <td>{formatDate(data.updatedAt)}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_code}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_name}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_contactPerson}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_status}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.createdAt)}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.updatedAt)}</td>
                                                 <td>
                                                     <button className='btn'  type='button' >
                                                         <Link to={`/editSupp/${data.supplier_code}`} ><NotePencil size={32} /></Link>

@@ -74,26 +74,6 @@ router.route('/fetchTableEdit').get(async (req, res) => {
 
 
 
-router.route('/taggingSupplier').post(async (req, res) => {
-  try {
-    const productId = req.body.id;
-    const selectedSuppliers = req.body.selectedSuppliers;
-
-
-    // Iterate through selected suppliers and save them to the database
-    for (const selectedSupplier of selectedSuppliers) {
-      await Product.create({
-        productId: productId, // You should use the appropriate field name in your model
-        supplierId: selectedSupplier.id, // Use the appropriate field name in your model
-      });
-    }
-
-    res.status(200).send('Selected suppliers saved successfully');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('An error occurred');
-  }
-});
 
 
 

@@ -118,7 +118,7 @@ function App() {
                   element={<EditSupplier/>}
                 />
                 <Route
-                  path="/viewsupplier"
+                  path="/viewsupplier/:id"
                   element={<ViewSupplier />}
                 />
 

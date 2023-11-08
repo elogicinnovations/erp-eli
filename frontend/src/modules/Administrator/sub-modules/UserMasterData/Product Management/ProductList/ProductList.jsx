@@ -64,8 +64,8 @@ function ProductList() {
              
             if (response.status === 200) {
               swal({
-                title: 'The Supplier has been deleted!',
-                text: 'The Supplier has been updated successfully.',
+                title: 'The Product has been deleted!',
+                text: 'The Product has been deleted successfully.',
                 icon: 'success',
                 button: 'OK'
               }).then(() => {
