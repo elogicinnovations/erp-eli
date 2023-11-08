@@ -51,16 +51,60 @@ function ProductSupplier() {
 const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [tableData, setTableData] = useState([]);
 
-  // Your data fetching code...
+// adding to datatable
+// const handleSupplierSelect = (selectedList, selectedItem) => {
+//   // Log each selected supplier
+//   selectedList.forEach(selectedSupplier => {
+//     console.log('Selected Supplier: ' + selectedSupplier.name);
+//     axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
+//       id,
+//       // selectedSupplier, // Send the currently selected supplier
+//       selectedItem
+//     })
+//     .then((res) => {
+//       console.log(res);
+//       // Handle the response or display a message if needed
+//     });
+//   });
+//   setSelectedSuppliers(selectedList); // Update the state after making the requests
+//   updateTable(selectedList);
+// };
 
-  const handleSupplierSelect = (selectedList, selectedItem) => {
-    setSelectedSuppliers(selectedList);
-    updateTable(selectedList);
-  };
+const handleSupplierSelect = (selectedList, selectedItem) => {
+  const uniqueSelectedSuppliers = [];
+  
+  selectedList.forEach(selectedSupplier => {
+    const isDuplicate = uniqueSelectedSuppliers.some(item => item.id === selectedSupplier.id);
+    if (!isDuplicate) {
+      uniqueSelectedSuppliers.push(selectedSupplier);
+    }
+  });
 
+  uniqueSelectedSuppliers.forEach(selectedSupplier => {
+    console.log('Selected Supplier: ' + selectedSupplier.name);
+    axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
+      id,
+      selectedItem: selectedSupplier, // Send the currently selected supplier as an individual request
+    })
+    .then((res) => {
+      console.log(res);
+      // Handle the response or display a message if needed
+    });
+  });
+
+  setSelectedSuppliers(uniqueSelectedSuppliers); // Update the state after making the requests
+  updateTable(uniqueSelectedSuppliers);
+};
+
+
+
+
+  
+//remove to datatable
   const handleSupplierRemove = (selectedList, removedItem) => {
     setSelectedSuppliers(selectedList);
     updateTable(selectedList);
+     console.log('remove:' + selectedSuppliers)
   };
 
   const updateTable = (selectedSuppliers) => {
@@ -71,8 +115,6 @@ const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 
       return (
         <tr key={selectedSupplier.id}>
-          <td>{id}</td>
-          <td>{name}</td>
           <td>{supplierData.supplier_name}</td>
           <td>walapa</td>
         </tr>
@@ -439,7 +481,7 @@ const [selectedSuppliers, setSelectedSuppliers] = useState([]);
                           <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
-                                <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
+                                <Form.Label style={{ fontSize: '20px' }}>Supplier: </Form.Label>
                                 <Multiselect
                                   options={supplier.map(s => ({ id: s.supplier_code, name: s.supplier_name }))}
                                   selectedValues={selectedSuppliers}
@@ -478,8 +520,6 @@ const [selectedSuppliers, setSelectedSuppliers] = useState([]);
                                   <table id="order-listing">
                                     <thead>
                                       <tr>
-                                        <th className="tableh">Product ID</th>
-                                        <th className="tableh">Name</th>
                                         <th className="tableh">Supplier</th>
                                         <th className="tableh">Price</th>
                                       </tr>
