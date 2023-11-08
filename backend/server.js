@@ -26,7 +26,7 @@ app.use("/category", category);
 app.use("/binLocation", binLocation);
 app.use("/product", product);
 app.use("/manufacturer", manufacturer);
-app.use("/subpart", subPart);
+app.use("/subPart", subPart);
 
 
 app.listen(port, () => {
