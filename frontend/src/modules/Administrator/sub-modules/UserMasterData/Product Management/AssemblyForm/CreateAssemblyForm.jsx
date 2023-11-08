@@ -111,7 +111,7 @@ React.useEffect(() => {
                                             <tr>
                                                 <th className='tableh'>Product Code</th>
                                                 <th className='tableh'>Quantity</th>
-                                                <th className='tableh'>Sub Supplier</th>
+                                                <th className='tableh'>Spare Parts</th>
                                                 <th className='tableh'>Desciptions</th>
                                                 <th className='tableh'>Action</th>
                                             </tr>
