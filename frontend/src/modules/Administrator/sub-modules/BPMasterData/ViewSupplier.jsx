@@ -113,17 +113,37 @@ function ViewSupplier() {
           .then(res => setproduct(res.data))
           .catch(err => console.log(err));
       }, []);
+      
 
 
 
 
 // styless
-    React.useEffect(() => {
-        $(document).ready(function () {
-          $('#order-listing').DataTable();
-          $('#ordered-listing').DataTable();
-        });
-      }, []);
+ useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && product.length > 0) {
+        $('#order-listing').DataTable();
+      }
+    }, [product]);
+
+
+// try {
+//     $(document).ready(function() {
+//         $('#order-listing').DataTable();
+//     });
+// } catch (error) {
+//     console.error("DataTables Error:", error);
+// }
+
+
+// React.useEffect(() => {
+//     $(document).ready(function () {
+//       $('#order-listing').DataTable();
+//       $('#ordered-listing').DataTable();
+//     });
+//   }, []);
+
+
     const tabStyle = {
         padding: '10px 15px', 
         margin: '0 10px',
@@ -331,11 +351,11 @@ function ViewSupplier() {
                                                 {product.map((data,i) =>(
                                                 <tr key={i} >
                                                     <td >{data.product_code}</td>
-                                                    <td >{data.product.product_name}</td>
+                                                    {/* <td >{data.product.product_category}</td>
                                                     <td >{data.product.product_category}</td>
                                                     <td >{data.product.product_unitMeasurement}</td>
                                                     <td >{data.product.product_name}</td>
-                                                    <td>{data.product_price !== null ? data.product_price : 0}</td>
+                                                    <td>{data.product_price !== null ? data.product_price : 0}</td> */}
                                                   
                                                 </tr>
                                                 ))}
