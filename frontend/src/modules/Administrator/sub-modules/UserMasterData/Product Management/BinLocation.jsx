@@ -368,8 +368,8 @@ function BinLocation() {
                                 <tr>
                                     <th className='tableh'>ID</th>
                                     <th className='tableh'>Bin Name</th>
-                                    <th className='tableh'>Bin Sub-Name</th>
-                                    <th className='tableh'>Bin Remarks</th>
+                                    <th className='tableh'>Sub Bin-Name</th>
+                                    <th className='tableh'>Remarks</th>
                                     <th className='tableh'>Date Added</th>
                                     <th className='tableh'>Date Modified</th>
                                     <th className='tableh'>Action</th>
@@ -405,19 +405,19 @@ function BinLocation() {
               <Modal.Body>
                 <div>
                   <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: '20px' }}>Bin Location Name: </Form.Label>
+                    <Form.Label style={{ fontSize: '20px' }}>Location Name: </Form.Label>
                     <Form.Control type="text" placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}}required onChange={e => setbinLocationName(e.target.value)}/>
                   </Form.Group>
                 </div>
                 <div>
                   <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: '20px' }}>Bin Location Sub-Name: </Form.Label>
+                    <Form.Label style={{ fontSize: '20px' }}>Location Sub-Name: </Form.Label>
                     <Form.Control type="text" placeholder="Enter Sub-Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required onChange={e => setbinLocationSubName(e.target.value)} />
                   </Form.Group>
                 </div>
                 <div>
                   <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: '20px' }}>Bin Location Remarks: </Form.Label>
+                    <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
                     <Form.Control type="text" placeholder="Enter Bin Location Remarks..." style={{height: '40px', fontSize: '15px'}} onChange={e => setbinLocationRemarks(e.target.value)} />
                   </Form.Group>
               </div>
@@ -446,7 +446,7 @@ function BinLocation() {
                   <Modal.Body>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput1">
-                          <Form.Label style={{ fontSize: '20px' }}>Bin Location Name: </Form.Label>
+                          <Form.Label style={{ fontSize: '20px' }}>Location Name: </Form.Label>
                           <Form.Control type="text"
                           value={updateFormData.bin_name} onChange={handleUpdateFormChange} name="bin_name"
                           placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required/>
@@ -454,7 +454,7 @@ function BinLocation() {
                       </div>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput1">
-                          <Form.Label style={{ fontSize: '20px' }}>Bin Location Sub-Name: </Form.Label>
+                          <Form.Label style={{ fontSize: '20px' }}>Location Sub-Name: </Form.Label>
                           <Form.Control type="text"
                           value={updateFormData.bin_subname} onChange={handleUpdateFormChange} name="bin_subname"
                           placeholder="Enter Name of the Bin Location..." style={{height: '40px', fontSize: '15px'}} required/>
@@ -462,7 +462,7 @@ function BinLocation() {
                       </div>
                       <div>
                         <Form.Group controlId="exampleForm.ControlInput2">
-                          <Form.Label style={{ fontSize: '20px' }}>Bin Location Remarks: </Form.Label>
+                          <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
                           <Form.Control type="text" value={updateFormData.bin_remarks} onChange={handleUpdateFormChange} name="bin_remarks"
                           placeholder="Enter Bin Location Remarks..." style={{height: '40px', fontSize: '15px'}}/>
                         </Form.Group>

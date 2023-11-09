@@ -142,8 +142,8 @@ useEffect(() => {
 
 
 const handleBlurPrice = async table_id => {swal({
-  title: "Are you sure to remove this supplier?",
-  text: "You are attempting to remove the supplier",
+  title: "Are you sure to update this price?",
+  text: "You are attempting to update the price",
   icon: "warning",
   buttons: true,
   dangerMode: true,
@@ -660,6 +660,7 @@ const handleDelete = async table_id => {
                                         <th className="tableh">ID</th>
                                         <th className="tableh">Supplier</th>
                                         <th className="tableh">Price</th>
+                                        <th className="tableh">Action</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -667,12 +668,16 @@ const handleDelete = async table_id => {
                                           <tr key={i} >
                                             <td >{data.id}</td>
                                             <td >{data.supplier_code}</td>
-                                            <td  >
-                                              <input className='bg-primary' 
+                                            <td >
+                                              <div className='input-group' style={{background: '#E9ECEF'}}>
+                                                <span style={{background: '#E9ECEF'}}>₱</span>
+                                                <input className='form-control' style={{background: '#E9ECEF', fontSize: 15}} 
+                                              
                                                 type="number" 
                                                 onBlur={() => handleBlurPrice(data.id)} 
                                                 value={data.product_price} 
                                                 onChange={e => setPrice(e.target.value)}/>
+                                              </div>                           
                                             </td>
                                             <td><Trash size={32} color="#e60000" onClick={() => handleDelete(data.id)}/></td>
                                           </tr>

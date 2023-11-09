@@ -331,8 +331,11 @@ function ViewSupplier() {
                                                 {product.map((data,i) =>(
                                                 <tr key={i} >
                                                     <td >{data.product_code}</td>
-                                                    <td >{data.product_code}</td>
-                                                    <td></td>
+                                                    <td >{data.product.product_name}</td>
+                                                    <td >{data.product.product_category}</td>
+                                                    <td >{data.product.product_unitMeasurement}</td>
+                                                    <td >{data.product.product_name}</td>
+                                                    <td>{data.product_price !== null ? data.product_price : 0}</td>
                                                   
                                                 </tr>
                                                 ))}

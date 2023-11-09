@@ -1,3 +1,3 @@
-const unit = ["BOX ",  "PAILS",  "PIECE"];
+const unit = ["kg ",  "liters",  "ml"];
 
 export default unit;

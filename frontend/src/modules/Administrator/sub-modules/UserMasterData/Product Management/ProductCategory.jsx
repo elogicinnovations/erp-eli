@@ -354,9 +354,9 @@ function ProductCategory() {
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>Category ID</th>
+                                    <th className='tableh'>Category Code</th>
                                     <th className='tableh'>Category Name</th>
-                                    <th className='tableh'>Category Remarks</th>
+                                    <th className='tableh'>Description</th>
                                     <th className='tableh'>Date Added</th>
                                     <th className='tableh'>Date Modified</th>
                                     <th className='tableh'>Action</th>

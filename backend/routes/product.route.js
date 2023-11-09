@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const Product = require('../db/models/product.model')
+// const Product = require('../db/models/product.model')
+const { ProductTAGSupplier, Product } = require("../db/models/associations"); 
 const session = require('express-session')
 const multer = require('multer'); // Import multer
 
@@ -9,6 +10,7 @@ const multer = require('multer'); // Import multer
 // const storage = multer.memoryStorage();
 // const uploader = multer({ storage });
 const mime = require('mime-types');
+const productTAGsupplier = require('../db/models/productTAGsupplier.model');
 // Create a multer instance to handle file uploads
 const upload = multer();
 
@@ -84,6 +86,15 @@ router.route('/create').post(
     
     async (req, res) => {
     try {
+
+      let finalThreshold;
+
+
+      if (req.body.thresholds === ''){
+        finalThreshold = 0;
+      }else{
+        finalThreshold = req.body.thresholds;
+      }
         
         // Check if the supplier code is already exists in the table
         const existingDataCode = await Product.findOne({
@@ -125,7 +136,7 @@ router.route('/create').post(
             product_unitMeasurement: req.body.unitMeasurement,
             product_manufacturer: req.body.slct_manufacturer,
             product_details: req.body.details,
-            product_threshold: req.body.thresholds,
+            product_threshold: finalThreshold,
             product_image: image_blob,
             product_imageType: image_blobFiletype
           });
@@ -215,25 +226,45 @@ router.route('/update').put(
 router.route('/delete/:table_id').delete(async (req, res) => {
   const id = req.params.table_id;
 
-  Product.destroy({
-    where : {
-      product_code: id
-    }
-  }).then(
-      (del) => {
-          if(del){
-              res.json({success : true})
-          }
-          else{
-              res.status(400).json({success : false})
-          }
+
+
+  await productTAGsupplier.findAll({
+    where: {
+      product_code: id,
+    },
+  })
+    .then((check) => {
+      if (check && check.length > 0) {
+        res.status(202).json({ success: true });
       }
-  ).catch(
-      (err) => {
-          console.error(err)
-          res.status(409)
+
+      else{
+        Product.destroy({
+          where : {
+            product_code: id
+          }
+        }).then(
+            (del) => {
+                if(del){
+                    res.json({success : true})
+                }
+                else{
+                    res.status(400).json({success : false})
+                }
+            }
+        ).catch(
+            (err) => {
+                console.error(err)
+                res.status(409)
+            }
+        );
       }
-  );
+    })
+
+
+
+
+  
 });
 
 

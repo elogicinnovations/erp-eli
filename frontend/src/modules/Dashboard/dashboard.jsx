@@ -19,7 +19,9 @@ function Dashboard() {
 
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-            
+          <div >
+            <img className='imdashboard' style={{width: '85vw'}} src={dashboardImg} alt="" srcset="" />
+          </div>
         </div>
       </div>
      

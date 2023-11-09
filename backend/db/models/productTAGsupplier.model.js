@@ -9,7 +9,7 @@ const productTAGsupplier = sequelize.define('product_tag_supplier', {
         autoIncrement: true
     },
     product_code: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
     },
     supplier_code: {

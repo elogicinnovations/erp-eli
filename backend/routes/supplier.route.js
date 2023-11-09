@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const Supplier = require('../db/models/supplier.model')
+// const Supplier = require('../db/models/supplier.model')
+const { ProductTAGSupplier, Supplier } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -229,25 +230,49 @@ router.route('/update').put(async (req, res) => {
 router.route('/delete/:table_id').delete(async (req, res) => {
   const id = req.params.table_id;
 
-  Supplier.destroy({
-    where : {
-      supplier_code: id
-    }
-  }).then(
-      (del) => {
-          if(del){
-              res.json({success : true})
-          }
-          else{
-              res.status(400).json({success : false})
-          }
+
+
+
+  await ProductTAGSupplier.findAll({
+    where: {
+      supplier_code: id,
+    },
+  })
+    .then((check) => {
+      if (check && check.length > 0) {
+        res.status(202).json({ success: true });
       }
-  ).catch(
-      (err) => {
-          console.error(err)
-          res.status(409)
+
+      else{
+        Supplier.destroy({
+          where : {
+            supplier_code: id
+          }
+        }).then(
+            (del) => {
+                if(del){
+                    res.json({success : true})
+                }
+                else{
+                    res.status(400).json({success : false})
+                }
+            }
+        ).catch(
+            (err) => {
+                console.error(err)
+                res.status(409)
+            }
+        );
+
+
       }
-  );
+    })
+
+
+
+
+
+
 });
 
 

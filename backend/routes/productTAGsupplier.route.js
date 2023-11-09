@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const sequelize = require('../db/config/sequelize.config');
-const ProductTAGSupplier = require('../db/models/productTAGsupplier.model');
+const { ProductTAGSupplier, Product } = require("../db/models/associations"); 
+// const ProductTAGSupplier = require('../db/models/productTAGsupplier.model');
 
 
 router.route('/fetchTable').get(async (req, res) => {
     try {
+      
       console.log(req.query.id)
       const data = await ProductTAGSupplier.findAll({
         where: {product_code: req.query.id}
@@ -24,13 +26,34 @@ router.route('/fetchTable').get(async (req, res) => {
   });
 
 
-  
 router.route('/fetchProduct').get(async (req, res) => { // for fetching product that is tag to supplier (supplier module)
   try {
     // console.log(req.query.id)
+
+    //  const data = await ProductTAGSupplier.findAll({
+    //   include: {
+    //     model: Product,
+    //     required: true,
+    //   },
+    //   where: 
+    //         {
+    //           supplier_code: req.query.id
+    //         }
+    // });
+
     const data = await ProductTAGSupplier.findAll({
-      where: {supplier_code: req.query.id}
-    });
+      where: { supplier_code: req.query.id },
+      include: [{
+        model: Product,
+        required: true
+        
+      }]
+    })
+
+
+    // const data = await ProductTAGSupplier.findAll({
+    //   where: {supplier_code: req.query.id}
+    // });
 
     if (data) {
       // console.log(data);
