@@ -1112,6 +1112,19 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+.show {
+  position: absolute;
+  right: 20px;
+  bottom: 3px;
+}
+
+.restrictions{
+  display: block;
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+}
+
 div#order-listing_wrapper{
   position: relative;
   top: -50px;
