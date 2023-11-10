@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "multiselect-react-dropdown": "^2.0.25",
-    "react-dropzone": "^14.2.3"
-  }
-}
