@@ -9,6 +9,7 @@ import swal from 'sweetalert';
 import BASE_URL from '../../../../assets/global/url';
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from 'react-bootstrap/Form';
+import { FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa';
 
 import {
   MagnifyingGlass,
@@ -37,6 +38,9 @@ function MasterList() {
   const [masterListt, setmasterListt] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for confirm password visibility
 
   const [formData, setFormData] = useState({
     cname: '',
@@ -126,46 +130,96 @@ function MasterList() {
     }
   };
 
-  const handleFormChange = e => {
+  const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
-
+  
     if (type === 'checkbox') {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
-        [name]: checked
+        [name]: checked,
       }));
+    } else if (name === 'cnum') {
+      // Check if the value contains only numbers, '+', and '-'
+      const isValid = /^[0-9+\\-]*$/.test(value);
+  
+      if (isValid) {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
     } else if (name === 'cname') {
       // Check if the value contains invalid characters
       const isValid = /^[a-zA-Z\s',.\-]*$/.test(value);
-
-      if (isValid) {
-        setFormData(prevData => ({
+  
+      if (name === 'cpass' || name === 'cpass2') {
+        // For password and confirm password fields
+        setFormData((prevData) => ({
           ...prevData,
-          [name]: value
+          [name]: value,
+        }));
+      }
+  
+      if (isValid) {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
         }));
       }
     } else {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
-        [name]: value
+        [name]: value,
       }));
     }
+  };
+  
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Function to toggle confirm password visibility
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const getRoleName = (roleID) => {
+    const role = roles.find(role => role.col_roleID === roleID);
+    return role ? role.col_rolename : 'Unknown Role';
   };
 
   const handleUpdateFormChange = e => {
     const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setUpdateFormData(prevData => ({
-        ...prevData,
-        [name]: checked
-      }));
-    } else {
-      setUpdateFormData(prevData => ({
-        ...prevData,
-        [name]: value
-      }));
+  
+    // Define regex patterns
+    const nameRegex = /^[a-zA-Z\s',.\-]*$/;
+    const contactRegex = /^[0-9+\\-]*$/;
+  
+    // Validate input based on type
+    let isValidInput = true;
+    if (type === 'text' && name === 'uaname') {
+      isValidInput = nameRegex.test(value);
+    } else if (type === 'text' && name === 'uanum') {
+      isValidInput = contactRegex.test(value);
+    }
+  
+    // Update form data only if the input is valid
+    if (isValidInput) {
+      if (type === 'checkbox') {
+        setUpdateFormData(prevData => ({
+          ...prevData,
+          [name]: checked
+        }));
+      } else {
+        setUpdateFormData(prevData => ({
+          ...prevData,
+          [name]: value
+        }));
+      }
     }
   };
+  
 
   const handleFormSubmit = async e => {
     e.preventDefault();
@@ -506,7 +560,7 @@ function MasterList() {
                               {masterListt.map((data, i) => (
                               <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                                 <td>{data.col_id}</td>
-                                <td>{data.col_roleID}</td>
+                                <td>{getRoleName(data.col_roleID)}</td>
                                 <td>{data.col_Fname}</td>
                                 <td>{data.col_email}</td>
                                 <td>{data.col_status}</td>
@@ -563,7 +617,7 @@ function MasterList() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Name: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter your name" style={{height: '40px', fontSize: '15px'}} value={formData.cname} onChange={handleFormChange} name="cname" required/>
+                                <Form.Control type="text" placeholder="Enter your name" maxLength={50} style={{height: '40px', fontSize: '15px'}} value={formData.cname} onChange={handleFormChange} name="cname" required/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
@@ -580,8 +634,8 @@ function MasterList() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Contact: </Form.Label>
-                                <Form.Control type="number" placeholder="Enter your contact number" style={{height: '40px', fontSize: '15px'}} 
-                                value={formData.cnum} onChange={handleFormChange} name="cnum" required/>
+                                <Form.Control type="text" placeholder="Enter your contact number" style={{height: '40px', fontSize: '15px'}} 
+                                value={formData.cnum} onChange={handleFormChange} name="cnum" maxLength={15} required/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
@@ -643,17 +697,31 @@ function MasterList() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Password: </Form.Label>
-                                <Form.Control type="password"
+                                <Form.Control type={showPassword ? 'text' : 'password'}
                                 value={formData.cpass} onChange={handleFormChange} required name="cpass"
                                 placeholder="Enter your password" style={{height: '40px', fontSize: '15px'}}/>
+                                <div className="show">
+                                {showPassword ? (
+                                  <FaEyeSlash className="eye" onClick={togglePasswordVisibility} />
+                                ) : (
+                                  <FaEye className="eye" onClick={togglePasswordVisibility} />
+                                )}
+                                </div>
                               </Form.Group>
                             </div>
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                                 <Form.Label style={{ fontSize: '20px' }}>Confirm Password: </Form.Label>
-                                <Form.Control type="password"
+                                <Form.Control type={showConfirmPassword ? 'text' : 'password'}
                                 value={formData.cpass2} onChange={handleFormChange} required name="cpass2"
                                 placeholder="Confirm your password" style={{height: '40px', fontSize: '15px'}}/>
+                                <div className="show">
+                                  {showConfirmPassword ? (
+                                    <FaEyeSlash className="eye" onClick={toggleConfirmPasswordVisibility} />
+                                  ) : (
+                                    <FaEye className="eye" onClick={toggleConfirmPasswordVisibility} />
+                                  )}
+                                </div>
                               </Form.Group>
                             </div>
                           </div>
@@ -709,7 +777,7 @@ function MasterList() {
                         <Form.Group controlId="exampleForm.ControlInput1">
                           <Form.Label style={{ fontSize: '20px' }}>Name: </Form.Label>
                           <Form.Control type="text"
-                          value={updateFormData.uaname} onChange={handleUpdateFormChange} name="uaname"
+                          value={updateFormData.uaname} onChange={handleUpdateFormChange} maxLength={50} name="uaname"
                           placeholder="Enter your name" style={{height: '40px', fontSize: '15px'}}/>
                         </Form.Group>
                       </div>
@@ -728,7 +796,7 @@ function MasterList() {
                       <div className="col-6">
                         <Form.Group controlId="exampleForm.ControlInput1">
                           <Form.Label style={{ fontSize: '20px' }}>Contact: </Form.Label>
-                          <Form.Control type="number" value={updateFormData.uanum} onChange={handleUpdateFormChange} name="uanum" placeholder="Enter your contact number" style={{height: '40px', fontSize: '15px'}}/>
+                          <Form.Control type="text" value={updateFormData.uanum} maxLength={15} onChange={handleUpdateFormChange} name="uanum" placeholder="Enter your contact number" style={{height: '40px', fontSize: '15px'}}/>
                         </Form.Group>
                       </div>
                       <div className="col-6">
@@ -788,23 +856,34 @@ function MasterList() {
                       <div className="col-6">
                         <Form.Group controlId="exampleForm.ControlInput1">
                           <Form.Label style={{ fontSize: '20px' }}>Password: </Form.Label>
-                          <Form.Control type="password"
+                          <Form.Control type={showPassword ? 'text' : 'password'}
                           value={updateFormData.uapass} onChange={handleUpdateFormChange} required name="uapass"
                            placeholder="Enter your password" style={{height: '40px', fontSize: '15px'}}/>
+                           <div className="show">
+                            {showPassword ? (
+                              <FaEyeSlash className="eye" onClick={togglePasswordVisibility} />
+                            ) : (
+                              <FaEye className="eye" onClick={togglePasswordVisibility} />
+                            )}
+                           </div>
                         </Form.Group>
                       </div>
                       <div className="col-6">
                         <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: '20px' }}>Confirm Password: </Form.Label>
-                          <Form.Control type="password" value={updateFormData.uapass} onChange={handleUpdateFormChange} required name="uapass"
+                          <Form.Control type={showConfirmPassword ? 'text' : 'password'} value={updateFormData.uapass} onChange={handleUpdateFormChange} required name="uapass"
                            placeholder="Confirm your password" style={{height: '40px', fontSize: '15px'}}/>
+                           <div className="show">
+                            {showConfirmPassword ? (
+                              <FaEyeSlash className="eye" onClick={toggleConfirmPasswordVisibility} />
+                            ) : (
+                              <FaEye className="eye" onClick={toggleConfirmPasswordVisibility} />
+                            )}
+                          </div>
                         </Form.Group>
                       </div>
                     </div>
                   </Form>
-
-
-                  
 
                   </Modal.Body>
                   <Modal.Footer>

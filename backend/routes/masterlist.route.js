@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {where, Op} = require('sequelize')
+const { where, Op, col, fn } = require('sequelize');
 const nodemailer = require('nodemailer');
 //master Model
 // const MasterList = require('../db/models/masterlist.model')
@@ -14,28 +14,25 @@ router.use(session({
 
 
 router.route("/login").post(async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    try{
-      const user = await MasterList.findOne({
-        where : {
-            col_email : username,
-          // password : await bcrypt(password, 10)
-          col_Pass: password
-        }
-      });
+  try {
+    const user = await MasterList.findOne({
+      where: {
+        col_email: username,
+      },
+    });
 
-      if (user) {
-        // const token = await jwt.sign({col_email : username}, "secret")
-        return res.status(200).json({message: 'Login Success'})
-      }else{
-        return res.status(202).json({message: 'incorrect credentials'})
-      }
-    }catch (e) {
-      console.error(e)
-      return res.status(500).json({ error : "Internal server error"})
+    if (user && user.col_Pass === password) {
+      return res.status(200).json({ message: 'Login Success' });
+    } else {
+      return res.status(202).json({ message: 'Incorrect credentials' });
     }
-})
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 //--------------------Forgot Password------------------//
 // Replace these with your Gmail credentials

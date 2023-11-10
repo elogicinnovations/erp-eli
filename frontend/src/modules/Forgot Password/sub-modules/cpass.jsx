@@ -150,6 +150,7 @@ const [passwordValues, setPasswordValues] = useState({
 
 const [isLengthValid, setIsLengthValid] = useState(true); // State to track password length validation
 const [hasAlphaNumeric, setHasAlphanumeric] = useState(true); // State to track capital letter presence
+const [hasUpperCase, setHasUpperCase] = useState(true);
 
 const [passwordMatch, setPasswordMatch] = useState(false); // State to track password matching
 const [passwordinput, setpass] = useState('');
@@ -172,8 +173,12 @@ const handlePasswordChangeIcon = (prop) => (event) => {
   // Check if the password contains at least one number and special character
   const hasAlphaNumeric = /[0-9!@#]/.test(newPassword);
 
+  // Check if the password contains at least one uppercase letter
+  const hasUpperCase = /[A-Z]/.test(newPassword);
+
   setIsLengthValid(isLengthValid);
   setHasAlphanumeric(hasAlphaNumeric);
+  setHasUpperCase(hasUpperCase);
 };
 
 const handlePasswordChangeIconCpass = (prop) => (event) => {
@@ -324,18 +329,23 @@ const handleSubmit = () => {
                                   className={isLengthValid ? 'valid' : 'invalid'} // Apply CSS class based on length validation
                                 />
                           </Box>
+                            <div className="restrictions">
                               {!isLengthValid && (
                                 <p style={{ color: 'red', fontSize: 11 }}>
                                   * Password must be at least 8 characters
                                 </p>
                               )}
-                              <div className="alphanumeric">
+                              {!hasUpperCase && (
+                                <p style={{ color: 'red', fontSize: 11, }}>
+                                  * Password must contain at least one uppercase letter
+                                </p>
+                              )}
                               {!hasAlphaNumeric && (
                                 <p style={{ color: 'red', fontSize: 11, }}>
                                   * Password must contain numbers and special characters [0-9!@#].
                                 </p>
                               )}
-                              </div>
+                            </div>
                         </div>
 
                         <div className="secondinput-pass">
