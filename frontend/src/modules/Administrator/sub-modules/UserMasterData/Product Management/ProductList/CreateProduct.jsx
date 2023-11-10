@@ -273,7 +273,7 @@ function CreateProduct() {
                                   <Form.Label style={{ fontSize: '20px' }}>Unit: </Form.Label>
                                   <Form.Select
                                     aria-label=""
-                                    required
+                                    
                                     style={{ height: '40px', fontSize: '15px' }}
                                     defaultValue=''
                                     onChange={handleChangeUnit}
@@ -321,7 +321,7 @@ function CreateProduct() {
                                   <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
                                   <Form.Select
                                     aria-label=""
-                                    required
+                                    
                                     style={{ height: '40px', fontSize: '15px' }}
                                     defaultValue=''
                                     onChange={handleChangeMeasurement}
@@ -391,7 +391,7 @@ function CreateProduct() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
-                                <Form.Control required onChange={(e) => setThresholds(e.target.value)} type="number" placeholder="Minimum Stocking" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control onChange={(e) => setThresholds(e.target.value)} type="number" placeholder="Minimum Stocking" style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
                             <div className="col-6">

@@ -64,8 +64,8 @@ function ProductList() {
              
             if (response.status === 200) {
               swal({
-                title: 'The Supplier has been deleted!',
-                text: 'The Supplier has been updated successfully.',
+                title: 'The Product has been deleted!',
+                text: 'The Product has been deleted successfully.',
                 icon: 'success',
                 button: 'OK'
               }).then(() => {
@@ -166,7 +166,6 @@ function ProductList() {
                                 <tr>
                                     <th className='tableh'>Product Code</th>
                                     <th className='tableh'>Item Name</th>
-                                    <th className='tableh'>Supplier</th>
                                     <th className='tableh'>U/M</th>
                                     <th className='tableh'>Date Created</th>
                                     <th className='tableh'>Date Modified</th>
@@ -178,8 +177,7 @@ function ProductList() {
                                         <tr key={i} >
                                           <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_code}</td>
                                           <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_name}</td>
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>--</td>
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_unitMeasurement}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_unitMeasurement  !== '' ? data.product_unitMeasurement : '--'}</td>
                                           <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{formatDate(data.createdAt)}</td>
                                           <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{formatDate(data.updatedAt)}</td>
                                           <td>

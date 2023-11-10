@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef}from 'react'
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import '../../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import swal from 'sweetalert';
@@ -11,7 +11,9 @@ import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement
 import cls_unit from '../../../../../../assets/global/unit';
 import Dropzone from 'react-dropzone';
 import Multiselect from 'multiselect-react-dropdown';
-
+import {
+  Trash
+} from "@phosphor-icons/react";
 
 
 import '../../../../../../assets/skydash/vendors/feather/feather.css';
@@ -27,10 +29,10 @@ import '../../../../../../assets/skydash/js/off-canvas';
 
 
 function ProductSupplier() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { id } = useParams();
-  // const [product, setproduct] = useState([]); // for fetching product data
-  const [validated, setValidated] = useState(false);// for form validation
+  const [product, setproduct] = useState([]); // for fetching product data that tag to supplier
+  // const [validated, setValidated] = useState(false);// for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
   const [supplier, setsupplier] = useState([]); // for fetching category data
@@ -47,32 +49,61 @@ function ProductSupplier() {
   const [thresholds, setThresholds] = useState('');
 
 
-//------------------------------for tagging of supplier ---------------------------//
-const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-  const [tableData, setTableData] = useState([]);
+  const [price, setPrice] = useState('');
 
-// adding to datatable
+
+//------------------------------for tagging of supplier ---------------------------//
+
+
+const reloadTable  = () => {
+  
+  axios.get(BASE_URL + '/productTAGsupplier/fetchTable',{
+    params: {
+      id: id
+    }
+  })
+    .then(res => setproduct(res.data))
+    .catch(err => console.log(err));
+}
+
+
+const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 // const handleSupplierSelect = (selectedList, selectedItem) => {
-//   // Log each selected supplier
+//   const uniqueSelectedSuppliers = [];
+
 //   selectedList.forEach(selectedSupplier => {
-//     console.log('Selected Supplier: ' + selectedSupplier.name);
+//     const isDuplicate = uniqueSelectedSuppliers.some(item => item.id === selectedSupplier.id);
+//     if (!isDuplicate) {
+//       uniqueSelectedSuppliers.push(selectedSupplier);
+//     }
+//   });
+
+//   // Filter out items with blank supplier_code
+//   const nonBlankItems = uniqueSelectedSuppliers.filter(item => item.id !== '');
+
+//   // Update the product state with non-blank items
+//   nonBlankItems.forEach(selectedSupplier => {
 //     axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
 //       id,
-//       // selectedSupplier, // Send the currently selected supplier
-//       selectedItem
+//       selectedItem: selectedSupplier,
 //     })
 //     .then((res) => {
 //       console.log(res);
-//       // Handle the response or display a message if needed
+//       const newId = res.data.id;
+//       setproduct(prev => [...prev, {
+//         id: newId,
+//         product_code: res.data.product_code,
+//         supplier_code: res.data.supplier_code
+//       }]);
 //     });
 //   });
-//   setSelectedSuppliers(selectedList); // Update the state after making the requests
-//   updateTable(selectedList);
+
+//   setSelectedSuppliers(nonBlankItems); // Update the state after making the requests
 // };
 
 const handleSupplierSelect = (selectedList, selectedItem) => {
   const uniqueSelectedSuppliers = [];
-  
+
   selectedList.forEach(selectedSupplier => {
     const isDuplicate = uniqueSelectedSuppliers.some(item => item.id === selectedSupplier.id);
     if (!isDuplicate) {
@@ -81,51 +112,157 @@ const handleSupplierSelect = (selectedList, selectedItem) => {
   });
 
   uniqueSelectedSuppliers.forEach(selectedSupplier => {
-    console.log('Selected Supplier: ' + selectedSupplier.name);
     axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
       id,
-      selectedItem: selectedSupplier, // Send the currently selected supplier as an individual request
+      selectedItem: selectedSupplier,
     })
     .then((res) => {
       console.log(res);
-      // Handle the response or display a message if needed
+      // setproduct(prev => [...prev, res.data]); 
+      // const newId = res.data.id;
+      // console.log(newId)
+      // setproduct(prev => [...prev, {
+      //   id: newId,
+      //   product_code: res.data.product_code,
+      //   supplier_code: res.data.supplier_code
+      // }]);
+
+      reloadTable()
     });
   });
 
   setSelectedSuppliers(uniqueSelectedSuppliers); // Update the state after making the requests
-  updateTable(uniqueSelectedSuppliers);
 };
 
+useEffect(() => {
+  reloadTable()
+}, []);
 
 
 
-  
-//remove to datatable
-  const handleSupplierRemove = (selectedList, removedItem) => {
-    setSelectedSuppliers(selectedList);
-    updateTable(selectedList);
-     console.log('remove:' + selectedSuppliers)
-  };
 
-  const updateTable = (selectedSuppliers) => {
-    // Create an array of table rows based on selected suppliers
-    const tableRows = selectedSuppliers.map(selectedSupplier => {
-      // You may need to find additional data from the 'supplier' array
-      const supplierData = supplier.find(s => s.supplier_code === selectedSupplier.id);
+const handleBlurPrice = async table_id => {swal({
+  title: "Are you sure to update this price?",
+  text: "You are attempting to update the price",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+}).then(async (yes) => {
 
-      return (
-        <tr key={selectedSupplier.id}>
-          <td>{supplierData.supplier_name}</td>
-          <td>walapa</td>
-        </tr>
+  if(yes){
+    try{
+      const response = await axios.put(
+        BASE_URL + `/productTAGsupplier/updatePrice`,
+        {
+          table_id, price
+        }
       );
+  
+      if(response.status === 200){
+        swal({
+          title: 'Updated Successfully',
+          text: 'Price is updated successfully',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          reloadTable()    
+        });
+        
+      }
+      else{
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+    } 
+    catch (err) {
+      console.log(err);
+    }
+   
+  }else{
+    swal({
+      title: "Cancelled Successfully",
+      text: "Price not updated",
+      icon: "warning",
+    }).then(() => {
+      reloadTable()    
     });
+  }
 
-    setTableData(tableRows);
+})
+
+ 
+}
+
+
+  const handleSupplierRemove = (selectedList, removedItem) => {
+    setSelectedSuppliers(removedItem);
+    // updateTable(selectedList);
+    //  console.log('remove:' + selectedSuppliers)
+// Log each selected supplier
+  // selectedList.forEach(selectedSupplier => {
+  //   console.log('Selected Supplier: ' + selectedSupplier.name);
+  //   axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
+  //     id,
+  //     // selectedSupplier, // Send the currently selected supplier
+  //     selectedItem
+  //   })
+  //   .then((res) => {
+  //     console.log(res);
+  //     // Handle the response or display a message if needed
+  //   });
+  // });
+  // setSelectedSuppliers(removedItem); // Update the state after making the requests
+  // updateTable(selectedList);
+    
   };
+
 
 //------------------------------for tagging of supplier END ---------------------------//
 
+const handleDelete = async table_id => {
+  swal({
+    title: "Are you sure to remove this supplier?",
+    text: "You are attempting to remove the supplier",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  }).then(async (willDelete) => {
+    if (willDelete) {
+      try {
+        const  response = await axios.delete(BASE_URL + `/productTAGsupplier/delete/${table_id}`);
+         
+        if (response.status === 200) {
+          swal({
+            title: 'The Supplier has been removed!',
+            text: 'The Supplier has been removed successfully.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+           reloadTable()
+            
+          });
+        } else {
+          swal({
+            icon: 'error',
+            title: 'Something went wrong',
+            text: 'Please contact our support'
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      swal({
+        title: "Cancelled Successfully",
+        text: "Supplier not removed!",
+        icon: "warning",
+      });
+    }
+  });
+};
 
   //-----------------------------fetching data for edit
 
@@ -520,12 +657,31 @@ const handleSupplierSelect = (selectedList, selectedItem) => {
                                   <table id="order-listing">
                                     <thead>
                                       <tr>
+                                        <th className="tableh">ID</th>
                                         <th className="tableh">Supplier</th>
                                         <th className="tableh">Price</th>
+                                        <th className="tableh">Action</th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {tableData}
+                                      {product.map((data,i) =>(
+                                          <tr key={i} >
+                                            <td >{data.id}</td>
+                                            <td >{data.supplier_code}</td>
+                                            <td >
+                                              <div className='input-group' style={{background: '#E9ECEF'}}>
+                                                <span style={{background: '#E9ECEF'}}>₱</span>
+                                                <input className='form-control' style={{background: '#E9ECEF', fontSize: 15}} 
+                                              
+                                                type="number" 
+                                                onBlur={() => handleBlurPrice(data.id)} 
+                                                value={data.product_price} 
+                                                onChange={e => setPrice(e.target.value)}/>
+                                              </div>                           
+                                            </td>
+                                            <td><Trash size={32} color="#e60000" onClick={() => handleDelete(data.id)}/></td>
+                                          </tr>
+                                        ))}
                                     </tbody>
                                   </table>
                                 </div>
@@ -537,9 +693,9 @@ const handleSupplierSelect = (selectedList, selectedItem) => {
                             Close
                         </Link>
                         </div> */}
-                         <div className='save-cancel'>
+                         {/* <div className='save-cancel'>
                           <Link to='/productList' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Apply Changes</Link>
-                        </div>
+                        </div> */}
             </div>
         </div>
     </div>

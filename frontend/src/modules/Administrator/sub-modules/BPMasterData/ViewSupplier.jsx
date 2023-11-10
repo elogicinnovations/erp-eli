@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../../../Sidebar/sidebar';
 import axios from 'axios';
 import BASE_URL from '../../../../assets/global/url';
 import swal from 'sweetalert';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import receiving from "../../../../assets/global/receiving";
 import {
-MagnifyingGlass,
 Printer,
 ArrowCircleLeft,
 } from "@phosphor-icons/react";
+
+
 import '../../../../assets/skydash/vendors/feather/feather.css';
 import '../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
 import '../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -30,20 +28,127 @@ import '../../../../assets/skydash/js/off-canvas';
 import * as $ from 'jquery';  
 
 function ViewSupplier() {
-    React.useEffect(() => {
-        $(document).ready(function () {
-          $('#order-listing').DataTable();
-          $('#ordered-listing').DataTable();
-        });
+
+    const { id } = useParams();
+
+
+    const [suppName, setsuppName] = useState('');
+    const [suppCode, setsuppCode] = useState('');
+    const [suppTin, setsuppTin] = useState('');
+    const [suppEmail, setsuppEmail] = useState('');
+    const [suppAdd, setsuppAdd] = useState('');
+    const [suppCity, setsuppCity] = useState('');
+    const [suppPcode, setsuppPcode] = useState('');
+    const [suppCperson, setsuppCperson] = useState('');
+    const [suppCnum, setsuppCnum] = useState('');
+    const [suppTelNum, setsuppTelNum] = useState('');
+    const [suppTerms, setsuppTerms] = useState('');
+    const [suppVat, setsuppVat] = useState('');
+    const [suppReceving, setsuppReceving] = useState('');
+    // const [suppStatus, setsuppStatus] = useState('Active');
+    // const [checkedStatus, setcheckedStatus] = useState();
+
+    const [countries, setCountries] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState('PH');
+
+    const [product, setproduct] = useState([]); // fetching product
+
+
+    useEffect(() => {
+        // Fetch the list of countries from the API
+        axios.get('https://restcountries.com/v3.1/all')
+          .then((response) => {
+            const countryData = response.data.map((country) => ({
+              value: country.cca2,
+              label: country.name.common,
+            }));
+            
+            // Sort the country list in ascending order by label (country name)
+            countryData.sort((a, b) => a.label.localeCompare(b.label));
+            
+            setCountries(countryData);
+          })
+          .catch((error) => {
+            console.error('Error fetching countries:', error);
+          });
       }, []);
+
+
+
+      useEffect(() => {   
+        // console.log('code' + id)
+        axios.get(BASE_URL + '/supplier/fetchTableEdit', {
+            params: {
+              id: id
+            }
+          })
+        //   .then(res => setsupplier(res.data))
+        .then(res => {
+            setsuppName(res.data[0].supplier_name);
+            setsuppCode(res.data[0].supplier_code);
+            setsuppTin(res.data[0].supplier_tin);
+            setSelectedCountry(res.data[0].supplier_country);
+            setsuppEmail(res.data[0].supplier_email);
+            setsuppAdd(res.data[0].supplier_address);
+            setsuppCity(res.data[0].supplier_city);
+            setsuppPcode(res.data[0].supplier_postcode);
+            setsuppCperson(res.data[0].supplier_contactPerson);
+            setsuppCnum(res.data[0].supplier_number);
+            setsuppTelNum(res.data[0].supplier_Telnumber);
+            setsuppTerms(res.data[0].supplier_terms);
+            setsuppVat(res.data[0].supplier_vat);
+            setsuppReceving(res.data[0].supplier_receiving);
+
+        })
+          .catch(err => console.log(err));
+      }, []);
+
+
+      useEffect(() => {
+        axios.get(BASE_URL + '/productTAGsupplier/fetchProduct',{
+          params: {
+            id: id
+          }
+        })
+          .then(res => setproduct(res.data))
+          .catch(err => console.log(err));
+      }, []);
+      
+
+
+
+
+// styless
+ useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && product.length > 0) {
+        $('#order-listing').DataTable();
+      }
+    }, [product]);
+
+
+// try {
+//     $(document).ready(function() {
+//         $('#order-listing').DataTable();
+//     });
+// } catch (error) {
+//     console.error("DataTables Error:", error);
+// }
+
+
+// React.useEffect(() => {
+//     $(document).ready(function () {
+//       $('#order-listing').DataTable();
+//       $('#ordered-listing').DataTable();
+//     });
+//   }, []);
+
+
     const tabStyle = {
         padding: '10px 15px', 
         margin: '0 10px',
         color: '#333',
         transition: 'color 0.3s',
-    };
-    const tablestyle = {
-        fontSize: '20px',
     };
     return (
         <div className="main-of-containers">
@@ -59,14 +164,14 @@ function ViewSupplier() {
                             <div className="arrowandtitle">
                                 <Link to='/supplier'><ArrowCircleLeft size={50} color="#60646c" weight="fill" /></Link>
                                 <div className="titletext">
-                                    <h1>KINGKONG INCO</h1>
-                                        <div className="home-supplier-tag">
+                                    <h1>Supplier Summary</h1>
+                                        {/* <div className="home-supplier-tag">
                                             <p>Home</p>
                                             <p>•</p>
                                             <p>Supplier</p>
                                             <p>•</p>
                                             <p>Kingkong Inco</p>
-                                        </div>
+                                        </div> */}
                                 </div>
                             </div>
                         </div>
@@ -89,13 +194,13 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Supplier Name: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppName}  style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Code: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppCode} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -103,13 +208,13 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>TIN: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppTin}  style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
-                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Terms: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly/>
+                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Terms: (no. of days) </Form.Label>
+                                                <Form.Control value={suppTerms} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly/>
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -117,23 +222,41 @@ function ViewSupplier() {
 
                                     <Form style={{paddingLeft: '15px'}}>
                                         <h1>Location Information</h1>
-                                        <div className="">
-                                            <Form.Group controlId="exampleForm.ControlInput1">
-                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Address: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
-                                            </Form.Group>
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <Form.Group controlId="exampleForm.ControlInput1">
+                                                    <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Address: </Form.Label>
+                                                    <Form.Control value={suppAdd} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
+                                                </Form.Group>
+                                            </div>
+                                            <div className="col-6">
+                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Country: </Form.Label>
+                                                <Form.Select
+                                                    aria-label=""
+                                                    disabled
+                                                    value={selectedCountry}
+                                                    style={{height: '50px', fontSize: '16px', width: '97.5%'}} 
+                                                >
+                                                    {countries.map((country) => (
+                                                    <option key={country.value} value={country.value}>
+                                                        {country.label}
+                                                    </option>
+                                                    ))}
+                                                </Form.Select>
+                                            </div>
+                                            
                                         </div>
                                         <div className="row">
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>City: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppCity} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>ZipCode: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppPcode}  style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -145,13 +268,13 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Contact Person: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppCperson} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Mobile No.: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppCnum} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -159,13 +282,41 @@ function ViewSupplier() {
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Telephone No.: </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly />
+                                                <Form.Control value={suppTelNum} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
                                             <div className="col-6">
                                             <Form.Group controlId="exampleForm.ControlInput2">
-                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Terms (no. of days) </Form.Label>
-                                                <Form.Control style={{height: '50px', fontSize: '16px', width: '95%'}} readOnly/>
+                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Email </Form.Label>
+                                                <Form.Control value={suppEmail} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly/>
+                                            </Form.Group>
+                                            </div>
+                                        </div>
+                                    </Form>
+
+                                    <Form style={{paddingLeft: '15px'}}>
+                                        <div className="row">
+                                            <div className="col-6">
+                                            <Form.Group controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Vatable </Form.Label>
+                                                <Form.Control value={suppVat} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
+                                            </Form.Group>
+                                            </div>
+                                            <div className="col-6">
+                                            <Form.Group controlId="exampleForm.ControlInput2">
+                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Receiving Area </Form.Label>
+                                                <Form.Select
+                                                    aria-label=""
+                                                    disabled
+                                                    style={{height: '50px', fontSize: '16px', width: '97.5%'}}
+                                                    value={suppReceving}
+                                                >
+                                                    {receiving.map((city, index) => (
+                                                    <option key={index} value={city}>
+                                                        {city}
+                                                    </option>
+                                                    ))}
+                                                </Form.Select>
                                             </Form.Group>
                                             </div>
                                         </div>
@@ -197,14 +348,17 @@ function ViewSupplier() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>HAHAH</td>
-                                                        <td>HHAHAH</td>
-                                                        <td>HEHEHE</td>
-                                                        <td>SDSADAS</td>
-                                                        <td>DSAD</td>
-                                                        <td>DSADAS</td>
-                                                    </tr>
+                                                {product.map((data,i) =>(
+                                                <tr key={i} >
+                                                    <td >{data.product_code}</td>
+                                                    {/* <td >{data.product.product_category}</td>
+                                                    <td >{data.product.product_category}</td>
+                                                    <td >{data.product.product_unitMeasurement}</td>
+                                                    <td >{data.product.product_name}</td>
+                                                    <td>{data.product_price !== null ? data.product_price : 0}</td> */}
+                                                  
+                                                </tr>
+                                                ))}
                                                 </tbody>
                                             </table>
                                         </div>
