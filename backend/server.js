@@ -31,7 +31,7 @@ app.use("/manufacturer", manufacturer);
 app.use("/subpart", subPart);
 app.use("/productTAGsupplier", productTAGsupplier);
 app.use("/subPart", subPart);
-
+  
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);
