@@ -1179,6 +1179,20 @@ div#order-listing_wrapper{
   height: 100%;
 }
 
+div#order1-listing_wrapper{
+  position: relative;
+  top: -50px;
+  width: 100%;
+  height: 100%;
+}
+
+div#order2-listing_wrapper{
+  position: relative;
+  top: -50px;
+  width: 100%;
+  height: 100%;
+}
+
 tbody, td, tfoot, th, thead, tr{
   width: 100pc;
 }
@@ -1260,6 +1274,18 @@ a.button:hover{
 }
 
 div#order-listing_length{
+  position: relative;
+  top: 60px;
+  width: 50%;
+}
+
+div#order1-listing_length{
+  position: relative;
+  top: 60px;
+  width: 50%;
+}
+
+div#order2-listing_length{
   position: relative;
   top: 60px;
   width: 50%;

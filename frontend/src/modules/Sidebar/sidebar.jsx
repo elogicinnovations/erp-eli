@@ -147,6 +147,13 @@ function Sidebar() {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (location.pathname === '/costCenter') {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
   return (
     <div className="containers-of-sidebard">
       <div className='sidebar-main-content'>
@@ -329,14 +336,23 @@ function Sidebar() {
 
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>
-                  <ListItem button className='BPsub-menu'> 
-                    <ListItemText primary="Cost Centre" />
-                  </ListItem>
+                  <NavLink
+                    to='/costCenter'
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    activeClassName="active"
+                  >
+                    <ListItem
+                      button
+                      className={`BPsub-menu ${location.pathname === '/costCenter' ? 'active' : ''}`}
+                    >
+                      <ListItemText primary="Cost Center" />
+                    </ListItem>
+                  </NavLink>
                   <NavLink
                   to='/supplier'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
-                >
+                  >
                   <ListItem
                     button
                     className={`BPsub-menu ${location.pathname === '/supplier' ? 'active' : ''}`}
@@ -375,15 +391,21 @@ function Sidebar() {
             </List>
           </Collapse>
 
-          <ListItem button 
-           className={`menu-item ${activeMenu === 'INVENTORY' ? 'active' : ''}`} 
-           onClick={() => {
-            setActiveMenu(activeMenu === 'INVENTORY' ? '' : 'INVENTORY');
-          }}
-           activeClassName="active">
-            <Archive size={20}/>
-            <ListItemText primary="INVENTORY" />
-          </ListItem>
+          
+          <NavLink
+            to='/inventory'
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            onClick={() => handleMenuClick('INVENTORY')}
+            activeClassName="active"
+          >
+            <ListItem
+              button
+              className={`menu-item ${location.pathname.startsWith('/inventory') ? 'active' : ''}`}
+            >
+              <Archive size={20} />
+              <ListItemText primary="INVENTORY" />
+            </ListItem>
+          </NavLink>
 
           <ListItem button 
             className={`menu-item ${activeMenu === 'PURCHASE ORDER' ? 'active' : ''}`} 
