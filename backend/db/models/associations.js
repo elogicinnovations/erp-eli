@@ -18,7 +18,7 @@ Product.belongsTo(BinLocation, { foreignKey: "product_location"});
 
 Manufacturer.hasMany(Product, { foreignKey: "product_manufacturer"});
 Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"});
-
+ 
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_code"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_code"});
 
