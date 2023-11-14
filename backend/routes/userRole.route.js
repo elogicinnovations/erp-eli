@@ -14,17 +14,7 @@ router.use(session({
 router.route("/fetchuserrole").get(async (req, res) => {
     // const departmentName = req.query.departmentName;
    
-    UserRole.findAll({
-    attributes: [
-      'col_roleID',
-      'col_rolename',
-      'col_desc',
-      'createdAt',
-      [sequelize.literal("GROUP_CONCAT(col_authorization ORDER BY col_authorization)"), 'consolidated_authorizations'],
-    ],
-    group: ['col_roleID', 'col_rolename', 'col_desc', 'createdAt'],
-    order: [['col_roleID', 'DESC']],
-  })
+    UserRole.findAll()
     .then((data) => {
       return res.json(data);
     })
@@ -41,7 +31,7 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
     try {
         const data = await UserRole.findAll({
         where: {
-            col_roleID: roleId,
+            col_id: roleId,
         },
         });
 
@@ -50,7 +40,7 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
         return res.status(404).json({ message: 'User role not found' });
         
         }
-        // console.log(data)
+        console.log(data)
         return res.json(data);
         
     } catch (error) {
@@ -69,7 +59,7 @@ router.post('/editUserrole/:id/:rolename', async (req, res) => {
       const existingRole = await UserRole.findOne({
         where: {
           col_rolename: rolename,
-          col_roleID: { [sequelize]: roleId },
+          col_id: { [sequelize]: roleId },
         },
       });
   
@@ -77,21 +67,21 @@ router.post('/editUserrole/:id/:rolename', async (req, res) => {
         return res.status(202).send('Exist');
       } else {
         // Delete existing role authorizations
-        await UserRole.destroy({
-          where: {
-            col_roleID: roleId,
-          },
-        });
+        // await UserRole.destroy({
+        //   where: {
+        //     col_id: roleId,
+        //   },
+        // });
   
-        // Insert new role authorizations
-        await UserRole.bulkCreate(selectedCheckboxes.map(item => ({
-          col_roleID: roleId,
-          col_rolename: item.rolename,
-          col_desc: item.desc,
-          col_authorization: item.authorization,
-        })));
+        // // Insert new role authorizations
+        // await UserRole.bulkCreate(selectedCheckboxes.map(item => ({
+        //   col_roleID: roleId,
+        //   col_rolename: item.rolename,
+        //   col_desc: item.desc,
+        //   col_authorization: item.authorization,
+        // })));
   
-        return res.status(200).json({ message: 'Data inserted and updated successfully' });
+        // return res.status(200).json({ message: 'Data inserted and updated successfully' });
       }
     } catch (error) {
       console.error('Error:', error);
@@ -105,18 +95,57 @@ router.route('/deleteRole/:param_id').delete(async (req, res) => {
     const id = req.params.param_id;
 
   try {
-    const deletedUserRole = await UserRole.destroy({
+    await MasterList.findAll({
       where: {
         col_roleID: id,
       },
-    });
+    })
+      .then((check) => {
+        if (check && check.length > 0) {
+          return res.status(202).json({ success: true });
+        }
+        else{
+           UserRole.destroy({
+            where : {
+              col_id: id
+            }
+          })
+          .then(
+              (del) => {
+                  if(del){
+                    return res.status(200).json({ message: 'User role deleted successfully' });
+                  }
+                  else{
+                      res.status(400).json({success : false})
+                  }
+              }
+          )
+          .catch(
+              (err) => {
+                  console.error(err)
+                  res.status(409)
+              }
+          );
+        }
+      })
 
-    if (deletedUserRole === 0) {
-      // No records were deleted
-      return res.status(404).json({ message: 'User role not found' });
-    }
+    // const deletedUserRole = await UserRole.destroy({
+    //   where: {
+    //     col_id: id,
+    //   },
+    // });
 
-    return res.json({ message: 'User role deleted successfully' });
+    // if (deletedUserRole === 0) {
+    //   // No records were deleted
+    //   return res.status(404).json({ message: 'User role not found' });
+    // }
+
+    // return res.json({ message: 'User role deleted successfully' });
+
+
+
+
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'An error occurred' });
@@ -124,40 +153,33 @@ router.route('/deleteRole/:param_id').delete(async (req, res) => {
 });
 
 router.post('/createUserrole/:rolename', async (req, res) => {
-    const selectedCheckboxes = req.body.selectedCheckboxes;
-    const param_rolename = req.params.rolename;
-  
-    try {
+  const selectedCheckboxes = req.body.selectedCheckboxes;
+  const param_rolename = req.params.rolename;
+
+  try {
       const existingRole = await UserRole.findOne({ where: { col_rolename: param_rolename } });
-  
+
       if (existingRole) {
-        return res.status(202).send('Exist');
+          return res.status(202).send('Exist');
       } else {
-        const lastRoleIDResult = await UserRole.findOne({
-          order: [['col_roleID', 'DESC']],
-          attributes: ['col_roleID'],
-        });
-  
-        const lastRoleID = lastRoleIDResult ? lastRoleIDResult.col_roleID + 1 : 1;
-  
-        const createdRoles = await Promise.all(
-          selectedCheckboxes.map(item => {
-            return UserRole.create({
-              col_roleID: lastRoleID,
-              col_rolename: item.rolename,
-              col_desc: item.desc,
-              col_authorization: item.authorization,
-            });
-          })
-        );
-  
-        return res.status(200).json({ message: 'Data inserted successfully', lastRoleID });
+
+          // Concatenate the authorization values with commas
+          const concatenatedAuthorization = selectedCheckboxes.map(item => item.authorization).join(',');
+
+          const createdRole = await UserRole.create({
+              col_rolename: selectedCheckboxes[0].rolename, // Use the first rolename as an example
+              col_desc: selectedCheckboxes[0].desc, // Use the first description as an example
+              col_authorization: concatenatedAuthorization,
+          });
+
+          return res.status(200).json({ message: 'Data inserted successfully' });
       }
-    } catch (error) {
+  } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'An error occurred' });
-    }
-  });
+  }
+});
+
 
 
 

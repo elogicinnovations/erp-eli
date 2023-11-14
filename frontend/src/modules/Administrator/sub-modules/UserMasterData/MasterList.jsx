@@ -184,10 +184,10 @@ function MasterList() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const getRoleName = (roleID) => {
-    const role = roles.find(role => role.col_roleID === roleID);
-    return role ? role.col_rolename : 'Unknown Role';
-  };
+  // const getRoleName = (roleID) => {
+  //   const role = roles.find(role => role.col_roleID === roleID);
+  //   return role ? role.col_rolename : 'Unknown Role';
+  // };
 
   const handleUpdateFormChange = e => {
     const { name, value, type, checked } = e.target;
@@ -560,7 +560,7 @@ function MasterList() {
                               {masterListt.map((data, i) => (
                               <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                                 <td>{data.col_id}</td>
-                                <td>{getRoleName(data.col_roleID)}</td>
+                                <td>{data.userRole.col_rolename}</td>
                                 <td>{data.col_Fname}</td>
                                 <td>{data.col_email}</td>
                                 <td>{data.col_status}</td>
@@ -681,7 +681,7 @@ function MasterList() {
                                   style={{ height: '40px', fontSize: '15px' }}>
                                     <option disabled value="">Role</option>
                                         {roles.map(role => (
-                                          <option key={role.col_roleID} value={role.col_roleID}>
+                                          <option key={role.col_id} value={role.col_id}>
                                             {role.col_rolename}
                                           </option>
                                         ))}
@@ -841,8 +841,8 @@ function MasterList() {
                             style={{ height: '40px', fontSize: '15px' }}>
                                  <option disabled value="">Role</option>
                             {roles.map(role => (
-                              <option key={role.col_roleID} value={role.col_roleID}>
-                                {role.col_rolename}
+                              <option key={role.col_roleID} value={role.col_id}>
+                                {role.col_id}
                               </option>
                             ))}
                             </Form.Select>

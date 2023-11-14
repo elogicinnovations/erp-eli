@@ -14,9 +14,6 @@ import {
   Gear, 
   Bell,
   UserCircle,
-  Plus,
-  Trash,
-  NotePencil,
 } from "@phosphor-icons/react";
 
 import BASE_URL from '../../../../assets/global/url';
@@ -30,10 +27,12 @@ function EditRole() {
   const [rolename, setRolename] = useState(''); // Initialize the state for Role Name
   const [desc, setDesc] = useState(''); // Initialize the state for Description
   const [searchQuery, setSearchQuery] = useState('');
+
+
   useEffect(() => {
     axios.get(BASE_URL + `/userRole/fetchuserroleEDIT/${id}`)
       .then(res => {
-        setRole(res.data[0]); // Assuming the response is an array with a single object
+        setRole(res.data); // Assuming the response is an array with a single object
         setRolename(res.data[0].col_rolename); // Set the Role Name
         setDesc(res.data[0].col_desc); // Set the Description
         // Assuming res.data is an array with the role data
@@ -47,8 +46,8 @@ function EditRole() {
         setSelectedCheckboxes(selectedCheckboxes);
       })
       .catch(err => console.log(err));
-  }, [id]);
-  console.log(role);
+  }, []);
+  // console.log(role);
 
 
 // Inserting to database checkboxes
@@ -323,6 +322,22 @@ const handleCheckboxChange = (value) => {
 
                     <div className="table-containss">
                        <div className="main-of-all-tables">
+                       <table id="order-listing">
+                        <thead>
+                          <tr>
+                            <th className='tableh'>Role Name</th>
+                           
+                          </tr>
+                        </thead>
+                        <tbody>
+                              {role.map((data, i) => (
+                              <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
+                                <td>{data.col_authorization}</td>
+                               
+                              </tr>
+                            ))}
+                        </tbody>
+                  </table>
                             <form className='w-100 mt-3' onSubmit={handleSubmit}>
 
                                 <Form style={{ marginLeft: '50px' }}>

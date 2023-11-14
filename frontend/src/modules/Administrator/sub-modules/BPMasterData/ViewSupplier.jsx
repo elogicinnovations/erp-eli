@@ -339,11 +339,10 @@ function ViewSupplier() {
                                             <table id='order-listing'>
                                                 <thead>
                                                     <tr>
-                                                        <th>Code</th>
+                                                        <th>Product Code</th>
                                                         <th>Product Name</th>
                                                         <th>Category</th>
                                                         <th>UOM</th>
-                                                        <th>Contact</th>
                                                         <th>Price</th>
                                                     </tr>
                                                 </thead>
@@ -351,11 +350,10 @@ function ViewSupplier() {
                                                 {product.map((data,i) =>(
                                                 <tr key={i} >
                                                     <td >{data.product_code}</td>
-                                                    {/* <td >{data.product.product_category}</td>
+                                                    <td >{data.product.product_name}</td>
                                                     <td >{data.product.product_category}</td>
                                                     <td >{data.product.product_unitMeasurement}</td>
-                                                    <td >{data.product.product_name}</td>
-                                                    <td>{data.product_price !== null ? data.product_price : 0}</td> */}
+                                                    <td>{data.product_price !== null ? data.product_price : 0}</td>
                                                   
                                                 </tr>
                                                 ))}

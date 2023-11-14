@@ -154,7 +154,7 @@ router.route('/masterTable').get(async (req, res) => {
     const data = await MasterList.findAll({
       include: {
         model: UserRole,
-        required: false,
+        required: true,
       },
     });
     // const data = await MasterList.findAll();
@@ -176,6 +176,8 @@ router.route('/masterTable').get(async (req, res) => {
 router.route('/createMaster').post(async (req, res) => {
   try {
     const email = req.body.cemail;
+
+    console.log(req.body.crole)
 
     // Check if the email already exists in the table
     const existingData = await MasterList.findOne({

@@ -14,7 +14,6 @@ import Form from 'react-bootstrap/Form';
 // import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 // import Pagination from 'react-bootstrap/Pagination';
 import {
-  MagnifyingGlass,
   Gear, 
   Bell,
   UserCircle,
@@ -36,6 +35,17 @@ import '../../../../assets/skydash/js/off-canvas';
 import * as $ from 'jquery';
 
 function UserRole() {
+
+  function formatDate(isoDate) {
+    const date = new Date(isoDate);
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+  }
+  
+  function padZero(num) {
+    return num.toString().padStart(2, '0');
+  }
+
+
   const [role, setRole] = useState([]);
   useEffect(() => {
     axios.get(BASE_URL + '/userRole/fetchuserrole')
@@ -44,6 +54,8 @@ function UserRole() {
       })
       .catch(err => console.log(err));
   }, []);
+
+  console.log(role)
 
 
   const handleDelete = async (param_id) => {
@@ -57,12 +69,42 @@ function UserRole() {
     .then(async (willDelete) => {
       if (willDelete) {
         try {
-          await axios.delete(BASE_URL + `/userRole/deleteRole/${param_id}`);
+          const response = await axios.delete(BASE_URL + `/userRole/deleteRole/${param_id}`);
           // Update both role and filteredRole after deletion
-          setRole(prevRole => prevRole.filter(data => data.col_roleID !== param_id));
-          swal("The Role has been deleted!", {
-            icon: "success",
-          });
+          
+
+
+          if (response.status === 200) {
+            swal({
+              title: 'The User Role has been deleted!',
+              text: 'The Location has been updated successfully.',
+              icon: 'success',
+              button: 'OK'
+            }).then(() => {
+              setRole(prevRole => prevRole.filter(data => data.col_id !== param_id));
+              
+            });
+          } else if (response.status === 202) {
+            swal({
+              icon: 'error',
+              title: 'Delete Prohibited',
+              text: 'You cannot delete User Role that is used'
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: 'Something went wrong',
+              text: 'Please contact our support'
+            });
+          }
+
+
+
+
+
+
+
+
         } catch (err) {
           console.log(err);
         }
@@ -82,7 +124,7 @@ function UserRole() {
     if ($('#order-listing').length > 0 && role.length > 0) {
       $('#order-listing').DataTable();
     }
-  }, [role]);
+  }, [$('#order-listing'), role]);
 
   return (
     <div className="main-of-containers">
@@ -144,6 +186,7 @@ function UserRole() {
                             <th className='tableh'>Features</th>
                             <th className='tableh'> Description</th>
                             <th className='tableh'>Date Created</th>
+                            <th className='tableh'>Date Modified</th>
                             <th className='tableh'>Action</th>
                           </tr>
                         </thead>
@@ -151,14 +194,15 @@ function UserRole() {
                               {role.map((data, i) => (
                               <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                                 <td>{data.col_rolename}</td>
-                                <td>{data.consolidated_authorizations}</td>
+                                <td>{data.col_authorization}</td>
                                 <td>{data.col_desc}</td>
-                                <td>{data.createdAt}</td>
+                                <td>{formatDate(data.createdAt)}</td>
+                                <td>{formatDate(data.updatedAt)}</td>
                                 <td>
                                   <button className='btn'>
-                                    <Link to={`/editRole/${data.col_roleID}`} style={{ color: "black" }}><NotePencil size={25} /></Link>
+                                    <Link to={`/editRole/${data.col_id}`} style={{ color: "black" }}><NotePencil size={25} /></Link>
                                   </button>
-                                  <button className='btn' onClick={() => handleDelete(data.col_roleID)}><Trash size={25} color="#e60000" /></button>
+                                  <button className='btn' onClick={() => handleDelete(data.col_id)}><Trash size={25} color="#e60000" /></button>
                                 </td>
                               </tr>
                             ))}

@@ -7,8 +7,8 @@ const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
 
-MasterList.hasMany(UserRole, { foreignKey: "col_roleID"});
-// UserRole.hasMany(MasterList, { foreignKey: "col_roleID"});
+UserRole.hasMany(MasterList, { foreignKey: "col_roleID"});
+MasterList.belongsTo(UserRole, { foreignKey: "col_roleID"});
 
 Category.hasMany(Product, { foreignKey: "product_category"});
 Product.belongsTo(Category, { foreignKey: "product_category"});
@@ -24,7 +24,7 @@ ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_code"});
 
 
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
-ProductTAGSupplier.belongsTo(Product, { foreignKey: "supplier_code"});
+ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 module.exports = { 
                     MasterList, 

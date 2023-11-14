@@ -28,29 +28,18 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/fetchProduct').get(async (req, res) => { // for fetching product that is tag to supplier (supplier module)
   try {
-    console.log(req.query.id)
-
-    //  const data = await ProductTAGSupplier.findAll({
-    //   include: {
-    //     model: Product,
-    //     required: true,
-    //   },
-    //   where: 
-    //         {
-    //           supplier_code: req.query.id
-    //         }
-    // });
+    // console.log(req.query.id)
 
     const data = await ProductTAGSupplier.findAll({
       where: { supplier_code: req.query.id },
-      include: [{
+      include: {
         model: Product,
-        required: true,   
-      }]
-    })
+        required: true,
+      },
+    });
 
     if (data) {
-      console.log(data);
+      // console.log(data);
       return res.json(data);
     } else {
       res.status(400);

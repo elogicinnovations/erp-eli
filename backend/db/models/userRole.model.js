@@ -8,11 +8,6 @@ const UserRole = sequelize.define('userRole', {
     primaryKey: true,
     autoIncrement: true,
   },
-  col_roleID: {
-    type: DataTypes.INTEGER, // Change the column name to col_roleID
-    allowNull: true,
-    unique: false,
-  },
   col_rolename: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -24,7 +19,7 @@ const UserRole = sequelize.define('userRole', {
     unique: false,
   },
   col_authorization: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING('2000'),
     allowNull: true,
     unique: false,
   }
