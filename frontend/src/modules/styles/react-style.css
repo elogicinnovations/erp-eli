@@ -1018,51 +1018,51 @@ left: 12rem;
 }
 
 .sidebar-main-content .adminsub-menu:hover{
-  background-color: #161A23;
+  background-color: #2D2F39;
   color: #FFA500;
 }
 
 .sidebar-main-content .Employeesub-menu .MuiListItemText-primary{
   font-size: 1.1rem;
   font-family: Poppins, 'Source Sans Pro';
-  margin-left: 4.5rem;
+  margin-left: 6.5rem;
 }
 
 .sidebar-main-content .Employeesub-menu:hover{
-  background-color: #161A23;
+  background-color: #2D2F39;
   color: #FFA500;
 }
 
 .sidebar-main-content .Productsub-menu .MuiListItemText-primary{
   font-size: 1.1rem;
   font-family: Poppins, 'Source Sans Pro';
-  margin-left: 4.5rem;
+  margin-left: 6.5rem;
 }
 
 .sidebar-main-content .Productsub-menu:hover{
-  background-color: #161A23;
+  background-color: #2D2F39;
   color: #FFA500;
 }
 
 .sidebar-main-content .BPsub-menu .MuiListItemText-primary{
   font-size: 1.1rem;
   font-family: Poppins, 'Source Sans Pro';
-  margin-left: 4.5rem;
+  margin-left: 6.5rem;
 }
 
 .sidebar-main-content .BPsub-menu:hover{
-  background-color: #161A23;
+  background-color: #2D2F39;
   color: #FFA500;
 }
 
 .sidebar-main-content .Assetsub-menu .MuiListItemText-primary{
   font-size: 1.1rem;
   font-family: Poppins, 'Source Sans Pro';
-  margin-left: 4.5rem;
+  margin-left: 6.5rem;
 }
 
 .sidebar-main-content .Assetsub-menu:hover{
-  background-color: #161A23;
+  background-color: #2D2F39;
   color: #FFA500;
 }
 
@@ -1111,6 +1111,53 @@ left: 12rem;
 }
 
 /* Jerome's CSS */
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #ccc;
+  border-radius: 20px;
+  outline: none;
+  transition: background-color 0.4s;
+  cursor: pointer;
+}
+
+.toggle-switch::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #fff;
+  left: 0;
+  transition: transform 0.4s;
+}
+
+.toggle-switch:checked {
+  background-color: #00bb00;
+}
+
+.toggle-switch:checked::before {
+  transform: translateX(20px);
+}
+
+.BPsub-menu.active {
+  background-color: #2D2F39;
+  color: #FFA500;
+}
+
+.Productsub-menu.active {
+  background-color: #2D2F39;
+  color: #FFA500;
+}
+
+.Employeesub-menu.active {
+  background-color: #2D2F39;
+  color: #FFA500;
+}
 
 .show {
   position: absolute;

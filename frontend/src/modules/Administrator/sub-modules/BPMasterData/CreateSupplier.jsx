@@ -52,6 +52,15 @@ function CreateSupplier() {
 
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('PH');
+
+    const [maxTinLength, setMaxTinLength] = useState(30);
+
+    const handleTinChange = (e) => {
+        const inputValue = e.target.value;
+        if (inputValue.length <= maxTinLength) {
+          setsuppTin(inputValue);
+        }
+      };
   
     useEffect(() => {
         // Fetch the list of countries from the API
@@ -187,14 +196,13 @@ function CreateSupplier() {
                             <div className="form-group d-flex flex-row justify-content-center align-items-center">
                                 <React.Fragment>
                                 <label className='userstatus'  style={{fontSize: 15, marginRight: 10}}>Supplier Status</label>
-                                    <input
-                                        type="checkbox"
-                                        name="cstatus"
-                                        
-                                        style={{fontSize: 20}}
-                                        onChange={handleActiveStatus}
-                                        defaultChecked={suppStatus}
-                                    />
+                                <input
+                                    type="checkbox"
+                                    name="cstatus"
+                                    className="toggle-switch" // Add the custom class
+                                    onChange={handleActiveStatus}
+                                    defaultChecked={suppStatus}
+                                />
                                     
                                 </React.Fragment>
                             </div>    
@@ -207,12 +215,12 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <Form.Label style={{fontSize: 20}} >Supplier Name: </Form.Label>
-                            <Form.Control className='p-3  fs-3' placeholder='Supplier Name' onChange={e => setsuppName(e.target.value)} required/>
+                            <Form.Control className='p-3  fs-3' placeholder='Supplier Name' maxLength={80} onChange={e => setsuppName(e.target.value)} required/>
                             
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Code: </label>
-                            <Form.Control className='p-3 fs-3' onChange={e => setsuppCode(e.target.value)} required placeholder='Supplier Code'/>
+                            <Form.Control className='p-3 fs-3' onChange={e => setsuppCode(e.target.value)} required maxLength={10} placeholder='Supplier Code'/>
                             
                         </Col>
                     </Row>
@@ -220,11 +228,11 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>TIN: </label>
-                            <Form.Control className='p-3  fs-3' type="number" onChange={e => setsuppTin(e.target.value)}   placeholder='TIN'/>
+                            <Form.Control className='p-3  fs-3' type="number" value={suppTin} onChange={handleTinChange}   placeholder='TIN'/>
                         </Col>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>Terms: </label>
-                            <Form.Control className='p-3 fs-3' type="number"   onChange={e => setsuppTerms(e.target.value)}  placeholder='0'/>
+                            <Form.Control className='p-3 fs-3' type="text" onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} maxLength={4} onChange={e => setsuppTerms(e.target.value)}  placeholder='0'/>
                         </Col>
                     </Row>
                     
@@ -259,11 +267,11 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>City: </label>
-                            <Form.Control className='p-3 fs-3'  onChange={e => setsuppCity(e.target.value)}  required placeholder='City'/>
+                            <Form.Control className='p-3 fs-3' maxLength={80} onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z.'\-,\s]/g, ''))} onChange={e => setsuppCity(e.target.value)}  required placeholder='City'/>
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Zipcode/Postcode: </label>
-                            <Form.Control className='p-3 fs-3' type="number"   onChange={e => setsuppPcode(e.target.value)} required placeholder='0000'/>
+                            <Form.Control className='p-3 fs-3' type="text" maxLength={10} onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} onChange={e => setsuppPcode(e.target.value)} required placeholder='0000'/>
                         </Col>
                     </Row>
 
@@ -274,18 +282,18 @@ function CreateSupplier() {
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head'  style={{fontSize: 20}}>Contact Person: </label>
-                            <Form.Control className='p-3  fs-3' onChange={e => setsuppCperson(e.target.value)} required placeholder='Contact Person'/>
+                            <Form.Control className='p-3  fs-3' maxLength={80} onInput={(e) => (e.target.value = e.target.value.replace(/[^A-Za-z.'\-,\s]/g, ''))} onChange={e => setsuppCperson(e.target.value)} required placeholder='Contact Person'/>
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Mobile Number: </label>
-                            <Form.Control className='p-3 fs-3' type="number"  onChange={e => setsuppCnum(e.target.value)} required placeholder='09xxxxxxxx'/>
+                            <Form.Control className='p-3 fs-3' type="text" maxLength={15} onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} onChange={e => setsuppCnum(e.target.value)} required placeholder='09xxxxxxxx'/>
                         </Col>
                     </Row>
 
                     <Row>
                         <Col>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>Tel. # </label>
-                            <Form.Control className='p-3  fs-3' type="number"  onChange={e => setsuppTelNum(e.target.value)} placeholder='xxxxxxxxx'/>
+                            <Form.Control className='p-3  fs-3' type="text" maxLength={15} onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} onChange={e => setsuppTelNum(e.target.value)} placeholder='xxxxxxxxx'/>
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Email: </label>
@@ -311,7 +319,7 @@ function CreateSupplier() {
                                 </label>
                             </div>                        
                         </div>
-                        <Form.Control className='p-3  fs-3' disabled={!isChecked} type="number" onChange={e => setsuppVat(e.target.value)} placeholder='00'/>
+                        <Form.Control className='p-3  fs-3' disabled={!isChecked} type="text" maxLength={3} onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} onChange={e => setsuppVat(e.target.value)} placeholder='00'/>
                        
                         </Col>
                         <Col>

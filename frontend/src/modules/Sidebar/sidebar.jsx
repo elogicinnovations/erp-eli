@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../assets/global/style.css'
 import '../styles/react-style.css'
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -13,7 +13,7 @@ import {
   SignOut,
   Files,
 } from "@phosphor-icons/react";
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -22,6 +22,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Collapse from '@mui/material/Collapse';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
+
+
+
 
 function Sidebar() {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -72,6 +75,78 @@ function Sidebar() {
     if (openBPData) setOpenBPData(false);
   };
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/masterList') {
+      setOpenAdministrator(true);
+      setOpenEmployeeData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/userRole') {
+      setOpenAdministrator(true);
+      setOpenEmployeeData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/productCategory') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/binLocation') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/productList') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/ProductManu') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/subParts') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/spareParts') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/assemblyForm') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/supplier') {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
   return (
     <div className="containers-of-sidebard">
       <div className='sidebar-main-content'>
@@ -83,21 +158,24 @@ function Sidebar() {
           </div>
 
           <List>
-        <Link
-              to='/dashboard'
-              style={{ textDecoration: 'none', color: 'inherit' }}
-              onClick={() => handleMenuClick('DASHBOARD')}>
-              <ListItem
-                button
-                className={`menu-item ${activeMenu === 'DASHBOARD' ? 'active' : ''}`}>
-                <SquaresFour size={20} />
-                <ListItemText primary="DASHBOARD" />
-              </ListItem>
-          </Link>
+          <NavLink
+            to='/dashboard'
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            onClick={() => handleMenuClick('DASHBOARD')}
+            activeClassName="active"
+          >
+            <ListItem
+              button
+              className={`menu-item ${location.pathname.startsWith('/dashboard') ? 'active' : ''}`}
+            >
+              <SquaresFour size={20} />
+              <ListItemText primary="DASHBOARD" />
+            </ListItem>
+          </NavLink>
 
         <ListItem
           button
-          className={`menu-item ${activeMenu === 'ADMINISTRATOR' ? 'active' : ''}`}
+          className={`menu-item ${activeMenu === 'ADMINISTRATOR' ? 'active-hover' : ''}`}
           onClick={() => {
             setActiveMenu(activeMenu === 'ADMINISTRATOR' ? '' : 'ADMINISTRATOR');
             toggleAdministrator();
@@ -117,19 +195,33 @@ function Sidebar() {
               
               <Collapse in={openEmployeeData}>
                 <List component="div" disablePadding>
-                  <Link to='/masterList'  style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Employeesub-menu'>                   
-                        <ListItemText primary="Master List" />
-                    </ListItem>
-                  </Link>
+                <NavLink
+                  to='/masterList'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Employeesub-menu ${location.pathname === '/masterList' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Master List" />
+                  </ListItem>
+                </NavLink>
                   <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Employee Type" />
                   </ListItem>
-                  <Link to={'/userRole'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Employeesub-menu'>                  
-                      <ListItemText primary="RBAC List" />                 
-                    </ListItem>
-                  </Link>
+                  <NavLink
+                  to='/userRole'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Employeesub-menu ${location.pathname === '/userRole' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="RBAC List" />
+                  </ListItem>
+                </NavLink>
                 </List>
               </Collapse>
 
@@ -140,45 +232,94 @@ function Sidebar() {
 
               <Collapse in={openProductSettings}>
                 <List component="div" disablePadding>
-                  <Link to='/productCategory'  style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>                   
-                        <ListItemText primary="Product Categories" />
-                    </ListItem>
-                  </Link>
-                  <Link to='/binLocation'  style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>                   
-                        <ListItemText primary="Bin Location" />
-                    </ListItem>
-                  </Link>
-                  <Link to='/productList'  style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>                   
-                        <ListItemText primary="Product List" />
-                    </ListItem>
-                  </Link>
-                  <Link to={'/ProductManu'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>
-                      <ListItemText primary="Product Manufacturer" />
-                    </ListItem>
-                  </Link>
+                  <NavLink
+                  to='/productCategory'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/productCategory' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Product Categories" />
+                  </ListItem>
+                </NavLink>
+                  <NavLink
+                  to='/binLocation'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Bin Location" />
+                  </ListItem>
+                </NavLink>
+                  <NavLink
+                  to='/productList'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/productList' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Product List" />
+                  </ListItem>
+                </NavLink>
+                  <NavLink
+                  to='/ProductManu'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/ProductManu' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Product Manufacturer" />
+                  </ListItem>
+                </NavLink>
                   <ListItem button className='Productsub-menu'>
                     <ListItemText primary="Price Options" />
                   </ListItem>
                   </List>
-                  <Link to={'/subParts'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>
-                      <ListItemText primary="Sub Parts" />
-                    </ListItem>
-                  </Link>
-                  <Link to={'/spareParts'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>
-                      <ListItemText primary="Spare Parts" />
-                    </ListItem>
-                  </Link>
-                  <Link to={'/assemblyForm'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='Productsub-menu'>
-                      <ListItemText primary="Assembly Form" />
-                    </ListItem>
-                  </Link>
+                  <NavLink
+                  to='/subParts'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/subParts' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Sub Parts" />
+                  </ListItem>
+                </NavLink>
+                  <NavLink
+                  to='/spareParts'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/spareParts' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Spare Parts" />
+                  </ListItem>
+                </NavLink>
+                  <NavLink
+                  to='/assemblyForm'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Productsub-menu ${location.pathname === '/assemblyForm' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Assembly Form" />
+                  </ListItem>
+                </NavLink>
               </Collapse>
 
               <ListItem button className='adminsub-menu' onClick={toggleBPData}>
@@ -191,11 +332,18 @@ function Sidebar() {
                   <ListItem button className='BPsub-menu'> 
                     <ListItemText primary="Cost Centre" />
                   </ListItem>
-                  <Link to={'/supplier'} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <ListItem button className='BPsub-menu'>
-                      <ListItemText primary="Suppliers" />
-                    </ListItem>
-                  </Link>
+                  <NavLink
+                  to='/supplier'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`BPsub-menu ${location.pathname === '/supplier' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Suppliers" />
+                  </ListItem>
+                </NavLink>
                 </List>
               </Collapse>
 

@@ -33565,5 +33565,4 @@ input {
 /* to display none the text in datatable if no data */
 table.dataTable td.dataTables_empty, table.dataTable th.dataTables_empty {
     text-align: center;
-    display: none;
 }

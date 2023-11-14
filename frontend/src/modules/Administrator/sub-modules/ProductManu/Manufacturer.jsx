@@ -188,6 +188,10 @@ function Productvariants(){
         createdAt: res.data.createdAt,
         updatedAt: res.data.updatedAt,
       }]);
+
+      setCode(''); // Clear the code input field
+      setName(''); // Clear the nameManu input field
+      setDescription(''); // Clear the descManu input field
      
       setShow(false);
 
@@ -254,18 +258,26 @@ function Productvariants(){
 
   const handleUpdateSubmit = async e => {
     e.preventDefault();
+    
+    if (!updateFormData.manufacturer_name) {
+      swal({
+        icon: 'error',
+        title: 'Name is required',
+        text: 'Please enter a name before updating.'
+      });
+      return; // Prevent submission if the name is empty
+    }
+  
     try {
-
       const updaemasterID = updateFormData.manufacturer_code;
-      console.log(updaemasterID)
       const response = await axios.put(
-        BASE_URL + `/manufacturer/update/${updateFormData.manufacturer_code}`,
+        BASE_URL + `/manufacturer/update/${updaemasterID}`,
         {
           manufacturer_name: updateFormData.manufacturer_name,
           manufacturer_remarks: updateFormData.manufacturer_remarks
         }
       );
-
+  
       if (response.status === 200) {
         swal({
           title: 'Update successful!',
@@ -273,8 +285,6 @@ function Productvariants(){
           icon: 'success',
           button: 'OK'
         }).then(() => {
-
-          // window.location.reload();
           handleModalToggle();
           setManufacturer(prev => prev.map(data =>
             data.manufacturer_code === updateFormData.manufacturer_code
@@ -282,11 +292,10 @@ function Productvariants(){
                 ...data,
                 manufacturer_name: updateFormData.manufacturer_name,
                 manufacturer_remarks: updateFormData.manufacturer_remarks
-                
               }
               : data
           ));
-
+  
           // Reset the form fields
           setUpdateFormData({
             manufacturer_name: '',
@@ -311,6 +320,7 @@ function Productvariants(){
       console.log(err);
     }
   };
+  
 
   useEffect(() => {
     // Initialize DataTable when role data is available

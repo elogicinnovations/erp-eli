@@ -178,71 +178,87 @@ function BinLocation() {
   };
 
   
-    const handleUpdateSubmit = async e => {
-      e.preventDefault();
-          try {
-
-            const id = updateFormData.bin_id;
-            console.log(id)
-            const response = await axios.put(
-              BASE_URL + `/binLocation/update/${updateFormData.bin_id}`,
-              {
-                bin_name: updateFormData.bin_name,
-                bin_subname: updateFormData.bin_subname,
-                bin_remarks: updateFormData.bin_remarks
-              }
-            );
-      
-            if (response.status === 200) {
-              swal({
-                title: 'Update successful!',
-                text: 'The Bin Location has been updated successfully.',
-                icon: 'success',
-                button: 'OK'
-              }).then(() => {
-                // const newId = response.data.bin_id;
-                // window.location.reload();
-                handleModalToggle();
-                setbinLocation(prev => prev.map(data =>
-                  data.bin_id === updateFormData.bin_id
-                    ? {
-                      ...data,
-                      bin_id: updateFormData.bin_id,
-                      bin_name: updateFormData.bin_name,
-                      bin_subname: updateFormData.bin_subname,
-                      bin_remarks: updateFormData.bin_remarks,
-                      // updatedAt: updateFormData.data.updatedAt
-                    
-                    }
-                    : data
-                ));
-      
-                // Reset the form fields
-                setUpdateFormData({
-                  bin_name: '',
-                  bin_subname: '',
-                  bin_remarks: '',
-                  updatedAt: '',
-                  bin_id: null,
-                });
-              });
-            } else if (response.status === 202) {
-              swal({
-                icon: 'error',
-                title: 'Bin Location is already exists',
-                text: 'Please input another Bin Location'
-              });
-            } else {
-              swal({
-                icon: 'error',
-                title: 'Something went wrong',
-                text: 'Please contact our support'
-              });
-            }
-          } catch (err) {
-            console.log(err);
-          }
-    };
+  const handleUpdateSubmit = async e => {
+    e.preventDefault();
+  
+    // Check if bin_name and bin_subname are empty
+    if (updateFormData.bin_name.trim() === '') {
+      swal({
+        icon: 'error',
+        title: 'Bin Location Name is required',
+        text: 'Please fill Bin Location Name field',
+      });
+      return;
+    }
+    if (updateFormData.bin_subname.trim() === '') {
+      swal({
+        icon: 'error',
+        title: 'Bin Location SubName is required',
+        text: 'Please fill Bin Location SubName field',
+      });
+      return;
+    }
+  
+    try {
+      const id = updateFormData.bin_id;
+      const response = await axios.put(
+        BASE_URL + `/binLocation/update/${updateFormData.bin_id}`,
+        {
+          bin_name: updateFormData.bin_name,
+          bin_subname: updateFormData.bin_subname,
+          bin_remarks: updateFormData.bin_remarks,
+        }
+      );
+  
+      if (response.status === 200) {
+        swal({
+          title: 'Update successful!',
+          text: 'The Bin Location has been updated successfully.',
+          icon: 'success',
+          button: 'OK',
+        }).then(() => {
+          handleModalToggle();
+          setbinLocation(prev =>
+            prev.map(data =>
+              data.bin_id === updateFormData.bin_id
+                ? {
+                    ...data,
+                    bin_id: updateFormData.bin_id,
+                    bin_name: updateFormData.bin_name,
+                    bin_subname: updateFormData.bin_subname,
+                    bin_remarks: updateFormData.bin_remarks,
+                  }
+                : data
+            )
+          );
+  
+          // Reset the form fields
+          setUpdateFormData({
+            bin_name: '',
+            bin_subname: '',
+            bin_remarks: '',
+            updatedAt: '',
+            bin_id: null,
+          });
+        });
+      } else if (response.status === 202) {
+        swal({
+          icon: 'error',
+          title: 'Bin Location is already exists',
+          text: 'Please input another Bin Location',
+        });
+      } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support',
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
   
     const handleDelete = async table_id => {
       swal({

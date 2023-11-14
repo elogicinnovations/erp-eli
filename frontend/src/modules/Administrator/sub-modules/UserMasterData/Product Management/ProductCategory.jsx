@@ -228,10 +228,19 @@ function ProductCategory() {
   
     const handleUpdateSubmit = async e => {
       e.preventDefault();
+    
+      if (updateFormData.category_name.trim() === '') {
+        // Display an error message or take any other action you want when the category name is empty
+        swal({
+          icon: 'error',
+          title: 'Category Name is required',
+          text: 'Please enter a Category Name before updating.'
+        });
+        return;
+      }
+    
       try {
-
         const updaemasterID = updateFormData.category_code;
-        console.log(updaemasterID)
         const response = await axios.put(
           BASE_URL + `/category/update/${updateFormData.category_code}`,
           {
@@ -239,7 +248,7 @@ function ProductCategory() {
             category_remarks: updateFormData.category_remarks
           }
         );
-  
+    
         if (response.status === 200) {
           swal({
             title: 'Update successful!',
@@ -247,25 +256,19 @@ function ProductCategory() {
             icon: 'success',
             button: 'OK'
           }).then(() => {
-  
-            // window.location.reload();
             handleModalToggle();
             setcategory(prev => prev.map(data =>
               data.category_code === updateFormData.category_code
                 ? {
-                  ...data,
-                  category_name: updateFormData.category_name,
-                  category_remarks: updateFormData.category_remarks
-                  
-                }
+                    ...data,
+                    category_name: updateFormData.category_name,
+                    category_remarks: updateFormData.category_remarks
+                  }
                 : data
             ));
-  
-            // Reset the form fields
             setUpdateFormData({
               category_name: '',
               category_remarks: '',
-            
               category_code: null,
             });
           });
@@ -286,7 +289,7 @@ function ProductCategory() {
         console.log(err);
       }
     };
- 
+    
    
   
     useEffect(() => {
