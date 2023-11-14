@@ -38,6 +38,10 @@ import UpdateAssemblyForm from "./modules/Administrator/sub-modules/UserMasterDa
 import CreateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/CreateProduct"
 import UpdateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/UpdateProduct"
 import ProductSupplier from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductSupplier"
+import CostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/CostCenter"
+import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/CreateCostCenter"
+import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
+import Inventory from "./modules/Inventory/Inventory"
 // import './assets/skydash/vendors/feather/feather.css';
 // import './assets/skydash/vendors/css/vendor.bundle.base.css';
 // import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -180,6 +184,22 @@ function App() {
                     path="/updateAssemblyForm"
                     element={<UpdateAssemblyForm/>}
                   />
+          <Route
+            path="/costCenter"
+            element={<CostCenter/>}
+          />     <Route
+                    path="/createCostCenter"
+                    element={<CreateCostCenter/>}
+                  />
+                  <Route
+                    path="/updateCostCenter"
+                    element={<UpdateCostCenter/>}
+                  />
+          <Route
+            path="/inventory"
+            element={<Inventory/>}
+          />
+             
 
            
         </Routes>
