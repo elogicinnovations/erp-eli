@@ -42,6 +42,7 @@ import CostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCen
 import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/CreateCostCenter"
 import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
 import Inventory from "./modules/Inventory/Inventory"
+import CreateIssuance from "./modules/Inventory/CreateIssuance"
 // import './assets/skydash/vendors/feather/feather.css';
 // import './assets/skydash/vendors/css/vendor.bundle.base.css';
 // import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -187,7 +188,8 @@ function App() {
           <Route
             path="/costCenter"
             element={<CostCenter/>}
-          />     <Route
+          />     
+                  <Route
                     path="/createCostCenter"
                     element={<CreateCostCenter/>}
                   />
@@ -199,6 +201,10 @@ function App() {
             path="/inventory"
             element={<Inventory/>}
           />
+                  <Route
+                        path="/createIssuance"
+                        element={<CreateIssuance/>}
+                      />
              
 
            
