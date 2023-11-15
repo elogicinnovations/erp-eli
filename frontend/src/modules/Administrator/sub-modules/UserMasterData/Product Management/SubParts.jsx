@@ -34,18 +34,6 @@ import {
 function SubParts() {
     
 
-// Artifitial data
-
-      const aData = [
-        {
-          cat_id: '2434',
-          cat_name: 'Sub Part A',
-          cat_remarks: 'Supplier A',
-          cat_added: '--',
-        },
-      ]
-
-// Artifitial data
 
     const [subParts, setSubParts] = useState([]);
     const [validated, setValidated] = useState(false);
@@ -90,10 +78,16 @@ function SubParts() {
         });
     }, []);
 
-    useEffect(() => {
+
+    const reloadTable  = () => {
+  
       axios.get(BASE_URL + '/subPart/fetchTable')
         .then(res => setSubParts(res.data))
         .catch(err => console.log(err));
+    }
+
+    useEffect(() => {
+      reloadTable()
     }, []);
 
     function formatDate(isoDate) {
@@ -106,6 +100,7 @@ function SubParts() {
     }
 
     const [updateFormData, setUpdateFormData] = useState({
+      id: null,
       subPart_name: '',
       supplier: '',
       subPart_desc: '',
@@ -117,6 +112,7 @@ function SubParts() {
       setUpdateModalShow(!updateModalShow);
       if (updateData) {
         setUpdateFormData({
+          id: updateData.id,
           subPart_code: updateData.subPart_code,
           subPart_name: updateData.subPart_name,
           supplier: updateData.supplier,
@@ -125,6 +121,7 @@ function SubParts() {
         setslctSupplier(updateData.supplier); // Set the selected supplier
       } else {
         setUpdateFormData({
+          id: null,
           subPart_code: '',
           subPart_name: '',
           supplier: '',
@@ -192,24 +189,25 @@ function SubParts() {
                   button: 'OK',
                 }).then(() => {
                   // Handle success
-                  const newId = response.data.subPart_code;
-                  setSubParts((prev) => [
-                    ...prev,
-                    {
-                      subPart_code: newId,
-                      subPart_name: response.data.subPart_name,
-                      supplier: response.data.supplier,
-                      subPart_desc: response.data.subPart_desc,
-                    },
-                  ]);
+                  // const newId = response.data.subPart_code;
+                  // setSubParts((prev) => [
+                  //   ...prev,
+                  //   {
+                  //     subPart_code: subPart_code,
+                  //     subPart_name: response.data.subPart_name,
+                  //     supplier: response.data.supplier,
+                  //     subPart_desc: response.data.subPart_desc,
+                  //   },
+                  // ]);
+                  reloadTable()
                   setShowModal(false);
                 });
-              } else if (response.status === 409) {
+              } else if (response.status === 201) {
                 // Sub Part code already exists
                 swal({
                   icon: 'error',
                   title: 'Sub Part Code Exists',
-                  text: 'The Sub Part Code is already in use. Please use a different code.',
+                  text: 'The Sub Part Code is already in use.',
                   button: 'OK',
                 });
               } else {
@@ -230,7 +228,7 @@ function SubParts() {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     try {
-      const id = updateFormData.subPart_code;
+      const id = updateFormData.id;
   
       // Check if the required fields are filled
       if (!updateFormData.subPart_name || !slctSupplier) { // Use slctSupplier here
@@ -256,18 +254,19 @@ function SubParts() {
           button: 'OK',
         }).then(() => {
           handleModalToggle(); // Close the update modal
-          setSubParts((prev) =>
-            prev.map((data) =>
-              data.subPart_code === updateFormData.subPart_code
-                ? {
-                    ...data,
-                    subPart_name: updateFormData.subPart_name,
-                    supplier: updateFormData.supplier,
-                    subPart_desc: updateFormData.subPart_desc,
-                  }
-                : data
-            )
-          );
+          // setSubParts((prev) =>
+          //   prev.map((data) =>
+          //     data.subPart_code === updateFormData.subPart_code
+          //       ? {
+          //           ...data,
+          //           subPart_name: updateFormData.subPart_name,
+          //           supplier: updateFormData.supplier,
+          //           subPart_desc: updateFormData.subPart_desc,
+          //         }
+          //       : data
+          //   )
+          // );
+          reloadTable()
 
           // Reset the form fields
           setUpdateFormData({
@@ -276,7 +275,6 @@ function SubParts() {
             supplier: '',
             subPart_desc: '',
           });
-          window.location.reload();
         });
       } else if (response.status === 202) {
         swal({
@@ -320,8 +318,7 @@ function SubParts() {
               icon: 'success',
               button: 'OK'
             }).then(() => {
-              setSubParts(prev => prev.filter(data => data.subPart_code !== table_id));
-              window.location.reload();
+              reloadTable()
             });
           } else if (response.status === 202) {
             swal({
@@ -420,6 +417,8 @@ function SubParts() {
                                     <th className='tableh'>Sub Parts Name</th>
                                     <th className='tableh'>Supplier</th>
                                     <th className='tableh'>Details</th>
+                                    <th className='tableh'>Date Created</th>
+                                    <th className='tableh'>Date Modified</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
@@ -430,9 +429,11 @@ function SubParts() {
                                           <td>{data.subPart_name}</td>
                                           <td>{data.supplier}</td>
                                           <td>{data.subPart_desc}</td>
+                                          <td>{formatDate(data.createdAt)}</td>
+                                          <td>{formatDate(data.updatedAt)}</td>
                                           <td>
                                           <button onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></button>
-                                          <button onClick={() => handleDelete(data.subPart_code)} className='btn'><Trash size={32} color="#e60000" /></button>
+                                          <button onClick={() => handleDelete(data.id)} className='btn'><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}
@@ -512,7 +513,7 @@ function SubParts() {
                   <div className='col-4'>
                     <Form.Group controlId="exampleForm.ControlInput1">
                       <Form.Label style={{ fontSize: '20px' }}>Code: </Form.Label>
-                      <Form.Control type="text" value={updateFormData.subPart_code} readOnly name="subPart_code" maxLength={5} placeholder="Enter Code..." style={{ height: '40px', fontSize: '15px' }} required />
+                      <Form.Control type="text" value={updateFormData.subPart_code} onChange={handleUpdateFormChange} name="subPart_code" maxLength={5} placeholder="Enter Code..." style={{ height: '40px', fontSize: '15px' }} required />
                     </Form.Group>
                   </div>
                   <div className='col-8'>

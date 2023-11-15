@@ -6,6 +6,8 @@ const BinLocation = require("./binLocation.model");
 const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
+// const SparePart = require("./sparePart.model");
+// const Supplier_SparePart = require("./supplier_sparePart.model");
 
 UserRole.hasMany(MasterList, { foreignKey: "col_roleID"});
 MasterList.belongsTo(UserRole, { foreignKey: "col_roleID"});
@@ -26,6 +28,14 @@ ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_code"});
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
 ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+
+// Supplier.hasMany(Supplier_SparePart, { foreignKey: "supplier_code"});
+// Supplier_SparePart.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+// SparePart.hasMany(Supplier_SparePart, { foreignKey: "subPart_code"});
+// Supplier_SparePart.belongsTo(SparePart, { foreignKey: "subPart_code"});
+
+
 module.exports = { 
                     MasterList, 
                     UserRole,  
@@ -34,5 +44,7 @@ module.exports = {
                     BinLocation, 
                     Manufacturer,
                     ProductTAGSupplier,
-                    Supplier
+                    Supplier,
+                    // Supplier_SparePart,
+                    // SparePart
                 };

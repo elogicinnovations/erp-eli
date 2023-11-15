@@ -9,7 +9,6 @@ import swal from 'sweetalert';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import {
-    MagnifyingGlass,
     Gear, 
     Bell,
     UserCircle,
@@ -143,8 +142,8 @@ function ProductCategory() {
          
           if (response.status === 200) {
             swal({
-              title: 'The Location has been deleted!',
-              text: 'The Location has been updated successfully.',
+              title: 'The Category has been deleted!',
+              text: 'The Category has been updated successfully.',
               icon: 'success',
               button: 'OK'
             }).then(() => {
@@ -155,7 +154,7 @@ function ProductCategory() {
             swal({
               icon: 'error',
               title: 'Delete Prohibited',
-              text: 'You cannot delete Bin Location that is used'
+              text: 'You cannot delete Category that is used'
             });
           } else {
             swal({

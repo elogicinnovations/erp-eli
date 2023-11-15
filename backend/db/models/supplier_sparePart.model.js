@@ -1,29 +1,21 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const SubPart = sequelize.define('subPart', {
+const Supplier_SparePart = sequelize.define('supplier_sparePart', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  subPart_code: {
+  sparePart_id: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  subPart_name: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
   supplier: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  subPart_desc: {
     type: DataTypes.STRING,
     allowNull: true,
   }
 });
 
-module.exports = SubPart;
+module.exports = Supplier_SparePart;

@@ -36,10 +36,10 @@ router.route('/fetchTable').get(async (req, res) => {
     try {
       const { subPartCode, subPartName, supplier, subPartDesc } = req.body;
   
-      // Validate the request data
-      if (!subPartCode || !subPartName || !supplier) {
-        return res.status(400).json({ error: 'Missing required data' });
-      }
+      // // Validate the request data
+      // if (!subPartCode || !subPartName || !supplier) {
+      //   return res.status(400).json({ error: 'Missing required data' });
+      // }
   
       // Check for an existing SubPart
       const existingSubPart = await SubPart.findOne({
@@ -49,7 +49,7 @@ router.route('/fetchTable').get(async (req, res) => {
       });
   
       if (existingSubPart) {
-        return res.status(409).json({ error: 'SubPart with the same code already exists' });
+        return res.status(201).json({ error: 'SubPart with the same code already exists' });
       }
   
       // Create a new SubPart
@@ -68,40 +68,82 @@ router.route('/fetchTable').get(async (req, res) => {
   });
   
 
+
   router.route('/update/:param_id').put(async (req, res) => {
     try {
-      const param_id = req.params.param_id;
-  
-      const { subPart_name, supplier, subPart_desc } = req.body;
-  
-      if (!subPart_name || !supplier) {
-        return res.status(400).json({ error: 'Missing required data' });
-      }
-  
-      // Update the SubPart
-      const existingSubPart = await SubPart.findOne({
+      const { subPart_code, subPart_name, supplier, subPart_desc } = req.body;
+      const updatemasterID = req.params.param_id;
+      console.log('id:' + updatemasterID)
+      console.log('code:' + subPart_code)
+
+
+      // Check if the email already exists in the table for other records
+      const existingData = await SubPart.findOne({
         where: {
-          subPart_code: param_id,
+          subPart_code: subPart_code,
+          id: { [Op.ne]: updatemasterID }, // Exclude the current record
         },
       });
   
-      if (!existingSubPart) {
-        return res.status(404).json({ message: 'Record not found' });
+      if (existingData) {
+        res.status(202).send('Exist');
+      } else {
+  
+        // Update the record in the table
+        const [affectedRows] = await SubPart.update(
+          {
+            subPart_code: subPart_code.toUpperCase(),
+            subPart_name: subPart_name,
+            supplier: supplier,
+            subPart_desc: subPart_desc,
+          },
+          {
+            where: { id: updatemasterID },
+          }
+        );
+  
+        res.status(200).json({ message: "Data updated successfully", affectedRows });
       }
-  
-      existingSubPart.subPart_name = subPart_name;
-      existingSubPart.supplier = supplier;
-      existingSubPart.subPart_desc = subPart_desc;
-  
-      // Save the changes
-      await existingSubPart.save();
-  
-      return res.status(200).json({ message: 'Data updated successfully' });
     } catch (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal server error' });
+      res.status(500).send('An error occurred');
     }
   });
+
+  // router.route('/update/:param_id').put(async (req, res) => {
+  //   try {
+  //     const param_id = req.params.param_id;
+  
+  //     const { subPart_name, supplier, subPart_desc } = req.body;
+  
+  //     if (!subPart_name || !supplier) {
+  //       return res.status(201).json({ error: 'Missing required data' });
+  //     }
+  
+  //     // Update the SubPart
+  //     const existingSubPart = await SubPart.findOne({
+  //       where: {
+  //         subPart_code: param_id,
+  //       },
+  //     });
+  
+  //     if (existingSubPart) {
+  //       return res.status(202).json({ message: 'Record not found' });
+  //     }
+  
+  //     existingSubPart.subPart_name = subPart_name;
+  //     existingSubPart.supplier = supplier;
+  //     existingSubPart.subPart_desc = subPart_desc;
+  
+  //     // Save the changes
+  //     await existingSubPart.save();
+  
+  //     return res.status(200).json({ message: 'Data updated successfully' });
+  //   } catch (err) {
+  //     console.error(err);
+  //     return res.status(500).json({ error: 'Internal server error' });
+  //   }
+  // });
   
   
   router.route('/delete/:subPartId').delete(async (req, res) => {
@@ -111,7 +153,7 @@ router.route('/fetchTable').get(async (req, res) => {
       // Delete the SubPart record
       const deletedRows = await SubPart.destroy({
         where: {
-          subPart_code: subPartId,
+          id: subPartId,
         },
       });
   

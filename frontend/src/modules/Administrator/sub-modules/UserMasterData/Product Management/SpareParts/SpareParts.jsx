@@ -34,64 +34,78 @@ import {
 
 function SpareParts() {
     
+  const [sparePart, setSparePart] = useState([]);
+  const reloadTable  = () => {
+    axios.get(BASE_URL + '/sparePart/fetchTable')
+    .then(res => setSparePart(res.data))
+    .catch(err => console.log(err));
+}
+  useEffect(() => {
+     reloadTable()
+    }, []);
 
-// Artifitial data
-
-      const aData = [
-        {
-          cat_id: '2434',
-          cat_name: 'Spare Part A',
-          cat_supplier: 'Supplier A',
-          cat_sub: '--',
-          cat_details: '--',
-        },
-      ]
-
-// Artifitial data
-
-    const [showModal, setShowModal] = useState(false);
-    const [updateModalShow, setUpdateModalShow] = useState(false);
-    const navigate = useNavigate();
-  
-    const handleClose = () => {
-      setShowModal(false);
-    };
-  
-    const handleShow = () => setShowModal(true);
-  
-    const handleModalToggle = () => {
-      setUpdateModalShow(!updateModalShow);
-    };
-  
-    const handleDelete = async param_id => {
+    function formatDate(isoDate) {
+      const date = new Date(isoDate);
+      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+    }
+    
+    function padZero(num) {
+      return num.toString().padStart(2, '0');
+    }
+    const handleDelete = async table_id => {
       swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this user file!",
+        text: "Once deleted, you will not be able to recover this product data!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
           try {
+            const  response = await axios.delete(BASE_URL + `/sparePart/delete/${table_id}`);
+             
+            if (response.status === 200) {
+              swal({
+                title: 'The Product has been deleted!',
+                text: 'The Product has been deleted successfully.',
+                icon: 'success',
+                button: 'OK'
+              }).then(() => {
+                reloadTable();
+                
+              });
+            } else if (response.status === 202) {
+              swal({
+                icon: 'error',
+                title: 'Delete Prohibited',
+                text: 'You cannot delete product that is used'
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
           } catch (err) {
             console.log(err);
           }
         } else {
           swal({
             title: "Cancelled Successfully",
-            text: "Spare Part not Deleted!",
+            text: "Product not Deleted!",
             icon: "warning",
           });
         }
       });
     };
   
-  
-    React.useEffect(() => {
-      $(document).ready(function () {
+    useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && sparePart.length > 0) {
         $('#order-listing').DataTable();
-      });
-    }, []);
+      }
+    }, [sparePart]);
 
   return (
     <div className="main-of-containers">
@@ -135,7 +149,7 @@ function SpareParts() {
 
                         <div className="button-create-side">
                         <div className="Buttonmodal-new">
-                            <Link to='/createSpareParts' onClick={handleShow} className='button'>
+                            <Link to='/createSpareParts' className='button'>
                                 <span style={{ }}>
                                 <Plus size={25} />
                                 </span>
@@ -153,23 +167,23 @@ function SpareParts() {
                                 <tr>
                                     <th className='tableh'>Code</th>
                                     <th className='tableh'>Spare Parts Name</th>
-                                    <th className='tableh'>Supplier</th>
-                                    <th className='tableh'>Sub Part</th>
-                                    <th className='tableh'>Details</th>
+                                    <th className='tableh'>Description</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {aData.map((data,i) =>(
+                                      {sparePart.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.cat_id}</td>
-                                          <td>{data.cat_name}</td>
-                                          <td>{data.cat_supplier}</td>
-                                          <td>{data.cat_sub}</td>
-                                          <td>{data.cat_details}</td>
+                                          <td>{data.spareParts_code}</td>
+                                          <td>{data.spareParts_name}</td>
+                                          <td>{data.spareParts_desc}</td>
                                           <td>
-                                          <Link to='/updateSpareParts' onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></Link>
-                                          <button onClick={() => handleDelete(data.bin_id)} className='btn'><Trash size={32} color="#e60000" /></button>
+                                          <Link to='/updateSpareParts' 
+                                            // onClick={() => handleModalToggle(data)} 
+                                            className='btn'><NotePencil size={32} /></Link>
+                                          <button 
+                                            onClick={() => handleDelete(data.id)} 
+                                            className='btn'><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}
