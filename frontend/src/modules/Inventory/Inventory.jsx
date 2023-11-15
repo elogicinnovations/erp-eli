@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import receiving from "../../assets/global/receiving";
+import Dropdown from 'react-bootstrap/Dropdown';
 import {
     MagnifyingGlass,
     Gear, 
@@ -16,6 +17,9 @@ import {
     Plus,
     Trash,
     NotePencil,
+    Eye,
+    ArrowUUpLeft,
+    DotsThreeCircle,
   } from "@phosphor-icons/react";
 
 
@@ -34,23 +38,107 @@ import * as $ from 'jquery';
 
 function Inventory() {
 
+    // Artificial Data
+
+    const Data = [
+        {
+          a: '1',
+          b: '1',
+          c: '1',
+          d: '1',
+          e: '1',
+        },
+        {
+          a: '1',
+          b: '1',
+          c: '1',
+          d: '1',
+          e: '1',
+        },
+        {
+          a: '1',
+          b: '1',
+          c: '1',
+          d: '1',
+          e: '1',
+        },
+      ]
+
+    // Artificial Data
+
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    // Close dropdown when the component unmounts or when another tab is selected
+    return () => setShowDropdown(false);
+  }, []);
+
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [rotatedIcons, setRotatedIcons] = useState(Array(Data.length).fill(false));
+  
+  const toggleDropdown = (event, index) => {
+    // Check if the clicked icon is already open, close it
+    if (index === openDropdownIndex) {
+      setRotatedIcons((prevRotatedIcons) => {
+        const newRotatedIcons = [...prevRotatedIcons];
+        newRotatedIcons[index] = !newRotatedIcons[index];
+        return newRotatedIcons;
+      });
+      setShowDropdown(false);
+      setOpenDropdownIndex(null);
+    } else {
+      // If a different icon is clicked, close the currently open dropdown and open the new one
+      setRotatedIcons(Array(Data.length).fill(false));
+      const iconPosition = event.currentTarget.getBoundingClientRect();
+      setDropdownPosition({
+        top: iconPosition.bottom + window.scrollY,
+        left: iconPosition.left + window.scrollX,
+      });
+      setRotatedIcons((prevRotatedIcons) => {
+        const newRotatedIcons = [...prevRotatedIcons];
+        newRotatedIcons[index] = true;
+        return newRotatedIcons;
+      });
+      setShowDropdown(true);
+      setOpenDropdownIndex(index);
+    }
+  };
+
+  useEffect(() => {
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (showDropdown && !event.target.closest('.dots-icon')) {
+        setRotatedIcons(Array(Data.length).fill(false));
+        setShowDropdown(false);
+        setOpenDropdownIndex(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showDropdown]);
+
     React.useEffect(() => {
         $(document).ready(function () {
           $('#order-listing').DataTable();
         });
       }, []);
 
-    React.useEffect(() => {
-        $(document).ready(function () {
-          $('#order1-listing').DataTable();
-        });
-      }, []);
+      React.useEffect(() => {
+          $(document).ready(function () {
+            $('#order1-listing').DataTable();
+          });
+        }, []);
 
-    React.useEffect(() => {
-        $(document).ready(function () {
-          $('#order2-listing').DataTable();
-        });
-      }, []);
+        React.useEffect(() => {
+            $(document).ready(function () {
+              $('#order2-listing').DataTable();
+            });
+          }, []);
 
     const tabStyle = {
         padding: '10px 15px', 
@@ -92,28 +180,16 @@ function Inventory() {
                         </div>
 
                         </div>
-                        <div className="Employeetext-button">
-                    <div className="employee-and-button">
-                        <div className="emp-text-side">
-                            <p>Inventory</p>
-                        </div>
-
-                        <div className="button-create-side">
-                        <div className="Buttonmodal-new">
-                            
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
                         <div className="tabbutton-sides">
                             <Tabs
-                                defaultActiveKey="profile"
+                                defaultActiveKey="inventory"
                                 transition={false}
                                 id="noanim-tab-example"
                                 >
-                                <Tab eventKey="profile" title={<span style={{...tabStyle, fontSize: '20px', overflowY: 'auto'}}>Profile</span>}>
+                                <Tab eventKey="inventory" title={<span style={{...tabStyle, fontSize: '20px', overflowY: 'auto'}}>Inventory</span>}>
+                                    <div className="tab-titles">
+                                        <h1>Inventory</h1>
+                                    </div>
                                     <div className="table-containss">
                                         <div className="main-of-all-tables">
                                             <table id='order-listing'>
@@ -127,22 +203,61 @@ function Inventory() {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                            <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
+                                                        {Data.map((data, i) => (
+                                                        <tr key={i}>
+                                                            <td>{data.a}</td>
+                                                            <td>{data.b}</td>
+                                                            <td>{data.c}</td>
+                                                            <td>{data.d}</td>
                                                             <td>
-                                                            <Link to='/updateCostCenter' className='btn'><NotePencil size={32} /></Link>
-                                                            <button className='btn'><Trash size={32} color="#e60000" /></button>
+                                                            <DotsThreeCircle
+                                                                size={32}
+                                                                className="dots-icon"
+                                                                style={{
+                                                                cursor: 'pointer',
+                                                                transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
+                                                                color: rotatedIcons[i] ? '#666' : '#000',
+                                                                transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
+                                                                }}
+                                                                onClick={(event) => toggleDropdown(event, i)}
+                                                            />
+                                                            <div
+                                                                className='choices'
+                                                                style={{
+                                                                position: 'fixed',
+                                                                top: dropdownPosition.top - 30 + 'px',
+                                                                left: dropdownPosition.left - 100 + 'px',
+                                                                opacity: showDropdown ? 1 : 0,
+                                                                visibility: showDropdown ? 'visible' : 'hidden',
+                                                                transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+                                                                boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
+                                                                }}
+                                                            >
+                                                                {/* Your dropdown content here */}
+                                                                <button>View</button>
+                                                                <button>Add</button>
+                                                                <button>Return</button>
+                                                            </div>
                                                             </td>
-                                                            </tr>
-                                                </tbody>
+                                                        </tr>
+                                                        ))}
+                                                    </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </Tab>
-                                <Tab eventKey="product list" title={<span style={{...tabStyle, fontSize: '20px' }}>Product List</span>}>
+                                <Tab eventKey="issuance" title={<span style={{...tabStyle, fontSize: '20px' }}>Issuance</span>}>
+                                    <div className="tab-titles">
+                                        <h1>Issuance</h1>
+                                        <div>
+                                            <Link to={'/createIssuance'} className="issuance-btn">
+                                            <span style={{marginRight: '4px'}}>
+                                                <Plus size={20} />
+                                            </span>
+                                                Add Issuance
+                                            </Link>
+                                        </div>
+                                    </div>
                                     <div className="table-containss">
                                         <div className="main-of-all-tables">
                                             <table id='order1-listing'>
@@ -156,22 +271,53 @@ function Inventory() {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                            <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
+                                                        {Data.map((data, i) => (
+                                                        <tr key={i}>
+                                                            <td>{data.a}</td>
+                                                            <td>{data.b}</td>
+                                                            <td>{data.c}</td>
+                                                            <td>{data.d}</td>
                                                             <td>
-                                                            <Link to='/updateCostCenter' className='btn'><NotePencil size={32} /></Link>
-                                                            <button className='btn'><Trash size={32} color="#e60000" /></button>
+                                                            <DotsThreeCircle
+                                                                size={32}
+                                                                className="dots-icon"
+                                                                style={{
+                                                                cursor: 'pointer',
+                                                                transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
+                                                                color: rotatedIcons[i] ? '#666' : '#000',
+                                                                transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
+                                                                }}
+                                                                onClick={(event) => toggleDropdown(event, i)}
+                                                            />
+                                                            <div
+                                                                className='choices'
+                                                                style={{
+                                                                position: 'fixed',
+                                                                top: dropdownPosition.top - 30 + 'px',
+                                                                left: dropdownPosition.left - 100 + 'px',
+                                                                opacity: showDropdown ? 1 : 0,
+                                                                visibility: showDropdown ? 'visible' : 'hidden',
+                                                                transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+                                                                boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
+                                                                }}
+                                                            >
+                                                                {/* Your dropdown content here */}
+                                                                <button>View</button>
+                                                                <button>Add</button>
+                                                                <button>Return</button>
+                                                            </div>
                                                             </td>
-                                                            </tr>
-                                                </tbody>
+                                                        </tr>
+                                                        ))}
+                                                    </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </Tab>
-                                <Tab eventKey="ordered list" title={<span style={{...tabStyle, fontSize: '20px' }}>Ordered List</span>}>
+                                <Tab eventKey="return" title={<span style={{...tabStyle, fontSize: '20px' }}>Return</span>}>
+                                    <div className="tab-titles">
+                                        <h1>Return</h1>
+                                    </div>
                                     <div className="table-containss">
                                         <div className="main-of-all-tables">
                                             <table id='order2-listing'>
@@ -185,17 +331,45 @@ function Inventory() {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                            <tr>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
-                                                            <td>a</td>
+                                                        {Data.map((data, i) => (
+                                                        <tr key={i}>
+                                                            <td>{data.a}</td>
+                                                            <td>{data.b}</td>
+                                                            <td>{data.c}</td>
+                                                            <td>{data.d}</td>
                                                             <td>
-                                                            <Link to='/updateCostCenter' className='btn'><NotePencil size={32} /></Link>
-                                                            <button className='btn'><Trash size={32} color="#e60000" /></button>
+                                                            <DotsThreeCircle
+                                                                size={32}
+                                                                className="dots-icon"
+                                                                style={{
+                                                                cursor: 'pointer',
+                                                                transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
+                                                                color: rotatedIcons[i] ? '#666' : '#000',
+                                                                transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
+                                                                }}
+                                                                onClick={(event) => toggleDropdown(event, i)}
+                                                            />
+                                                            <div
+                                                                className='choices'
+                                                                style={{
+                                                                position: 'fixed',
+                                                                top: dropdownPosition.top - 30 + 'px',
+                                                                left: dropdownPosition.left - 100 + 'px',
+                                                                opacity: showDropdown ? 1 : 0,
+                                                                visibility: showDropdown ? 'visible' : 'hidden',
+                                                                transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+                                                                boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
+                                                                }}
+                                                            >
+                                                                {/* Your dropdown content here */}
+                                                                <button>View</button>
+                                                                <button>Add</button>
+                                                                <button>Return</button>
+                                                            </div>
                                                             </td>
-                                                            </tr>
-                                                </tbody>
+                                                        </tr>
+                                                        ))}
+                                                    </tbody>
                                             </table>
                                         </div>
                                     </div>

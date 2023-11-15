@@ -22325,9 +22325,10 @@ code {
 .form-check .form-check-label {
   min-height: 18px;
   display: block;
-  margin-left: 1.75rem;
+  margin-left: 0px;
   font-size: 0.875rem;
   line-height: 1.5;
+  font-size: 13px;
 }
 
 .rtl .form-check .form-check-label {
@@ -24834,7 +24835,7 @@ dl li {
 .tab-content {
   border: 1px solid #CED4DA;
   border-top: 0;
-  padding: 2rem 1rem;
+  padding: 1rem;
   text-align: justify;
 }
 

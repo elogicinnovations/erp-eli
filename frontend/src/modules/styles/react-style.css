@@ -1112,6 +1112,46 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+.choices button{
+  background: none;
+  border: none;
+  font-size: 12px;
+}
+
+.choices{    
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  border: solid 1px #c1c1c1;
+  border-radius: 10px;
+  background: white;
+}
+
+.issuance-btn:hover {
+  background-color: #d18800;
+  color: white;
+  text-decoration: none;
+}
+
+.issuance-btn{
+    background-color: #FFA500;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 2;
+    position: relative;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.tab-titles{
+    display: flex;
+    padding: 15px;
+    width: 100%;
+    justify-content: space-between;
+}
+
 .toggle-switch {
   position: relative;
   width: 40px;
