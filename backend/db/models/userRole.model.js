@@ -1,3 +1,4 @@
+// sequelize.config.js
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
@@ -19,9 +20,17 @@ const UserRole = sequelize.define('userRole', {
     unique: false,
   },
   col_authorization: {
-    type: DataTypes.STRING('2000'),
+    type: DataTypes.STRING('2000'), // Change to STRING type
     allowNull: true,
-    unique: false,
+    get() {
+      // Deserialize the JSON string to an array
+      const value = this.getDataValue('col_authorization');
+      return value ? JSON.parse(value) : [];
+    },
+    set(value) {
+      // Serialize the array to a JSON string
+      this.setDataValue('col_authorization', JSON.stringify(value));
+    },
   }
 });
 

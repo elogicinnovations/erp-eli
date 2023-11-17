@@ -51,44 +51,46 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
 
 
 router.post('/editUserrole/:id/:rolename', async (req, res) => {
-    const roleId = req.params.id;
-    const rolename = req.params.rolename;
-    const selectedCheckboxes = req.body.selectedCheckboxes;
-  
-    try {
-      const existingRole = await UserRole.findOne({
-        where: {
-          col_rolename: rolename,
-          col_id: { [sequelize]: roleId },
-        },
-      });
-  
-      if (existingRole) {
-        return res.status(202).send('Exist');
-      } else {
-        // Delete existing role authorizations
-        // await UserRole.destroy({
-        //   where: {
-        //     col_id: roleId,
-        //   },
-        // });
-  
-        // // Insert new role authorizations
-        // await UserRole.bulkCreate(selectedCheckboxes.map(item => ({
-        //   col_roleID: roleId,
-        //   col_rolename: item.rolename,
-        //   col_desc: item.desc,
-        //   col_authorization: item.authorization,
-        // })));
-  
-        // return res.status(200).json({ message: 'Data inserted and updated successfully' });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      return res.status(500).json({ error: 'An error occurred' });
+  const roleId = req.params.id;
+  const rolename = req.params.rolename;
+  const selectedCheckboxes = req.body.selectedCheckboxes;
+
+  try {
+    // Check for the existence of the role by ID
+    const existingRole = await UserRole.findByPk(roleId);
+
+    if (!existingRole) {
+      return res.status(404).json({ message: 'User role not found' });
     }
-  });
-  
+
+    // Update existing role authorizations
+    const existingAuthorizationValues = existingRole.col_authorization.split(', ');
+    existingRole.col_authorization = selectedCheckboxes
+      .map((item) => {
+        const existingValue = existingAuthorizationValues.find((value) => value === item.authorization);
+        return existingValue || item.authorization;
+      })
+      .join(', ');
+
+    existingRole.col_desc = selectedCheckboxes[0].desc;
+    
+    // Use the update method directly on the model
+    await UserRole.update({
+      col_authorization: existingRole.col_authorization,
+      col_desc: existingRole.col_desc,
+    }, {
+      where: {
+        col_id: roleId,
+      },
+    });
+
+    return res.status(200).json({ message: 'Data updated successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 
 //DELETE:
 router.route('/deleteRole/:param_id').delete(async (req, res) => {
@@ -164,7 +166,7 @@ router.post('/createUserrole/:rolename', async (req, res) => {
       } else {
 
           // Concatenate the authorization values with commas
-          const concatenatedAuthorization = selectedCheckboxes.map(item => item.authorization).join(',');
+          const concatenatedAuthorization = selectedCheckboxes.map(item => item.authorization).join(', ');
 
           const createdRole = await UserRole.create({
               col_rolename: selectedCheckboxes[0].rolename, // Use the first rolename as an example
