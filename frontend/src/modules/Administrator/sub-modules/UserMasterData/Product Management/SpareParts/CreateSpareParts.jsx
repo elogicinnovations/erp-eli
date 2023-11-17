@@ -58,7 +58,7 @@ const handleSelectChange_SubPart = (selectedOptions) => {
   setSubParts(selectedOptions);
 };
 
-const handleAddSubPartClick = () => {
+const handleAddSupp = () => {
   setShowDropdown(true);
 };
 
@@ -160,21 +160,19 @@ const add = async e => {
                             </div>
                             <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
-                                  <Form.Label style={{ fontSize: '20px' }}>Supplier: </Form.Label>
-
+                                <Form.Label style={{ fontSize: '20px' }}>Subpart: </Form.Label>
                                   <Select
                                     isMulti
-                                    options={fetchSupp.map(supplier => ({
-                                      value: supplier.supplier_code,
-                                      label: supplier.supplier_name 
+                                    options={fetchSubPart.map((subPart) => ({
+                                      value: subPart.id,
+                                      label: subPart.subPart_name,
                                     }))}
-                                    onChange={handleSelectChange}
+                                    onChange={handleSelectChange_SubPart}
                                   />
-
                                 </Form.Group>
                               </div>
                           </div>
-                       
+                                   
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Details: </Form.Label>
@@ -208,34 +206,35 @@ const add = async e => {
                                     </thead>
                                     <tbody>
                                      
-                                          {SubParts.length > 0 ? (
-                                            SubParts.map((subPart) => (
+                                          {supp.length > 0 ? (
+                                            supp.map((supp) => (
                                               <tr>
-                                                <td key={subPart.value}>{subPart.label}</td>
+                                                <td key={supp.value}>{supp.label}</td>
                                               </tr>
                                             ))
                                           ) : (
                                             <tr>
-                                              <td>No Sub Part selected</td>
+                                              <td>No Supplier selected</td>
                                             </tr>
                                           )}
                                       
                                       {showDropdown && (
                                         <div className="dropdown mt-3">
+                                          
                                           <Select
                                             isMulti
-                                            options={fetchSubPart.map((subPart) => ({
-                                              value: subPart.id,
-                                              label: subPart.subPart_name,
+                                            options={fetchSupp.map(supplier => ({
+                                              value: supplier.supplier_code,
+                                              label: supplier.supplier_name 
                                             }))}
-                                            onChange={handleSelectChange_SubPart}
+                                            onChange={handleSelectChange}
                                           />
                                         </div>
                                       )}
 
                                       <Button
                                         className='btn btn-danger mt-1'
-                                        onClick={handleAddSubPartClick}
+                                        onClick={handleAddSupp}
                                         size="md"
                                         style={{ fontSize: '15px', margin: '0px 5px' }}
                                       >

@@ -10,6 +10,34 @@ router.use(session({
     saveUninitialized: true
 }));
 
+router.route('/fetchTableEdit').get(async (req, res) => {
+    try {
+      const data = await Supplier_SparePart.findAll({
+        where: {
+          sparePart_id: req.query.id,
+        },
+      });
+  
+      if (data) {
+        // Assuming 'supplier_code' and 'supplier_name' are properties of the Supplier model
+        const suppliers = data.map(item => ({
+          value: item.supplier,
+          label: item.supplier,
+        }));
+  
+        console.log(suppliers);
+        return res.json(suppliers);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+  
+  
+
 
 
 

@@ -3,15 +3,10 @@ import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
 import '../../../../styles/react-style.css';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router';
 import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
-import Button from 'react-bootstrap/Button';
 import swal from 'sweetalert';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
 import {
-    MagnifyingGlass,
     Gear, 
     Bell,
     UserCircle,
@@ -178,9 +173,11 @@ function SpareParts() {
                                           <td>{data.spareParts_name}</td>
                                           <td>{data.spareParts_desc}</td>
                                           <td>
-                                          <Link to='/updateSpareParts' 
-                                            // onClick={() => handleModalToggle(data)} 
-                                            className='btn'><NotePencil size={32} /></Link>
+                                            <Link
+                                              to={`/updateSpareParts/${data.id}`}
+                                              // onClick={() => handleModalToggle(data)} 
+                                              className='btn'><NotePencil size={32} />
+                                            </Link>
                                           <button 
                                             onClick={() => handleDelete(data.id)} 
                                             className='btn'><Trash size={32} color="#e60000" /></button>
