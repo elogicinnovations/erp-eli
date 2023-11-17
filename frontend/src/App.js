@@ -43,16 +43,7 @@ import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/C
 import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
 import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
-// import './assets/skydash/vendors/feather/feather.css';
-// import './assets/skydash/vendors/css/vendor.bundle.base.css';
-// import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-// import './assets/skydash/vendors/datatables.net/jquery.dataTables';
-// import './assets/skydash/vendors/ti-icons/css/themify-icons.css';
-// import './assets/skydash/css/vertical-layout-light/style.css';
-// import './assets/skydash/vendors/js/vendor.bundle.base';
-// import './assets/skydash/vendors/datatables.net/jquery.dataTables';
-// import './assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-// import './assets/skydash/js/off-canvas.js';
+
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
 function App() {
@@ -194,7 +185,7 @@ function App() {
                     element={<CreateCostCenter/>}
                   />
                   <Route
-                    path="/updateCostCenter"
+                    path="/initUpdateCostCenter/:id"
                     element={<UpdateCostCenter/>}
                   />
           <Route
@@ -206,8 +197,6 @@ function App() {
                         element={<CreateIssuance/>}
                       />
              
-
-           
         </Routes>
       </DataProvider>
     </Router>

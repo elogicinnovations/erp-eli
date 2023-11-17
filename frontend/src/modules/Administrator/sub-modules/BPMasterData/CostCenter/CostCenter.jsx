@@ -4,11 +4,11 @@ import '../../../../../assets/global/style.css';
 import '../../../../styles/react-style.css';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router';
-import axios from 'axios';
-import Button from 'react-bootstrap/Button';
 import swal from 'sweetalert';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
+import BASE_URL from '../../../../../assets/global/url';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import axios from 'axios';
+
 import {
     MagnifyingGlass,
     Gear, 
@@ -18,36 +18,20 @@ import {
     Trash,
     NotePencil,
   } from "@phosphor-icons/react";
-  import '../../../../../assets/skydash/vendors/feather/feather.css';
-  import '../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
-  import '../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-  import '../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-  import '../../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
-  import '../../../../../assets/skydash/css/vertical-layout-light/style.css';
-  import '../../../../../assets/skydash/vendors/js/vendor.bundle.base';
-  import '../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-  import '../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-  import '../../../../../assets/skydash/js/off-canvas';
   
   import * as $ from 'jquery';
 
 function CostCenter() {
-    
+  const [CostCenter, setCostCenter] = useState([]);   
+
+// Fetch Data
+  useEffect(() => {
+    axios.get(BASE_URL + '/costCenter/getCostCenter')
+      .then(res => setCostCenter(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
 // Artifitial data
-
-      const aData = [
-        {
-          cat_id: '2434',
-          cat_name: 'Spare Part A',
-          cat_supplier: 'Supplier A',
-          cat_sub: '--',
-          cat_details: '--',
-        },
-      ]
-
-// Artifitial data
-
     const [showModal, setShowModal] = useState(false);
     const [updateModalShow, setUpdateModalShow] = useState(false);
     const navigate = useNavigate();
@@ -84,13 +68,26 @@ function CostCenter() {
         }
       });
     };
-  
-  
-    React.useEffect(() => {
-      $(document).ready(function () {
+
+    //search
+    useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && CostCenter.length > 0) {
         $('#order-listing').DataTable();
-      });
-    }, []);
+      }
+    }, [CostCenter]);
+
+    //date format
+    function formatDatetime(datetime) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return new Date(datetime).toLocaleString('en-US', options);
+    }
 
   return (
     <div className="main-of-containers">
@@ -150,22 +147,28 @@ function CostCenter() {
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>User #</th>
+                                    <th className='tableh'>ID</th>
                                     <th className='tableh'>Name</th>
-                                    <th className='tableh'>Contact</th>
-                                    <th className='tableh'>Description</th>
+                                    <th className='tableh'>Assigned User</th>
+                                    <th className='tableh'>Contact #</th>
+                                    <th className='tableh'>Status</th>
+                                    <th className='tableh'>Date Created</th>
+                                    <th className='tableh'>Date Modified</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {aData.map((data,i) =>(
+                                      {CostCenter.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.cat_id}</td>
-                                          <td>{data.cat_name}</td>
-                                          <td>{data.cat_supplier}</td>
-                                          <td>{data.cat_details}</td>
+                                          <td>{data.id}</td>
+                                          <td>{data.name}</td>
+                                          <td>{data.masterlist.col_Fname}</td>
+                                          <td>{data.masterlist.col_phone}</td>
+                                          <td>{data.status}</td>
+                                          <td>{formatDatetime(data.createdAt)}</td>
+                                          <td>{formatDatetime(data.updatedAt)}</td>
                                           <td>
-                                          <Link to='/updateCostCenter' onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></Link>
+                                          <Link to={`/initUpdateCostCenter/${data.id}`} onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></Link>
                                           <button onClick={() => handleDelete(data.bin_id)} className='btn'><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>

@@ -6,6 +6,7 @@ const BinLocation = require("./binLocation.model");
 const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
+const CostCenter = require("./costcenter.model");
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
 
@@ -28,6 +29,9 @@ ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_code"});
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
 ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+MasterList.hasMany(CostCenter, { foreignKey: "col_id" });
+CostCenter.belongsTo(MasterList, { foreignKey: "col_id"});
+
 
 // Supplier.hasMany(Supplier_SparePart, { foreignKey: "supplier_code"});
 // Supplier_SparePart.belongsTo(Supplier, { foreignKey: "supplier_code"});
@@ -45,6 +49,7 @@ module.exports = {
                     Manufacturer,
                     ProductTAGSupplier,
                     Supplier,
+                    CostCenter,
                     // Supplier_SparePart,
                     // SparePart
                 };

@@ -150,8 +150,6 @@ router.route('/create').post(
       }
 });
 
-
-
 router.route('/update').put(
   upload.fields([
       { name: 'selectedimage', maxCount: 1 },

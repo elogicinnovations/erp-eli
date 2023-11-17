@@ -1,39 +1,131 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../../Sidebar/sidebar';
 import '../../../../../assets/global/style.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
-import {
-    MagnifyingGlass,
-    Gear, 
-    Bell,
-    UserCircle,
-    Plus,
-    X,
-    NotePencil,
-  } from "@phosphor-icons/react";
-import '../../../../../assets/skydash/vendors/feather/feather.css';
-import '../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
-import '../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-import '../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-import '../../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
-import '../../../../../assets/skydash/css/vertical-layout-light/style.css';
-import '../../../../../assets/skydash/vendors/js/vendor.bundle.base';
-import '../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-import '../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-import '../../../../../assets/skydash/js/off-canvas';
+import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+import BASE_URL from '../../../../../assets/global/url';
+import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
 function CreateCostCenter() {
+  const navigate = useNavigate();
 
+  const [name, setName] = useState('');
+  const [select_masterlist, setSelect_Masterlist] = useState([]);
+  const [description, setDescription] = useState('');
+
+  const [validated, setValidated] = useState(false);
+  const [status, setStatus] = useState('Active');
+
+// ----------------------------------Start Get  Master List------------------------------//
+const [masterList, setMasteList] = useState([]); 
+useEffect(() => {
+  axios.get(BASE_URL + '/masterList/masterTable')
+    .then(response => {
+      setMasteList(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching master list:', error);
+    });
+}, []);
+
+const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.target.value);};
+
+// ----------------------------------End Get  Master List------------------------------//
+
+// ----------------------------------Start Add new Cost center------------------------------//
+const add = async e => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  if (form.checkValidity() === false) {
+    e.preventDefault();
+    e.stopPropagation();
+      swal({
+          icon: 'error',
+          title: 'Fields are required',
+          text: 'Please fill the red text fields'
+        });
+  }
+  else{
+    axios
+    .post(BASE_URL + '/costCenter/create', 
+      { 
+          name, masterList, description, select_masterlist, status
+      })
+    .then((res) => {
+      console.log(res);
+      if(res.status === 200){
+        SuccessInserted(res);
+      }
+      else if(res.status === 201){
+        Duplicate_Message();
+      }
+      else{
+        ErrorInserted();
+      }
+    })
+  }
+  setValidated(true); //for validations
+};
+// ----------------------------------End Add new Cost center------------------------------//
+
+
+// ----------------------------------Start Search------------------------------//
 React.useEffect(() => {
     $(document).ready(function () {
         $('#order-listing').DataTable();
     });
     }, []);
+// ----------------------------------End Serach------------------------------//
+
+// ----------------------------------Validation------------------------------//
+const SuccessInserted = (res) => {
+  swal({
+    title: 'Cost Center Created',
+    text: 'The Cost Center has been added successfully',
+    icon: 'success',
+    button: 'OK'
+  })
+  .then(() => {
+   
+   navigate('/costCenter')
+
+
+  })
+}
+const Duplicate_Message = () => {
+  swal({
+    title: 'Cost Center Already Exist',
+    text: 'Please input other cost center name',
+    icon: 'error',
+    button: 'OK'
+  })
+}
+const ErrorInserted = () => {
+  swal({
+    title: 'Something went wrong',
+    text: 'Please Contact our Support',
+    icon: 'error',
+    button: 'OK'
+  })  
+}
+
+const handleActiveStatus= e => {
+
+  if(status === 'Active'){
+      setStatus('Inactive')
+  }
+  else{
+      setStatus('Active')
+  }
+}
+// ----------------------------------End Validation------------------------------//
 
   return (
     <div className="main-of-containers">
@@ -57,94 +149,62 @@ React.useEffect(() => {
                             }}
                           ></span>
                         </div>
-                        <Form>
+                        <Form noValidate validated={validated} onSubmit={add}>
                           <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Cost Center: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control type="text" placeholder="Enter name" style={{height: '40px', fontSize: '15px'}} onChange={e => setName(e.target.value)}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput2">
                                 <Form.Label style={{ fontSize: '20px' }}>Assign User: </Form.Label>
-                                <Select
-                                isMulti
-                                options={[
-                                    { value: 'user1', label: 'x' },
-                                    { value: 'user2', label: 'y' },
-                                    { value: 'user3', label: 'j' },
-                                    { value: 'user4', label: 'l' },
-                                    { value: 'user5', label: 'q' },
-                                ]}
-                                />
+                                <Form.Select 
+                                    aria-label="" 
+                                    onChange={handleFormChangeMasterList} 
+                                    required
+                                    style={{ height: '40px', fontSize: '15px' }}
+                                    defaultValue=''
+                                  >
+                                      <option disabled value=''>
+                                          Select User
+                                      </option>
+                                        {masterList.map(masterList => (
+                                          <option key={masterList.col_id} value={masterList.col_id}>
+                                            {masterList.col_Fname}
+                                          </option>
+                                        ))}
+                                  </Form.Select>
                             </Form.Group>
                               </div>
-                          </div>
-                          <div className="row">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Contact: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter Contact Number" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
                           </div>
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Description: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}} onChange={e => setDescription(e.target.value)}/>
                             </Form.Group>
                         </div>
-                        </Form>
+                        
+                            <div className="form-group d-flex flex-row justify-content-center align-items-center"> 
+                                <label className='userstatus'  style={{fontSize: 15, marginRight: 10}}>Status</label>
+                                <input
+                                    type="checkbox"
+                                    name="cstatus"
+                                    className="toggle-switch" // Add the custom class
+                                    onChange={handleActiveStatus}
+                                    defaultChecked={status}
+                                />
+                            </div> 
 
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
-                          Master List
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '85%',
-                              left: '10rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-                        <div className="supplier-table">
-                            <div className="table-containss">
-                                <div className="main-of-all-tables">
-                                    <table>
-                                            <thead>
-                                            <tr>
-                                                <th className='tableh'>Product Code</th>
-                                                <th className='tableh'>Quantity</th>
-                                                <th className='tableh'>Sub Parts</th>
-                                                <th className='tableh'>Desciptions</th>
-                                                <th className='tableh'>Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                    <tr>
-                                                    <td>asd</td>
-                                                    <td>asdsda</td>
-                                                    <td>tnbgv</td>
-                                                    <td>sdf</td>
-                                                    <td>
-                                                    <button className='btn'><X size={32} color="#e60000" /></button>
-                                                    </td>
-                                                    </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
                         <div className='save-cancel'>
-                        <Link to='/costCenter' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
+                        <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                         <Link to='/costCenter' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Close
                         </Link>
                         </div>
+                        </Form>
+                       
             </div>
         </div>
     </div>
