@@ -170,7 +170,7 @@ function App() {
                     element={<CreateSpareParts/>}
                   />
                   <Route
-                    path="/updateSpareParts"
+                    path="/updateSpareParts/:id"
                     element={<UpdateSpareParts/>}
                   />
           <Route
