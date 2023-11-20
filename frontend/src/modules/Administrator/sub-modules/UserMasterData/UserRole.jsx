@@ -194,7 +194,7 @@ function UserRole() {
                               {role.map((data, i) => (
                               <tr key={i} className={i % 2 === 0 ? 'even-row' : 'odd-row'}>
                                 <td>{data.col_rolename}</td>
-                                <td>{data.col_authorization}</td>
+                                <td className='autho'>{data.col_authorization}</td>
                                 <td>{data.col_desc}</td>
                                 <td>{formatDate(data.createdAt)}</td>
                                 <td>{formatDate(data.updatedAt)}</td>

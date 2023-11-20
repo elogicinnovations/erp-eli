@@ -1112,6 +1112,13 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+td.autho{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
 .choices button{
   background: none;
   border: none;

@@ -54,35 +54,26 @@ router.post('/editUserrole/:id/:rolename', async (req, res) => {
   const roleId = req.params.id;
   const rolename = req.params.rolename;
   const selectedCheckboxes = req.body.selectedCheckboxes;
+  console.log('Received parameters:', roleId, rolename);
 
   try {
-    // Check for the existence of the role by ID
-    const existingRole = await UserRole.findByPk(roleId);
-
-    if (!existingRole) {
-      return res.status(404).json({ message: 'User role not found' });
-    }
-
-    // Update existing role authorizations
-    const existingAuthorizationValues = existingRole.col_authorization.split(', ');
-    existingRole.col_authorization = selectedCheckboxes
-      .map((item) => {
-        const existingValue = existingAuthorizationValues.find((value) => value === item.authorization);
-        return existingValue || item.authorization;
-      })
-      .join(', ');
-
-    existingRole.col_desc = selectedCheckboxes[0].desc;
-    
-    // Use the update method directly on the model
-    await UserRole.update({
-      col_authorization: existingRole.col_authorization,
-      col_desc: existingRole.col_desc,
-    }, {
-      where: {
-        col_id: roleId,
+    // Update the existing role with the updated data
+    const updatedRole = await UserRole.update(
+      {
+        col_rolename: rolename,
+        col_desc: selectedCheckboxes[0].desc,
+        col_authorization: selectedCheckboxes.map(item => item.authorization).join(', '),
       },
-    });
+      {
+        where: {
+          col_id: roleId,
+        },
+      }
+    );
+
+    if (!updatedRole[0]) {
+      return res.status(404).json({ error: 'User role not found' });
+    }
 
     return res.status(200).json({ message: 'Data updated successfully' });
   } catch (error) {
