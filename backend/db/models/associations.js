@@ -7,6 +7,10 @@ const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
 const CostCenter = require("./costcenter.model");
+const Assembly = require("./assembly.model");
+const Assembly_Supplier = require("./assembly_supplier.model");
+const Assembly_SparePart = require("./assembly_spare.model");
+
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
 
@@ -33,8 +37,11 @@ MasterList.hasMany(CostCenter, { foreignKey: "col_id" });
 CostCenter.belongsTo(MasterList, { foreignKey: "col_id"});
 
 
-// Supplier.hasMany(Supplier_SparePart, { foreignKey: "supplier_code"});
-// Supplier_SparePart.belongsTo(Supplier, { foreignKey: "supplier_code"});
+Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
+Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+// Assembly.hasMany(Assembly_SparePart, { foreignKey: "sparePart_id"});
+// Assembly_SparePart.belongsTo(Assembly, { foreignKey: "sparePart_id"});
 
 // SparePart.hasMany(Supplier_SparePart, { foreignKey: "subPart_code"});
 // Supplier_SparePart.belongsTo(SparePart, { foreignKey: "subPart_code"});
@@ -50,6 +57,7 @@ module.exports = {
                     ProductTAGSupplier,
                     Supplier,
                     CostCenter,
-                    // Supplier_SparePart,
-                    // SparePart
+                    // Assembly,
+                    Assembly_Supplier,
+                    // Assembly_SparePart
                 };

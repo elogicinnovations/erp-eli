@@ -31,8 +31,8 @@ const supp_SparePart = require("./routes/supplier_sparePart.route");
 const subPart_SparePart = require("./routes/subPart_sparePart.route");
 
 const assembly = require("./routes/assembly.route");
-const spare_assembly = require("./routes/spare_assembly.route");
-const supplier_assembly = require("./routes/supplier_assembly.route");
+const spare_assembly = require("./routes/assembly_spare.route");
+const supplier_assembly = require("./routes/assembly_supplier.route");
 
 const productTAGsupplier = require("./routes/productTAGsupplier.route");
 const costCenter = require("./routes/costCenter.route");

@@ -66,7 +66,7 @@ const handleSelectChange_Supp = (selectedOptions) => {
   setSupp(selectedOptions);
 };
 
-const handleAddSparePartClick = () => {
+const handleAddSuppClick = () => {
   setShowDropdown(true);
 };
 
@@ -236,7 +236,7 @@ const add = async e => {
 
                                  <Button
                                    className='btn btn-danger mt-1'
-                                   onClick={handleAddSparePartClick}
+                                   onClick={handleAddSuppClick}
                                    size="md"
                                    style={{ fontSize: '15px', margin: '0px 5px' }}
                                  >

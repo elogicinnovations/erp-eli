@@ -72,10 +72,13 @@ function MasterList() {
     updateId: null,
   });
 
-  useEffect(() => {
+  const reloadTable = () => {
     axios.get(BASE_URL + '/masterList/masterTable')
-      .then(res => setmasterListt(res.data))
-      .catch(err => console.log(err));
+    .then(res => setmasterListt(res.data))
+    .catch(err => console.log(err));
+  } 
+  useEffect(() => {
+    reloadTable()
   }, []);
 
   console.log(masterListt)
@@ -316,19 +319,21 @@ function MasterList() {
           button: 'OK'
         })
         .then(() => {
-          const newId = response.data.col_id;
-          console.log(newId)
-          setmasterListt(prevStudent => [...prevStudent, {
-            col_id: newId,
-            col_Fname: formData.cname,
-            col_address: formData.caddress,
-            col_phone: formData.cnum,
-            col_email: formData.cemail,
-            col_username: formData.cuname,
-            col_roleID: formData.crole,         
-            col_Pass: formData.cpass,
-            col_status: status
-          }]);
+          // const newId = response.data.col_id;
+          // console.log(newId)
+          // setmasterListt(prevStudent => [...prevStudent, {
+          //   col_id: newId,
+          //   col_Fname: formData.cname,
+          //   col_address: formData.caddress,
+          //   col_phone: formData.cnum,
+          //   col_email: formData.cemail,
+          //   col_username: formData.cuname,
+          //   col_roleID: formData.crole,         
+          //   col_Pass: formData.cpass,
+          //   col_status: status
+          // }]);
+
+          reloadTable()
 
           // Reset the form fields
           setFormData({
@@ -842,7 +847,7 @@ function MasterList() {
                                  <option disabled value="">Role</option>
                             {roles.map(role => (
                               <option key={role.col_roleID} value={role.col_id}>
-                                {role.col_id}
+                                {role.col_rolename}
                               </option>
                             ))}
                             </Form.Select>

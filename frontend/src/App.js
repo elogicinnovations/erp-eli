@@ -173,7 +173,7 @@ function App() {
                     element={<CreateAssemblyForm/>}
                   />
                   <Route
-                    path="/updateAssemblyForm"
+                    path="/updateAssemblyForm/:id"
                     element={<UpdateAssemblyForm/>}
                   />
           <Route

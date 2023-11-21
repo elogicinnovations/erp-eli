@@ -1,21 +1,21 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const Supplier_Assembly = sequelize.define('supplier_assembly', {
+const Spare_Assembly = sequelize.define('assembly_spare', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  assembly_id: {
+  assembly_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  supplier_code: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  }
+  sparePart_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
-module.exports = Supplier_Assembly;
+module.exports = Spare_Assembly;

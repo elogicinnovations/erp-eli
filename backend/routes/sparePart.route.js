@@ -176,34 +176,6 @@ router.route('/update').put(async (req, res) => {
 
       }
 
-      // for (const supplier of req.query.supp) {
-      //   const supplierValue = supplier.value;
-
-      //   console.log(supplierValue)
-      //   await Supplier_SparePart.bulkCreate({
-      //       supplier: supplierValue,
-      //   },
-      //   {
-      //     where: { sparePart_id: req.query.id },
-      //   }
-      //   );
-      // }
-
-      // for (const subPart of req.query.SubParts) {
-      //   const subPartValue = subPart.value;
-
-      //   console.log('subpart id' + subPartValue)
-
-      //   await SubPart_SparePart.bulkCreate({
-      //       subPart_code: subPartValue,
-      //   },
-      //   {
-      //     where: { sparePart_id: req.query.id },
-      //   }
-      //   );
-      // }
-
-
 
       res.status(200).json();
     }

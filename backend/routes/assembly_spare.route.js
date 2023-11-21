@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const spare_assembly = require('../db/models/spare_assembly.model')
+const Assembly_SparePart = require('../db/models/assembly_spare.model')
+// const {Assembly_Supplier, Assembly, Assembly_SparePart} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({

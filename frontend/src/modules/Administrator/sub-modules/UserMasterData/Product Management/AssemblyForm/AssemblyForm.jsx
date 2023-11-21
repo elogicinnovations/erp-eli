@@ -173,7 +173,7 @@ function AssemblyForm() {
                                           <td>{data.assembly_name}</td>
                                           <td>{data.assembly_desc}</td>
                                           <td>
-                                          <Link to='/updateAssemblyForm'  className='btn'><NotePencil size={32} /></Link>
+                                          <Link to={`/updateAssemblyForm/${data.id}`}  className='btn'><NotePencil size={32} /></Link>
                                           <button onClick={() => handleDelete(data.id)} className='btn'><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
