@@ -8,6 +8,11 @@ const productTAGsupplier = sequelize.define('product_tag_supplier', {
         primaryKey: true,
         autoIncrement: true
     },
+    product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+    },
     product_code: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -20,6 +25,7 @@ const productTAGsupplier = sequelize.define('product_tag_supplier', {
         type: DataTypes.FLOAT,
         allowNull: true,
     }
+    
 });
 
 

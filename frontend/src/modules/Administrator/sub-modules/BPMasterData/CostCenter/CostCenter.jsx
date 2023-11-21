@@ -46,7 +46,7 @@ function CostCenter() {
       setUpdateModalShow(!updateModalShow);
     };
   
-    const handleDelete = async param_id => {
+    const handleDelete = async id => {
       swal({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this user file!",
@@ -56,6 +56,32 @@ function CostCenter() {
       }).then(async (willDelete) => {
         if (willDelete) {
           try {
+            const response = await axios.delete(BASE_URL + `/costCenter/delete/${id}`);
+
+            if (response.status === 200) {
+              swal({
+                title: 'Deleted!',
+                text: 'The Cost Center has been deleted successfully.',
+                icon: 'success',
+                button: 'OK'
+              }).then(() => {
+                setCostCenter(prev => prev.filter(data => data.id !== id));
+                
+              });
+            } else if (response.status === 202) {
+              swal({
+                icon: 'error',
+                title: 'Delete Prohibited',
+                text: 'You cannot delete Cost Center that is used'
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
+
           } catch (err) {
             console.log(err);
           }
@@ -169,7 +195,7 @@ function CostCenter() {
                                           <td>{formatDatetime(data.updatedAt)}</td>
                                           <td>
                                           <Link to={`/initUpdateCostCenter/${data.id}`} onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></Link>
-                                          <button onClick={() => handleDelete(data.bin_id)} className='btn'><Trash size={32} color="#e60000" /></button>
+                                          <button onClick={() => handleDelete(data.id)} className='btn'><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}
