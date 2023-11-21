@@ -47,43 +47,40 @@ function SpareParts() {
     function padZero(num) {
       return num.toString().padStart(2, '0');
     }
-    const handleDelete = async table_id => {
-      swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this product data!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      }).then(async (willDelete) => {
+    const handleDelete = async (table_id) => {
+      try {
+        const willDelete = await swal({
+          title: "Are you sure?",
+          text: "Once deleted, you will not be able to recover this product data!",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
+    
         if (willDelete) {
-          try {
-            const  response = await axios.delete(BASE_URL + `/sparePart/delete/${table_id}`);
-             
-            if (response.status === 200) {
-              swal({
-                title: 'The Product has been deleted!',
-                text: 'The Product has been deleted successfully.',
-                icon: 'success',
-                button: 'OK'
-              }).then(() => {
-                reloadTable();
-                
-              });
-            } else if (response.status === 202) {
-              swal({
-                icon: 'error',
-                title: 'Delete Prohibited',
-                text: 'You cannot delete product that is used'
-              });
-            } else {
-              swal({
-                icon: 'error',
-                title: 'Something went wrong',
-                text: 'Please contact our support'
-              });
-            }
-          } catch (err) {
-            console.log(err);
+          const response = await axios.delete(BASE_URL + `/sparePart/delete/${table_id}`);
+    
+          if (response.status === 200) {
+            swal({
+              title: 'The Product has been deleted!',
+              text: 'The Product has been deleted successfully.',
+              icon: 'success',
+              button: 'OK'
+            }).then(() => {
+              reloadTable();
+            });
+          } else if (response.status === 202) {
+            swal({
+              icon: 'error',
+              title: 'Delete Prohibited',
+              text: 'You cannot delete a product that is in use'
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: 'Something went wrong',
+              text: 'Please contact our support'
+            });
           }
         } else {
           swal({
@@ -92,9 +89,12 @@ function SpareParts() {
             icon: "warning",
           });
         }
-      });
+      } catch (error) {
+        // Handle errors here
+        console.error(error);
+      }
     };
-  
+    
     useEffect(() => {
       // Initialize DataTable when role data is available
       if ($('#order-listing').length > 0 && sparePart.length > 0) {

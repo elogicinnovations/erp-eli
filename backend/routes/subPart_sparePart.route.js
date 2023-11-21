@@ -32,7 +32,29 @@ router.route('/fetchTable').get(async (req, res) => {
     }
   });
   
-
-
+  router.route('/fetchTableEdit').get(async (req, res) => {
+    try {
+      const { id } = req.query;
+  
+      if (!id) {
+        return res.status(400).json({ error: 'Missing required parameter: id' });
+      }
+  
+      const data = await SubPart_SparePart.findAll({
+        where: {
+          sparePart_id: id,
+        },
+      });
+  
+      if (data) {
+        return res.json(data);
+      } else {
+        res.status(404).json({ error: 'Data not found' });
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });  
 
 module.exports = router;

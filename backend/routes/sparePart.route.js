@@ -111,101 +111,81 @@ router.route('/create').post(async (req, res) => {
 
 router.route('/update').put(async (req, res) => {
   try {
-    // console.log(req.query.id)
+    const { id, code, name, desc, supp, SubParts } = req.body;
 
     // Check if the email already exists in the table for other records
     const existingData = await SparePart.findOne({
       where: {
-        spareParts_code: req.query.code,
-        id: { [Op.ne]: req.query.id }, // Exclude the current record
+        spareParts_code: code,
+        id: { [Op.ne]: id }, // Exclude the current record
       },
     });
 
     if (existingData) {
       res.status(201).send('Exist');
     } else {
-
-      // Update the record in the table
-      const affectedRows = await SparePart.update(
-        {
-          spareParts_code: req.query.code.toUpperCase(),
-          spareParts_name: req.query.name,
-          spareParts_desc: req.query.desc
-        },
-        {
-          where: { id: req.query.id },
-        }
-      );
-
-      if(affectedRows){
-        const deletesubpart  = SubPart_SparePart.destroy({
-          where : {
-            sparePart_id: req.query.id
+      // Start a transaction
+      await sequelize.transaction(async (t) => {
+        // Update the record in the SparePart table
+        const [affectedRows] = await SparePart.update(
+          {
+            spareParts_code: code.toUpperCase(),
+            spareParts_name: name,
+            spareParts_desc: desc,
+          },
+          {
+            where: { id: id },
+            transaction: t,
           }
-        })
-        if(deletesubpart){
-          for (const subPart of req.query.SubParts) {
-            const subPartValue = subPart.value;
-  
-            console.log('subpart id' + subPartValue)
-    
-            await SubPart_SparePart.create({
-                sparePart_id: req.query.id,
-                subPart_code: subPartValue,
-            });
-          }
-        }
+        );
 
+        if (affectedRows > 0) {
+          // Delete existing records in Supplier_SparePart and recreate
+          await Supplier_SparePart.destroy({
+            where: {
+              sparePart_id: id,
+            },
+            transaction: t,
+          });
 
-        const deletesupp  = Supplier_SparePart.destroy({
-          where : {
-            sparePart_id: req.query.id
-          }
-        })
-        if(deletesupp){
-          for (const supplier of req.query.supp) {
+          for (const supplier of supp) {
             const supplierValue = supplier.value;
-    
-            await Supplier_SparePart.create({
-                sparePart_id: req.query.id,
+            await Supplier_SparePart.create(
+              {
+                sparePart_id: id,
                 supplier: supplierValue,
-            });
+              },
+              { transaction: t }
+            );
           }
-  
+
+          // Delete existing records in SubPart_SparePart and recreate
+          await SubPart_SparePart.destroy({
+            where: {
+              sparePart_id: id,
+            },
+            transaction: t,
+          });
+
+          for (const subPart of SubParts) {
+            const subPartValue = subPart.value;
+            await SubPart_SparePart.create(
+              {
+                sparePart_id: id,
+                subPart_code: subPartValue,
+              },
+              { transaction: t }
+            );
+          }
+
+          // Commit the transaction
+          await t.commit();
+
+          res.status(200).json();
+        } else {
+          res.status(400).send('Failed to update');
         }
-
-      }
-
-      // for (const supplier of req.query.supp) {
-      //   const supplierValue = supplier.value;
-
-      //   console.log(supplierValue)
-      //   await Supplier_SparePart.bulkCreate({
-      //       supplier: supplierValue,
-      //   },
-      //   {
-      //     where: { sparePart_id: req.query.id },
-      //   }
-      //   );
-      // }
-
-      // for (const subPart of req.query.SubParts) {
-      //   const subPartValue = subPart.value;
-
-      //   console.log('subpart id' + subPartValue)
-
-      //   await SubPart_SparePart.bulkCreate({
-      //       subPart_code: subPartValue,
-      //   },
-      //   {
-      //     where: { sparePart_id: req.query.id },
-      //   }
-      //   );
-      // }
-
-
-
-      res.status(200).json();
+      });
     }
   } catch (err) {
     console.error(err);
