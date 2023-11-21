@@ -2,12 +2,18 @@ const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
 const Product = sequelize.define('product', {
+  product_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true
+  },
   product_code: {
     // type: DataTypes.STRING,
     type: DataTypes.INTEGER,
     allowNull: true,
-    autoIncrement: true,
-    primaryKey: true,
+    autoIncrement: false,
+    primaryKey: false,
   },
   product_name: {
     type: DataTypes.STRING, // Change the column name to col_roleID

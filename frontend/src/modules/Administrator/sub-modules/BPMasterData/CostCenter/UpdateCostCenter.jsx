@@ -4,9 +4,10 @@ import '../../../../../assets/global/style.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import '../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
-import Select from 'react-select';
+import swal from 'sweetalert';
 import axios from 'axios';
 import BASE_URL from '../../../../../assets/global/url';
+import Button from 'react-bootstrap/Button';
 
 
 function UpdateCostCenter() {
@@ -15,14 +16,16 @@ function UpdateCostCenter() {
   const [status, setStatus] = useState(false);
   const [contactNumber, setContactNumber] = useState('');
   const [description, setDescription] = useState('');
+  const [checkedStatus, setcheckedStatus] = useState();
   
 
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [validated, setValidated] = useState(false);
 
 
 //Render Cost Center By ID
 useEffect(() => {   
-  console.log('code' + id)
   axios.get(BASE_URL + '/costCenter/initUpdate', {
       params: {
         id: id
@@ -32,8 +35,16 @@ useEffect(() => {
       setName(res.data[0].name);
       setSelect_Masterlist(res.data[0].col_id);
       setContactNumber(res.data[0].masterlist.col_phone);
-      setStatus(res.data[0].status);
-      setDescription(res.data[0].description)
+      setDescription(res.data[0].description);
+
+       // Check if the status is "Active" and set suppStatus accordingly
+       if (res.data[0].status === "Active") {
+        setcheckedStatus(true)
+        setStatus('Active'); // Check the checkbox
+    } else if (res.data[0].status === "Inactive") {
+        setcheckedStatus(false)
+        setStatus('Inactive'); // Uncheck the checkbox
+    }
   })
     .catch(err => console.log(err));
 }, []);
@@ -54,6 +65,54 @@ const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.targe
 
 // ----------------------------------End Get  Master List------------------------------//
 
+
+// ----------------------------------Start Handle Submit------------------------------//
+const handleFormSubmit = async e => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  if (form.checkValidity() === false) {
+    e.preventDefault();
+    e.stopPropagation();
+  swal({
+      icon: 'error',
+      title: 'Fields are required',
+      text: 'Please fill the red text fields'
+    });
+  }
+  else{
+       axios
+       .put(BASE_URL + '/costCenter/update/', 
+          { 
+            id,name, description, select_masterlist, status
+          })
+       .then((response) => {
+          if (response.status === 200) {
+              swal({
+                  title: 'Update successful!',
+                  text: 'You successfully updated cost center.',
+                  icon: 'success',
+                  button: 'OK'
+                })
+              .then(() => {
+                  navigate("/CostCenter");
+              })
+          }
+          else if (response.status === 201){
+              swal({
+                  title: 'Cost Center Exist',
+                  text: 'Cost Center is already exist please fill other cost center',
+                  icon: 'error',
+                  button: 'OK'
+                });
+          }
+         
+       })
+  }
+
+  setValidated(true); //for validations
+}
+// ----------------------------------End Handle Submit------------------------------//
 const handleActiveStatus= e => {
   if(status === 'Active'){
       setStatus('Inactive')
@@ -85,12 +144,12 @@ const handleActiveStatus= e => {
                             }}
                           ></span>
                         </div>
-                        <Form>
+                        <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
                           <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Cost Center: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter item name" value={name} style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control type="text" placeholder="Enter item name" onChange={e => setName(e.target.value)} value={name} style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
@@ -115,40 +174,33 @@ const handleActiveStatus= e => {
                             </Form.Group>
                               </div>
                           </div>
-                          <div className="row">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Contact: </Form.Label>
-                                <Form.Control type="text" placeholder="Enter Contact Number" value={contactNumber} style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
+                        <div className="row">
+                            <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Description: </Form.Label>
+                                <Form.Control as="textarea" placeholder="Enter details name" onChange={e => setDescription(e.target.value)} value={description} style={{height: '100px', fontSize: '15px'}}/>
+                            </Form.Group>
+                        </div>
+                        <div className="row">
                             <div className="col-6">
                             <div className="form-group d-flex flex-row"> 
-                                  <label className='userstatus'  style={{fontSize: 15, marginRight: 10}}>Status</label>
+                                  <label className='userstatus' style={{fontSize: 15, marginRight: 10}}>Status</label>
                                   <input
                                       type="checkbox"
                                       name="cstatus"
                                       className="toggle-switch"
-                                      onChange={handleActiveStatus}
-                                      defaultChecked={status}
+                                      onClick={handleActiveStatus}
+                                      defaultChecked={checkedStatus}
                                   />
                                   </div>
                               </div> 
                           </div>
-
-                        <div className="row">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Description: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" value={description} style={{height: '100px', fontSize: '15px'}}/>
-                            </Form.Group>
-                        </div>
-                        </Form>
                         <div className='save-cancel'>
-                        <Link to='/costCenter' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
+                        <Button type="submit" className='btn btn-warning ntn-' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>Save</Button>
                         <Link to='/costCenter' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Close
                         </Link>
                         </div>
+                        </Form>
             </div>
         </div>
     </div>
