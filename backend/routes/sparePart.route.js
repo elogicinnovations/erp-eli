@@ -109,75 +109,41 @@ router.route('/create').post(async (req, res) => {
 });
 
 
-router.route('/update').put(async (req, res) => {
+
+router.route('/update/:param_id').put(async (req, res) => {
   try {
-    // console.log(req.query.id)
+    const { subPart_code, subPart_name, supplier, subPart_desc } = req.body;
+    const updatemasterID = req.params.param_id;
+    console.log('id:' + updatemasterID)
+    console.log('code:' + subPart_code)
+
 
     // Check if the email already exists in the table for other records
-    const existingData = await SparePart.findOne({
+    const existingData = await SubPart.findOne({
       where: {
-        spareParts_code: req.query.code,
-        id: { [Op.ne]: req.query.id }, // Exclude the current record
+        subPart_code: subPart_code,
+        id: { [Op.ne]: updatemasterID }, // Exclude the current record
       },
     });
 
     if (existingData) {
-      res.status(201).send('Exist');
+      res.status(202).send('Exist');
     } else {
 
       // Update the record in the table
-      const affectedRows = await SparePart.update(
+      const [affectedRows] = await SubPart.update(
         {
-          spareParts_code: req.query.code.toUpperCase(),
-          spareParts_name: req.query.name,
-          spareParts_desc: req.query.desc
+          subPart_code: subPart_code.toUpperCase(),
+          subPart_name: subPart_name,
+          supplier: supplier,
+          subPart_desc: subPart_desc,
         },
         {
-          where: { id: req.query.id },
+          where: { id: updatemasterID },
         }
       );
 
-      if(affectedRows){
-        const deletesubpart  = SubPart_SparePart.destroy({
-          where : {
-            sparePart_id: req.query.id
-          }
-        })
-        if(deletesubpart){
-          for (const subPart of req.query.SubParts) {
-            const subPartValue = subPart.value;
-  
-            console.log('subpart id' + subPartValue)
-    
-            await SubPart_SparePart.create({
-                sparePart_id: req.query.id,
-                subPart_code: subPartValue,
-            });
-          }
-        }
-
-
-        const deletesupp  = Supplier_SparePart.destroy({
-          where : {
-            sparePart_id: req.query.id
-          }
-        })
-        if(deletesupp){
-          for (const supplier of req.query.supp) {
-            const supplierValue = supplier.value;
-    
-            await Supplier_SparePart.create({
-                sparePart_id: req.query.id,
-                supplier: supplierValue,
-            });
-          }
-  
-        }
-
-      }
-
-
-      res.status(200).json();
+      res.status(200).json({ message: "Data updated successfully", affectedRows });
     }
   } catch (err) {
     console.error(err);

@@ -42,25 +42,44 @@ const { id } = useParams();
 
 
 
-useEffect(() => {   
-  // console.log('code' + id)
+useEffect(() => {
   axios.get(BASE_URL + '/sparePart/fetchTableEdit', {
-      params: {
-        id: id
-      }
-    })
-  //   .then(res => setsupplier(res.data))
-  .then(res => {
+    params: {
+      id: id
+    }
+  })
+    .then(res => {
       setCode(res.data[0].spareParts_code);
       setName(res.data[0].spareParts_name);
       setDesc(res.data[0].spareParts_desc);
-  })
+
+      // Ensure that the API response contains an array of subParts
+      const existingSubParts = res.data[0].subParts.map(subPart => ({
+        value: subPart.id,
+        label: subPart.subPart_name
+      }));
+
+      // Set SubParts with the formatted data
+      // setSubParts(existingSubParts);
+    })
     .catch(err => console.log(err));
-}, []);
+}, [id]);
+
+// console.log(SubParts)
 
 useEffect(() => {
   axios.get(BASE_URL + '/subPart_SparePart/fetchTable')
     .then(res => settableSubPart(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => {
+  axios.get(BASE_URL + '/subPart_SparePart/fetchTableEdit', {
+    params: {
+      id: id
+    }
+  })
+    .then(res => setSubParts(res.data))
     .catch(err => console.log(err));
 }, []);
 
@@ -76,14 +95,23 @@ useEffect(() => {
     .catch(err => console.log(err));
 }, []);
 
+// console.log(fetchSubPart)
+
 //for supplier selection values
 const handleSelectChange = (selectedOptions) => {
   setSupp(selectedOptions);
 };
 
 const handleSelectChange_SubPart = (selectedOptions) => {
-  setSubParts(selectedOptions);
+  // Extracting only the ids from the selected options
+  const selectedIds = selectedOptions.map((option) => ({
+    id: option.value,
+    subPart_code: option.label,
+  }));
+  setSubParts(selectedIds);
 };
+
+console.log(SubParts)
 
 const handleEditClick = () => {
   // for clicking the button can be editted not readonly
@@ -103,19 +131,22 @@ const update = async (e) => {
     swal({
       icon: 'error',
       title: 'Fields are required',
-      text: 'Please fill the red text fields',
+      text: 'Please fill the required fields',
     });
   } else {
-    console.log(id);
     axios
       .put(`${BASE_URL}/sparePart/update`, null, {
         params: {
-          id: id,
-          code, name, supp, desc, SubParts
-        },
+          id,
+          code,
+          name,
+          supp,
+          desc,
+          SubParts,
+        }
+        
       })
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
           swal({
             title: 'The Spare Parts successfully added!',
@@ -138,11 +169,20 @@ const update = async (e) => {
             text: 'Please contact our support',
           });
         }
+      })
+      .catch((error) => {
+        console.error(error);
+        swal({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred during the update.',
+        });
       });
   }
 
-  setValidated(true); //for validations
+  setValidated(true);
 };
+
 
 
 // React.useEffect(() => {
@@ -203,9 +243,13 @@ const update = async (e) => {
                                     isDisabled={!isReadOnly}
                                     options={fetchSubPart.map((subPart) => ({
                                       value: subPart.id,
-                                      label: subPart.subPart_name,
+                                      label: subPart.subPart_name, // Use subPart_name or any relevant property for label
                                     }))}
                                     onChange={handleSelectChange_SubPart}
+                                    value={SubParts.map((subPart) => ({
+                                      value: subPart.id,
+                                      label: subPart.subPart_code,
+                                    }))}
                                   />
 
                                 </Form.Group>
