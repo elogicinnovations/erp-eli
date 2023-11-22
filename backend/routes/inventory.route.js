@@ -13,31 +13,6 @@ router.use(session({
 
 
 
-router.route('/fetchInvetory').get(async (req, res) => {
-    try {
-    //   const data = await MasterList.findAll({
-    //     include: {
-    //       model: UserRole,
-    //       required: false,
-    //     },
-    //   });
-      const data = await Inventory.findAll({
-        
-      });
-  
-      if (data) {
-        // console.log(data);
-        return res.json(data);
-      } else {
-        res.status(400);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
-    }
-  });
-
-
 
 
 
