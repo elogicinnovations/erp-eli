@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Product = require('../db/models/product.model')
-const { ProductTAGSupplier, Product } = require("../db/models/associations"); 
+const { ProductTAGSupplier, Product, Inventory } = require("../db/models/associations"); 
 const session = require('express-session')
 const multer = require('multer'); // Import multer
 
@@ -10,7 +10,7 @@ const multer = require('multer'); // Import multer
 // const storage = multer.memoryStorage();
 // const uploader = multer({ storage });
 const mime = require('mime-types');
-const productTAGsupplier = require('../db/models/productTAGsupplier.model');
+// const productTAGsupplier = require('../db/models/productTAGsupplier.model');
 // Create a multer instance to handle file uploads
 const upload = multer();
 
@@ -31,7 +31,7 @@ router.route('/fetchTable').get(async (req, res) => {
   //     },
   //   });
     const data = await Product.findAll({
-      attributes: ['product_code', 'product_name', 'product_unitMeasurement', 'createdAt', 'updatedAt']
+      attributes: ['product_id', 'product_code', 'product_name', 'product_unitMeasurement', 'createdAt', 'updatedAt']
     });
 
     if (data) {
@@ -56,7 +56,7 @@ router.route('/fetchTableEdit').get(async (req, res) => {
     try {
         const data = await Product.findAll({
         where: {
-            product_code: req.query.id,
+            product_id: req.query.id,
         },
         });
 
@@ -99,8 +99,8 @@ router.route('/create').post(
         // Check if the supplier code is already exists in the table
         const existingDataCode = await Product.findOne({
           where: {
-            // product_code: req.body.binLocationName, //dapat ma generate pag meron na assembly at parts
-            product_name: req.body.name,
+            product_code: req.body.code, 
+            // product_name: req.body.name,
           },
         });
     
@@ -129,6 +129,7 @@ router.route('/create').post(
             }
 
             const newData = await Product.create({
+            product_code: req.body.code,
             product_name: req.body.name,
             product_category: req.body.slct_category,
             product_unit: req.body.unit,
@@ -140,6 +141,15 @@ router.route('/create').post(
             product_image: image_blob,
             product_imageType: image_blobFiletype
           });
+
+          const generated_product_id = newData.product_id;
+
+          await Inventory.create({
+            product_id: generated_product_id,
+            quantity: 0
+          })
+
+
     
           res.status(200).json(newData);
           // console.log(newDa)
@@ -162,8 +172,8 @@ router.route('/update').put(
       const existingDataCode = await Product.findOne({
         where: {
           // product_code: req.body.binLocationName, //dapat ma generate pag meron na assembly at parts
-          product_name: req.body.name,
-          product_code: { [Op.ne]: req.body.id },
+          product_code: req.body.code,
+          product_cid: { [Op.ne]: req.body.id },
         },
       });
   
@@ -204,7 +214,7 @@ router.route('/update').put(
           product_imageType: image_blobFiletype
         },
           {
-            where: { product_code: req.body.id },
+            where: { product_id: req.body.id },
           }
         )
         ;
@@ -226,40 +236,98 @@ router.route('/delete/:table_id').delete(async (req, res) => {
 
 
 
-  await productTAGsupplier.findAll({
-    where: {
-      product_code: id,
-    },
-  })
-    .then((check) => {
-      if (check && check.length > 0) {
-        res.status(202).json({ success: true });
-      }
+  // await ProductTAGSupplier.findAll({
+  //   where: {
+  //     product_id: id,
+  //   },
+  // })
+  //   .then((check) => {
+  //     if (check && check.length > 0) {
+  //       res.status(202).json({ success: true });
+  //     }
 
-      else{
-        Product.destroy({
-          where : {
-            product_code: id
+  //     else{
+  //       Product.destroy({
+  //         where : {
+  //           product_id: id
+  //         }
+  //       }).then(
+  //           (del) => {
+  //               if(del){
+  //                   res.json({success : true})
+  //               }
+  //               else{
+  //                   res.status(400).json({success : false})
+  //               }
+  //           }
+  //       ).catch(
+  //           (err) => {
+  //               console.error(err)
+  //               res.status(409)
+  //           }
+  //       );
+  //     }
+  //   })
+
+  Product.destroy({
+    where : {
+      product_id: id
+    }
+  }).then(
+      (del) => {
+          if(del){
+
+
+
+            ProductTAGSupplier.destroy({
+              where : {
+                product_id: id
+              }
+            }).then(
+                (deleted) => {
+                    if(deleted){
+                      Inventory.destroy({
+                        where : {
+                          product_id: id
+                        }
+                      }).then(
+                          (deletedInventory) => {
+                              if(deletedInventory){
+                                  res.status(200).json({success : true})
+                              }
+                              else{
+                                  res.status(400).json({success : false})
+                              }
+                          }
+                      ).catch(
+                          (err) => {
+                              console.error(err)
+                              res.status(409)
+                          }
+                      );
+                    }
+                    else{
+                        res.status(400).json({success : false})
+                    }
+                }
+            ).catch(
+                (err) => {
+                    console.error(err)
+                    res.status(409)
+                }
+            );
+            
           }
-        }).then(
-            (del) => {
-                if(del){
-                    res.json({success : true})
-                }
-                else{
-                    res.status(400).json({success : false})
-                }
-            }
-        ).catch(
-            (err) => {
-                console.error(err)
-                res.status(409)
-            }
-        );
+          else{
+              res.status(400).json({success : false})
+          }
       }
-    })
-
-
+  ).catch(
+      (err) => {
+          console.error(err)
+          res.status(409)
+      }
+  );
 
 
   

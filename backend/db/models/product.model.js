@@ -9,11 +9,9 @@ const Product = sequelize.define('product', {
     autoIncrement: true
   },
   product_code: {
-    // type: DataTypes.STRING,
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
+    // type: DataTypes.INTEGER,
     allowNull: true,
-    autoIncrement: false,
-    primaryKey: false,
   },
   product_name: {
     type: DataTypes.STRING, // Change the column name to col_roleID

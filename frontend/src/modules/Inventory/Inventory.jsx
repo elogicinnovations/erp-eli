@@ -40,29 +40,29 @@ function Inventory() {
 
     // Artificial Data
 
-    const Data = [
-        {
-          a: '1',
-          b: '1',
-          c: '1',
-          d: '1',
-          e: '1',
-        },
-        {
-          a: '1',
-          b: '1',
-          c: '1',
-          d: '1',
-          e: '1',
-        },
-        {
-          a: '1',
-          b: '1',
-          c: '1',
-          d: '1',
-          e: '1',
-        },
-      ]
+    // const Data = [
+    //     {
+    //       a: '1',
+    //       b: '1',
+    //       c: '1',
+    //       d: '1',
+    //       e: '1',
+    //     },
+    //     {
+    //       a: '1',
+    //       b: '1',
+    //       c: '1',
+    //       d: '1',
+    //       e: '1',
+    //     },
+    //     {
+    //       a: '1',
+    //       b: '1',
+    //       c: '1',
+    //       d: '1',
+    //       e: '1',
+    //     },
+    //   ]
 
     // Artificial Data
 
@@ -195,10 +195,12 @@ function Inventory() {
                                             <table id='order-listing'>
                                                     <thead>
                                                     <tr>
-                                                        <th className='tableh'>User #</th>
-                                                        <th className='tableh'>Name</th>
-                                                        <th className='tableh'>Contact</th>
-                                                        <th className='tableh'>Description</th>
+                                                        <th className='tableh'>Product Code</th>
+                                                        <th className='tableh'>Product Name</th>
+                                                        <th className='tableh'>Manufacturer</th>
+                                                        <th className='tableh'>Quantity</th>
+                                                        <th className='tableh'>Cost per Item</th>
+                                                        <th className='tableh'>Total Cost</th>
                                                         <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
@@ -207,6 +209,8 @@ function Inventory() {
                                                         <tr key={i}>
                                                             <td>{data.a}</td>
                                                             <td>{data.b}</td>
+                                                            <td>{data.c}</td>
+                                                            <td>{data.d}</td>
                                                             <td>{data.c}</td>
                                                             <td>{data.d}</td>
                                                             <td>

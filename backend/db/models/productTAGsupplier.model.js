@@ -11,11 +11,6 @@ const productTAGsupplier = sequelize.define('product_tag_supplier', {
     product_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-    },
-    product_code: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
     },
     supplier_code: {
         type: DataTypes.STRING,

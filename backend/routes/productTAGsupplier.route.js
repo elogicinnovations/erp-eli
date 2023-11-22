@@ -10,7 +10,7 @@ router.route('/fetchTable').get(async (req, res) => {
       
       console.log(req.query.id)
       const data = await ProductTAGSupplier.findAll({
-        where: {product_code: req.query.id}
+        where: {product_id: req.query.id}
       });
   
       if (data) {
@@ -61,7 +61,7 @@ router.route('/taggingSupplier').post(async (req, res) => {
     // Check if a record with the same product_code and supplier_code already exists
     const existingRecord = await ProductTAGSupplier.findOne({
       where: {
-        product_code: productId,
+        product_id: productId,
         supplier_code: selectedSupplier.id,
       },
     });
@@ -75,7 +75,7 @@ router.route('/taggingSupplier').post(async (req, res) => {
       } else {
         // Record doesn't exist, so insert it
         const newProduct = await ProductTAGSupplier.create({
-          product_code: productId,
+          product_id: productId,
           supplier_code: selectedSupplier.id,
         });
       

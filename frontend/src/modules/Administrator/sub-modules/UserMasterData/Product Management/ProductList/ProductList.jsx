@@ -175,14 +175,14 @@ function ProductList() {
                                 <tbody>
                                       {product.map((data,i) =>(
                                         <tr key={i} >
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_code}</td>
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_name}</td>
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{data.product_unitMeasurement  !== '' ? data.product_unitMeasurement : '--'}</td>
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{formatDate(data.createdAt)}</td>
-                                          <td onClick={() => navigate(`/productSupplier/${data.product_code}`)}>{formatDate(data.updatedAt)}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_id}`)}>{data.product_code}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_id}`)}>{data.product_name}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_id}`)}>{data.product_unitMeasurement  !== '' ? data.product_unitMeasurement : '--'}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_id}`)}>{formatDate(data.createdAt)}</td>
+                                          <td onClick={() => navigate(`/productSupplier/${data.product_id}`)}>{formatDate(data.updatedAt)}</td>
                                           <td>
-                                          <Link to={`/updateProduct/${data.product_code}`}className='btn'><NotePencil size={32}/></Link>
-                                          <button className='btn' type="button" onClick={() => handleDelete(data.product_code)}><Trash size={32} color="#e60000" /></button>
+                                          <Link to={`/updateProduct/${data.product_id}`}className='btn'><NotePencil size={32}/></Link>
+                                          <button className='btn' type="button" onClick={() => handleDelete(data.product_id)}><Trash size={32} color="#e60000" /></button>
                                           </td>
                                         </tr>
                                       ))}

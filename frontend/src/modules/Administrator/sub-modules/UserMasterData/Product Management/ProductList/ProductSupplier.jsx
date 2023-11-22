@@ -118,14 +118,6 @@ const handleSupplierSelect = (selectedList, selectedItem) => {
     })
     .then((res) => {
       console.log(res);
-      // setproduct(prev => [...prev, res.data]); 
-      // const newId = res.data.id;
-      // console.log(newId)
-      // setproduct(prev => [...prev, {
-      //   id: newId,
-      //   product_code: res.data.product_code,
-      //   supplier_code: res.data.supplier_code
-      // }]);
 
       reloadTable()
     });

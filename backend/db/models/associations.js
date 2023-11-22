@@ -37,8 +37,8 @@ ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 MasterList.hasMany(CostCenter, { foreignKey: "col_id" });
 CostCenter.belongsTo(MasterList, { foreignKey: "col_id"});
 
-Inventory.hasMany(Product, { foreignKey: "product_id"});
-Product.belongsTo(Inventory, {foreignKey: "product_id"});
+Product.hasMany(Inventory, { foreignKey: "product_id"});
+Inventory.belongsTo(Product, {foreignKey: "product_id"});
 
 
 Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
