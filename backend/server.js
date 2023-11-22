@@ -39,6 +39,9 @@ const costCenter = require("./routes/costCenter.route");
 
 const inventory = require("./routes/inventory.route");
 
+const issuance = require("./routes/issuance.route");
+
+
 app.use("/masterList", masterRoute);
 app.use("/userRole", userRoute);
 app.use("/supplier", supplier);
@@ -58,6 +61,9 @@ app.use("/spare_assembly", spare_assembly);
 app.use("/supplier_assembly", supplier_assembly);
 
 app.use("/inventory", inventory);
+
+app.use("/issuance", issuance);
+
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);
