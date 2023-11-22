@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import BASE_URL from '../../assets/global/url';
 import Sidebar from '../Sidebar/sidebar';
 import '../../assets/global/style.css';
 import { Link } from 'react-router-dom';
 import '../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
+import subwarehouse from "../../assets/global/subwarehouse";
+
+
 import {
     MagnifyingGlass,
     Gear, 
@@ -14,16 +19,6 @@ import {
     X,
     NotePencil,
   } from "@phosphor-icons/react";
-import '../../assets/skydash/vendors/feather/feather.css';
-import '../../assets/skydash/vendors/css/vendor.bundle.base.css';
-import '../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-import '../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-import '../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
-import '../../assets/skydash/css/vertical-layout-light/style.css';
-import '../../assets/skydash/vendors/js/vendor.bundle.base';
-import '../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-import '../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-import '../../assets/skydash/js/off-canvas';
 
 import * as $ from 'jquery';
 
@@ -34,6 +29,31 @@ React.useEffect(() => {
         $('#order-listing').DataTable();
     });
     }, []);
+
+//get MasterList
+const [roles, setRoles] = useState([]);
+useEffect(() => {
+  axios.get(BASE_URL + '/masterList/masterTable')
+    .then(response => {
+      setRoles(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching roles:', error);
+    });
+}, []);
+
+//get Cost Center
+const [costCenter, setCostCenter] = useState([]);
+useEffect(() => {
+  axios.get(BASE_URL + '/costCenter/getCostCenter')
+    .then(response => {
+      setCostCenter(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching roles:', error);
+    });
+}, []);
+
 
   return (
     <div className="main-of-containers">
@@ -65,7 +85,12 @@ React.useEffect(() => {
                             <Form.Select
                                 style={{ height: '40px', fontSize: '15px' }}required
                             >
-                                <option value="">Select Site</option>
+                                <option disabled selected>Select Site</option>
+                                {subwarehouse.map((name, index) => (
+                                <option key={index} value={name}>
+                                    {name}
+                                </option>
+                                ))}
                             </Form.Select>
                             </Form.Group>
                               </div>
@@ -75,7 +100,12 @@ React.useEffect(() => {
                             <Form.Select
                                 style={{ height: '40px', fontSize: '15px' }}required
                             >
-                                <option value="">Select Site</option>
+                                <option value="">Select Cost Center</option>
+                                {costCenter.map(costCenter => (
+                                          <option key={costCenter.id} value={costCenter.id}>
+                                            {costCenter.name}
+                                          </option>
+                                        ))}
                             </Form.Select>
                             </Form.Group>
                               </div>
@@ -119,6 +149,11 @@ React.useEffect(() => {
                                         style={{ height: '40px', fontSize: '15px' }}required
                                     >
                                         <option value="">Select Employee</option>
+                                        {roles.map(role => (
+                                          <option key={role.col_id} value={role.col_id}>
+                                            {role.col_Fname}
+                                          </option>
+                                        ))}
                                     </Form.Select>
                                 </Form.Group>
                             </div>
@@ -131,31 +166,39 @@ React.useEffect(() => {
                                         style={{ height: '40px', fontSize: '15px' }}required
                                     >
                                         <option value="">Select Employee</option>
+                                        {roles.map(role => (
+                                          <option key={role.col_id} value={role.col_id}>
+                                            {role.col_Fname}
+                                          </option>
+                                        ))}
                                     </Form.Select>
                                 </Form.Group>
                             </div>
                             <div className="col-4">
-                                <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: '20px' }}>Document Date: </Form.Label>
-                                    <Form.Select
-                                        style={{ height: '40px', fontSize: '15px' }}required
-                                    >
-                                        <option value="">Select Date</option>
-                                    </Form.Select>
-                                </Form.Group>
+                            <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Document Date: </Form.Label>
+                                <Form.Control type="date" style={{height: '40px', fontSize: '15px'}}/>
+                              </Form.Group>
                             </div>
                             <div className="col-2">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>MRS #: </Form.Label>
-                                <Form.Control type="text" placeholder="Input #..." style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control type="text" placeholder="Input #" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                          </div>
+                          </div> 
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
                                 <Form.Control as="textarea"placeholder="Enter Remarks" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
+                        </div>
+
+                        <div className='save-cancel'>
+                        <Link to='/inventory' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
+                        <Link to='/inventory' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                            Close
+                        </Link>
                         </div>
                         </Form>
 
@@ -199,12 +242,6 @@ React.useEffect(() => {
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                        <div className='save-cancel'>
-                        <Link to='/inventory' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
-                        <Link to='/inventory' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                            Close
-                        </Link>
                         </div>
             </div>
         </div>
