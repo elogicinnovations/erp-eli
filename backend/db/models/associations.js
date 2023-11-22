@@ -24,8 +24,8 @@ Product.belongsTo(Category, { foreignKey: "product_category"});
 BinLocation.hasMany(Product, { foreignKey: "product_location"});
 Product.belongsTo(BinLocation, { foreignKey: "product_location"});
 
-Manufacturer.hasMany(Product, { foreignKey: "product_manufacturer"});
-Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"});
+Manufacturer.hasMany(Product, { foreignKey: "product_manufacturer"}); // ginamit ng product
+Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"}); // gumamit sa manufacturer
  
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
@@ -37,8 +37,8 @@ ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 MasterList.hasMany(CostCenter, { foreignKey: "col_id" });
 CostCenter.belongsTo(MasterList, { foreignKey: "col_id"});
 
-Product.hasMany(Inventory, { foreignKey: "product_id"});
-Inventory.belongsTo(Product, {foreignKey: "product_id"});
+ProductTAGSupplier.hasMany(Inventory, { foreignKey: "product_tag_supp_id"});
+Inventory.belongsTo(ProductTAGSupplier, {foreignKey: "product_tag_supp_id"});
 
 
 Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});

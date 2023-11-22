@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const sequelize = require('../db/config/sequelize.config');
-const { ProductTAGSupplier, Product } = require("../db/models/associations"); 
+const { ProductTAGSupplier, Product, Inventory } = require("../db/models/associations"); 
 // const ProductTAGSupplier = require('../db/models/productTAGsupplier.model');
 
 
@@ -51,7 +51,7 @@ router.route('/fetchProduct').get(async (req, res) => { // for fetching product 
 });
 
 
-router.route('/taggingSupplier').post(async (req, res) => {
+router.route('/ADD_taggingSupplier').post(async (req, res) => {
   try {
     const productId = req.body.id;
     const selectedSupplier = req.body.selectedItem;
@@ -78,9 +78,20 @@ router.route('/taggingSupplier').post(async (req, res) => {
           product_id: productId,
           supplier_code: selectedSupplier.id,
         });
-      
-        console.log('Selected supplier saved successfully');
-        res.status(200).json(newProduct); // Send the newly added product data in the response
+
+        if(newProduct){
+
+          const generated_product_id = newProduct.id;
+
+          await Inventory.create({
+            product_tag_supp_id	: generated_product_id,
+            quantity: 0
+          })
+
+
+          console.log('Selected supplier saved successfully');
+          res.status(200).json(newProduct); // Send the newly added product data in the response
+        }
       }
 
       // const newProduct = await ProductTAGSupplier.create({

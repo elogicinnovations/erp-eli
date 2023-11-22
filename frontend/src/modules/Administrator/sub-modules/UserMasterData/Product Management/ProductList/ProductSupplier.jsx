@@ -112,7 +112,7 @@ const handleSupplierSelect = (selectedList, selectedItem) => {
   });
 
   uniqueSelectedSuppliers.forEach(selectedSupplier => {
-    axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
+    axios.post(`${BASE_URL}/productTAGsupplier/ADD_taggingSupplier`, {
       id,
       selectedItem: selectedSupplier,
     })

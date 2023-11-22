@@ -37,34 +37,13 @@ import '../../assets/skydash/js/off-canvas';
 import * as $ from 'jquery';  
 
 function Inventory() {
-
-    // Artificial Data
-
-    // const Data = [
-    //     {
-    //       a: '1',
-    //       b: '1',
-    //       c: '1',
-    //       d: '1',
-    //       e: '1',
-    //     },
-    //     {
-    //       a: '1',
-    //       b: '1',
-    //       c: '1',
-    //       d: '1',
-    //       e: '1',
-    //     },
-    //     {
-    //       a: '1',
-    //       b: '1',
-    //       c: '1',
-    //       d: '1',
-    //       e: '1',
-    //     },
-    //   ]
-
-    // Artificial Data
+const navigate = useNavigate()
+    const [inventory, setInventory] = useState([]);
+    useEffect(() => {
+        axios.get(BASE_URL + '/inventory/fetchInvetory')
+          .then(res => setInventory(res.data))
+          .catch(err => console.log(err));
+      }, []);
 
     const [showDropdown, setShowDropdown] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -75,7 +54,7 @@ function Inventory() {
   }, []);
 
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [rotatedIcons, setRotatedIcons] = useState(Array(Data.length).fill(false));
+  const [rotatedIcons, setRotatedIcons] = useState(Array(inventory.length).fill(false));
   
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -89,7 +68,7 @@ function Inventory() {
       setOpenDropdownIndex(null);
     } else {
       // If a different icon is clicked, close the currently open dropdown and open the new one
-      setRotatedIcons(Array(Data.length).fill(false));
+      setRotatedIcons(Array(inventory.length).fill(false));
       const iconPosition = event.currentTarget.getBoundingClientRect();
       setDropdownPosition({
         top: iconPosition.bottom + window.scrollY,
@@ -109,7 +88,7 @@ function Inventory() {
     // Close dropdown when clicking outside
     const handleClickOutside = (event) => {
       if (showDropdown && !event.target.closest('.dots-icon')) {
-        setRotatedIcons(Array(Data.length).fill(false));
+        setRotatedIcons(Array(inventory.length).fill(false));
         setShowDropdown(false);
         setOpenDropdownIndex(null);
       }
@@ -122,23 +101,26 @@ function Inventory() {
     };
   }, [showDropdown]);
 
-    React.useEffect(() => {
-        $(document).ready(function () {
-          $('#order-listing').DataTable();
-        });
-      }, []);
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($('#order-listing').length > 0 && inventory.length > 0) {
+      $('#order-listing').DataTable();
+    }
+  }, [inventory]);
 
-      React.useEffect(() => {
-          $(document).ready(function () {
-            $('#order1-listing').DataTable();
-          });
-        }, []);
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($('#order-listing').length > 0 && inventory.length > 0) {
+      $('#order-listing').DataTable();
+    }
+  }, [inventory]);
 
-        React.useEffect(() => {
-            $(document).ready(function () {
-              $('#order2-listing').DataTable();
-            });
-          }, []);
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($('#order-listing').length > 0 && inventory.length > 0) {
+      $('#order-listing').DataTable();
+    }
+  }, [inventory]);
 
     const tabStyle = {
         padding: '10px 15px', 
@@ -197,52 +179,24 @@ function Inventory() {
                                                     <tr>
                                                         <th className='tableh'>Product Code</th>
                                                         <th className='tableh'>Product Name</th>
+                                                        <th className='tableh'>Supplier</th>
                                                         <th className='tableh'>Manufacturer</th>
                                                         <th className='tableh'>Quantity</th>
                                                         <th className='tableh'>Cost per Item</th>
                                                         <th className='tableh'>Total Cost</th>
-                                                        <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {Data.map((data, i) => (
-                                                        <tr key={i}>
-                                                            <td>{data.a}</td>
-                                                            <td>{data.b}</td>
-                                                            <td>{data.c}</td>
-                                                            <td>{data.d}</td>
-                                                            <td>{data.c}</td>
-                                                            <td>{data.d}</td>
-                                                            <td>
-                                                            <DotsThreeCircle
-                                                                size={32}
-                                                                className="dots-icon"
-                                                                style={{
-                                                                cursor: 'pointer',
-                                                                transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
-                                                                color: rotatedIcons[i] ? '#666' : '#000',
-                                                                transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
-                                                                }}
-                                                                onClick={(event) => toggleDropdown(event, i)}
-                                                            />
-                                                            <div
-                                                                className='choices'
-                                                                style={{
-                                                                position: 'fixed',
-                                                                top: dropdownPosition.top - 30 + 'px',
-                                                                left: dropdownPosition.left - 100 + 'px',
-                                                                opacity: showDropdown ? 1 : 0,
-                                                                visibility: showDropdown ? 'visible' : 'hidden',
-                                                                transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-                                                                boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                                                                }}
-                                                            >
-                                                                {/* Your dropdown content here */}
-                                                                <button>View</button>
-                                                                <button>Add</button>
-                                                                <button>Return</button>
-                                                            </div>
-                                                            </td>
+                                                        {inventory.map((data, i) => (
+                                                        <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
+                                                            <td>{data.product_tag_supplier.product.product_code}</td>
+                                                            <td>{data.product_tag_supplier.product.product_name}</td>
+                                                            <td>{data.product_tag_supplier.supplier.supplier_name}</td>
+                                                            <td>{data.product_tag_supplier.product.manufacturer.manufacturer_name}</td>
+                                                            <td>{data.quantity}</td>
+                                                            <td>{data.product_tag_supplier.product_price}</td>
+                                                            <td>{data.product_tag_supplier.product_price}</td>
+                                                           
                                                         </tr>
                                                         ))}
                                                     </tbody>
@@ -275,7 +229,7 @@ function Inventory() {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {Data.map((data, i) => (
+                                                        {inventory.map((data, i) => (
                                                         <tr key={i}>
                                                             <td>{data.a}</td>
                                                             <td>{data.b}</td>
@@ -335,7 +289,7 @@ function Inventory() {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {Data.map((data, i) => (
+                                                        {inventory.map((data, i) => (
                                                         <tr key={i}>
                                                             <td>{data.a}</td>
                                                             <td>{data.b}</td>

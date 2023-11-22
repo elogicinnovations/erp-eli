@@ -142,12 +142,14 @@ router.route('/create').post(
             product_imageType: image_blobFiletype
           });
 
-          const generated_product_id = newData.product_id;
 
-          await Inventory.create({
-            product_id: generated_product_id,
-            quantity: 0
-          })
+          //para automatic insert if mag insert ng product
+          // const generated_product_id = newData.product_id;
+
+          // await Inventory.create({
+          //   product_id: generated_product_id,
+          //   quantity: 0
+          // })
 
 
     

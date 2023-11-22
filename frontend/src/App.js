@@ -43,6 +43,7 @@ import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/C
 import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
 import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
+import ViewInventory  from "./modules/Inventory/ViewInventory"
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
@@ -195,6 +196,10 @@ function App() {
                   <Route
                         path="/createIssuance"
                         element={<CreateIssuance/>}
+                      />
+                       <Route
+                        path="/viewInventory/:id"
+                        element={<ViewInventory/>}
                       />
              
         </Routes>

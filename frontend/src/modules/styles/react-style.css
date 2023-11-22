@@ -1626,4 +1626,10 @@ div#ordered-listing_length label{
 
  /*---------------------------------- Checkbox  -----------------------------*/
 
+ .clickable_Table_row{
+  cursor: pointer;
+ }
+.clickable_Table_row:hover{
+  background-color: #FFA500;
+}
  
