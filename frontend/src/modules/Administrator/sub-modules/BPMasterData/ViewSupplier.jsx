@@ -7,7 +7,7 @@ import swal from 'sweetalert';
 import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import receiving from "../../../../assets/global/receiving";
+import warehouse from "../../../../assets/global/warehouse";
 import {
 Printer,
 ArrowCircleLeft,
@@ -311,7 +311,7 @@ function ViewSupplier() {
                                                     style={{height: '50px', fontSize: '16px', width: '97.5%'}}
                                                     value={suppReceving}
                                                 >
-                                                    {receiving.map((city, index) => (
+                                                    {warehouse.map((city, index) => (
                                                     <option key={index} value={city}>
                                                         {city}
                                                     </option>

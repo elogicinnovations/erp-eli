@@ -3,12 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../Sidebar/sidebar';
 import axios from 'axios';
 import BASE_URL from '../../assets/global/url';
-import swal from 'sweetalert';
-import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import receiving from "../../assets/global/receiving";
-import Dropdown from 'react-bootstrap/Dropdown';
 import {
     MagnifyingGlass,
     Gear, 
@@ -22,18 +18,6 @@ import {
     DotsThreeCircle,
   } from "@phosphor-icons/react";
 
-
-import '../../assets/skydash/vendors/feather/feather.css';
-import '../../assets/skydash/vendors/css/vendor.bundle.base.css';
-import '../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-import '../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-import '../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
-import '../../assets/skydash/css/vertical-layout-light/style.css';
-import '../../assets/skydash/vendors/js/vendor.bundle.base';
-import '../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-import '../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-import '../../assets/skydash/js/off-canvas';
-
 import * as $ from 'jquery';  
 
 function Inventory() {
@@ -44,6 +28,44 @@ const navigate = useNavigate()
           .then(res => setInventory(res.data))
           .catch(err => console.log(err));
       }, []);
+
+    // Artificial Data
+
+    const [issuance, setIssuance] = useState([]);   
+
+    // Fetch Data
+    useEffect(() => {
+        axios.get(BASE_URL + '/issuance/getIssuance')
+        .then(res => setIssuance(res.data))
+        .catch(err => console.log(err));
+    }, []);
+        
+
+    const Data = [
+        {
+          a: '1',
+          b: '1',
+          c: '1',
+          d: '1',
+          e: '1',
+        },
+        {
+          a: '1',
+          b: '1',
+          c: '1',
+          d: '1',
+          e: '1',
+        },
+        {
+          a: '1',
+          b: '1',
+          c: '1',
+          d: '1',
+          e: '1',
+        },
+      ]
+
+    // Artificial Data
 
     const [showDropdown, setShowDropdown] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -108,12 +130,12 @@ const navigate = useNavigate()
     }
   }, [inventory]);
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($('#order-listing').length > 0 && inventory.length > 0) {
-      $('#order-listing').DataTable();
-    }
-  }, [inventory]);
+      useEffect(() => {
+        // Initialize DataTable when role data is available
+        if ($('#order-listing').length > 0 && issuance.length > 0) {
+          $('#order-listing').DataTable();
+        }
+      }, [issuance]);
 
   useEffect(() => {
     // Initialize DataTable when role data is available
@@ -221,20 +243,26 @@ const navigate = useNavigate()
                                             <table id='order1-listing'>
                                                     <thead>
                                                     <tr>
-                                                        <th className='tableh'>User #</th>
-                                                        <th className='tableh'>Name</th>
-                                                        <th className='tableh'>Contact</th>
-                                                        <th className='tableh'>Description</th>
+                                                        <th className='tableh'>Issuance ID</th>
+                                                        <th className='tableh'>Issued To</th>
+                                                        <th className='tableh'>Origin Site</th>
+                                                        <th className='tableh'>MRS #</th>
+                                                        <th className='tableh'>Received By</th>
+                                                        <th className='tableh'>Date Created</th>
+                                                        <th className='tableh'>Status</th>
                                                         <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {inventory.map((data, i) => (
+                                                        {issuance.map((data, i) => (
                                                         <tr key={i}>
-                                                            <td>{data.a}</td>
-                                                            <td>{data.b}</td>
-                                                            <td>{data.c}</td>
-                                                            <td>{data.d}</td>
+                                                            <td>{data.issuance_id}</td>
+                                                            <td>{data.from_site}</td>
+                                                            <td>{data.from_site}</td>
+                                                            <td>{data.from_site}</td>
+                                                            <td>{data.from_site}</td>
+                                                            <td>{data.from_site}</td>
+                                                            <td>{data.from_site}</td>
                                                             <td>
                                                             <DotsThreeCircle
                                                                 size={32}

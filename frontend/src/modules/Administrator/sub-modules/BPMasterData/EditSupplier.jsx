@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import '../../../styles/react-style.css';
-import receiving from "../../../../assets/global/receiving";
+import warehouse from "../../../../assets/global/warehouse";
 import {
     ArrowCircleLeft
   } from "@phosphor-icons/react";
@@ -368,7 +368,7 @@ function EditSupplier() {
                                 value={suppReceving}
                                 onChange={handleChangeReceiving}
                             >
-                                {receiving.map((city, index) => (
+                                {warehouse.map((city, index) => (
                                 <option key={index} value={city}>
                                     {city}
                                 </option>

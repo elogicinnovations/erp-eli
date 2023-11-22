@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../../styles/react-style.css';
-import receiving from "../../../../assets/global/receiving";
+import warehouse from "../../../../assets/global/warehouse";
 import {
     ArrowCircleLeft
   } from "@phosphor-icons/react";
@@ -335,7 +335,7 @@ function CreateSupplier() {
                                 <option disabled value=''>
                                     Select City ...
                                 </option>
-                                {receiving.map((city, index) => (
+                                {warehouse.map((city, index) => (
                                 <option key={index} value={city}>
                                     {city}
                                 </option>
