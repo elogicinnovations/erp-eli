@@ -150,6 +150,18 @@ const navigate = useNavigate()
         color: '#333',
         transition: 'color 0.3s',
     };
+
+     //date format
+     function formatDatetime(datetime) {
+        const options = {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        };
+        return new Date(datetime).toLocaleString('en-US', options);
+      }
     return (
         <div className="main-of-containers">
             <div className="left-of-main-containers">
@@ -249,7 +261,6 @@ const navigate = useNavigate()
                                                         <th className='tableh'>MRS #</th>
                                                         <th className='tableh'>Received By</th>
                                                         <th className='tableh'>Date Created</th>
-                                                        <th className='tableh'>Status</th>
                                                         <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
@@ -257,12 +268,11 @@ const navigate = useNavigate()
                                                         {issuance.map((data, i) => (
                                                         <tr key={i}>
                                                             <td>{data.issuance_id}</td>
+                                                            <td>{data.cost_center.name}</td>
                                                             <td>{data.from_site}</td>
-                                                            <td>{data.from_site}</td>
-                                                            <td>{data.from_site}</td>
-                                                            <td>{data.from_site}</td>
-                                                            <td>{data.from_site}</td>
-                                                            <td>{data.from_site}</td>
+                                                            <td>{data.mrs}</td>
+                                                            <td>{data.masterlist.col_Fname}</td>
+                                                            <td>{formatDatetime(data.createdAt)}</td>
                                                             <td>
                                                             <DotsThreeCircle
                                                                 size={32}
