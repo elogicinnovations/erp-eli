@@ -44,7 +44,7 @@ function ViewInventory() {
         setUm(res.data[0].product_tag_supplier.product.product_unitMeasurement);
         setDetails(res.data[0].product_tag_supplier.product.product_details);
         setThresholds(res.data[0].product_tag_supplier.product.product_threshold);
-        setSupplier(res.data[0].product_name);
+        setSupplier(res.data[0].product_tag_supplier.supplier.supplier_name);
     })
       .catch(err => console.log(err));
   }, []);
@@ -184,7 +184,7 @@ function ViewInventory() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                                 <Form.Label style={{ fontSize: '20px' }}>Supplier: </Form.Label>
-                                <Form.Control required value={suppliers} readOnly type="number"  style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control required value={suppliers} readOnly type="text"  style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
@@ -195,7 +195,7 @@ function ViewInventory() {
 
 
 
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
+                        {/* <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
                           Assembly Item List
                           <span
                             style={{
@@ -227,10 +227,10 @@ function ViewInventory() {
                                   </table>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                          <div className='save-cancel'>
-                            <Link to='/inventory' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                            <Link to='/inventory' className='btn btn-secondary btn-md' size="l" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                                 Close
                             </Link>
                         </div>
