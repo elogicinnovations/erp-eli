@@ -40,6 +40,7 @@ const costCenter = require("./routes/costCenter.route");
 const inventory = require("./routes/inventory.route");
 
 const issuance = require("./routes/issuance.route");
+const returned = require("./routes/returned.route");
 
 
 app.use("/masterList", masterRoute);
@@ -63,6 +64,7 @@ app.use("/supplier_assembly", supplier_assembly);
 app.use("/inventory", inventory);
 
 app.use("/issuance", issuance);
+app.use("/returend", returned);
 
 
 app.listen(port, () => {

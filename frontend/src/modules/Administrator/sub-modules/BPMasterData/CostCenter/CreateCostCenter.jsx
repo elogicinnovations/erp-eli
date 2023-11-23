@@ -6,6 +6,8 @@ import '../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 import BASE_URL from '../../../../../assets/global/url';
 import swal from 'sweetalert';
@@ -134,7 +136,23 @@ const handleActiveStatus= e => {
         </div>
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
-                <h1>Create Cost Center</h1>
+            <Row>
+                <Col>
+                  <h1>Create Cost Center</h1>
+                </Col>
+                <Col>
+                  <div className="form-group d-flex flex-row justify-content-center align-items-center">
+                      <label className='userstatus'  style={{fontSize: 15, marginRight: 10}}>Active Status</label>
+                      <input
+                          type="checkbox"
+                          name="cstatus"
+                          className="toggle-switch" // Add the custom class
+                          onChange={handleActiveStatus}
+                          defaultChecked={status}
+                      />
+                  </div>
+                </Col>
+            </Row>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           General Information
                           <span
@@ -185,17 +203,6 @@ const handleActiveStatus= e => {
                                 <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}} onChange={e => setDescription(e.target.value)}/>
                             </Form.Group>
                         </div>
-                        
-                            <div className="form-group d-flex flex-row justify-content-center align-items-center"> 
-                                <label className='userstatus'  style={{fontSize: 15, marginRight: 10}}>Status</label>
-                                <input
-                                    type="checkbox"
-                                    name="cstatus"
-                                    className="toggle-switch" // Add the custom class
-                                    onChange={handleActiveStatus}
-                                    defaultChecked={status}
-                                />
-                            </div> 
 
                         <div className='save-cancel'>
                         <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
