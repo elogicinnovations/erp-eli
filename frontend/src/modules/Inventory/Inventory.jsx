@@ -32,38 +32,21 @@ const navigate = useNavigate()
     // Artificial Data
 
     const [issuance, setIssuance] = useState([]);   
-
-    // Fetch Data
+    // Get Issuance
     useEffect(() => {
         axios.get(BASE_URL + '/issuance/getIssuance')
         .then(res => setIssuance(res.data))
         .catch(err => console.log(err));
     }, []);
-        
 
-    const Data = [
-        {
-          a: '1',
-          b: '1',
-          c: '1',
-          d: '1',
-          e: '1',
-        },
-        {
-          a: '1',
-          b: '1',
-          c: '1',
-          d: '1',
-          e: '1',
-        },
-        {
-          a: '1',
-          b: '1',
-          c: '1',
-          d: '1',
-          e: '1',
-        },
-      ]
+    const [returned, setReturned] = useState([]);
+    // Get Return
+    useEffect(() => {
+      axios.get(BASE_URL + '/return/getReturned')
+      .then(res => setReturned(res.data))
+      .catch(err => console.log(err));
+  }, []);
+       
 
     // Artificial Data
 
@@ -319,20 +302,24 @@ const navigate = useNavigate()
                                             <table id='order2-listing'>
                                                     <thead>
                                                     <tr>
-                                                        <th className='tableh'>User #</th>
-                                                        <th className='tableh'>Name</th>
-                                                        <th className='tableh'>Contact</th>
-                                                        <th className='tableh'>Description</th>
+                                                        <th className='tableh'>Id</th>
+                                                        <th className='tableh'>Issued Id</th>
+                                                        <th className='tableh'>Return By</th>
+                                                        <th className='tableh'>Return Quantity</th>
+                                                        <th className='tableh'>Date Return</th>
+                                                        <th className='tableh'>Status</th>
                                                         <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {inventory.map((data, i) => (
+                                                        {returned.map((data, i) => (
                                                         <tr key={i}>
-                                                            <td>{data.a}</td>
-                                                            <td>{data.b}</td>
-                                                            <td>{data.c}</td>
-                                                            <td>{data.d}</td>
+                                                            <td>{data.issued_return_id}</td>
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td>{data.quantity}</td>
+                                                            <td></td>
+                                                            <td></td>
                                                             <td>
                                                             <DotsThreeCircle
                                                                 size={32}

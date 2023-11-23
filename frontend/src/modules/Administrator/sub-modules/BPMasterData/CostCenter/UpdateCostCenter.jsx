@@ -6,6 +6,8 @@ import '../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import swal from 'sweetalert';
 import axios from 'axios';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import BASE_URL from '../../../../../assets/global/url';
 import Button from 'react-bootstrap/Button';
 
@@ -129,7 +131,27 @@ const handleActiveStatus= e => {
         </div>
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
-                <h1>Update Cost Center</h1>
+              <Row>
+                <Col>
+                  <h1>Update Cost Center</h1>
+                </Col>
+                <Col>
+                <div className="row">
+                            <div className="col-6">
+                            <div className="form-group d-flex flex-row"> 
+                                  <label className='userstatus' style={{fontSize: 15, marginRight: 10}}>Status</label>
+                                  <input
+                                      type="checkbox"
+                                      name="cstatus"
+                                      className="toggle-switch"
+                                      onClick={handleActiveStatus}
+                                      defaultChecked={checkedStatus}
+                                  />
+                                  </div>
+                              </div> 
+                        </div>
+                </Col>
+              </Row>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           General Information
                           <span
@@ -180,20 +202,7 @@ const handleActiveStatus= e => {
                                 <Form.Control as="textarea" placeholder="Enter details name" onChange={e => setDescription(e.target.value)} value={description} style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                         </div>
-                        <div className="row">
-                            <div className="col-6">
-                            <div className="form-group d-flex flex-row"> 
-                                  <label className='userstatus' style={{fontSize: 15, marginRight: 10}}>Status</label>
-                                  <input
-                                      type="checkbox"
-                                      name="cstatus"
-                                      className="toggle-switch"
-                                      onClick={handleActiveStatus}
-                                      defaultChecked={checkedStatus}
-                                  />
-                                  </div>
-                              </div> 
-                          </div>
+                       
                         <div className='save-cancel'>
                         <Button type="submit" className='btn btn-warning ntn-' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>Save</Button>
                         <Link to='/costCenter' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>

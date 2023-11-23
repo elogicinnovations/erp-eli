@@ -86,7 +86,6 @@ function EditSupplier() {
       
 
       useEffect(() => {   
-        console.log('code' + id)
         axios.get(BASE_URL + '/supplier/fetchTableEdit', {
             params: {
               id: id
@@ -335,12 +334,8 @@ function EditSupplier() {
                             <Form.Control className='p-3 fs-3' type="email"  onChange={e => setsuppEmail(e.target.value)}  required placeholder='Enter your email...' value={suppEmail} />
                         </Col>
                        
-                    </Row>
-                    
-                    <Row>
-                   
+                        <Row>
                         <Col>
-
                         <div className='d-flex flex-direction-row'>
                             <label htmlFor="" className='label-head' style={{fontSize: 20}}>Vatable</label>
                             <div class="cl-toggle-switch mt-2">
@@ -348,40 +343,40 @@ function EditSupplier() {
                                 <input
                                     type="checkbox"
                                     checked={isChecked} // Set the initial and current state
-                                    onChange={handleCheckboxChange} // Handle change event
-                                    value={suppVat}
+                                    onChange={handleCheckboxChange} // Handle change event 
                                 />
                                     <span></span>
                                 </label>
-                            </div>                        
+                            </div>     
+                            <Form.Control className='p-3  fs-3' value={suppVat}  style={{width: '20%', marginLeft: 50}} disabled={!isChecked} type="text" maxLength={3} onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} onChange={e => setsuppVat(e.target.value)} placeholder='0%'/>                   
                         </div>
-                        <Form.Control className='p-3  fs-3' disabled={!isChecked} type="text" maxLength={3} onInput={(e) => (e.target.value = e.target.value.replace(/\D/, ''))} onChange={e => setsuppVat(e.target.value)} placeholder='00'/>
-                       
                         </Col>
                         <Col>
-
-                            <label htmlFor="" className='label-head mt-5' style={{ fontSize: 20 }}>Select a Receiving Area: </label>
+                           
+                        <div className='d-flex flex-direction-row'>
+                        <label className='label-head' style={{ fontSize: 20, marginRight: 10}}>Select a Receiving Area: </label>
+                            <div class="cl-toggle-switch mt-2">
                             <Form.Select
                                 aria-label=""
                                 required
-                                style={{ fontSize: 15 }}
+                                style={{ fontSize: 13, width: '350%'}}
                                 value={suppReceving}
                                 onChange={handleChangeReceiving}
                             >
+                                <option disabled value=''>
+                                    Select City ...
+                                </option>
                                 {warehouse.map((city, index) => (
                                 <option key={index} value={city}>
                                     {city}
                                 </option>
                                 ))}
                             </Form.Select>
-                       
+                            </div>     
+                        </div>
+                           
                         </Col>
-
-                    
-                       
                     </Row>
-                       
-                    <Row>
                    
                         <Col>
                             <Button type='submit' variant="success" size="lg" className="fs-5">

@@ -13,6 +13,9 @@ const Assembly_SparePart = require("./assembly_spare.model");
 
 const Inventory = require("./inventory.model");
 const Issuance = require("./issuance.model");
+const IssuedProduct = require("./issued_product.model");
+const IssuedReturn = require("./issued_return.model");
+
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
 
@@ -30,7 +33,6 @@ Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"}); // gumam
  
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
-
 
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
 ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
@@ -52,6 +54,21 @@ Issuance.belongsTo(MasterList, { foreignKey: "transported_by" });
 
 CostCenter.hasMany(Issuance, { foreignKey: "issued_to" });
 Issuance.belongsTo(CostCenter, { foreignKey: "issued_to" });
+
+IssuedProduct.hasMany(IssuedReturn, { foreignKey: "product_id" });
+IssuedReturn.belongsTo(IssuedProduct, { foreignKey: "product_id" });
+
+MasterList.hasMany(IssuedReturn, { foreignKey: "return_by" });
+IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by" });
+
+Issuance.hasMany(IssuedProduct, { foreignKey: "issuance_id" });
+IssuedProduct.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory.hasMany(IssuedProduct, { foreignKey: "inventory_id" });
+IssuedProduct.belongsTo(Inventory, { foreignKey: "inventory_id"});
+
+
+
 
 
 // Assembly.hasMany(Assembly_SparePart, { foreignKey: "sparePart_id"});
@@ -75,7 +92,9 @@ module.exports = {
                     Assembly_Supplier,
                     // Assembly_SparePart
                     Inventory,
-                    Issuance
+                    Issuance,
+                    IssuedProduct,
+                    IssuedReturn
                     // Supplier_SparePart,
                     // SparePart
                 };
