@@ -55,17 +55,20 @@ Issuance.belongsTo(MasterList, { foreignKey: "transported_by" });
 CostCenter.hasMany(Issuance, { foreignKey: "issued_to" });
 Issuance.belongsTo(CostCenter, { foreignKey: "issued_to" });
 
-IssuedProduct.hasMany(IssuedReturn, { foreignKey: "product_id" });
-IssuedReturn.belongsTo(IssuedProduct, { foreignKey: "product_id" });
-
-MasterList.hasMany(IssuedReturn, { foreignKey: "return_by" });
-IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by" });
-
 Issuance.hasMany(IssuedProduct, { foreignKey: "issuance_id" });
 IssuedProduct.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
 Inventory.hasMany(IssuedProduct, { foreignKey: "inventory_id" });
 IssuedProduct.belongsTo(Inventory, { foreignKey: "inventory_id"});
+
+Inventory.hasMany(IssuedReturn, { foreignKey: "inventory_id" });
+IssuedReturn.belongsTo(Inventory, { foreignKey: "inventory_id" });
+
+Issuance.hasMany(IssuedReturn, { foreignKey: "issued_id" });
+IssuedReturn.belongsTo(Issuance, { foreignKey: "issued_id" });
+
+MasterList.hasMany(IssuedReturn, { foreignKey: "return_by" });
+IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by" });
 
 
 
