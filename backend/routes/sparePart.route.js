@@ -109,41 +109,103 @@ router.route('/create').post(async (req, res) => {
 });
 
 
-
-router.route('/update/:param_id').put(async (req, res) => {
+router.route('/update').put(async (req, res) => {
   try {
-    const { subPart_code, subPart_name, supplier, subPart_desc } = req.body;
-    const updatemasterID = req.params.param_id;
-    console.log('id:' + updatemasterID)
-    console.log('code:' + subPart_code)
-
+    // console.log(req.query.id)
 
     // Check if the email already exists in the table for other records
-    const existingData = await SubPart.findOne({
+    const existingData = await SparePart.findOne({
       where: {
-        subPart_code: subPart_code,
-        id: { [Op.ne]: updatemasterID }, // Exclude the current record
+        spareParts_code: req.query.code,
+        id: { [Op.ne]: req.query.id }, // Exclude the current record
       },
     });
 
     if (existingData) {
-      res.status(202).send('Exist');
+      res.status(201).send('Exist');
     } else {
 
       // Update the record in the table
-      const [affectedRows] = await SubPart.update(
+      const affectedRows = await SparePart.update(
         {
-          subPart_code: subPart_code.toUpperCase(),
-          subPart_name: subPart_name,
-          supplier: supplier,
-          subPart_desc: subPart_desc,
+          spareParts_code: req.query.code.toUpperCase(),
+          spareParts_name: req.query.name,
+          spareParts_desc: req.query.desc
         },
         {
-          where: { id: updatemasterID },
+          where: { id: req.query.id },
         }
       );
 
-      res.status(200).json({ message: "Data updated successfully", affectedRows });
+      if(affectedRows){
+        const deletesubpart  = SubPart_SparePart.destroy({
+          where : {
+            sparePart_id: req.query.id
+          }
+        })
+        if(deletesubpart){
+          for (const subPart of req.query.SubParts) {
+            const subPartValue = subPart.value;
+  
+              console.log('subpart value: ' + subPartValue)
+          
+              await SubPart_SparePart.create({
+                sparePart_id: req.query.id,
+                subPart_code: subPartValue,
+              });
+        }
+      }
+
+
+        const deletesupp  = Supplier_SparePart.destroy({
+          where : {
+            sparePart_id: req.query.id
+          }
+        })
+        if(deletesupp){
+          for (const supplier of req.query.supp) {
+            const supplierValue = supplier.value;
+    
+            await Supplier_SparePart.create({
+                sparePart_id: req.query.id,
+                supplier: supplierValue,
+            });
+          }
+  
+        }
+
+      }
+
+      // for (const supplier of req.query.supp) {
+      //   const supplierValue = supplier.value;
+
+      //   console.log(supplierValue)
+      //   await Supplier_SparePart.bulkCreate({
+      //       supplier: supplierValue,
+      //   },
+      //   {
+      //     where: { sparePart_id: req.query.id },
+      //   }
+      //   );
+      // }
+
+      // for (const subPart of req.query.SubParts) {
+      //   const subPartValue = subPart.value;
+
+      //   console.log('subpart id' + subPartValue)
+
+      //   await SubPart_SparePart.bulkCreate({
+      //       subPart_code: subPartValue,
+      //   },
+      //   {
+      //     where: { sparePart_id: req.query.id },
+      //   }
+      //   );
+      // }
+
+
+
+      res.status(200).json();
     }
   } catch (err) {
     console.error(err);

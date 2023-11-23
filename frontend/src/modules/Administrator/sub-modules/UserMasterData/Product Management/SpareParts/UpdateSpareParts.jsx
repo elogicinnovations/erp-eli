@@ -56,16 +56,15 @@ useEffect(() => {
       // Ensure that the API response contains an array of subParts
       const existingSubParts = res.data[0].subParts.map(subPart => ({
         value: subPart.id,
-        label: subPart.subPart_name
+        label: subPart.subPart_code
       }));
 
       // Set SubParts with the formatted data
-      // setSubParts(existingSubParts);
+      setSubParts(existingSubParts);
     })
     .catch(err => console.log(err));
 }, [id]);
 
-// console.log(SubParts)
 
 useEffect(() => {
   axios.get(BASE_URL + '/subPart_SparePart/fetchTable')
@@ -74,11 +73,8 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  axios.get(BASE_URL + '/subPart_SparePart/fetchTableEdit', {
-    params: {
-      id: id
-    }
-  })
+  axios.get(BASE_URL + '/subPart_SparePart/fetchTableEdit')
+    
     .then(res => setSubParts(res.data))
     .catch(err => console.log(err));
 }, []);
@@ -95,7 +91,6 @@ useEffect(() => {
     .catch(err => console.log(err));
 }, []);
 
-// console.log(fetchSubPart)
 
 //for supplier selection values
 const handleSelectChange = (selectedOptions) => {
@@ -103,15 +98,10 @@ const handleSelectChange = (selectedOptions) => {
 };
 
 const handleSelectChange_SubPart = (selectedOptions) => {
-  // Extracting only the ids from the selected options
-  const selectedIds = selectedOptions.map((option) => ({
-    id: option.value,
-    subPart_code: option.label,
-  }));
-  setSubParts(selectedIds);
+  setSubParts(selectedOptions);
+  console.log(selectedOptions);
 };
 
-console.log(SubParts)
 
 const handleEditClick = () => {
   // for clicking the button can be editted not readonly
@@ -242,13 +232,13 @@ const update = async (e) => {
                                     isMulti
                                     isDisabled={!isReadOnly}
                                     options={fetchSubPart.map((subPart) => ({
-                                      value: subPart.id,
-                                      label: subPart.subPart_name, // Use subPart_name or any relevant property for label
+                                      value: subPart.subPart_code,
+                                      label: subPart.subPart_code, // Set label to subPart_name for options
                                     }))}
                                     onChange={handleSelectChange_SubPart}
-                                    value={SubParts.map((subPart) => ({
-                                      value: subPart.id,
-                                      label: subPart.subPart_code,
+                                    value={SubParts.map((selectedOption) => ({
+                                      value: selectedOption.subPart_code,
+                                      label: selectedOption.subPart_code, // Set label to subPart_code for selected value
                                     }))}
                                   />
 
