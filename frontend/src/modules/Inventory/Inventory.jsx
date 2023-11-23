@@ -42,7 +42,7 @@ const navigate = useNavigate()
     const [returned, setReturned] = useState([]);
     // Get Return
     useEffect(() => {
-      axios.get(BASE_URL + '/return/getReturned')
+      axios.get(BASE_URL + '/returend/getReturned')
       .then(res => setReturned(res.data))
       .catch(err => console.log(err));
   }, []);
@@ -145,6 +145,18 @@ const navigate = useNavigate()
         };
         return new Date(datetime).toLocaleString('en-US', options);
       }
+
+       //date format
+    function formatDatetime(datetime) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return new Date(datetime).toLocaleString('en-US', options);
+    }
     return (
         <div className="main-of-containers">
             <div className="left-of-main-containers">
@@ -315,11 +327,11 @@ const navigate = useNavigate()
                                                         {returned.map((data, i) => (
                                                         <tr key={i}>
                                                             <td>{data.issued_return_id}</td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td>{data.issued_id}</td>
+                                                            <td>{data.masterlist.col_Fname}</td>
                                                             <td>{data.quantity}</td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td>{formatDatetime(data.createdAt)}</td>
+                                                            <td>{data.status}</td>
                                                             <td>
                                                             <DotsThreeCircle
                                                                 size={32}

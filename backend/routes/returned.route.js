@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { IssuedReturn, MasterList, IssuedProduct} = require("../db/models/associations"); 
+const { IssuedReturn, Inventory, MasterList, Issuance} = require("../db/models/associations"); 
 
 
 // Get All 
@@ -13,10 +13,14 @@ router.route('/getReturned').get(async (req, res) =>
                 model: MasterList,
                  required: true
                 },
-            {
-                model: IssuedProduct,
-                required: true
-            }]
+                {
+                    model: Inventory,
+                    required: true
+                },
+                {
+                    model: Issuance,
+                    required: true
+                }]
             });
 
         if (data) {
