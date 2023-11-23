@@ -2,6 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 const { Issuance, MasterList, CostCenter } = require("../db/models/associations"); 
+const Issued_Product = require('../db/models/issued_product.model')
 
 
 // Get All Issuance
@@ -34,9 +35,13 @@ router.route('/getIssuance').get(async (req, res) =>
 
 //Create Issuance
 router.route('/create').post(async (req, res) => {
+    const { addProductbackend } = req.body
 
+
+        // console.log('addProductbackend'+ reqaddProduct)
+        console.log('fromSite'+ req.body)
 try {
-    const newData = await Issuance.create({
+    const Issue_newData = await Issuance.create({
         from_site: req.body.fromSite,
         issued_to: req.body.issuedTo,
         with_accountability: req.body.withAccountability,
@@ -47,9 +52,27 @@ try {
         transported_by: req.body.transportedBy,
         mrs: req.body.mrs,
         remarks: req.body.remarks
-    });
+    })
 
-    res.status(200).json(newData);
+
+        const issuanceee_ID = Issue_newData.issuance_id
+        console.log('issuance_ID' + addProductbackend)
+
+        for (const product_issued of addProductbackend) {
+            const inventory_id = product_issued.inventory_id
+            const Name = product_issued.name
+            console.log('value' + inventory_id)
+            console.log('Name' + Name)
+             Issued_Product.create({
+                issuance_id: issuanceee_ID,
+                inventory_id: inventory_id,
+                quantity: 1,
+                status: 'Deployed'
+            });
+          }
+    
+
+    res.status(200).json(Issue_newData);
     } catch (err) {
     console.error(err);
     res.status(500).send('An error occurred');

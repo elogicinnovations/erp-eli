@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import subwarehouse from "../../assets/global/subwarehouse";
 import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
-
+import Select from 'react-select';
 
 import {
     MagnifyingGlass,
@@ -27,6 +27,10 @@ function CreateIssuance() {
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
 
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [fetchProduct, setFetchProduct] = useState([]);
+  const [addProduct, setAddProduct] = useState([]); // para sa pag ng product na e issue sa table
+  const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [fromSite, setFromSite] = useState();
   const [issuedTo, setIssuedTo] = useState();
   const [withAccountability, setWithAccountability] = useState();
@@ -39,11 +43,56 @@ function CreateIssuance() {
   const [remarks, setRemarks] = useState();
   
 
-React.useEffect(() => {
-    $(document).ready(function () {
-        $('#order-listing').DataTable();
-    });
-    }, []);
+// React.useEffect(() => {
+//     $(document).ready(function () {
+//         $('#order-listing').DataTable();
+//     });
+//     }, []);
+
+const handleAddProdClick = () => { // para pag display ng drop down for add product
+  setShowDropdown(true);
+
+  // // Create a simplified array with only necessary information
+  // const simplifiedProducts = addProduct.map(product => ({
+  //   code: product.code,
+  //   name: product.name,
+  //   desc: product.desc,
+  // }));
+
+  // // Use the simplified array for your backend call
+  // // setAddProductbackend(simplifiedProducts);
+
+  // console.log(simplifiedProducts)
+  
+};
+// const handleSelectChange_Prod = (selectedOptions) => { // para sa mag hold ng value sa selected product
+//   setAddProductbackend(selectedOptions);
+//   // Log the values of addProduct
+//   console.log("Selected Products:", selectedOptions);
+  
+// };
+
+const handleSelectChange_Prod = (selectedOptions) => {
+  // Serialize the selected options before updating the state
+  const serializedProducts = selectedOptions.map((product) => ({
+    inventory_id: product.inventory_id,
+    code: product.code,
+    name: product.name,
+    quantity_available: product.quantity_available,
+    desc: product.desc,
+  }));
+
+  setAddProductbackend(serializedProducts);
+  setAddProduct(selectedOptions)
+  console.log("Selected Products:", serializedProducts);
+};
+
+//get supplier product
+useEffect(() => {
+  axios.get(BASE_URL + '/inventory/fetchToIssueProduct')
+    .then(res => setFetchProduct(res.data))
+    .catch(err => console.log(err));
+}, []);
 
 //get MasterList
 const [roles, setRoles] = useState([]);
@@ -89,15 +138,47 @@ const add = async e => {
         });
   }
   else{
-    axios
-    .post(BASE_URL + '/issuance/create', 
-      { 
-        fromSite,issuedTo,withAccountability,accountabilityRefcode,serialNumber,
-        jobOrderRefcode,receivedBy,transportedBy,mrs,remarks
-      })
+
+    // const formData = new FormData();
+    //   formData.append('fromSite', fromSite);
+    //   formData.append('issuedTo', issuedTo);
+    //   formData.append('withAccountability', withAccountability);
+    //   formData.append('accountabilityRefcode', accountabilityRefcode);
+    //   formData.append('serialNumber', serialNumber);
+    //   formData.append('jobOrderRefcode', jobOrderRefcode);
+    //   formData.append('receivedBy', receivedBy);
+    //   formData.append('transportedBy', transportedBy);
+    //   formData.append('mrs', mrs);
+    //   formData.append('remarks', remarks);
+    //   formData.append('addProductbackend', addProductbackend);
+
+    // axios
+    // .post(BASE_URL + '/issuance/create', 
+    //   { 
+    //     fromSite,issuedTo,withAccountability,accountabilityRefcode,serialNumber,
+    //     jobOrderRefcode,receivedBy,transportedBy,mrs,remarks, addProductbackend
+    //   })
+    fetch(BASE_URL + '/issuance/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({  fromSite,
+        issuedTo,
+        withAccountability,
+        accountabilityRefcode,
+        serialNumber,
+        jobOrderRefcode,
+        receivedBy,
+        transportedBy,
+        mrs,
+        remarks,
+        addProductbackend: addProductbackend }),
+    })
     .then((res) => {
       console.log(res);
       if(res.status === 200){
+        
         SuccessInserted(res);
       }
       else if(res.status === 201){
@@ -115,8 +196,8 @@ const add = async e => {
 // ----------------------------------Validation------------------------------//
 const SuccessInserted = (res) => {
   swal({
-    title: 'Cost Center Created',
-    text: 'The Cost Center has been added successfully',
+    title: 'Issuance Created',
+    text: 'The Issuance has been added successfully',
     icon: 'success',
     button: 'OK'
   })
@@ -129,8 +210,8 @@ const SuccessInserted = (res) => {
 }
 const Duplicate_Message = () => {
   swal({
-    title: 'Cost Center Already Exist',
-    text: 'Please input other cost center name',
+    title: 'Issuance Already Exist',
+    text: '',
     icon: 'error',
     button: 'OK'
   })
@@ -143,6 +224,18 @@ const ErrorInserted = () => {
     button: 'OK'
   })  
 }
+// const handleQuantityChange = (e, productValue) => {
+//   const updatedProducts = addProduct.map((product) => {
+//     if (product.value === productValue) {
+//       return { ...product, quantity: e.target.value };
+//     }
+//     return product;
+//   });
+
+//   setAddProductbackend(updatedProducts);
+//   console.log('to backend' + updatedProducts)
+// };
+
 // ----------------------------------End Validation------------------------------//
 
   return (
@@ -152,6 +245,7 @@ const ErrorInserted = () => {
         </div>
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
+            <Form noValidate validated={validated} onSubmit={add}>
                 <h1>Create Issuance</h1>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Issuance Info
@@ -167,7 +261,7 @@ const ErrorInserted = () => {
                             }}
                           ></span>
                         </div>
-                        <Form noValidate validated={validated} onSubmit={add}>
+                        
                           <div className="row mt-3">
                             <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput2">
@@ -176,8 +270,9 @@ const ErrorInserted = () => {
                                 style={{ height: '40px', fontSize: '15px' }}
                                 required
                                 onChange={handleFormChangeWarehouse}
+                                defaultValue=''
                             >
-                                <option disabled selected>Select Site</option>
+                                <option disabled selected value=''>Select Site</option>
                                 {subwarehouse.map((name, index) => (
                                 <option key={index} value={name}>
                                     {name}
@@ -244,8 +339,9 @@ const ErrorInserted = () => {
                                         style={{ height: '40px', fontSize: '15px' }}
                                         required
                                         onChange={handleFormChangeReceived}
+                                        defaultValue=''
                                     >
-                                        <option value="">Select Employee</option>
+                                        <option disabled value=''>Select Employee</option>
                                         {roles.map(role => (
                                           <option key={role.col_id} value={role.col_id}>
                                             {role.col_Fname}
@@ -276,7 +372,7 @@ const ErrorInserted = () => {
                             <div className="col-2">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>MRS #: </Form.Label>
-                                <Form.Control type="text" placeholder="Input #" style={{height: '40px', fontSize: '15px'}} onChange={e => setMrs(e.target.value)}/>
+                                <Form.Control type="text" required placeholder="Input #" style={{height: '40px', fontSize: '15px'}} onChange={e => setMrs(e.target.value)}/>
                               </Form.Group>
                             </div>
                           </div> 
@@ -287,13 +383,8 @@ const ErrorInserted = () => {
                             </Form.Group>
                         </div>
 
-                          <div className='save-cancel'>
-                          <Button type="submit" className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                          <Link to='/inventory' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                              Close
-                          </Link>
-                          </div>
-                    </Form>
+                        
+                    
 
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
                           <span
@@ -315,27 +406,96 @@ const ErrorInserted = () => {
                                             <thead>
                                             <tr>
                                                 <th className='tableh'>Product Code</th>
+                                                <th className='tableh'>Product Name</th>
                                                 <th className='tableh'>Quantity</th>
-                                                <th className='tableh'>Product</th>
                                                 <th className='tableh'>Desciptions</th>
-                                                <th className='tableh'>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                    <tr>
-                                                    <td>asd</td>
-                                                    <td>asdsda</td>
-                                                    <td>tnbgv</td>
-                                                    <td>sdf</td>
+                                     
+                                              {addProduct.length > 0 ? (
+                                                addProduct.map((product) => (
+                                                  <tr key={product.value}>
+                                                    <td key={product.value}>{product.code}</td>
+                                                    <td key={product.value}>{product.name}</td>
                                                     <td>
-                                                    <button className='btn'><X size={32} color="#e60000" /></button>
+                                                      <div className='d-flex flex-direction-row align-items-center'> 
+                                                        <Form.Control 
+                                                          type="number" 
+                                                          required
+                                                          placeholder="Input quantity" 
+                                                         
+                                                          style={{height: '40px', width: '120px', fontSize: '15px'}} />
+                                                          /{product.quantity_available}
+                                                      </div>
+                                                      
                                                     </td>
-                                                    </tr>
+                                                    <td >                       
+                                                      {product.desc}
+                                                    </td>
+                                                  </tr>
+                                                ))
+                                              ) : (
+                                                <tr>
+                                                  <td></td>
+                                                  <td></td>
+                                                  <td></td>
+                                                  <td></td>
+                                                </tr>
+                                              )}
+                                          
+                                          
                                         </tbody>
+                                        {showDropdown && (
+          
+                                            <Select
+                                            isMulti
+                                            options={fetchProduct.map((product) => ({
+                                              value: product.inventory_id,
+                                              label: <div>
+                                                Product Name: <strong>{product.product_tag_supplier.product.product_name}</strong> / 
+                                                Supplier: <strong>{product.product_tag_supplier.supplier.supplier_name}</strong> / 
+                                                Price: <strong>{product.product_tag_supplier.product_price}</strong> /
+                                                Stock: <strong>{product.quantity}</strong>
+                                              </div>,
+                                              inventory_id: product.inventory_id,
+                                              code: product.product_tag_supplier.product.product_code,
+                                              name: product.product_tag_supplier.product.product_name,
+                                              quantity_available: product.quantity,
+                                              desc: product.product_tag_supplier.product.product_details,
+                                            }))}
+                                            
+                                            onChange={handleSelectChange_Prod}
+                                            
+                                          />
+        
+                                          
+                                          
+                                        )}
+
+                                        <Button
+                                          className='btn btn-danger mt-1'
+                                          onClick={handleAddProdClick}
+                                          size="md"
+                                          style={{ fontSize: '15px', margin: '0px 5px' }}
+                                        >
+                                          Add Product
+                                        </Button>
                                     </table>
+                                    
                                 </div>
+                                <div className='save-cancel'>
+                                  <Button type="submit" className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                                  <Link to='/inventory' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                                      Close
+                                  </Link>
+                                </div>
+
                             </div>
+                           
                         </div>
+                        
+                        </Form>
             </div>
         </div>
     </div>

@@ -103,6 +103,39 @@ router.route('/fetchView').get(async (req, res) => {
 });
 
 
+router.route('/fetchToIssueProduct').get(async (req, res) => { // para sa pag fetch ng product for issuance
+  try {
+    
+    console.log(req.query.id)
+    const data = await Inventory.findAll({
+      include: [{
+        model: ProductTAGSupplier,
+        required: true,
+
+        include: [{
+          model: Product,
+          required: true
+        },
+        {
+          model: Supplier,
+          required: true
+        }
+      ]
+      }]
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 
 
 
