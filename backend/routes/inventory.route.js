@@ -32,8 +32,7 @@ router.route('/fetchInvetory').get(async (req, res) => {
               {
                 model: Supplier,
                 required: true
-              }],
-             
+              }],            
         }
         
       ]
@@ -81,6 +80,10 @@ router.route('/fetchView').get(async (req, res) => {
                         
                   }]
 
+            },
+            {
+              model: Supplier,
+              required: true
             }]
       }]
     });
