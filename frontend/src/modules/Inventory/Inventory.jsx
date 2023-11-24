@@ -115,17 +115,17 @@ const navigate = useNavigate()
 
       useEffect(() => {
         // Initialize DataTable when role data is available
-        if ($('#order-listing').length > 0 && issuance.length > 0) {
-          $('#order-listing').DataTable();
+        if ($('#order1-listing').length > 0 && issuance.length > 0) {
+          $('#order1-listing').DataTable();
         }
       }, [issuance]);
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if ($('#order-listing').length > 0 && inventory.length > 0) {
-      $('#order-listing').DataTable();
+    if ($('#order2-listing').length > 0 && returned.length > 0) {
+      $('#order2-listing').DataTable();
     }
-  }, [inventory]);
+  }, [returned]);
 
     const tabStyle = {
         padding: '10px 15px', 
@@ -293,8 +293,7 @@ const navigate = useNavigate()
                                                                 }}
                                                             >
                                                                 {/* Your dropdown content here */}
-                                                                <button>View</button>
-                                                                <button>Add</button>
+                                                                
                                                                 <button>Return</button>
                                                             </div>
                                                             </td>
@@ -315,7 +314,7 @@ const navigate = useNavigate()
                                                     <thead>
                                                     <tr>
                                                         <th className='tableh'>Id</th>
-                                                        <th className='tableh'>Issued Id</th>
+                                                        <th className='tableh'>Issuance Id</th>
                                                         <th className='tableh'>Return By</th>
                                                         <th className='tableh'>Return Quantity</th>
                                                         <th className='tableh'>Date Return</th>
@@ -357,9 +356,9 @@ const navigate = useNavigate()
                                                                 }}
                                                             >
                                                                 {/* Your dropdown content here */}
-                                                                <button>View</button>
-                                                                <button>Add</button>
-                                                                <button>Return</button>
+                                                                <button style={{fontSize: '15px'}}>Retained</button>
+                                                                <button style={{fontSize: '15px'}}>To Inventory</button>
+                                        
                                                             </div>
                                                             </td>
                                                         </tr>

@@ -1,10 +1,10 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-// const { Supplier_SparePart, Supplier, SparePart } = require("../db/models/associations"); 
-const SparePart = require('../db/models/sparePart.model')
-const Supplier_SparePart = require('../db/models/supplier_sparePart.model')
-const SubPart_SparePart = require('../db/models/subPart_sparePart.model')
+const { SparePart_Supplier, SparePart_SubPart, SparePart } = require("../db/models/associations"); 
+// const SparePart = require('../db/models/sparePart.model')
+// const Supplier_SparePart = require('../db/models/sparePart_supplier..model')
+// const SubPart_SparePart = require('../db/models/sparePart_subPart.model')
 const session = require('express-session')
 
 router.use(session({
@@ -78,13 +78,13 @@ router.route('/create').post(async (req, res) => {
           });
 
           const createdID = spare_newData.id;
-
+          console.log('new ID' + createdID)
           for (const supplier of supp) {
             const supplierValue = supplier.value;
     
-            await Supplier_SparePart.create({
+            await SparePart_Supplier.create({
                 sparePart_id: createdID,
-                supplier: supplierValue,
+                supplier_code: supplierValue,
             });
           }
 
@@ -93,9 +93,9 @@ router.route('/create').post(async (req, res) => {
 
             console.log('subpart id' + subPartValue)
     
-            await SubPart_SparePart.create({
+            await SparePart_SubPart.create({
                 sparePart_id: createdID,
-                subPart_code: subPartValue,
+                subPart_id: subPartValue,
             });
           }
     
@@ -138,7 +138,7 @@ router.route('/update').put(async (req, res) => {
       );
 
       if(affectedRows){
-        const deletesubpart  = SubPart_SparePart.destroy({
+        const deletesubpart  = SparePart_SubPart.destroy({
           where : {
             sparePart_id: req.query.id
           }
@@ -149,15 +149,15 @@ router.route('/update').put(async (req, res) => {
   
               console.log('subpart value: ' + subPartValue)
           
-              await SubPart_SparePart.create({
+              await SparePart_SubPart.create({
                 sparePart_id: req.query.id,
-                subPart_code: subPartValue,
+                subPart_id: subPartValue,
               });
         }
       }
 
 
-        const deletesupp  = Supplier_SparePart.destroy({
+        const deletesupp  = SparePart_Supplier.destroy({
           where : {
             sparePart_id: req.query.id
           }
@@ -166,9 +166,9 @@ router.route('/update').put(async (req, res) => {
           for (const supplier of req.query.supp) {
             const supplierValue = supplier.value;
     
-            await Supplier_SparePart.create({
+            await SparePart_Supplier.create({
                 sparePart_id: req.query.id,
-                supplier: supplierValue,
+                supplier_code: supplierValue,
             });
           }
   
@@ -180,7 +180,7 @@ router.route('/update').put(async (req, res) => {
       //   const supplierValue = supplier.value;
 
       //   console.log(supplierValue)
-      //   await Supplier_SparePart.bulkCreate({
+      //   await SparePart_Supplier.bulkCreate({
       //       supplier: supplierValue,
       //   },
       //   {
@@ -194,7 +194,7 @@ router.route('/update').put(async (req, res) => {
 
       //   console.log('subpart id' + subPartValue)
 
-      //   await SubPart_SparePart.bulkCreate({
+      //   await SparePart_SubPart.bulkCreate({
       //       subPart_code: subPartValue,
       //   },
       //   {
@@ -238,7 +238,7 @@ router.route('/delete/:table_id').delete(async (req, res) => {
                   if(del){
 
 
-                    Supplier_SparePart.destroy({
+                    SparePart_Supplier.destroy({
                       where : {
                         sparePart_id: id
                       }
@@ -248,7 +248,7 @@ router.route('/delete/:table_id').delete(async (req, res) => {
                             if(del){
                                 
                               
-                              SubPart_SparePart.destroy({
+                              SparePart_SubPart.destroy({
                                 where : {
                                   sparePart_id: id
                                 }

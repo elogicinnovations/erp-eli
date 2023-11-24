@@ -1,7 +1,7 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const Supplier_SparePart = sequelize.define('supplier_sparePart', {
+const Supplier_SparePart = sequelize.define('sparepart_supplier', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -9,10 +9,10 @@ const Supplier_SparePart = sequelize.define('supplier_sparePart', {
     autoIncrement: true,
   },
   sparePart_id: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  supplier: {
+  supplier_code: {
     type: DataTypes.STRING,
     allowNull: true,
   }

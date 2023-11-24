@@ -566,7 +566,7 @@ function SubParts() {
                     <Button type="submit" variant="warning" className='' style={{ fontSize: '20px' }}>
                       Update
                     </Button>
-                    <Button variant="secondary" onClick={() => setUpdateModalShow(!updateModalShow)} style={{ fontSize: '20px' }}>
+                    <Button type="button" variant="secondary" onClick={() => setUpdateModalShow(!updateModalShow)} style={{ fontSize: '20px' }}>
                       Close
                     </Button>
                     

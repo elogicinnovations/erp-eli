@@ -182,7 +182,7 @@ const add = async e => {
                         
 
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
-                          Sub Parts List
+                          Supplier List
                           <span
                             style={{
                               position: 'absolute',
@@ -201,7 +201,12 @@ const add = async e => {
                                   <table>
                                     <thead>
                                       <tr>
-                                        <th className='tableh'>Product Code</th>
+                                        <th className='tableh'>Supplier Code</th>
+                                        <th className='tableh'>Supplier Name</th>
+                                        <th className='tableh'>Supplier Email</th>
+                                        <th className='tableh'>Supplier Number</th>
+                                        <th className='tableh'>Supplier Country</th>
+                                        <th className='tableh'>Receiving Area</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -209,7 +214,12 @@ const add = async e => {
                                           {supp.length > 0 ? (
                                             supp.map((supp) => (
                                               <tr>
-                                                <td key={supp.value}>{supp.label}</td>
+                                                <td key={supp.value}>{supp.value}</td>
+                                                <td >{supp.label}</td>
+                                                <td >{supp.email}</td>
+                                                <td >{supp.number}</td>
+                                                <td >{supp.country}</td>
+                                                <td >{supp.receving}</td>
                                               </tr>
                                             ))
                                           ) : (
@@ -218,14 +228,20 @@ const add = async e => {
                                             </tr>
                                           )}
                                       
-                                      {showDropdown && (
+                                      
+                                    </tbody>
+                                    {showDropdown && (
                                         <div className="dropdown mt-3">
                                           
                                           <Select
                                             isMulti
                                             options={fetchSupp.map(supplier => ({
                                               value: supplier.supplier_code,
-                                              label: supplier.supplier_name 
+                                              label: supplier.supplier_name,
+                                              email: supplier.supplier_email,
+                                              number: supplier.supplier_number,
+                                              country: supplier.supplier_country,
+                                              receving: supplier.supplier_receiving
                                             }))}
                                             onChange={handleSelectChange}
                                           />
@@ -240,7 +256,6 @@ const add = async e => {
                                       >
                                         Add Sub-Part
                                       </Button>
-                                    </tbody>
                                   </table>
                                 </div>
                             </div>

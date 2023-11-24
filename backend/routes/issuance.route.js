@@ -3,6 +3,7 @@ const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 const { Issuance, MasterList, CostCenter } = require("../db/models/associations"); 
 const Issued_Product = require('../db/models/issued_product.model')
+const Inventory = require('../db/models/issued_product.model')
 
 
 // Get All Issuance

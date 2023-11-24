@@ -26,7 +26,7 @@ const [desc, setDesc] = useState('');
 
 
 //Edit useState display
-const [tableSubPart, settableSubPart] = useState([]); // for display in table 
+const [tableSupp, setTableSupp] = useState([]); // for display in table 
 
 // for display selected subPart in Table
 const [SubParts, setSubParts] = useState([]);
@@ -41,7 +41,7 @@ const { id } = useParams();
 
 
 
-
+//para sa mga input textfieldd fetch
 useEffect(() => {
   axios.get(BASE_URL + '/sparePart/fetchTableEdit', {
     params: {
@@ -66,24 +66,31 @@ useEffect(() => {
 }, [id]);
 
 
+// para sa mga 
+
 useEffect(() => {
-  axios.get(BASE_URL + '/subPart_SparePart/fetchTable')
-    .then(res => settableSubPart(res.data))
+  axios.get(BASE_URL + '/supp_SparePart/fetchTableEdit', {
+    params: {
+      id: id
+    }
+  })
+    .then(res => setTableSupp(res.data))
     .catch(err => console.log(err));
 }, []);
 
-useEffect(() => {
-  axios.get(BASE_URL + '/subPart_SparePart/fetchTableEdit')
+// useEffect(() => {
+//   axios.get(BASE_URL + '/supp_SparePart/fetchTableEdit')
     
-    .then(res => setSubParts(res.data))
-    .catch(err => console.log(err));
-}, []);
+//     .then(res => setSubParts(res.data))
+//     .catch(err => console.log(err));
+// }, []);
 
 useEffect(() => {
   axios.get(BASE_URL + '/supplier/fetchTable')
     .then(res => setFetchSupp(res.data))
     .catch(err => console.log(err));
 }, []);
+
 
 useEffect(() => {
   axios.get(BASE_URL + '/subPart/fetchTable')
@@ -95,6 +102,8 @@ useEffect(() => {
 //for supplier selection values
 const handleSelectChange = (selectedOptions) => {
   setSupp(selectedOptions);
+
+  console.log(selectedOptions)
 };
 
 const handleSelectChange_SubPart = (selectedOptions) => {
@@ -124,6 +133,7 @@ const update = async (e) => {
       text: 'Please fill the required fields',
     });
   } else {
+
     axios
       .put(`${BASE_URL}/sparePart/update`, null, {
         params: {
@@ -232,14 +242,14 @@ const update = async (e) => {
                                     isMulti
                                     isDisabled={!isReadOnly}
                                     options={fetchSubPart.map((subPart) => ({
-                                      value: subPart.subPart_code,
-                                      label: subPart.subPart_code, // Set label to subPart_name for options
+                                      value: subPart.id,
+                                      label: subPart.subPart_name , // Set label to subPart_name for options
                                     }))}
                                     onChange={handleSelectChange_SubPart}
-                                    value={SubParts.map((selectedOption) => ({
-                                      value: selectedOption.subPart_code,
-                                      label: selectedOption.subPart_code, // Set label to subPart_code for selected value
-                                    }))}
+                                    // value={SubParts.map((selectedOption) => ({
+                                    //   value: selectedOption.subPart_code,
+                                    //   label: selectedOption.subPart_code, // Set label to subPart_code for selected value
+                                    // }))}
                                   />
 
                                 </Form.Group>
@@ -274,44 +284,64 @@ const update = async (e) => {
                                   <table>
                                     <thead>
                                       <tr>
-                                        <th className='tableh'>Product Code</th>
-                                        <th className='tableh'>Action</th>
+                                      <th className='tableh'>Supplier Code</th>
+                                        <th className='tableh'>Supplier Name</th>
+                                        <th className='tableh'>Supplier Email</th>
+                                        <th className='tableh'>Supplier Number</th>
+                                        <th className='tableh'>Supplier Country</th>
+                                        <th className='tableh'>Receiving Area</th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                    {tableSubPart.map((data,i) =>(
+                                    {tableSupp.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.subPart_code}</td>
-                                          <td>
-                                            
-                                          </td>
+                                          <td>{data.supplier_code}</td>
+                                          <td>{data.supplier.supplier_name}</td>
+                                          <td>{data.supplier.supplier_email}</td>
+                                          <td>{data.supplier.supplier_number}</td>
+                                          <td>{data.supplier.supplier_country}</td>
+                                          <td>{data.supplier.supplier_receiving}</td>
                                         </tr>
                                       ))}
                                      
                                           {supp.length > 0 ? (
-                                            supp.map((sup) => (
+                                            supp.map((supp) => (
                                               <tr>
-                                                <td key={supp.value}>{supp.label}</td>
-                                                <td></td>
+                                                <td key={supp.value}>{supp.value}</td>
+                                                <td >{supp.label}</td>
+                                                <td >{supp.email}</td>
+                                                <td >{supp.number}</td>
+                                                <td >{supp.country}</td>
+                                                <td >{supp.receving}</td>
                                               </tr>
                                             ))
                                           ) : (
                                             <tr>
-                                                <td ></td>
-                                                <td></td>
+                                                 <td></td>
+                                                 <td></td>
+                                                 <td></td>
+                                                 <td></td>
+                                                 <td></td>
+                                                 <td></td>
                                               </tr>
                                          
                                           )}
 
                                          
                                       
-                                      {showDropdown && (
+                                     
+                                    </tbody>
+                                    {showDropdown && (
                                         <div className="dropdown mt-3">
                                            <Select
                                               isMulti
                                               options={fetchSupp.map(supplier => ({
                                                 value: supplier.supplier_code,
-                                                label: supplier.supplier_name 
+                                                label: supplier.supplier_name,
+                                                email: supplier.supplier_email,
+                                                number: supplier.supplier_number,
+                                                country: supplier.supplier_country,
+                                                receving: supplier.supplier_receiving
                                               }))}
                                               onChange={handleSelectChange}
                                             />
@@ -327,10 +357,9 @@ const update = async (e) => {
                                         style={{ fontSize: '15px', margin: '0px 5px' }}
                                           
                                         >
-                                          Add Sub-Part
+                                          Add Supplier
                                         </Button>
                                         )}
-                                    </tbody>
                                   </table>
                                 </div>
                             </div>

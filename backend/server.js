@@ -27,8 +27,8 @@ const manufacturer = require("./routes/manufacturer.route");
 const subPart = require("./routes/subPart.route");
 
 const sparePart = require("./routes/sparePart.route");
-const supp_SparePart = require("./routes/supplier_sparePart.route");
-const subPart_SparePart = require("./routes/subPart_sparePart.route");
+const supp_SparePart = require("./routes/sparePart_supplier.route");
+const subPart_SparePart = require("./routes/sparePart_subPart.route");
 
 const assembly = require("./routes/assembly.route");
 const spare_assembly = require("./routes/assembly_spare.route");
@@ -52,9 +52,11 @@ app.use("/binLocation", binLocation);
 app.use("/product", product);
 app.use("/manufacturer", manufacturer);
 app.use("/subpart", subPart);
+
 app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);
 app.use("/subPart_SparePart", subPart_SparePart);
+
 app.use("/productTAGsupplier", productTAGsupplier);
 app.use("/costCenter", costCenter);
 

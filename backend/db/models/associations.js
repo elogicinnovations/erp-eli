@@ -7,9 +7,18 @@ const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
 const CostCenter = require("./costcenter.model");
+
+const SubPart = require("./subpart.model");
+
+const SparePart = require("./sparePart.model");
+const SparePart_SubPart = require("./sparePart_subPart.model");
+const SparePart_Supplier = require("./sparePart_supplier..model");
+
 const Assembly = require("./assembly.model");
 const Assembly_Supplier = require("./assembly_supplier.model");
 const Assembly_SparePart = require("./assembly_spare.model");
+
+
 
 const Inventory = require("./inventory.model");
 const Issuance = require("./issuance.model");
@@ -70,15 +79,21 @@ IssuedReturn.belongsTo(Issuance, { foreignKey: "issued_id" });
 MasterList.hasMany(IssuedReturn, { foreignKey: "return_by" });
 IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by" });
 
+// `sparepart_subparts
+SubPart.hasMany(SparePart_SubPart, { foreignKey: "subPart_id"});
+SparePart_SubPart.belongsTo(SubPart, { foreignKey: "subPart_id"});
+
+SparePart.hasMany(SparePart_SubPart, { foreignKey: "sparePart_id"});
+SparePart_SubPart.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 
 
+// `sparepart_suPPLIER
+SparePart.hasMany(SparePart_Supplier, { foreignKey: "sparePart_id"});
+SparePart_Supplier.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 
+Supplier.hasMany(SparePart_Supplier, { foreignKey: "supplier_code"});
+SparePart_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
-// Assembly.hasMany(Assembly_SparePart, { foreignKey: "sparePart_id"});
-// Assembly_SparePart.belongsTo(Assembly, { foreignKey: "sparePart_id"});
-
-// SparePart.hasMany(Supplier_SparePart, { foreignKey: "subPart_code"});
-// Supplier_SparePart.belongsTo(SparePart, { foreignKey: "subPart_code"});
 
 
 module.exports = { 
@@ -91,13 +106,13 @@ module.exports = {
                     ProductTAGSupplier,
                     Supplier,
                     CostCenter,
-                    // Assembly,
+                    SubPart,
+                    SparePart,
+                    SparePart_SubPart,
+                    SparePart_Supplier,             
                     Assembly_Supplier,
-                    // Assembly_SparePart
                     Inventory,
                     Issuance,
                     IssuedProduct,
                     IssuedReturn
-                    // Supplier_SparePart,
-                    // SparePart
                 };
