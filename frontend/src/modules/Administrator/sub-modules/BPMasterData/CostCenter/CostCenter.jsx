@@ -186,13 +186,13 @@ function CostCenter() {
                                 <tbody>
                                       {CostCenter.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.id}</td>
-                                          <td>{data.name}</td>
-                                          <td>{data.masterlist.col_Fname}</td>
-                                          <td>{data.masterlist.col_phone}</td>
-                                          <td>{data.status}</td>
-                                          <td>{formatDatetime(data.createdAt)}</td>
-                                          <td>{formatDatetime(data.updatedAt)}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{data.id}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{data.name}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{data.masterlist.col_Fname}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{data.masterlist.col_phone}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{data.status}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{formatDatetime(data.createdAt)}</td>
+                                          <td onClick={() => navigate('/viewCostCenter')}>{formatDatetime(data.updatedAt)}</td>
                                           <td>
                                           <Link to={`/initUpdateCostCenter/${data.id}`} onClick={() => handleModalToggle(data)} className='btn'><NotePencil size={32} /></Link>
                                           <button onClick={() => handleDelete(data.id)} className='btn'><Trash size={32} color="#e60000" /></button>

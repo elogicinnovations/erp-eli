@@ -1112,6 +1112,33 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+td.drop {
+  padding:0px 15px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in;
+}
+
+td.drop.open {
+  max-height: 300px; /* Adjust the value based on your content */
+  transition: max-height 0.3s ease-out;
+}
+
+th.theadD {
+  height: 20px;
+  font-size: 15px;
+  background-color: antiquewhite;
+}
+
+td.tbodyD {
+  height: 20px;
+  font-size: 13px;
+}
+
+table.drop_table {
+  min-height: 0px;
+}
+
 td.autho{
   overflow: hidden;
   text-overflow: ellipsis;

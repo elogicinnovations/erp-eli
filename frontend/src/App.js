@@ -39,6 +39,7 @@ import CreateProduct from "./modules/Administrator/sub-modules/UserMasterData/Pr
 import UpdateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/UpdateProduct"
 import ProductSupplier from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductSupplier"
 import CostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/CostCenter"
+import ViewCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/ViewCostCenter"
 import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/CreateCostCenter"
 import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
 import Inventory from "./modules/Inventory/Inventory"
@@ -188,6 +189,10 @@ function App() {
                   <Route
                     path="/initUpdateCostCenter/:id"
                     element={<UpdateCostCenter/>}
+                  />
+                  <Route
+                    path="/viewCostCenter"
+                    element={<ViewCostCenter/>}
                   />
           <Route
             path="/inventory"
