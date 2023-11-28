@@ -16,6 +16,7 @@ import {
     Plus,
     Trash,
     NotePencil,
+    DotsThreeCircle
   } from "@phosphor-icons/react";
   import '../../../../../assets/skydash/vendors/feather/feather.css';
   import '../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
@@ -47,7 +48,40 @@ function BinLocation() {
     const [binLocationName, setbinLocationName] = useState('');
     const [binLocationSubName, setbinLocationSubName] = useState('');
     const [binLocationRemarks, setbinLocationRemarks] = useState('');
-   
+
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [rotatedIcons, setRotatedIcons] = useState(Array(binLocation.length).fill(false));
+    const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  
+    const toggleDropdown = (event, index) => {
+      // Check if the clicked icon is already open, close it
+      if (index === openDropdownIndex) {
+        setRotatedIcons((prevRotatedIcons) => {
+          const newRotatedIcons = [...prevRotatedIcons];
+          newRotatedIcons[index] = !newRotatedIcons[index];
+          return newRotatedIcons;
+        });
+        setShowDropdown(false);
+        setOpenDropdownIndex(null);
+      } else {
+        // If a different icon is clicked, close the currently open dropdown and open the new one
+        setRotatedIcons(Array(binLocation.length).fill(false));
+        const iconPosition = event.currentTarget.getBoundingClientRect();
+        setDropdownPosition({
+          top: iconPosition.bottom + window.scrollY,
+          left: iconPosition.left + window.scrollX,
+        });
+        setRotatedIcons((prevRotatedIcons) => {
+          const newRotatedIcons = [...prevRotatedIcons];
+          newRotatedIcons[index] = true;
+          return newRotatedIcons;
+        });
+        setShowDropdown(true);
+        setOpenDropdownIndex(index);
+      }
+    };
+
   
     const handleClose = () => {
       setShowModal(false);
@@ -401,9 +435,39 @@ function BinLocation() {
                                           <td>{formatDate(data.createdAt)}</td>
                                           <td>{formatDate(data.updatedAt)}</td>
                                           <td>
+                                          <DotsThreeCircle
+                                              size={32}
+                                              className="dots-icon"
+                                              style={{
+                                              cursor: 'pointer',
+                                              transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
+                                              color: rotatedIcons[i] ? '#666' : '#000',
+                                              transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
+                                              }}
+                                              onClick={(event) => toggleDropdown(event, i)}
+                                          />
+                                          <div
+                                              className='choices'
+                                              style={{
+                                              position: 'fixed',
+                                              top: dropdownPosition.top - 30 + 'px',
+                                              left: dropdownPosition.left - 100 + 'px',
+                                              opacity: showDropdown ? 1 : 0,
+                                              visibility: showDropdown ? 'visible' : 'hidden',
+                                              transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+                                              boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
+                                              }}
+                                          >
+                                              {/* Your dropdown content here */}
+                                              
+                                          <button className='btn' onClick={() => handleModalToggle(data)}>Update</button>
+                                          <button className='btn' onClick={() => handleDelete(data.bin_id)}>Delete</button>
+                                          </div>
+                                          </td>
+                                          {/* <td>
                                           <button className='btn' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
                                           <button className='btn' onClick={() => handleDelete(data.bin_id)}><Trash size={32} color="#e60000" /></button>
-                                          </td>
+                                          </td> */}
                                         </tr>
                                       ))}
                             </tbody>

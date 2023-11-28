@@ -488,14 +488,14 @@ color: #ffffff;
 
 .main-of-all-tables table {
   width: 100%;
-  font-size: 20px;
+  font-size: 18px;
   font-family: Poppins, 'Source Sans Pro';
   justify-content: center;
   align-items: center;
 }
 
 .main-of-all-tables th{
-  background-color: #F9F9FB;
+  background-color: #ededed;
   font-family: Poppins, 'Source Sans Pro';
   font-weight: normal;
   height: 50px;
@@ -1111,6 +1111,10 @@ left: 12rem;
 }
 
 /* Jerome's CSS */
+
+tbody{
+  font-size: 15px;
+}
 
 td.drop {
   padding:0px 15px;
