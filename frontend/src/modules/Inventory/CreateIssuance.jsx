@@ -31,6 +31,7 @@ function CreateIssuance() {
   const [fetchProduct, setFetchProduct] = useState([]);
   const [addProduct, setAddProduct] = useState([]); // para sa pag ng product na e issue sa table
   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
+  const [quantityInputs, setQuantityInputs] = useState({});
   const [fromSite, setFromSite] = useState();
   const [issuedTo, setIssuedTo] = useState();
   const [withAccountability, setWithAccountability] = useState();
@@ -72,20 +73,121 @@ const handleAddProdClick = () => { // para pag display ng drop down for add prod
   
 // };
 
-const handleSelectChange_Prod = (selectedOptions) => {
-  // Serialize the selected options before updating the state
-  const serializedProducts = selectedOptions.map((product) => ({
-    inventory_id: product.inventory_id,
-    code: product.code,
-    name: product.name,
-    quantity_available: product.quantity_available,
-    desc: product.desc,
-  }));
+// const handleSelectChange_Prod = (selectedOptions) => {
+//   // Serialize the selected options before updating the state
+//   const serializedProducts = selectedOptions.map((product) => ({
+//     inventory_id: product.inventory_id,
+//     code: product.code,
+//     name: product.name,
+//     quantity_available: product.quantity_available,
+//     desc: product.desc,
+//   }));
 
-  setAddProductbackend(serializedProducts);
-  setAddProduct(selectedOptions)
-  console.log("Selected Products:", serializedProducts);
+//   setAddProductbackend(serializedProducts);
+//   setAddProduct(selectedOptions)
+//   console.log("Selected Products:", serializedProducts);
+// };
+
+const handleSelectChange_Prod = (selectedOptions) => {
+  // const serializedProducts = selectedOptions.map((product) => ({
+  //   // Include the input value for quantity (initialize with an empty string)
+  //   quantity: quantityInputs[product.value] || '',
+
+  //   inventory_id: product.inventory_id,
+  //   code: product.code,
+  //   name: product.name,
+  //   quantity_available: product.quantity_available,
+  //   desc: product.desc,
+    
+  // }));
+
+  // Update the visual representation in the table
+  setAddProduct(selectedOptions);
+
+  // Update the array for backend storage
+  // setAddProductbackend(serializedProducts);
+
+  // console.log("Selected Products:", serializedProducts);
 };
+
+// const handleQuantityChange = (value, productValue) => {
+//   // Update the quantityInputs state for the corresponding product
+//   setQuantityInputs((prevInputs) => ({
+//     ...prevInputs,
+//     [productValue]: value,
+//   }));
+
+
+//   const serializedProducts = addProduct.map((product) => ({
+//     // Include the input value for quantity (initialize with an empty string)
+//     quantity: quantityInputs[product.value] || '',
+
+//     inventory_id: product.inventory_id,
+//     code: product.code,
+//     name: product.name,
+//     quantity_available: product.quantity_available,
+//     desc: product.desc,
+    
+//   }));
+
+//   setAddProductbackend(serializedProducts);
+
+//   console.log("Selected Products:", serializedProducts);
+// };
+
+
+// const handleQuantityChange = (value, productValue) => {
+//   // Update the quantityInputs state for the corresponding product
+//   setQuantityInputs((prevInputs) => ({
+//     ...prevInputs,
+//     [productValue]: value,
+//   }), () => {
+//     // Use the callback to ensure that you're working with the latest state
+//     const serializedProducts = addProduct.map((product) => ({
+//       // Include the input value for quantity (initialize with an empty string)
+//       quantity: quantityInputs[product.value] || '',
+//       inventory_id: product.inventory_id,
+//       code: product.code,
+//       name: product.name,
+//       quantity_available: product.quantity_available,
+//       desc: product.desc,
+//     }));
+
+//     setAddProductbackend(serializedProducts);
+
+//     console.log("Selected Products:", serializedProducts);
+//   });
+// };
+
+const handleQuantityChange = (value, productValue) => {
+  // Update the quantityInputs state for the corresponding product
+  setQuantityInputs((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [productValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedProducts = addProduct.map((product) => ({
+      quantity: updatedInputs[product.value] || '',
+      inventory_id: product.inventory_id,
+      code: product.code,
+      name: product.name,
+      quantity_available: product.quantity_available,
+      desc: product.desc,
+    }));
+
+    setAddProductbackend(serializedProducts);
+
+    console.log("Selected Products:", serializedProducts);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
+
+
+
 
 //get supplier product
 useEffect(() => {
@@ -419,7 +521,7 @@ const ErrorInserted = () => {
                                                     <td key={product.value}>{product.code}</td>
                                                     <td key={product.value}>{product.name}</td>
                                                     <td>
-                                                      <div className='d-flex flex-direction-row align-items-center'> 
+                                                      {/* <div className='d-flex flex-direction-row align-items-center'> 
                                                         <Form.Control 
                                                           type="number" 
                                                           required
@@ -427,6 +529,17 @@ const ErrorInserted = () => {
                                                          
                                                           style={{height: '40px', width: '120px', fontSize: '15px'}} />
                                                           /{product.quantity_available}
+                                                      </div> */}
+                                                      <div className='d-flex flex-direction-row align-items-center'>
+                                                        <input
+                                                          type="number"
+                                                          value={quantityInputs[product.value] || ''}
+                                                          onChange={(e) => handleQuantityChange(e.target.value, product.value)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
+                                                        /{product.quantity_available}
                                                       </div>
                                                       
                                                     </td>
@@ -468,10 +581,13 @@ const ErrorInserted = () => {
                                             onChange={handleSelectChange_Prod}
                                             
                                           />
+                                          
         
                                           
                                           
                                         )}
+
+                                        
 
                                         <Button
                                           className='btn btn-danger mt-1'
