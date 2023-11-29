@@ -35,7 +35,7 @@ import {
   
   import * as $ from 'jquery';
 
-function PurchaseRequest() {
+function PurchaseOrderList() {
 
     
 // Artifitial data
@@ -126,7 +126,7 @@ const data = [
                                   placeholderText="Start Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
+                                <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px'}}/>
                               </Form.Group>
                           </div>
                           <div className="col-2" style={{zIndex: '3'}}>
@@ -161,14 +161,6 @@ const data = [
                                       Go
                                   </Button>
                         <div className="Buttonmodal-new">
-                            <button>
-                                <Link to="/createPurchaseRequest" className='button'>
-                                <span style={{ }}>
-                                <Plus size={25} />
-                                </span>
-                                New PR
-                                </Link>
-                            </button>
                             </div>
                         </div>
 
@@ -211,4 +203,4 @@ const data = [
   )
 }
 
-export default PurchaseRequest
+export default PurchaseOrderList

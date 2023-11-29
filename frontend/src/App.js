@@ -47,7 +47,8 @@ import CreateIssuance from "./modules/Inventory/CreateIssuance"
 import ViewInventory  from "./modules/Inventory/ViewInventory"
 import PurchaseRequest from "./modules/Purchase Order/PurchaseRequest/PurchaseRequest";
 import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
-import UpdatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/UpdatePurchaseRequest";
+import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
+import PurchaseOrderList from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderList";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
@@ -217,10 +218,17 @@ function App() {
                         path="/createPurchaseRequest"
                         element={<CreatePurchaseRequest/>}
                       />
-                      <Route
-                            path="/updatePurchaseRequest"
-                            element={<UpdatePurchaseRequest/>}
-                          />
+                  <Route
+                        path="/purchaseRequestPreview"
+                        element={<PurchaseRequestPreview/>}
+                      /><Route
+            path="/purchaseOrderList"
+            element={<PurchaseOrderList/>}
+          />
+                  {/* <Route
+                        path="/createPurchaseOrderList"
+                        element={<CreatePurchaseOrderList/>}
+                      /> */}
              
         </Routes>
       </DataProvider>
