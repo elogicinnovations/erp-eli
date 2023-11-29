@@ -44,20 +44,55 @@ function ViewCostCenter() {
         },
       ]
 
-    const [showDropdown, setShowDropdown] = useState(false); 
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    
+      
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleRowClick = (index) => {
+    setSelectedRow(index);
+    setShowDropdown(!showDropdown);
+  };
+
+  const renderDropdown = () => {
+    if (selectedRow === null) return null;
+
+    return (
+      <tr className={selectedRow === selectedRow ? 'active' : ''}>
+        <td  className="dropdown" colSpan="5">
+          <div className="dropdown">
+            <table className="drop_table">
+              <thead>
+                <tr>
+                  <th className="theadD">ID</th>
+                  <th className="theadD">Name</th>
+                  <th className="theadD">Assigned User</th>
+                  <th className="theadD">Contact #</th>
+                  <th className="theadD">Status</th>
+                </tr>
+              </thead>
+              <tbody className='tbodyD'>
+                {Data.map((data, i) => (
+                    <tr key={i}>
+                      <td className='tbodyD'>{data.samA}</td>
+                      <td className='tbodyD'>{data.samB}</td>
+                      <td className='tbodyD'>{data.samC}</td>
+                      <td className='tbodyD'>{data.samD}</td>
+                      <td className='tbodyD'>{data.samE}</td>
+                    </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    );
+  };
+  
     useEffect(() => {
         if ($('#order-listing').length > 0) {
           $('#order-listing').DataTable();
         }
       }, []);
-
-    const handleTbodyClick = (index) => {
-        setSelectedRow(selectedRow === index ? null : index);
-        setIsDropdownOpen(!isDropdownOpen);
-    };
 
   return (
     <div className="main-of-containers">
@@ -155,62 +190,33 @@ function ViewCostCenter() {
 
                         <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
-                                <thead>
-                                <tr>
-                                    <th className='tableh'>ID</th>
-                                    <th className='tableh'>Name</th>
-                                    <th className='tableh'>Assigned User</th>
-                                    <th className='tableh'>Contact #</th>
-                                    <th className='tableh'>Status</th>
-                                    <th className='tableh'>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                            {Data.map((data, i) => (
-                                <React.Fragment key={i}>
-                                    <tr>
-                                        <td onClick={() => handleTbodyClick(i)}>{data.samA}</td>
-                                        <td onClick={() => handleTbodyClick(i)}>{data.samB}</td>
-                                        <td onClick={() => handleTbodyClick(i)}>{data.samC}</td>
-                                        <td onClick={() => handleTbodyClick(i)}>{data.samD}</td>
-                                        <td onClick={() => handleTbodyClick(i)}>{data.samE}</td>
-                                        <td>
-                                            <Link className='btn'><NotePencil size={32} /></Link>
-                                            <button className='btn'><Trash size={32} color="#e60000" /></button>
-                                        </td>
-                                    </tr>
-                                    {selectedRow === i && (
-                                        <tr>
-                                            <td className={`drop ${isDropdownOpen ? 'open' : ''}`} colSpan="6">
-                                                <table className="drop_table">
-                                                    <thead>
-                                                    <tr>
-                                                        <th className='theadD'>ID</th>
-                                                        <th className='theadD'>Name</th>
-                                                        <th className='theadD'>Assigned User</th>
-                                                        <th className='theadD'>Contact #</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td className='tbodyD'>asd</td>
-                                                            <td className='tbodyD'>asd</td>
-                                                            <td className='tbodyD'>asd</td>
-                                                            <td className='tbodyD'>asd</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                        </table>
+                    <table id="order-listing">
+                      <thead>
+                        <tr>
+                          <th className="tableh">ID</th>
+                          <th className="tableh">Name</th>
+                          <th className="tableh">Assigned User</th>
+                          <th className="tableh">Contact #</th>
+                          <th className="tableh">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Data.map((data, i) => (
+                          <React.Fragment key={i}>
+                            <tr onClick={() => handleRowClick(i)}>
+                              <td>{data.samA}</td>
+                              <td>{data.samB}</td>
+                              <td>{data.samC}</td>
+                              <td>{data.samD}</td>
+                              <td>{data.samE}</td>
+                            </tr>
+                            {selectedRow === i && showDropdown && renderDropdown()}
+                          </React.Fragment>
+                        ))}
+                      </tbody>
+                    </table>
                     </div>
                 </div>
-                       
                         <div className='save-cancel'>
                         <Link to='/costCenter' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px',  width: '200px'}}>
                             Close

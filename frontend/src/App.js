@@ -45,6 +45,9 @@ import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/C
 import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
 import ViewInventory  from "./modules/Inventory/ViewInventory"
+import PurchaseRequest from "./modules/Purchase Order/PurchaseRequest/PurchaseRequest";
+import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
+import UpdatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/UpdatePurchaseRequest";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
@@ -206,6 +209,18 @@ function App() {
                         path="/viewInventory/:id"
                         element={<ViewInventory/>}
                       />
+          <Route
+            path="/purchaseRequest"
+            element={<PurchaseRequest/>}
+          />
+                  <Route
+                        path="/createPurchaseRequest"
+                        element={<CreatePurchaseRequest/>}
+                      />
+                      <Route
+                            path="/updatePurchaseRequest"
+                            element={<UpdatePurchaseRequest/>}
+                          />
              
         </Routes>
       </DataProvider>

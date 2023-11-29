@@ -38,6 +38,11 @@ function Sidebar() {
   const [openProductSettings, setOpenProductSettings] = useState(false);
   const [openBPData, setOpenBPData] = useState(false);
   const [openAssetSetup, setOpenAssetSetup] = useState(false);
+  const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
+
+  const togglePurchaseOrder = () => {
+    setOpenPurchaseOrder(!openPurchaseOrder);
+  };
 
   const toggleAdministrator = () => {
     setOpenAdministrator(!openAdministrator);
@@ -407,14 +412,57 @@ function Sidebar() {
             </ListItem>
           </NavLink>
 
-          <ListItem button 
-            className={`menu-item ${activeMenu === 'PURCHASE ORDER' ? 'active' : ''}`} 
-            onClick={() => {
-              setActiveMenu(activeMenu === 'PURCHASE ORDER' ? '' : 'PURCHASE ORDER');
-            }}>
-            <ClipboardText size={20}/>
-            <ListItemText primary="PURCHASE ORDER" />
-          </ListItem>
+          <ListItem
+          button
+          className={`menu-item ${activeMenu === 'PURCHASE ORDER' ? 'active-hover' : ''}`}
+          onClick={() => {
+            setActiveMenu(activeMenu === 'PURCHASE ORDER' ? '' : 'PURCHASE ORDER');
+            togglePurchaseOrder();
+          }}
+        >
+          <ClipboardText size={20}/>
+          <ListItemText primary="PURCHASE ORDER" />
+          {openPurchaseOrder ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+
+        <Collapse in={openPurchaseOrder}>
+                <NavLink
+                  to='/purchaseRequest'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`adminsub-menu ${location.pathname === '/purchaseRequest' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Purchase Request" />
+                  </ListItem>
+                </NavLink>
+                <NavLink
+                  to='/'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`adminsub-menu ${location.pathname === '/' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Purchase Order List" />
+                  </ListItem>
+                </NavLink>
+                <NavLink
+                  to='/'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`adminsub-menu ${location.pathname === '/' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Invoice" />
+                  </ListItem>
+                </NavLink>
+          </Collapse>
 
           <ListItem button className={`menu-item ${activeMenu === 'WAREHOUSE' ? 'active' : ''}`}
             onClick={() => {

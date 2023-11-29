@@ -1112,20 +1112,43 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+.item {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.new_item button{
+  height: 40px;
+  width: 120px;
+  background-color: #FFA500;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.new_item button:hover{
+  background-color: #161A23;
+}
+
 tbody{
   font-size: 15px;
 }
 
-td.drop {
-  padding:0px 15px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in;
+td.dropdown {
+  padding: 0px 15px 10px 15px;
 }
 
-td.drop.open {
-  max-height: 300px; /* Adjust the value based on your content */
-  transition: max-height 0.3s ease-out;
+.dropdown {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.dropdown.active {
+  height: 200px;
+  transition: max-height 0.3s ease;
 }
 
 th.theadD {
@@ -1140,7 +1163,7 @@ td.tbodyD {
 }
 
 table.drop_table {
-  min-height: 0px;
+  min-height: 0px;    
 }
 
 td.autho{
