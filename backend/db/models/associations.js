@@ -25,6 +25,11 @@ const Issuance = require("./issuance.model");
 const IssuedProduct = require("./issued_product.model");
 const IssuedReturn = require("./issued_return.model");
 
+
+
+const PR = require("./pr.model");
+const PR_product = require("./pr_products.model");
+
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
 
@@ -94,7 +99,12 @@ SparePart_Supplier.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 Supplier.hasMany(SparePart_Supplier, { foreignKey: "supplier_code"});
 SparePart_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+//purchase request
+PR.hasMany(PR_product, { foreignKey: "pr_id"});
+PR_product.belongsTo(PR, { foreignKey: "pr_id"});
 
+Product.hasMany(PR_product, { foreignKey: "product_id"});
+PR_product.belongsTo(Product, { foreignKey: "product_id"});
 
 module.exports = { 
                     MasterList, 
@@ -114,5 +124,7 @@ module.exports = {
                     Inventory,
                     Issuance,
                     IssuedProduct,
-                    IssuedReturn
+                    IssuedReturn,
+                    PR,
+                    PR_product
                 };

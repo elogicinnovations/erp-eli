@@ -11,17 +11,6 @@ import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
 import Select from 'react-select';
 
-import {
-    MagnifyingGlass,
-    Gear, 
-    Bell,
-    UserCircle,
-    Plus,
-    X,
-    NotePencil,
-  } from "@phosphor-icons/react";
-
-import * as $ from 'jquery';
 
 function CreateIssuance() {
   const navigate = useNavigate();

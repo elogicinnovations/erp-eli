@@ -43,6 +43,8 @@ const issuance = require("./routes/issuance.route");
 const issued_product = require("./routes/issued_product.route");
 const returned = require("./routes/returned.route");
 
+const PR = require("./routes/pr.route");
+const PR_product = require("./routes/pr_product.route");
 
 app.use("/masterList", masterRoute);
 app.use("/userRole", userRoute);
@@ -68,6 +70,9 @@ app.use("/inventory", inventory);
 
 app.use("/issuance", issuance);
 app.use("/returend", returned);
+
+app.use("/PR", PR);
+app.use("/PR_product", PR_product);
 
 
 app.listen(port, () => {

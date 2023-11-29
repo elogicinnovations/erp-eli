@@ -19,35 +19,179 @@ import swal from 'sweetalert';
 import * as $ from 'jquery';
 
 function CreatePurchaseRequest() {
-  const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
+  const navigate = useNavigate()
+
+  const [prNum, setPrNum] = useState('');
+  const [dateNeed, setDateNeed] = useState('');
+  const [useFor, setUseFor] = useState('');
+  const [remarks, setRemarks] = useState('');
+  const [product, setProduct] = useState([]);
+  const [addProductbackend, setAddProductbackend] = useState([]);
+  // const [quantityInputs, setQuantityInputs] = useState({}); // to add the quantity to array 
+  // const [descInputs, setDescInputs] = useState({}); // to add the description to array 
+  const [inputValues, setInputValues] = useState({});
+
+
+  const [validated, setValidated] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [fetchProduct, setFetchProduct] = useState([]);
+
+
+// para sa pag fetch ng last pr number 
+  useEffect(() => {   
+    axios.get(BASE_URL + '/PR/lastPRNumber')
+    .then(res => {
+      const prNumber = res.data !== null ? res.data : 0;
+      
+      // Increment the value by 1
+      setPrNum(prNumber + 1);
+    })
+    .catch(err => console.log(err));
+  }, []);
 
   useEffect(() => {
-    if ($('#order-listing').length > 0) {
-      $('#order-listing').DataTable();
-    }
+    axios.get(BASE_URL + '/product/fetchTable')
+      .then(res => setFetchProduct(res.data))
+      .catch(err => console.log(err));
   }, []);
+
+  
+const add = async e => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  if (form.checkValidity() === false) {
+    e.preventDefault();
+    e.stopPropagation();
+  // if required fields has NO value
+  //    console.log('requried')
+      swal({
+          icon: 'error',
+          title: 'Fields are required',
+          text: 'Please fill the red text fields'
+        });
+  }
+  else{
+    axios.post(`${BASE_URL}/PR/create`, {
+       prNum, dateNeed, useFor, remarks, addProductbackend
+    })
+    .then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        swal({
+          title: 'The Purchase sucessfully request!',
+          text: 'The Purchase been added successfully.',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          navigate('/purchaseRequest')
+          
+        });
+      } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+    })
+
+  }
+
+  setValidated(true); //for validations
+
+  
+};
+
+const displayDropdown = () => {
+  setShowDropdown(true);
+};
+
+//for supplier selection values
+const selectProduct = (selectedOptions) => {
+
+
+    setProduct(selectedOptions);
+
+   
+  
+};
+
+
+// const handleQuantityChange = (value, productValue) => {
+//   // Update the quantityInputs state for the corresponding product
+//   setQuantityInputs((prevInputs) => {
+//     const updatedInputs = {
+//       ...prevInputs,
+//       [productValue]: value,
+//     };
+
+//     // Use the updatedInputs directly to create the serializedProducts array
+//    const serializedProducts = product.map((product) => ({
+//     quantity: updatedInputs[product.value] || '',
+//     value: product.value,
+//     // code: product.code,
+//     // name: product.name,
+//     // quantity_available: product.quantity_available,
+//     // desc: product.desc,
+//   }));
+
+//   setAddProductbackend(serializedProducts);
+
+
+//     console.log("Selected Products:", serializedProducts);
+
+//     // Return the updatedInputs to be used as the new state
+//     return updatedInputs;
+//   });
+// };
+
+
+// const handleDescChange = (value, productValue) => {
+//   // Update the quantityInputs state for the corresponding product
+//   setDescInputs((prevInputs) => {
+//     const updatedInputs = {
+//       ...prevInputs,
+//       [productValue]: value,
+//     };
+
+//     // Use the updatedInputs directly to create the serializedProducts array
+//    const serializedProducts = product.map((product) => ({
+//     value: product.value,
+//     desc: updatedInputs[product.value] || '',
+//   }));
+
+//   setAddProductbackend(serializedProducts);
+
+
+//   console.log("Selected Products:", serializedProducts);
+
+//     // Return the updatedInputs to be used as the new state
+//     return updatedInputs;
+//   });
+// };
+
+const handleInputChange = (value, productValue, inputType) => {
+  setInputValues((prevInputs) => ({
+    ...prevInputs,
+    [productValue]: {
+      ...prevInputs[productValue],
+      [inputType]: value,
+    },
+  }));
+};
+
+useEffect(() => {
+  const serializedProducts = product.map((product) => ({
+    value: product.value,
+    quantity: inputValues[product.value]?.quantity || '',
+    desc: inputValues[product.value]?.desc || '',
+  }));
+
+  setAddProductbackend(serializedProducts);
+
+  console.log("Selected Products:", serializedProducts);
+}, [inputValues, product]);
 
   return (
     <div className="main-of-containers">
@@ -70,7 +214,7 @@ function CreatePurchaseRequest() {
                     <p1>Purchasing please purchase the following item enumerated below </p1>
                 </Col>
             </Row>
-                        <Form>
+              <Form noValidate validated={validated} onSubmit={add}>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Purchase Information
                           <span
@@ -88,24 +232,14 @@ function CreatePurchaseRequest() {
                           <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
-                                <Form.Control type="text" readOnly style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Label style={{ fontSize: '20px' }}>PR cont. #: </Form.Label>
+                                <Form.Control type="text" value={prNum}  readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput2">
                                 <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                <Form.Select 
-                                    aria-label=""
-                                    required
-                                    style={{ height: '40px', fontSize: '15px' }}
-                                    defaultValue=''
-                                  >
-                                      <option disabled value=''>
-                                      </option>
-                                          <option>
-                                          </option>
-                                  </Form.Select>
+                                <Form.Control onChange={e => setDateNeed(e.target.value)} type="date" required  style={{height: '40px', fontSize: '15px'}}/>
                             </Form.Group>
                               </div>
                           </div>
@@ -113,13 +247,13 @@ function CreatePurchaseRequest() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
-                                <Form.Control type="text" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control onChange={e => setUseFor(e.target.value)} placeholder='Enter where/whom will use' type="text" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control as="textarea" onChange={e => setRemarks(e.target.value)} placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                             </div>
                         </div>
@@ -143,60 +277,96 @@ function CreatePurchaseRequest() {
                                 <div className="main-of-all-tables">
                                     <table id='order-listing'>
                                             <thead>
-                                            <tr>
-                                                <th className='tableh'>PR No.</th>
-                                                <th className='tableh'>Requestor</th>
-                                                <th className='tableh'>Status</th>
-                                                <th className='tableh'>Date Created</th>
-                                                <th className='tableh'>Remarks</th>
-                                            </tr>
+                                              <tr>
+                                                  <th className='tableh'>Product Code</th>
+                                                  <th className='tableh'>Product Name</th>
+                                                  <th className='tableh'>Quantity</th>                                           
+                                                  <th className='tableh'>Date Created</th>
+                                                  <th className='tableh'>Description</th>
+                                              </tr>
                                             </thead>
                                             <tbody>
-                                                  {data.map((data,i) =>(
-                                                    <tr key={i}>
-                                                    <td>{data.samA}</td>
-                                                    <td>
-                                                      <Form.Group controlId="exampleForm.ControlInput2">
-                                                          <Form.Select 
-                                                              aria-label=""
-                                                              required
-                                                              style={{ height: '40px', fontSize: '15px' }}
-                                                              defaultValue=''
-                                                            >
-                                                                <option disabled value=''>
-                                                                  Select Product
-                                                                </option>
-                                                                    <option>
-                                                                    </option>
-                                                            </Form.Select>
-                                                      </Form.Group>
-                                                    </td>
-                                                    <td>{data.samC}</td>
-                                                    <td>{data.samD}</td>
-                                                    <td>{data.samE}</td>
-                                                    </tr>
-                                                  ))}
-                                        </tbody>
-                                  <div className="item">
-                                      <div className="new_item">
-                                          <button>
-                                          <span style={{marginRight: '4px'}}>
-                                          </span>
-                                          <Plus size={20} /> New Item
-                                          </button>
-                                      </div>
-                                  </div>
+
+                                            {product.length > 0 ? (
+                                            product.map((product) => (
+                                              <tr key={product.value}>
+                                                <td >{product.code}</td>
+                                                <td >{product.name}</td>                                           
+                                                <td > 
+                                                  <div className='d-flex flex-direction-row align-items-center'>
+                                                    <input
+                                                      type="number"
+                                                      value={inputValues[product.value]?.quantity || ''}
+                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
+                                                      required
+                                                      placeholder="Input quantity"
+                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                    />
+                                                    
+                                                  </div>
+                                                </td>
+                                                <td >{product.created}</td>
+                                                <td >
+                                                  <div className='d-flex flex-direction-row align-items-center'>
+                                                    <input                                              
+                                                      as="textarea"
+                                                      value={inputValues[product.value]?.desc || ''}
+                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
+                                                      placeholder="Input description"
+                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                    />
+                                                    
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            ))
+                                          ) : (
+                                            <tr>
+                                              <td>No Product selected</td>
+                                            </tr>
+                                          )}
+                                                 
+                                            </tbody>
+                                        {showDropdown && (
+                                        <div className="dropdown mt-3">
+                                          
+                                          <Select
+                                            isMulti
+                                            options={fetchProduct.map(prod => ({
+                                              value: prod.product_id,
+                                              label: <div>
+                                                Product Code: <strong>{prod.product_code}</strong> / 
+                                                Product Name: <strong>{prod.product_name}</strong> / 
+                                                
+                                              </div>,
+                                              code: prod.product_code,
+                                              name: prod.product_name,
+                                              created: prod.createdAt
+                                            }))}
+                                            onChange={selectProduct}
+                                          />
+                                        </div>
+                                      )}
+                                            <div className="item">
+                                                <div className="new_item">
+                                                    <button type="button" onClick={displayDropdown}>
+                                                      <span style={{marginRight: '4px'}}>
+                                                      </span>
+                                                      <Plus size={20} /> New Item
+                                                    </button>
+                                                </div>
+                                            </div>
                                     </table>
                                 </div>
                             </div>
                         
                         <div className='save-cancel'>
-                        <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                        <Link to='/purchaseRequest' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                            Close
-                        </Link>
+                          <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                          <Link to='/purchaseRequest' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                              Close
+                          </Link>
                         </div>
-                        </Form>
+                </Form>
                        
             </div>
         </div>
