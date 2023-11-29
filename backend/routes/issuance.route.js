@@ -61,13 +61,15 @@ try {
 
         for (const product_issued of addProductbackend) {
             const inventory_id = product_issued.inventory_id
+            const quantityee = product_issued.quantity
             const Name = product_issued.name
             console.log('value' + inventory_id)
             console.log('Name' + Name)
+            console.log('quantityee' + quantityee)
              Issued_Product.create({
                 issuance_id: issuanceee_ID,
                 inventory_id: inventory_id,
-                quantity: 1,
+                quantity: quantityee,
                 status: 'Deployed'
             });
           }
