@@ -8,6 +8,8 @@ import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
     ArrowCircleLeft,
     Plus
@@ -54,6 +56,8 @@ function CreatePurchaseRequest() {
       .then(res => setFetchProduct(res.data))
       .catch(err => console.log(err));
   }, []);
+  
+  const [dateNeeded, setDateNeeded] = useState(null);
 
   
 const add = async e => {
@@ -236,10 +240,18 @@ useEffect(() => {
                                 <Form.Control type="text" value={prNum}  readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput2">
+                            <div className="col-3">
+                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
                                 <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
                                 <Form.Control onChange={e => setDateNeed(e.target.value)} type="date" required  style={{height: '40px', fontSize: '15px'}}/>
+                                  <DatePicker
+                                    selected={dateNeeded}
+                                    onChange={(date) => setDateNeeded(date)}
+                                    dateFormat="MM/dd/yyyy"
+                                    placeholderText="Start Date"
+                                    className="form-control"
+                                  />
+                                  <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
                             </Form.Group>
                               </div>
                           </div>

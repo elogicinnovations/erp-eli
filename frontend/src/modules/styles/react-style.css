@@ -1112,6 +1112,15 @@ left: 12rem;
 
 /* Jerome's CSS */
 
+.datepick {
+  display: flex;
+  flex-direction: column;
+}
+
+input.form-control{
+  height: 40px;
+}
+
 .item {
   padding-top: 10px;
   display: flex;
@@ -1136,7 +1145,7 @@ tbody{
   font-size: 15px;
 }
 
-td.dropdown {
+/* td.dropdown {
   padding: 0px 15px 10px 15px;
 }
 
@@ -1149,7 +1158,7 @@ td.dropdown {
 .dropdown.active {
   height: 200px;
   transition: max-height 0.3s ease;
-}
+} */
 
 th.theadD {
   height: 20px;

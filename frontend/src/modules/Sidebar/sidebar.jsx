@@ -439,13 +439,13 @@ function Sidebar() {
                   </ListItem>
                 </NavLink>
                 <NavLink
-                  to='/'
+                  to='/purchaseOrderList'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
                 >
                   <ListItem
                     button
-                    className={`adminsub-menu ${location.pathname === '/' ? 'active' : ''}`}
+                    className={`adminsub-menu ${location.pathname === '/purchaseOrderList' ? 'active' : ''}`}
                   >
                     <ListItemText primary="Purchase Order List" />
                   </ListItem>
