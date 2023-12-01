@@ -1151,6 +1151,14 @@ button.move_btn {
   font-weight: 100;
 }
 
+.cost-c {
+  padding: 5px 10px;
+  width: fit-content;
+  background: #3597d2;
+  border-radius: 5px;
+  color: white;
+}
+
 .res-warehouse {
   padding: 5px 10px;
   width: fit-content;
@@ -1161,6 +1169,11 @@ button.move_btn {
 
 .pr-no p1 {
   color: #6f6fff;
+}
+
+.ware p1 {
+  color: #6f6fff;
+  font-size: 15px;
 }
 
 .ware{

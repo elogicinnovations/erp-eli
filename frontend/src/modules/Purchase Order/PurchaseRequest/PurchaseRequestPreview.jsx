@@ -15,9 +15,9 @@ import {
     ArrowCircleLeft,
     Plus,
     Paperclip,
-    NotePencilgit,
+    NotePencil,
     DotsThreeCircle,
-    CalendarBlank
+    CalendarBlank,
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
