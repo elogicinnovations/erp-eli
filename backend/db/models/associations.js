@@ -29,6 +29,7 @@ const IssuedReturn = require("./issued_return.model");
 
 const PR = require("./pr.model");
 const PR_product = require("./pr_products.model");
+const PR_history = require("./pr_historical.model");
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -106,6 +107,9 @@ PR_product.belongsTo(PR, { foreignKey: "pr_id"});
 Product.hasMany(PR_product, { foreignKey: "product_id"});
 PR_product.belongsTo(Product, { foreignKey: "product_id"});
 
+PR.hasMany(PR_history, { foreignKey: "pr_id"});
+PR_history.belongsTo(PR, { foreignKey: "pr_id"});
+
 module.exports = { 
                     MasterList, 
                     UserRole,  
@@ -126,5 +130,6 @@ module.exports = {
                     IssuedProduct,
                     IssuedReturn,
                     PR,
-                    PR_product
+                    PR_product,
+                    PR_history
                 };

@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR = require('../db/models/pr.model')
-const {PR, PR_product} = require('../db/models/associations')
+const {PR, PR_product, PR_history} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -10,6 +10,47 @@ router.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+
+router.route('/fetchTable').get(async (req, res) => {
+    try {
+     
+      const data = await PR.findAll();
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
+
+  router.route('/fetchView').get(async (req, res) => {
+    try {
+     
+      const data = await PR.findOne({
+          where: {
+            id: req.query.id
+          }
+      });
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
 
 router.route('/lastPRNumber').get(async (req, res) => {
     try {
@@ -39,9 +80,16 @@ router.route('/create').post(async (req, res) => {
             date_needed: dateNeed,
             used_for: useFor,
             remarks: remarks,
+            status: 'For-Approval'
+          });
+          const createdID = PR_newData.id;
+          const PR_historical = await PR_history.create({
+            pr_id: createdID,
+            status: 'For-Approval',
+            remarks: remarks,
           });
 
-          const createdID = PR_newData.id;
+          
 
           for (const prod of addProductbackend) {
             const prod_value = prod.value;
@@ -52,10 +100,74 @@ router.route('/create').post(async (req, res) => {
                 pr_id: createdID,
                 product_id: prod_value,
                 quantity: prod_quantity,
-                description: prod_desc
+                description: prod_desc,              
             });
           }
     
+    
+          res.status(200).json();
+        
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('An error occurred');
+      }
+});
+
+router.route('/update').post(async (req, res) => {
+  try {
+     const {prNum, dateNeed, useFor, remarks, addProductbackend} = req.query;
+      
+        const PR_newData = await PR.update({
+          pr_num: prNum,
+          date_needed: dateNeed,
+          used_for: useFor,
+          remarks: remarks,
+          status: 'For-Approval'
+        });
+        const createdID = PR_newData.id;    
+        
+        
+        const deletePR_prod = PR_product.destroy({
+          where : {
+            pr_id: req.query.id
+          }
+        })
+        if(deletePR_prod){
+          for (const prod of addProductbackend) {
+            const prod_value = prod.value;
+            const prod_quantity = prod.quantity;
+            const prod_desc = prod.desc;
+  
+            await PR_product.create({
+                pr_id: createdID,
+                product_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+            });
+          }
+        }
+        res.status(200).json();
+      
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    }
+});
+
+router.route('/cancel').put(async (req, res) => {
+    try {
+       const {row_id} = req.body;
+        
+       const [affectedRows] = await PR.update(
+        {
+          status: 'Cancelled'
+        },
+        {
+          where: { id: row_id },
+        }
+      );
+
+        
     
           res.status(200).json();
         

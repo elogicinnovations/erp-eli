@@ -12,7 +12,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
     ArrowCircleLeft,
-    Plus
+    Plus,
+    CalendarBlank
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
@@ -57,7 +58,7 @@ function CreatePurchaseRequest() {
       .catch(err => console.log(err));
   }, []);
   
-  const [dateNeeded, setDateNeeded] = useState(null);
+
 
   
 const add = async e => {
@@ -76,6 +77,7 @@ const add = async e => {
         });
   }
   else{
+
     axios.post(`${BASE_URL}/PR/create`, {
        prNum, dateNeed, useFor, remarks, addProductbackend
     })
@@ -113,67 +115,9 @@ const displayDropdown = () => {
 
 //for supplier selection values
 const selectProduct = (selectedOptions) => {
-
-
     setProduct(selectedOptions);
-
-   
-  
 };
 
-
-// const handleQuantityChange = (value, productValue) => {
-//   // Update the quantityInputs state for the corresponding product
-//   setQuantityInputs((prevInputs) => {
-//     const updatedInputs = {
-//       ...prevInputs,
-//       [productValue]: value,
-//     };
-
-//     // Use the updatedInputs directly to create the serializedProducts array
-//    const serializedProducts = product.map((product) => ({
-//     quantity: updatedInputs[product.value] || '',
-//     value: product.value,
-//     // code: product.code,
-//     // name: product.name,
-//     // quantity_available: product.quantity_available,
-//     // desc: product.desc,
-//   }));
-
-//   setAddProductbackend(serializedProducts);
-
-
-//     console.log("Selected Products:", serializedProducts);
-
-//     // Return the updatedInputs to be used as the new state
-//     return updatedInputs;
-//   });
-// };
-
-
-// const handleDescChange = (value, productValue) => {
-//   // Update the quantityInputs state for the corresponding product
-//   setDescInputs((prevInputs) => {
-//     const updatedInputs = {
-//       ...prevInputs,
-//       [productValue]: value,
-//     };
-
-//     // Use the updatedInputs directly to create the serializedProducts array
-//    const serializedProducts = product.map((product) => ({
-//     value: product.value,
-//     desc: updatedInputs[product.value] || '',
-//   }));
-
-//   setAddProductbackend(serializedProducts);
-
-
-//   console.log("Selected Products:", serializedProducts);
-
-//     // Return the updatedInputs to be used as the new state
-//     return updatedInputs;
-//   });
-// };
 
 const handleInputChange = (value, productValue, inputType) => {
   setInputValues((prevInputs) => ({
@@ -243,14 +187,15 @@ useEffect(() => {
                             <div className="col-3">
                             <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
                                 <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                <Form.Control onChange={e => setDateNeed(e.target.value)} type="date" required  style={{height: '40px', fontSize: '15px'}}/>
-                                  <DatePicker
-                                    selected={dateNeeded}
-                                    onChange={(date) => setDateNeeded(date)}
-                                    dateFormat="MM/dd/yyyy"
-                                    placeholderText="Start Date"
-                                    className="form-control"
-                                  />
+
+                                <DatePicker
+                                  selected={dateNeed}
+                                  onChange={(date) => setDateNeed(date)}
+                                  dateFormat="yyyy-MM-dd"
+                                  placeholderText="Start Date"
+                                  className="form-control"
+                                />
+
                                   <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
                             </Form.Group>
                               </div>

@@ -1,33 +1,25 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const PR = sequelize.define('purchase_req', {
+const PR_history = sequelize.define('purchase_req_history', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_num:{
+  pr_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  date_needed: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
-  used_for: {
+  status: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   remarks: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+  }
 });
 
-module.exports = PR;
+module.exports = PR_history;

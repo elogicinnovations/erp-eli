@@ -37,45 +37,111 @@ import {
 
 function PurchaseRequest() {
 
-    
-// Artifitial data
-
-const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
-      
-// Artifitial data
 
 
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const [PR, setPR] = useState([]);
+
+  const reloadTable = () =>{
+    axios.get(BASE_URL + '/PR/fetchTable')
+    .then(res => setPR(res.data))
+    .catch(err => console.log(err));
+  }
+  useEffect(() => {
+     reloadTable()
+    }, []);
+
+
+
+    const CancelRequest = async (row_id, row_status) => {
+      swal({
+        title: "Are you sure?",
+        text: "You are about to cancel the request",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (cancel) => {
+        if (cancel) {
+          try {
+                  console.log(row_status)
+                  if (row_status !== 'For-Approval' && row_status !== 'For-Rejustification') {
+                    swal({
+                        icon: 'error',
+                        title: 'Cancel Prohibited',
+                        text: 'You can only cancel a request that is "Pending" OR "For-Rejustification"'
+                    });
+                }              
+                else{
+                  const  response = await axios.put(BASE_URL + `/PR/cancel`,{
+                    row_id, row_status
+                  });
+                  
+                  if (response.status === 200) {
+                    swal({
+                      title: 'Cancelled Successfully',
+                      text: 'The Request is cancelled successfully',
+                      icon: 'success',
+                      button: 'OK'
+                    }).then(() => {
+                      reloadTable();
+                      
+                    });
+                  } else {
+                  swal({
+                    icon: 'error',
+                    title: 'Something went wrong',
+                    text: 'Please contact our support'
+                  });
+                }
+              }
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          swal({
+            title: "Cancelled Successfully",
+            text: "Product not Deleted!",
+            icon: "warning",
+          });
+        }
+      });
+    };
+
+
+      //date format
+      function formatDatetime(datetime) {
+        const options = {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        };
+        return new Date(datetime).toLocaleString('en-US', options);
+      }
+
+       //date format
+    function formatDatetime(datetime) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return new Date(datetime).toLocaleString('en-US', options);
+    }
+
   
     useEffect(() => {
-        if ($('#order-listing').length > 0) {
-          $('#order-listing').DataTable();
-        }
-      }, []);
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && PR.length > 0) {
+        $('#order-listing').DataTable();
+      }
+    }, [PR]);
 
 
   return (
@@ -188,15 +254,15 @@ const data = [
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {data.map((data,i) =>(
+                                      {PR.map((data,i) =>(
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samA}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samB}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samC}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samD}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samE}</td>
+                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{data.pr_num}</td>
+                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>--</td>
+                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{data.status}</td>
+                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{formatDatetime(data.createdAt)}</td>
+                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{data.remarks}</td>
                                         <td>
-                                        <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
+                                        <button className='btn btn-danger'onClick={() => CancelRequest(data.id, data.status)}>Cancel</button>
                                         </td>
                                         </tr>
                                       ))}

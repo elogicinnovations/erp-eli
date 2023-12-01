@@ -219,7 +219,7 @@ function App() {
                         element={<CreatePurchaseRequest/>}
                       />
                   <Route
-                        path="/purchaseRequestPreview"
+                        path="/purchaseRequestPreview/:id"
                         element={<PurchaseRequestPreview/>}
                       /><Route
             path="/purchaseOrderList"
