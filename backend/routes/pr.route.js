@@ -113,9 +113,39 @@ router.route('/create').post(async (req, res) => {
       }
 });
 
+
+router.route('/approve').post(async (req, res) => {
+  try {
+     const {id} = req.query;
+      
+        const PR_newData = await PR.update({
+          status: 'For-Canvassing'
+        },
+        {
+          where: { id }
+        }); 
+
+        const PR_historical = await PR_history.create({
+          pr_id: id,
+          status: 'For-Canvassing',
+        });
+
+      //  return console.log(id)
+
+        
+      res.status(200).json();
+      
+      
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    }
+});
+
+
 router.route('/update').post(async (req, res) => {
   try {
-     const {prNum, dateNeed, useFor, remarks, addProductbackend} = req.query;
+     const {id, prNum, dateNeed, useFor, remarks, addProductbackend} = req.query;
       
         const PR_newData = await PR.update({
           pr_num: prNum,
@@ -123,13 +153,20 @@ router.route('/update').post(async (req, res) => {
           used_for: useFor,
           remarks: remarks,
           status: 'For-Approval'
+        },
+        {
+          where: { id: req.query.id}
         });
-        const createdID = PR_newData.id;    
-        
-        
+        const updatedID = PR_newData.id;    
+
+      //  return console.log(id)
+
+      if (!Array.isArray(addProductbackend)) {
+        return res.status(200).json();
+      } else {
         const deletePR_prod = PR_product.destroy({
           where : {
-            pr_id: req.query.id
+            pr_id: id
           }
         })
         if(deletePR_prod){
@@ -137,16 +174,20 @@ router.route('/update').post(async (req, res) => {
             const prod_value = prod.value;
             const prod_quantity = prod.quantity;
             const prod_desc = prod.desc;
-  
+
             await PR_product.create({
-                pr_id: createdID,
+                pr_id: id,
                 product_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
             });
           }
         }
-        res.status(200).json();
+      }
+        
+        
+      res.status(200).json();
+      
       
     } catch (err) {
       console.error(err);

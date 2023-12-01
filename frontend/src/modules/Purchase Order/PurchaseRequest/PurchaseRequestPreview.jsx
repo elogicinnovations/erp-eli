@@ -15,9 +15,9 @@ import {
     ArrowCircleLeft,
     Plus,
     Paperclip,
-    NotePencilgit,
+    NotePencil,
     DotsThreeCircle,
-    CalendarBlank
+    CalendarBlank,
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
@@ -44,11 +44,71 @@ function PurchaseRequestPreview() {
   const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch ng product na e select
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
+
+  const [disabledApprove, setDisabledApprove] = useState(false);
+
+
   const handleEditClick = () => {
     // for clicking the button can be editted not readonly
     setReadOnly(true);
   };
+  
+  const handleApproveClick = () => {
 
+    swal({
+      title: "Are you sure?",
+      text: "You are attempting to approve this request",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+        
+
+
+
+          axios.post(`${BASE_URL}/PR/approve`, null, {
+            params:{
+              id: id,
+            }
+             
+          })
+          .then((res) => {
+            console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: 'The Purchase sucessfully approved!',
+                text: 'The Purchase been approved successfully.',
+                icon: 'success',
+                button: 'OK'
+              }).then(() => {
+                navigate('/purchaseRequest')
+                
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
+          })
+
+
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        swal({
+          title: "Cancelled Successfully",
+          icon: "warning",
+        });
+      }
+    });
+
+  };
+  
   useEffect(() => {
     axios.get(BASE_URL + '/product/fetchTable')
       .then(res => setFetchProduct(res.data))
@@ -82,6 +142,11 @@ function PurchaseRequestPreview() {
       setRemarks(res.data.remarks);
       setProduct(res.date.product_id);
 
+
+
+   
+      
+
     })
     .catch(err => {
       console.error(err);
@@ -89,11 +154,16 @@ function PurchaseRequestPreview() {
     });
   }, [id]);
 
-  // useEffect(() => {
-  //   // Parse the date string into a Date object
-  //   const parsedDate = new Date(dateNeed);
-  //   setDateNeed(parsedDate);
-  // }, [dateNeed]);
+  useEffect(() => {
+    // Add this line to log the status
+    if (status === 'For-Approval') {
+      setDisabledApprove(false);
+    } else {
+      setDisabledApprove(true);
+    }
+  }, []);
+
+  console.log('Status:'+ status);
   
   const selectProduct = (selectedOptions) => {
     setProduct(selectedOptions);
@@ -178,7 +248,7 @@ const update = async e => {
   }
   else{
 
-    axios.post(`${BASE_URL}/PR/update`, {
+    axios.post(`${BASE_URL}/PR/update`, null, {
       params:{
         id: id,
         prNum, 
@@ -458,8 +528,11 @@ const update = async e => {
                         {isReadOnly && (
                           <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                         )}
-                        
-                        <Button type='button'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
+                      {!disabledApprove && (
+                        <Button type='button' onClick={handleApproveClick} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
+                      )}
+
+                       
                         <Button onClick={handleShow} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Rejustify
                         </Button>

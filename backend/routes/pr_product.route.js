@@ -16,7 +16,7 @@ router.route('/fetchView').get(async (req, res) => {
      
       const data = await PR_product.findAll({
           where: {
-            id: req.query.id
+            pr_id: req.query.id
           },
           include: {
             model: Product,

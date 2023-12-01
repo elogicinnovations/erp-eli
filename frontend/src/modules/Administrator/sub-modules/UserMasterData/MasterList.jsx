@@ -488,12 +488,12 @@ function MasterList() {
     }).then(async (willDelete) => {
       if (willDelete) {
         try {
-          // console.log(param_id)
-          await axios.delete(BASE_URL + `/masterList/deleteMaster/${param_id}`);
-          setmasterListt(prevStudent => prevStudent.filter(data => data.col_id !== param_id));
-          swal("The User has been deleted!", {
-            icon: "success",
-          });
+          console.log(param_id)
+          // await axios.delete(BASE_URL + `/masterList/deleteMaster/${param_id}`);
+          // setmasterListt(prevStudent => prevStudent.filter(data => data.col_id !== param_id));
+          // swal("The User has been deleted!", {
+          //   icon: "success",
+          // });
         } catch (err) {
           console.log(err);
         }
