@@ -15,7 +15,7 @@ import {
     ArrowCircleLeft,
     Plus,
     Paperclip,
-    NotePencil
+    NotePencilgit,
     DotsThreeCircle,
     CalendarBlank
   } from "@phosphor-icons/react";
