@@ -35,7 +35,7 @@ import {
   
   import * as $ from 'jquery';
 
-function PurchaseRequest() {
+function StockManagement() {
 
     
 // Artifitial data
@@ -70,6 +70,43 @@ const data = [
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  
+
+  const [stockMgnt, setStockMgnt] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [rotatedIcons, setRotatedIcons] = useState(Array(stockMgnt.length).fill(false));
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const toggleDropdown = (event, index) => {
+    // Check if the clicked icon is already open, close it
+    if (index === openDropdownIndex) {
+      setRotatedIcons((prevRotatedIcons) => {
+        const newRotatedIcons = [...prevRotatedIcons];
+        newRotatedIcons[index] = !newRotatedIcons[index];
+        return newRotatedIcons;
+      });
+      setShowDropdown(false);
+      setOpenDropdownIndex(null);
+    } else {
+      // If a different icon is clicked, close the currently open dropdown and open the new one
+      setRotatedIcons(Array(stockMgnt.length).fill(false));
+      const iconPosition = event.currentTarget.getBoundingClientRect();
+      setDropdownPosition({
+        top: iconPosition.bottom + window.scrollY,
+        left: iconPosition.left + window.scrollX,
+      });
+      setRotatedIcons((prevRotatedIcons) => {
+        const newRotatedIcons = [...prevRotatedIcons];
+        newRotatedIcons[index] = true;
+        return newRotatedIcons;
+      });
+      setShowDropdown(true);
+      setOpenDropdownIndex(index);
+    }
+  };
+
   
     useEffect(() => {
         if ($('#order-listing').length > 0) {
@@ -94,7 +131,7 @@ const data = [
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
                         <div className="emp-text-side">
-                            <p>Purchase Request</p>
+                            <p>Stock Management</p>
                         </div>
                     </div>
                     <div className="iconic-side">
@@ -162,11 +199,10 @@ const data = [
                                   </Button>
                         <div className="Buttonmodal-new">
                             <button>
-                                <Link to="/createPurchaseRequest" className='button'>
+                                <Link to="/createStockTransfer" className='button'>
                                 <span style={{ }}>
-                                <Plus size={25} />
+                                <Plus size={25} /> Stock Transfer
                                 </span>
-                                New PR
                                 </Link>
                             </button>
                             </div>
@@ -179,25 +215,57 @@ const data = [
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>PR No.</th>
-                                    <th className='tableh'>Requestor</th>
-                                    <th className='tableh'>Status</th>
-                                    <th className='tableh'>Date Created</th>
-                                    <th className='tableh'>Remarks</th>
+                                    <th className='tableh'>Transfer ID</th>
+                                    <th className='tableh'>Description</th>
+                                    <th className='tableh'>Date Transfered</th>
+                                    <th className='tableh'>Source Warehouse</th>
+                                    <th className='tableh'>Target Warehouse</th>
+                                    <th className='tableh'>Quantity</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                       {data.map((data,i) =>(
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samA}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samB}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samC}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samD}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samE}</td>
-                                        <td>
+                                        <td>{data.samA}</td>
+                                        <td>{data.samB}</td>
+                                        <td>{data.samC}</td>
+                                        <td>{data.samD}</td>
+                                        <td>{data.samE}</td>
+                                        <td>{data.samE}</td>
+                                          <td>
+                                          <DotsThreeCircle
+                                              size={32}
+                                              className="dots-icon"
+                                              style={{
+                                              cursor: 'pointer',
+                                              transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
+                                              color: rotatedIcons[i] ? '#666' : '#000',
+                                              transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
+                                              }}
+                                              onClick={(event) => toggleDropdown(event, i)}
+                                          />
+                                          <div
+                                              className='choices'
+                                              style={{
+                                              position: 'fixed',
+                                              top: dropdownPosition.top - 30 + 'px',
+                                              left: dropdownPosition.left - 100 + 'px',
+                                              opacity: showDropdown ? 1 : 0,
+                                              visibility: showDropdown ? 'visible' : 'hidden',
+                                              transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+                                              boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
+                                              }}
+                                          >
+                                              {/* Your dropdown content here */}
+                                              
+                                          <button className='btn' onClick={() => navigate(`/stockManagementPreview`)}>View</button>
+                                          <button className='btn'>Cancel</button>
+                                          </div>
+                                          </td>
+                                        {/* <td>
                                         <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
-                                        </td>
+                                        </td> */}
                                         </tr>
                                       ))}
                             </tbody>
@@ -211,4 +279,4 @@ const data = [
   )
 }
 
-export default PurchaseRequest
+export default StockManagement

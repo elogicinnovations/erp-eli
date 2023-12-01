@@ -94,7 +94,7 @@ const data = [
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
                         <div className="emp-text-side">
-                            <p>Purchase Request</p>
+                            <p>Purchase Order List</p>
                         </div>
                     </div>
                     <div className="iconic-side">
@@ -118,7 +118,7 @@ const data = [
                     <div className="employee-and-button">
                         <div className="button-create-side">
                           <div className="col-2" style={{zIndex: '3'}}>
-                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={startDate}
                                   onChange={(date) => setStartDate(date)}
@@ -126,11 +126,11 @@ const data = [
                                   placeholderText="Start Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px'}}/>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px',}}/>
                               </Form.Group>
                           </div>
                           <div className="col-2" style={{zIndex: '3'}}>
-                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={endDate}
                                   onChange={(date) => setEndDate(date)}
@@ -138,7 +138,7 @@ const data = [
                                   placeholderText="End Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
                           </div>
                           <div className="col-4">
@@ -182,11 +182,11 @@ const data = [
                                 <tbody>
                                       {data.map((data,i) =>(
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samA}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samB}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samC}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samD}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samE}</td>
+                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samA}</td>
+                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samB}</td>
+                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samC}</td>
+                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samD}</td>
+                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samE}</td>
                                         <td>
                                         <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
                                         </td>

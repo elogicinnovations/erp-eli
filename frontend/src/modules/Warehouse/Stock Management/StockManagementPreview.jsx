@@ -16,7 +16,8 @@ import {
     Plus,
     Paperclip,
     DotsThreeCircle,
-    CalendarBlank
+    CalendarBlank,
+    PlusCircle
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
@@ -24,14 +25,7 @@ import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
-function PurchaseRequestPreview() {
-
-    const stat = [
-        {
-            status: 'Pending',
-            date: '11/29/2023'
-        }
-    ]
+function StockTransferPreview() {
     
     const data = [
     {
@@ -110,6 +104,12 @@ function PurchaseRequestPreview() {
     }
   }, []);
 
+  useEffect(() => {
+    if ($('#order2-listing').length > 0) {
+      $('#order2-listing').DataTable();
+    }
+  }, []);
+
   return (
     <div className="main-of-containers">
         <div className="left-of-main-containers">
@@ -121,34 +121,18 @@ function PurchaseRequestPreview() {
                 
             <Col>
                 <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/purchaseRequest">
+                    <Link style={{ fontSize: '1.5rem' }} to="/stockManagement">
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Purchase Request Preview
+                    Stock Management Preview
                     </h1>
-                </div>
-                    <p1>Purchasing please purchase the following item enumerated below </p1>
-                </Col>
-                <Col>
-                <div className='Status' style={{display: 'flex', alignItems: 'center'}}>
-                    
-                {stat.map((data,i) =>(
-                    <h4>
-                        <div className="row">
-                    Status: {data.status}
-                    </div>
-                        <div className="row">
-                    Date Created: {data.date}
-                    </div>
-                    </h4>
-                    ))}
                 </div>
                 </Col>
             </Row>
                         <Form>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Purchase Information
+                          General Information
                           <span
                             style={{
                               position: 'absolute',
@@ -156,47 +140,76 @@ function PurchaseRequestPreview() {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '19rem',
+                              left: '17.8rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
                           <div className="row mt-3">
                             <div className="col-6">
+                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Label style={{ fontSize: '20px' }}>Source: </Form.Label>   
+                                  <Form.Select 
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      defaultValue=''
+                                    >
+                                        <option disabled value=''>
+                                          Select Site
+                                        </option>
+                                            <option>
+                                            </option>
+                                    </Form.Select>
+                              </Form.Group>
+                                </div>
+                            <div className="col-6">
+                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
+                                  <Form.Select 
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      defaultValue=''
+                                    >
+                                        <option disabled value=''>
+                                          Select Site
+                                        </option>
+                                            <option>
+                                            </option>
+                                    </Form.Select>
+                              </Form.Group>
+                                </div>
+                            <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
-                                <Form.Control type="text" readOnly style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Label style={{ fontSize: '20px' }}>Reference code: </Form.Label>
+                                <Form.Control readOnly type="text" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-3">
-                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                  <DatePicker
-                                    selected={dateNeeded}
-                                    onChange={(date) => setDateNeeded(date)}
-                                    dateFormat="MM/dd/yyyy"
-                                    placeholderText="Start Date"
-                                    className="form-control"
-                                  />
-                            </Form.Group>
-                              </div>
+                            <div className="col-6">
+                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Label style={{ fontSize: '20px' }}>Received By: </Form.Label>   
+                                  <Form.Select 
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      defaultValue=''
+                                    >
+                                        <option disabled value=''>
+                                          Select Employee
+                                        </option>
+                                            <option>
+                                            </option>
+                                    </Form.Select>
+                              </Form.Group>
+                                </div>
                           </div>
-                        <div className="row">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
-                                <Form.Control type="text" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
                                 <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
-                            </div>
-                        </div>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Order Items
+                          Product List
                           <span
                             style={{
                               position: 'absolute',
@@ -216,11 +229,12 @@ function PurchaseRequestPreview() {
                                     <table id='order-listing'>
                                             <thead>
                                             <tr>
-                                                <th className='tableh'>Item No.</th>
-                                                <th className='tableh'>Quantity</th>
+                                                <th className='tableh'>Code</th>
+                                                <th className='tableh'>Product Name</th>
                                                 <th className='tableh'>U/M</th>
-                                                <th className='tableh'>Item</th>
-                                                <th className='tableh'>Description</th>
+                                                <th className='tableh'>Source</th>
+                                                <th className='tableh'>Stock</th>
+                                                <th className='tableh'>Quantity</th>
                                                 <th className='tableh'>Action</th>
                                             </tr>
                                             </thead>
@@ -228,24 +242,10 @@ function PurchaseRequestPreview() {
                                                   {data.map((data,i) =>(
                                                     <tr key={i}>
                                                     <td>{data.samA}</td>
-                                                    <td>
-                                                      <Form.Group controlId="exampleForm.ControlInput2">
-                                                          <Form.Select 
-                                                              aria-label=""
-                                                              required
-                                                              style={{ height: '40px', fontSize: '15px' }}
-                                                              defaultValue=''
-                                                            >
-                                                                <option disabled value=''>
-                                                                  Select Product
-                                                                </option>
-                                                                    <option>
-                                                                    </option>
-                                                            </Form.Select>
-                                                      </Form.Group>
-                                                    </td>
+                                                    <td>{data.samC}</td>
                                                     <td>{data.samC}</td>
                                                     <td>{data.samD}</td>
+                                                    <td>{data.samE}</td>
                                                     <td>{data.samE}</td>
                                                     <td>
                                                     <DotsThreeCircle
@@ -284,7 +284,7 @@ function PurchaseRequestPreview() {
                                         </tbody>
                                   <div className="item">
                                       <div className="new_item">
-                                          <button>
+                                          <button onClick={handleShow} >
                                           <span style={{marginRight: '4px'}}>
                                           </span>
                                           <Plus size={20} /> New Item
@@ -297,47 +297,47 @@ function PurchaseRequestPreview() {
                         
                         <div className='save-cancel'>
                         <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
-                        <Button onClick={handleShow} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                            Rejustify
-                        </Button>
+                        <Link to="/stockManagement" className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                            Cancel
+                        </Link>
                         </div>
                         
-        <Modal show={showModal} onHide={handleClose}>
+        <Modal show={showModal} onHide={handleClose} size="xl">
           <Form>
             <Modal.Header closeButton>
-              <Modal.Title style={{ fontSize: '24px' }}>For Rejustification</Modal.Title>     
+              <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
             </Modal.Header>
               <Modal.Body>
-              <div className="row mt-3">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
-                                <Form.Control type="text" readOnly style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                  <DatePicker
-                                    selected={dateNeeded}
-                                    onChange={(date) => setDateNeeded(date)}
-                                    dateFormat="MM/dd/yyyy"
-                                    placeholderText="Start Date"
-                                    className="form-control"
-                                  />
-                            </Form.Group>
-                              </div>
-                          </div>
-                          
-                        <div className="row">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
-                            </Form.Group>
-                        <div className="col-6">
-                            <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
-                                <Paperclip size={20} />Upload Attachment
-                            </Link>
+                        <div className="table-containss">
+                            <div className="main-of-all-tables">
+                                <table id='order2-listing'>
+                                        <thead>
+                                        <tr>
+                                            <th className='tableh'>Code</th>
+                                            <th className='tableh'>Product Name</th>
+                                            <th className='tableh'>Category</th>
+                                            <th className='tableh'>UOM</th>
+                                            <th className='tableh'>Supplier</th>
+                                            <th className='tableh'>Contact</th>
+                                            <th className='tableh'>Price</th>
+                                            <th className='tableh'></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                                {data.map((data,i) =>(
+                                                <tr key={i}>
+                                                <td>{data.samA}</td>
+                                                <td>{data.samC}</td>
+                                                <td>{data.samD}</td>
+                                                <td>{data.samE}</td>
+                                                <td>{data.samE}</td>
+                                                <td>{data.samE}</td>
+                                                <td>{data.samE}</td>
+                                                <td><button type='button' className='btn canvas'><PlusCircle size={32}/></button></td>
+                                                </tr>
+                                                ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                 </Modal.Body>
@@ -359,4 +359,4 @@ function PurchaseRequestPreview() {
   )
 }
 
-export default PurchaseRequestPreview
+export default StockTransferPreview

@@ -35,7 +35,7 @@ import {
   
   import * as $ from 'jquery';
 
-function PurchaseRequest() {
+function ReceivingManagement() {
 
     
 // Artifitial data
@@ -94,7 +94,7 @@ const data = [
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
                         <div className="emp-text-side">
-                            <p>Purchase Request</p>
+                            <p>Receiving Management</p>
                         </div>
                     </div>
                     <div className="iconic-side">
@@ -161,14 +161,6 @@ const data = [
                                       Go
                                   </Button>
                         <div className="Buttonmodal-new">
-                            <button>
-                                <Link to="/createPurchaseRequest" className='button'>
-                                <span style={{ }}>
-                                <Plus size={25} />
-                                </span>
-                                New PR
-                                </Link>
-                            </button>
                             </div>
                         </div>
 
@@ -179,25 +171,26 @@ const data = [
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>PR No.</th>
-                                    <th className='tableh'>Requestor</th>
-                                    <th className='tableh'>Status</th>
-                                    <th className='tableh'>Date Created</th>
-                                    <th className='tableh'>Remarks</th>
-                                    <th className='tableh'>Action</th>
+                                    <th className='tableh'>Transfer ID</th>
+                                    <th className='tableh'>Description</th>
+                                    <th className='tableh'>Date Transfered</th>
+                                    <th className='tableh'>Source Warehouse</th>
+                                    <th className='tableh'>Target Warehouse</th>
+                                    <th className='tableh'>Quantity</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                       {data.map((data,i) =>(
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samA}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samB}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samC}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samD}</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview`)}>{data.samE}</td>
-                                        <td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samA}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samB}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samC}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samD}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samE}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samE}</td>
+                                        {/* <td>
                                         <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
-                                        </td>
+                                        </td> */}
                                         </tr>
                                       ))}
                             </tbody>
@@ -211,4 +204,4 @@ const data = [
   )
 }
 
-export default PurchaseRequest
+export default ReceivingManagement

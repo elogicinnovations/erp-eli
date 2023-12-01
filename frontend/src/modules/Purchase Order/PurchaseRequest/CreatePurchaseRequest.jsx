@@ -12,7 +12,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
     ArrowCircleLeft,
-    Plus
+    Plus,
+    CalendarBlank
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
@@ -243,7 +244,6 @@ useEffect(() => {
                             <div className="col-3">
                             <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
                                 <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                <Form.Control onChange={e => setDateNeed(e.target.value)} type="date" required  style={{height: '40px', fontSize: '15px'}}/>
                                   <DatePicker
                                     selected={dateNeeded}
                                     onChange={(date) => setDateNeeded(date)}
@@ -251,7 +251,6 @@ useEffect(() => {
                                     placeholderText="Start Date"
                                     className="form-control"
                                   />
-                                  <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
                             </Form.Group>
                               </div>
                           </div>
