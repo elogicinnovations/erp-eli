@@ -35,7 +35,7 @@ import {
   
   import * as $ from 'jquery';
 
-function PurchaseOrderList() {
+function ReceivingManagement() {
 
     
 // Artifitial data
@@ -94,7 +94,7 @@ const data = [
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
                         <div className="emp-text-side">
-                            <p>Purchase Order List</p>
+                            <p>Receiving Management</p>
                         </div>
                     </div>
                     <div className="iconic-side">
@@ -126,7 +126,7 @@ const data = [
                                   placeholderText="Start Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px',}}/>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
                           </div>
                           <div className="col-2" style={{zIndex: '3'}}>
@@ -171,25 +171,26 @@ const data = [
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>PR No.</th>
-                                    <th className='tableh'>Requestor</th>
-                                    <th className='tableh'>Status</th>
-                                    <th className='tableh'>Date Created</th>
-                                    <th className='tableh'>Remarks</th>
-                                    <th className='tableh'>Action</th>
+                                    <th className='tableh'>Transfer ID</th>
+                                    <th className='tableh'>Description</th>
+                                    <th className='tableh'>Date Transfered</th>
+                                    <th className='tableh'>Source Warehouse</th>
+                                    <th className='tableh'>Target Warehouse</th>
+                                    <th className='tableh'>Quantity</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                       {data.map((data,i) =>(
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samA}</td>
-                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samB}</td>
-                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samC}</td>
-                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samD}</td>
-                                        <td onClick={() => navigate(`/purchaseOrderListPreview`)}>{data.samE}</td>
-                                        <td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samA}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samB}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samC}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samD}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samE}</td>
+                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samE}</td>
+                                        {/* <td>
                                         <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
-                                        </td>
+                                        </td> */}
                                         </tr>
                                       ))}
                             </tbody>
@@ -203,4 +204,4 @@ const data = [
   )
 }
 
-export default PurchaseOrderList
+export default ReceivingManagement

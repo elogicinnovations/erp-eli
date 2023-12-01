@@ -49,6 +49,12 @@ import PurchaseRequest from "./modules/Purchase Order/PurchaseRequest/PurchaseRe
 import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
 import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
 import PurchaseOrderList from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderList";
+import PurchaseOrderListPreview from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderListPreview";
+import StockManagement from "./modules/Warehouse/Stock Management/StockManagement";
+import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStockTransfer";
+import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview"
+import ReceivingManagement from "./modules/Warehouse/Receiving Management/ReceivingManagement";
+import ReceivingManagementPreview from "./modules/Warehouse/Receiving Management/ReceivingManagementPreview";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
@@ -221,13 +227,38 @@ function App() {
                   <Route
                         path="/purchaseRequestPreview/:id"
                         element={<PurchaseRequestPreview/>}
-                      /><Route
+                      />
+          <Route
             path="/purchaseOrderList"
             element={<PurchaseOrderList/>}
           />
+                  <Route
+                        path="/purchaseOrderListPreview"
+                        element={<PurchaseOrderListPreview/>}
+                      />
+          <Route
+            path="/stockManagement"
+            element={<StockManagement/>}
+          />
+                  <Route
+                        path="/createStockTransfer"
+                        element={<CreateStockTransfer/>}
+                      />
+                  <Route
+                        path="/stockManagementPreview"
+                        element={<StockManagementPreview/>}
+                      />
+          <Route
+            path="/receivingManagement"
+            element={<ReceivingManagement/>}
+          />
+                  <Route
+                        path="/receivingManagementPreview"
+                        element={<ReceivingManagementPreview/>}
+                      />
                   {/* <Route
-                        path="/createPurchaseOrderList"
-                        element={<CreatePurchaseOrderList/>}
+                        path="/stockManagementPreview"
+                        element={<StockManagementPreview/>}
                       /> */}
              
         </Routes>

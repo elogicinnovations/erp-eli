@@ -39,6 +39,11 @@ function Sidebar() {
   const [openBPData, setOpenBPData] = useState(false);
   const [openAssetSetup, setOpenAssetSetup] = useState(false);
   const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
+  const [openWarehouse, setOpenWarehouse] = useState(false);
+
+  const toggleWarehouse = () => {
+    setOpenWarehouse(!openWarehouse);
+  };
 
   const togglePurchaseOrder = () => {
     setOpenPurchaseOrder(!openPurchaseOrder);
@@ -97,6 +102,24 @@ function Sidebar() {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (location.pathname === '/createRole') {
+      setOpenAdministrator(true);
+      setOpenEmployeeData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/editRole\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
+      setOpenAdministrator(true);
+      setOpenEmployeeData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (location.pathname === '/productCategory') {
       setOpenAdministrator(true);
       setOpenProductSettings(true);
@@ -112,6 +135,35 @@ function Sidebar() {
 
   useEffect(() => {
     if (location.pathname === '/productList') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/createProduct') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/updateProduct\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/productSupplier\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
       setOpenAdministrator(true);
       setOpenProductSettings(true);
     }
@@ -139,7 +191,43 @@ function Sidebar() {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (location.pathname === '/createSpareParts') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/updateSpareParts\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (location.pathname === '/assemblyForm') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/createAssemblyForm') {
+      setOpenAdministrator(true);
+      setOpenProductSettings(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/updateAssemblyForm\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
       setOpenAdministrator(true);
       setOpenProductSettings(true);
     }
@@ -153,9 +241,93 @@ function Sidebar() {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (location.pathname === '/CreateSupplier') {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/editSupp\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/viewSupplier\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (location.pathname === '/costCenter') {
       setOpenAdministrator(true);
       setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/createCostCenter') {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/viewCostCenter') {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    // Extract id from the path
+    const match = location.pathname.match(/^\/initUpdateCostCenter\/(\d+)$/);
+    const id = match ? match[1] : null;
+  
+    if (id) {
+      setOpenAdministrator(true);
+      setOpenBPData(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/purchaseRequest') {
+      setOpenPurchaseOrder(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/purchaseRequestPreview') {
+      setOpenPurchaseOrder(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/createPurchaseRequest') {
+      setOpenPurchaseOrder(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/purchaseOrderList') {
+      setOpenPurchaseOrder(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/purchaseOrderListPreview') {
+      setOpenPurchaseOrder(true);
     }
   }, [location.pathname]);
 
@@ -229,7 +401,7 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Employeesub-menu ${location.pathname === '/userRole' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname.startsWith('/userRole') || location.pathname.startsWith('/createRole') || location.pathname.startsWith('/editRole') ? 'active' : ''}`}
                   >
                     <ListItemText primary="RBAC List" />
                   </ListItem>
@@ -273,10 +445,10 @@ function Sidebar() {
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
                 >
-                  <ListItem
-                    button
-                    className={`Productsub-menu ${location.pathname === '/productList' ? 'active' : ''}`}
-                  >
+                <ListItem
+                  button
+                  className={`Employeesub-menu ${location.pathname.startsWith('/productList') || location.pathname.startsWith('/createProduct') || location.pathname.startsWith('/updateProduct') || location.pathname.startsWith('/productSupplier') ? 'active' : ''}`}
+                >
                     <ListItemText primary="Product List" />
                   </ListItem>
                 </NavLink>
@@ -315,7 +487,7 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Productsub-menu ${location.pathname === '/spareParts' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname.startsWith('/spareParts') || location.pathname.startsWith('/createSpareParts') || location.pathname.startsWith('/updateSpareParts') ? 'active' : ''}`}
                   >
                     <ListItemText primary="Spare Parts" />
                   </ListItem>
@@ -325,10 +497,10 @@ function Sidebar() {
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
                 >
-                  <ListItem
-                    button
-                    className={`Productsub-menu ${location.pathname === '/assemblyForm' ? 'active' : ''}`}
-                  >
+                <ListItem
+                  button
+                  className={`Employeesub-menu ${location.pathname.startsWith('/assemblyForm') || location.pathname.startsWith('/createAssemblyForm') || location.pathname.startsWith('/updateAssemblyForm') ? 'active' : ''}`}
+                >
                     <ListItemText primary="Assembly Form" />
                   </ListItem>
                 </NavLink>
@@ -346,10 +518,10 @@ function Sidebar() {
                     style={{ textDecoration: 'none', color: 'inherit' }}
                     activeClassName="active"
                   >
-                    <ListItem
-                      button
-                      className={`BPsub-menu ${location.pathname === '/costCenter' ? 'active' : ''}`}
-                    >
+                  <ListItem
+                    button
+                    className={`Employeesub-menu ${location.pathname.startsWith('/costCenter') || location.pathname.startsWith('/createCostCenter') || location.pathname.startsWith('/viewCostCenter') || location.pathname.startsWith('/initUpdateCostCenter') ? 'active' : ''}`}
+                  >
                       <ListItemText primary="Cost Center" />
                     </ListItem>
                   </NavLink>
@@ -360,7 +532,7 @@ function Sidebar() {
                   >
                   <ListItem
                     button
-                    className={`BPsub-menu ${location.pathname === '/supplier' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname.startsWith('/supplier') || location.pathname.startsWith('/CreateSupplier') || location.pathname.startsWith('/viewSupplier') || location.pathname.startsWith('/editSupp') ? 'active' : ''}`}
                   >
                     <ListItemText primary="Suppliers" />
                   </ListItem>
@@ -431,10 +603,10 @@ function Sidebar() {
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
                 >
-                  <ListItem
-                    button
-                    className={`adminsub-menu ${location.pathname === '/purchaseRequest' ? 'active' : ''}`}
-                  >
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/purchaseRequest') || location.pathname.startsWith('/purchaseRequestPreview') || location.pathname.startsWith('/createPurchaseRequest') ? 'active' : ''}`}
+                >
                     <ListItemText primary="Purchase Request" />
                   </ListItem>
                 </NavLink>
@@ -445,32 +617,51 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`adminsub-menu ${location.pathname === '/purchaseOrderList' ? 'active' : ''}`}
+                    className={`adminsub-menu ${location.pathname.startsWith('/purchaseOrderList') || location.pathname.startsWith('/purchaseOrderListPreview') ? 'active' : ''}`}
                   >
                     <ListItemText primary="Purchase Order List" />
                   </ListItem>
                 </NavLink>
+          </Collapse>
+
+          <ListItem
+          button
+          className={`menu-item ${activeMenu === 'WAREHOUSE' ? 'active-hover' : ''}`}
+          onClick={() => {
+            setActiveMenu(activeMenu === 'WAREHOUSE' ? '' : 'WAREHOUSE');
+            toggleWarehouse();
+          }}>
+          <Warehouse size={20}/>
+          <ListItemText primary="WAREHOUSE" />
+          {openWarehouse ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+
+          <Collapse in={openWarehouse}>
                 <NavLink
-                  to='/'
+                  to='/receivingManagement'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
                 >
-                  <ListItem
-                    button
-                    className={`adminsub-menu ${location.pathname === '/' ? 'active' : ''}`}
-                  >
-                    <ListItemText primary="Invoice" />
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/purchaseRequest') || location.pathname.startsWith('/purchaseRequestPreview') || location.pathname.startsWith('/createPurchaseRequest') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Recieving Management" />
+                  </ListItem>
+                </NavLink>
+                <NavLink
+                  to='/stockManagement'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/purchaseRequest') || location.pathname.startsWith('/purchaseRequestPreview') || location.pathname.startsWith('/createPurchaseRequest') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Stock Management" />
                   </ListItem>
                 </NavLink>
           </Collapse>
-
-          <ListItem button className={`menu-item ${activeMenu === 'WAREHOUSE' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveMenu(activeMenu === 'WAREHOUSE' ? '' : 'WAREHOUSE');
-            }}>
-            <Warehouse size={20}/>
-            <ListItemText primary="WAREHOUSE" />
-          </ListItem>
 
           <ListItem button className={`menu-item ${activeMenu === 'ASSET MANAGEMENT' ? 'active' : ''}`}
             onClick={() => {

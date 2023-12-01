@@ -184,7 +184,7 @@ function PurchaseRequest() {
                     <div className="employee-and-button">
                         <div className="button-create-side">
                           <div className="col-2" style={{zIndex: '3'}}>
-                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={startDate}
                                   onChange={(date) => setStartDate(date)}
@@ -192,11 +192,11 @@ function PurchaseRequest() {
                                   placeholderText="Start Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
                           </div>
                           <div className="col-2" style={{zIndex: '3'}}>
-                              <Form.Group controlId="exampleForm.ControlInput2">
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={endDate}
                                   onChange={(date) => setEndDate(date)}
@@ -204,7 +204,7 @@ function PurchaseRequest() {
                                   placeholderText="End Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'absolute', color: '#9a9a9a', right:'25px', top: '10px' }}/>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
                           </div>
                           <div className="col-4">
