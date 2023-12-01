@@ -183,21 +183,39 @@ const update = async e => {
                           ></span>
                         </div>
          
-                          <div className="row mt-3">
-                            <div className="col-2">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Product Code: </Form.Label>
-                                <Form.Control required value={code} readOnly={!isReadOnly}  onChange={(e) => setCode(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-5">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
-                                <Form.Control required value={name} readOnly={!isReadOnly}  onChange={(e) => setName(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-5">
+                        <div className="row">
+                                  <div className="col-6">
+                                    <Form.Group controlId="exampleForm.ControlInput1">
+                                      <Form.Label style={{ fontSize: '20px' }}>Product Code: </Form.Label>
+                                      <Form.Control required value={code} readOnly={!isReadOnly}  onChange={(e) => setCode(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                    </Form.Group>
+                                  </div>
+                                  <div className="col-6">
+                                    <Form.Group controlId="exampleForm.ControlInput1">
+                                        <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
+                                        <Form.Control required value={name} readOnly={!isReadOnly}  onChange={(e) => setName(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                      </Form.Group>
+                                  </div>
+                              </div>
+                          
+
+                         
+                            <div className="row">
+                              <div className="col-6">
                                 <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: '20px' }}>Sub Parts: </Form.Label>
+                                  <Select
+                                    // isMulti
+                                    // options={fetchSubPart.map(subpart => ({
+                                    //   value: subpart.id,
+                                    //   label: subpart.subPart_name 
+                                    // }))}
+                                    // onChange={handleSubpartChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="col-6">
+                              <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Spare Parts: </Form.Label>
                                   <Select
                                     isMulti
@@ -210,7 +228,8 @@ const update = async e => {
                                   />
                                 </Form.Group>
                               </div>
-                          </div>
+                            </div>
+                          
                    
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">

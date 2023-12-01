@@ -31,16 +31,20 @@ function CreateAssemblyForm() {
 
   const [fetchSparePart, setFetchPart] = useState([]);
   const [fetchSupp, setFetchSupp] = useState([]);
+  const [fetchSubPart, setFetchsub] = useState([]);
   const [spareParts, setSparePart] = useState([]);
+  const [subparting, setsubparting] = useState([]);
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  
+  const [priceInput, setPriceInput] = useState({});
+  const [addPriceInput, setaddPriceInputbackend] = useState([]);
   // for display selected subPart in Table
   const [supp, setSupp] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const navigate = useNavigate();
+
 
 
   
@@ -57,9 +61,19 @@ useEffect(() => {
     .catch(err => console.log(err));
 }, []);
 
+useEffect(() => {
+  axios.get(BASE_URL + '/subpart/fetchTable')
+    .then(res => setFetchsub(res.data))
+    .catch(err => console.log(err));
+}, []);
+
 //for supplier selection values
 const handleSelectChange = (selectedOptions) => {
   setSparePart(selectedOptions);
+};
+
+const handleSubpartChange = (selectedOption) => {
+  setsubparting(selectedOption);
 };
 
 const handleSelectChange_Supp = (selectedOptions) => {
@@ -70,6 +84,27 @@ const handleAddSuppClick = () => {
   setShowDropdown(true);
 };
 
+const handlePriceinput = (value, priceValue) => {
+  setPriceInput((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [priceValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedPrice = supp.map((supp) => ({
+      price: updatedInputs[supp.value] || '',
+      code: supp.codes
+    }));
+
+    setaddPriceInputbackend(serializedPrice);
+
+    console.log("Price Inputted:", serializedPrice);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
 
 const add = async e => {
   e.preventDefault();
@@ -88,7 +123,7 @@ const add = async e => {
   }
   else{
     axios.post(`${BASE_URL}/assembly/create`, {
-       code, name, supp, desc, spareParts
+       code, name, desc, spareParts, addPriceInput, subparting
     })
     .then((res) => {
       // console.log(res);
@@ -148,20 +183,39 @@ const add = async e => {
                           ></span>
                         </div>
          
-                          <div className="row mt-3">
-                            <div className="col-2">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Product Code: </Form.Label>
-                                <Form.Control required onChange={(e) => setCode(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-5">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
-                                <Form.Control required onChange={(e) => setName(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-5">
+                          
+                              <div className="row">
+                                  <div className="col-6">
+                                    <Form.Group controlId="exampleForm.ControlInput1">
+                                      <Form.Label style={{ fontSize: '20px' }}>Product Code: </Form.Label>
+                                      <Form.Control required onChange={(e) => setCode(e.target.value) } type="text" placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
+                                    </Form.Group>
+                                  </div>
+                                  <div className="col-6">
+                                    <Form.Group controlId="exampleForm.ControlInput1">
+                                      <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
+                                      <Form.Control required onChange={(e) => setName(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                    </Form.Group>
+                                  </div>
+                              </div>
+                          
+
+                         
+                            <div className="row">
+                              <div className="col-6">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: '20px' }}>Sub Parts: </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchSubPart.map(subpart => ({
+                                      value: subpart.id,
+                                      label: subpart.subPart_name 
+                                    }))}
+                                    onChange={handleSubpartChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="col-6">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Spare Parts: </Form.Label>
                                   <Select
@@ -174,7 +228,8 @@ const add = async e => {
                                   />
                                 </Form.Group>
                               </div>
-                          </div>
+                            </div>
+                          
                    
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
@@ -204,56 +259,86 @@ const add = async e => {
                                     <table id='order-listing'>
                                             <thead>
                                             <tr>
-                                                <th className='tableh'>Supplier Name</th>
+                                                <th className='tableh'>Supplier Code</th>
+                                                <th className='tableh'>Name</th>
+                                                <th className='tableh'>Email</th>
+                                                <th className='tableh'>Contact</th>
+                                                <th className='tableh'>Address</th>
+                                                <th className='tableh'>Price</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                     
-                                     {supp.length > 0 ? (
-                                       supp.map((supp) => (
-                                         <tr>
-                                           <td key={supp.value}>{supp.label}</td>
-                                         </tr>
-                                       ))
-                                     ) : (
-                                       <tr>
-                                         <td>No Supplier selected</td>
-                                       </tr>
-                                     )}
-                                 
-                                 {showDropdown && (
-                                   <div className="dropdown mt-3">
-                                     <Select
-                                       isMulti
-                                       options={fetchSupp.map((supp) => ({
-                                         value: supp.supplier_code,
-                                         label: supp.supplier_name,
-                                       }))}
-                                       onChange={handleSelectChange_Supp}
-                                     />
-                                   </div>
-                                 )}
 
-                                 <Button
-                                   className='btn btn-danger mt-1'
-                                   onClick={handleAddSuppClick}
-                                   size="md"
-                                   style={{ fontSize: '15px', margin: '0px 5px' }}
-                                 >
-                                   Add Supplier
-                                 </Button>
-                               </tbody>
+                                              {supp.length > 0 ? (
+                                                supp.map((supp) => (
+                                                  <tr>
+                                                    <td>{supp.codes}</td>
+                                                    <td>{supp.names}</td>
+                                                    <td>{supp.email}</td>
+                                                    <td>{supp.contact}</td>
+                                                    <td>{supp.address}</td>
+                                                    <td>
+                                                    <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
+                                                      <input
+                                                        type="number"
+                                                        style={{height: '50px'}}
+                                                        placeholder="Input Price"
+                                                        value={priceInput[supp.value] || ''}
+                                                        onChange={(e) => handlePriceinput(e.target.value, supp.value)}
+                                                        required
+                                                      />
+                                                    </td>
+                                                  </tr>
+                                                ))
+                                              ) : (
+                                                <tr>
+                                                  <td>No Supplier selected</td>
+                                                </tr>
+                                              )}
+                                          </tbody>
+                                          {showDropdown && (
+                                              <div className="dropdown mt-3">
+                                                <Select
+                                                  isMulti
+                                                  options={fetchSupp.map((supp) => ({
+                                                    value: supp.supplier_code,
+                                                    label: <div>
+                                                    Supplier Code: <strong>{supp.supplier_code}</strong> / 
+                                                    Name: <strong>{supp.supplier_name}</strong> 
+                                                  </div>,
+                                                  codes: supp.supplier_code,
+                                                  names: supp.supplier_name,
+                                                  email: supp.supplier_email,
+                                                  contact: supp.supplier_number,
+                                                  address: supp.supplier_address,
+                                                  price: supp.supplier_price
+                                                  }))}
+                                                  onChange={handleSelectChange_Supp}
+                                                />
+                                              </div>
+                                            )}
+
+                                            <Button
+                                              variant="outline-warning"
+                                              onClick={handleAddSuppClick}
+                                              size="md"
+                                              style={{ fontSize: '15px', marginTop: '10px' }}
+                                            >
+                                              Add Supplier
+                                            </Button>
                                     </table>
                                 </div>
+
                             </div>
                         </div>
+                        
                         <div className='save-cancel'>
                         <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                         <Link to='/assemblyForm' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Close
                         </Link>
                         </div>
-                  </Form>
+            </Form>
             </div>
         </div>
     </div>

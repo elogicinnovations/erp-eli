@@ -33,6 +33,7 @@ const subPart_SparePart = require("./routes/sparePart_subPart.route");
 const assembly = require("./routes/assembly.route");
 const spare_assembly = require("./routes/assembly_spare.route");
 const supplier_assembly = require("./routes/assembly_supplier.route");
+const subpart_assembly = require("./routes/assembly_subparts.route")
 
 const productTAGsupplier = require("./routes/productTAGsupplier.route");
 const costCenter = require("./routes/costCenter.route");
@@ -66,6 +67,7 @@ app.use("/costCenter", costCenter);
 app.use("/assembly", assembly);
 app.use("/spare_assembly", spare_assembly);
 app.use("/supplier_assembly", supplier_assembly);
+app.use("/assembly_subparts", subpart_assembly);
 
 app.use("/inventory", inventory);
 

@@ -1,10 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const Assembly = require('../db/models/assembly.model')
-const Assembly_Supplier = require('../db/models/assembly_supplier.model')
-// const {Assembly_Supplier, Assembly, Assembly_SparePart} = require('../db/models/associations')
-const Assembly_SparePart = require('../db/models/assembly_spare.model')
+const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart} = require('../db/models/associations')
 
 
 const session = require('express-session')
@@ -69,8 +66,9 @@ router.route('/fetchTableEdit').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
-       const {code, name, supp, desc, spareParts} = req.body;
+       const {code, name, desc, spareParts, addPriceInput, subparting} = req.body;
         // Check if the supplier code is already exists in the table
+        console.log(code);
         const existingDataCode = await Assembly.findOne({
           where: {
             assembly_code: code,
@@ -88,19 +86,18 @@ router.route('/create').post(async (req, res) => {
 
           const createdID = spare_newData.id;
 
-          for (const supplier of supp) {
-            const supplierValue = supplier.value;
-    
+          for (const supplier of addPriceInput) {
+            const supplierValue = supplier.code;
+            const supplierPrice = supplier.price;
             await Assembly_Supplier.create({
                 assembly_id: createdID,
                 supplier_code: supplierValue,
+                supplier_price: supplierPrice
             });
           }
 
           for (const sparePart of spareParts) {
             const sparePartval = sparePart.value;
-
-            // console.log('subpart id' + sparePartval)
     
             await Assembly_SparePart.create({
                 assembly_id: createdID,
@@ -108,7 +105,14 @@ router.route('/create').post(async (req, res) => {
             });
           }
     
+          for (const subPart of subparting) {
+            const subparting = subPart.value;
     
+            await Assembly_SubPart.create({
+                assembly_id: createdID,
+                subPart_id: subparting,
+            });
+          }
           res.status(200).json();
         }
       } catch (err) {
