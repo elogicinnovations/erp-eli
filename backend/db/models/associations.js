@@ -17,7 +17,7 @@ const SparePart_Supplier = require("./sparePart_supplier..model");
 const Assembly = require("./assembly.model");
 const Assembly_Supplier = require("./assembly_supplier.model");
 const Assembly_SparePart = require("./assembly_spare.model");
-
+const Assembly_SubPart = require("./asssembly_subparts.model");
 
 
 const Inventory = require("./inventory.model");
@@ -57,9 +57,6 @@ CostCenter.belongsTo(MasterList, { foreignKey: "col_id"});
 
 ProductTAGSupplier.hasMany(Inventory, { foreignKey: "product_tag_supp_id"});
 Inventory.belongsTo(ProductTAGSupplier, {foreignKey: "product_tag_supp_id"});
-
-Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
-Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 MasterList.hasMany(Issuance, { foreignKey: "received_by" });
 Issuance.belongsTo(MasterList, { foreignKey: "received_by" });
@@ -110,6 +107,32 @@ PR_product.belongsTo(Product, { foreignKey: "product_id"});
 PR.hasMany(PR_history, { foreignKey: "pr_id"});
 PR_history.belongsTo(PR, { foreignKey: "pr_id"});
 
+
+//Assembly Sub parts
+Assembly.hasMany(Assembly_SubPart, { foreignKey: "assembly_id"});
+Assembly_SubPart.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+SubPart.hasMany(Assembly_SubPart, { foreignKey: "subPart_id"});
+Assembly_SubPart.belongsTo(SubPart, { foreignKey: "subPart_id"});
+
+
+//Assembly Spare Parts
+Assembly.hasMany(Assembly_SparePart, {foreignKey: "assembly_id"});
+Assembly_SparePart.belongsTo(Assembly, {foreignKey: "assembly_id"});
+
+SparePart.hasMany(Assembly_SparePart, {foreignKey: "sparePart_id"});
+Assembly_SparePart.belongsTo(SparePart, {foreignKey: "sparePart_id"});
+
+
+//Assembly_supplier
+Assembly.hasMany(Assembly_Supplier, { foreignKey: "assembly_id"});
+Assembly_Supplier.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
+Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+
+
 module.exports = { 
                     MasterList, 
                     UserRole,  
@@ -123,8 +146,13 @@ module.exports = {
                     SubPart,
                     SparePart,
                     SparePart_SubPart,
-                    SparePart_Supplier,             
+                    SparePart_Supplier, 
+
+                    Assembly,            
                     Assembly_Supplier,
+                    Assembly_SparePart,
+                    Assembly_SubPart,
+                    
                     Inventory,
                     Issuance,
                     IssuedProduct,
