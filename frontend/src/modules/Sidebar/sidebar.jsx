@@ -40,6 +40,11 @@ function Sidebar() {
   const [openAssetSetup, setOpenAssetSetup] = useState(false);
   const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
   const [openWarehouse, setOpenWarehouse] = useState(false);
+  const [openReports, setOpenReports] = useState(false);
+
+  const toggleReports = () => {
+    setOpenReports(!openReports);
+  };
 
   const toggleWarehouse = () => {
     setOpenWarehouse(!openWarehouse);
@@ -331,6 +336,36 @@ function Sidebar() {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (location.pathname === '/receivingManagement') {
+      setOpenWarehouse(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/receivingManagementPreview') {
+      setOpenWarehouse(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/stockManagement') {
+      setOpenWarehouse(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/createStockTransfer') {
+      setOpenWarehouse(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/stockManagementPreview') {
+      setOpenWarehouse(true);
+    }
+  }, [location.pathname]);
+
   return (
     <div className="containers-of-sidebard">
       <div className='sidebar-main-content'>
@@ -577,7 +612,7 @@ function Sidebar() {
           >
             <ListItem
               button
-              className={`menu-item ${location.pathname.startsWith('/inventory') ? 'active' : ''}`}
+              className={`menu-item ${location.pathname === ('/inventory') ? 'active' : ''}`}
             >
               <Archive size={20} />
               <ListItemText primary="INVENTORY" />
@@ -644,7 +679,7 @@ function Sidebar() {
                 >
                 <ListItem
                   button
-                  className={`adminsub-menu ${location.pathname.startsWith('/purchaseRequest') || location.pathname.startsWith('/purchaseRequestPreview') || location.pathname.startsWith('/createPurchaseRequest') ? 'active' : ''}`}
+                  className={`adminsub-menu ${location.pathname.startsWith('/receivingManagement') ? 'active' : ''}`}
                 >
                     <ListItemText primary="Recieving Management" />
                   </ListItem>
@@ -656,7 +691,7 @@ function Sidebar() {
                 >
                 <ListItem
                   button
-                  className={`adminsub-menu ${location.pathname.startsWith('/purchaseRequest') || location.pathname.startsWith('/purchaseRequestPreview') || location.pathname.startsWith('/createPurchaseRequest') ? 'active' : ''}`}
+                  className={`adminsub-menu ${location.pathname.startsWith('/stockManagement') || location.pathname.startsWith('/createStockTransfer') || location.pathname.startsWith('/stockManagementPreview') ? 'active' : ''}`}
                 >
                     <ListItemText primary="Stock Management" />
                   </ListItem>
@@ -671,13 +706,44 @@ function Sidebar() {
             <ListItemText primary="ASSET MANAGEMENT" />
           </ListItem>
 
-          <ListItem button className={`menu-item ${activeMenu === 'REPORTS' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveMenu(activeMenu === 'REPORTS' ? '' : 'REPORTS');
-            }}>
-            <ChartLineUp size={20}/>
-            <ListItemText primary="REPORTS" />
+          <ListItem
+          button
+          className={`menu-item ${activeMenu === 'REPORTS' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveMenu(activeMenu === 'REPORTS' ? '' : 'REPORTS');
+            toggleReports();
+          }}>
+          <ChartLineUp size={20}/>
+          <ListItemText primary="REPORTS" />
+          {openReports ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+
+          <Collapse in={openReports}>
+                {/* <NavLink
+                  to='/inventoryReports'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/inventoryReports') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Inventory Report" />
+                  </ListItem>
+                </NavLink> */}
+                {/* <NavLink
+                  to='/'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/a') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Purchase Order Transaction Report" />
+                  </ListItem>
+                </NavLink> */}
+          </Collapse>
 
           <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
               onClick={() => {

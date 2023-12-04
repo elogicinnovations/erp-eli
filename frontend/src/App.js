@@ -55,6 +55,8 @@ import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStoc
 import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview"
 import ReceivingManagement from "./modules/Warehouse/Receiving Management/ReceivingManagement";
 import ReceivingManagementPreview from "./modules/Warehouse/Receiving Management/ReceivingManagementPreview";
+import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
+import ReturnForm from "./modules/Inventory/ReturnForm";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
@@ -212,10 +214,14 @@ function App() {
                         path="/createIssuance"
                         element={<CreateIssuance/>}
                       />
-                       <Route
-                        path="/viewInventory/:id"
-                        element={<ViewInventory/>}
-                      />
+                  <Route
+                    path="/viewInventory/:id"
+                    element={<ViewInventory/>}
+                  />
+                  <Route
+                    path="/returnForm/:id"
+                    element={<ReturnForm/>}
+                  />
           <Route
             path="/purchaseRequest"
             element={<PurchaseRequest/>}
@@ -256,10 +262,10 @@ function App() {
                         path="/receivingManagementPreview"
                         element={<ReceivingManagementPreview/>}
                       />
-                  {/* <Route
-                        path="/stockManagementPreview"
-                        element={<StockManagementPreview/>}
-                      /> */}
+          {/* <Route
+                path="/inventoryReports"
+                element={<InventoryReports/>}
+              /> */}
              
         </Routes>
       </DataProvider>

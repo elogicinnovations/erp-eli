@@ -269,33 +269,9 @@ const navigate = useNavigate()
                                                             <td>{data.masterlist.col_Fname}</td>
                                                             <td>{formatDatetime(data.createdAt)}</td>
                                                             <td>
-                                                            <DotsThreeCircle
-                                                                size={32}
-                                                                className="dots-icon"
-                                                                style={{
-                                                                cursor: 'pointer',
-                                                                transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
-                                                                color: rotatedIcons[i] ? '#666' : '#000',
-                                                                transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
-                                                                }}
-                                                                onClick={(event) => toggleDropdown(event, i)}
-                                                            />
-                                                            <div
-                                                                className='choices'
-                                                                style={{
-                                                                position: 'fixed',
-                                                                top: dropdownPosition.top - 30 + 'px',
-                                                                left: dropdownPosition.left - 100 + 'px',
-                                                                opacity: showDropdown ? 1 : 0,
-                                                                visibility: showDropdown ? 'visible' : 'hidden',
-                                                                transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-                                                                boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                                                                }}
-                                                            >
-                                                                {/* Your dropdown content here */}
-                                                                
-                                                                <button>Return</button>
-                                                            </div>
+                                                                <button onClick={() => navigate(`/returnForm/${data.issuance_id}`)} style={{fontSize:'12px'}}
+                                                                  className='btn'>Return
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                         ))}

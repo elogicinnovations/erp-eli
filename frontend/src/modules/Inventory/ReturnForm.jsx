@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from '../../Sidebar/sidebar';
-import '../../../assets/global/style.css';
+import Sidebar from '../Sidebar/sidebar';
+import '../../assets/global/style.css';
 import { Link, useNavigate } from 'react-router-dom';
-import '../../styles/react-style.css';
+import '../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
 import Modal from 'react-bootstrap/Modal';
@@ -22,12 +22,12 @@ import {
     ArrowUUpLeft
   } from "@phosphor-icons/react";
 import axios from 'axios';
-import BASE_URL from '../../../assets/global/url';
+import BASE_URL from '../../assets/global/url';
 import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
-function ReceivingManagementPreview() {
+function ReturnForm() {
     
     const data = [
     {
@@ -123,18 +123,18 @@ function ReceivingManagementPreview() {
                 
             <Col>
                 <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/receivingManagement">
+                    <Link style={{ fontSize: '1.5rem' }} to="/inventory">
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Receiving Management Preview
+                    Return Form
                     </h1>
                 </div>
                 </Col>
             </Row>
                         <Form>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Purchase Request Details
+                          Issuance Info
                           <span
                             style={{
                               position: 'absolute',
@@ -142,7 +142,7 @@ function ReceivingManagementPreview() {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '22.3rem',
+                              left: '11.6rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -151,33 +151,30 @@ function ReceivingManagementPreview() {
                             <div className="row" style={{padding: '20px'}}>
                                 <div className="col-6">
                                     <div className="ware">
-                                        Destination Warehouse
+                                        Destination Warehouse <p1>/123456</p1>
                                     </div>
-                                    <div className="pr-no">
-                                        PR #: <p1>123456</p1>
-                                    </div>
-                                    <div className="res-warehouse">
-                                        Agusan Warehouse
+                                    <div className="cost-c">
+                                        MAIN - COST CENTER #01
                                     </div>
                                 </div>
                                 <div className="col-4">
                                     <div className="created">
-                                        Created date: <p1>11/30/2023 4:44 PM</p1>
+                                        Date created: <p1>11/30/2023 4:44 PM</p1>
+                                    </div>
+                                    <div className="created mt-3">
+                                        Date Received: <p1>11/30/2023 4:44 PM</p1>
                                     </div>
                                     <div className="created mt-3">
                                         Created By: <p1>Jerome De Guzman</p1>
                                     </div>
                                 </div>
                                 <div className="col-2">
-                                    <div className="status">
-                                    <Circle weight="fill" size={17} color='green' style={{margin:'10px'}}/>  To Receive
-                                    </div>
                                 </div>
                             </div>
                         </div>
                             <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Label style={{ fontSize: '20px' }}>Description: </Form.Label>
+                                <Form.Control as="textarea"placeholder="Why are you returning these items?" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Item List
@@ -200,21 +197,15 @@ function ReceivingManagementPreview() {
                                     <table id='order-listing'>
                                             <thead>
                                             <tr>
-                                                <th className='tableh'>Code</th>
+                                                <th className='tableh'>Product Code</th>
                                                 <th className='tableh'>Product Name</th>
-                                                <th className='tableh'>Quantity Ordered</th>
-                                                <th className='tableh'>UOM</th>
-                                                <th className='tableh'>Quantity Delivered</th>
                                                 <th className='tableh'>Quantity Received</th>
-                                                <th className='tableh'>Quality Assurance</th>
-                                                <th className='tableh'>Action</th>
+                                                <th className='tableh'>Quantity of Return</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                                   {data.map((data,i) =>(
                                                     <tr key={i}>
-                                                    <td>{data.samA}</td>
-                                                    <td>{data.samC}</td>
                                                     <td>{data.samC}</td>
                                                     <td>{data.samC}</td>
                                                     <td>{data.samD}</td>
@@ -222,17 +213,6 @@ function ReceivingManagementPreview() {
                                                         <Form.Group controlId="exampleForm.ControlInput1">
                                                             <Form.Control type="number" style={{height:'40px', fontSize:'15px'}} placeholder='0.0'/>
                                                         </Form.Group>
-                                                    </td>
-                                                    <td>
-                                                        <div className="tab_checkbox">
-                                                        <input
-                                                        type="checkbox"
-                                                        defaultChecked={FormData.ustatus} // Set defaultChecked based on ustatus
-                                                        />
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" className='move_btn'><ArrowUUpLeft size={20} /><p1>Move To Inventory</p1></button>
                                                     </td>
                                                     </tr>
                                                   ))}
@@ -242,7 +222,10 @@ function ReceivingManagementPreview() {
                             </div>
                         
                         <div className='save-cancel'>
-                        <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
+                        <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                        <Link to="/inventory" className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                            Cancel
+                        </Link>
                         </div>
                         
         <Modal show={showModal} onHide={handleClose} size="xl">
@@ -302,4 +285,4 @@ function ReceivingManagementPreview() {
   )
 }
 
-export default ReceivingManagementPreview
+export default ReturnForm
