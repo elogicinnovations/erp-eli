@@ -8,11 +8,6 @@ const IssuedReturn = sequelize.define('issued_return', {
     primaryKey: true,
     autoIncrement: true,
   },
-  inventory_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true, 
-    unique: false,
-  }, 
   issued_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

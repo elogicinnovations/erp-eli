@@ -42,6 +42,7 @@ const inventory = require("./routes/inventory.route");
 
 const issuance = require("./routes/issuance.route");
 const issued_product = require("./routes/issued_product.route");
+const issued_return = require("./routes/issued_return.route")
 const returned = require("./routes/returned.route");
 
 const PR = require("./routes/pr.route");
@@ -72,6 +73,8 @@ app.use("/assembly_subparts", subpart_assembly);
 app.use("/inventory", inventory);
 
 app.use("/issuance", issuance);
+app.use("/issued_product", issued_product);
+app.use("/issuedReturn", issued_return)
 app.use("/returend", returned);
 
 app.use("/PR", PR);

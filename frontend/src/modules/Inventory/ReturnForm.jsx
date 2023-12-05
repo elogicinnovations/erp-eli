@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../Sidebar/sidebar';
 import '../../assets/global/style.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import '../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
@@ -28,89 +28,135 @@ import swal from 'sweetalert';
 import * as $ from 'jquery';
 
 function ReturnForm() {
+  
+const navigate = useNavigate()
+const [issuedProduct, setIssuedProduct] = useState([]);
+
+   
+    function formatDatetime(datetime) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return new Date(datetime).toLocaleString('en-US', options);
+    }
+
+    const { id } = useParams();
+    const [validated, setValidated] = useState(false);
+    const [fetchProduct, setFetchProduct] = useState('');
+    const [issuanceCode, setIssuanceCode] = useState('');
+    const [remarks, setRemarks] = useState('');
+    const [status, setStatus] = useState('To be Return');
+    const [quantity, setQuantity] = useState([]);
+    const [site, setSite] = useState([]);
+    const [costCenter, setCostCenter] = useState('');
+    const [dateReceived, setDateReceived] = useState(null);
+    const [dateCreated, setDateCreated] = useState(null);
+
+
+
+    useEffect(() => {
+      axios.get(BASE_URL + '/issued_product/getProducts', {
+        params: {
+          id:id
+        }
+      })
+        .then(res => setIssuedProduct(res.data))
+        .catch(err => console.log(err));
+    }, []);
+      
+
+    useEffect(() => {
+      axios.get(BASE_URL + '/issuance/getIssuance', {
+        params: {
+          id: id
+        }
+      })
+      .then(res => {
+        setIssuanceCode(res.data[0].issuance_id);
+          setSite(res.data[0].from_site);
+          setCostCenter(res.data[0].cost_center.name);
+          // setDateReceived(res.data[0].updateAt);
+          const createDate = new Date(res.data[0].createdAt);
+          setDateCreated(createDate);
+          const receiveDate = new Date(res.data[0].updatedAt);
+          setDateReceived(receiveDate);
+  
+  
+     
+        
+  
+      })
+      .catch(err => {
+        console.error(err);
+        // Handle error state or show an error message to the user
+      });
+    }, [id]);
     
-    const data = [
-    {
-        status: 'Pending',
-        samA: 'asd',
-        samB: 'asd',
-        samC: 'asd',
-        samD: 'asd',
-        samE: 'asd',
-    },
-    {
-        status: 'Pending',
-        samA: 'asd',
-        samB: 'asd',
-        samC: 'asd',
-        samD: 'asd',
-        samE: 'asd',
-    },
-    {
-        status: 'Pending',
-        samA: 'asd',
-        samB: 'asd',
-        samC: 'asd',
-        samD: 'asd',
-        samE: 'asd',
-    },
-    ]
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+    
+      const form = e.currentTarget;
+      if (form.checkValidity() === false) {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        swal({
+          icon: 'error',
+          title: 'Fields are required',
+          text: 'Please fill the red text fields',
+        });
+      } else {
+        // Your existing code for form submission
+    
+        axios.post(`${BASE_URL}/issuedReturn/issueReturn`, null, {
+          params: {
+            id: id,
+            remarks,
+            quantity,
+            status: 'To be Return', // Set the status here
+          },
+        })
+          .then((res) => {
+            // Handle the response as needed
+            console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: 'The Spare Parts successfully Done!',
+                text: 'The Spare Parts has been updated successfully.',
+                icon: 'success',
+                button: 'OK',
+              }).then(() => {
+                navigate('/inventory');
+              });
+            } else if (res.status === 201) {
+              swal({
+                icon: 'error',
+                title: 'Code Already Exist',
+                text: 'Please input another code',
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support',
+              });
+            }
+          });
+      }
+    
+      setValidated(true); // for validations
+    };
 
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  const [rotatedIcons, setRotatedIcons] = useState(Array(data.length).fill(false));
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  
-  const [dateNeeded, setDateNeeded] = useState(null);
-
-  const toggleDropdown = (event, index) => {
-    // Check if the clicked icon is already open, close it
-    if (index === openDropdownIndex) {
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = !newRotatedIcons[index];
-        return newRotatedIcons;
-      });
-      setShowDropdown(false);
-      setOpenDropdownIndex(null);
-    } else {
-      // If a different icon is clicked, close the currently open dropdown and open the new one
-      setRotatedIcons(Array(data.length).fill(false));
-      const iconPosition = event.currentTarget.getBoundingClientRect();
-      setDropdownPosition({
-        top: iconPosition.bottom + window.scrollY,
-        left: iconPosition.left + window.scrollX,
-      });
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = true;
-        return newRotatedIcons;
-      });
-      setShowDropdown(true);
-      setOpenDropdownIndex(index);
-    }
-  };
-
-
-  const [showModal, setShowModal] = useState(false);
-
-  const handleShow = () => setShowModal(true);
-  
-  const handleClose = () => {
-    setShowModal(false);
-  };
-
-  useEffect(() => {
-    if ($('#order-listing').length > 0) {
-      $('#order-listing').DataTable();
-    }
-  }, []);
-
-  useEffect(() => {
-    if ($('#order2-listing').length > 0) {
-      $('#order2-listing').DataTable();
-    }
-  }, []);
+    useEffect(() => {
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && issuedProduct.length > 0) {
+        $('#order-listing').DataTable();
+      }
+    }, [issuedProduct]);
 
   return (
     <div className="main-of-containers">
@@ -132,7 +178,7 @@ function ReturnForm() {
                 </div>
                 </Col>
             </Row>
-                        <Form>
+                        <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Issuance Info
                           <span
@@ -151,21 +197,21 @@ function ReturnForm() {
                             <div className="row" style={{padding: '20px'}}>
                                 <div className="col-6">
                                     <div className="ware">
-                                        Destination Warehouse <p1>/123456</p1>
+                                        Destination Warehouse
                                     </div>
                                     <div className="cost-c">
-                                        MAIN - COST CENTER #01
+                                    {site} - {costCenter}
                                     </div>
                                 </div>
                                 <div className="col-4">
                                     <div className="created">
-                                        Date created: <p1>11/30/2023 4:44 PM</p1>
+                                        Date created: <p1>{formatDatetime(dateCreated)}</p1>
                                     </div>
                                     <div className="created mt-3">
-                                        Date Received: <p1>11/30/2023 4:44 PM</p1>
+                                        Date Received: <p1>{formatDatetime(dateReceived)}</p1>
                                     </div>
                                     <div className="created mt-3">
-                                        Created By: <p1>Jerome De Guzman</p1>
+                                        Created By: <p1>--</p1>
                                     </div>
                                 </div>
                                 <div className="col-2">
@@ -173,8 +219,8 @@ function ReturnForm() {
                             </div>
                         </div>
                             <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Description: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Why are you returning these items?" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                <Form.Control onChange={(e) => setRemarks(e.target.value)} as="textarea"placeholder="Why are you returning these items?" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Item List
@@ -192,34 +238,35 @@ function ReturnForm() {
                         </div>
                         
                         
-                            <div className="table-containss">
-                                <div className="main-of-all-tables">
-                                    <table id='order-listing'>
-                                            <thead>
-                                            <tr>
-                                                <th className='tableh'>Product Code</th>
-                                                <th className='tableh'>Product Name</th>
-                                                <th className='tableh'>Quantity Received</th>
-                                                <th className='tableh'>Quantity of Return</th>
+                        <div className="table-containss">
+                            <div className="main-of-all-tables">
+                                <table id='order-listing'>
+                                        <thead>
+                                        <tr>
+                                            <th className='tableh'>Product Code</th>
+                                            <th className='tableh'>Product Name</th>
+                                            <th className='tableh'>Quantity</th>
+                                            <th className='tableh'>Quantity of Return</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {issuedProduct.map((data, i) => (
+                                            <tr key={i}>
+                                                <td>{data.inventory.product_tag_supplier.product.product_code}</td>
+                                                <td>{data.inventory.product_tag_supplier.product.product_name}</td>
+                                                <td>{data.quantity}</td>
+                                                <td>
+                                                  <Form.Group controlId="exampleForm.ControlInput1">
+                                                      <Form.Control onChange={(e) => setQuantity(e.target.value)} type="number" style={{height:'40px', fontSize:'15px'}} placeholder='0.0'/>
+                                                  </Form.Group>
+                                                  </td>
+                                                
                                             </tr>
-                                            </thead>
-                                            <tbody>
-                                                  {data.map((data,i) =>(
-                                                    <tr key={i}>
-                                                    <td>{data.samC}</td>
-                                                    <td>{data.samC}</td>
-                                                    <td>{data.samD}</td>
-                                                    <td>
-                                                        <Form.Group controlId="exampleForm.ControlInput1">
-                                                            <Form.Control type="number" style={{height:'40px', fontSize:'15px'}} placeholder='0.0'/>
-                                                        </Form.Group>
-                                                    </td>
-                                                    </tr>
-                                                  ))}
+                                            ))}
                                         </tbody>
-                                    </table>
-                                </div>
+                                </table>
                             </div>
+                        </div>
                         
                         <div className='save-cancel'>
                         <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
@@ -227,56 +274,6 @@ function ReturnForm() {
                             Cancel
                         </Link>
                         </div>
-                        
-        <Modal show={showModal} onHide={handleClose} size="xl">
-          <Form>
-            <Modal.Header closeButton>
-              <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
-            </Modal.Header>
-              <Modal.Body>
-                        <div className="table-containss">
-                            <div className="main-of-all-tables">
-                                <table id='order2-listing'>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Code</th>
-                                            <th className='tableh'>Product Name</th>
-                                            <th className='tableh'>Category</th>
-                                            <th className='tableh'>UOM</th>
-                                            <th className='tableh'>Supplier</th>
-                                            <th className='tableh'>Contact</th>
-                                            <th className='tableh'>Price</th>
-                                            <th className='tableh'></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {data.map((data,i) =>(
-                                                <tr key={i}>
-                                                <td>{data.samA}</td>
-                                                <td>{data.samC}</td>
-                                                <td>{data.samD}</td>
-                                                <td>{data.samE}</td>
-                                                <td>{data.samE}</td>
-                                                <td>{data.samE}</td>
-                                                <td>{data.samE}</td>
-                                                <td><button type='button' className='btn canvas'><PlusCircle size={32}/></button></td>
-                                                </tr>
-                                                ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>
-                        Save
-                    </Button>
-                </Modal.Footer>
-            </Form>
-          </Modal>
                         </Form>
                        
             </div>
