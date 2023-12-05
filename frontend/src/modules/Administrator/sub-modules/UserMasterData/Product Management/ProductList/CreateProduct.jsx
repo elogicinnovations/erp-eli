@@ -176,7 +176,7 @@ function CreateProduct() {
       formData.append('details', details);
       formData.append('thresholds', thresholds);
       formData.append('selectedimage', selectedimage);
-      formData.append('assemblydrop', assembly);
+      formData.append('assembly', assembly);
 
       axios.post(`${BASE_URL}/product/create`, formData, {
         headers: {
