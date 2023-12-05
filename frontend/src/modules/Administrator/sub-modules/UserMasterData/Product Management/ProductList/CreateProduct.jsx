@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 import cls_unit from '../../../../../../assets/global/unit';
-
+import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
 function CreateProduct() {
@@ -32,8 +32,12 @@ function CreateProduct() {
   const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer 
   const [details, setDetails] = useState('');
   const [thresholds, setThresholds] = useState('');
-
-
+  const [fetchSparePart, setFetchPart] = useState([]);
+  const [fetchSubPart, setFetchsub] = useState([]);
+  const [fetchAssembly, setAssembly] = useState([]);
+  const [spareParts, setSparePart] = useState([]);
+  const [subparting, setsubparting] = useState([]);
+  const [assembly, setassemblies] = useState([]);
 
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
@@ -58,9 +62,38 @@ function CreateProduct() {
     
   };
 
-  // const handleChooseFile = () => {
-  //   fileInputRef.current.click();
-  // };
+  //Assembly Fetch
+  useEffect(() => {
+    axios.get(BASE_URL + '/assembly/fetchTable')
+      .then(res => setAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
+  //Subpart Fetch
+  useEffect(() => {
+    axios.get(BASE_URL + '/subpart/fetchTable')
+      .then(res => setFetchsub(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
+  //Spare part Fetch
+  useEffect(() => {
+    axios.get(BASE_URL + '/sparePart/fetchTable')
+      .then(res => setFetchPart(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  const handleSparepartChange = (selectedOptions) => {
+    setSparePart(selectedOptions);
+  };
+  
+  const handleSubpartChange = (selectedOption) => {
+    setsubparting(selectedOption);
+  };
+
+  const handleAssemblyChange = (selectedOptions) => {
+    setassemblies(selectedOptions);
+  };
 
   // for Unit on change function
   const handleChangeUnit = (event) => {
@@ -125,8 +158,6 @@ function CreateProduct() {
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-    // if required fields has NO value
-    //    console.log('requried')
         swal({
             icon: 'error',
             title: 'Fields are required',
@@ -134,13 +165,6 @@ function CreateProduct() {
           });
     }
     else{
-      // axios
-      // .post(`${BASE_URL}/product/create`, {
-      //   name, slct_category, unit,
-      //   slct_binLocation, unitMeasurement,
-      //   slct_manufacturer, details, thresholds,
-      //   selectedimage
-      // })
       const formData = new FormData();
       formData.append('code', code);
       formData.append('name', name);
@@ -152,6 +176,7 @@ function CreateProduct() {
       formData.append('details', details);
       formData.append('thresholds', thresholds);
       formData.append('selectedimage', selectedimage);
+      formData.append('assemblydrop', assembly);
 
       axios.post(`${BASE_URL}/product/create`, formData, {
         headers: {
@@ -170,17 +195,10 @@ function CreateProduct() {
           ErrorInserted();
         }
       })
-
-      // .catch((err) => {
-      //   console.error(err);
-      //   // ErrorInserted();
-      // });
     }
-
     setValidated(true); //for validations
-
-    
   };
+
   const SuccessInserted = (res) => {
     swal({
       title: 'Product Created',
@@ -275,6 +293,48 @@ function CreateProduct() {
                               </div>
                           </div>
 
+                          <div className="row">
+                            <div className="col-4">
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: '20px' }}>Assembly: </Form.Label>
+                                    <Select
+                                      isMulti
+                                      options={fetchAssembly.map(assembly => ({
+                                        value: assembly.id,
+                                        label: assembly.assembly_name 
+                                      }))}
+                                      onChange={handleAssemblyChange}
+                                    />
+                                  </Form.Group>
+                                </div>
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: '20px' }}>Sub Parts: </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchSubPart.map(subpart => ({
+                                      value: subpart.id,
+                                      label: subpart.subPart_name 
+                                    }))}
+                                    onChange={handleSubpartChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: '20px' }}>Spare Parts: </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchSparePart.map(sparePart => ({
+                                      value: sparePart.id,
+                                      label: sparePart.spareParts_name 
+                                    }))}
+                                    onChange={handleSparepartChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                          </div>
+
                         <div className="row">
                             <div className="col-6">
                                 <Form.Group controlId="exampleForm.ControlInput2">
@@ -285,8 +345,7 @@ function CreateProduct() {
                                     style={{ height: '40px', fontSize: '15px' }}
                                     defaultValue=''
                                     onChange={handleChangeUnit}
-                                   
-                                  >
+                                   >
                                       <option disabled value=''>
                                           Select Unit ...
                                       </option>

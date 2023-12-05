@@ -12,8 +12,6 @@ import {
     Bell,
     UserCircle,
     Plus,
-    Trash,
-    NotePencil,
     DotsThreeCircle
   } from "@phosphor-icons/react";
   import '../../../../../../assets/skydash/vendors/feather/feather.css';
@@ -37,6 +35,8 @@ function AssemblyForm() {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(Array(assembly.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const navigate = useNavigate();
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -204,9 +204,9 @@ function AssemblyForm() {
                                 <tbody>
                                       {assembly.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.assembly_code}</td>
-                                          <td>{data.assembly_name}</td>
-                                          <td>{data.assembly_desc}</td>
+                                          <td onClick={() => navigate(`/viewAssembleForm/${data.id}`)}>{data.assembly_code}</td>
+                                          <td onClick={() => navigate(`/viewAssembleForm/${data.id}`)}>{data.assembly_name}</td>
+                                          <td onClick={() => navigate(`/viewAssembleForm/${data.id}`)}>{data.assembly_desc}</td>
                                           <td>
                                           <DotsThreeCircle
                                               size={32}
@@ -237,10 +237,6 @@ function AssemblyForm() {
                                           <button onClick={() => handleDelete(data.id)} className='btn'>Delete</button>
                                           </div>
                                           </td>
-                                          {/* <td>
-                                          <Link to={`/updateAssemblyForm/${data.id}`}  className='btn'><NotePencil size={32} /></Link>
-                                          <button onClick={() => handleDelete(data.id)} className='btn'><Trash size={32} color="#e60000" /></button>
-                                          </td> */}
                                         </tr>
                                       ))}
                             </tbody>

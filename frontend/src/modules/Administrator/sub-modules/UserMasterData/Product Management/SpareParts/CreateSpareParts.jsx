@@ -19,22 +19,21 @@ import {
 
 function CreateSpareParts() {
 
-const [validated, setValidated] = useState(false);
-const [fetchSupp, setFetchSupp] = useState([]);
-const [fetchSubPart, setFetchSubPart] = useState([]);
-const [code, setCode] = useState('');
-const [name, setName] = useState('');
-const [supp, setSupp] = useState([]);
-const [desc, setDesc] = useState('');
-
-// for display selected subPart in Table
-const [SubParts, setSubParts] = useState([]);
+  const [validated, setValidated] = useState(false);
+  const [fetchSupp, setFetchSupp] = useState([]);
+  const [fetchSubPart, setFetchSubPart] = useState([]);
+  const [code, setCode] = useState('');
+  const [name, setName] = useState('');
+  const [supp, setSupp] = useState([]);
+  const [desc, setDesc] = useState('');
+  const [sparepriceInput, setsparePriceInput] = useState({});
+  const [SpareaddPriceInput, setsparePriceInputbackend] = useState([]);
+  // for display selected subPart in Table
+  const [SubParts, setSubParts] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
 
 const navigate = useNavigate();
-
-
 
 
 useEffect(() => {
@@ -62,6 +61,28 @@ const handleAddSupp = () => {
   setShowDropdown(true);
 };
 
+const handleSparePriceinput = (value, priceValue) => {
+  setsparePriceInput((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [priceValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedPrice = supp.map((supp) => ({
+      price: updatedInputs[supp.value] || '',
+      code: supp.codes
+      
+    }));
+    setsparePriceInputbackend(serializedPrice);
+  
+    console.log("Price Inputted:", serializedPrice);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
+
 const add = async e => {
   e.preventDefault();
 
@@ -79,7 +100,7 @@ const add = async e => {
   }
   else{
     axios.post(`${BASE_URL}/sparePart/create`, {
-       code, name, supp, desc, SubParts
+      code, name, desc, SubParts, SpareaddPriceInput
     })
     .then((res) => {
       console.log(res);
@@ -202,11 +223,12 @@ const add = async e => {
                                     <thead>
                                       <tr>
                                         <th className='tableh'>Supplier Code</th>
-                                        <th className='tableh'>Supplier Name</th>
-                                        <th className='tableh'>Supplier Email</th>
-                                        <th className='tableh'>Supplier Number</th>
-                                        <th className='tableh'>Supplier Country</th>
+                                        <th className='tableh'>Name</th>
+                                        <th className='tableh'>Email</th>
+                                        <th className='tableh'>Contact</th>
+                                        <th className='tableh'>Address</th>
                                         <th className='tableh'>Receiving Area</th>
+                                        <th className='tableh'>Price</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -214,12 +236,23 @@ const add = async e => {
                                           {supp.length > 0 ? (
                                             supp.map((supp) => (
                                               <tr>
-                                                <td key={supp.value}>{supp.value}</td>
-                                                <td >{supp.label}</td>
-                                                <td >{supp.email}</td>
-                                                <td >{supp.number}</td>
-                                                <td >{supp.country}</td>
-                                                <td >{supp.receving}</td>
+                                                <td>{supp.codes}</td>
+                                                <td>{supp.names}</td>
+                                                <td>{supp.email}</td>
+                                                <td>{supp.contact}</td>
+                                                <td>{supp.address}</td>
+                                                <td>{supp.sparereceving}</td>
+                                                <td>
+                                                  <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
+                                                    <input
+                                                      type="number"
+                                                      style={{height: '50px'}}
+                                                      placeholder="Input Price"
+                                                      value={sparepriceInput[supp.value] || ''}
+                                                      onChange={(e) => handleSparePriceinput(e.target.value, supp.value)}
+                                                      required
+                                                    />
+                                                </td>
                                               </tr>
                                             ))
                                           ) : (
@@ -235,13 +268,19 @@ const add = async e => {
                                           
                                           <Select
                                             isMulti
-                                            options={fetchSupp.map(supplier => ({
-                                              value: supplier.supplier_code,
-                                              label: supplier.supplier_name,
-                                              email: supplier.supplier_email,
-                                              number: supplier.supplier_number,
-                                              country: supplier.supplier_country,
-                                              receving: supplier.supplier_receiving
+                                            options={fetchSupp.map(supp => ({
+                                              value: supp.supplier_code,
+                                              label: <div>
+                                                    Supplier Code: <strong>{supp.supplier_code}</strong> / 
+                                                    Name: <strong>{supp.supplier_name}</strong> 
+                                                  </div>,
+                                              codes: supp.supplier_code,
+                                              names: supp.supplier_name,
+                                              email: supp.supplier_email,
+                                              contact: supp.supplier_number,
+                                              address: supp.supplier_address,
+                                              sparereceving: supp.supplier_receiving,
+                                              price: supp.supplier_price
                                             }))}
                                             onChange={handleSelectChange}
                                           />
@@ -249,10 +288,10 @@ const add = async e => {
                                       )}
 
                                       <Button
-                                        className='btn btn-danger mt-1'
+                                        variant="outline-warning"
                                         onClick={handleAddSupp}
                                         size="md"
-                                        style={{ fontSize: '15px', margin: '0px 5px' }}
+                                        style={{ fontSize: '15px', marginTop: '10px' }}
                                       >
                                         Add Sub-Part
                                       </Button>

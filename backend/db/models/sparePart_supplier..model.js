@@ -15,6 +15,10 @@ const Supplier_SparePart = sequelize.define('sparepart_supplier', {
   supplier_code: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  supplier_price: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
   }
 });
 

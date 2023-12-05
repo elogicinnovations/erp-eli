@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
 import '../../../../styles/react-style.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
 import swal from 'sweetalert';
@@ -136,7 +136,7 @@ function SpareParts() {
         $('#order-listing').DataTable();
       }
     }, [sparePart]);
-
+    const navigate = useNavigate();
   return (
     <div className="main-of-containers">
         <div className="left-of-main-containers">
@@ -204,11 +204,11 @@ function SpareParts() {
                                 <tbody>
                                       {sparePart.map((data,i) =>(
                                         <tr key={i}>
-                                          <td>{data.spareParts_code}</td>
-                                          <td>{data.spareParts_name}</td>
-                                          <td>{data.spareParts_desc}</td>
+                                          <td onClick={() => navigate(`/viewSpareParts/${data.id}`)}>{data.spareParts_code}</td>
+                                          <td onClick={() => navigate(`/viewSpareParts/${data.id}`)}>{data.spareParts_name}</td>
+                                          <td onClick={() => navigate(`/viewSpareParts/${data.id}`)}>{data.spareParts_desc}</td>
                                           <td>
-                                          <DotsThreeCircle
+                                          {/* <DotsThreeCircle
                                               size={32}
                                               className="dots-icon"
                                               style={{
@@ -218,8 +218,8 @@ function SpareParts() {
                                               transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
                                               }}
                                               onClick={(event) => toggleDropdown(event, i)}
-                                          />
-                                          <div
+                                          /> */}
+                                          {/* <div
                                               className='choices'
                                               style={{
                                               position: 'fixed',
@@ -231,9 +231,10 @@ function SpareParts() {
                                               boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
                                               }}
                                           >
-                                              {/* Your dropdown content here */}
                                               
-                                            <Link
+                                            
+                                          </div> */}
+                                          <Link
                                               to={`/updateSpareParts/${data.id}`} style={{fontSize:'12px'}}
                                               // onClick={() => handleModalToggle(data)} 
                                               className='btn'>Update
@@ -241,18 +242,7 @@ function SpareParts() {
                                           <button 
                                             onClick={() => handleDelete(data.id)} 
                                             className='btn'>Delete</button>
-                                          </div>
                                           </td>
-                                          {/* <td>
-                                            <Link
-                                              to={`/updateSpareParts/${data.id}`}
-                                              // onClick={() => handleModalToggle(data)} 
-                                              className='btn'><NotePencil size={32} />
-                                            </Link>
-                                          <button 
-                                            onClick={() => handleDelete(data.id)} 
-                                            className='btn'><Trash size={32} color="#e60000" /></button>
-                                          </td> */}
                                         </tr>
                                       ))}
                             </tbody>

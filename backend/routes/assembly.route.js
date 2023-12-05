@@ -89,6 +89,7 @@ router.route('/create').post(async (req, res) => {
           for (const supplier of addPriceInput) {
             const supplierValue = supplier.code;
             const supplierPrice = supplier.price;
+            
             await Assembly_Supplier.create({
                 assembly_id: createdID,
                 supplier_code: supplierValue,

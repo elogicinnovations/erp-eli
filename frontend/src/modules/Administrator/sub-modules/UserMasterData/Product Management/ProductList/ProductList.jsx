@@ -12,8 +12,6 @@ import {
     Bell,
     UserCircle,
     Plus,
-    Trash,
-    NotePencil,
     DotsThreeCircle
   } from "@phosphor-icons/react";
   import '../../../../../../assets/skydash/vendors/feather/feather.css';
