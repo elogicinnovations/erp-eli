@@ -46,6 +46,14 @@ function PurchaseRequestPreview() {
   const [isReadOnly, setReadOnly] = useState(false);
 
   const [disabledApprove, setDisabledApprove] = useState(false);
+  const [disabledRejustify, setDisabledRejustify] = useState(false);
+
+  const [files, setFiles] = useState([]);
+  const [rejustifyRemarks, setRejustifyRemarks] = useState('');
+
+  const handleFileChange = (e) => {
+    setFiles(e.target.files);
+  };
 
 
   const handleEditClick = () => {
@@ -108,6 +116,50 @@ function PurchaseRequestPreview() {
     });
 
   };
+
+
+  
+  const handleUploadRejustify = async () => {
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+       
+      }
+      formData.append('remarks', rejustifyRemarks);
+      formData.append('id', id);
+
+
+      // Adjust the URL based on your backend server
+      const response = await axios.post(BASE_URL + `/PR_rejustify/rejustify`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200){
+        swal({
+          title: 'Request rejustify!',
+          text: 'The Request has been successfully rejustified',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          navigate('/purchaseRequest')
+          
+        });
+      } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
   
   useEffect(() => {
     axios.get(BASE_URL + '/product/fetchTable')
@@ -158,9 +210,14 @@ function PurchaseRequestPreview() {
     // Add this line to log the status
     if (status === 'For-Approval') {
       setDisabledApprove(false);
-    } else {
-      setDisabledApprove(true);
     }
+    else {
+      setDisabledApprove(true);
+      // setDisabledRejustify(false)
+    }
+
+
+    
   }, []);
 
   console.log('Status:'+ status);
@@ -263,7 +320,7 @@ const update = async e => {
       console.log(res);
       if (res.status === 200) {
         swal({
-          title: 'The Purchase sucessfully request!',
+          title: 'The Request sucessfully submitted!',
           text: 'The Purchase been added successfully.',
           icon: 'success',
           button: 'OK'
@@ -522,20 +579,23 @@ const update = async e => {
                             </div>
                         
                         <div className='save-cancel'>
-                        {!isReadOnly && (
-                          <Button type='button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
-                        )}
-                        {isReadOnly && (
-                          <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                        )}
-                      {!disabledApprove && (
-                        <Button type='button' onClick={handleApproveClick} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
-                      )}
+                              {!isReadOnly && (
+                                <Button type='button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
+                              )}
+                              {isReadOnly && (
+                                <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                              )}
+                            {/* {!disabledApprove && (
+                              <Button type='button' onClick={handleApproveClick} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
+                            )} */}
+                            <Button type='button' onClick={handleApproveClick} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
 
-                       
-                        <Button onClick={handleShow} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                            Rejustify
-                        </Button>
+                            {!disabledRejustify && (
+                               <Button onClick={handleShow} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                               Rejustify
+                             </Button> 
+                            )}
+                                              
                         </div>
                         </Form>
         <Modal show={showModal} onHide={handleClose}>
@@ -569,12 +629,19 @@ const update = async e => {
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control as="textarea"  onChange={e => setRejustifyRemarks(e.target.value)}  placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
-                        <div className="col-6">
-                            <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
-                                <Paperclip size={20} />Upload Attachment
-                            </Link>
+                          <div className="col-6">
+                            {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
+                                  <Paperclip size={20} />Upload Attachment
+                              </Link> */}
+
+                            <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
+                                {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
+                                <input type="file" onChange={handleFileChange} />
+                            </Form.Group>
+
                             </div>
                         </div>
                 </Modal.Body>
@@ -582,7 +649,7 @@ const update = async e => {
                     <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
                         Cancel
                     </Button>
-                    <Button type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>
+                    <Button type="button" onClick={handleUploadRejustify} variant="warning" size="md" style={{ fontSize: '20px' }}>
                         Save
                     </Button>
                 </Modal.Footer>

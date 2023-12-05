@@ -393,6 +393,51 @@ color: #ffffff;
   justify-content: space-evenly;
 }
 
+.clone-dropdown{
+  display: flex;
+  padding: 10px;
+}
+
+.dateandselect{
+  flex: 1;
+}
+
+.buttonGo{
+  flex: 1;
+  margin-left: 30px;
+  margin-top: 10px;
+}
+
+.btngo{
+  border: none;
+  background-color: #DCDFE3;
+  cursor: pointer;
+  color: #000000;
+  width: 70px;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.btngo:hover {
+  background-color: gray; /* Darker green color on hover */
+}
+
+.custom-datepicker-wrapper {
+  border: 1px solid #DEE2E6 !important;
+  padding: 7px !important;
+  padding-left: 30px !important;
+  width: 220px;
+  height: 40px;
+  font-size: 15px;
+  border-radius: 4px !important;
+}
+
+.custom-popper {
+  z-index: 9999 !important;
+}
+
 .Employeetext-button {
   flex: 10;
   display: flex;

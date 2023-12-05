@@ -536,7 +536,7 @@ function Sidebar() {
                   button
                   className={`Employeesub-menu ${location.pathname.startsWith('/assemblyForm') || location.pathname.startsWith('/createAssemblyForm') || location.pathname.startsWith('/updateAssemblyForm') ? 'active' : ''}`}
                 >
-                    <ListItemText primary="Assembly Form" />
+                    <ListItemText primary="Product Assembly" />
                   </ListItem>
                 </NavLink>
               </Collapse>

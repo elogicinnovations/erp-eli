@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const sequelize = require('../db/config/sequelize.config');
-const { ProductTAGSupplier, Product, Inventory } = require("../db/models/associations"); 
+const { ProductTAGSupplier, Product, Inventory, PR, Supplier, Category } = require("../db/models/associations"); 
 // const ProductTAGSupplier = require('../db/models/productTAGsupplier.model');
 
 
@@ -10,6 +10,41 @@ router.route('/fetchTable').get(async (req, res) => {
       
       console.log(req.query.id)
       const data = await ProductTAGSupplier.findAll({
+        where: {product_id: req.query.id}
+      });
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
+
+  router.route('/fetchCanvass').get(async (req, res) => {
+    try {
+      
+      console.log(req.query.id)
+      const data = await ProductTAGSupplier.findAll({
+        include: [{
+          model: Product,
+          required: true,
+
+          include: [{
+            model: Category,
+            required: true
+          }]
+        },
+        {
+          model: Supplier,
+          required: true
+        }
+      ],
         where: {product_id: req.query.id}
       });
   

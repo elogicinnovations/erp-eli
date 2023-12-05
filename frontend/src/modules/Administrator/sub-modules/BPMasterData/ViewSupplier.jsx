@@ -349,7 +349,7 @@ function ViewSupplier() {
                                                 <tbody>
                                                 {product.map((data,i) =>(
                                                 <tr key={i} >
-                                                    <td >{data.product_code}</td>
+                                                    <td >{data.product.product_code}</td>
                                                     <td >{data.product.product_name}</td>
                                                     <td >{data.product.product_category}</td>
                                                     <td >{data.product.product_unitMeasurement}</td>

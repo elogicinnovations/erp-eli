@@ -239,7 +239,7 @@ function App() {
             element={<PurchaseOrderList/>}
           />
                   <Route
-                        path="/purchaseOrderListPreview"
+                        path="/purchaseOrderListPreview/:id"
                         element={<PurchaseOrderListPreview/>}
                       />
           <Route
@@ -262,9 +262,9 @@ function App() {
                         path="/receivingManagementPreview"
                         element={<ReceivingManagementPreview/>}
                       />
-          {/* <Route
-                path="/inventoryReports"
-                element={<InventoryReports/>}
+              {/* <Route
+                    path="/inventoryReports"
+                    element={<InventoryReports/>}
               /> */}
              
         </Routes>

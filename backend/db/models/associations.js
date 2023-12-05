@@ -30,6 +30,7 @@ const IssuedReturn = require("./issued_return.model");
 const PR = require("./pr.model");
 const PR_product = require("./pr_products.model");
 const PR_history = require("./pr_historical.model");
+const PR_Rejustify = require("./pr_rejustify.model");
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -107,6 +108,9 @@ PR_product.belongsTo(Product, { foreignKey: "product_id"});
 PR.hasMany(PR_history, { foreignKey: "pr_id"});
 PR_history.belongsTo(PR, { foreignKey: "pr_id"});
 
+PR.hasMany(PR_Rejustify, { foreignKey: "pr_id"});
+PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id"});
+
 
 //Assembly Sub parts
 Assembly.hasMany(Assembly_SubPart, { foreignKey: "assembly_id"});
@@ -157,7 +161,10 @@ module.exports = {
                     Issuance,
                     IssuedProduct,
                     IssuedReturn,
+
+
                     PR,
                     PR_product,
-                    PR_history
+                    PR_history,
+                    PR_Rejustify
                 };

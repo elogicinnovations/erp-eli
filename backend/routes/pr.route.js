@@ -29,6 +29,50 @@ router.route('/fetchTable').get(async (req, res) => {
     }
   });
 
+  
+router.route('/fetchTable_PO').get(async (req, res) => {
+  try {
+   
+    const data = await PR.findAll({
+      where: {
+        status: 'For-Canvassing'
+      }
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route('/fetchTable_PO_view').get(async (req, res) => {
+  try {
+   
+    const data = await PR.findAll({
+      where: {
+       id: req.query.id
+
+      }
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 
   router.route('/fetchView').get(async (req, res) => {
     try {
@@ -208,7 +252,10 @@ router.route('/cancel').put(async (req, res) => {
         }
       );
 
-        
+      const PR_historical = await PR_history.create({
+        pr_id: row_id,
+        status: 'Cancelled',
+      });
     
           res.status(200).json();
         
@@ -216,6 +263,33 @@ router.route('/cancel').put(async (req, res) => {
         console.error(err);
         res.status(500).send('An error occurred');
       }
+});
+
+router.route('/cancel_PO').put(async (req, res) => {
+  try {
+     const {row_id} = req.body;
+      
+     const [affectedRows] = await PR.update(
+      {
+        status: 'For-Canvassing'
+      },
+      {
+        where: { id: row_id },
+      }
+    );
+
+    const PR_historical = await PR_history.create({
+      pr_id: row_id,
+      status: 'For-Canvassing',
+      remarks: 'Cancelled PO - Re Canvassing'
+    });
+  
+        res.status(200).json();
+      
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    }
 });
 
 

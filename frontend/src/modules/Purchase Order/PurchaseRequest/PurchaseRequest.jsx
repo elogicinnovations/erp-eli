@@ -12,14 +12,10 @@ import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
-    MagnifyingGlass,
     Gear, 
     Bell,
     UserCircle,
     Plus,
-    Trash,
-    NotePencil,
-    DotsThreeCircle,
     CalendarBlank
   } from "@phosphor-icons/react";
   import '../../../assets/skydash/vendors/feather/feather.css';
@@ -50,6 +46,7 @@ function PurchaseRequest() {
     .then(res => setPR(res.data))
     .catch(err => console.log(err));
   }
+  
   useEffect(() => {
      reloadTable()
     }, []);
@@ -66,7 +63,7 @@ function PurchaseRequest() {
       }).then(async (cancel) => {
         if (cancel) {
           try {
-                  console.log(row_status)
+                  // console.log(row_status)
                   if (row_status !== 'For-Approval' && row_status !== 'For-Rejustification') {
                     swal({
                         icon: 'error',

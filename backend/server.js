@@ -47,6 +47,7 @@ const returned = require("./routes/returned.route");
 const PR = require("./routes/pr.route");
 const PR_product = require("./routes/pr_product.route");
 const PR_history = require("./routes/pr_historical.route");
+const PR_rejustify = require("./routes/pr_rejustify.route");
 
 app.use("/masterList", masterRoute);
 app.use("/userRole", userRoute);
@@ -77,6 +78,7 @@ app.use("/returend", returned);
 app.use("/PR", PR);
 app.use("/PR_product", PR_product);
 app.use("/PR_history", PR_history);
+app.use("/PR_rejustify", PR_rejustify);
 
 
 app.listen(port, () => {

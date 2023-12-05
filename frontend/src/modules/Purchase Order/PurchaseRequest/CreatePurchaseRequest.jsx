@@ -141,6 +141,32 @@ useEffect(() => {
   console.log("Selected Products:", serializedProducts);
 }, [inputValues, product]);
 
+
+
+   //date format
+   function formatDatetime(datetime) {
+    const options = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    return new Date(datetime).toLocaleString('en-US', options);
+  }
+
+   //date format
+function formatDatetime(datetime) {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+  return new Date(datetime).toLocaleString('en-US', options);
+}
+
   return (
     <div className="main-of-containers">
         <div className="left-of-main-containers">
@@ -262,7 +288,7 @@ useEffect(() => {
                                                     
                                                   </div>
                                                 </td>
-                                                <td >{product.created}</td>
+                                                <td >{formatDatetime(product.created)}</td>
                                                 <td >
                                                   <div className='d-flex flex-direction-row align-items-center'>
                                                     <input                                              
