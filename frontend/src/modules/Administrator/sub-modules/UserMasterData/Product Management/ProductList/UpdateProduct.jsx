@@ -23,6 +23,7 @@ function UpdateProduct() {
   const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
+  const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [unit, setunit] = useState('');
@@ -47,6 +48,7 @@ function UpdateProduct() {
       })
     //   .then(res => setsupplier(res.data))
     .then(res => {
+        setCode(res.data[0].product_code);
         setName(res.data[0].product_name);
         setslct_category(res.data[0].product_category);
         setunit(res.data[0].product_unit);
@@ -170,6 +172,7 @@ function UpdateProduct() {
       // })
       const formData = new FormData();
       formData.append('id', id);
+      formData.append('code', code);
       formData.append('name', name);
       formData.append('slct_category', slct_category);
       formData.append('unit', unit);
@@ -264,13 +267,19 @@ function UpdateProduct() {
                         </div>
                         <Form  noValidate validated={validated} onSubmit={update}>
                           <div className="row mt-3">
-                            <div className="col-6">
+                          <div className="col-4">
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Item Code: </Form.Label>
+                                <Form.Control required type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
+                              </Form.Group>
+                            </div>
+                            <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
                                 <Form.Control required type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-6">
+                            <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Category: </Form.Label>
 

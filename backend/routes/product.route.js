@@ -163,7 +163,7 @@ router.route('/update').put(
         where: {
           // product_code: req.body.binLocationName, //dapat ma generate pag meron na assembly at parts
           product_code: req.body.code,
-          product_cid: { [Op.ne]: req.body.id },
+          product_id: { [Op.ne]: req.body.id },
         },
       });
   
@@ -192,6 +192,7 @@ router.route('/update').put(
           }
 
           const newData = await Product.update({
+          product_code: req.body.code,
           product_name: req.body.name,
           product_category: req.body.slct_category,
           product_unit: req.body.unit,
