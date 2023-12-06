@@ -28,7 +28,7 @@ router.route('/fetchspareTable').get(async (req, res) => {
         return res.status(404).json();
         
         }
-        console.log(data)
+        // console.log(data)
         return res.json(data);
         
     } catch (error) {

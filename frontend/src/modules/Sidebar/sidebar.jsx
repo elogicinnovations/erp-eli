@@ -512,7 +512,7 @@ function Sidebar() {
                     button
                     className={`Productsub-menu ${location.pathname === '/subParts' ? 'active' : ''}`}
                   >
-                    <ListItemText primary="Sub Parts" />
+                    <ListItemText primary="Product Sub-Parts" />
                   </ListItem>
                 </NavLink>
                   <NavLink
@@ -524,7 +524,7 @@ function Sidebar() {
                     button
                     className={`Employeesub-menu ${location.pathname.startsWith('/spareParts') || location.pathname.startsWith('/createSpareParts') || location.pathname.startsWith('/updateSpareParts') ? 'active' : ''}`}
                   >
-                    <ListItemText primary="Spare Parts" />
+                    <ListItemText primary="Product Parts" />
                   </ListItem>
                 </NavLink>
                   <NavLink

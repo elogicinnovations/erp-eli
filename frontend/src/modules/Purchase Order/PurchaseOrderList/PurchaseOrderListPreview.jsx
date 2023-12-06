@@ -394,10 +394,7 @@ function PurchaseOrderListPreview() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>
-                        Save
+                        Close
                     </Button>
                 </Modal.Footer>
             </Form>
