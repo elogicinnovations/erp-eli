@@ -129,16 +129,19 @@ router.route('/create').post(
             product_imageType: image_blobFiletype
           });
 
-          const IdData = newData.id;
-          for (const assemblydropdown of req.body.assembly){
-              const assemblyValue = assemblydropdown.value
+          const IdData = newData.product_id;
+          
+          const selectedAssemblies = JSON.parse(req.body.assemblies);
 
-
-              console.log(assemblyValue)
+          for (const assemblyDropdown of selectedAssemblies) {
+            const assemblyValue = assemblyDropdown.value;
+    
+            console.log(assemblyValue);
+    
             await Product_Assembly.create({
               product_id: IdData,
-              assembly_id: assemblyValue
-            })
+              assembly_id: assemblyValue,
+            });
           }
   
           res.status(200).json(newData);
