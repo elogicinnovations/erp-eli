@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../Sidebar/sidebar';
 import axios from 'axios';
+import Modal from 'react-bootstrap/Modal';
 import BASE_URL from '../../assets/global/url';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import Form from 'react-bootstrap/Form';
+import swal from 'sweetalert';
+import Button from 'react-bootstrap/Button';
 import {
     MagnifyingGlass,
     Gear, 
@@ -39,19 +43,103 @@ const navigate = useNavigate()
         .catch(err => console.log(err));
     }, []);
 
+    const { id } = useParams();
     const [returned, setReturned] = useState([]);
-    // Get Return
-    useEffect(() => {
-      axios.get(BASE_URL + '/returend/getReturned')
-      .then(res => setReturned(res.data))
-      .catch(err => console.log(err));
-  }, []);
-       
+    const [remarks, setRemarks] = useState([])
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/issuedReturn/getReturn',{
+      params: {
+        id: id
+      }
+    })
+    .then(res => {
+        setReturned(res.data);
+        setRemarks(res.data[0].remarks);
+    })
+    .catch(err => {
+      console.error(err);
+      // Handle error state or show an error message to the user
+    });
+  }, [id]);
+
+  const fetchReturnedData = () => {
+        axios.get(BASE_URL + '/issuedReturn/getReturn')
+            .then(res => setReturned(res.data))
+            .catch(err => console.log(err));
+    };
+    const handleMoveToInventory = (returnId) => {
+      // Show confirmation SweetAlert
+      swal({
+        title: 'Are you sure?',
+        text: 'This will move the item to inventory!',
+        icon: 'warning',
+        buttons: true,
+        dangerMode: true,
+      }).then((confirmed) => {
+        if (confirmed) {
+          // If confirmed, make the API call to move to inventory
+          axios.post(BASE_URL + `/issuedReturn/moveToInventory/${returnId}`)
+            .then(() => {
+              // Show success SweetAlert
+              swal('Success!', 'Item moved to inventory successfully!', 'success')
+                .then(() => {
+                  // Reload the page
+                  window.location.reload();
+                });
+            })
+            .catch(err => {
+              console.log(err);
+              // Show error SweetAlert if the API call fails
+              swal('Error!', 'Failed to move item to inventory. Please try again.', 'error');
+            });
+        }
+      });
+    };
+    
+    const handleRetain = (returnId) => {
+      // Show confirmation SweetAlert
+      swal({
+          title: 'Are you sure?',
+          text: 'This will set the status to Retained!',
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+      }).then((confirmed) => {
+          if (confirmed) {
+              // If confirmed, make the API call to update the status to Retained
+              axios.put(BASE_URL + `/issuedReturn/updateStatus/${returnId}`, { status: 'Retained' })
+                  .then(() => {
+                      // Show success SweetAlert
+                      swal('Success!', 'Status set to Retained successfully!', 'success')
+                          .then(() => {
+                              // Reload the page or perform additional actions if needed
+                              window.location.reload();
+                          });
+                  })
+                  .catch(err => {
+                      console.log(err);
+                      // Show error SweetAlert if the API call fails
+                      swal('Error!', 'Failed to update status to Retained. Please try again.', 'error');
+                  });
+          }
+      });
+  };
+  
+    
 
     // Artificial Data
 
     const [showDropdown, setShowDropdown] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    
+    const [showModal, setShowModal] = useState(false);
+    const handleShow = () => setShowModal(true);
+    const [validated, setValidated] = useState(false);
+
+    const handleClose = () => {
+      setShowModal(false);
+    };
 
   useEffect(() => {
     // Close dropdown when the component unmounts or when another tab is selected
@@ -133,18 +221,6 @@ const navigate = useNavigate()
         color: '#333',
         transition: 'color 0.3s',
     };
-
-     //date format
-     function formatDatetime(datetime) {
-        const options = {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        };
-        return new Date(datetime).toLocaleString('en-US', options);
-      }
 
        //date format
     function formatDatetime(datetime) {
@@ -301,41 +377,27 @@ const navigate = useNavigate()
                                                     <tbody>
                                                         {returned.map((data, i) => (
                                                         <tr key={i}>
-                                                            <td>{data.issued_return_id}</td>
-                                                            <td>{data.issued_id}</td>
-                                                            <td>{data.masterlist.col_Fname}</td>
-                                                            <td>{data.quantity}</td>
-                                                            <td>{formatDatetime(data.createdAt)}</td>
-                                                            <td>{data.status}</td>
+                                                            <td onClick={handleShow}>{data.issued_return_id}</td>
+                                                            <td onClick={handleShow}>{data.issued_id}</td>
+                                                            <td onClick={handleShow}>{data.return_by}</td>
+                                                            <td onClick={handleShow}>{data.quantity}</td>
+                                                            <td onClick={handleShow}>{formatDatetime(data.createdAt)}</td>
+                                                            <td onClick={handleShow}>{data.status}</td>
                                                             <td>
-                                                            <DotsThreeCircle
-                                                                size={32}
-                                                                className="dots-icon"
-                                                                style={{
-                                                                cursor: 'pointer',
-                                                                transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
-                                                                color: rotatedIcons[i] ? '#666' : '#000',
-                                                                transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
-                                                                }}
-                                                                onClick={(event) => toggleDropdown(event, i)}
-                                                            />
-                                                            <div
-                                                                className='choices'
-                                                                style={{
-                                                                position: 'fixed',
-                                                                top: dropdownPosition.top - 30 + 'px',
-                                                                left: dropdownPosition.left - 100 + 'px',
-                                                                opacity: showDropdown ? 1 : 0,
-                                                                visibility: showDropdown ? 'visible' : 'hidden',
-                                                                transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-                                                                boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                                                                }}
-                                                            >
-                                                                {/* Your dropdown content here */}
-                                                                <button style={{fontSize: '15px'}}>Retained</button>
-                                                                <button style={{fontSize: '15px'}}>To Inventory</button>
-                                        
-                                                            </div>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleMoveToInventory(data.issued_return_id)}
+                                                              >
+                                                                  move to inventory
+                                                              </button>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleRetain(data.issued_return_id)}
+                                                              >
+                                                                  Retain
+                                                              </button>
                                                             </td>
                                                         </tr>
                                                         ))}
@@ -343,6 +405,59 @@ const navigate = useNavigate()
                                             </table>
                                         </div>
                                     </div>
+                                    
+                                    <Modal show={showModal} onHide={handleClose}>
+                                      <Form noValidate validated={validated}>
+                                        <Modal.Header closeButton>
+                                          <Modal.Title style={{ fontSize: '24px' }}>Return Information</Modal.Title>     
+                                        </Modal.Header>
+                                          <Modal.Body>
+                                            
+                                            <div className="row">
+                                            <div className="col-6">
+                                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '18px' }}>ID: </Form.Label>
+                                                <Form.Control type="text"
+                                                style={{height: '40px', fontSize: '15px'}}/>
+                                              </Form.Group>
+                                              </div>
+                                              <div className="col-6">
+                                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '18px' }}>Issuance ID: </Form.Label>
+                                                <Form.Control type="text"
+                                                style={{height: '40px', fontSize: '15px'}}/>
+                                              </Form.Group>
+                                            </div>
+                                            </div><div className="row">
+                                            <div className="col-6">
+                                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '18px' }}>Quantity: </Form.Label>
+                                                <Form.Control type="text"
+                                                style={{height: '40px', fontSize: '15px'}}/>
+                                              </Form.Group>
+                                              </div>
+                                              <div className="col-6">
+                                              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '18px' }}>Return By: </Form.Label>
+                                                <Form.Control type="text"
+                                                style={{height: '40px', fontSize: '15px'}}/>
+                                              </Form.Group>
+                                            </div>
+                                            </div>
+                                            <div>
+                                              <Form.Group controlId="exampleForm.ControlInput2">
+                                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                                <Form.Control
+                                                  value={remarks} disabled as="textarea" style={{fontSize: '16px', height: '100px', maxHeight: '200px', resize: 'none', overflowY: 'auto'}} />
+                                              </Form.Group>
+                                          </div>
+                                                
+
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                            </Modal.Footer>
+                                        </Form>
+                                      </Modal>
                                 </Tab>
                             </Tabs>
                         </div>
