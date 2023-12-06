@@ -49,15 +49,47 @@ Product.belongsTo(BinLocation, { foreignKey: "product_location"});
 
 Manufacturer.hasMany(Product, { foreignKey: "product_manufacturer"}); // ginamit ng product
 Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"}); // gumamit sa manufacturer
- 
+
+
+
+
+
+//product tag supplier table
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
 
+Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
+ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+// product_assemblies` table
 Product.hasMany(Product_Assembly, { foreignKey: "product_id"});
 Product_Assembly.belongsTo(Product, { foreignKey: "product_id"});
 
-Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
-ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
+Assembly.hasMany(Product_Assembly, { foreignKey: "assembly_id"});
+Product_Assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+
+
+// product_spareparts` table
+Product.hasMany(Product_Spareparts, { foreignKey: "product_id"});
+Product_Spareparts.belongsTo(Product, { foreignKey: "product_id"});
+
+SparePart.hasMany(Product_Spareparts, { foreignKey: "sparePart_id"});
+Product_Spareparts.belongsTo(SparePart, { foreignKey: "sparePart_id"});
+
+
+
+// product_subparts` table
+Product.hasMany(Product_Subparts, { foreignKey: "product_id"});
+Product_Subparts.belongsTo(Product, { foreignKey: "product_id"});
+
+SubPart.hasMany(Product_Subparts, { foreignKey: "subPart_id"});
+Product_Subparts.belongsTo(SubPart, { foreignKey: "subPart_id"});
+
+
+
+
+
 
 MasterList.hasMany(CostCenter, { foreignKey: "col_id" });
 CostCenter.belongsTo(MasterList, { foreignKey: "col_id"});
@@ -150,6 +182,8 @@ module.exports = {
                     
                     ProductTAGSupplier,
                     Product_Assembly,
+                    Product_Spareparts,
+                    Product_Subparts,
 
                     Category, 
                     BinLocation, 
