@@ -17,29 +17,25 @@ import {
 function UpdateSpareParts() {
 
 const [validated, setValidated] = useState(false);
-const [fetchSupp, setFetchSupp] = useState([]); // for select options
-const [fetchSubPart, setFetchSubPart] = useState([]); // for select options
+const [fetchSupp, setFetchSupp] = useState([]); 
+const [fetchSubPart, setFetchSubPart] = useState([]);
 const [code, setCode] = useState('');
 const [name, setName] = useState('');
 const [supp, setSupp] = useState([]);
 const [desc, setDesc] = useState('');
+const [priceInput, setPriceInput] = useState({});
+const [addPriceInput, setaddPriceInputbackend] = useState([]);
 
+const [tableSupp, setTableSupp] = useState([]);
 
-//Edit useState display
-const [tableSupp, setTableSupp] = useState([]); // for display in table 
-
-// for display selected subPart in Table
 const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
 const [isReadOnly, setReadOnly] = useState(false);
+const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
+
 
 const navigate = useNavigate();
 const { id } = useParams();
-
-
-
-
-
 
 //para sa mga input textfieldd fetch
 useEffect(() => {
@@ -52,6 +48,7 @@ useEffect(() => {
       setCode(res.data[0].spareParts_code);
       setName(res.data[0].spareParts_name);
       setDesc(res.data[0].spareParts_desc);
+
 
       // Ensure that the API response contains an array of subParts
       const existingSubParts = res.data[0].subParts.map(subPart => ({
@@ -66,24 +63,53 @@ useEffect(() => {
 }, [id]);
 
 
-// para sa mga 
+// const handlePriceChange = (index, value) => {
+//   const updatedTable = [...tableSupp];
+//   updatedTable[index].supplier_price = value;
+//   setTableSupp(updatedTable);
+// };
 
+const handlePriceChange = (index, value) => {
+  const updatedTable = [...tableSupp];
+  updatedTable[index].supplier_price = value;
+
+  const serializedPrice = updatedTable.map((row) => ({
+    price: row.supplier_price || '',
+    code: row.supplier_code
+  }));
+
+  setTableSupp(updatedTable);
+  setaddPriceInputbackend(serializedPrice);
+
+  console.log("Price Inputted:", serializedPrice);
+
+  // Return the updatedInputs to be used as the new state
+  return updatedTable;
+};
+
+//fetch the spareparts in table
 useEffect(() => {
   axios.get(BASE_URL + '/supp_SparePart/fetchTableEdit', {
     params: {
       id: id
     }
   })
-    .then(res => setTableSupp(res.data))
-    .catch(err => console.log(err));
-}, []);
+    .then(res => {
+      const data = res.data;
+      setTableSupp(data);
 
-// useEffect(() => {
-//   axios.get(BASE_URL + '/supp_SparePart/fetchTableEdit')
-    
-//     .then(res => setSubParts(res.data))
-//     .catch(err => console.log(err));
-// }, []);
+      // Set selected options based on the table data
+      const selectedOptions = data.map((row) => ({
+        value: row.supplier_code,
+        label: `Supplier Code: ${row.supplier_code} / Name: ${row.supplier.supplier_name}`,
+        // Add other properties as needed
+      }));
+      setSelectedDropdownOptions(selectedOptions);
+    })
+    .catch(err => console.log(err));
+}, [id]);
+
+
 
 useEffect(() => {
   axios.get(BASE_URL + '/supplier/fetchTable')
@@ -101,9 +127,21 @@ useEffect(() => {
 
 //for supplier selection values
 const handleSelectChange = (selectedOptions) => {
-  setSupp(selectedOptions);
+  setSelectedDropdownOptions(selectedOptions);
+  // Update the table with the selected options and the previously removed rows
+  const updatedTable = [
+    ...tableSupp.filter((row) => selectedOptions.some((option) => option.value === row.supplier_code)),
+    ...selectedOptions
+      .filter((option) => !tableSupp.some((row) => row.supplier_code === option.value))
+      .map((option) => ({
+        supplier_code: option.value,
+        supplier: {
+          supplier_name: option.label.split('/ Name: ')[1].trim(),
+        },
+      })),
+  ];
 
-  console.log(selectedOptions)
+  setTableSupp(updatedTable);
 };
 
 const handleSelectChange_SubPart = (selectedOptions) => {
@@ -143,6 +181,7 @@ const update = async (e) => {
           supp,
           desc,
           SubParts,
+          addPriceInput
         }
         
       })
@@ -284,12 +323,13 @@ const update = async (e) => {
                                   <table>
                                     <thead>
                                       <tr>
-                                      <th className='tableh'>Supplier Code</th>
-                                        <th className='tableh'>Supplier Name</th>
-                                        <th className='tableh'>Supplier Email</th>
-                                        <th className='tableh'>Supplier Number</th>
-                                        <th className='tableh'>Supplier Country</th>
+                                        <th className='tableh'>Supplier Code</th>
+                                        <th className='tableh'>Name</th>
+                                        <th className='tableh'>Email</th>
+                                        <th className='tableh'>Contact</th>
+                                        <th className='tableh'>Address</th>
                                         <th className='tableh'>Receiving Area</th>
+                                        <th className='tableh'>Price</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -299,20 +339,30 @@ const update = async (e) => {
                                           <td>{data.supplier.supplier_name}</td>
                                           <td>{data.supplier.supplier_email}</td>
                                           <td>{data.supplier.supplier_number}</td>
-                                          <td>{data.supplier.supplier_country}</td>
+                                          <td>{data.supplier.supplier_address}</td>
                                           <td>{data.supplier.supplier_receiving}</td>
+                                          <td>
+                                            <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
+                                            <input
+                                              type="number"
+                                              style={{ height: '50px' }}
+                                              value={data.supplier_price || ''}
+                                              readOnly={!isReadOnly}
+                                              onChange={(e) => handlePriceChange(i, e.target.value)}
+                                            />
+                                          </td>
                                         </tr>
                                       ))}
                                      
-                                          {supp.length > 0 ? (
+                                          {/* {supp.length > 0 ? (
                                             supp.map((supp) => (
                                               <tr>
-                                                <td key={supp.value}>{supp.value}</td>
-                                                <td >{supp.label}</td>
-                                                <td >{supp.email}</td>
-                                                <td >{supp.number}</td>
-                                                <td >{supp.country}</td>
-                                                <td >{supp.receving}</td>
+                                                <td>{supp.codes}</td>
+                                                <td>{supp.name}</td>
+                                                <td>{supp.email}</td>
+                                                <td>{supp.number}</td>
+                                                <td>{supp.address}</td>
+                                                <td>{supp.receving}</td>
                                               </tr>
                                             ))
                                           ) : (
@@ -325,36 +375,31 @@ const update = async (e) => {
                                                  <td></td>
                                               </tr>
                                          
-                                          )}
+                                          )} */}
 
-                                         
-                                      
-                                     
                                     </tbody>
                                     {showDropdown && (
                                         <div className="dropdown mt-3">
                                            <Select
-                                              isMulti
-                                              options={fetchSupp.map(supplier => ({
-                                                value: supplier.supplier_code,
-                                                label: supplier.supplier_name,
-                                                email: supplier.supplier_email,
-                                                number: supplier.supplier_number,
-                                                country: supplier.supplier_country,
-                                                receving: supplier.supplier_receiving
-                                              }))}
-                                              onChange={handleSelectChange}
-                                            />
+                                                isMulti
+                                                options={fetchSupp.map((supplier) => ({
+                                                  value: supplier.supplier_code,
+                                                  label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
+                                                  // Add other properties as needed
+                                                }))}
+                                                value={selectedDropdownOptions}
+                                                onChange={handleSelectChange}
+                                              />
                                         </div>
                                       )}
 
                                       
                                       {isReadOnly && (
                                         <Button
-                                        className='btn btn-danger mt-1'
+                                        variant="outline-warning"
                                         onClick={handleAddSupp}
                                         size="md"
-                                        style={{ fontSize: '15px', margin: '0px 5px' }}
+                                        style={{ fontSize: '15px', marginTop: '10px' }}
                                           
                                         >
                                           Add Supplier

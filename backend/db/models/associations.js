@@ -6,6 +6,9 @@ const BinLocation = require("./binLocation.model");
 const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
+const Product_Subparts = require("./product_subparts.model");
+const Product_Spareparts = require("./product_spare.model");
+const Product_Assembly = require("./product_assembly.model");
 const CostCenter = require("./costcenter.model");
 
 const SubPart = require("./subpart.model");
@@ -49,6 +52,9 @@ Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"}); // gumam
  
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
+
+Product.hasMany(Product_Assembly, { foreignKey: "product_id"});
+Product_Assembly.belongsTo(Product, { foreignKey: "product_id"});
 
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
 ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
@@ -141,10 +147,14 @@ module.exports = {
                     MasterList, 
                     UserRole,  
                     Product, 
+                    
+                    ProductTAGSupplier,
+                    Product_Assembly,
+
                     Category, 
                     BinLocation, 
                     Manufacturer,
-                    ProductTAGSupplier,
+                    
                     Supplier,
                     CostCenter,
                     SubPart,

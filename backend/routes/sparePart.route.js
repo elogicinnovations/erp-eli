@@ -60,8 +60,9 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
-       const {code, name, supp, desc, SubParts} = req.body;
+       const {code, name, supp, desc, SubParts, SpareaddPriceInput} = req.body;
         // Check if the supplier code is already exists in the table
+        console.log(code);
         const existingDataCode = await SparePart.findOne({
           where: {
             spareParts_code: code,
@@ -78,13 +79,15 @@ router.route('/create').post(async (req, res) => {
           });
 
           const createdID = spare_newData.id;
-          console.log('new ID' + createdID)
-          for (const supplier of supp) {
-            const supplierValue = supplier.value;
+
+          for (const supplier of SpareaddPriceInput) {
+            const supplierValue = supplier.code;
+            const supplierPrices = supplier.price;
     
             await SparePart_Supplier.create({
                 sparePart_id: createdID,
                 supplier_code: supplierValue,
+                supplier_price: supplierPrices
             });
           }
 
@@ -111,7 +114,6 @@ router.route('/create').post(async (req, res) => {
 
 router.route('/update').put(async (req, res) => {
   try {
-    // console.log(req.query.id)
 
     // Check if the email already exists in the table for other records
     const existingData = await SparePart.findOne({
@@ -163,12 +165,14 @@ router.route('/update').put(async (req, res) => {
           }
         })
         if(deletesupp){
-          for (const supplier of req.query.supp) {
-            const supplierValue = supplier.value;
+          for (const supplier of req.query.addPriceInput) {
+            const supplierValue = supplier.code;
+            const supplierPrice = supplier.price;
     
             await SparePart_Supplier.create({
                 sparePart_id: req.query.id,
                 supplier_code: supplierValue,
+                supplier_price: supplierPrice
             });
           }
   

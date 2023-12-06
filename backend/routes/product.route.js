@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Product = require('../db/models/product.model')
-const { ProductTAGSupplier, Product, Inventory } = require("../db/models/associations"); 
+const { ProductTAGSupplier, Product, Inventory, Product_Assembly } = require("../db/models/associations"); 
 const session = require('express-session')
 const multer = require('multer'); // Import multer
 
@@ -88,34 +88,21 @@ router.route('/create').post(
     try {
 
       let finalThreshold;
-
-
       if (req.body.thresholds === ''){
         finalThreshold = 0;
       }else{
         finalThreshold = req.body.thresholds;
       }
-        
-        // Check if the supplier code is already exists in the table
         const existingDataCode = await Product.findOne({
           where: {
             product_code: req.body.code, 
-            // product_name: req.body.name,
           },
         });
     
         if (existingDataCode) {
           res.status(201).send('Exist');
         } else {
-
-
             let image_blob, image_blobFiletype;
-
-
-            // image_blob = req.files.selectedimage[0].buffer;
-
-            // image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
-
             if (req.files.selectedimage) {
                 image_blob = req.files.selectedimage[0].buffer;
 
@@ -142,17 +129,18 @@ router.route('/create').post(
             product_imageType: image_blobFiletype
           });
 
-
-          //para automatic insert if mag insert ng product
-          // const generated_product_id = newData.product_id;
-
-          // await Inventory.create({
-          //   product_id: generated_product_id,
-          //   quantity: 0
-          // })
+          const IdData = newData.id;
+          for (const assemblydropdown of req.body.assembly){
+              const assemblyValue = assemblydropdown.value
 
 
-    
+              console.log(assemblyValue)
+            await Product_Assembly.create({
+              product_id: IdData,
+              assembly_id: assemblyValue
+            })
+          }
+  
           res.status(200).json(newData);
           // console.log(newDa)
         }

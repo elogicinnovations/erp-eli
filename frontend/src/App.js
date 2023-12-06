@@ -32,9 +32,11 @@ import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product
 import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
 import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
 import UpdateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/UpdateSpareParts"
+import ViewSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/ViewSpareParts"
 import AssemblyForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/AssemblyForm"
 import CreateAssemblyForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/CreateAssemblyForm"
 import UpdateAssemblyForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/UpdateAssemblyForm"
+import ViewAssemblyeForm from "./modules/Administrator/sub-modules/UserMasterData/Product Management/AssemblyForm/ViewAssemblyForm";
 import CreateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/CreateProduct"
 import UpdateProduct from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/UpdateProduct"
 import ProductSupplier from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductSupplier"
@@ -178,6 +180,10 @@ function App() {
                     path="/updateSpareParts/:id"
                     element={<UpdateSpareParts/>}
                   />
+                   <Route
+                    path="/viewSpareParts/:id"
+                    element={<ViewSpareParts/>}
+                  />
           <Route
             path="/assemblyForm"
             element={<AssemblyForm/>}
@@ -189,6 +195,10 @@ function App() {
                   <Route
                     path="/updateAssemblyForm/:id"
                     element={<UpdateAssemblyForm/>}
+                  />
+                  <Route 
+                    path="/viewAssembleForm/:id"
+                    element={<ViewAssemblyeForm/>}
                   />
           <Route
             path="/costCenter"
