@@ -52,6 +52,7 @@ import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/Crea
 import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
 import PurchaseOrderList from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderList";
 import PurchaseOrderListPreview from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderListPreview";
+import PO_approvalRejustify from "./modules/Purchase Order/PurchaseOrderList/PO_approval_rejustify";
 import StockManagement from "./modules/Warehouse/Stock Management/StockManagement";
 import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStockTransfer";
 import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview"
@@ -249,9 +250,13 @@ function App() {
             element={<PurchaseOrderList/>}
           />
                   <Route
-                        path="/purchaseOrderListPreview/:id"
-                        element={<PurchaseOrderListPreview/>}
-                      />
+                    path="/purchaseOrderListPreview/:id"
+                    element={<PurchaseOrderListPreview/>}
+                  />
+                    <Route
+                    path="/PO_approvalRejustify/:id"
+                    element={<PO_approvalRejustify/>}
+                  />
           <Route
             path="/stockManagement"
             element={<StockManagement/>}

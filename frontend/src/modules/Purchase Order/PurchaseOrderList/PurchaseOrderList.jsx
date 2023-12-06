@@ -243,9 +243,16 @@ const [pr_req, setPr_req] = useState([]);
                           <tbody>
                             {pr_req.map((data, i) => (
                               <tr key={i}>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.pr_num}</td>
+                              <td
+                                onClick={() => data.status === 'For-Approval (PO)' ? navigate(`/PO_approvalRejustify/${data.id}`) : navigate(`/purchaseOrderListPreview/${data.id}`)}
+                              >
+                                {data.pr_num}
+                              </td>
                                 <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>--</td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.status}</td>
+                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>
+                                  {data.status === 'For-Approval (PO)' ? 'For Approval' : data.status}
+                                </td>
+
                                 <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{formatDatetime(data.updatedAt)}</td>
                                 <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.remarks}</td>
                               </tr>

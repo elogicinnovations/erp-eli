@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR = require('../db/models/pr.model')
-const {PR, PR_product, PR_history} = require('../db/models/associations')
+const {PR, PR_product, PR_history, PR_PO} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -35,7 +35,10 @@ router.route('/fetchTable_PO').get(async (req, res) => {
    
     const data = await PR.findAll({
       where: {
-        status: 'For-Canvassing'
+        [Op.or]: [
+          { status: 'For-Canvassing' },
+          { status: 'For-Approval (PO)' }
+        ]
       }
     });
 
@@ -166,7 +169,7 @@ router.route('/approve').post(async (req, res) => {
           status: 'For-Canvassing'
         },
         {
-          where: { id }
+          where: { id: id }
         }); 
 
         const PR_historical = await PR_history.create({
@@ -283,6 +286,16 @@ router.route('/cancel_PO').put(async (req, res) => {
       status: 'For-Canvassing',
       remarks: 'Cancelled PO - Re Canvassing'
     });
+
+
+    const deletePR_prod = PR_PO.destroy({
+      where : {
+        pr_id: row_id
+      }
+    })
+    if(deletePR_prod){
+
+    }
   
         res.status(200).json();
       

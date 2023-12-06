@@ -34,6 +34,7 @@ const PR = require("./pr.model");
 const PR_product = require("./pr_products.model");
 const PR_history = require("./pr_historical.model");
 const PR_Rejustify = require("./pr_rejustify.model");
+const PR_PO = require("./pr_toPO.model");
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -149,6 +150,13 @@ PR_history.belongsTo(PR, { foreignKey: "pr_id"});
 PR.hasMany(PR_Rejustify, { foreignKey: "pr_id"});
 PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id"});
 
+//purchase_req_pos TAble
+PR.hasMany(PR_PO, { foreignKey: "pr_id"});
+PR_PO.belongsTo(PR, { foreignKey: "pr_id"});
+
+ProductTAGSupplier.hasMany(PR_PO, { foreignKey: "product_tag_supplier_ID"});
+PR_PO.belongsTo(ProductTAGSupplier, { foreignKey: "product_tag_supplier_ID"});
+
 
 //Assembly Sub parts
 Assembly.hasMany(Assembly_SubPart, { foreignKey: "assembly_id"});
@@ -210,5 +218,6 @@ module.exports = {
                     PR,
                     PR_product,
                     PR_history,
-                    PR_Rejustify
+                    PR_Rejustify,
+                    PR_PO
                 };
