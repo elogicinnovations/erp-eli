@@ -22,6 +22,30 @@ router.use(session({
 
 
 
+
+// for PR  fetching all the products, assembly, sparePart, subpart
+router.route('/fetchALLProduct').get(async (req, res) => {
+  try {
+    const data = await sequelize.query(`
+      SELECT product_id as id, product_code as code, product_name as name,createdAt as createdAt FROM products
+      UNION
+      SELECT id as id, assembly_code as code, assembly_name as name, createdAt as createdAt FROM assemblies
+    `, {
+      type: sequelize.QueryTypes.SELECT,
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400).json({ error: "No data found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 router.route('/fetchTable').get(async (req, res) => {
   try {
   //   const data = await MasterList.findAll({

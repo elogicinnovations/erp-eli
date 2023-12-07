@@ -38,6 +38,10 @@ function POApprovalRejustify() {
 
   //for adding the data from table canvass to table PO
   const [addProductPO, setAddProductPO] = useState([]);
+
+  // for remarks 
+  const [files, setFiles] = useState([]);
+  const [rejustifyRemarks, setRejustifyRemarks] = useState('');
 //   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
 //   const [quantityInputs, setQuantityInputs] = useState({});
 //   const handleAddToTablePO = (itemId) => {
@@ -61,6 +65,15 @@ function POApprovalRejustify() {
 //     return selectedItem
     
 //   };
+
+const [showModal, setShowModal] = useState(false);
+
+const handleShow = () => setShowModal(true);
+
+const handleClose = () => {
+  setShowModal(false);
+};
+
 
 useEffect(() => {
     axios.get(BASE_URL + '/PR_PO/fetchView',{
@@ -111,10 +124,7 @@ useEffect(() => {
   // const handleShow = () => setShowModal(true);
 
   
-
-
-  
-  const handleCancel = async (status, id) => {
+  const handleCancel = async (id) => {
     swal({
       title: "Are you sure?",
       text: "You are about to cancel the request",
@@ -155,6 +165,55 @@ useEffect(() => {
       } else {
         swal({
           title: "Cancelled Successfully",
+          text: "Request not Approved!",
+          icon: "warning",
+        });
+      }
+    });
+  };
+
+
+  
+  
+  const handleApprove = async (id) => {
+    swal({
+      title: "Are you sure want to approve this purchase Order?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {       
+            const  response = await axios.post(BASE_URL + `/PR_PO/approve_PO`, {
+             id
+           });
+           
+           if (response.status === 200) {
+             swal({
+               title: 'Approved Successfully',
+               text: 'The Request is approved successfully',
+               icon: 'success',
+               button: 'OK'
+             }).then(() => {
+               navigate("/purchaseOrderList")
+               
+             });
+           } else {
+           swal({
+             icon: 'error',
+             title: 'Something went wrong',
+             text: 'Please contact our support'
+           });
+         }
+                      
+         
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        swal({
+          title: "Cancelled Successfully",
           text: "Request not Cancelled!",
           icon: "warning",
         });
@@ -162,6 +221,51 @@ useEffect(() => {
     });
   };
 
+
+  const handleUploadRejustify = async () => {
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+       
+      }
+      formData.append('remarks', rejustifyRemarks);
+      formData.append('id', id);
+
+
+      // Adjust the URL based on your backend server
+      const response = await axios.post(BASE_URL + `/PR_rejustify/rejustify_for_PO`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200){
+        swal({
+          title: 'Request rejustify!',
+          text: 'The Requested PO has been successfully rejustified',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          navigate('/purchaseOrderList')
+          
+        });
+      } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
+  const handleFileChange = (e) => {
+    setFiles(e.target.files);
+  };
 
 
 //   const handleQuantityChange = (value, productValue) => {
@@ -255,7 +359,7 @@ useEffect(() => {
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Purchase Order List Preview
+                    Purchase Order List Approval
                     </h1>
                 </div>
                 </Col>
@@ -378,7 +482,7 @@ useEffect(() => {
                                         <tbody>
                                                 {addProductPO.map((data) =>(
                                                 <tr key={data.id}>
-                                                  <td>{data.product_code}</td>
+                                                  <td>{data.product_tag_supplier.product.product_code}</td>
                                                   <td>
                                                         {data.quantity}
                                                         {/* <div className='d-flex flex-direction-row align-items-center'>
@@ -393,9 +497,9 @@ useEffect(() => {
                                                             /{data.quantity}
                                                         </div> */}
                                                   </td>
-                                                  <td>{data.product_name}</td>
-                                                  <td>{data.supplier_name}</td>
-                                                  <td>{data.product_price}</td>
+                                                  <td>{data.product_tag_supplier.product.product_name}</td>
+                                                  <td>{data.product_tag_supplier.supplier.supplier_name}</td>
+                                                  <td>{data.product_tag_supplier.product_price}</td>
                                           
                                                 </tr>
                                                 ))}
@@ -407,10 +511,86 @@ useEffect(() => {
                         <Button type='button'  
                           className='btn btn-danger' 
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
-                          onClick={() => handleCancel(status, id)}
-                          >Cancel Purchase Order</Button>                       
+                          onClick={() => handleCancel(id)}
+                          >Cancel 
+                        </Button>   
+
+
+
+                        <Button onClick={handleShow} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                               Rejustify
+                        </Button>  
+
+
+                       
+
+                        <Button type='button'  
+                          className='btn btn-success' 
+                          size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
+                          onClick={() => handleApprove(id)}
+                          >Approve
+                        </Button>    
+
+                                             
                         </div>
-           
+                        
+                        <Modal show={showModal} onHide={handleClose}>
+                          <Form>
+                            <Modal.Header closeButton>
+                              <Modal.Title style={{ fontSize: '24px' }}>For Rejustification</Modal.Title>     
+                            </Modal.Header>
+                              <Modal.Body>
+                              <div className="row mt-3">
+                                            <div className="col-6">
+                                              <Form.Group controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
+                                                <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
+                                              </Form.Group>
+                                            </div>
+                                            <div className="col-6">
+                                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
+                                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
+                                                  <DatePicker
+                                                    readOnly
+                                                    selected={dateNeeded}
+                                                    onChange={(date) => setDateNeeded(date)}
+                                                    dateFormat="MM/dd/yyyy"
+                                                    placeholderText="Start Date"
+                                                    className="form-control"
+                                                  />
+                                            </Form.Group>
+                                              </div>
+                                          </div>
+                                          
+                                        <div className="row">
+                                            <Form.Group controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                                <Form.Control as="textarea"  onChange={e => setRejustifyRemarks(e.target.value)}  placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
+                                            </Form.Group>
+                                          <div className="col-6">
+                                            {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
+                                                  <Paperclip size={20} />Upload Attachment
+                                              </Link> */}
+
+                                            <Form.Group controlId="exampleForm.ControlInput1">
+                                                <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
+                                                {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
+                                                <input type="file" onChange={handleFileChange} />
+                                            </Form.Group>
+
+                                            </div>
+                                        </div>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="button" onClick={handleUploadRejustify} variant="warning" size="md" style={{ fontSize: '20px' }}>
+                                        Save
+                                    </Button>
+                                </Modal.Footer>
+                            </Form>
+                          </Modal>
                        
                        
             </div>

@@ -12,6 +12,7 @@ router.use(session({
 }));
 
 
+
 router.route('/fetchTable').get(async (req, res) => {
     try {
      
@@ -37,7 +38,9 @@ router.route('/fetchTable_PO').get(async (req, res) => {
       where: {
         [Op.or]: [
           { status: 'For-Canvassing' },
-          { status: 'For-Approval (PO)' }
+          { status: 'For-Approval (PO)' },
+          { status: 'For-Rejustify (PO)' },
+          { status: 'To-Receive' }
         ]
       }
     });

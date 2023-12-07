@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR_PO = require('../db/models/pr_toPO.model')
-const {PR, PR_PO, PR_history} = require('../db/models/associations')
+const {PR, PR_PO, PR_history, ProductTAGSupplier, Product, Supplier} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -16,6 +16,20 @@ router.route('/fetchView').get(async (req, res) => {
     try {
      
       const data = await PR_PO.findAll({
+        include: [{
+          model: ProductTAGSupplier,
+          required: true,
+
+          include: [{
+            model: Product,
+            required: true
+
+          },
+          {
+            model: Supplier,
+            required: true
+          }]
+        }],
         where: {
          pr_id: req.query.id
   
@@ -78,6 +92,34 @@ router.route('/save').post(async (req, res) => {
 });
 
 
+router.route('/approve_PO').post(async (req, res) => {
+  try {
+     const {id} = req.body;
 
+     console.log(id)
+      
+        const PR_newData = await PR.update({
+          status: 'To-Receive'
+        },
+        {
+          where: { id: id }
+        }); 
+
+        const PR_historical = await PR_history.create({
+          pr_id: id,
+          status: 'To-Receive',
+        });
+
+      //  return console.log(id)
+
+        
+      res.status(200).json();
+      
+      
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    }
+});
 
 module.exports = router;

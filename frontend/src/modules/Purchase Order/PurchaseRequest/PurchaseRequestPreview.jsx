@@ -45,8 +45,6 @@ function PurchaseRequestPreview() {
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
 
-  const [disabledApprove, setDisabledApprove] = useState(false);
-  const [disabledRejustify, setDisabledRejustify] = useState(false);
 
   const [files, setFiles] = useState([]);
   const [rejustifyRemarks, setRejustifyRemarks] = useState('');
@@ -206,19 +204,7 @@ function PurchaseRequestPreview() {
     });
   }, [id]);
 
-  useEffect(() => {
-    // Add this line to log the status
-    if (status === 'For-Approval') {
-      setDisabledApprove(false);
-    }
-    else {
-      setDisabledApprove(true);
-      // setDisabledRejustify(false)
-    }
 
-
-    
-  }, []);
 
   console.log('Status:'+ status);
   
@@ -579,23 +565,86 @@ const update = async e => {
                             </div>
                         
                         <div className='save-cancel'>
-                              {!isReadOnly && (
+                              {/* {!isReadOnly && (
                                 <Button type='button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
-                              )}
+                              )} */}
                               {isReadOnly && (
                                 <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                               )}
-                            {/* {!disabledApprove && (
-                              <Button type='button' onClick={handleApproveClick} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
-                            )} */}
-                            <Button type='button' onClick={handleApproveClick} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Approve</Button>
 
-                            {!disabledRejustify && (
-                               <Button onClick={handleShow} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                               Rejustify
-                             </Button> 
-                            )}
-                                              
+                              {status === 'For-Approval' ? (
+                                <>
+                                  <Button
+                                  
+                                    type='button'
+                                    onClick={handleApproveClick}
+                                    className='btn btn-warning'
+                                    size="md"
+                                    style={{ fontSize: '20px', margin: '0px 5px' }}
+                                  >
+                                    Approve
+                                  </Button>
+
+                                  <Button
+                                    type='button'
+                                    onClick={handleEditClick}
+                                    className='btn btn-success'
+                                    size="s"
+                                    style={{ fontSize: '20px', margin: '0px 5px' }}
+                                  >
+                                    <NotePencil /> Edit
+                                  </Button>
+
+                                  <Button 
+                                      onClick={handleShow} 
+                                      className='btn btn-secondary btn-md' 
+                                      size="md" 
+                                      style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                                    Rejustify
+                                  </Button> 
+
+                                </>
+                                
+                              ):
+                              status === 'For-Rejustify' ? (
+                                <>
+                                <Button
+                                
+                                  type='button'
+                                  onClick={handleApproveClick}
+                                  className='btn btn-warning'
+                                  size="md"
+                                  style={{ fontSize: '20px', margin: '0px 5px' }}
+                                >
+                                  Approve
+                                </Button>
+
+                                <Button
+                                  type='button'
+                                  onClick={handleEditClick}
+                                  className='btn btn-success'
+                                  size="s"
+                                  style={{ fontSize: '20px', margin: '0px 5px' }}
+                                >
+                                  <NotePencil /> Edit
+                                </Button>
+
+                                <Button 
+                                    onClick={handleShow} 
+                                    className='btn btn-secondary btn-md' 
+                                    size="md" 
+                                    style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                                  Rejustify
+                                </Button> 
+
+                              </>
+                              ):
+                             
+                              (
+                               <></>
+                              )
+                              
+                              }                                         
                         </div>
                         </Form>
         <Modal show={showModal} onHide={handleClose}>

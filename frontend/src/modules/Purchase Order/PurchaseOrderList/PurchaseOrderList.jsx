@@ -248,13 +248,51 @@ const [pr_req, setPr_req] = useState([]);
                               >
                                 {data.pr_num}
                               </td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>--</td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>
-                                  {data.status === 'For-Approval (PO)' ? 'For Approval' : data.status}
+                              <td onClick={() => 
+                                          data.status === 'For-Approval (PO)' ? 
+                                            navigate(`/PO_approvalRejustify/${data.id}`) :
+                                            data.status === 'For-Rejustify (PO)' ?
+                                              navigate(`/PO_approvalRejustify/${data.id}`) :
+                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                        }>
+                                    --
                                 </td>
 
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{formatDatetime(data.updatedAt)}</td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.remarks}</td>
+                                
+
+                                <td onClick={() => 
+                                          data.status === 'For-Approval (PO)' ? 
+                                            navigate(`/PO_approvalRejustify/${data.id}`) :
+                                            data.status === 'For-Rejustify (PO)' ?
+                                              navigate(`/PO_approvalRejustify/${data.id}`) :
+                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                        }>
+                                           { (data.status === 'For-Approval (PO)' ? 'For Approval' :
+                                            data.status === 'For-Rejustify (PO)' ? 'For Rejustify' :
+                                            data.status)}
+                                  </td>
+
+                                  <td onClick={() => 
+                                          data.status === 'For-Approval (PO)' ? 
+                                            navigate(`/PO_approvalRejustify/${data.id}`) :
+                                            data.status === 'For-Rejustify (PO)' ?
+                                              navigate(`/PO_approvalRejustify/${data.id}`) :
+                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                        }>
+                                    {formatDatetime(data.updatedAt)}
+                                </td>
+
+                                <td onClick={() => 
+                                          data.status === 'For-Approval (PO)' ? 
+                                            navigate(`/PO_approvalRejustify/${data.id}`) :
+                                            data.status === 'For-Rejustify (PO)' ?
+                                              navigate(`/PO_approvalRejustify/${data.id}`) :
+                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                        }>
+                                   {data.remarks}
+                                </td>
+
+                          
                               </tr>
                             ))}
                           </tbody>
