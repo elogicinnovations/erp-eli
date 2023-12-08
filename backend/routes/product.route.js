@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Product = require('../db/models/product.model')
-const { ProductTAGSupplier, Product, Inventory, Product_Assembly } = require("../db/models/associations"); 
+const { ProductTAGSupplier, Product, Inventory, Product_Assembly, Product_Spareparts, Product_Subparts} = require("../db/models/associations"); 
 const session = require('express-session')
 const multer = require('multer'); // Import multer
 
@@ -153,8 +153,8 @@ router.route('/create').post(
             product_imageType: image_blobFiletype
           });
 
+          //Assembly
           const IdData = newData.product_id;
-          
           const selectedAssemblies = JSON.parse(req.body.assemblies);
 
           for (const assemblyDropdown of selectedAssemblies) {
@@ -164,10 +164,37 @@ router.route('/create').post(
     
             await Product_Assembly.create({
               product_id: IdData,
-              assembly_id: assemblyValue,
+              assembly_id: assemblyValue
             });
           }
   
+          //Spareparts
+          const selectedSpare = JSON.parse(req.body.sparepart);
+
+          for (const spareDropdown of selectedSpare) {
+            const spareValue = spareDropdown.value;
+    
+            console.log(spareValue)
+            await Product_Spareparts.create({
+              product_id: IdData,
+              sparePart_id: spareValue
+            });
+          }
+
+          //Subparts
+          const selectedSubparting = JSON.parse(req.body.subpart);
+
+          for (const subpartDropdown of selectedSubparting) {
+            const subpartValue = subpartDropdown.value;
+    
+            console.log(subpartValue)
+            await Product_Subparts.create({
+              product_id: IdData,
+              subPart_id: subpartValue
+            });
+          }
+
+
           res.status(200).json(newData);
           // console.log(newDa)
         }

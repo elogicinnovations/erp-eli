@@ -35,27 +35,71 @@ function PurchaseOrderList() {
 
 const navigate = useNavigate();
 const [startDate, setStartDate] = useState(null);
+const [endDate, setEndDate] = useState(null);
+const [selectedStatus, setSelectedStatus] = useState('');
+const [filteredPR, setFilteredPR] = useState([]);
+const [allPR, setAllPR] = useState([]);
 
 const handleXCircleClick = () => {
   setStartDate(null);
 };
-const [endDate, setEndDate] = useState(null);
+
 const handleXClick = () => {
   setEndDate(null);
 };
 
+const handleStatusChange = (e) => {
+  setSelectedStatus(e.target.value);
+};
+
 const [pr_req, setPr_req] = useState([]);
 
-  const reloadTable = () =>{
-    axios.get(BASE_URL + '/PR/fetchTable_PO')
-    .then(res => setPr_req(res.data))
-    .catch(err => console.log(err));
-  }
+  const reloadTable = () => {
+    axios
+      .get(BASE_URL + '/PR/fetchTable_PO')
+      .then((res) => {
+        setPr_req(res.data)
+        setAllPR(res.data);
+        setFilteredPR(res.data); 
+      })
+      .catch((err) => console.log(err));
+  };
   
   useEffect(() => {
      reloadTable()
     }, []);
 
+    //Function when user click the Go button to filter
+    const handleGoButtonClick = () => {
+      if (!startDate && !endDate && !selectedStatus) {
+        return;
+      }
+    
+      const filteredData = allPR.filter((data) => {
+        const createdAt = new Date(data.createdAt);
+    
+        const isWithinDateRange =
+          (!startDate || createdAt >= startDate) &&
+          (!endDate || createdAt <= endDate);
+    
+        const isMatchingStatus =
+          !selectedStatus || data.status === selectedStatus;
+    
+        return isWithinDateRange && isMatchingStatus;
+      });
+    
+      setFilteredPR(filteredData);
+    };
+    
+
+    //function when user click the clear filter button
+    const clearFilters = () => {
+      setStartDate(null);
+      setEndDate(null);
+      setSelectedStatus('');
+  
+      reloadTable();
+    };
 
       //date format
       function formatDatetime(datetime) {
@@ -127,105 +171,107 @@ const [pr_req, setPr_req] = useState([]);
 
                 </div>
                 
-                <div className="clone-dropdown">
-                  <div className="dateandselet">
-                      <Form>
-                        <div className="row">
-                          <div className="col-4">
-                            <div style={{ position: "relative", marginBottom: "15px" }}>
-                              <DatePicker
-                                selected={startDate}
-                                onChange={(date) => setStartDate(date)}
-                                placeholderText="Choose Date From"
-                                dateFormat="yyyy-MM-dd"
-                                wrapperClassName="custom-datepicker-wrapper"
-                                popperClassName="custom-popper"
-                              />
-                              <CalendarBlank
-                                size={20}
-                                weight="thin"
-                                style={{
-                                  position: "absolute",
-                                  left: "8px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  cursor: 'pointer',
-                                }}
-                              />
-                              {startDate && (
-                                <XCircle
-                                  size={16}
+                <div className="Employeetext-button">
+                    <div className="employee-and-button">
+                        <div className="button-create-side">
+                          <div style={{ position: "relative", marginBottom: "15px" }}>
+                                <DatePicker
+                                  selected={startDate}
+                                  onChange={(date) => setStartDate(date)}
+                                  placeholderText="Choose Date From"
+                                  dateFormat="yyyy-MM-dd"
+                                  wrapperClassName="custom-datepicker-wrapper"
+                                  popperClassName="custom-popper"
+                                  style={{fontFamily: 'Poppins, Source Sans Pro'}}
+                                />
+                                <CalendarBlank
+                                  size={20}
                                   weight="thin"
                                   style={{
                                     position: "absolute",
-                                    right: "19px",
+                                    left: "8px",
                                     top: "50%",
                                     transform: "translateY(-50%)",
                                     cursor: 'pointer',
                                   }}
-                                  onClick={handleXCircleClick}
                                 />
-                              )}
-                            </div>
-                          </div>
+                                {startDate && (
+                                  <XCircle
+                                    size={16}
+                                    weight="thin"
+                                    style={{
+                                      position: "absolute",
+                                      right: "19px",
+                                      top: "50%",
+                                      transform: "translateY(-50%)",
+                                      cursor: 'pointer',
+                                    }}
+                                    onClick={handleXCircleClick}
+                                  />
+                                )}
+                              </div>
 
-                          <div className="col-4">
-                            <div style={{ position: "relative", marginBottom: "15px" }}>
-                              <DatePicker
-                                selected={endDate}
-                                onChange={(date) => setEndDate(date)}
-                                placeholderText="Choose Date To"
-                                dateFormat="yyyy-MM-dd"
-                                wrapperClassName="custom-datepicker-wrapper"
-                                popperClassName="custom-popper"
-                              />
-                              <CalendarBlank
-                                size={20}
-                                weight="thin"
-                                selected={endDate}
-                                onChange={(date) => setEndDate(date)}
-                                style={{
-                                  position: "absolute",
-                                  left: "8px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  cursor: 'pointer',
-                                }}
-                              />
-                              {endDate && (
-                                <XCircle
-                                  size={16}
+                              <div style={{ position: "relative", marginBottom: "15px" }}>
+                                <DatePicker
+                                  selected={endDate}
+                                  onChange={(date) => setEndDate(date)}
+                                  placeholderText="Choose Date To"
+                                  dateFormat="yyyy-MM-dd"
+                                  wrapperClassName="custom-datepicker-wrapper"
+                                  popperClassName="custom-popper"
+                                  style={{fontFamily: 'Poppins, Source Sans Pro'}}
+                                />
+                                <CalendarBlank
+                                  size={20}
                                   weight="thin"
+                                  selected={endDate}
+                                  onChange={(date) => setEndDate(date)}
                                   style={{
                                     position: "absolute",
-                                    right: "19px",
+                                    left: "8px",
                                     top: "50%",
                                     transform: "translateY(-50%)",
                                     cursor: 'pointer',
                                   }}
-                                  onClick={handleXClick}
                                 />
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="col-4">
-                            <Form.Select aria-label="item status"
-                            style={{width: '250px', height: '40px', fontSize: '15px'}}>
-                              <option disabled selected>
-                                Select Status
-                              </option>
-                            </Form.Select>
-                          </div>
+                                {endDate && (
+                                  <XCircle
+                                    size={16}
+                                    weight="thin"
+                                    style={{
+                                      position: "absolute",
+                                      right: "19px",
+                                      top: "50%",
+                                      transform: "translateY(-50%)",
+                                      cursor: 'pointer',
+                                    }}
+                                    onClick={handleXClick}
+                                  />
+                                )}
+                              </div>
+                              <Form.Select aria-label="item status"
+                                value={selectedStatus}
+                              onChange={handleStatusChange}
+                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}>
+                                  <option value="" disabled selected>
+                                    Select Status
+                                  </option>
+                                  <option value="For-Approval">For-Approval</option>
+                                  <option value="For-Rejustify">For-Rejustify</option>
+                                  <option value="For-Canvassing">For-Canvassing</option>
+                                  <option value="Cancelled">Cancelled</option>
+                                </Form.Select>  
+                                  <button className='goesButton' onClick={handleGoButtonClick}>
+                                    GO
+                                  </button>
+                                  <button className='Filterclear' onClick={clearFilters}>
+                                    Clear Filter
+                                  </button>
+                                  <div className="Buttonmodal-new">
+                                </div>
                         </div>
-                      </Form>
-                      </div>
 
-                      <div className="buttonGo">
-                          <button className='btngo'>
-                            GO
-                          </button>
-                      </div>
+                    </div>
                 </div>
                               
                 <div className="table-containss">
@@ -240,8 +286,9 @@ const [pr_req, setPr_req] = useState([]);
                               <th className='tableh'>Remarks</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            {pr_req.map((data, i) => (
+                          {filteredPR.length > 0 ? (
+                                <tbody>
+                                {filteredPR.map((data, i) => (
                               <tr key={i}>
                              <td
                                   onClick={() =>
@@ -280,9 +327,12 @@ const [pr_req, setPr_req] = useState([]);
                                              navigate(`/PO_receive/${data.id}`) :
                                              navigate(`/purchaseOrderListPreview/${data.id}`)
                                         }>
-                                           { (data.status === 'For-Approval (PO)' ? 'For Approval' :
-                                            data.status === 'For-Rejustify (PO)' ? 'For Rejustify' :
-                                            data.status)}
+                                           <button className='btn btn-secondary' style={{fontSize: '12px'}}>
+                                              {(data.status === 'For-Approval (PO)' ? 'For Approval' :
+                                                data.status === 'For-Rejustify (PO)' ? 'For Rejustify' :
+                                                data.status)} 
+                                            </button>
+                                          
                                   </td>
 
                                   <td onClick={() => 
@@ -309,10 +359,27 @@ const [pr_req, setPr_req] = useState([]);
                                    {data.remarks}
                                 </td>
 
-                          
+{/*                           
+                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.pr_num}</td>
+                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>--</td>
+                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>
+                                  <button className='btn btn-secondary' style={{fontSize: '12px'}}>
+                                          {data.status}
+                                  </button></td>
+                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{formatDatetime(data.updatedAt)}</td>
+                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.remarks}</td> */}
                               </tr>
                             ))}
                           </tbody>
+                          ) : (
+                            <tbody>
+                            <tr>
+                              <td colSpan="6" style={{ textAlign: 'center' }}>
+                                No matches found.
+                              </td>
+                            </tr>
+                          </tbody>
+                        )}
                         </table>
                     </div>
                 </div>

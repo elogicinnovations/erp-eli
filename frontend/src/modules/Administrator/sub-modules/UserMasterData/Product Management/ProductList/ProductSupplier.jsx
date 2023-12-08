@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef}from 'react'
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import '../../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import swal from 'sweetalert';
@@ -11,10 +11,14 @@ import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement
 import cls_unit from '../../../../../../assets/global/unit';
 import Dropzone from 'react-dropzone';
 import Multiselect from 'multiselect-react-dropdown';
+import Select from 'react-select';
 import {
-  Trash
+  DotsThreeCircle,
+  NotePencil,
 } from "@phosphor-icons/react";
-
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import Button from 'react-bootstrap/Button';
 
 import '../../../../../../assets/skydash/vendors/feather/feather.css';
 import '../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
@@ -29,16 +33,17 @@ import '../../../../../../assets/skydash/js/off-canvas';
 
 
 function ProductSupplier() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
   const [product, setproduct] = useState([]); // for fetching product data that tag to supplier
-  // const [validated, setValidated] = useState(false);// for form validation
+  const [validated, setValidated] = useState(false);// for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
-  const [supplier, setsupplier] = useState([]); // for fetching category data
+  const [supplier, setsupplier] = useState([]); // for fetching supplier data
   const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
+  const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [unit, setunit] = useState('');
@@ -50,13 +55,27 @@ function ProductSupplier() {
 
 
   const [price, setPrice] = useState('');
+  const [activeTab, setActiveTab] = useState('Assembly');
+  const [Assembly, setAssembly] = useState([]);
+  const [Subparts, setSubParts] = useState([]);
+  const [Spareparts, setSpareparts] = useState([]);
 
-
+  const [isReadOnly, setReadOnly] = useState(false);
+  const [fetchSupp, setFetchSupp] = useState([]); 
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
 //------------------------------for tagging of supplier ---------------------------//
+//When user click the Edit button function
+const handleEditClick = () => {
+  setReadOnly(true);
+};
 
+//when user click the Add supplier button
+const handleAddSupp = () => {
+  setShowDropdown(true);
+};
 
-const reloadTable  = () => {
-  
+const reloadTable  = () => {  
   axios.get(BASE_URL + '/productTAGsupplier/fetchTable',{
     params: {
       id: id
@@ -65,73 +84,6 @@ const reloadTable  = () => {
     .then(res => setproduct(res.data))
     .catch(err => console.log(err));
 }
-
-
-const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-// const handleSupplierSelect = (selectedList, selectedItem) => {
-//   const uniqueSelectedSuppliers = [];
-
-//   selectedList.forEach(selectedSupplier => {
-//     const isDuplicate = uniqueSelectedSuppliers.some(item => item.id === selectedSupplier.id);
-//     if (!isDuplicate) {
-//       uniqueSelectedSuppliers.push(selectedSupplier);
-//     }
-//   });
-
-//   // Filter out items with blank supplier_code
-//   const nonBlankItems = uniqueSelectedSuppliers.filter(item => item.id !== '');
-
-//   // Update the product state with non-blank items
-//   nonBlankItems.forEach(selectedSupplier => {
-//     axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
-//       id,
-//       selectedItem: selectedSupplier,
-//     })
-//     .then((res) => {
-//       console.log(res);
-//       const newId = res.data.id;
-//       setproduct(prev => [...prev, {
-//         id: newId,
-//         product_code: res.data.product_code,
-//         supplier_code: res.data.supplier_code
-//       }]);
-//     });
-//   });
-
-//   setSelectedSuppliers(nonBlankItems); // Update the state after making the requests
-// };
-
-const handleSupplierSelect = (selectedList, selectedItem) => {
-  const uniqueSelectedSuppliers = [];
-
-  selectedList.forEach(selectedSupplier => {
-    const isDuplicate = uniqueSelectedSuppliers.some(item => item.id === selectedSupplier.id);
-    if (!isDuplicate) {
-      uniqueSelectedSuppliers.push(selectedSupplier);
-    }
-  });
-
-  uniqueSelectedSuppliers.forEach(selectedSupplier => {
-    axios.post(`${BASE_URL}/productTAGsupplier/ADD_taggingSupplier`, {
-      id,
-      selectedItem: selectedSupplier,
-    })
-    .then((res) => {
-      console.log(res);
-
-      reloadTable()
-    });
-  });
-
-  setSelectedSuppliers(uniqueSelectedSuppliers); // Update the state after making the requests
-};
-
-useEffect(() => {
-  reloadTable()
-}, []);
-
-
-
 
 const handleBlurPrice = async table_id => {swal({
   title: "Are you sure to update this price?",
@@ -183,34 +135,8 @@ const handleBlurPrice = async table_id => {swal({
     });
   }
 
-})
-
- 
+  })
 }
-
-
-  const handleSupplierRemove = (selectedList, removedItem) => {
-    setSelectedSuppliers(removedItem);
-    // updateTable(selectedList);
-    //  console.log('remove:' + selectedSuppliers)
-// Log each selected supplier
-  // selectedList.forEach(selectedSupplier => {
-  //   console.log('Selected Supplier: ' + selectedSupplier.name);
-  //   axios.post(`${BASE_URL}/productTAGsupplier/taggingSupplier`, {
-  //     id,
-  //     // selectedSupplier, // Send the currently selected supplier
-  //     selectedItem
-  //   })
-  //   .then((res) => {
-  //     console.log(res);
-  //     // Handle the response or display a message if needed
-  //   });
-  // });
-  // setSelectedSuppliers(removedItem); // Update the state after making the requests
-  // updateTable(selectedList);
-    
-  };
-
 
 //------------------------------for tagging of supplier END ---------------------------//
 
@@ -267,6 +193,7 @@ const handleDelete = async table_id => {
       })
     //   .then(res => setsupplier(res.data))
     .then(res => {
+        setCode(res.data[0].product_code)
         setName(res.data[0].product_name);
         setslct_category(res.data[0].product_category);
         setunit(res.data[0].product_unit);
@@ -308,32 +235,6 @@ const handleDelete = async table_id => {
     
   };
 
-
-  // // for Unit on change function
-  // const handleChangeUnit = (event) => {
-  //   setunit(event.target.value);
-  // };
-
-  // // for Unit Measurement on change function
-  // const handleChangeMeasurement = (event) => {
-  //   setunitMeasurement(event.target.value);
-  // };
-
-  // // for Catergory on change function
-  // const handleFormChangeCategory = (event) => {
-  //   setslct_category(event.target.value);
-  // };
-
-  // // for Bin Location on change function
-  // const handleFormChangeBinLocation = (event) => {
-  //   setslct_binLocation(event.target.value);
-  // };
-
-  // // for Unit Measurement on change function
-  // const handleFormChangeManufacturer = (event) => {
-  //   setslct_manufacturer(event.target.value);
-  // };
-
   useEffect(() => {
     axios.get(BASE_URL + '/binLocation/fetchTable')
       .then(response => {
@@ -354,7 +255,6 @@ const handleDelete = async table_id => {
       });
   }, []);
 
-
   useEffect(() => {
     axios.get(BASE_URL + '/manufacturer/retrieve')
       .then(response => {
@@ -365,15 +265,160 @@ const handleDelete = async table_id => {
       });
   }, []);
 
+  //fetching of supplier
   useEffect(() => {
     axios.get(BASE_URL + '/supplier/fetchTable')
       .then(response => {
         setsupplier(response.data);
+        setFetchSupp(response.data)
       })
       .catch(error => {
         console.error('Error fetching roles:', error);
       });
   }, []);
+
+  //fetching of assembly
+  useEffect(() => {
+    axios.get(BASE_URL + '/productAssembly/fetchassemblyTable',{
+      params: {
+        id: id
+      }
+    })
+      .then(res => setAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  //fetching of subparts
+  useEffect(() => {
+    axios.get(BASE_URL + '/productSubpart/fetchsubpartTable',{
+      params: {
+        id: id
+      }
+    })
+      .then(res => setSubParts(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  //fetching of spareparts
+  useEffect(() => {
+    axios.get(BASE_URL + '/productSparepart/fetchsparepartTable',{
+      params: {
+        id: id
+      }
+    })
+      .then(res => setSpareparts(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+
+
+    // for Unit on change function
+    const handleChangeUnit = (event) => {
+      setunit(event.target.value);
+    };
+  
+    // for Unit Measurement on change function
+    const handleChangeMeasurement = (event) => {
+      setunitMeasurement(event.target.value);
+    };
+  
+    // for Catergory on change function
+    const handleFormChangeCategory = (event) => {
+      setslct_category(event.target.value);
+    };
+  
+    // for Bin Location on change function
+    const handleFormChangeBinLocation = (event) => {
+      setslct_binLocation(event.target.value);
+    };
+  
+    // for Unit Measurement on change function
+    const handleFormChangeManufacturer = (event) => {
+      setslct_manufacturer(event.target.value);
+    };
+
+  const update = async e => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    // if required fields has NO value
+    //    console.log('requried')
+        swal({
+            icon: 'error',
+            title: 'Fields are required',
+            text: 'Please fill the red text fields'
+          });
+    }
+    else{
+      const formData = new FormData();
+      formData.append('id', id);
+      formData.append('code', code);
+      formData.append('name', name);
+      formData.append('slct_category', slct_category);
+      formData.append('unit', unit);
+      formData.append('slct_binLocation', slct_binLocation);
+      formData.append('unitMeasurement', unitMeasurement);
+      formData.append('slct_manufacturer', slct_manufacturer);
+      formData.append('details', details);
+      formData.append('thresholds', thresholds);
+      formData.append('selectedimage', selectedimage);
+
+      axios.put(`${BASE_URL}/product/update`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        if(res.status === 200){
+          SuccessInserted(res);
+        }
+        else if(res.status === 201){
+          Duplicate_Message();
+        }
+        else{
+          ErrorInserted();
+        }
+      })
+    }
+
+    setValidated(true); //for validations
+  };
+
+  const SuccessInserted = (res) => {
+    swal({
+      title: 'Product Created',
+      text: 'The Product has been added successfully',
+      icon: 'success',
+      button: 'OK'
+    })
+    .then(() => {
+     
+     navigate('/productList')
+
+
+    })
+  }
+  const Duplicate_Message = () => {
+    swal({
+      title: 'Product Already Exist',
+      text: 'The input other product',
+      icon: 'error',
+      button: 'OK'
+    })
+  }
+
+  const ErrorInserted = () => {
+    swal({
+      title: 'Something went wrong',
+      text: 'Please Contact our Support',
+      icon: 'error',
+      button: 'OK'
+    })  
+  }
 
   return (
     <div className="main-of-containers">
@@ -397,28 +442,31 @@ const handleDelete = async table_id => {
                             }}
                           ></span>
                         </div>
-
+                        <Form  noValidate validated={validated} onSubmit={update}>
                           <div className="row mt-3">
-                            <div className="col-6">
+                          <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
-                                <Form.Control required type="text" value={name} readOnly placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Label style={{ fontSize: '20px' }}>Item Code: </Form.Label>
+                                <Form.Control required type="text" value={code} onChange={(e) => setCode(e.target.value)} readOnly={!isReadOnly} style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-6">
+                            <div className="col-4">
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Item Name: </Form.Label>
+                                <Form.Control required type="text" value={name} onChange={(e) => setName(e.target.value)}  style={{height: '40px', fontSize: '15px'}} readOnly={!isReadOnly}/>
+                              </Form.Group>
+                            </div>
+                            <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Category: </Form.Label>
-
                                   <Form.Select 
                                     aria-label="" 
-                                    disabled
-                                    required
+                                    onChange={handleFormChangeCategory}
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={slct_category}
+                                    disabled={!isReadOnly}
                                   >
-
-
-                                      <option disabled value=''>
+                                      <option value=''>
                                           Select Category ...
                                       </option>
                                         {category.map(category => (
@@ -437,13 +485,12 @@ const handleDelete = async table_id => {
                                   <Form.Label style={{ fontSize: '20px' }}>Unit: </Form.Label>
                                   <Form.Select
                                     aria-label=""
-                                    required
+                                    onChange={handleChangeUnit}
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={unit}
-                                    disabled
-                                   
+                                    disabled={!isReadOnly}
                                   >
-                                      <option disabled value=''>
+                                      <option value=''>
                                           Select Unit ...
                                       </option>
                                     {cls_unit.map((unit, index) => (
@@ -459,21 +506,20 @@ const handleDelete = async table_id => {
                                   <Form.Label style={{ fontSize: '20px' }}>Bin Location: </Form.Label>
                                   <Form.Select 
                                     aria-label="" 
-                                    disabled
+                                    onChange={handleFormChangeBinLocation}
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={slct_binLocation}
+                                    disabled={!isReadOnly}
                                   >
-
-
-                                      <option disabled value=''>
-                                          Select Bin Location ...
-                                      </option>
-                                        {binLocation.map(binLocation => (
-                                          <option key={binLocation.bin_id} value={binLocation.bin_id}>
-                                            {binLocation.bin_name}
-                                          </option>
-                                        ))}
+                                    <option value=''>
+                                        Select Bin Location ...
+                                    </option>
+                                      {binLocation.map(binLocation => (
+                                        <option key={binLocation.bin_id} value={binLocation.bin_id}>
+                                          {binLocation.bin_name}
+                                        </option>
+                                      ))}
                                   </Form.Select>
                                 </Form.Group>
                             </div>
@@ -488,10 +534,10 @@ const handleDelete = async table_id => {
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={unitMeasurement}
-                                    disabled
-                                   
+                                    disabled={!isReadOnly}
+                                    onChange={handleChangeMeasurement}
                                   >
-                                      <option disabled value=''>
+                                      <option value=''>
                                           Select Unit Measurement ...
                                       </option>
                                     {cls_unitMeasurement.map((unitM, index) => (
@@ -507,14 +553,12 @@ const handleDelete = async table_id => {
                                   <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
                                   <Form.Select 
                                     aria-label="" 
-                                    disabled
-                                    required
+                                    onChange={handleFormChangeManufacturer}
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={slct_manufacturer}
+                                    disabled={!isReadOnly}
                                   >
-
-
-                                      <option disabled value=''>
+                                      <option value=''>
                                           Select Manufacturer ...
                                       </option>
                                         {manufacturer.map(manufacturer => (
@@ -530,14 +574,14 @@ const handleDelete = async table_id => {
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Details Here: </Form.Label>
-                                <Form.Control as="textarea" value={details}  readOnly placeholder="Enter item name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control as="textarea" value={details} onChange={(e) => setDetails(e.target.value)} style={{height: '100px', fontSize: '15px'}} readOnly={!isReadOnly}/>
                             </Form.Group>
                         </div>
 
 
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
                           Notification Thresholds
-                          <p className='fs-5'>Sets your preferred thresholds.</p>
+                          <p className='fs-15'>Sets your preferred thresholds.</p>
                           <span
                             style={{
                               position: 'absolute',
@@ -555,14 +599,13 @@ const handleDelete = async table_id => {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
-                                <Form.Control required value={thresholds} readOnly type="number" placeholder="Minimum Stocking" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control required value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" style={{height: '40px', fontSize: '15px'}} readOnly={!isReadOnly}/>
                                 </Form.Group>
                             </div>
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-                                  {/* <input className="form-control" type="file" 
-                                  onChange={handleFileChange}/> */}
+            
                                   <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
                                       <Dropzone onDrop={onDropImage}>
                                           {({ getRootProps, getInputProps }) => (
@@ -571,30 +614,31 @@ const handleDelete = async table_id => {
                                                   ref={fileInputRef}
                                                   type="file"
                                                   style={{display: 'none'}}
+                                                  readOnly={!isReadOnly}
                                               />
                                               <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
                                                 <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
                                               </div>
-                                              {selectedimage && 
+                                              {/* {selectedimage && 
                                                   <div className='d-flex align-items-center justify-content-center' style={{border: "1px green solid", width: '100%', height: '5em'}}>
                                                     <p 
                                                       style={{color: 'green', fontSize: '15px',}}>
                                                         Uploaded Image: {selectedimage.name}
                                                     </p>
-                                                  </div>}
+                                                  </div>} */}
                                           </div>
                                           )}
                                       </Dropzone>
-                                      
                                   </div>              
                               </Form.Group>   
                             </div>
 
                           </div>
-
+                        
+                        {isReadOnly && (
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
                           Product Supplier
-                          <p className='fs-5'>Assigns product to supplier(s)</p>
+                          <p className='fs-15'>Assigns product to supplier(s)</p>
                           <span
                             style={{
                               position: 'absolute',
@@ -602,92 +646,231 @@ const handleDelete = async table_id => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '65%',
-                              left: '21rem',
+                              left: '15rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
-                          <div className="row mt-3">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput2">
-                                <Form.Label style={{ fontSize: '20px' }}>Supplier: </Form.Label>
-                                <Multiselect
-                                  options={supplier.map(s => ({ id: s.supplier_code, name: s.supplier_name }))}
-                                  selectedValues={selectedSuppliers}
-                                  onSelect={handleSupplierSelect}
-                                  onRemove={handleSupplierRemove}
-                                  displayValue="name"
-                                  emptyRecordMsg="No options available"
-                                />
-                              </Form.Group>
-                            </div>
-                            <div className="col-6">
-                             
-                              </div>
-
-                          </div>
-
-
-
+                        )}
+                        
+                        {!isReadOnly && (
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
-                          Product Pricing
+                          Item List
                           <span
                             style={{
                               position: 'absolute',
                               height: '0.5px',
                               width: '-webkit-fill-available',
                               background: '#FFA500',
-                              top: '65%',
-                              left: '21rem',
+                              top: '86%',
+                              left: '8rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
-                        </div>
+                        </div>                        
+                        )}
+
                         <div className="supplier-table">
                             <div className="table-containss">
+                            {!isReadOnly ? (
                                 <div className="main-of-all-tables">
-                                  <table id="order-listing">
+                                    <Tabs
+                                    activeKey={activeTab}
+                                    onSelect={(key) => setActiveTab(key)}
+                                    transition={false}
+                                    id="noanim-tab-example"
+                                    >
+                                      <Tab eventKey="Assembly" title={<span style={{fontSize: '20px' }}>Assembly</span>}>
+                                            <div className="productandprint">
+                                                <div className="printbtns">
+                                                </div>
+                                            </div>
+                                            <div className="main-of-all-tables">
+                                                <table id='order-listing'>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Assembly Code</th>
+                                                            <th>Assembly Name</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      {Assembly.map((assemblies, i) =>(
+                                                        <tr key={i}>
+                                                            <td>{assemblies.assembly.assembly_code}</td>
+                                                            <td>{assemblies.assembly.assembly_name}</td>
+                                                            <td>{assemblies.assembly.assembly_desc}</td>
+                                                        </tr>
+                                                      ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                      </Tab>
+                                    <Tab eventKey="Subparts" title={<span style={{fontSize: '20px' }}>Sub Parts</span>}>
+                                            <div className="productandprint">
+
+                                                <div className="printbtns">
+                                                </div>
+                                            </div>
+                                            <div className="main-of-all-tables">
+                                                <table id='order-listing'>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Supplier Code</th>
+                                                            <th>Sub-Part Name</th>
+                                                            <th>Supplier Name</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      {Subparts.map((subpart, i) =>(
+                                                        <tr>
+                                                            <td>{subpart.subPart.subPart_code}</td>
+                                                            <td>{subpart.subPart.subPart_name}</td>
+                                                            <td>{subpart.subPart.supplier}</td>
+                                                            <td>{subpart.subPart.subPart_desc}</td>
+                                                        </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                    </Tab>
+                                      <Tab eventKey="ordered list" title={<span style={{fontSize: '20px' }}>Spare Parts</span>}>
+                                          <div className="orderhistory-side">
+                                              <div className="printersbtn">
+
+                                              </div>
+                                          </div>
+                                          <div className="main-of-all-tables">
+                                              <table id="ordered-listing">
+                                                      <thead>
+                                                          <tr>
+                                                              <th>Supplier Code</th>
+                                                              <th>Spare-Part Name</th>
+                                                              <th>Description</th>
+                                                          </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {Spareparts.map((sparepart, i) =>(
+                                                          <tr key={i}>
+                                                              <td>{sparepart.sparePart.spareParts_code}</td>
+                                                              <td>{sparepart.sparePart.spareParts_name}</td>
+                                                              <td>{sparepart.sparePart.spareParts_desc}</td>
+                                                          </tr>
+                                                        ))}
+                                                      </tbody>
+                                              </table>
+                                          </div>
+                                      </Tab>
+                                      <Tab eventKey="SupplierTab" title={<span style={{fontSize: '20px' }}>Supplier</span>}>
+                                          <div className="orderhistory-side">
+                                              <div className="printersbtn">
+
+                                              </div>
+                                          </div>
+                                          <div className="main-of-all-tables">
+                                              <table id="ordered-listing">
+                                                      <thead>
+                                                          <tr>
+                                                              <th>Supplier Code</th>
+                                                              <th>Supplier Name</th>
+                                                              <th>Contact</th>
+                                                          </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {supplier.map((data,i) =>(
+                                                          <tr>
+                                                              <td>{data.supplier_code}</td>
+                                                              <td>{data.supplier_name}</td>
+                                                              <td>{data.supplier_number}</td>
+                                                          </tr>
+                                                          ))}
+                                                      </tbody>
+                                              </table>
+                                          </div>
+                                      </Tab>
+                                  </Tabs>
+                                </div>
+                                ) : (
+                                  <div className="main-of-all-tables">
+                                  <table>
                                     <thead>
                                       <tr>
-                                        <th className="tableh">ID</th>
-                                        <th className="tableh">Supplier</th>
-                                        <th className="tableh">Price</th>
-                                        <th className="tableh">Action</th>
+                                        <th className='tableh'>Supplier Code</th>
+                                        <th className='tableh'>Name</th>
+                                        <th className='tableh'>Email</th>
+                                        <th className='tableh'>Contact</th>
+                                        <th className='tableh'>Address</th>
+                                        <th className='tableh'>Receiving Area</th>
+                                        <th className='tableh'>Price</th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {product.map((data,i) =>(
-                                          <tr key={i} >
-                                            <td >{data.id}</td>
-                                            <td >{data.supplier_code}</td>
-                                            <td >
-                                              <div className='input-group' style={{background: '#E9ECEF'}}>
-                                                <span style={{background: '#E9ECEF'}}>₱</span>
-                                                <input className='form-control' style={{background: '#E9ECEF', fontSize: 15}} 
-                                              
-                                                type="number" 
-                                                onBlur={() => handleBlurPrice(data.id)} 
-                                                value={data.product_price} 
-                                                onChange={e => setPrice(e.target.value)}/>
-                                              </div>                           
-                                            </td>
-                                            <td><Trash size={32} color="#e60000" onClick={() => handleDelete(data.id)}/></td>
-                                          </tr>
-                                        ))}
+                                    {supplier.map((supp,i) =>(
+                                        <tr key={i}>
+                                          <td>{supp.supplier_code}</td>
+                                          <td>{supp.supplier_name}</td>
+                                          <td>{supp.supplier_email}</td>
+                                          <td>{supp.supplier_number}</td>
+                                          <td>{supp.supplier_address}</td>
+                                          <td>{supp.supplier_receiving}</td>
+                                          <td>
+                                            <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
+                                            <input
+                                              type="number"
+                                              style={{ height: '50px' }}
+                                              value={supp.supplier_price || ''}
+                                              // onChange={(e) => handlePriceChange(i, e.target.value)}
+                                            />
+                                          </td>
+                                        </tr>
+                                      ))}
+
                                     </tbody>
+                                    {showDropdown && (
+                                        <div className="dropdown mt-3">
+                                           <Select
+                                                isMulti
+                                                options={fetchSupp.map((supplier) => ({
+                                                  value: supplier.supplier_code,
+                                                  label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
+                                                  // Add other properties as needed
+                                                }))}
+                                                value={selectedDropdownOptions}
+                                                // onChange={handleSelectChange}
+                                              />
+                                        </div>
+                                      )}
+                                      {isReadOnly && (
+                                        <Button
+                                        variant="outline-warning"
+                                        onClick={handleAddSupp}
+                                        size="md"
+                                        style={{ fontSize: '15px', marginTop: '10px' }}
+                                          
+                                        >
+                                          Add Supplier
+                                        </Button>
+                                        )}
                                   </table>
                                 </div>
+                                )}
                             </div>
                         </div>
-                        {/* <div className='save-cancel'>
-                        <Link to='/productList' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Link>
-                        <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                            Close
-                        </Link>
-                        </div> */}
-                         {/* <div className='save-cancel'>
-                          <Link to='/productList' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Apply Changes</Link>
-                        </div> */}
+                        <div className='save-cancel'>
+                        {isReadOnly && (
+                          <Button type='submit' disabled={!isReadOnly} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
+                        )    
+                      
+                        }
+                        {!isReadOnly && (
+                          <Button type='Button' onClick={handleEditClick} className='btn btn-warning' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
+                        )}
+                          <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                              Close
+                          </Link>
+                        </div>
+                      </Form>
             </div>
         </div>
     </div>

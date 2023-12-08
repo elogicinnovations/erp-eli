@@ -3,6 +3,9 @@
   padding: 0;
 }
 
+#order-listing tbody td {
+  height: 45px; /* Adjust the padding as needed */
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
@@ -149,7 +152,6 @@ font-family: Poppins, 'Source Sans Pro';
 
 .email-pass-input {
 position: relative;
-
 left: 21.5rem;
 width: 60%;
 border-radius: 10px;
@@ -459,12 +461,14 @@ color: #ffffff;
 .Employeetext-button {
   flex: 10;
   display: flex;
+  
 }
 
 .employee-and-button {
   width: 100%;
   height: 100%;
   display: flex;
+  justify-content: space-between;
 }
 
 .emp-text-side{
@@ -487,6 +491,40 @@ color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+}
+
+.goesButton{
+  border: none;
+  padding: 10px;
+  background-color: #CFD2D6;
+  width: 90px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.goesButton:hover{
+  background-color: #afacac;
+}
+
+.Filterclear{
+  border: none;
+  background-color: #ff5050;
+  width: 200px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  padding: 10px;
+  color: white;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.Filterclear:hover{
+  background-color: #ff0000;
 }
 
 .Buttonmodal-new {
@@ -2212,4 +2250,13 @@ div#ordered-listing_length label{
 .clickable_Table_row:hover{
   background-color: #E9ECEF;
 }
- 
+
+
+/*Hover in table row*/
+.tableRows:hover{
+  background-color: #EDEDED;
+  cursor: pointer;
+}
+
+
+/*for dropdown and ADD button*/

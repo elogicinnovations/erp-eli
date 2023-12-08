@@ -177,7 +177,9 @@ function CreateProduct() {
       formData.append('thresholds', thresholds);
       formData.append('selectedimage', selectedimage);
       formData.append('assemblies', JSON.stringify(assembly));
-
+      formData.append('sparepart', JSON.stringify(spareParts));
+      formData.append('subpart', JSON.stringify(subparting));
+      
       axios.post(`${BASE_URL}/product/create`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

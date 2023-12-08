@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const SubPart = require('../db/models/subpart.model')
+const {SubPart, Subpart_supplier, Supplier} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -32,40 +32,45 @@ router.route('/fetchTable').get(async (req, res) => {
     }
   });
 
-  router.route('/create').post(async (req, res) => {
+  router.route('/createsubpart').post(async (req, res) => {
     try {
-      const { subPartCode, subPartName, supplier, subPartDesc } = req.body;
-  
-      // // Validate the request data
-      // if (!subPartCode || !subPartName || !supplier) {
-      //   return res.status(400).json({ error: 'Missing required data' });
-      // }
-  
-      // Check for an existing SubPart
-      const existingSubPart = await SubPart.findOne({
-        where: {
-          subPart_code: subPartCode,
-        },
-      });
-  
-      if (existingSubPart) {
-        return res.status(201).json({ error: 'SubPart with the same code already exists' });
+       const {code, subpartName, details, SubaddPriceInput} = req.body;
+        // Check if the supplier code is already exists in the table
+        console.log(code);
+        const existingSubCode = await SubPart.findOne({
+          where: {
+            subPart_code: code,
+          },
+        });
+    
+        if (existingSubCode) {
+          return res.status(201).send('Exist');
+        } else {
+          const subpart_newData = await SubPart.create({
+            subPart_code: code.toUpperCase(),
+            subPart_name: subpartName,
+            subPart_desc: details,
+          });
+
+          const createdID = subpart_newData.id;
+
+          for (const supplier of SubaddPriceInput) {
+            const supplierValue = supplier.code;
+            const supplierPrices = supplier.price;
+    
+            await Subpart_supplier.create({
+                subpart_id: createdID,
+                supplier_code: supplierValue,
+                supplier_price: supplierPrices
+            });
+          }
+          res.status(200).json();
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('An error occurred');
       }
-  
-      // Create a new SubPart
-      const newSubPart = await SubPart.create({
-        subPart_code: subPartCode,
-        subPart_name: subPartName,
-        supplier: supplier,
-        subPart_desc: subPartDesc, // You can provide an empty string or null if it's not provided
-      });
-  
-      return res.status(200).json(newSubPart);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-  });
+});
   
 
 

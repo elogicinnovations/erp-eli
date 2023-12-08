@@ -12,6 +12,7 @@ const Product_Assembly = require("./product_assembly.model");
 const CostCenter = require("./costcenter.model");
 
 const SubPart = require("./subpart.model");
+const Subpart_supplier = require("./subpart_supplier.model")
 
 const SparePart = require("./sparePart.model");
 const SparePart_SubPart = require("./sparePart_subPart.model");
@@ -55,8 +56,12 @@ Manufacturer.hasMany(Product, { foreignKey: "product_manufacturer"}); // ginamit
 Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"}); // gumamit sa manufacturer
 
 
+//subpart tag supplier table
+SubPart.hasMany(Subpart_supplier, { foreignKey: "subpart_id"});
+Subpart_supplier.belongsTo(SubPart, { foreignKey: "subpart_id"});
 
-
+Supplier.hasMany(Subpart_supplier, { foreignKey: "supplier_code"});
+Subpart_supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 //product tag supplier table
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
@@ -89,8 +94,6 @@ Product_Subparts.belongsTo(Product, { foreignKey: "product_id"});
 
 SubPart.hasMany(Product_Subparts, { foreignKey: "subPart_id"});
 Product_Subparts.belongsTo(SubPart, { foreignKey: "subPart_id"});
-
-
 
 
 
@@ -216,7 +219,10 @@ module.exports = {
                     
                     Supplier,
                     CostCenter,
+
                     SubPart,
+                    Subpart_supplier,
+                    
                     SparePart,
                     SparePart_SubPart,
                     SparePart_Supplier, 

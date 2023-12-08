@@ -28,7 +28,8 @@ import ProductCategory from "./modules/Administrator/sub-modules/UserMasterData/
 import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer"
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
-import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts"
+import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/SubParts"
+import CreateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/CreateSubParts"
 import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
 import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
 import UpdateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/UpdateSpareParts"
@@ -170,6 +171,12 @@ function App() {
             path="/subParts"
             element={<SubParts/>}
           />
+                  <Route
+                    path="/createsubParts"
+                    element={<CreateSubParts/>}
+                  />
+
+
           <Route
             path="/spareParts"
             element={<SpareParts/>}

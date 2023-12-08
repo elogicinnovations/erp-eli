@@ -16,7 +16,8 @@ import {
     Bell,
     UserCircle,
     Plus,
-    CalendarBlank
+    CalendarBlank,
+    XCircle,
   } from "@phosphor-icons/react";
   import '../../../assets/skydash/vendors/feather/feather.css';
   import '../../../assets/skydash/vendors/css/vendor.bundle.base.css';
@@ -38,20 +39,68 @@ function PurchaseRequest() {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [filteredPR, setFilteredPR] = useState([]);
+  const [allPR, setAllPR] = useState([]);
+
+  const handleXCircleClick = () => {
+    setStartDate(null);
+  };
+
+  const handleXClick = () => {
+    setEndDate(null);
+  };
+
+  const handleStatusChange = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+
 
   const [PR, setPR] = useState([]);
 
-  const reloadTable = () =>{
-    axios.get(BASE_URL + '/PR/fetchTable')
-    .then(res => setPR(res.data))
-    .catch(err => console.log(err));
-  }
+  const reloadTable = () => {
+    axios
+      .get(BASE_URL + '/PR/fetchTable')
+      .then((res) => {
+        setAllPR(res.data);
+        setFilteredPR(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
   
   useEffect(() => {
      reloadTable()
     }, []);
 
+const handleGoButtonClick = () => {
+  if (!startDate && !endDate && !selectedStatus) {
+    return;
+  }
 
+  const filteredData = allPR.filter((data) => {
+    const createdAt = new Date(data.createdAt);
+
+    const isWithinDateRange =
+      (!startDate || createdAt >= startDate) &&
+      (!endDate || createdAt <= endDate);
+
+    const isMatchingStatus =
+      !selectedStatus || data.status === selectedStatus;
+
+    return isWithinDateRange && isMatchingStatus;
+  });
+
+  setFilteredPR(filteredData);
+};
+
+  const clearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedStatus('');
+
+    reloadTable();
+  };
 
     const CancelRequest = async (row_id, row_status) => {
       swal({
@@ -175,63 +224,111 @@ function PurchaseRequest() {
                         </div>
                     </div>
                 </div>
+            </div>
 
-                </div>
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
                         <div className="button-create-side">
-                          <div className="col-2" style={{zIndex: '3'}}>
-                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
+                          <div style={{ position: "relative", marginBottom: "15px" }}>
                                 <DatePicker
                                   selected={startDate}
                                   onChange={(date) => setStartDate(date)}
-                                  dateFormat="MM/dd/yyyy"
-                                  placeholderText="Start Date"
-                                  className="form-control"
+                                  placeholderText="Choose Date From"
+                                  dateFormat="yyyy-MM-dd"
+                                  wrapperClassName="custom-datepicker-wrapper"
+                                  popperClassName="custom-popper"
                                 />
-                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
-                              </Form.Group>
-                          </div>
-                          <div className="col-2" style={{zIndex: '3'}}>
-                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
+                                <CalendarBlank
+                                  size={20}
+                                  weight="thin"
+                                  style={{
+                                    position: "absolute",
+                                    left: "8px",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    cursor: 'pointer',
+                                  }}
+                                />
+                                {startDate && (
+                                  <XCircle
+                                    size={16}
+                                    weight="thin"
+                                    style={{
+                                      position: "absolute",
+                                      right: "19px",
+                                      top: "50%",
+                                      transform: "translateY(-50%)",
+                                      cursor: 'pointer',
+                                    }}
+                                    onClick={handleXCircleClick}
+                                  />
+                                )}
+                              </div>
+
+                              <div style={{ position: "relative", marginBottom: "15px" }}>
                                 <DatePicker
                                   selected={endDate}
                                   onChange={(date) => setEndDate(date)}
-                                  dateFormat="MM/dd/yyyy"
-                                  placeholderText="End Date"
-                                  className="form-control"
+                                  placeholderText="Choose Date To"
+                                  dateFormat="yyyy-MM-dd"
+                                  wrapperClassName="custom-datepicker-wrapper"
+                                  popperClassName="custom-popper"
                                 />
-                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
-                              </Form.Group>
-                          </div>
-                          <div className="col-4">
-                              <Form.Group controlId="exampleForm.ControlInput2">
-                                  <Form.Select 
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      defaultValue=''
-                                    >
-                                        <option disabled value=''>
-                                          Status
-                                        </option>
-                                            <option>
-                                            </option>
-                                    </Form.Select>
-                              </Form.Group>
-                                </div>
-                                  <Button variant="secondary" size="md"style={{ fontSize: '20px' }}>
-                                      Go
-                                  </Button>
-                        <div className="Buttonmodal-new">
-                            <button>
-                                <Link to="/createPurchaseRequest" className='button'>
-                                <span style={{ }}>
-                                <Plus size={25} />
-                                </span>
-                                New PR
-                                </Link>
-                            </button>
+                                <CalendarBlank
+                                  size={20}
+                                  weight="thin"
+                                  selected={endDate}
+                                  onChange={(date) => setEndDate(date)}
+                                  style={{
+                                    position: "absolute",
+                                    left: "8px",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    cursor: 'pointer',
+                                  }}
+                                />
+                                {endDate && (
+                                  <XCircle
+                                    size={16}
+                                    weight="thin"
+                                    style={{
+                                      position: "absolute",
+                                      right: "19px",
+                                      top: "50%",
+                                      transform: "translateY(-50%)",
+                                      cursor: 'pointer',
+                                    }}
+                                    onClick={handleXClick}
+                                  />
+                                )}
+                              </div>
+                              <Form.Select aria-label="item status"
+                                value={selectedStatus}
+                              onChange={handleStatusChange}
+                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}>
+                                  <option value="" disabled selected>
+                                    Select Status
+                                  </option>
+                                  <option value="For-Approval">For-Approval</option>
+                                  <option value="For-Rejustify">For-Rejustify</option>
+                                  <option value="For-Canvassing">For-Canvassing</option>
+                                  <option value="Cancelled">Cancelled</option>
+                                </Form.Select>  
+                                  <button className='goesButton' onClick={handleGoButtonClick}>
+                                    GO
+                                  </button>
+                                  <button className='Filterclear' onClick={clearFilters}>
+                                    Clear Filter
+                                  </button>
+                              <div className="Buttonmodal-new">
+                                <button>
+                                    <Link to="/createPurchaseRequest" className='button'>
+                                    <span style={{ }}>
+                                    <Plus size={25} />
+                                    </span>
+                                    New PR
+                                    </Link>
+                                </button>
                             </div>
                         </div>
 
@@ -250,12 +347,16 @@ function PurchaseRequest() {
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
+                                {filteredPR.length > 0 ? (
                                 <tbody>
-                                      {PR.map((data,i) =>(
+                                {filteredPR.map((data, i) => (
                                         <tr key={i}>
                                         <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{data.pr_num}</td>
                                         <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>--</td>
-                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{data.status}</td>
+                                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>
+                                          <button className='btn btn-secondary' style={{fontSize: '12px'}}>
+                                          {data.status}
+                                          </button></td>
                                         <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{formatDatetime(data.createdAt)}</td>
                                         <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>{data.remarks}</td>
                                         <td>
@@ -264,6 +365,15 @@ function PurchaseRequest() {
                                         </tr>
                                       ))}
                             </tbody>
+                            ) : (
+                              <tbody>
+                              <tr>
+                                <td colSpan="6" style={{ textAlign: 'center' }}>
+                                  No matches found.
+                                </td>
+                              </tr>
+                            </tbody>
+                          )}
                         </table>
                     </div>
                 </div>
