@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 // const MasterList = require('../db/models/masterlist.model')
 const { MasterList, UserRole } = require("../db/models/associations"); 
 const session = require('express-session')
+const jwt = require('jsonwebtoken');
 
 router.use(session({
     secret: 'secret-key',
@@ -24,7 +25,15 @@ router.route("/login").post(async (req, res) => {
     });
 
     if (user && user.col_Pass === password) {
-      return res.status(200).json({ message: 'Login Success' });
+      const username = { username: user.col_username }
+      const accessToken = jwt.sign(username, process.env.ACCESS_SECRET_TOKEN);
+      // localStorage.setItem('access-token', accessToken);
+
+      // localStorage.removeItem('access-token');
+      res.cookie('access-token', accessToken, {
+        // httpOnly : true
+      });
+      return res.status(200).json({ message: 'Login Success', accessToken: accessToken });
     } else {
       return res.status(202).json({ message: 'Incorrect credentials' });
     }

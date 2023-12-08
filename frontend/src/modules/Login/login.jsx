@@ -22,9 +22,10 @@ const Login = () => {
       .post(BASE_URL + '/masterList/login', { username, password })
       .then((response) => {
         if (response.status === 200) {
+          console.log(response.data.accessToken);
+          localStorage.setItem('accessToken', response.data.accessToken);
           swal({
-            title: 'Login Successful',
-            text: '',
+            text: 'Login Success!',
             icon: 'success',
             button: 'OK',
           }).then(() => {

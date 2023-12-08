@@ -17,9 +17,11 @@ import {
 
   import * as $ from 'jquery';
 
+import { CostContext } from '../../../../../contexts/contexts';
 
 function ViewCostCenter() {
 
+    const costData = useContext(CostContext)
     const Data = [
         {
           samA: 'asd',
@@ -52,6 +54,10 @@ function ViewCostCenter() {
     setSelectedRow(index);
     setShowDropdown(!showDropdown);
   };
+
+  useEffect(() => {
+    console.log("Cost Context: ", costData.value);
+  }, [costData])
 
   const renderDropdown = () => {
     if (selectedRow === null) return null;

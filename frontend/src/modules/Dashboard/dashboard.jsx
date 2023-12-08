@@ -5,8 +5,17 @@ import '../../assets/global/style.css';
 import '../styles/react-style.css';
 import dashboardImg from '../../assets/image/dashboard.png'; // Ensure correct case and extension
 
-function Dashboard() {
+import { useEffect, useState } from 'react';
+import { NavLink, Navigate, useNavigate } from 'react-router-dom';
 
+function Dashboard() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    console.log(localStorage.getItem('accessToken'));
+    if(localStorage.getItem('accessToken') === null){
+      navigate('/');
+    }
+  }, [])
 
   return (
     <div className='main-of-containers'>
@@ -26,7 +35,7 @@ function Dashboard() {
       </div>
      
     </div>
-  );
+  ) ;
 }
 
 export default Dashboard;
