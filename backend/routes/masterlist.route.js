@@ -1,17 +1,18 @@
-const router = require('express').Router()
-const { where, Op, col, fn } = require('sequelize');
-const nodemailer = require('nodemailer');
+const router = require("express").Router();
+const { where, Op, col, fn } = require("sequelize");
+const nodemailer = require("nodemailer");
 //master Model
 // const MasterList = require('../db/models/masterlist.model')
-const { MasterList, UserRole } = require("../db/models/associations"); 
-const session = require('express-session')
+const { MasterList, UserRole } = require("../db/models/associations");
+const session = require("express-session");
 
-router.use(session({
-    secret: 'secret-key',
+router.use(
+  session({
+    secret: "secret-key",
     resave: false,
-    saveUninitialized: true
-}));
-
+    saveUninitialized: true,
+  })
+);
 
 router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
@@ -24,9 +25,9 @@ router.route("/login").post(async (req, res) => {
     });
 
     if (user && user.col_Pass === password) {
-      return res.status(200).json({ message: 'Login Success' });
+      return res.status(200).json({ message: "Login Success" });
     } else {
-      return res.status(202).json({ message: 'Incorrect credentials' });
+      return res.status(202).json({ message: "Incorrect credentials" });
     }
   } catch (e) {
     console.error(e);
@@ -36,23 +37,21 @@ router.route("/login").post(async (req, res) => {
 
 //--------------------Forgot Password------------------//
 // Replace these with your Gmail credentials
-const gmailEmail = 'infintyerpslash@gmail.com';
-const gmailPassword = 'kaaokvxtaahuckvp';
-
+const gmailEmail = "infintyerpslash@gmail.com";
+const gmailPassword = "kaaokvxtaahuckvp";
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: gmailEmail,
     pass: gmailPassword,
   },
 });
 
+router.route("/emailForgotPass").post(async (req, res) => {
+  const { email } = req.body;
 
-  router.route("/emailForgotPass").post(async (req, res) => {
-    const { email } = req.body;
-
-  console.log(email)
+  console.log(email);
   await MasterList.findAll({
     where: {
       col_email: email,
@@ -60,27 +59,26 @@ const transporter = nodemailer.createTransport({
   })
     .then((forgot) => {
       if (forgot && forgot.length > 0) {
-        
-
         const code = Math.floor(1000 + Math.random() * 9000); // Generate a random code
 
         const mailOptions = {
           from: gmailEmail,
           to: email,
-          subject: 'Verification Code',
+          subject: "Verification Code",
           text: `Your verification code is: ${code}`,
         };
-      
+
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
             console.error(error);
-            res.status(500).json({ success: false, error: 'Email sending failed' });
+            res
+              .status(500)
+              .json({ success: false, error: "Email sending failed" });
           } else {
-            console.log('Email sent: ' + info.response);
+            console.log("Email sent: " + info.response);
             res.status(200).json({ success: true, code: code });
           }
         });
-
       } else {
         res.status(202).json({ success: true });
       }
@@ -91,65 +89,61 @@ const transporter = nodemailer.createTransport({
     });
 });
 
-
 router.route("/emailResendCode").post(async (req, res) => {
-  
   const toEmail = req.body.toEmail;
-  console.log(gmailEmail)
-  console.log('wala:' + toEmail)
+  console.log(gmailEmail);
+  console.log("wala:" + toEmail);
 
   const code = Math.floor(1000 + Math.random() * 9000); // Generate a random code
 
   const mailOptions = {
     from: gmailEmail,
     to: toEmail,
-    subject: 'Verification Code',
+    subject: "Verification Code",
     text: `Your verification code is: ${code}`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Email sending failed' });
+      res.status(500).json({ success: false, error: "Email sending failed" });
     } else {
-      console.log('Email sent: ' + info.response);
+      console.log("Email sent: " + info.response);
       res.status(200).json({ success: true, code: code });
     }
   });
 });
 
 //UPDATE
-router.route('/resetPassword').put(async (req, res) => {
-    await MasterList.update(
-      {
-        col_Pass : req.body.password,
+router.route("/resetPassword").put(async (req, res) => {
+  await MasterList.update(
+    {
+      col_Pass: req.body.password,
+    },
+
+    {
+      where: {
+        col_email: req.body.email,
       },
-      
-      {
-        where: {
-          col_email : req.body.email
-        }
-      }
-    )
+    }
+  )
     .then((update) => {
-        if(update) {
-          console.log(req.body.email);
-          console.log(update);
-            res.status(200).json({success:true})
-        }
-        else{
-            res.status(400).json({success:false})
-        }
-    }).catch((err) => {
-        console.error(err)
-        res.status(409).json({errorMessage:err})
+      if (update) {
+        console.log(req.body.email);
+        console.log(update);
+        res.status(200).json({ success: true });
+      } else {
+        res.status(400).json({ success: false });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(409).json({ errorMessage: err });
     });
 });
 
-
-
 // FOR USER MASTERLIST MODULE
-router.route('/masterTable').get(async (req, res) => {
+router.route("/masterTable").get(async (req, res) => {
   try {
     const data = await MasterList.findAll({
       include: {
@@ -171,13 +165,12 @@ router.route('/masterTable').get(async (req, res) => {
   }
 });
 
-
 // CREATE
-router.route('/createMaster').post(async (req, res) => {
+router.route("/createMaster").post(async (req, res) => {
   try {
     const email = req.body.cemail;
 
-    console.log(req.body.crole)
+    console.log(req.body.crole);
 
     // Check if the email already exists in the table
     const existingData = await MasterList.findOne({
@@ -187,10 +180,10 @@ router.route('/createMaster').post(async (req, res) => {
     });
 
     if (existingData) {
-      res.status(202).send('Exist');
+      res.status(202).send("Exist");
     } else {
       // Convert boolean status to "Active" or "Inactive"
-      const status = req.body.cstatus ? 'Active' : 'Inactive';
+      const status = req.body.cstatus ? "Active" : "Inactive";
       // console.log('tyr: ' + req.body.crole)
       // Insert a new record into the table
       const newData = await MasterList.create({
@@ -209,12 +202,11 @@ router.route('/createMaster').post(async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send('An error occurred');
+    res.status(500).send("An error occurred");
   }
 });
 
-
-router.route('/updateMaster/:param_id').put(async (req, res) => {
+router.route("/updateMaster/:param_id").put(async (req, res) => {
   try {
     const email = req.body.col_email;
     const updatemasterID = req.params.param_id;
@@ -229,10 +221,10 @@ router.route('/updateMaster/:param_id').put(async (req, res) => {
     });
 
     if (existingData) {
-      res.status(202).send('Exist');
+      res.status(202).send("Exist");
     } else {
       // Convert boolean status to "Active" or "Inactive"
-      const status = req.body.col_status ? 'Active' : 'Inactive';
+      const status = req.body.col_status ? "Active" : "Inactive";
 
       // Update the record in the table
       const [affectedRows] = await MasterList.update(
@@ -255,39 +247,30 @@ router.route('/updateMaster/:param_id').put(async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send('An error occurred');
+    res.status(500).send("An error occurred");
   }
 });
 
-
-
 //DELETE:
-router.route('/deleteMaster/:param_id').delete(async (req, res) => {
-    const id = req.params.param_id;
-    await MasterList.destroy({
-        where : {
-          col_id: id
-        }
-    }).then(
-        (del) => {
-            if(del){
-                res.json({success : true})
-            }
-            else{
-                res.status(400).json({success : false})
-            }
-        }
-    ).catch(
-        (err) => {
-            console.error(err)
-            res.status(409)
-        }
-    );
+router.route("/deleteMaster/:param_id").delete(async (req, res) => {
+  const id = req.params.param_id;
+  await MasterList.destroy({
+    where: {
+      col_id: id,
+    },
+  })
+    .then((del) => {
+      if (del) {
+        res.json({ success: true });
+      } else {
+        res.status(400).json({ success: false });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(409);
+    });
 });
-
-
-
-
 
 //CREATE
 // router.route('/add').post(async (req, res) => {
@@ -307,7 +290,6 @@ router.route('/deleteMaster/:param_id').delete(async (req, res) => {
 //     });
 // });
 
-
 // //UPDATE
 // router.route('/update').put(async (req, res) => {
 //     await User.update(req.body,{
@@ -326,7 +308,6 @@ router.route('/deleteMaster/:param_id').delete(async (req, res) => {
 //         res.status(409).json({errorMessage:err})
 //     });
 // });
-
 
 // //DELETE:
 // router.route('/deleteMaster/:param_id').delete(async (req, res) => {
@@ -351,8 +332,5 @@ router.route('/deleteMaster/:param_id').delete(async (req, res) => {
 //         }
 //     );
 // });
-
-
-
 
 module.exports = router;
