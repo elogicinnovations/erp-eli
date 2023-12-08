@@ -22,7 +22,7 @@ import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
-function POApprovalRejustify() {
+function PO_Receive() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -34,12 +34,10 @@ function POApprovalRejustify() {
 
 //   const [validated, setValidated] = useState(false);
   const [products, setProducts] = useState([]);
-  const [assembly, setAssembly] = useState([]);
+  const [suppProducts, setSuppProducts] = useState([]);
 
   //for adding the data from table canvass to table PO
   const [addProductPO, setAddProductPO] = useState([]);
-
-  const [addAssemblyPO, setAddAssemblyPO] = useState([]);
 
   // for remarks 
   const [files, setFiles] = useState([]);
@@ -78,22 +76,12 @@ const handleClose = () => {
 
 
 useEffect(() => {
-    axios.get(BASE_URL + '/PR_PO/fetchView_product',{
+    axios.get(BASE_URL + '/PR_PO/fetchView',{
       params:{
         id: id
       }
     })
       .then(res => setAddProductPO(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_PO/fetchView_asmbly',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAddAssemblyPO(res.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -105,16 +93,6 @@ useEffect(() => {
       }
     })
       .then(res => setProducts(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_assembly/fetchView',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAssembly(res.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -381,7 +359,7 @@ useEffect(() => {
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Purchase Order List Approval
+                    Purchase Order List Receiving
                     </h1>
                 </div>
                 </Col>
@@ -463,24 +441,13 @@ useEffect(() => {
                                         </thead>
                                         <tbody>
                                                 {products.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.product.product_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.product.product_name}</td>
-                                                    <td>{data.description}</td>
-                                                
-                                                  </tr>
-                                                ))}
-
-
-                                                {assembly.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.assembly.assembly_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.assembly.assembly_name}</td>
-                                                    <td>{data.description}</td>
-                                                
-                                                  </tr>
+                                                <tr key={i}>
+                                                <td>{data.product.product_code}</td>
+                                                <td>{data.quantity}</td>
+                                                <td>{data.product.product_name}</td>
+                                                <td>{data.description}</td>
+                                               
+                                                </tr>
                                                 ))}
                                     </tbody>
                                 </table>
@@ -536,35 +503,12 @@ useEffect(() => {
                                           
                                                 </tr>
                                                 ))}
-
-                                              {addAssemblyPO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.assembly_supplier.assembly.assembly_code}</td>
-                                                  <td>
-                                                      {/* <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsAss[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        /> */}
-                                                        {data.quantity}
-                                                      {/* </div> */}
-                                                  </td>
-                                                  <td>{data.assembly_supplier.assembly.assembly_name}</td>
-                                                  <td>{data.assembly_supplier.supplier.supplier_name}</td>
-                                                  <td>{data.assembly_supplier.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div className='save-cancel'>
-                        <Button type='button'  
+                        {/* <Button type='button'  
                           className='btn btn-danger' 
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
                           onClick={() => handleCancel(id)}
@@ -585,74 +529,16 @@ useEffect(() => {
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
                           onClick={() => handleApprove(id)}
                           >Approve
-                        </Button>    
+                        </Button>     */}
 
                                              
                         </div>
                         
-                        <Modal show={showModal} onHide={handleClose}>
-                          <Form>
-                            <Modal.Header closeButton>
-                              <Modal.Title style={{ fontSize: '24px' }}>For Rejustification</Modal.Title>     
-                            </Modal.Header>
-                              <Modal.Body>
-                              <div className="row mt-3">
-                                            <div className="col-6">
-                                              <Form.Group controlId="exampleForm.ControlInput1">
-                                                <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
-                                                <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
-                                              </Form.Group>
-                                            </div>
-                                            <div className="col-6">
-                                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                                  <DatePicker
-                                                    readOnly
-                                                    selected={dateNeeded}
-                                                    onChange={(date) => setDateNeeded(date)}
-                                                    dateFormat="MM/dd/yyyy"
-                                                    placeholderText="Start Date"
-                                                    className="form-control"
-                                                  />
-                                            </Form.Group>
-                                              </div>
-                                          </div>
-                                          
-                                        <div className="row">
-                                            <Form.Group controlId="exampleForm.ControlInput1">
-                                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                                <Form.Control as="textarea"  onChange={e => setRejustifyRemarks(e.target.value)}  placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
-                                            </Form.Group>
-                                          <div className="col-6">
-                                            {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
-                                                  <Paperclip size={20} />Upload Attachment
-                                              </Link> */}
-
-                                            <Form.Group controlId="exampleForm.ControlInput1">
-                                                <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
-                                                {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
-                                                <input type="file" onChange={handleFileChange} />
-                                            </Form.Group>
-
-                                            </div>
-                                        </div>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                                        Cancel
-                                    </Button>
-                                    <Button type="button" onClick={handleUploadRejustify} variant="warning" size="md" style={{ fontSize: '20px' }}>
-                                        Save
-                                    </Button>
-                                </Modal.Footer>
-                            </Form>
-                          </Modal>
-                       
-                       
+                      
             </div>
         </div>
     </div>
   )
 }
 
-export default POApprovalRejustify
+export default PO_Receive

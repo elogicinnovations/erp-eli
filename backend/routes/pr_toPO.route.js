@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR_PO = require('../db/models/pr_toPO.model')
-const {PR, PR_PO, PR_history, ProductTAGSupplier, Product, Supplier} = require('../db/models/associations')
+const {PR, PR_PO, PR_PO_asmbly, PR_history, ProductTAGSupplier, Product, Supplier, Assembly, Assembly_Supplier} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -12,7 +12,7 @@ router.use(session({
 }));
 
 
-router.route('/fetchView').get(async (req, res) => {
+router.route('/fetchView_product').get(async (req, res) => {
     try {
      
       const data = await PR_PO.findAll({
@@ -48,14 +48,52 @@ router.route('/fetchView').get(async (req, res) => {
     }
   });
 
+
+  router.route('/fetchView_asmbly').get(async (req, res) => {
+    try {
+     
+      const data = await PR_PO_asmbly.findAll({
+        include: [{
+          model: Assembly_Supplier,
+          required: true,
+
+          include: [{
+            model: Assembly,
+            required: true
+
+          },
+          {
+            model: Supplier,
+            required: true
+          }]
+        }],
+        where: {
+         pr_id: req.query.id
+  
+        }
+      });
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
+
 router.route('/save').post(async (req, res) => {
     try {
-       const {id, addProductbackend} = req.body;
+       const {id, addProductbackend, addAssemblybackend} = req.body;
         
    
 
           
-
+        /// inserting Product canvass supplier product 
           for (const prod of addProductbackend) {
             const prod_quantity = prod.quantity;
             const taggedIDSUpplier = prod.tagSupplier_ID;
@@ -69,6 +107,25 @@ router.route('/save').post(async (req, res) => {
                          
             });
           }
+
+
+           /// inserting Product canvass supplier assembly 
+           for (const asmbly of addAssemblybackend) {
+            const prod_quantity = asmbly.quantity;
+            const taggedIDSUpplier = asmbly.tagSupplier_ID;
+
+
+
+            await PR_PO_asmbly.create({
+                pr_id: id,
+                quantity: prod_quantity, 
+                assembly_suppliers_ID: taggedIDSUpplier,
+                         
+            });
+          }
+
+
+
             await PR.update({
                 status: 'For-Approval (PO)',
             },

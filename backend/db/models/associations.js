@@ -32,9 +32,12 @@ const IssuedReturn = require("./issued_return.model");
 
 const PR = require("./pr.model");
 const PR_product = require("./pr_products.model");
+const PR_assembly = require("./pr_assembly.model");
 const PR_history = require("./pr_historical.model");
 const PR_Rejustify = require("./pr_rejustify.model");
 const PR_PO = require("./pr_toPO.model");
+const PR_PO_asmbly = require("./pr_toPO_asmbly.model");
+
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -144,13 +147,19 @@ PR_product.belongsTo(PR, { foreignKey: "pr_id"});
 Product.hasMany(PR_product, { foreignKey: "product_id"});
 PR_product.belongsTo(Product, { foreignKey: "product_id"});
 
+PR.hasMany(PR_assembly, { foreignKey: "pr_id"});
+PR_assembly.belongsTo(PR, { foreignKey: "pr_id"});
+
+Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id"});
+PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
 PR.hasMany(PR_history, { foreignKey: "pr_id"});
 PR_history.belongsTo(PR, { foreignKey: "pr_id"});
 
 PR.hasMany(PR_Rejustify, { foreignKey: "pr_id"});
 PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id"});
 
-//purchase_req_pos TAble
+//purchase_req_pos TAble (Product)
 PR.hasMany(PR_PO, { foreignKey: "pr_id"});
 PR_PO.belongsTo(PR, { foreignKey: "pr_id"});
 
@@ -158,7 +167,15 @@ ProductTAGSupplier.hasMany(PR_PO, { foreignKey: "product_tag_supplier_ID"});
 PR_PO.belongsTo(ProductTAGSupplier, { foreignKey: "product_tag_supplier_ID"});
 
 
-//Assembly Sub parts
+//purchase_req_po_asmbly TAble (Assembly)
+PR.hasMany(PR_PO_asmbly, { foreignKey: "pr_id"});
+PR_PO_asmbly.belongsTo(PR, { foreignKey: "pr_id"});
+
+Assembly_Supplier.hasMany(PR_PO_asmbly, { foreignKey: "assembly_suppliers_ID"});
+PR_PO_asmbly.belongsTo(Assembly_Supplier, { foreignKey: "assembly_suppliers_ID"});
+
+
+//Assembly Sub parts PR_PO_asmbly
 Assembly.hasMany(Assembly_SubPart, { foreignKey: "assembly_id"});
 Assembly_SubPart.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
@@ -217,7 +234,9 @@ module.exports = {
 
                     PR,
                     PR_product,
+                    PR_assembly,
                     PR_history,
                     PR_Rejustify,
-                    PR_PO
+                    PR_PO,
+                    PR_PO_asmbly
                 };

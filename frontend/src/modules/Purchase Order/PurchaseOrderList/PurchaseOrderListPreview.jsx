@@ -33,36 +33,37 @@ function PurchaseOrderListPreview() {
   const [status, setStatus] = useState('');
 
   const [validated, setValidated] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [suppProducts, setSuppProducts] = useState([]);
+
+
+
+  //para sa assembly data na e canvass
+  const [assembly, setAssembly] = useState([]);
+  const [suppAssembly, setSuppAssembly] = useState([]);
+  const [addAssemblyPO, setAddAssemblyPO] = useState([]);
+  const [quantityInputsAss, setQuantityInputsAss] = useState({}); // for asse,blly quantity array holder
+  const [addAssemblybackend, setAddAssemblybackend] = useState([]); // para sa pag ng product na e issue sa backend
 
   //for adding the data from table canvass to table PO
+  const [products, setProducts] = useState([]);
+  const [suppProducts, setSuppProducts] = useState([]);
   const [addProductPO, setAddProductPO] = useState([]);
   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
-  const [quantityInputs, setQuantityInputs] = useState({});
-  const handleAddToTablePO = (itemId) => {
-    // Find the item in table 1 by ID
-    const selectedItem = suppProducts.find((item) => item.id === itemId);
-
-     // Check if the item already exists in table 2
-    const isItemInTablePO = addProductPO.some((item) => item.id === itemId);
+  const [quantityInputs, setQuantityInputs] = useState({}); // for product quantity array holder
 
 
-    if (selectedItem && !isItemInTablePO) {
-      // Transfer the item to table 2
-      setAddProductPO([...addProductPO, selectedItem]);
 
-      // Optionally, you can remove the item from table 1 if needed
-      const updatedTable1Data = suppProducts.filter((item) => item.id !== itemId);
-      setSuppProducts(updatedTable1Data);
-    }
-    // handleClose()
-  
-    return selectedItem
-    
+
+  const [showModal, setShowModal] = useState(false) //for product modal
+  const [showModalAs, setShowModalAS] = useState(false) //for assembly modal
+
+
+
+  const handleClose = () => {
+    setShowModal(false);
+    setShowModalAS(false)
   };
 
-  const [showModal, setShowModal] = useState(false)
+
 
   useEffect(() => {
     axios.get(BASE_URL + '/PR_product/fetchView',{
@@ -71,6 +72,17 @@ function PurchaseOrderListPreview() {
       }
     })
       .then(res => setProducts(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_assembly/fetchView',{
+      params:{
+        id: id
+      }
+    })
+      .then(res => setAssembly(res.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -101,30 +113,169 @@ function PurchaseOrderListPreview() {
 
   // const handleShow = () => setShowModal(true);
 
-  const handleCanvass = (product_id) => {
-    setShowModal(true);
+  
 
 
-    axios.get(BASE_URL + '/productTAGsupplier/fetchCanvass',{
-      params:{
-        id: product_id
-      }
-     
+
+
+
+//------------------------------------------------Product rendering data ------------------------------------------------//
+
+
+const handleCanvass = (product_id) => {
+  setShowModal(true);
+
+
+  axios.get(BASE_URL + '/productTAGsupplier/fetchCanvass',{
+    params:{
+      id: product_id
+    }
+   
+  })
+  
+    .then(res => {
+      setSuppProducts(res.data)
+      
     })
-    
-      .then(res => {
-        setSuppProducts(res.data)
+    .catch(err => console.log(err));
 
-       // Optionally, you can remove the item from table 1 if needed
-      // const updatedTable1Data = suppProducts.filter((item) => item.id !== product_id);
-      // setSuppProducts(updatedTable1Data);
-        
-      })
-      .catch(err => console.log(err));
+  // console.log(product_id)
 
-    // console.log(product_id)
+};
 
-  };
+
+
+const handleAddToTablePO = (itemId) => {
+  // Find the item in table 1 by ID
+  const selectedItem = suppProducts.find((item) => item.id === itemId);
+
+   // Check if the item already exists in table 2
+  const isItemInTablePO = addProductPO.some((item) => item.id === itemId);
+
+
+  if (selectedItem && !isItemInTablePO) {
+    // Transfer the item to table 2
+    setAddProductPO([...addProductPO, selectedItem]);
+
+    // Optionally, you can remove the item from table 1 if needed
+    const updatedTable1Data = suppProducts.filter((item) => item.id !== itemId);
+    setSuppProducts(updatedTable1Data);
+  }
+  // handleClose()
+
+  return selectedItem
+  
+};
+
+const handleQuantityChange = (value, productValue) => {
+  // Update the quantityInputs state for the corresponding product
+  setQuantityInputs((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [productValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedProducts = addProductPO.map((product) => ({
+      quantity: updatedInputs[product.id] || '',
+      tagSupplier_ID: product.id
+    }));
+
+//     console.log("Value:", value);
+// console.log("Product Value:", productValue);
+// console.log("Updated Inputs:", updatedInputs);
+
+    setAddProductbackend(serializedProducts);
+
+    console.log("Selected Products:", serializedProducts);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
+
+
+//------------------------------------------------Assembly rendering data ------------------------------------------------//
+
+
+const handleCanvassAssembly = (id) => {
+  setShowModalAS(true);
+
+
+  axios.get(BASE_URL + '/supplier_assembly/fetchCanvass',{
+    params:{
+      id: id
+    }
+   
+  })
+  
+    .then(res => {
+      setSuppAssembly(res.data)
+      
+    })
+    .catch(err => console.log(err));
+
+  // console.log(product_id)
+
+};
+
+
+const handleAddToTablePO_Assembly = (itemId) => {
+  // Find the item in table 1 by ID
+  const selectedItem = suppAssembly.find((item) => item.id === itemId);
+
+   // Check if the item already exists in table 2
+  const isItemInTablePO = addAssemblyPO.some((item) => item.id === itemId);
+
+
+  if (selectedItem && !isItemInTablePO) {
+    // Transfer the item to table 2
+    setAddAssemblyPO([...addAssemblyPO, selectedItem]);
+
+    // Optionally, you can remove the item from table 1 if needed
+    const updatedTable1Data = suppAssembly.filter((item) => item.id !== itemId);
+    setSuppAssembly(updatedTable1Data);
+  }
+  // handleClose()
+
+  return selectedItem
+  
+};
+
+
+const handleQuantityChange_Ass = (value, productValue) => {
+  // Update the quantityInputs state for the corresponding product
+  setQuantityInputsAss((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [productValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedProducts = addAssemblyPO.map((product) => ({
+      quantity: updatedInputs[product.id] || '',
+      tagSupplier_ID: product.id
+    }));
+
+//     console.log("Value:", value);
+// console.log("Product Value:", productValue);
+// console.log("Updated Inputs:", updatedInputs);
+
+    setAddAssemblybackend(serializedProducts);
+
+    console.log("Selected Assembly:", serializedProducts);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
+
+
+  //------------------------------------------------Spare rendering data ------------------------------------------------//
+
+
+
+
 
   
 
@@ -179,36 +330,9 @@ function PurchaseOrderListPreview() {
   };
 
 
-  const handleClose = () => {
-    setShowModal(false);
-  };
+ 
 
-  const handleQuantityChange = (value, productValue) => {
-    // Update the quantityInputs state for the corresponding product
-    setQuantityInputs((prevInputs) => {
-      const updatedInputs = {
-        ...prevInputs,
-        [productValue]: value,
-      };
-  
-      // Use the updatedInputs directly to create the serializedProducts array
-      const serializedProducts = addProductPO.map((product) => ({
-        quantity: updatedInputs[product.id] || '',
-        tagSupplier_ID: product.id
-      }));
 
-  //     console.log("Value:", value);
-  // console.log("Product Value:", productValue);
-  // console.log("Updated Inputs:", updatedInputs);
-  
-      setAddProductbackend(serializedProducts);
-  
-      console.log("Selected Products:", serializedProducts);
-  
-      // Return the updatedInputs to be used as the new state
-      return updatedInputs;
-    });
-  };
 
   const add = async e => {
     e.preventDefault();
@@ -228,7 +352,7 @@ function PurchaseOrderListPreview() {
     else{
   
       axios.post(`${BASE_URL}/PR_PO/save`, {
-        addProductbackend,
+        addProductbackend,addAssemblybackend,
         id: id,
       })
       .then((res) => {
@@ -357,18 +481,32 @@ function PurchaseOrderListPreview() {
                                         </thead>
                                         <tbody>
                                                 {products.map((data,i) =>(
-                                                <tr key={i}>
-                                                <td>{data.product.product_code}</td>
-                                                <td>{data.quantity}</td>
-                                                <td>{data.product.product_name}</td>
-                                                <td>{data.description}</td>
-                                                <td>
-                                                    <button type='button' 
-                                                      onClick={() => handleCanvass(data.product.product_id)}
-                                                      className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
-                                                </td>
-                                                </tr>
+                                                  <tr key={i}>
+                                                    <td>{data.product.product_code}</td>
+                                                    <td>{data.quantity}</td>
+                                                    <td>{data.product.product_name}</td>
+                                                    <td>{data.description}</td>
+                                                    <td>
+                                                        <button type='button' 
+                                                          onClick={() => handleCanvass(data.product_id)}
+                                                          className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
+                                                    </td>
+                                                  </tr>
                                                 ))}
+
+                                              {assembly.map((data,i) =>(
+                                                <tr key={i}>
+                                                  <td>{data.assembly.assembly_code}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>{data.assembly.assembly_name}</td>
+                                                  <td>{data.description}</td>
+                                                  <td>
+                                                      <button type='button' 
+                                                        onClick={() => handleCanvassAssembly(data.assembly_id)}
+                                                        className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
+                                                  </td>
+                                                </tr>
+                                              ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -401,14 +539,38 @@ function PurchaseOrderListPreview() {
                                         </thead>
                                         <tbody>
                                                 {addProductPO.map((data) =>(
+                                                  <tr key={data.id}>
+                                                    <td>{data.product.product_code}</td>
+                                                    <td>
+                                                        <div className='d-flex flex-direction-row align-items-center'>
+                                                          <input
+                                                            type="number"
+                                                            value={quantityInputs[data.id] || ''}
+                                                            onChange={(e) => handleQuantityChange(e.target.value, data.id)}
+                                                            required
+                                                            placeholder="Input quantity"
+                                                            style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                          />
+                                                          /{data.quantity}
+                                                        </div>
+                                                    </td>
+                                                    <td>{data.product.product_name}</td>
+                                                    <td>{data.supplier.supplier_name}</td>
+                                                    <td>{data.product_price}</td>
+                                            
+                                                  </tr>
+                                                ))}
+
+
+                                              {addAssemblyPO.map((data) =>(
                                                 <tr key={data.id}>
-                                                  <td>{data.product.product_code}</td>
+                                                  <td>{data.assembly.assembly_code}</td>
                                                   <td>
                                                       <div className='d-flex flex-direction-row align-items-center'>
                                                         <input
                                                           type="number"
-                                                          value={quantityInputs[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange(e.target.value, data.id)}
+                                                          value={quantityInputsAss[data.id] || ''}
+                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
                                                           required
                                                           placeholder="Input quantity"
                                                           style={{ height: '40px', width: '120px', fontSize: '15px' }}
@@ -416,12 +578,12 @@ function PurchaseOrderListPreview() {
                                                         /{data.quantity}
                                                       </div>
                                                   </td>
-                                                  <td>{data.product.product_name}</td>
+                                                  <td>{data.assembly.assembly_name}</td>
                                                   <td>{data.supplier.supplier_name}</td>
-                                                  <td>{data.product_price}</td>
+                                                  <td>{data.supplier_price}</td>
                                           
                                                 </tr>
-                                                ))}
+                                              ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -436,57 +598,117 @@ function PurchaseOrderListPreview() {
                           
                         </div>
                 </Form>
-        <Modal show={showModal} onHide={handleClose} size="xl">
-          <Form>
-            <Modal.Header closeButton>
-              <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
-            </Modal.Header>
-              <Modal.Body>
-                        <div className="table-containss">
-                            <div className="main-of-all-tables">
-                                <table id='order2-listing'>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Product Code</th>
-                                            <th className='tableh'>Product Name</th>
-                                            <th className='tableh'>Category</th>
-                                            <th className='tableh'>UOM</th>
-                                            <th className='tableh'>Supplier</th>
-                                            <th className='tableh'>Contact</th>
-                                            <th className='tableh'>Price</th>
-                                            <th className='tableh'></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {suppProducts.map((data,i) =>(
-                                                <tr key={i}>
-                                                <td>{data.product.product_code}</td>
-                                                <td>{data.product.product_name}</td>
-                                                <td>{data.product.category.category_name}</td>
-                                                <td>{data.product.product_unitMeasurement}</td>
-                                                <td>{data.supplier.supplier_name}</td>
-                                                <td>{data.supplier.supplier_number}</td>
-                                                <td>{data.product_price}</td>
-                                                <td>                                                
-                                                  <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id)}>
-                                                    <PlusCircle size={32}/>
-                                                  </button>
-                                                </td>
-                                                </tr>
-                                                ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Form>
-          </Modal>
-                       
+                      <Modal show={showModal} onHide={handleClose} size="xl">
+                          <Modal.Header closeButton>
+                            <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
+                          </Modal.Header>
+                            <Modal.Body>
+                                      <div className="table-containss">
+                                          <div className="main-of-all-tables">
+                                              <table id='order2-listing'>
+                                                      <thead>
+                                                      <tr>
+                                                          <th className='tableh'>Product Code</th>
+                                                          <th className='tableh'>Product Name</th>
+                                                          <th className='tableh'>Category</th>
+                                                          <th className='tableh'>UOM</th>
+                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Price</th>
+                                                          <th className='tableh'></th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                              {suppProducts.map((data,i) =>(
+                                                                <tr key={i}>
+                                                                    <td>{data.product.product_code}</td>
+                                                                    <td>{data.product.product_name}</td>
+                                                                    <td>{data.product.category.category_name}</td>
+                                                                    <td>{data.product.product_unitMeasurement}</td>
+                                                                    <td>{data.supplier.supplier_name}</td>
+                                                                    <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.product_price}</td>
+                                                                    <td>                                                
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id)}>
+                                                                        <PlusCircle size={32}/>
+                                                                      </button>
+                                                                    </td>
+                                                                </tr>
+                                                              ))}
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                      </div>
+                              </Modal.Body>
+                              <Modal.Footer>
+                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                                      Close
+                                  </Button>
+                              </Modal.Footer>
+                        </Modal>
+                                    {/* ------------------ END Product Modal ---------------- */}
+                  {/* ------------------------------------------- BREAK ----------------------------------------------- */}
+                                    {/* ------------------ Start Assembly Modal ---------------- */}
+
+
+                        <Modal show={showModalAs} onHide={handleClose} size="xl">
+                          <Modal.Header closeButton>
+                            <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
+                          </Modal.Header>
+                            <Modal.Body>
+                                      <div className="table-containss">
+                                          <div className="main-of-all-tables">
+                                              <table id='order2-listing'>
+                                                      <thead>
+                                                      <tr>
+                                                          <th className='tableh'>Product Code</th>
+                                                          <th className='tableh'>Product Name</th>
+                                                          <th className='tableh'>Category</th>
+                                                          <th className='tableh'>UOM</th>
+                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Price</th>
+                                                          <th className='tableh'></th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                             
+                                                              {suppAssembly.map((data,i) =>(
+                                                                <tr key={i}>
+                                                                    <td>{data.assembly.assembly_code}</td>
+                                                                    <td>{data.assembly.assembly_name}</td>
+                                                                    <td>--</td>
+                                                                    <td>--</td>
+                                                                    <td>{data.supplier.supplier_name}</td>
+                                                                    <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.supplier_price}</td>
+                                                                    <td>                                                
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id)}>
+                                                                        <PlusCircle size={32}/>
+                                                                      </button>
+                                                                    </td>
+                                                                </tr>
+                                                              ))}
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                      </div>
+                              </Modal.Body>
+                              <Modal.Footer>
+                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                                      Close
+                                  </Button>
+                              </Modal.Footer>
+                        </Modal>
+                                    {/* ------------------ END Assembly Modal ---------------- */}
+                  {/* ------------------------------------------- BREAK ----------------------------------------------- */}
+                                    {/* ------------------ Start SparePart Modal ---------------- */}
+
+
+
+
+
+
                        
             </div>
         </div>

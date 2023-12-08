@@ -49,6 +49,7 @@ const returned = require("./routes/returned.route");
 
 const PR = require("./routes/pr.route");
 const PR_product = require("./routes/pr_product.route");
+const PR_assembly= require("./routes/pr_assembly.route");
 const PR_history = require("./routes/pr_historical.route");
 const PR_rejustify = require("./routes/pr_rejustify.route");
 const PR_PO = require("./routes/pr_toPO.route");
@@ -86,6 +87,7 @@ app.use("/returend", returned);
 
 app.use("/PR", PR);
 app.use("/PR_product", PR_product);
+app.use("/PR_assembly", PR_assembly);
 app.use("/PR_history", PR_history);
 app.use("/PR_rejustify", PR_rejustify);
 app.use("/PR_PO", PR_PO);

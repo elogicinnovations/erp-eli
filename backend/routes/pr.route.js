@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR = require('../db/models/pr.model')
-const {PR, PR_product, PR_history, PR_PO} = require('../db/models/associations')
+const {PR, PR_product, PR_assembly, PR_history, PR_PO, PR_PO_asmbly} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -145,13 +145,27 @@ router.route('/create').post(async (req, res) => {
             const prod_value = prod.value;
             const prod_quantity = prod.quantity;
             const prod_desc = prod.desc;
+            const prod_type= prod.type;
 
-            await PR_product.create({
+
+            if (prod_type === "Product"){
+
+              await PR_product.create({
                 pr_id: createdID,
                 product_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
-            });
+              } );
+            } 
+            else if (prod_type === "Assembly"){
+              await PR_assembly.create({
+                pr_id: createdID,
+                assembly_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+              } );
+            }
+
           }
     
     
@@ -224,13 +238,46 @@ router.route('/update').post(async (req, res) => {
             const prod_value = prod.value;
             const prod_quantity = prod.quantity;
             const prod_desc = prod.desc;
+            const prod_type = prod.type;
 
-            await PR_product.create({
+
+            if (prod_type === "Product"){
+
+              await PR_product.create({
                 pr_id: id,
                 product_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
-            });
+              });
+            } 
+             
+
+            
+          }
+        }
+
+
+
+        const deletePR_assmbly = PR_assembly.destroy({
+          where : {
+            pr_id: id
+          }
+        })
+        if(deletePR_assmbly){
+          for (const prod of addProductbackend) {
+            const prod_value = prod.value;
+            const prod_quantity = prod.quantity;
+            const prod_desc = prod.desc;
+            const prod_type = prod.type;
+
+            if (prod_type === "Assembly"){
+              await PR_assembly.create({
+                pr_id: id,
+                assembly_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+              } );
+            }
           }
         }
       }
@@ -291,14 +338,17 @@ router.route('/cancel_PO').put(async (req, res) => {
     });
 
 
-    const deletePR_prod = PR_PO.destroy({
+    await PR_PO.destroy({
       where : {
         pr_id: row_id
       }
     })
-    if(deletePR_prod){
 
-    }
+    await PR_PO_asmbly.destroy({
+      where : {
+        pr_id: row_id
+      }
+    })
   
         res.status(200).json();
       

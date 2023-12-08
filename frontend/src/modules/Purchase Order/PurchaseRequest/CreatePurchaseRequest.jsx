@@ -38,7 +38,7 @@ function CreatePurchaseRequest() {
   const [validated, setValidated] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchProduct, setFetchProduct] = useState([]);
-
+  const [fetchAssembly, setFetchAssembly] = useState([]);
 
 // para sa pag fetch ng last pr number 
   useEffect(() => {   
@@ -55,6 +55,12 @@ function CreatePurchaseRequest() {
   useEffect(() => {
     axios.get(BASE_URL + '/product/fetchTable')
       .then(res => setFetchProduct(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/assembly/fetchTable')
+      .then(res => setFetchAssembly(res.data))
       .catch(err => console.log(err));
   }, []);
   
@@ -131,7 +137,8 @@ const handleInputChange = (value, productValue, inputType) => {
 
 useEffect(() => {
   const serializedProducts = product.map((product) => ({
-    value: product.value,
+    type: product.type,
+    value: product.values,
     quantity: inputValues[product.value]?.quantity || '',
     desc: inputValues[product.value]?.desc || '',
   }));
@@ -139,6 +146,7 @@ useEffect(() => {
   setAddProductbackend(serializedProducts);
 
   console.log("Selected Products:", serializedProducts);
+  
 }, [inputValues, product]);
 
 
@@ -313,7 +321,7 @@ function formatDatetime(datetime) {
                                         {showDropdown && (
                                         <div className="dropdown mt-3">
                                           
-                                          <Select
+                                          {/* <Select
                                             isMulti
                                             options={fetchProduct.map(prod => ({
                                               value: prod.product_id,
@@ -327,7 +335,36 @@ function formatDatetime(datetime) {
                                               created: prod.createdAt
                                             }))}
                                             onChange={selectProduct}
-                                          />
+                                          /> */}
+
+                                                <Select
+                                                  isMulti
+                                                  options={fetchProduct.map(prod => ({
+                                                    value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
+                                                    label: <div>
+                                                      Product Code: <strong>{prod.product_code}</strong> / 
+                                                      Product Name: <strong>{prod.product_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Product',
+                                                    values: prod.product_id,
+                                                    code: prod.product_code,
+                                                    name: prod.product_name,
+                                                    created: prod.createdAt
+                                                  })).concat(fetchAssembly.map(assembly => ({
+                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Assembly Code: <strong>{assembly.assembly_code}</strong> / 
+                                                      Assembly Name: <strong>{assembly.assembly_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Assembly',
+                                                    values: assembly.id,
+                                                    code: assembly.assembly_code,
+                                                    name: assembly.assembly_name,
+                                                    created: assembly.createdAt
+                                                  })))}
+                                                  onChange={selectProduct}
+                                                />
+
                                         </div>
                                       )}
                                             <div className="item">

@@ -1,7 +1,7 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const PR_PO = sequelize.define('purchase_req_po_prd', {
+const PR_assembly= sequelize.define('purchase_req_assembly', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -12,14 +12,18 @@ const PR_PO = sequelize.define('purchase_req_po_prd', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  assembly_id:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  product_tag_supplier_ID: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+  description: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 
-module.exports = PR_PO;
+module.exports = PR_assembly;

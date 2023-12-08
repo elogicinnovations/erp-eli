@@ -37,11 +37,13 @@ function PurchaseRequestPreview() {
   const [remarks, setRemarks] = useState('');
   const [product, setProduct] = useState([]); //para pag fetch ng mga registered products
   const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create
+  const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa product na selected sa pag create
   const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch ng product na e select
+  const [fetchAssembly, setFetchAssembly] = useState([]); // para sa pag fetch ng assembly na e select
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
 
@@ -166,10 +168,24 @@ function PurchaseRequestPreview() {
   }, []);
 
   useEffect(() => {
+    axios.get(BASE_URL + '/assembly/fetchTable')
+      .then(res => setFetchAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
     axios.get(BASE_URL + '/PR_product/fetchView',{
       params: {id: id}
     })
       .then(res => setProductSelectedFetch(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_assembly/fetchView',{
+      params: {id: id}
+    })
+      .then(res => setAssemblySelectedFetch(res.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -226,9 +242,11 @@ const handleInputChange = (value, productValue, inputType) => {
   }));
 };
 
+
 useEffect(() => {
   const serializedProducts = product.map((product) => ({
-    value: product.value,
+    type: product.type,
+    value: product.values,
     quantity: inputValues[product.value]?.quantity || '',
     desc: inputValues[product.value]?.desc || '',
   }));
@@ -236,6 +254,7 @@ useEffect(() => {
   setAddProductbackend(serializedProducts);
 
   console.log("Selected Products:", serializedProducts);
+  
 }, [inputValues, product]);
 
 
@@ -446,92 +465,95 @@ const update = async e => {
                                             </thead>
                                             <tbody>
 
-
-                                            {productSelectedFetch.length > 0 ? (
-                                            productSelectedFetch.map((product) => (
-                                              <tr >
-                                                <td >{product.product.product_code}</td>
-                                                <td > 
-                                                  <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input
-                                                      type="number"
-                                                      value={inputValues[product.value]?.quantity || product.quantity}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
-                                                      required
-                                                      readOnly
-                                                      placeholder="Input quantity"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                    />
-                                                    
-                                                  </div>
-                                                </td>
-                                                <td >{product.product.product_unitMeasurement}</td>                                           
-                                                <td >{product.product.product_name}</td>  
-                                                <td >
-                                                  <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input                                              
-                                                      as="textarea"
-                                                      readOnly
-                                                      value={inputValues[product.value]?.desc || product.description}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
-                                                      placeholder="Input description"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                    />
-                                                    
-                                                  </div>
-                                                </td>
+                                            {!isReadOnly && (
+                                              productSelectedFetch.length > 0 ? (
+                                              productSelectedFetch.map((product) => (
+                                                <tr >
+                                                  <td >{product.product.product_code}</td>
+                                                  <td > 
+                                                    {product.quantity}
+                                                  </td>
+                                                  <td >{product.product.product_unitMeasurement}</td>                                           
+                                                  <td >{product.product.product_name}</td>  
+                                                  <td >
+                                                    {product.description}
+                                                  </td>
+                                                </tr>
+                                              ))
+                                            ) : (
+                                              <tr>
+                                                <td></td>
                                               </tr>
-                                            ))
-                                          ) : (
-                                            <tr>
-                                              <td></td>
-                                            </tr>
-                                          )}
+                                            )
 
-                                            {product.length > 0 ? (
-                                            product.map((product) => (
-                                              <tr key={product.value}>
-                                                <td >{product.code}</td>
-                                                <td > 
-                                                  <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input
-                                                      type="number"
-                                                      value={inputValues[product.value]?.quantity || ''}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
-                                                      required
-                                                      placeholder="Input quantity"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                    />
-                                                    
-                                                  </div>
-                                                </td>
-                                                <td >{product.um}</td>                                           
-                                                <td >{product.name}</td>  
-                                                <td >
-                                                  <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input                                              
-                                                      as="textarea"
-                                                      value={inputValues[product.value]?.desc || ''}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
-                                                      placeholder="Input description"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                    />
-                                                    
-                                                  </div>
-                                                </td>
+                                          )} {/* end ng !isReadOnly*/}
+
+
+                                            {!isReadOnly && (
+                                              assemblySelectedFetch.length > 0 ? (
+                                                assemblySelectedFetch.map((product) => (
+                                                <tr >
+                                                  <td >{product.assembly.assembly_code}</td>
+                                                  <td > {product.quantity}</td>
+                                                  <td > -- </td>                                           
+                                                  <td >{product.assembly.assembly_name}</td>  
+                                                  <td >{product.description}</td>
+                                                </tr>
+                                              ))
+                                            ) : (
+                                              <tr>
+                                                <td></td>
                                               </tr>
-                                            ))
-                                          ) : (
-                                            <tr>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                                                 
+                                            )
+
+                                          )} {/* end ng !isReadOnly*/}
+
+
+                                            {isReadOnly && (
+                                              product.length > 0 ? (
+                                              product.map((product) => (
+                                                <tr key={product.value}>
+                                                  <td >{product.code}</td>
+                                                  <td > 
+                                                    <div className='d-flex flex-direction-row align-items-center'>
+                                                      <input
+                                                        type="number"
+                                                        value={inputValues[product.value]?.quantity || ''}
+                                                        onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
+                                                        required
+                                                        placeholder="Input quantity"
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                      />
+                                                      
+                                                    </div>
+                                                  </td>
+                                                  <td >{product.um}</td>                                           
+                                                  <td >{product.name}</td>  
+                                                  <td >
+                                                    <div className='d-flex flex-direction-row align-items-center'>
+                                                      <input                                              
+                                                        as="textarea"
+                                                        value={inputValues[product.value]?.desc || ''}
+                                                        onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
+                                                        placeholder="Input description"
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                      />
+                                                      
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              ))
+                                            ) : (
+                                              <tr>
+                                                <td></td>
+                                              </tr>
+                                            )
+                                          )} {/* end ng isReadOnly*/}
                                             </tbody>
                                         {showDropdown && (
                                         <div className="dropdown mt-3">
                                           
-                                          <Select
+                                          {/* <Select
                                             isMulti
                                             options={fetchProduct.map(prod => ({
                                               value: prod.product_id,
@@ -546,7 +568,36 @@ const update = async e => {
                                               created: prod.createdAt
                                             }))}
                                             onChange={selectProduct}
-                                          />
+                                          /> */}
+
+                                                <Select
+                                                  isMulti
+                                                  options={fetchProduct.map(prod => ({
+                                                    value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
+                                                    label: <div>
+                                                      Product Code: <strong>{prod.product_code}</strong> / 
+                                                      Product Name: <strong>{prod.product_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Product',
+                                                    values: prod.product_id,
+                                                    um: prod.product_unitMeasurement,
+                                                    code: prod.product_code,
+                                                    name: prod.product_name,
+                                                    created: prod.createdAt
+                                                  })).concat(fetchAssembly.map(assembly => ({
+                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Assembly Code: <strong>{assembly.assembly_code}</strong> / 
+                                                      Assembly Name: <strong>{assembly.assembly_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Assembly',
+                                                    values: assembly.id,
+                                                    code: assembly.assembly_code,
+                                                    name: assembly.assembly_name,
+                                                    created: assembly.createdAt
+                                                  })))}
+                                                  onChange={selectProduct}
+                                                />
                                         </div>
                                       )}
                                       {isReadOnly && (
@@ -569,73 +620,90 @@ const update = async e => {
                                 <Button type='button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
                               )} */}
                               {isReadOnly && (
-                                <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                                <Button type='submit' className='btn btn-success' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                               )}
+
+
 
                               {status === 'For-Approval' ? (
                                 <>
-                                  <Button
-                                  
-                                    type='button'
-                                    onClick={handleApproveClick}
-                                    className='btn btn-warning'
-                                    size="md"
-                                    style={{ fontSize: '20px', margin: '0px 5px' }}
-                                  >
-                                    Approve
-                                  </Button>
+                                  {!isReadOnly && (
+                                    <Button
+                                    
+                                      type='button'
+                                      onClick={handleApproveClick}
+                                      className='btn btn-warning'
+                                      size="md"
+                                      style={{ fontSize: '20px', margin: '0px 5px' }}
+                                    >
+                                      Approve
+                                    </Button>
 
-                                  <Button
-                                    type='button'
-                                    onClick={handleEditClick}
-                                    className='btn btn-success'
-                                    size="s"
-                                    style={{ fontSize: '20px', margin: '0px 5px' }}
-                                  >
-                                    <NotePencil /> Edit
-                                  </Button>
+                                  )}
 
-                                  <Button 
-                                      onClick={handleShow} 
-                                      className='btn btn-secondary btn-md' 
-                                      size="md" 
-                                      style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                                    Rejustify
-                                  </Button> 
+                                    {!isReadOnly && (
+                                      <Button
+                                        type='button'
+                                        onClick={handleEditClick}
+                                        className='btn btn-success'
+                                        size="s"
+                                        style={{ fontSize: '20px', margin: '0px 5px' }}
+                                      >
+                                        <NotePencil /> Edit
+                                      </Button>
+                                    )}
 
+                                  {!isReadOnly && (
+
+                                    <Button 
+                                        onClick={handleShow} 
+                                        className='btn btn-secondary btn-md' 
+                                        size="md" 
+                                        style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                                      Rejustify
+                                    </Button> 
+                                  )}
                                 </>
                                 
                               ):
                               status === 'For-Rejustify' ? (
                                 <>
-                                <Button
-                                
-                                  type='button'
-                                  onClick={handleApproveClick}
-                                  className='btn btn-warning'
-                                  size="md"
-                                  style={{ fontSize: '20px', margin: '0px 5px' }}
-                                >
-                                  Approve
-                                </Button>
+                                  {!isReadOnly && (
+                                    <Button
+                                    
+                                      type='button'
+                                      onClick={handleApproveClick}
+                                      className='btn btn-warning'
+                                      size="md"
+                                      style={{ fontSize: '20px', margin: '0px 5px' }}
+                                    >
+                                      Approve
+                                    </Button>
 
-                                <Button
-                                  type='button'
-                                  onClick={handleEditClick}
-                                  className='btn btn-success'
-                                  size="s"
-                                  style={{ fontSize: '20px', margin: '0px 5px' }}
-                                >
-                                  <NotePencil /> Edit
-                                </Button>
+                                  )}
 
-                                <Button 
-                                    onClick={handleShow} 
-                                    className='btn btn-secondary btn-md' 
-                                    size="md" 
-                                    style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                                  Rejustify
-                                </Button> 
+                                    {!isReadOnly && (
+                                      <Button
+                                        type='button'
+                                        onClick={handleEditClick}
+                                        className='btn btn-success'
+                                        size="s"
+                                        style={{ fontSize: '20px', margin: '0px 5px' }}
+                                      >
+                                        <NotePencil /> Edit
+                                      </Button>
+                                    )}
+
+                                  {!isReadOnly && (
+
+                                    <Button 
+                                        onClick={handleShow} 
+                                        className='btn btn-secondary btn-md' 
+                                        size="md" 
+                                        style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                                      Rejustify
+                                    </Button> 
+                                  )}
 
                               </>
                               ):

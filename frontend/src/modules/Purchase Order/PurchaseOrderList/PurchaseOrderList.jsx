@@ -243,16 +243,27 @@ const [pr_req, setPr_req] = useState([]);
                           <tbody>
                             {pr_req.map((data, i) => (
                               <tr key={i}>
-                              <td
-                                onClick={() => data.status === 'For-Approval (PO)' ? navigate(`/PO_approvalRejustify/${data.id}`) : navigate(`/purchaseOrderListPreview/${data.id}`)}
-                              >
-                                {data.pr_num}
-                              </td>
+                             <td
+                                  onClick={() =>
+                                    data.status === 'For-Approval (PO)' ? 
+                                    navigate(`/PO_approvalRejustify/${data.id}`) :
+                                    data.status === 'For-Rejustify (PO)' ?
+                                      navigate(`/PO_approvalRejustify/${data.id}`) :
+                                      data.status === 'To-Receive' ?
+                                      navigate(`/PO_receive/${data.id}`) :
+                                      navigate(`/purchaseOrderListPreview/${data.id}`)
+                                  }
+                                >
+                                  {data.pr_num}
+                                </td>
+
                               <td onClick={() => 
                                           data.status === 'For-Approval (PO)' ? 
                                             navigate(`/PO_approvalRejustify/${data.id}`) :
                                             data.status === 'For-Rejustify (PO)' ?
                                               navigate(`/PO_approvalRejustify/${data.id}`) :
+                                              data.status === 'To-Receive' ?
+                                              navigate(`/PO_receive/${data.id}`) :
                                               navigate(`/purchaseOrderListPreview/${data.id}`)
                                         }>
                                     --
@@ -261,11 +272,13 @@ const [pr_req, setPr_req] = useState([]);
                                 
 
                                 <td onClick={() => 
-                                          data.status === 'For-Approval (PO)' ? 
-                                            navigate(`/PO_approvalRejustify/${data.id}`) :
-                                            data.status === 'For-Rejustify (PO)' ?
-                                              navigate(`/PO_approvalRejustify/${data.id}`) :
-                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                           data.status === 'For-Approval (PO)' ? 
+                                           navigate(`/PO_approvalRejustify/${data.id}`) :
+                                           data.status === 'For-Rejustify (PO)' ?
+                                             navigate(`/PO_approvalRejustify/${data.id}`) :
+                                             data.status === 'To-Receive' ?
+                                             navigate(`/PO_receive/${data.id}`) :
+                                             navigate(`/purchaseOrderListPreview/${data.id}`)
                                         }>
                                            { (data.status === 'For-Approval (PO)' ? 'For Approval' :
                                             data.status === 'For-Rejustify (PO)' ? 'For Rejustify' :
@@ -273,21 +286,25 @@ const [pr_req, setPr_req] = useState([]);
                                   </td>
 
                                   <td onClick={() => 
-                                          data.status === 'For-Approval (PO)' ? 
-                                            navigate(`/PO_approvalRejustify/${data.id}`) :
-                                            data.status === 'For-Rejustify (PO)' ?
-                                              navigate(`/PO_approvalRejustify/${data.id}`) :
-                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                           data.status === 'For-Approval (PO)' ? 
+                                           navigate(`/PO_approvalRejustify/${data.id}`) :
+                                           data.status === 'For-Rejustify (PO)' ?
+                                             navigate(`/PO_approvalRejustify/${data.id}`) :
+                                             data.status === 'To-Receive' ?
+                                             navigate(`/PO_receive/${data.id}`) :
+                                             navigate(`/purchaseOrderListPreview/${data.id}`)
                                         }>
                                     {formatDatetime(data.updatedAt)}
                                 </td>
 
                                 <td onClick={() => 
-                                          data.status === 'For-Approval (PO)' ? 
-                                            navigate(`/PO_approvalRejustify/${data.id}`) :
-                                            data.status === 'For-Rejustify (PO)' ?
-                                              navigate(`/PO_approvalRejustify/${data.id}`) :
-                                              navigate(`/purchaseOrderListPreview/${data.id}`)
+                                           data.status === 'For-Approval (PO)' ? 
+                                           navigate(`/PO_approvalRejustify/${data.id}`) :
+                                           data.status === 'For-Rejustify (PO)' ?
+                                             navigate(`/PO_approvalRejustify/${data.id}`) :
+                                             data.status === 'To-Receive' ?
+                                             navigate(`/PO_receive/${data.id}`) :
+                                             navigate(`/purchaseOrderListPreview/${data.id}`)
                                         }>
                                    {data.remarks}
                                 </td>
