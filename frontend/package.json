@@ -13,14 +13,14 @@
     "@mui/icons-material": "^5.14.13",
     "@mui/material": "^5.14.15",
     "@mui/system": "^5.14.12",
-    "@phosphor-icons/react": "^2.0.13",
+    "@phosphor-icons/react": "^2.0.15",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.10.1",
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
-    "bootstrap-icons": "^1.11.1",
+    "bootstrap-icons": "^1.11.2",
     "datatables.net": "^1.13.6",
     "mdbreact": "^5.2.0",
     "multiselect-react-dropdown": "^2.0.25",
@@ -44,7 +44,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prod": "npm run-script build && serve build"
   },
   "eslintConfig": {
     "extends": [
