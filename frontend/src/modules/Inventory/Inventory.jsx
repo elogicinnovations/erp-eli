@@ -45,7 +45,6 @@ const navigate = useNavigate()
 
     const { id } = useParams();
     const [returned, setReturned] = useState([]);
-    const [remarks, setRemarks] = useState([])
 
   useEffect(() => {
     axios.get(BASE_URL + '/issuedReturn/getReturn',{
@@ -55,7 +54,6 @@ const navigate = useNavigate()
     })
     .then(res => {
         setReturned(res.data);
-        setRemarks(res.data[0].remarks);
     })
     .catch(err => {
       console.error(err);
@@ -63,11 +61,9 @@ const navigate = useNavigate()
     });
   }, [id]);
 
-  const fetchReturnedData = () => {
-        axios.get(BASE_URL + '/issuedReturn/getReturn')
-            .then(res => setReturned(res.data))
-            .catch(err => console.log(err));
-    };
+
+  const [issuedReturn, setIssuedReturn] = useState()
+
     const handleMoveToInventory = (returnId) => {
       // Show confirmation SweetAlert
       swal({
@@ -377,12 +373,31 @@ const navigate = useNavigate()
                                                     <tbody>
                                                         {returned.map((data, i) => (
                                                         <tr key={i}>
-                                                            <td onClick={handleShow}>{data.issued_return_id}</td>
-                                                            <td onClick={handleShow}>{data.issued_id}</td>
-                                                            <td onClick={handleShow}>{data.return_by}</td>
-                                                            <td onClick={handleShow}>{data.quantity}</td>
-                                                            <td onClick={handleShow}>{formatDatetime(data.createdAt)}</td>
-                                                            <td onClick={handleShow}>{data.status}</td>
+                                                            <td onClick={() => {
+                                                                  setIssuedReturn(data);
+                                                                  handleShow();
+                                                                }}>{data.issued_return_id}</td>
+                                                            <td onClick={() => {
+                                                                  setIssuedReturn(data);
+                                                                  handleShow();
+                                                                }}>{data.issued_id}</td>
+                                                            <td onClick={() => {
+                                                                  setIssuedReturn(data);
+                                                                  handleShow();
+                                                                }}>{data.return_by}</td>
+                                                            <td onClick={() => {
+                                                                  setIssuedReturn(data);
+                                                                  handleShow();
+                                                                }}>{data.quantity}</td>
+                                                            <td onClick={() => {
+                                                                  setIssuedReturn(data);
+                                                                  handleShow();
+                                                                }}>{formatDatetime(data.createdAt)}</td>
+                                                            <td onClick={() => {
+                                                                  setIssuedReturn(data);
+                                                                  handleShow();
+                                                                }}>{data.status}
+                                                              </td>
                                                             <td>
                                                               <button
                                                                   style={{ fontSize: '12px' }}
@@ -417,14 +432,14 @@ const navigate = useNavigate()
                                             <div className="col-6">
                                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '18px' }}>ID: </Form.Label>
-                                                <Form.Control type="text"
+                                                <Form.Control value={issuedReturn?.issued_return_id} disabled type="text"
                                                 style={{height: '40px', fontSize: '15px'}}/>
                                               </Form.Group>
                                               </div>
                                               <div className="col-6">
                                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '18px' }}>Issuance ID: </Form.Label>
-                                                <Form.Control type="text"
+                                                <Form.Control value={issuedReturn?.issued_id} disabled type="text"
                                                 style={{height: '40px', fontSize: '15px'}}/>
                                               </Form.Group>
                                             </div>
@@ -432,14 +447,14 @@ const navigate = useNavigate()
                                             <div className="col-6">
                                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '18px' }}>Quantity: </Form.Label>
-                                                <Form.Control type="text"
+                                                <Form.Control value={issuedReturn?.quantity} disabled type="text"
                                                 style={{height: '40px', fontSize: '15px'}}/>
                                               </Form.Group>
                                               </div>
                                               <div className="col-6">
                                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '18px' }}>Return By: </Form.Label>
-                                                <Form.Control type="text"
+                                                <Form.Control value={issuedReturn?.return_by} disabled type="text"
                                                 style={{height: '40px', fontSize: '15px'}}/>
                                               </Form.Group>
                                             </div>
@@ -448,7 +463,7 @@ const navigate = useNavigate()
                                               <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
                                                 <Form.Control
-                                                  value={remarks} disabled as="textarea" style={{fontSize: '16px', height: '100px', maxHeight: '200px', resize: 'none', overflowY: 'auto'}} />
+                                                  value={issuedReturn?.remarks} disabled as="textarea" style={{fontSize: '16px', height: '100px', maxHeight: '200px', resize: 'none', overflowY: 'auto'}} />
                                               </Form.Group>
                                           </div>
                                                 
