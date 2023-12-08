@@ -40,14 +40,18 @@ router.route('/create').post(async (req, res) => {
         
 
         // Check if the supplier code is already exists in the table
-        const existingDataCode = await BinLocation.findOne({
+        const existingDataCode = await BinLocation.findAll({
           where: {
-            bin_name: req.body.binLocationName,
-            bin_subname: req.body.binLocationSubName,
+            [Op.or] : [
+              { bin_name: { [Op.eq] : req.body.binLocationName } },
+              { bin_subname: { [Op.eq] : req.body.binLocationSubName } },
+            ]
           },
         });
     
-        if (existingDataCode) {
+        console.log("Existing: ", existingDataCode.length);
+
+        if (existingDataCode.length > 0) {
           res.status(201).send('Exist');
         } else {
           const newData = await BinLocation.create({

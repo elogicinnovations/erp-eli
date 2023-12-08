@@ -43,7 +43,8 @@ import {
   
   import * as $ from 'jquery';
 
-function Dashboard() {
+import { useEffect, useState } from 'react';
+import { NavLink, Navigate, useNavigate } from 'react-router-dom';
 
   const data = [
     { name: 'In Stock', value: 400 },
@@ -201,6 +202,14 @@ function Dashboard() {
     },
   ];
 
+function Dashboard() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    console.log(localStorage.getItem('accessToken'));
+    if(localStorage.getItem('accessToken') === null){
+      navigate('/');
+    }
+  }, [])
 
   return (
     <div className="main-of-containers">
@@ -649,7 +658,7 @@ function Dashboard() {
 
         </div>
     </div>
-  )
+  ) ;
 }
 
 export default Dashboard

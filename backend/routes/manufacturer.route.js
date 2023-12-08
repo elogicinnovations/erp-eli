@@ -11,14 +11,16 @@ router.route('/add').post(async (req, res) => {
 
     try {
       // Check if the supplier code is already exists in the table
-      const existingDataCode = await Manufacturer.findOne({
+      const existingDataCode = await Manufacturer.findAll({
         where: {
-          manufacturer_code: req.body.codeManu
-         
+          [Op.or] : [
+            { manufacturer_code: { [Op.eq] : req.body.codeManu }},
+            { manufacturer_name : { [Op.eq] : req.body.nameManufacturer }}
+          ]
         },
       });
   
-      if (existingDataCode) {
+      if (existingDataCode.length > 0) {
         res.status(201).send('Exist');
       } else {
         const newData = await Manufacturer.create({
