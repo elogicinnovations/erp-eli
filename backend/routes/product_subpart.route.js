@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {Product, Product_Assembly, Assembly} = require('../db/models/associations')
+const {Product, Product_Subparts, SubPart} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -10,11 +10,11 @@ router.use(session({
     saveUninitialized: true
 }));
 
-router.route('/fetchassemblyTable').get(async (req, res) => {
+router.route('/fetchsubpartTable').get(async (req, res) => {
     try {
-        const data = await Product_Assembly.findAll({
+        const data = await Product_Subparts.findAll({
           include:[{
-             model: Assembly,
+             model: SubPart,
              required: true 
           }],
           where: {

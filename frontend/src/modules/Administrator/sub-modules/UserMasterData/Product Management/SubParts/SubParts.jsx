@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from '../../../../Sidebar/sidebar';
-import '../../../../../assets/global/style.css';
+import Sidebar from '../../../../../Sidebar/sidebar';
+import '../../../../../../assets/global/style.css';
 import '../../../../styles/react-style.css';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import BASE_URL from '../../../../../assets/global/url';
+import BASE_URL from '../../../../../../assets/global/url';
 import Button from 'react-bootstrap/Button';
 import swal from 'sweetalert';
 import Modal from 'react-bootstrap/Modal';
@@ -19,16 +19,16 @@ import {
     NotePencil,
     DotsThreeCircle
   } from "@phosphor-icons/react";
-  import '../../../../../assets/skydash/vendors/feather/feather.css';
-  import '../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
-  import '../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
-  import '../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-  import '../../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
-  import '../../../../../assets/skydash/css/vertical-layout-light/style.css';
-  import '../../../../../assets/skydash/vendors/js/vendor.bundle.base';
-  import '../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
-  import '../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
-  import '../../../../../assets/skydash/js/off-canvas';
+  import '../../../../../../assets/skydash/vendors/feather/feather.css';
+  import '../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
+  import '../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
+  import '../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
+  import '../../../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css';
+  import '../../../../../../assets/skydash/css/vertical-layout-light/style.css';
+  import '../../../../../../assets/skydash/vendors/js/vendor.bundle.base';
+  import '../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
+  import '../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
+  import '../../../../../../assets/skydash/js/off-canvas';
   
   import * as $ from 'jquery';
 
@@ -432,12 +432,12 @@ function SubParts() {
 
                         <div className="button-create-side">
                         <div className="Buttonmodal-new">
-                            <button onClick={handleShow} className='button'>
+                            <Link to='/createsubParts' className='button'>
                                 <span style={{ }}>
                                 <Plus size={25} />
                                 </span>
                                 New Product
-                            </button>
+                              </Link>
                             </div>
                         </div>
 

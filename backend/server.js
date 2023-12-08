@@ -23,10 +23,13 @@ const binLocation = require("./routes/binLocation.route");
 const product = require("./routes/product.route");
 const productTAGsupplier = require("./routes/productTAGsupplier.route");
 const Product_Assembly = require("./routes/product_assembly.route");
+const Product_Subparts = require("./routes/product_subpart.route");
+const Product_Spareparts = require("./routes/product_sparepart");
 
 const manufacturer = require("./routes/manufacturer.route");
 
 const subPart = require("./routes/subPart.route");
+const subPart_supplier = require("./routes/subpart_supplier.route");
 
 const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
@@ -58,13 +61,18 @@ app.use("/userRole", userRoute);
 app.use("/supplier", supplier);
 app.use("/category", category);
 app.use("/binLocation", binLocation);
+
 app.use("/product", product);
 app.use("/productTAGsupplier", productTAGsupplier);
 app.use("/productAssembly", Product_Assembly);
+app.use("/productSubpart", Product_Subparts);
+app.use("/productSparepart", Product_Spareparts);
 
 app.use("/costCenter", costCenter);
 app.use("/manufacturer", manufacturer);
+
 app.use("/subpart", subPart);
+app.use("/subpartSupplier", subPart_supplier);
 
 app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);

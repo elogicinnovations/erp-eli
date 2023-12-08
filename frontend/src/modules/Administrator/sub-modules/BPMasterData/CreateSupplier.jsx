@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Sidebar from '../../../Sidebar/sidebar';
 import axios from 'axios';
 import BASE_URL from '../../../../assets/global/url';
@@ -34,14 +34,55 @@ function CreateSupplier() {
     const [suppVat, setsuppVat] = useState('');
     const [suppReceving, setsuppReceving] = useState('');
     const [suppStatus, setsuppStatus] = useState('Active');
-
-
+    const [supplier, setSupplier] = useState([]);
+    const [suppliers, setsuppliers] = useState([]);
+    const [errorcode, setErrorcode] = useState('');
+    const [isCodeExist, setIsCodeExist] = useState(false);
  // Handle the checkbox change event for toggle button VAtable textbox
     const [isChecked, setIsChecked] = useState(false);
     const handleCheckboxChange = (event) => {
       setIsChecked(event.target.checked);
     };
 
+    useEffect(() => {
+        axios
+          .get(BASE_URL + '/supplier/fetchTable')
+          .then((res) => setSupplier(res.data))
+          .catch((err) => console.log(err));
+      }, []);
+
+      //function for existing code and name
+      const checkexistingCode = useCallback(async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/supplier/fetchTable`);
+          const existingSuppliers = response.data;
+    
+          const isNameExist = existingSuppliers.some(
+            (supplier) => supplier.supplier_name === suppName
+          );
+    
+          const isCodeExist = existingSuppliers.some(
+            (supplier) => supplier.supplier_code === suppCode
+          );
+    
+          if (isCodeExist && isNameExist) {
+            setErrorcode('Name and Code are already in use');
+            setIsCodeExist(true);
+          } else if (isCodeExist) {
+            setErrorcode('Code is already in use');
+            setIsCodeExist(true);
+          } else {
+            setErrorcode('');
+            setIsCodeExist(false);
+          }
+        } catch (error) {
+          console.error('Error checking existing code:', error);
+        }
+      }, [suppCode, suppName]);
+    
+      useEffect(() => {
+        checkexistingCode();
+      }, [suppCode, suppName, checkexistingCode]);
 
 
 
@@ -96,14 +137,10 @@ function CreateSupplier() {
     const handleFormSubmit = async e => {
         e.preventDefault();
 
-       
-
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
           e.preventDefault();
           e.stopPropagation();
-        // if required fields has NO value
-        //    console.log('requried')
         swal({
             icon: 'error',
             title: 'Fields are required',
@@ -111,8 +148,7 @@ function CreateSupplier() {
           });
         }
         else{
-            // if required fields has value (GOOD)
-              console.log(suppCperson)
+            console.log(suppName, suppCode);
 
              axios
              .post(BASE_URL + '/supplier/create', 
@@ -148,19 +184,17 @@ function CreateSupplier() {
 
         setValidated(true); //for validations
     }
-
     const handleActiveStatus= e => {
-
         if(suppStatus === 'Active'){
             setsuppStatus('Inactive')
         }
         else{
             setsuppStatus('Active')
         }
-
-        // console.log('set now' + suppStatus)
     }
-    // console.log(suppStatus)
+
+
+ 
   return (
     <div className="main-of-containers">
         <div className="left-of-main-containers">
@@ -217,7 +251,9 @@ function CreateSupplier() {
                         <Col>
                             <Form.Label style={{fontSize: 20}} >Supplier Name: </Form.Label>
                             <Form.Control className='p-3  fs-3' placeholder='Supplier Name' maxLength={80} onChange={e => setsuppName(e.target.value)} required/>
-                            
+                            {errorcode && (
+                                <div style={{ color: 'red', marginTop: '5px', fontFamily: 'Poppins, Source Sans Pro', fontSize: '13px' }}>{errorcode}</div>
+                            )}
                         </Col>
                         <Col>
                         <label htmlFor="" className='label-head' style={{fontSize: 20}}>Code: </label>
@@ -350,7 +386,8 @@ function CreateSupplier() {
                     <Row>
                    
                         <Col>
-                            <Button type='submit' variant="success" size="lg" className="fs-5">
+                            <Button type='submit' variant="success" size="lg" className="fs-5"
+                            disabled={isCodeExist}>
                                 Save
                             </Button>
                         </Col>

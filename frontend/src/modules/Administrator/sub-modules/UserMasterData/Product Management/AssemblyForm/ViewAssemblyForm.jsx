@@ -35,6 +35,7 @@ function ViewAssembly(){
         transition: 'color 0.3s',
     };
 
+    console.log(Subparts);
     //for sub parts
     useEffect(() => {
         axios.get(BASE_URL + '/assembly_subparts/fetchinTable',{
