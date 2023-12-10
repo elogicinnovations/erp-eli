@@ -219,17 +219,24 @@ function CostCenter() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <CostContext.Provider value={costData}>
+                                {/* <CostContext.Provider value={costData}> */}
                                       {CostCenter.map((data,i) =>(
                                         <tr key={i}>
 
-                                          <td onClick={() => navigate('/viewCostCenter')}>{data.id}</td>
+                                          {/* <td onClick={() => navigate('/viewCostCenter')}>{data.id}</td>
                                           <td onClick={() => { setCostData(data); navigate('/viewCostCenter');  }}>{data.name}</td>
                                           <td onClick={() => { setCostData(data); navigate('/viewCostCenter'); }}>{data.masterlist.col_Fname}</td>
                                           <td onClick={() => { setCostData(data); navigate('/viewCostCenter'); }}>{data.masterlist.col_phone}</td>
                                           <td onClick={() => { navigate('/viewCostCenter'); setCostData(data); }}>{data.status}</td>
                                           <td onClick={() => { navigate('/viewCostCenter'); setCostData(data); }}>{formatDatetime(data.createdAt)}</td>
-                                          <td onClick={() => { navigate('/viewCostCenter'); setCostData(data); }}>{formatDatetime(data.updatedAt)}</td>
+                                          <td onClick={() => { navigate('/viewCostCenter'); setCostData(data); }}>{formatDatetime(data.updatedAt)}</td> */}
+                                            <td onClick={() => navigate('/viewCostCenter')}>{data.id}</td>
+                                            <td onClick={() => {  navigate('/viewCostCenter');  }}>{data.name}</td>
+                                            <td onClick={() => {  navigate('/viewCostCenter'); }}>{data.masterlist.col_Fname}</td>
+                                            <td onClick={() => {  navigate('/viewCostCenter'); }}>{data.masterlist.col_phone}</td>
+                                            <td onClick={() => { navigate('/viewCostCenter')}}>{data.status}</td>
+                                            <td onClick={() => { navigate('/viewCostCenter'); }}>{formatDatetime(data.createdAt)}</td>
+                                            <td onClick={() => { navigate('/viewCostCenter'); }}>{formatDatetime(data.updatedAt)}</td>
                                           <td>
                                           <DotsThreeCircle
                                               size={32}

@@ -43,9 +43,6 @@ import {
   
   import * as $ from 'jquery';
 
-import { useEffect, useState } from 'react';
-import { NavLink, Navigate, useNavigate } from 'react-router-dom';
-
   const data = [
     { name: 'In Stock', value: 400 },
     { name: 'Low Stock', value: 300 },
