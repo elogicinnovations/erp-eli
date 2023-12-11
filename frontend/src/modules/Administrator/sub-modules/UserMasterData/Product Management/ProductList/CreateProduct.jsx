@@ -16,7 +16,7 @@ import { X } from "@phosphor-icons/react";
 
 function CreateProduct() {
   const navigate = useNavigate();
-
+//try
   const [validated, setValidated] = useState(false); // for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
