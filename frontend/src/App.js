@@ -49,6 +49,8 @@ import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
 import ViewInventory  from "./modules/Inventory/ViewInventory"
 import ViewAssembly  from "./modules/Inventory/ViewAssembly"
+import ViewSpare  from "./modules/Inventory/ViewSpare"
+import ViewSubpart from "./modules/Inventory/ViewSubpart"
 import PurchaseRequest from "./modules/Purchase Order/PurchaseRequest/PurchaseRequest";
 import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
 import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
@@ -231,9 +233,9 @@ function App() {
             element={<Inventory/>}
           />
                   <Route
-                        path="/createIssuance"
-                        element={<CreateIssuance/>}
-                      />
+                    path="/createIssuance"
+                    element={<CreateIssuance/>}
+                  />
                   <Route
                     path="/viewInventory/:id"
                     element={<ViewInventory/>}
@@ -241,6 +243,14 @@ function App() {
                    <Route
                     path="/viewAssembly/:id"
                     element={<ViewAssembly/>}
+                  />
+                    <Route
+                    path="/viewSpare/:id"
+                    element={<ViewSpare/>}
+                  />
+                   <Route
+                    path="/viewSubpart/:id"
+                    element={<ViewSubpart/>}
                   />
                   <Route
                     path="/returnForm/:id"

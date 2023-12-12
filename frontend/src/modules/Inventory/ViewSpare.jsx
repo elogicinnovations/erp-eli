@@ -10,7 +10,7 @@ import {
   Trash
 } from "@phosphor-icons/react";
 
-function ViewAssembly() {
+function ViewSpare() {
   const { id } = useParams();
 
   const [code, setCode] = useState('');
@@ -29,22 +29,22 @@ function ViewAssembly() {
 
   useEffect(() => {   
     // console.log('code' + id)
-    axios.get(BASE_URL + '/inventory/fetchView_assembly', {
+    axios.get(BASE_URL + '/inventory/fetchView_spare', {
         params: {
           id: id
         }
       })
     .then(res => {
-        setCode(res.data[0].assembly_supplier.assembly.assembly_code);
-        setName(res.data[0].assembly_supplier.assembly.assembly_code);
-        setPrice(res.data[0].assembly_supplier.supplier_price);
+        setCode(res.data[0].sparepart_supplier.sparePart.spareParts_code);
+        setName(res.data[0].sparepart_supplier.sparePart.spareParts_name);
+        setPrice(res.data[0].sparepart_supplier.supplier_price);
         // setCategory(res.data[0].product_tag_supplier.product.category.category_name);
         // setUnit(res.data[0].product_tag_supplier.product.product_unit);
         // setBinLocation(res.data[0].product_tag_supplier.product.binLocation.bin_subname);
         // setUm(res.data[0].product_tag_supplier.product.product_unitMeasurement);
-        setDetails(res.data[0].assembly_supplier.assembly.assembly_desc);
+        setDetails(res.data[0].sparepart_supplier.sparePart.sparePart_desc);
         // setThresholds(res.data[0].product_tag_supplier.product.product_threshold);
-        setSupplier(res.data[0].assembly_supplier.supplier.supplier_name);
+        setSupplier(res.data[0].sparepart_supplier.supplier.supplier_name);
     })
       .catch(err => console.log(err));
   }, []);
@@ -240,4 +240,4 @@ function ViewAssembly() {
   )
 }
 
-export default ViewAssembly
+export default ViewSpare

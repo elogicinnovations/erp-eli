@@ -21,6 +21,23 @@ function CreateIssuance() {
   const [addProduct, setAddProduct] = useState([]); // para sa pag ng product na e issue sa table
   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [quantityInputs, setQuantityInputs] = useState({});
+
+
+// assembly
+  const [fetchAssembly, setFetchAssembly] = useState([]);
+
+
+
+//spare part
+const [fetchSpare, setFetchSpare] = useState([]);
+
+
+
+//sub-part
+const [fetchSubpart, setFetchSubpart] = useState([]);
+
+
+
   const [fromSite, setFromSite] = useState();
   const [issuedTo, setIssuedTo] = useState();
   const [withAccountability, setWithAccountability] = useState();
@@ -41,112 +58,12 @@ function CreateIssuance() {
 
 const handleAddProdClick = () => { // para pag display ng drop down for add product
   setShowDropdown(true);
-
-  // // Create a simplified array with only necessary information
-  // const simplifiedProducts = addProduct.map(product => ({
-  //   code: product.code,
-  //   name: product.name,
-  //   desc: product.desc,
-  // }));
-
-  // // Use the simplified array for your backend call
-  // // setAddProductbackend(simplifiedProducts);
-
-  // console.log(simplifiedProducts)
   
 };
-// const handleSelectChange_Prod = (selectedOptions) => { // para sa mag hold ng value sa selected product
-//   setAddProductbackend(selectedOptions);
-//   // Log the values of addProduct
-//   console.log("Selected Products:", selectedOptions);
-  
-// };
-
-// const handleSelectChange_Prod = (selectedOptions) => {
-//   // Serialize the selected options before updating the state
-//   const serializedProducts = selectedOptions.map((product) => ({
-//     inventory_id: product.inventory_id,
-//     code: product.code,
-//     name: product.name,
-//     quantity_available: product.quantity_available,
-//     desc: product.desc,
-//   }));
-
-//   setAddProductbackend(serializedProducts);
-//   setAddProduct(selectedOptions)
-//   console.log("Selected Products:", serializedProducts);
-// };
 
 const handleSelectChange_Prod = (selectedOptions) => {
-  // const serializedProducts = selectedOptions.map((product) => ({
-  //   // Include the input value for quantity (initialize with an empty string)
-  //   quantity: quantityInputs[product.value] || '',
-
-  //   inventory_id: product.inventory_id,
-  //   code: product.code,
-  //   name: product.name,
-  //   quantity_available: product.quantity_available,
-  //   desc: product.desc,
-    
-  // }));
-
-  // Update the visual representation in the table
   setAddProduct(selectedOptions);
-
-  // Update the array for backend storage
-  // setAddProductbackend(serializedProducts);
-
-  // console.log("Selected Products:", serializedProducts);
 };
-
-// const handleQuantityChange = (value, productValue) => {
-//   // Update the quantityInputs state for the corresponding product
-//   setQuantityInputs((prevInputs) => ({
-//     ...prevInputs,
-//     [productValue]: value,
-//   }));
-
-
-//   const serializedProducts = addProduct.map((product) => ({
-//     // Include the input value for quantity (initialize with an empty string)
-//     quantity: quantityInputs[product.value] || '',
-
-//     inventory_id: product.inventory_id,
-//     code: product.code,
-//     name: product.name,
-//     quantity_available: product.quantity_available,
-//     desc: product.desc,
-    
-//   }));
-
-//   setAddProductbackend(serializedProducts);
-
-//   console.log("Selected Products:", serializedProducts);
-// };
-
-
-// const handleQuantityChange = (value, productValue) => {
-//   // Update the quantityInputs state for the corresponding product
-//   setQuantityInputs((prevInputs) => ({
-//     ...prevInputs,
-//     [productValue]: value,
-//   }), () => {
-//     // Use the callback to ensure that you're working with the latest state
-//     const serializedProducts = addProduct.map((product) => ({
-//       // Include the input value for quantity (initialize with an empty string)
-//       quantity: quantityInputs[product.value] || '',
-//       inventory_id: product.inventory_id,
-//       code: product.code,
-//       name: product.name,
-//       quantity_available: product.quantity_available,
-//       desc: product.desc,
-//     }));
-
-//     setAddProductbackend(serializedProducts);
-
-//     console.log("Selected Products:", serializedProducts);
-//   });
-// };
 
 const handleQuantityChange = (value, productValue) => {
   // Update the quantityInputs state for the corresponding product
@@ -182,6 +99,27 @@ const handleQuantityChange = (value, productValue) => {
 useEffect(() => {
   axios.get(BASE_URL + '/inventory/fetchToIssueProduct')
     .then(res => setFetchProduct(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+//get supplier Assembly
+useEffect(() => {
+  axios.get(BASE_URL + '/inventory/fetchToIssueAssembly')
+    .then(res => setFetchAssembly(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+//get supplier Spare
+useEffect(() => {
+  axios.get(BASE_URL + '/inventory/fetchToIssueSpare')
+    .then(res => setFetchSpare(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+//get supplier Subpart
+useEffect(() => {
+  axios.get(BASE_URL + '/inventory/fetchToIssueSubpart')
+    .then(res => setFetchSubpart(res.data))
     .catch(err => console.log(err));
 }, []);
 
@@ -550,30 +488,96 @@ const ErrorInserted = () => {
                                         </tbody>
                                         {showDropdown && (
           
-                                            <Select
-                                            isMulti
-                                            options={fetchProduct.map((product) => ({
-                                              value: product.inventory_id,
-                                              label: <div>
-                                                Product Name: <strong>{product.product_tag_supplier.product.product_name}</strong> / 
-                                                Supplier: <strong>{product.product_tag_supplier.supplier.supplier_name}</strong> / 
-                                                Price: <strong>{product.product_tag_supplier.product_price}</strong> /
-                                                Stock: <strong>{product.quantity}</strong>
-                                              </div>,
-                                              inventory_id: product.inventory_id,
-                                              code: product.product_tag_supplier.product.product_code,
-                                              name: product.product_tag_supplier.product.product_name,
-                                              quantity_available: product.quantity,
-                                              desc: product.product_tag_supplier.product.product_details,
-                                            }))}
+                                            // <Select
+                                            // isMulti
+                                            // options={fetchProduct.map((product) => ({
+                                              // value: product.inventory_id,
+                                              // label: <div>
+                                              //   Product Name: <strong>{product.product_tag_supplier.product.product_name}</strong> / 
+                                              //   Supplier: <strong>{product.product_tag_supplier.supplier.supplier_name}</strong> / 
+                                              //   Price: <strong>{product.product_tag_supplier.product_price}</strong> /
+                                              //   Stock: <strong>{product.quantity}</strong>
+                                              // </div>,
+                                              // inventory_id: product.inventory_id,
+                                              // code: product.product_tag_supplier.product.product_code,
+                                              // name: product.product_tag_supplier.product.product_name,
+                                              // quantity_available: product.quantity,
+                                              // desc: product.product_tag_supplier.product.product_details,
+                                            // }))}
                                             
-                                            onChange={handleSelectChange_Prod}
+                                            // onChange={handleSelectChange_Prod}
                                             
-                                          />
-                                          
-        
-                                          
-                                          
+                                          // />
+                                          <Select
+                                                  isMulti
+                                                  options={fetchProduct.map(product => ({
+                                                    value: `${product.inventory_id}_Product`,
+                                                    label: 
+                                                      <div>
+                                                        Product Name: <strong>{product.product_tag_supplier.product.product_name}</strong> / 
+                                                        Supplier: <strong>{product.product_tag_supplier.supplier.supplier_name}</strong> / 
+                                                        Price: <strong>{product.product_tag_supplier.product_price}</strong> /
+                                                        Stock: <strong>{product.quantity}</strong>
+                                                      </div>,
+                                                      type: 'Product',
+                                                      inventory_id: product.inventory_id,
+                                                      code: product.product_tag_supplier.product.product_code,
+                                                      name: product.product_tag_supplier.product.product_name,
+                                                      quantity_available: product.quantity,
+                                                      desc: product.product_tag_supplier.product.product_details,
+                                                  }))
+                                                  .concat(fetchAssembly.map(assembly => ({
+                                                    value: `${assembly.inventory_id}_Assembly`, // Indicate that it's an assembly
+                                                    label: 
+                                                    <div>
+                                                      Product Name: <strong>{assembly.assembly_supplier.assembly.assembly_name}</strong> / 
+                                                      Supplier: <strong>{assembly.assembly_supplier.supplier.supplier_name}</strong> / 
+                                                      Price: <strong>{assembly.assembly_supplier.supplier_price}</strong> /
+                                                      Stock: <strong>{assembly.quantity}</strong>
+                                                    </div>,
+                                                    type: 'Assembly',
+                                                    inventory_id: assembly.inventory_id,
+                                                    code: assembly.assembly_supplier.assembly.assembly_code,
+                                                    name: assembly.assembly_supplier.assembly.assembly_name,
+                                                    quantity_available: assembly.quantity,
+                                                    desc: assembly.assembly_supplier.assembly.assembly_desc,
+                                                  })))
+                                                  .concat(fetchSpare.map(spare => ({
+                                                    value: `${spare.inventory_id}_Spare`, // Indicate that it's an assembly
+                                                    label: 
+                                                    <div>
+                                                      Product Name: <strong>{spare.sparepart_supplier.sparePart.spareParts_name}</strong> / 
+                                                      Supplier: <strong>{spare.sparepart_supplier.supplier.supplier_name}</strong> / 
+                                                      Price: <strong>{spare.sparepart_supplier.supplier_price}</strong> /
+                                                      Stock: <strong>{spare.quantity}</strong>
+                                                    </div>,
+                                                    type: 'Spare',
+                                                    inventory_id: spare.inventory_id,
+                                                    code: spare.sparepart_supplier.sparePart.spareParts_code,
+                                                    name: spare.sparepart_supplier.sparePart.spareParts_name,
+                                                    quantity_available: spare.quantity,
+                                                    desc: spare.sparepart_supplier.sparePart.spareParts_desc,
+                                                  })))
+                                                  .concat(fetchSubpart.map(subpart => ({
+                                                    value: `${subpart.inventory_id}_Subpart`, // Indicate that it's an assembly
+                                                    label: 
+                                                    <div>
+                                                      Product Name: <strong>{subpart.subpart_supplier.subPart.subPart_name}</strong> / 
+                                                      Supplier: <strong>{subpart.subpart_supplier.supplier.supplier_name}</strong> / 
+                                                      Price: <strong>{subpart.subpart_supplier.supplier_price}</strong> /
+                                                      Stock: <strong>{subpart.quantity}</strong>
+                                                    </div>,
+                                                    type: 'Subpart',
+                                                    inventory_id: subpart.inventory_id,
+                                                    code: subpart.subpart_supplier.subPart.subPart_code,
+                                                    name: subpart.subpart_supplier.subPart.subPart_name,
+                                                    quantity_available: subpart.quantity,
+                                                    desc: subpart.subpart_supplier.subPart.subPart_desc,
+                                                  })))
+                                                }
+                                                  onChange={handleSelectChange_Prod}
+                                                />
+                                       
                                         )}
 
                                         

@@ -336,7 +336,7 @@ const navigate = useNavigate()
                                                         ))}
 
                                                         {spare.map((data, i) => (
-                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
+                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSpare/${data.inventory_id}`)}>
                                                               <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
                                                               <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
                                                               <td>{data.sparepart_supplier.supplier.supplier_name}</td>
@@ -349,7 +349,7 @@ const navigate = useNavigate()
                                                         ))}
 
                                                         {subpart.map((data, i) => (
-                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
+                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSubpart/${data.inventory_id}`)}>
                                                               <td>{data.subpart_supplier.subPart.subPart_code}</td>
                                                               <td>{data.subpart_supplier.subPart.subPart_name}</td>
                                                               <td>{data.subpart_supplier.supplier.supplier_name}</td>
