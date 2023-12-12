@@ -39,6 +39,8 @@ function CreatePurchaseRequest() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchProduct, setFetchProduct] = useState([]);
   const [fetchAssembly, setFetchAssembly] = useState([]);
+  const [fetchSpare, setFetchSpare] = useState([]);
+  const [fetchSubPart, setFetchSubPart] = useState([]);
 
 // para sa pag fetch ng last pr number 
   useEffect(() => {   
@@ -61,6 +63,18 @@ function CreatePurchaseRequest() {
   useEffect(() => {
     axios.get(BASE_URL + '/assembly/fetchTable')
       .then(res => setFetchAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/sparePart/fetchTable')
+      .then(res => setFetchSpare(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/subpart/fetchTable')
+      .then(res => setFetchSubPart(res.data))
       .catch(err => console.log(err));
   }, []);
   
@@ -350,7 +364,8 @@ function formatDatetime(datetime) {
                                                     code: prod.product_code,
                                                     name: prod.product_name,
                                                     created: prod.createdAt
-                                                  })).concat(fetchAssembly.map(assembly => ({
+                                                  }))
+                                                  .concat(fetchAssembly.map(assembly => ({
                                                     value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
                                                     label: <div>
                                                       Assembly Code: <strong>{assembly.assembly_code}</strong> / 
@@ -361,7 +376,32 @@ function formatDatetime(datetime) {
                                                     code: assembly.assembly_code,
                                                     name: assembly.assembly_name,
                                                     created: assembly.createdAt
-                                                  })))}
+                                                  })))
+                                                  .concat(fetchSpare.map(spare => ({
+                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Product Part Code: <strong>{spare.spareParts_code}</strong> / 
+                                                      Product Part Name: <strong>{spare.spareParts_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Spare',
+                                                    values: spare.id,
+                                                    code: spare.spareParts_code,
+                                                    name: spare.spareParts_name,
+                                                    created: spare.createdAt
+                                                  })))
+                                                  .concat(fetchSubPart.map(subPart => ({
+                                                    value: `${subPart.id}_${subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Product Sub-Part Code: <strong>{subPart.subPart_code}</strong> / 
+                                                      Product Sub-Part Name: <strong>{subPart.subPart_name}</strong> / 
+                                                    </div>,
+                                                    type: 'SubPart',
+                                                    values: subPart.id,
+                                                    code: subPart.subPart_code,
+                                                    name: subPart.subPart_name,
+                                                    created: subPart.createdAt
+                                                  })))
+                                                }
                                                   onChange={selectProduct}
                                                 />
 

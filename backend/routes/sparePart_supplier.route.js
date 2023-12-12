@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Supplier_SparePart = require('../db/models/sparePart_supplier..model')
-const { SparePart_Supplier, Supplier } = require("../db/models/associations"); 
+const { SparePart_Supplier, Supplier, SparePart } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -42,6 +42,37 @@ router.route('/fetchTableEdit').get(async (req, res) => {
   });
   
   
+router.route('/fetchCanvass').get(async (req, res) => {
+  try {
+    
+    console.log(req.query.spare_ID)
+    const data = await SparePart_Supplier.findAll({
+      include: [{
+        model: SparePart,
+        required: true
+      },
+
+      {
+        model: Supplier,
+        required: true
+      }
+    ],
+      where: {sparePart_id: req.query.spare_ID}
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+
 
 
 

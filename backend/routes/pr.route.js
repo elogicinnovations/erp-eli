@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR = require('../db/models/pr.model')
-const {PR, PR_product, PR_assembly, PR_history, PR_PO, PR_PO_asmbly} = require('../db/models/associations')
+const {PR, PR_product, PR_assembly,PR_Rejustify, PR_subPart, PR_history, PR_PO, PR_PO_asmbly, PR_sparePart} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -165,6 +165,24 @@ router.route('/create').post(async (req, res) => {
                 description: prod_desc,              
               } );
             }
+            else if (prod_type === "Spare"){
+              await PR_sparePart.create({
+                pr_id: createdID,
+                spare_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+              } );
+              console.log('Spare insert')
+            }
+            else if (prod_type === "SubPart"){
+              await PR_subPart.create({
+                pr_id: createdID,
+                subPart_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+              } );
+              console.log('SubPart insert')
+            }
 
           }
     
@@ -228,6 +246,8 @@ router.route('/update').post(async (req, res) => {
       if (!Array.isArray(addProductbackend)) {
         return res.status(200).json();
       } else {
+
+         //for update product
         const deletePR_prod = PR_product.destroy({
           where : {
             pr_id: id
@@ -257,6 +277,7 @@ router.route('/update').post(async (req, res) => {
         }
 
 
+        //for update assembly
 
         const deletePR_assmbly = PR_assembly.destroy({
           where : {
@@ -279,7 +300,59 @@ router.route('/update').post(async (req, res) => {
               } );
             }
           }
-        }
+        };
+
+
+         //for update sparePart
+
+         const deletePR_spare = PR_sparePart.destroy({
+          where : {
+            pr_id: id
+          }
+        })
+        if(deletePR_spare){
+          for (const prod of addProductbackend) {
+            const prod_value = prod.value;
+            const prod_quantity = prod.quantity;
+            const prod_desc = prod.desc;
+            const prod_type = prod.type;
+
+            if (prod_type === "Spare"){
+              await PR_sparePart.create({
+                pr_id: id,
+                spare_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+              } );
+            }
+          }
+        };
+
+        
+         //for update subPart
+
+         const deletePR_subpart = PR_subPart.destroy({
+          where : {
+            pr_id: id
+          }
+        })
+        if(deletePR_subpart){
+          for (const prod of addProductbackend) {
+            const prod_value = prod.value;
+            const prod_quantity = prod.quantity;
+            const prod_desc = prod.desc;
+            const prod_type = prod.type;
+
+            if (prod_type === "SubPart"){
+              await PR_subPart.create({
+                pr_id: id,
+                subPart_id: prod_value,
+                quantity: prod_quantity,
+                description: prod_desc,              
+              } );
+            }
+          }
+        };
       }
         
         

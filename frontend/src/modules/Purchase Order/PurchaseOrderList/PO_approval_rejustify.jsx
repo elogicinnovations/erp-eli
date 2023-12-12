@@ -35,11 +35,15 @@ function POApprovalRejustify() {
 //   const [validated, setValidated] = useState(false);
   const [products, setProducts] = useState([]);
   const [assembly, setAssembly] = useState([]);
+  const [spare, setSpare] = useState([]);
+  const [subpart, setSubpart] = useState([]);
 
   //for adding the data from table canvass to table PO
   const [addProductPO, setAddProductPO] = useState([]);
 
   const [addAssemblyPO, setAddAssemblyPO] = useState([]);
+  const [addSparePO, setAddSparePO] = useState([]);
+  const [addSubpartPO, setAddSubpartPO] = useState([]);
 
   // for remarks 
   const [files, setFiles] = useState([]);
@@ -97,6 +101,29 @@ useEffect(() => {
       .catch(err => console.log(err));
   }, []);
 
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_PO/fetchView_spare',{
+      params:{
+        id: id
+      }
+    })
+      .then(res => setAddSparePO(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_PO/fetchView_subpart',{
+      params:{
+        id: id
+      }
+    })
+      .then(res => setAddSubpartPO(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+
+
+
 
 useEffect(() => {
     axios.get(BASE_URL + '/PR_product/fetchView',{
@@ -118,6 +145,25 @@ useEffect(() => {
       .catch(err => console.log(err));
   }, []);
 
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_spare/fetchView',{
+      params:{
+        id: id
+      }
+    })
+      .then(res => setSpare(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_subpart/fetchView',{
+      params:{
+        id: id
+      }
+    })
+      .then(res => setSubpart(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
   useEffect(() => {
     axios.get(BASE_URL + '/PR/fetchView', {
@@ -144,6 +190,9 @@ useEffect(() => {
 
 
   // const handleShow = () => setShowModal(true);
+
+  
+  
 
   
   const handleCancel = async (id) => {
@@ -437,7 +486,7 @@ useEffect(() => {
                             </div>
                         </div>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Product List
+                          Requested Product
                           <span
                             style={{
                               position: 'absolute',
@@ -482,12 +531,32 @@ useEffect(() => {
                                                 
                                                   </tr>
                                                 ))}
+
+                                                {spare.map((data,i) =>(
+                                                  <tr key={i}>
+                                                    <td>{data.sparePart.spareParts_code}</td>
+                                                    <td>{data.quantity}</td>
+                                                    <td>{data.sparePart.spareParts_name}</td>
+                                                    <td>{data.description}</td>
+                                                
+                                                  </tr>
+                                                ))}
+
+                                                {subpart.map((data,i) =>(
+                                                  <tr key={i}>
+                                                    <td>{data.subPart.subPart_code}</td>
+                                                    <td>{data.quantity}</td>
+                                                    <td>{data.subPart.subPart_name}</td>
+                                                    <td>{data.description}</td>
+                                                
+                                                  </tr>
+                                                ))}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Purchase Order
+                          Canvassed Item
                           <span
                             style={{
                               position: 'absolute',
@@ -556,6 +625,52 @@ useEffect(() => {
                                                   <td>{data.assembly_supplier.assembly.assembly_name}</td>
                                                   <td>{data.assembly_supplier.supplier.supplier_name}</td>
                                                   <td>{data.assembly_supplier.supplier_price}</td>
+                                          
+                                                </tr>
+                                              ))}
+
+                                              {addSparePO.map((data) =>(
+                                                <tr key={data.id}>
+                                                  <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
+                                                  <td>
+                                                      {/* <div className='d-flex flex-direction-row align-items-center'>
+                                                        <input
+                                                          type="number"
+                                                          value={quantityInputsAss[data.id] || ''}
+                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        /> */}
+                                                        {data.quantity}
+                                                      {/* </div> */}
+                                                  </td>
+                                                  <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
+                                                  <td>{data.sparepart_supplier.supplier.supplier_name}</td>
+                                                  <td>{data.sparepart_supplier.supplier_price}</td>
+                                          
+                                                </tr>
+                                              ))}
+
+                                              {addSubpartPO.map((data) =>(
+                                                <tr key={data.id}>
+                                                  <td>{data.subpart_supplier.subPart.subPart_code}</td>
+                                                  <td>
+                                                      {/* <div className='d-flex flex-direction-row align-items-center'>
+                                                        <input
+                                                          type="number"
+                                                          value={quantityInputsAss[data.id] || ''}
+                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        /> */}
+                                                        {data.quantity}
+                                                      {/* </div> */}
+                                                  </td>
+                                                  <td>{data.subpart_supplier.subPart.subPart_name}</td>
+                                                  <td>{data.subpart_supplier.supplier.supplier_name}</td>
+                                                  <td>{data.subpart_supplier.supplier_price}</td>
                                           
                                                 </tr>
                                               ))}

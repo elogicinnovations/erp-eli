@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart} = require('../db/models/associations')
+const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart, Inventory_Assembly} = require('../db/models/associations')
 
 
 const session = require('express-session')
@@ -90,10 +90,15 @@ router.route('/create').post(async (req, res) => {
             const supplierValue = supplier.code;
             const supplierPrice = supplier.price;
             
-            await Assembly_Supplier.create({
+            const SupplierAssembly_ID = await Assembly_Supplier.create({
                 assembly_id: createdID,
                 supplier_code: supplierValue,
                 supplier_price: supplierPrice
+            });
+
+            await Inventory_Assembly.create({
+              assembly_tag_supp_id: SupplierAssembly_ID.id,
+              quantity: 0
             });
           }
 

@@ -1,14 +1,14 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const Inventory = sequelize.define('inventory_prd', {
+const Inventory_Assembly = sequelize.define('inventory_assembly', {
   inventory_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  product_tag_supp_id: { //id from product_tag_suppliers
+  assembly_tag_supp_id: { 
     type: DataTypes.INTEGER,
     allowNull: true, 
     unique: false,
@@ -20,4 +20,4 @@ const Inventory = sequelize.define('inventory_prd', {
   }
 });
 
-module.exports = Inventory;
+module.exports = Inventory_Assembly;

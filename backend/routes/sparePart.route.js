@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { SparePart_Supplier, SparePart_SubPart, SparePart } = require("../db/models/associations"); 
+const { SparePart_Supplier, SparePart_SubPart, SparePart, Inventory_Spare } = require("../db/models/associations"); 
 // const SparePart = require('../db/models/sparePart.model')
 // const Supplier_SparePart = require('../db/models/sparePart_supplier..model')
 // const SubPart_SparePart = require('../db/models/sparePart_subPart.model')
@@ -84,10 +84,16 @@ router.route('/create').post(async (req, res) => {
             const supplierValue = supplier.code;
             const supplierPrices = supplier.price;
     
-            await SparePart_Supplier.create({
+            const SupplierSpare_ID = await SparePart_Supplier.create({
                 sparePart_id: createdID,
                 supplier_code: supplierValue,
                 supplier_price: supplierPrices
+            });
+
+            
+            await Inventory_Spare.create({
+              spare_tag_supp_id: SupplierSpare_ID.id,
+              quantity: 0
             });
           }
 

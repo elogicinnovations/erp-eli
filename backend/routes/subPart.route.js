@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {SubPart, Subpart_supplier, Supplier} = require('../db/models/associations')
+const {SubPart, Subpart_supplier, Inventory_Subpart} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -58,10 +58,14 @@ router.route('/fetchTable').get(async (req, res) => {
             const supplierValue = supplier.code;
             const supplierPrices = supplier.price;
     
-            await Subpart_supplier.create({
+            const SupplierSubpart_ID = await Subpart_supplier.create({
                 subpart_id: createdID,
                 supplier_code: supplierValue,
                 supplier_price: supplierPrices
+            });
+            await Inventory_Subpart.create({
+              subpart_tag_supp_id: SupplierSubpart_ID.id,
+              quantity: 0
             });
           }
           res.status(200).json();

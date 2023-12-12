@@ -37,13 +37,17 @@ function PurchaseRequestPreview() {
   const [remarks, setRemarks] = useState('');
   const [product, setProduct] = useState([]); //para pag fetch ng mga registered products
   const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create
-  const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa product na selected sa pag create
+  const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa assembly na selected sa pag create
+  const [spareSelectedFetch, setSpareSelectedFetch] = useState([]); //para pag display sa spare na selected sa pag create
+  const [subPartSelectedFetch, setSubPartSelectedFetch] = useState([]); //para pag display sa subpart na selected sa pag create
   const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch ng product na e select
   const [fetchAssembly, setFetchAssembly] = useState([]); // para sa pag fetch ng assembly na e select
+  const [fetchSpare, setFetchSpare] = useState([]);
+  const [fetchSubPart, setFetchSubPart] = useState([]);
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
 
@@ -61,6 +65,11 @@ function PurchaseRequestPreview() {
     setReadOnly(true);
   };
   
+  const handleCancelEdit = () => {
+    // for clicking the button can be editted not readonly
+    setReadOnly(false);
+  };
+
   const handleApproveClick = () => {
 
     swal({
@@ -174,6 +183,19 @@ function PurchaseRequestPreview() {
   }, []);
 
   useEffect(() => {
+    axios.get(BASE_URL + '/sparePart/fetchTable')
+      .then(res => setFetchSpare(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/subpart/fetchTable')
+      .then(res => setFetchSubPart(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
+
+  useEffect(() => {
     axios.get(BASE_URL + '/PR_product/fetchView',{
       params: {id: id}
     })
@@ -188,6 +210,25 @@ function PurchaseRequestPreview() {
       .then(res => setAssemblySelectedFetch(res.data))
       .catch(err => console.log(err));
   }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_spare/fetchView',{
+      params: {id: id}
+    })
+      .then(res => setSpareSelectedFetch(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_subpart/fetchView',{
+      params: {id: id}
+    })
+      .then(res => setSubPartSelectedFetch(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
+
+
 
   useEffect(() => {
     axios.get(BASE_URL + '/PR/fetchView', {
@@ -508,6 +549,44 @@ const update = async e => {
 
                                           )} {/* end ng !isReadOnly*/}
 
+                                          {!isReadOnly && (
+                                              spareSelectedFetch.length > 0 ? (
+                                                spareSelectedFetch.map((spare) => (
+                                                <tr >
+                                                  <td >{spare.sparePart.spareParts_code}</td>
+                                                  <td > {spare.quantity}</td>
+                                                  <td > -- </td>                                           
+                                                  <td >{spare.sparePart.spareParts_name}</td>  
+                                                  <td >{spare.description}</td>
+                                                </tr>
+                                              ))
+                                            ) : (
+                                              <tr>
+                                                <td></td>
+                                              </tr>
+                                            )
+
+                                          )} {/* end ng !isReadOnly*/}
+
+                                            {!isReadOnly && (
+                                              subPartSelectedFetch.length > 0 ? (
+                                                subPartSelectedFetch.map((subpart) => (
+                                                <tr >
+                                                  <td >{subpart.subPart.subPart_code}</td>
+                                                  <td > {subpart.quantity}</td>
+                                                  <td > -- </td>                                           
+                                                  <td >{subpart.subPart.subPart_name}</td>  
+                                                  <td >{subpart.description}</td>
+                                                </tr>
+                                              ))
+                                            ) : (
+                                              <tr>
+                                                <td></td>
+                                              </tr>
+                                            )
+
+                                          )} {/* end ng !isReadOnly*/}
+
 
                                             {isReadOnly && (
                                               product.length > 0 ? (
@@ -570,7 +649,7 @@ const update = async e => {
                                             onChange={selectProduct}
                                           /> */}
 
-                                                <Select
+                                              <Select
                                                   isMulti
                                                   options={fetchProduct.map(prod => ({
                                                     value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
@@ -580,11 +659,11 @@ const update = async e => {
                                                     </div>,
                                                     type: 'Product',
                                                     values: prod.product_id,
-                                                    um: prod.product_unitMeasurement,
                                                     code: prod.product_code,
                                                     name: prod.product_name,
                                                     created: prod.createdAt
-                                                  })).concat(fetchAssembly.map(assembly => ({
+                                                  }))
+                                                  .concat(fetchAssembly.map(assembly => ({
                                                     value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
                                                     label: <div>
                                                       Assembly Code: <strong>{assembly.assembly_code}</strong> / 
@@ -595,7 +674,32 @@ const update = async e => {
                                                     code: assembly.assembly_code,
                                                     name: assembly.assembly_name,
                                                     created: assembly.createdAt
-                                                  })))}
+                                                  })))
+                                                  .concat(fetchSpare.map(spare => ({
+                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Product Part Code: <strong>{spare.spareParts_code}</strong> / 
+                                                      Product Part Name: <strong>{spare.spareParts_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Spare',
+                                                    values: spare.id,
+                                                    code: spare.spareParts_code,
+                                                    name: spare.spareParts_name,
+                                                    created: spare.createdAt
+                                                  })))
+                                                  .concat(fetchSubPart.map(subPart => ({
+                                                    value: `${subPart.id}_${subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Product Sub-Part Code: <strong>{subPart.subPart_code}</strong> / 
+                                                      Product Sub-Part Name: <strong>{subPart.subPart_name}</strong> / 
+                                                    </div>,
+                                                    type: 'SubPart',
+                                                    values: subPart.id,
+                                                    code: subPart.subPart_code,
+                                                    name: subPart.subPart_name,
+                                                    created: subPart.createdAt
+                                                  })))
+                                                }
                                                   onChange={selectProduct}
                                                 />
                                         </div>
@@ -621,6 +725,9 @@ const update = async e => {
                               )} */}
                               {isReadOnly && (
                                 <Button type='submit' className='btn btn-success' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                              )}
+                               {isReadOnly && (
+                                <Button type='button' onClick={handleCancelEdit} className='btn btn-danger' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Cancel Edit</Button>
                               )}
 
 

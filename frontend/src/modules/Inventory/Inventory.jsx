@@ -27,13 +27,34 @@ import * as $ from 'jquery';
 function Inventory() {
 const navigate = useNavigate()
     const [inventory, setInventory] = useState([]);
-    useEffect(() => {
-        axios.get(BASE_URL + '/inventory/fetchInvetory')
+    const [assembly, setAssembly] = useState([]);
+    const [spare, setSpare] = useState([]);
+    const [subpart, setSubpart] = useState([]);
+
+    useEffect(() => { //fetch product for inventory
+        axios.get(BASE_URL + '/inventory/fetchInvetory_product')
           .then(res => setInventory(res.data))
           .catch(err => console.log(err));
       }, []);
 
-    // Artificial Data
+      useEffect(() => { //fetch assembly for inventory
+        axios.get(BASE_URL + '/inventory/fetchInvetory_assembly')
+          .then(res => setAssembly(res.data))
+          .catch(err => console.log(err));
+      }, []);
+
+      useEffect(() => { //fetch spare for inventory
+        axios.get(BASE_URL + '/inventory/fetchInvetory_spare')
+          .then(res => setSpare(res.data))
+          .catch(err => console.log(err));
+      }, []);
+
+      useEffect(() => { //fetch subpart for inventory
+        axios.get(BASE_URL + '/inventory/fetchInvetory_subpart')
+          .then(res => setSubpart(res.data))
+          .catch(err => console.log(err));
+      }, []);
+
 
     const [issuance, setIssuance] = useState([]);   
     // Get Issuance
@@ -275,7 +296,7 @@ const navigate = useNavigate()
                                     </div>
                                     <div className="table-containss">
                                         <div className="main-of-all-tables">
-                                            <table id='order-listing'>
+                                            <table className='table-hover' id='order-listing'>
                                                     <thead>
                                                     <tr>
                                                         <th className='tableh'>Product Code</th>
@@ -300,6 +321,48 @@ const navigate = useNavigate()
                                                            
                                                         </tr>
                                                         ))}
+
+                                                        {assembly.map((data, i) => (
+                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewAssembly/${data.inventory_id}`)}>
+                                                              <td>{data.assembly_supplier.assembly.assembly_code}</td>
+                                                              <td>{data.assembly_supplier.assembly.assembly_name}</td>
+                                                              <td>{data.assembly_supplier.supplier.supplier_name}</td>
+                                                              <td>--</td>
+                                                              <td>{data.quantity}</td>
+                                                              <td>{data.assembly_supplier.supplier_price}</td>
+                                                              <td>{data.assembly_supplier.supplier_price}</td>
+                                                            
+                                                        </tr>
+                                                        ))}
+
+                                                        {spare.map((data, i) => (
+                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
+                                                              <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
+                                                              <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
+                                                              <td>{data.sparepart_supplier.supplier.supplier_name}</td>
+                                                              <td>--</td>
+                                                              <td>{data.quantity}</td>
+                                                              <td>{data.sparepart_supplier.supplier_price}</td>
+                                                              <td>{data.sparepart_supplier.supplier_price}</td>
+                                                            
+                                                        </tr>
+                                                        ))}
+
+                                                        {subpart.map((data, i) => (
+                                                          <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
+                                                              <td>{data.subpart_supplier.subPart.subPart_code}</td>
+                                                              <td>{data.subpart_supplier.subPart.subPart_name}</td>
+                                                              <td>{data.subpart_supplier.supplier.supplier_name}</td>
+                                                              <td>--</td>
+                                                              <td>{data.quantity}</td>
+                                                              <td>{data.subpart_supplier.supplier_price}</td>
+                                                              <td>{data.subpart_supplier.supplier_price}</td>
+                                                            
+                                                        </tr>
+                                                        ))}
+
+
+
                                                     </tbody>
                                             </table>
                                         </div>

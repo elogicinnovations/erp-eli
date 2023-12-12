@@ -48,6 +48,7 @@ import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/C
 import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
 import ViewInventory  from "./modules/Inventory/ViewInventory"
+import ViewAssembly  from "./modules/Inventory/ViewAssembly"
 import PurchaseRequest from "./modules/Purchase Order/PurchaseRequest/PurchaseRequest";
 import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
 import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
@@ -236,6 +237,10 @@ function App() {
                   <Route
                     path="/viewInventory/:id"
                     element={<ViewInventory/>}
+                  />
+                   <Route
+                    path="/viewAssembly/:id"
+                    element={<ViewAssembly/>}
                   />
                   <Route
                     path="/returnForm/:id"

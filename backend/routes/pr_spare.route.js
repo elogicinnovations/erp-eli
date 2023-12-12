@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {SubPart, Subpart_supplier, Supplier} = require('../db/models/associations')
+const {SparePart, PR_sparePart} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -10,22 +10,18 @@ router.use(session({
     saveUninitialized: true
 }));
 
-router.route('/fetchCanvass').get(async (req, res) => {
-    try {
-      
-      console.log("id subpart" + req.query.sub_id)
-      const data = await Subpart_supplier.findAll({
-        include: [{
-          model: SubPart,
-          required: true
-        },
 
-        {
-          model: Supplier,
-          required: true
-        }
-      ],
-        where: {subpart_id: req.query.sub_id}
+router.route('/fetchView').get(async (req, res) => {
+    try {
+     
+      const data = await PR_sparePart.findAll({
+          where: {
+            pr_id: req.query.id
+          },
+          include: {
+            model: SparePart,
+            required: true
+          }
       });
   
       if (data) {
@@ -39,7 +35,5 @@ router.route('/fetchCanvass').get(async (req, res) => {
       res.status(500).json("Error");
     }
   });
-
-
 
 module.exports = router;

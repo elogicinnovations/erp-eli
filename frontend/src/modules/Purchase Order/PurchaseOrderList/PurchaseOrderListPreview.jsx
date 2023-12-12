@@ -35,9 +35,23 @@ function PurchaseOrderListPreview() {
   const [validated, setValidated] = useState(false);
 
 
+  //para sa subpart data na e canvass
+  const [suppSubpart, setSuppSubpart] = useState([]);
+  const [addSubpartPO, setAddSubpartPO] = useState([]);
+  const [quantityInputsSubpart, setQuantityInputSubpart] = useState({});
+  const [addSubpartbackend, setAddSubpartbackend] = useState([]);
+
+  //para sa spare data na e canvass
+  const [suppSpare, setSuppSpare] = useState([]);
+  const [addSparePO, setAddSparePO] = useState([]);
+  const [quantityInputsSpare, setQuantityInputSpare] = useState({});
+  const [addSparebackend, setAddSparebackend] = useState([]);
+
 
   //para sa assembly data na e canvass
   const [assembly, setAssembly] = useState([]);
+  const [spare, setSpare] = useState([]);
+  const [subpart, setSubpart] = useState([]);
   const [suppAssembly, setSuppAssembly] = useState([]);
   const [addAssemblyPO, setAddAssemblyPO] = useState([]);
   const [quantityInputsAss, setQuantityInputsAss] = useState({}); // for asse,blly quantity array holder
@@ -55,12 +69,16 @@ function PurchaseOrderListPreview() {
 
   const [showModal, setShowModal] = useState(false) //for product modal
   const [showModalAs, setShowModalAS] = useState(false) //for assembly modal
+  const [showModalSpare, setShowModalspare] = useState(false) //for spare modal
+  const [showModalSubpart, setShowModalSubpart] = useState(false) //for assembly modal
 
 
 
   const handleClose = () => {
     setShowModal(false);
     setShowModalAS(false)
+    setShowModalspare(false);
+    setShowModalSubpart(false)
   };
 
 
@@ -83,6 +101,22 @@ function PurchaseOrderListPreview() {
       }
     })
       .then(res => setAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_spare/fetchView',{
+      params: {id: id}
+    })
+      .then(res => setSpare(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_subpart/fetchView',{
+      params: {id: id}
+    })
+      .then(res => setSubpart(res.data))
       .catch(err => console.log(err));
   }, []);
 
@@ -276,6 +310,151 @@ const handleQuantityChange_Ass = (value, productValue) => {
 
 
 
+  const handleCanvassSpare = (id) => {
+    setShowModalspare(true);
+  
+    // console.log(id)
+  
+    axios.get(BASE_URL + '/supp_SparePart/fetchCanvass', {
+      params: {
+        spare_ID: id
+      }
+    })
+      .then(res => {
+        setSuppSpare(res.data)
+      })
+      .catch(err => console.log(err));
+  };
+  
+
+const handleAddToTablePO_Spare = (itemId) => {
+  // Find the item in table 1 by ID
+  const selectedItem = suppSpare.find((item) => item.id === itemId);
+
+   // Check if the item already exists in table 2
+  const isItemInTablePO = addSparePO.some((item) => item.id === itemId);
+
+
+  if (selectedItem && !isItemInTablePO) {
+    // Transfer the item to table 2
+    setAddSparePO([...addSparePO, selectedItem]);
+
+    // Optionally, you can remove the item from table 1 if needed
+    const updatedTable1Data = suppSpare.filter((item) => item.id !== itemId);
+    setSuppSpare(updatedTable1Data);
+  }
+  // handleClose()
+
+  return selectedItem
+  
+};
+
+
+const handleQuantityChange_Spare = (value, productValue) => {
+  // Update the quantityInputs state for the corresponding product
+  setQuantityInputSpare((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [productValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedProducts = addSparePO.map((product) => ({
+      quantity: updatedInputs[product.id] || '',
+      tagSupplier_ID: product.id
+    }));
+
+//     console.log("Value:", value);
+// console.log("Product Value:", productValue);
+// console.log("Updated Inputs:", updatedInputs);
+
+    setAddSparebackend(serializedProducts);
+
+    console.log("Selected Spare:", serializedProducts);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
+
+
+//------------------------------------------------SubPart rendering data ------------------------------------------------//
+
+const handleCanvassSubpart = (sub_partID) => {
+  setShowModalSubpart(true);
+
+
+  console.log("subpart ID" + sub_partID)
+  axios.get(BASE_URL + '/subpartSupplier/fetchCanvass', {
+    params: {
+      sub_id: sub_partID
+    }
+  })
+  
+    .then(res => {
+      console.log("Axios Response", res.data);
+      setSuppSubpart(res.data)
+      
+    })
+    .catch(err => console.log(err));
+
+  // console.log(product_id)
+
+};
+
+
+const handleAddToTablePO_Subpart = (itemId) => {
+  // Find the item in table 1 by ID
+  const selectedItem = suppSubpart.find((item) => item.id === itemId);
+
+   // Check if the item already exists in table 2
+  const isItemInTablePO = addSubpartPO.some((item) => item.id === itemId);
+
+
+  if (selectedItem && !isItemInTablePO) {
+    // Transfer the item to table 2
+    setAddSubpartPO([...addSubpartPO, selectedItem]);
+
+    // Optionally, you can remove the item from table 1 if needed
+    const updatedTable1Data = suppSubpart.filter((item) => item.id !== itemId);
+    setSuppSubpart(updatedTable1Data);
+  }
+  // handleClose()
+
+  return selectedItem
+  
+};
+
+
+const handleQuantityChange_Subpart = (value, productValue) => {
+  // Update the quantityInputs state for the corresponding product
+  setQuantityInputSubpart((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [productValue]: value,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedProducts = addSubpartPO.map((product) => ({
+      quantity: updatedInputs[product.id] || '',
+      tagSupplier_ID: product.id
+    }));
+
+//     console.log("Value:", value);
+// console.log("Product Value:", productValue);
+// console.log("Updated Inputs:", updatedInputs);
+
+    setAddSubpartbackend(serializedProducts);
+
+    console.log("Selected Subpart:", serializedProducts);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
+};
+
+
+
 
   
 
@@ -353,7 +532,8 @@ const handleQuantityChange_Ass = (value, productValue) => {
   
       axios.post(`${BASE_URL}/PR_PO/save`, {
         addProductbackend,addAssemblybackend,
-        id: id,
+        addSubpartbackend, addSparebackend,
+        id: id, 
       })
       .then((res) => {
         console.log(res);
@@ -507,6 +687,34 @@ const handleQuantityChange_Ass = (value, productValue) => {
                                                   </td>
                                                 </tr>
                                               ))}
+
+                                              {spare.map((data,i) =>(
+                                                <tr key={i}>
+                                                  <td>{data.sparePart.spareParts_code}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>{data.sparePart.spareParts_name}</td>
+                                                  <td>{data.description}</td>
+                                                  <td>
+                                                      <button type='button' 
+                                                        onClick={() => handleCanvassSpare(data.spare_id)}
+                                                        className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
+                                                  </td>
+                                                </tr>
+                                              ))}
+
+                                              {subpart.map((data,i) =>(
+                                                <tr key={i}>
+                                                  <td>{data.subPart.subPart_code}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>{data.subPart.subPart_name}</td>
+                                                  <td>{data.description}</td>
+                                                  <td>
+                                                      <button type='button' 
+                                                        onClick={() => handleCanvassSubpart(data.subPart_id)}
+                                                        className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
+                                                  </td>
+                                                </tr>
+                                              ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -584,6 +792,54 @@ const handleQuantityChange_Ass = (value, productValue) => {
                                           
                                                 </tr>
                                               ))}
+
+
+                                              {addSparePO.map((data) =>(
+                                                <tr key={data.id}>
+                                                  <td>{data.sparePart.spareParts_code}</td>
+                                                  <td>
+                                                      <div className='d-flex flex-direction-row align-items-center'>
+                                                        <input
+                                                          type="number"
+                                                          value={quantityInputsSpare[data.id] || ''}
+                                                          onChange={(e) => handleQuantityChange_Spare(e.target.value, data.id)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
+                                                        /{data.quantity}
+                                                      </div>
+                                                  </td>
+                                                  <td>{data.sparePart.spareParts_name}</td>
+                                                  <td>{data.supplier.supplier_name}</td>
+                                                  <td>{data.supplier_price}</td>
+                                          
+                                                </tr>
+                                              ))}
+
+
+                                              {addSubpartPO.map((data) =>(
+                                                <tr key={data.id}>
+                                                  <td>{data.subPart.subPart_code}</td>
+                                                  <td>
+                                                      <div className='d-flex flex-direction-row align-items-center'>
+                                                        <input
+                                                          type="number"
+                                                          value={quantityInputsSubpart[data.id] || ''}
+                                                          onChange={(e) => handleQuantityChange_Subpart(e.target.value, data.id)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
+                                                        /{data.quantity}
+                                                      </div>
+                                                  </td>
+                                                  <td>{data.subPart.subPart_name}</td>
+                                                  <td>{data.supplier.supplier_name}</td>
+                                                  <td>{data.supplier_price}</td>
+                                          
+                                                </tr>
+                                              ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -653,7 +909,7 @@ const handleQuantityChange_Ass = (value, productValue) => {
 
                         <Modal show={showModalAs} onHide={handleClose} size="xl">
                           <Modal.Header closeButton>
-                            <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
+                            <Modal.Title style={{ fontSize: '24px' }}>Product Assembly List</Modal.Title>     
                           </Modal.Header>
                             <Modal.Body>
                                       <div className="table-containss">
@@ -704,12 +960,109 @@ const handleQuantityChange_Ass = (value, productValue) => {
                   {/* ------------------------------------------- BREAK ----------------------------------------------- */}
                                     {/* ------------------ Start SparePart Modal ---------------- */}
 
+                        <Modal show={showModalSpare} onHide={handleClose} size="xl">
+                          <Modal.Header closeButton>
+                            <Modal.Title style={{ fontSize: '24px' }}>Product Parts List</Modal.Title>     
+                          </Modal.Header>
+                            <Modal.Body>
+                                      <div className="table-containss">
+                                          <div className="main-of-all-tables">
+                                              <table id='order2-listing'>
+                                                      <thead>
+                                                      <tr>
+                                                          <th className='tableh'>Product Code</th>
+                                                          <th className='tableh'>Product Name</th>
+                                                          <th className='tableh'>Category</th>
+                                                          <th className='tableh'>UOM</th>
+                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Price</th>
+                                                          <th className='tableh'></th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                             
+                                                              {suppSpare.map((data,i) =>(
+                                                                <tr key={i}>
+                                                                    <td>{data.sparePart.spareParts_code}</td>
+                                                                    <td>{data.sparePart.spareParts_name}</td>
+                                                                    <td>--</td>
+                                                                    <td>--</td>
+                                                                    <td>{data.supplier.supplier_name}</td>
+                                                                    <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.supplier_price}</td>
+                                                                    <td>                                                
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id)}>
+                                                                        <PlusCircle size={32}/>
+                                                                      </button>
+                                                                    </td>
+                                                                </tr>
+                                                              ))}
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                      </div>
+                              </Modal.Body>
+                              <Modal.Footer>
+                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                                      Close
+                                  </Button>
+                              </Modal.Footer>
+                        </Modal>
 
+                                        {/* ------------------ END SparePArt Modal ---------------- */}
+                  {/* ------------------------------------------- BREAK ----------------------------------------------- */}
+                                    {/* ------------------ Start SubPart Modal ---------------- */}
 
-
-
-
-                       
+                        <Modal show={showModalSubpart} onHide={handleClose} size="xl">
+                          <Modal.Header closeButton>
+                            <Modal.Title style={{ fontSize: '24px' }}>Product Sub-Parts List</Modal.Title>     
+                          </Modal.Header>
+                            <Modal.Body>
+                                      <div className="table-containss">
+                                          <div className="main-of-all-tables">
+                                              <table id='order2-listing'>
+                                                      <thead>
+                                                        <tr>
+                                                            <th className='tableh'>Product Code</th>
+                                                            <th className='tableh'>Product Name</th>
+                                                            <th className='tableh'>Category</th>
+                                                            <th className='tableh'>UOM</th>
+                                                            <th className='tableh'>Supplier</th>
+                                                            <th className='tableh'>Contact</th>
+                                                            <th className='tableh'>Price</th>
+                                                            <th className='tableh'></th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                             
+                                                      {suppSubpart.map((data,i) =>(
+                                                        <tr key={i}>
+                                                            <td>{data.subPart.subPart_code}</td>
+                                                            <td>{data.subPart.subPart_name}</td>
+                                                            <td>--</td>
+                                                            <td>--</td>
+                                                            <td>{data.supplier.supplier_name}</td>
+                                                            <td>{data.supplier.supplier_number}</td>
+                                                            <td>{data.supplier_price}</td>
+                                                            <td>                                                
+                                                              <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id)}>
+                                                                <PlusCircle size={32}/>
+                                                              </button>
+                                                            </td>
+                                                        </tr>
+                                                      ))}
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                      </div>
+                              </Modal.Body>
+                              <Modal.Footer>
+                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                                      Close
+                                  </Button>
+                              </Modal.Footer>
+                        </Modal>                    
             </div>
         </div>
     </div>
