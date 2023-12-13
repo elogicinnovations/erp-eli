@@ -195,7 +195,7 @@ function BinLocation() {
             });
           } else if (response.status === 201) {
             swal({
-              title: "Supplier Code Exist",
+              title: "Bin Location Name Exist",
               text: "Bin Location is already exist please fill other Bin Location",
               icon: "error",
               button: "OK",
@@ -308,8 +308,8 @@ function BinLocation() {
 
           if (response.status === 200) {
             swal({
-              title: "The Location has been deleted!",
-              text: "The Location has been updated successfully.",
+              title: "The Bin Location has been deleted!",
+              text: "The Bin Location has been updated successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -369,12 +369,9 @@ function BinLocation() {
   };
   return (
     <div className="main-of-containers">
-      <div className="left-of-main-containers">
+      {/* <div className="left-of-main-containers">
         <Sidebar />
-      </div>
-
-      <div className="mid-of-main-containers"></div>
-
+      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
           <div className="settings-search-master">

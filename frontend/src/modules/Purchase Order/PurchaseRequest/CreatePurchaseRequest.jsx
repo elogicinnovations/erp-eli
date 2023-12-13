@@ -106,7 +106,7 @@ const add = async e => {
       if (res.status === 200) {
         swal({
           title: 'The Purchase sucessfully request!',
-          text: 'The Purchase been added successfully.',
+          text: 'The Purchase Request has been added successfully.',
           icon: 'success',
           button: 'OK'
         }).then(() => {
@@ -191,9 +191,9 @@ function formatDatetime(datetime) {
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
             <Row>

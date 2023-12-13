@@ -234,12 +234,9 @@ const handleSave = () => {
 
   return (
     <div className="main-of-containers">
-      <div className="left-of-main-containers">
+      {/* <div className="left-of-main-containers">
         <Sidebar />
-      </div>
-
-      <div className="mid-of-main-containers"></div>
-
+      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
           <div className="settings-search-master">
@@ -294,7 +291,7 @@ const handleSave = () => {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table id="order-listing">
+              <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
                     <th className="tableh" id="check">

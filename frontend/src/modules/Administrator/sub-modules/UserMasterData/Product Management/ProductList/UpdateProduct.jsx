@@ -268,8 +268,8 @@ useEffect(() => {
 
   const SuccessInserted = (res) => {
     swal({
-      title: 'Product Created',
-      text: 'The Product has been added successfully',
+      title: 'Product Updated',
+      text: 'The Product has been updated successfully',
       icon: 'success',
       button: 'OK'
     })
@@ -300,9 +300,9 @@ useEffect(() => {
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
                 <h1>Update Product</h1>

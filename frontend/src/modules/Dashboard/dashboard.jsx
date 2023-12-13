@@ -210,14 +210,10 @@ function Dashboard() {
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
-
-        <div className="mid-of-main-containers">
-        </div>
-
-        <div className="right-of-main-container">
+        </div> */}
+        {/* <div className="right-of-main-container"> */}
             <div className="right-body-content">
               <div className="dashboard-container">
                 <div className="settings-search-master">
@@ -422,8 +418,8 @@ function Dashboard() {
                               <th>Purchase No.</th>
                               <th>Product Name</th>
                               <th>Supplier</th>
-                              <th>Order Date</th>
-                              <th>Delivered Date</th>
+                              <th>Date Ordered</th>
+                              <th>Date Delivered</th>
                               <th>Price</th>
                           </tr>
                           </thead>
@@ -443,7 +439,7 @@ function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="assetov-assetlst">
+                  {/* <div className="assetov-assetlst">
                     <div className="asset-overview-box">
                       <div className="dash-label" style={{paddingBottom: '20px'}}>
                         Asset Overview
@@ -464,7 +460,6 @@ function Dashboard() {
                                 <tr key={i}>
                                   <td className='dashtd'>{data.sample}</td>
                                   <td className={`dashstats ${data.status === 'Deployed' ? 'deployed' : data.status === 'Storage' ? 'storage' : ''}`}>
-                                    {/* Add a circle icon based on the status */}
                                     {data.status === 'Deployed' ? (
                                       <span className="status-circle deployed-circle"></span>
                                     ) : data.status === 'Storage' ? (
@@ -503,7 +498,7 @@ function Dashboard() {
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="ordersum-mstreqitms">
                     <div className="order-summary-box">
                       <div className="dash-label">
@@ -653,7 +648,7 @@ function Dashboard() {
               </div>
             </div>
 
-        </div>
+        {/* </div> */}
     </div>
   ) ;
 }

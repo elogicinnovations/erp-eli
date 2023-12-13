@@ -182,12 +182,9 @@ function UserRole() {
 
   return (
     <div className="main-of-containers">
-      <div className="left-of-main-containers">
+      {/* <div className="left-of-main-containers">
         <Sidebar />
-      </div>
-
-      <div className="mid-of-main-containers"></div>
-
+      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
           <div className="settings-search-master">

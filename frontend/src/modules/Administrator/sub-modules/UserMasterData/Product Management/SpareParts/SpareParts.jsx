@@ -97,8 +97,8 @@ function SpareParts() {
     
           if (response.status === 200) {
             swal({
-              title: 'The Product has been deleted!',
-              text: 'The Product has been deleted successfully.',
+              title: 'The Product Part has been deleted!',
+              text: 'The Product Part has been deleted successfully.',
               icon: 'success',
               button: 'OK'
             }).then(() => {
@@ -120,7 +120,7 @@ function SpareParts() {
         } else {
           swal({
             title: "Cancelled Successfully",
-            text: "Product not Deleted!",
+            text: "Product Part not Deleted!",
             icon: "warning",
           });
         }
@@ -139,13 +139,9 @@ function SpareParts() {
     const navigate = useNavigate();
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
-
-        <div className="mid-of-main-containers">
-        </div>
-
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents">
                 <div className="settings-search-master">
@@ -192,7 +188,7 @@ function SpareParts() {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
+                        <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Code</th>

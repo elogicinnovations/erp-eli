@@ -319,7 +319,7 @@ padding: 10px; /* Adjust the padding as needed */
 }
 
 .right-of-main-containers {
-  flex: 0 0 85.7%;
+  flex: 0 0 99.5%;
   background-color: #ffffff;
 }
 
@@ -411,11 +411,11 @@ padding: 10px; /* Adjust the padding as needed */
 }
 
 .iconic-side {
-  flex: 1;
+  flex: 1 1;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .clone-dropdown {
@@ -1156,10 +1156,18 @@ input[type="number"]::-webkit-clear-button {
   color: #ffa500;
 }
 
+.sidebar-main-content .adminsub-menu {
+  background-color: #121317;
+}
+
 .sidebar-main-content .Employeesub-menu .MuiListItemText-primary {
   font-size: 1.1rem;
   font-family: Poppins, "Source Sans Pro";
   margin-left: 6.5rem;
+}
+
+.sidebar-main-content .Employeesub-menu {
+  background-color: #0a0b0b;
 }
 
 .sidebar-main-content .Employeesub-menu:hover {
@@ -1251,6 +1259,106 @@ input[type="number"]::-webkit-clear-button {
 
 /* Jerome's CSS */
 
+.warehouse-filter{
+  padding: 0 10px;
+}
+
+.product-filter{
+  padding: 0 10px;
+}
+
+.filter{
+  display: flex;
+  z-index: 5;
+}
+
+.export p1{
+  margin: 0 10px;
+}
+
+.refresh p1{
+  margin: 0 10px;
+}
+
+.export{
+  background-color: #0091ff;
+}
+
+.refresh{
+  background-color: #2fda34;
+}
+
+.export-refresh button{
+  display: flex;
+  padding: 10px 30px;
+  margin: 30px 10px 0px 10px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.export-refresh{
+  display: flex;  
+  justify-content: right;
+  width: 100%;
+  z-index: 1;
+}
+
+.app{
+  overflow-y: hidden;
+  overflow-x: hidden;
+  max-height: 100vh;
+}
+
+.table-hover>tbody>tr:hover>*{
+  cursor: pointer;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link{
+  margin: 10px;
+}
+
+li.nav-item {
+  background-color: #F6F8FA;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+  margin:  10px;
+  border: 1px solid #CED4DA;
+  box-shadow: 3px 5px 3px 0px #9e9e9e;
+  border-radius: 10px;
+}
+
+.adminsub-menu,
+.Employeesub-menu,
+.Productsub-menu,
+.Assetsub-menu {
+  transition-duration: 0s !important;
+}
+
+.usersides {
+  padding-left: 20px;
+}
+
+.iconic-side h3 {
+  padding-right: 30px;
+}
+
+.bellsides{
+  padding: 0px 20px;
+}
+
+.gearsides {
+  padding: 0px 20px;
+}
+
+.username {
+  display: flex;
+  align-items: center;
+}
+
 .low-stat {
   color: red;
 }
@@ -1332,17 +1440,17 @@ input[type="number"]::-webkit-clear-button {
 
 ::-webkit-scrollbar {
   width: 4px;
-  border: 1px solid white;
+  border: 1px solid rgba(255, 255, 255, 0);
 }
 
 ::-webkit-scrollbar-track {
   border-radius: 0;
-  background: white;
+  background: rgba(255, 255, 255, 0);
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 0;
-  background: white;
+  background: rgba(255, 255, 255, 0);
 }
 
 .supplier-performance{

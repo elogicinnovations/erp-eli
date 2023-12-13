@@ -125,8 +125,8 @@ const [issuedProduct, setIssuedProduct] = useState([]);
             console.log(res);
             if (res.status === 200) {
               swal({
-                title: 'The Spare Parts successfully Done!',
-                text: 'The Spare Parts has been updated successfully.',
+                title: 'The Return successfully Done!',
+                text: 'The Quantity has returned successfully.',
                 icon: 'success',
                 button: 'OK',
               }).then(() => {
@@ -160,9 +160,9 @@ const [issuedProduct, setIssuedProduct] = useState([]);
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
             <Row>

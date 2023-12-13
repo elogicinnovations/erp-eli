@@ -90,7 +90,7 @@ import {
             if (res.status === 200) {
               swal({
                 title: 'The SubParts sucessfully added!',
-                text: 'The Assembly has been created successfully.',
+                text: 'The SubParts has been created successfully.',
                 icon: 'success',
                 button: 'OK'
               }).then(() => {
@@ -117,13 +117,9 @@ import {
       };
     return(
         <div className="main-of-containers">
-            <div className="left-of-main-containers">
+            {/* <div className="left-of-main-containers">
                 <Sidebar/>
-            </div>
-
-            <div className="mid-of-main-containers">
-            </div>
-
+            </div> */}
             <div className="right-of-main-containers">
                 <div className="right-body-contents">
                 <Form noValidate validated={validated} onSubmit={add}>
