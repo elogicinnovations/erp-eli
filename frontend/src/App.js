@@ -65,6 +65,7 @@ import ReceivingManagement from "./modules/Warehouse/Receiving Management/Receiv
 import ReceivingManagementPreview from "./modules/Warehouse/Receiving Management/ReceivingManagementPreview";
 import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
+import HistoricalData from "./modules/Reports/HistoricalData/HistoricalData";
 import ReturnForm from "./modules/Inventory/ReturnForm";
 import Sidebar from "./modules/Sidebar/sidebar";
 
@@ -329,6 +330,10 @@ function App() {
               <Route
                     path="/POTransactionReports"
                     element={<POTransactionReports/>}
+              />
+              <Route
+                    path="/historicalData"
+                    element={<HistoricalData/>}
               />
              
         </Routes>

@@ -514,6 +514,18 @@ function Sidebar() {
                     <ListItemText primary="Purchase Order Transaction Report" />
                   </ListItem>
                 </NavLink>
+                <NavLink
+                  to='/historicalData'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/historicalData') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Historical Data" />
+                  </ListItem>
+                </NavLink>
           </Collapse>
 
           <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
