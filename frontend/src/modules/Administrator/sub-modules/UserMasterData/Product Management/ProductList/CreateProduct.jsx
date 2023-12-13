@@ -13,6 +13,11 @@ import cls_unit from "../../../../../../assets/global/unit";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
 import { X } from "@phosphor-icons/react";
+import {
+  green,
+} from "@mui/material/colors";
+import { alpha, styled } from "@mui/material/styles";
+import Switch from "@mui/material/Switch";
 
 function CreateProduct() {
   const navigate = useNavigate();
@@ -38,6 +43,7 @@ function CreateProduct() {
   const [spareParts, setSparePart] = useState([]);
   const [subparting, setsubparting] = useState([]);
   const [assembly, setassemblies] = useState([]);
+  const [productStatus, setproductStatus] = useState(true);
   
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
@@ -48,9 +54,10 @@ function CreateProduct() {
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
   const [selectedimage, setselectedimage] = useState([]);
+  const [status, setStatus] = useState('Active');
 
   const onDropImage = (acceptedFiles) => {
-    const newSelectedImages = [...selectedimage];
+  const newSelectedImages = [...selectedimage];
 
     acceptedFiles.forEach((file) => {
       if (
@@ -75,6 +82,23 @@ function CreateProduct() {
     const newSelectedImages = [...selectedimage];
     newSelectedImages.splice(index, 1);
     setselectedimage(newSelectedImages);
+  };
+
+  //toggle switch Active and Inactive
+  const GreenSwitch = styled(Switch)(({ theme }) => ({
+    "& .MuiSwitch-switchBase.Mui-checked": {
+      color: green[600],
+      "&:hover": {
+        backgroundColor: alpha(green[600], theme.palette.action.hoverOpacity),
+      },
+    },
+    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+      backgroundColor: green[600],
+    },
+  }));
+
+  const handleStatusChange = (e) => {
+    setproductStatus(e.target.checked); // Update the status Active or Inactive
   };
 
   //Supplier Fetch
@@ -291,6 +315,16 @@ function CreateProduct() {
     });
   };
 
+  const handleActiveStatus= e => {
+
+    if(status === 'Active'){
+        setStatus('Inactive')
+    }
+    else{
+        setStatus('Active')
+    }
+  }
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -299,6 +333,7 @@ function CreateProduct() {
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
           <h1>Add Product</h1>
+
           <div
             className="gen-info"
             style={{

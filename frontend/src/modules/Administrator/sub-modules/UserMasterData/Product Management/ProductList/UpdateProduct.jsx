@@ -20,7 +20,6 @@ function UpdateProduct() {
   const [validated, setValidated] = useState(false);// for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
-  const [supplier, setsupplier] = useState([]); // for fetching supplier data
   const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
@@ -33,18 +32,57 @@ function UpdateProduct() {
   const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer 
   const [details, setDetails] = useState('');
   const [thresholds, setThresholds] = useState('');
+  const [fetchSparePart, setFetchPart] = useState([]); //for retrieveing ng mga sparepart
+  const [fetchSubPart, setFetchsub] = useState([]); //for retrieving ng mga subpart
+  const [fetchAssembly, setAssembly] = useState([]); //for retrieving ng mga assembly
+
+  const [spareParts, setSparePart] = useState([]); //for handling ng onchange sa dropdown ng spareparts
+  const [subparting, setsubparting] = useState([]); //for handling ng onchange sa dropdown ng subpart
+  const [assembly, setassemblies] = useState([]); //for handling ng onchange sa dropdown ng assembly
 
   const [price, setPrice] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
-  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]);
+  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); //fetch of supplier that been used in where clause to display in dropdown and table
 
   const [fetchSupp, setFetchSupp] = useState([]); 
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
 
 
+  //fetching of assembly in dropdown
+  useEffect(() => {
+    axios.get(BASE_URL + '/productAssembly/fetchassemblyTable',{
+      params: {
+        id: id
+      }
+    })
+      .then(res => setAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
-  //fetching data for edit
+  //fetching of subparts in dropdown
+  useEffect(() => {
+    axios.get(BASE_URL + '/productSubpart/fetchsubpartTable',{
+      params: {
+        id: id
+      }
+    })
+      .then(res => setFetchsub(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  //fetching of spareparts in dropdown
+  useEffect(() => {
+    axios.get(BASE_URL + '/productSparepart/fetchsparepartTable',{
+      params: {
+        id: id
+      }
+    })
+      .then(res => setFetchPart(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+
 //-----------------------------fetching data for edit
 useEffect(() => {   
   // console.log('code' + id)
@@ -152,6 +190,37 @@ useEffect(() => {
       })
       .catch(err => console.log(err));
   }, [id]);
+
+    //Supplier Fetch
+    useEffect(() => {
+      axios.get(BASE_URL + '/supplier/fetchTable')
+        .then(res => setFetchSupp(res.data))
+        .catch(err => console.log(err));
+    }, []);
+  
+    //Assembly Fetch
+    useEffect(() => {
+      axios
+        .get(BASE_URL + "/assembly/fetchTable")
+        .then((res) => setAssembly(res.data))
+        .catch((err) => console.log(err));
+    }, []);
+  
+    //Subpart Fetch
+    useEffect(() => {
+      axios
+        .get(BASE_URL + "/subpart/fetchTable")
+        .then((res) => setFetchsub(res.data))
+        .catch((err) => console.log(err));
+    }, []);
+  
+    //Spare part Fetch
+    useEffect(() => {
+      axios
+        .get(BASE_URL + "/sparePart/fetchTable")
+        .then((res) => setFetchPart(res.data))
+        .catch((err) => console.log(err));
+    }, []);
   
    //when user click the Add supplier button
   const handleAddSupp = () => {
@@ -182,6 +251,22 @@ useEffect(() => {
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
   };
+
+  //for onchange dropdown of spareparts
+  const handleSparepartChange = (selectedOptions) => {
+    setSparePart(selectedOptions);
+  };
+
+  //for onchange dropdown of subparts
+  const handleSubpartChange = (selectedOption) => {
+    setsubparting(selectedOption);
+  };
+
+  //for onchange dropdown of assembly
+  const handleAssemblyChange = (selectedOptions) => {
+    setassemblies(selectedOptions);
+  };
+
 
   useEffect(() => {
     axios.get(BASE_URL + '/binLocation/fetchTable')
@@ -357,6 +442,54 @@ useEffect(() => {
                               </div>
                           </div>
 
+                          <div className="row">
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: "20px" }}>
+                                    Assembly:{" "}
+                                  </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchAssembly.map((assembly) => ({
+                                      value: assembly.id,
+                                      label: assembly.assembly_name,
+                                    }))}
+                                    onChange={handleAssemblyChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: "20px" }}>
+                                    Sub Parts:{" "}
+                                  </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchSubPart.map((subpart) => ({
+                                      value: subpart.id,
+                                      label: subpart.subPart_name,
+                                    }))}
+                                    onChange={handleSubpartChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: "20px" }}>
+                                    Spare Parts:{" "}
+                                  </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchSparePart.map((sparePart) => ({
+                                      value: sparePart.id,
+                                      label: sparePart.spareParts_name,
+                                    }))}
+                                    onChange={handleSparepartChange}
+                                  />
+                                </Form.Group>
+                              </div>
+                            </div>
+
                         <div className="row">
                             <div className="col-6">
                                 <Form.Group controlId="exampleForm.ControlInput2">
@@ -378,6 +511,7 @@ useEffect(() => {
                                   </Form.Select>
                                 </Form.Group>
                             </div>
+
                             <div className="col-6">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Bin Location: </Form.Label>
