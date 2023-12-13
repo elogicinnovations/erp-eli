@@ -360,6 +360,11 @@ function Productvariants() {
     }));
   };
 
+  const closeVisibleButtons = () => {
+    setVisibleButtons({});
+    setIsVertical({});
+  };
+
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
@@ -459,14 +464,18 @@ function Productvariants() {
                               style={{ position: "absolute" }}>
                               <button
                                 className="btn"
-                                onClick={() => handleModalToggle(data)}>
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}>
                                 Update
                               </button>
                               <button
                                 className="btn"
-                                onClick={() =>
-                                  handleDelete(data.manufacturer_code)
-                                }>
+                                onClick={() => {
+                                  handleDelete(data.manufacturer_code);
+                                  closeVisibleButtons();
+                                }}>
                                 Delete
                               </button>
                             </div>

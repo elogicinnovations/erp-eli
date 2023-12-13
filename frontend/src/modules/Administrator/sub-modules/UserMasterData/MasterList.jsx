@@ -256,6 +256,17 @@ function MasterList() {
     }
   };
 
+  // Validation for PhoneNumber and Email
+  function isValidPhoneNumber(phone) {
+    const phoneRegex = /^09\d{9}$/;
+    return phoneRegex.test(phone);
+  }
+
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -282,10 +293,10 @@ function MasterList() {
           icon: "error",
           button: "OK",
         });
-      } else if (formData.cemail === "") {
+      } else if (!isValidPhoneNumber(formData.cnum)) {
         swal({
-          title: "Required Field",
-          text: "Email is Required",
+          title: "Invalid Phone Number Format",
+          text: "Please enter a valid number",
           icon: "error",
           button: "OK",
         });
@@ -293,6 +304,13 @@ function MasterList() {
         swal({
           title: "Required Field",
           text: "Email is Required",
+          icon: "error",
+          button: "OK",
+        });
+      } else if (!isValidEmail(formData.cemail)) {
+        swal({
+          title: "Invalid Email Format",
+          text: "Please enter a valid email address",
           icon: "error",
           button: "OK",
         });
@@ -541,6 +559,11 @@ function MasterList() {
     }));
   };
 
+  const closeVisibleButtons = () => {
+    setVisibleButtons({});
+    setIsVertical({});
+  };
+
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
@@ -639,12 +662,18 @@ function MasterList() {
                               style={{ position: "absolute" }}>
                               <button
                                 className="btn"
-                                onClick={() => handleModalToggle(data)}>
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}>
                                 Update
                               </button>
                               <button
                                 className="btn"
-                                onClick={() => handleDelete(data.col_id)}>
+                                onClick={() => {
+                                  handleDelete(data.col_id);
+                                  closeVisibleButtons();
+                                }}>
                                 Delete
                               </button>
                             </div>
@@ -750,7 +779,7 @@ function MasterList() {
                       value={formData.cnum}
                       onChange={handleFormChange}
                       name="cnum"
-                      maxLength={15}
+                      maxLength={11}
                       required
                     />
                   </Form.Group>
@@ -767,6 +796,7 @@ function MasterList() {
                       onChange={handleFormChange}
                       required
                       name="cemail"
+                      pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                   </Form.Group>

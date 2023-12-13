@@ -16,7 +16,7 @@ import { X } from "@phosphor-icons/react";
 
 function CreateProduct() {
   const navigate = useNavigate();
-//try
+  //try
   const [validated, setValidated] = useState(false); // for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
@@ -70,6 +70,7 @@ function CreateProduct() {
 
     setselectedimage(newSelectedImages);
   };
+
   const removeImage = (index) => {
     const newSelectedImages = [...selectedimage];
     newSelectedImages.splice(index, 1);
@@ -596,7 +597,9 @@ function CreateProduct() {
                       width: "720px",
                       padding: 10,
                     }}>
-                    <Dropzone onDrop={onDropImage}>
+                    <Dropzone
+                      onDrop={onDropImage}
+                      onChange={(e) => setselectedimage(e.target.value)}>
                       {({ getRootProps, getInputProps }) => (
                         <div
                           className="w-100 h-100"

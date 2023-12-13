@@ -293,7 +293,7 @@ const add = async e => {
                                         size="md"
                                         style={{ fontSize: '15px', marginTop: '10px' }}
                                       >
-                                        Add Sub-Part
+                                        Add Supplier
                                       </Button>
                                   </table>
                                 </div>

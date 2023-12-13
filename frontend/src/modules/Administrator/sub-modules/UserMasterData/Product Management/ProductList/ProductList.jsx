@@ -109,7 +109,6 @@ function ProductList() {
           const response = await axios.delete(
             BASE_URL + `/product/delete/${table_id}`
           );
-
           if (response.status === 200) {
             swal({
               title: "The Product has been deleted!",
@@ -159,6 +158,11 @@ function ProductList() {
       ...prevIsVertical,
       [userId]: !prevIsVertical[userId],
     }));
+  };
+
+  const closeVisibleButtons = () => {
+    setVisibleButtons({});
+    setIsVertical({});
   };
 
   const setButtonVisibles = (userId) => {
@@ -226,7 +230,8 @@ const handleSave = () => {
   });
 };
 
-    useEffect(() => {
+  useEffect(() => {
+    // Initialize DataTable when role data is available
     if ($("#order-listing").length > 0 && product.length > 0) {
       $("#order-listing").DataTable();
     }
@@ -400,7 +405,10 @@ const handleSave = () => {
                               <button
                                 className="btn"
                                 type="button"
-                                onClick={() => handleDelete(data.product_id)}>
+                                onClick={() => {
+                                  handleDelete(data.product_id);
+                                  closeVisibleButtons();
+                                }}>
                                 Delete
                               </button>
                             </div>

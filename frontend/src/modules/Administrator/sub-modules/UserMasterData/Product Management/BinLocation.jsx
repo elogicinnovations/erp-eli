@@ -363,7 +363,10 @@ function BinLocation() {
       [userId]: !prevIsVertical[userId],
     }));
   };
-
+  const closeVisibleButtons = () => {
+    setVisibleButtons({});
+    setIsVertical({});
+  };
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
@@ -459,12 +462,18 @@ function BinLocation() {
                               style={{ position: "absolute" }}>
                               <button
                                 className="btn"
-                                onClick={() => handleModalToggle(data)}>
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}>
                                 Update
                               </button>
                               <button
                                 className="btn"
-                                onClick={() => handleDelete(data.bin_id)}>
+                                onClick={() => {
+                                  handleDelete(data.bin_id);
+                                  closeVisibleButtons();
+                                }}>
                                 Delete
                               </button>
                             </div>
