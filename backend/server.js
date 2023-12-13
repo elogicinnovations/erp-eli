@@ -68,6 +68,7 @@ const PR_assembly= require("./routes/pr_assembly.route");
 const PR_history = require("./routes/pr_historical.route");
 const PR_rejustify = require("./routes/pr_rejustify.route");
 const PR_PO = require("./routes/pr_toPO.route");
+const PO_Receveid = require("./routes/po_received.route");
 
 const authenticateToken = require('./middleware/token_authentication.middleware');
 
@@ -119,6 +120,7 @@ app.use("/PR_assembly", PR_assembly);
 app.use("/PR_history", PR_history);
 app.use("/PR_rejustify", PR_rejustify);
 app.use("/PR_PO", PR_PO);
+app.use("/Received", PO_Receveid);
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);

@@ -287,6 +287,10 @@ function App() {
             element={<ReceivingManagement/>}
           />
                   <Route
+                    path="/viewToReceive/:id"
+                    element={<ReceivingManagementPreview/>}
+                  />
+                  <Route
                         path="/receivingManagementPreview"
                         element={<ReceivingManagementPreview/>}
                       />

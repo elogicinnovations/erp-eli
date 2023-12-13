@@ -36,33 +36,15 @@ import {
   import * as $ from 'jquery';
 
 function ReceivingManagement() {
+  const [PurchaseRequest, setPurchaseRequest] = useState([]); 
 
     
-// Artifitial data
-
-const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
+// Fetch Data
+useEffect(() => {
+  axios.get(BASE_URL + '/PR/fetchTableToReceive')
+    .then(res => setPurchaseRequest(res.data))
+    .catch(err => console.log(err));
+}, []);
       
 // Artifitial data
 
@@ -77,6 +59,17 @@ const data = [
         }
       }, []);
 
+//date format
+function formatDatetime(datetime) {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  };
+  return new Date(datetime).toLocaleString('en-US', options);
+}
 
   return (
     <div className="main-of-containers">
@@ -171,23 +164,21 @@ const data = [
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>Transfer ID</th>
-                                    <th className='tableh'>Description</th>
-                                    <th className='tableh'>Date Transfered</th>
-                                    <th className='tableh'>Source Warehouse</th>
-                                    <th className='tableh'>Target Warehouse</th>
-                                    <th className='tableh'>Quantity</th>
+                                    <th className='tableh'>PR NO.</th>
+                                    <th className='tableh'>Requestor</th>
+                                    <th className='tableh'>Status</th>
+                                    <th className='tableh'>Date Created</th>
+                                    <th className='tableh'>Remarks</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {data.map((data,i) =>(
+                                      {PurchaseRequest.map((data,i) =>(
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samA}</td>
-                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samB}</td>
-                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samC}</td>
-                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samD}</td>
-                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samE}</td>
-                                        <td onClick={() => navigate(`/receivingManagementPreview`)}>{data.samE}</td>
+                                        <td>{data.id}</td>
+                                        <td></td>
+                                        <td><Link to={`/viewToReceive/${data.id}`}>{data.status}</Link></td>
+                                        <td>{formatDatetime(data.createdAt)}</td>
+                                        <td>{data.remarks}</td>
                                         {/* <td>
                                         <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
                                         </td> */}
