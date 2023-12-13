@@ -169,7 +169,7 @@ function Productvariants() {
           if (response.status === 200) {
             swal({
               title: "The Manufacturer has been deleted!",
-              text: "The Location has been updated successfully.",
+              text: "The Manufacturer has been updated successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -196,7 +196,7 @@ function Productvariants() {
       } else {
         swal({
           title: "Cancelled Successfully",
-          text: "Category not Deleted!",
+          text: "Manufacturer not Deleted!",
           icon: "warning",
         });
       }
@@ -305,7 +305,7 @@ function Productvariants() {
       if (response.status === 200) {
         swal({
           title: "Update successful!",
-          text: "The Category has been updated successfully.",
+          text: "The Manufacturer has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -332,8 +332,8 @@ function Productvariants() {
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Category already exists",
-          text: "Please input another Category",
+          title: "Manufacturer already exists",
+          text: "Please input another Manufacturer",
         });
       } else {
         swal({
@@ -372,12 +372,9 @@ function Productvariants() {
 
   return (
     <div className="main-of-containers">
-      <div className="left-of-main-containers">
+      {/* <div className="left-of-main-containers">
         <Sidebar />
-      </div>
-
-      <div className="mid-of-main-containers"></div>
-
+      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
           <div className="settings-search-master">

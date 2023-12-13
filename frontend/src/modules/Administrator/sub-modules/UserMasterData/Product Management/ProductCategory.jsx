@@ -146,7 +146,7 @@ function ProductCategory() {
             });
           } else if (response.status === 201) {
             swal({
-              title: "CategoryExist",
+              title: "Category Exist",
               text: "Category is already exist please fill other supplier",
               icon: "error",
               button: "OK",
@@ -340,12 +340,9 @@ function ProductCategory() {
 
   return (
     <div className="main-of-containers">
-      <div className="left-of-main-containers">
+      {/* <div className="left-of-main-containers">
         <Sidebar />
-      </div>
-
-      <div className="mid-of-main-containers"></div>
-
+      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
           <div className="settings-search-master">

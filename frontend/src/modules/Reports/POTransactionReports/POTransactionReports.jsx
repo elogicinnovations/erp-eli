@@ -37,7 +37,7 @@ import {
   
   import * as $ from 'jquery';
 
-function InventoryReports() {
+function POTransactionReports() {
 
     
 // Artifitial data
@@ -67,6 +67,10 @@ const data = [
   ]
       
 // Artifitial data
+
+const navigate = useNavigate();
+const [startDate, setStartDate] = useState(null);
+const [endDate, setEndDate] = useState(null);
   
     useEffect(() => {
         if ($('#order-listing').length > 0) {
@@ -80,9 +84,10 @@ const data = [
         <div className="right-of-main-containers">
             <div className="right-body-contents">
                 <div className="settings-search-master">
+
                 <div className="dropdown-and-iconics">
-                        <div className="emp-text-side">
-                            <p>Inventory Reports</p>
+                    <div className="emp-text-side">
+                            <p>Purchase Order Reports</p>
                         </div>
                     <div className="dropdown-side">
                     </div>
@@ -124,6 +129,30 @@ const data = [
                           </Form.Select>
                           </div>
                         </div>
+                          <div className="col-2" style={{zIndex: '3'}}>
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
+                                <DatePicker
+                                  selected={startDate}
+                                  onChange={(date) => setStartDate(date)}
+                                  dateFormat="MM/dd/yyyy"
+                                  placeholderText="Start Date"
+                                  className="form-control"
+                                />
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
+                              </Form.Group>
+                          </div>
+                          <div className="col-2" style={{zIndex: '3'}}>
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
+                                <DatePicker
+                                  selected={endDate}
+                                  onChange={(date) => setEndDate(date)}
+                                  dateFormat="MM/dd/yyyy"
+                                  placeholderText="End Date"
+                                  className="form-control"
+                                />
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
+                              </Form.Group>
+                          </div>
                         <div className='export-refresh'>
                             <button className='export'>
                                  <Export size={20} weight="bold" /> <p1>Export</p1>
@@ -137,12 +166,13 @@ const data = [
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
+                                    <th className='tableh'>PO Number</th>
+                                    <th className='tableh'>PO Date</th>
                                     <th className='tableh'>Product Code</th>
-                                    <th className='tableh'>Product Name</th>
+                                    <th className='tableh'>Product</th>
                                     <th className='tableh'>UOM</th>
-                                    <th className='tableh'>Description</th>
-                                    <th className='tableh'>Destination</th>
-                                    <th className='tableh'>Unit Price</th>
+                                    <th className='tableh'>Supplier</th>
+                                    <th className='tableh'>Unit Cost</th>
                                     <th className='tableh'>Quantity</th>
                                     <th className='tableh'>Total</th>
                                 </tr>
@@ -154,6 +184,7 @@ const data = [
                                         <td>{data.samB}</td>
                                         <td>{data.samC}</td>
                                         <td>{data.samD}</td>
+                                        <td>{data.samE}</td>
                                         <td>{data.samE}</td>
                                         <td>{data.samE}</td>
                                         <td>{data.samE}</td>
@@ -171,4 +202,4 @@ const data = [
   )
 }
 
-export default InventoryReports
+export default POTransactionReports

@@ -60,30 +60,23 @@ import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStoc
 import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview"
 import ReceivingManagement from "./modules/Warehouse/Receiving Management/ReceivingManagement";
 import ReceivingManagementPreview from "./modules/Warehouse/Receiving Management/ReceivingManagementPreview";
+import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
 import ReturnForm from "./modules/Inventory/ReturnForm";
+import Sidebar from "./modules/Sidebar/sidebar";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 
 function App() {
   return (
     <Router>
+    <div className="app">
       <DataProvider>
         <Routes>
           <Route
             path="/"
             element={<Login />}
           />
-          
-
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
-
-          {/* Forgot PAssword*/}
-
-
           <Route
             path="/forgotpass"
             element={<ForgotPass />}
@@ -95,6 +88,26 @@ function App() {
             <Route
             path="/ConfirmPassword/:email?"
             element={<ConfirmPass />}
+          />
+        </Routes>
+      </DataProvider>
+
+    <div className="main-of-containers">
+        <div className="left-of-main-containers">
+            <Sidebar/>
+        </div>
+
+        <div className="mid-of-main-containers">
+        </div>
+
+        <div className="right-of-main-container">
+      <DataProvider>
+        <Routes>
+          
+
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
           />
 
           {/* User Master Data */}
@@ -290,13 +303,20 @@ function App() {
                         path="/receivingManagementPreview"
                         element={<ReceivingManagementPreview/>}
                       />
-              {/* <Route
+              <Route
                     path="/inventoryReports"
                     element={<InventoryReports/>}
-              /> */}
+              />
+              <Route
+                    path="/POTransactionReports"
+                    element={<POTransactionReports/>}
+              />
              
         </Routes>
       </DataProvider>
+      </div>
+      </div>
+      </div>
     </Router>
   );
 }

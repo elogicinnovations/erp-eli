@@ -188,8 +188,8 @@ const update = async (e) => {
       .then((res) => {
         if (res.status === 200) {
           swal({
-            title: 'The Spare Parts successfully added!',
-            text: 'The Spare Parts has been updated successfully.',
+            title: 'The Product Part successfully added!',
+            text: 'The Product Part has been updated successfully.',
             icon: 'success',
             button: 'OK',
           }).then(() => {
@@ -232,9 +232,9 @@ const update = async (e) => {
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a"> 
             

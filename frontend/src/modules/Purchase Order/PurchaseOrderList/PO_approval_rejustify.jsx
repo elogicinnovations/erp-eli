@@ -368,9 +368,9 @@ useEffect(() => {
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
             <Row>

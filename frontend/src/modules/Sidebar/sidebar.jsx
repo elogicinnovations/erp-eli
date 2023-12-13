@@ -28,11 +28,6 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 
 function Sidebar() {
   const [activeMenu, setActiveMenu] = useState(null);
-
-  const handleMenuClick = (menuName) => {
-    setActiveMenu(menuName);
-  };
-
   const [openAdministrator, setOpenAdministrator] = useState(false);
   const [openEmployeeData, setOpenEmployeeData] = useState(false);
   const [openProductSettings, setOpenProductSettings] = useState(false);
@@ -42,329 +37,107 @@ function Sidebar() {
   const [openWarehouse, setOpenWarehouse] = useState(false);
   const [openReports, setOpenReports] = useState(false);
 
+  const toggleOff = () => {
+    setOpenAdministrator(false);
+    setOpenPurchaseOrder(false);
+    setOpenWarehouse(false);
+    setOpenReports(false);
+  };
+
   const toggleReports = () => {
     setOpenReports(!openReports);
+    setOpenPurchaseOrder(false);
+    setOpenWarehouse(false);
+    setOpenAdministrator(false);
   };
 
   const toggleWarehouse = () => {
     setOpenWarehouse(!openWarehouse);
+    setOpenAdministrator(false);
+    setOpenPurchaseOrder(false);
+    setOpenReports(false);
   };
 
   const togglePurchaseOrder = () => {
     setOpenPurchaseOrder(!openPurchaseOrder);
+    setOpenAdministrator(false);
+    setOpenWarehouse(false);
+    setOpenReports(false);
   };
 
   const toggleAdministrator = () => {
     setOpenAdministrator(!openAdministrator);
-    if (openEmployeeData) setOpenEmployeeData(false);
-    if (openProductSettings) setOpenProductSettings(false);
-    if (openBPData) setOpenBPData(false);
-    if (openAssetSetup) setOpenAssetSetup(false);
+    setOpenEmployeeData(false);
+    setOpenProductSettings(false);
+    setOpenBPData(false);
+    setOpenAssetSetup(false);
+    setOpenPurchaseOrder(false);
+    setOpenWarehouse(false);
+    setOpenReports(false);
   };
 
   const toggleEmployeeData = () => {
     setOpenEmployeeData(!openEmployeeData);
-    if (openProductSettings) setOpenProductSettings(false);
-    if (openBPData) setOpenBPData(false);
-    if (openAssetSetup) setOpenAssetSetup(false);
+    setOpenProductSettings(false);
+    setOpenBPData(false);
+    setOpenAssetSetup(false);
+    setOpenReports(false);
   };
 
   const toggleProductSettings = () => {
     setOpenProductSettings(!openProductSettings);
-    if (openEmployeeData) setOpenEmployeeData(false);
-    if (openBPData) setOpenBPData(false);
-    if (openAssetSetup) setOpenAssetSetup(false);
+    setOpenEmployeeData(false);
+    setOpenBPData(false);
+    setOpenAssetSetup(false);
+    setOpenReports(false);
   };
 
   const toggleBPData = () => {
     setOpenBPData(!openBPData);
-    if (openEmployeeData) setOpenEmployeeData(false);
-    if (openProductSettings) setOpenProductSettings(false);
-    if (openAssetSetup) setOpenAssetSetup(false);
+    setOpenEmployeeData(false);
+    setOpenProductSettings(false);
+    setOpenAssetSetup(false);
+    setOpenReports(false);
   };
 
   const toggleAssetSetup = () => {
     setOpenAssetSetup(!openAssetSetup);
-    if (openEmployeeData) setOpenEmployeeData(false);
-    if (openProductSettings) setOpenProductSettings(false);
-    if (openBPData) setOpenBPData(false);
+    setOpenEmployeeData(false);
+    setOpenProductSettings(false);
+    setOpenBPData(false);
+    setOpenReports(false);
   };
 
   const location = useLocation();
-
+  
   useEffect(() => {
-    if (location.pathname === '/masterList') {
+    const path = location.pathname;
+
+    if (path === '/dashboard') {
+      setActiveMenu('DASHBOARD');
+    } else if (path.startsWith('/masterList') || path.startsWith('/userRole') || path.startsWith('/createRole') || path.match(/^\/editRole\/(\d+)$/)) {
       setOpenAdministrator(true);
       setOpenEmployeeData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/userRole') {
-      setOpenAdministrator(true);
-      setOpenEmployeeData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createRole') {
-      setOpenAdministrator(true);
-      setOpenEmployeeData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/editRole\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenEmployeeData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/productCategory') {
+    } else if (path.startsWith('/productCategory') || path.startsWith('/binLocation') || path.startsWith('/productList') || path.startsWith('/createProduct') || path.match(/^\/updateProduct\/(\d+)$/) || path.match(/^\/productSupplier\/(\d+)$/) || path === '/ProductManu' || path === '/subParts'  || path === '/createsubParts' || path.startsWith('/spareParts') || path.startsWith('/createSpareParts') || path.startsWith('/updateSpareParts') || path.startsWith('/assemblyForm') || path.startsWith('/createAssemblyForm') || path.match(/^\/updateAssemblyForm\/(\d+)$/)) {
       setOpenAdministrator(true);
       setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/binLocation') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/productList') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createProduct') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/updateProduct\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/productSupplier\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/ProductManu') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/subParts') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/spareParts') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createSpareParts') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/updateSpareParts\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/assemblyForm') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createAssemblyForm') {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/updateAssemblyForm\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenProductSettings(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/supplier') {
+    } else if (path.startsWith('/supplier') || path.startsWith('/CreateSupplier') || path.match(/^\/editSupp\/(\d+)$/) || path.match(/^\/viewSupplier\/(\d+)$/) || path.startsWith('/costCenter') || path.startsWith('/createCostCenter') || path.startsWith('/viewCostCenter') || path.match(/^\/initUpdateCostCenter\/(\d+)$/)) {
       setOpenAdministrator(true);
       setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/CreateSupplier') {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/editSupp\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/viewSupplier\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/costCenter') {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createCostCenter') {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/viewCostCenter') {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    // Extract id from the path
-    const match = location.pathname.match(/^\/initUpdateCostCenter\/(\d+)$/);
-    const id = match ? match[1] : null;
-  
-    if (id) {
-      setOpenAdministrator(true);
-      setOpenBPData(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/purchaseRequest') {
+    } else if (path.startsWith('/purchaseRequest') || path.startsWith('/purchaseRequestPreview') || path.startsWith('/createPurchaseRequest') || path.startsWith('/purchaseOrderList') || path.startsWith('/purchaseOrderListPreview')) {
       setOpenPurchaseOrder(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/purchaseRequestPreview') {
-      setOpenPurchaseOrder(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createPurchaseRequest') {
-      setOpenPurchaseOrder(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/purchaseOrderList') {
-      setOpenPurchaseOrder(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/purchaseOrderListPreview') {
-      setOpenPurchaseOrder(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/receivingManagement') {
+    } else if (path.startsWith('/receivingManagement') || path.startsWith('/receivingManagementPreview') || path.startsWith('/stockManagement') || path.startsWith('/createStockTransfer') || path.startsWith('/stockManagementPreview')) {
       setOpenWarehouse(true);
+    } else if (path === '/inventory') {
+      setActiveMenu('INVENTORY');
+    } else if (path === '/activityLogs') {
+      setActiveMenu('ACTIVITY LOGS');
+    } else if (path === '/reports') {
+      setActiveMenu('REPORTS');
+      setOpenReports(true);
     }
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (location.pathname === '/receivingManagementPreview') {
-      setOpenWarehouse(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/stockManagement') {
-      setOpenWarehouse(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/createStockTransfer') {
-      setOpenWarehouse(true);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === '/stockManagementPreview') {
-      setOpenWarehouse(true);
-    }
-  }, [location.pathname]);
 
   return (
     <div className="containers-of-sidebard">
@@ -380,12 +153,11 @@ function Sidebar() {
           <NavLink
             to='/dashboard'
             style={{ textDecoration: 'none', color: 'inherit' }}
-            onClick={() => handleMenuClick('DASHBOARD')}
             activeClassName="active"
           >
             <ListItem
               button
-              className={`menu-item ${location.pathname.startsWith('/dashboard') ? 'active' : ''}`}
+              className={`menu-item ${location.pathname.startsWith('/dashboard') ? 'active' : ''}`} onClick={toggleOff}
             >
               <SquaresFour size={20} />
               <ListItemText primary="DASHBOARD" />
@@ -458,7 +230,7 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Productsub-menu ${location.pathname === '/productCategory' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname === '/productCategory' ? 'active' : ''}`}
                   >
                     <ListItemText primary="Product Categories" />
                   </ListItem>
@@ -470,7 +242,7 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Productsub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
                   >
                     <ListItemText primary="Bin Location" />
                   </ListItem>
@@ -494,12 +266,12 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Productsub-menu ${location.pathname === '/ProductManu' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname === '/ProductManu' ? 'active' : ''}`}
                   >
                     <ListItemText primary="Product Manufacturer" />
                   </ListItem>
                 </NavLink>
-                  <ListItem button className='Productsub-menu'>
+                  <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Price Options" />
                   </ListItem>
                   </List>
@@ -510,7 +282,7 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Productsub-menu ${location.pathname === '/subParts' ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname.startsWith('/subParts') || location.pathname.startsWith('/createsubParts') ? 'active' : ''}`}
                   >
                     <ListItemText primary="Product Sub-Parts" />
                   </ListItem>
@@ -522,7 +294,7 @@ function Sidebar() {
                 >
                   <ListItem
                     button
-                    className={`Employeesub-menu ${location.pathname.startsWith('/spareParts') || location.pathname.startsWith('/createSpareParts') || location.pathname.startsWith('/updateSpareParts') ? 'active' : ''}`}
+                    className={`Employeesub-menu ${location.pathname.startsWith('/spareParts') || location.pathname.startsWith('/createSpareParts') || location.pathname.startsWith('/updateSpareParts') || location.pathname.startsWith('/viewSpareParts') ? 'active' : ''}`}
                   >
                     <ListItemText primary="Product Parts" />
                   </ListItem>
@@ -534,7 +306,7 @@ function Sidebar() {
                 >
                 <ListItem
                   button
-                  className={`Employeesub-menu ${location.pathname.startsWith('/assemblyForm') || location.pathname.startsWith('/createAssemblyForm') || location.pathname.startsWith('/updateAssemblyForm') ? 'active' : ''}`}
+                  className={`Employeesub-menu ${location.pathname.startsWith('/assemblyForm') || location.pathname.startsWith('/createAssemblyForm') || location.pathname.startsWith('/updateAssemblyForm') || location.pathname.startsWith('/viewAssembleForm') ? 'active' : ''}`}
                 >
                     <ListItemText primary="Product Assembly" />
                   </ListItem>
@@ -607,12 +379,11 @@ function Sidebar() {
           <NavLink
             to='/inventory'
             style={{ textDecoration: 'none', color: 'inherit' }}
-            onClick={() => handleMenuClick('INVENTORY')}
             activeClassName="active"
           >
             <ListItem
               button
-              className={`menu-item ${location.pathname === ('/inventory') ? 'active' : ''}`}
+              className={`menu-item ${location.pathname === ('/inventory') ? 'active' : ''}`} onClick={toggleOff}
             >
               <Archive size={20} />
               <ListItemText primary="INVENTORY" />
@@ -708,7 +479,7 @@ function Sidebar() {
 
           <ListItem
           button
-          className={`menu-item ${activeMenu === 'REPORTS' ? 'active' : ''}`}
+          className={`menu-item ${activeMenu === 'REPORTS' ? 'active-hover' : ''}`}
           onClick={() => {
             setActiveMenu(activeMenu === 'REPORTS' ? '' : 'REPORTS');
             toggleReports();
@@ -719,7 +490,7 @@ function Sidebar() {
           </ListItem>
 
           <Collapse in={openReports}>
-                {/* <NavLink
+                <NavLink
                   to='/inventoryReports'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -730,19 +501,19 @@ function Sidebar() {
                 >
                     <ListItemText primary="Inventory Report" />
                   </ListItem>
-                </NavLink> */}
-                {/* <NavLink
-                  to='/'
+                </NavLink>
+                <NavLink
+                  to='/POTransactionReports'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
                 >
                 <ListItem
                   button
-                  className={`adminsub-menu ${location.pathname.startsWith('/a') ? 'active' : ''}`}
+                  className={`adminsub-menu ${location.pathname.startsWith('/POTransactionReports') ? 'active' : ''}`}
                 >
                     <ListItemText primary="Purchase Order Transaction Report" />
                   </ListItem>
-                </NavLink> */}
+                </NavLink>
           </Collapse>
 
           <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}

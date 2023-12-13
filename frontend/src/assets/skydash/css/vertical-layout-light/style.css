@@ -24670,14 +24670,6 @@ dl li {
   }
 }
 
-.nav-tabs .nav-item:first-child .nav-link {
-  border-radius: 4px 0 0 0;
-}
-
-.nav-tabs .nav-item:last-child .nav-link {
-  border-radius: 0 4px 0 0;
-}
-
 .nav-tabs.nav-tabs-vertical, .nav-tabs.nav-tabs-vertical-custom {
   border-bottom: 0;
 }

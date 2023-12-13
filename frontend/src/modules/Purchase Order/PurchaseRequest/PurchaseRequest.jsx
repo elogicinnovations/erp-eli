@@ -149,7 +149,7 @@ const handleGoButtonClick = () => {
         } else {
           swal({
             title: "Cancelled Successfully",
-            text: "Product not Deleted!",
+            text: "PO not Deleted!",
             icon: "warning",
           });
         }
@@ -192,13 +192,9 @@ const handleGoButtonClick = () => {
 
   return (
     <div className="main-of-containers">
-        <div className="left-of-main-containers">
+        {/* <div className="left-of-main-containers">
             <Sidebar/>
-        </div>
-
-        <div className="mid-of-main-containers">
-        </div>
-
+        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents">
                 <div className="settings-search-master">
@@ -321,14 +317,12 @@ const handleGoButtonClick = () => {
                                     Clear Filter
                                   </button>
                               <div className="Buttonmodal-new">
-                                <button>
                                     <Link to="/createPurchaseRequest" className='button'>
                                     <span style={{ }}>
                                     <Plus size={25} />
                                     </span>
                                     New PR
                                     </Link>
-                                </button>
                             </div>
                         </div>
 
@@ -336,7 +330,7 @@ const handleGoButtonClick = () => {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
+                        <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>PR No.</th>
