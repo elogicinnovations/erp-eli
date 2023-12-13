@@ -200,13 +200,13 @@ import {
   ];
 
 function Dashboard() {
-  const navigate = useNavigate()
-  useEffect(() => {
-    console.log(localStorage.getItem('accessToken'));
-    if(localStorage.getItem('accessToken') === null){
-      navigate('/');
-    }
-  }, [])
+  // const navigate = useNavigate()
+  // useEffect(() => {
+  //   console.log(localStorage.getItem('accessToken'));
+  //   if(localStorage.getItem('accessToken') === null){
+  //     navigate('/');
+  //   }
+  // }, [])
 
   return (
     <div className="main-of-containers">

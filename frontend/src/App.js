@@ -69,6 +69,7 @@ import ReturnForm from "./modules/Inventory/ReturnForm";
 import Sidebar from "./modules/Sidebar/sidebar";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
+import ProtectedRoutes from "./hooks/protectedRoute";
 
 function App() {
   return (
@@ -105,9 +106,8 @@ function App() {
 
         <div className="right-of-main-container">
       <DataProvider>
+        <ProtectedRoutes>
         <Routes>
-          
-
           <Route
             path="/dashboard"
             element={<Dashboard />}
@@ -332,6 +332,7 @@ function App() {
               />
              
         </Routes>
+        </ProtectedRoutes>
       </DataProvider>
       </div>
       </div>
