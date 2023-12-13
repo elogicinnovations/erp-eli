@@ -334,6 +334,10 @@ function ProductCategory() {
     }));
   };
 
+  const closeVisibleButtons = () => {
+    setButtonVisibles({});
+    setIsVertical({});
+  };
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
@@ -432,15 +436,19 @@ function ProductCategory() {
                               <button
                                 className="btn"
                                 type="button"
-                                onClick={() => handleModalToggle(data)}>
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}>
                                 Update
                               </button>
                               <button
                                 className="btn"
                                 type="button"
-                                onClick={() =>
-                                  handleDelete(data.category_code)
-                                }>
+                                onClick={() => {
+                                  handleDelete(data.category_code);
+                                  closeVisibleButtons();
+                                }}>
                                 Delete
                               </button>
                             </div>

@@ -4,7 +4,7 @@ import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import BASE_URL from '../../../../../../assets/global/url';
+import BASE_URL from "../../../../../../assets/global/url";
 import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
@@ -394,6 +394,11 @@ function SubParts() {
     }));
   };
 
+  const closeVisibleButtons = () => {
+    setVisibleButtons({});
+    setIsVertical({});
+  };
+
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
@@ -450,9 +455,11 @@ function SubParts() {
                     New Product
                   </button> */}
 
-                  <Link to='/createsubParts' className='button'>
-                    <span style={{ }}>
-                    <Plus size={25} />
+                  <Link
+                    to="/createsubParts"
+                    className="button">
+                    <span style={{}}>
+                      <Plus size={25} />
                     </span>
                     New Product
                   </Link>
@@ -507,12 +514,18 @@ function SubParts() {
                               className="choices"
                               style={{ position: "absolute" }}>
                               <button
-                                onClick={() => handleModalToggle(data)}
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}
                                 className="btn">
                                 Update
                               </button>
                               <button
-                                onClick={() => handleDelete(data.id)}
+                                onClick={() => {
+                                  handleDelete(data.id);
+                                  closeVisibleButtons();
+                                }}
                                 className="btn">
                                 Delete
                               </button>

@@ -176,6 +176,10 @@ function UserRole() {
     }));
   };
 
+  const closeVisibleButtons = () => {
+    setVisibleButtons({});
+    setIsVertical({});
+  };
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
@@ -291,6 +295,7 @@ function UserRole() {
                                 className="btn"
                                 onClick={() => {
                                   handleDelete(data.col_id);
+                                  closeVisibleButtons();
                                 }}>
                                 Delete
                               </button>

@@ -16,7 +16,7 @@ import { X } from "@phosphor-icons/react";
 
 function CreateProduct() {
   const navigate = useNavigate();
-//try
+  //try
   const [validated, setValidated] = useState(false); // for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
@@ -64,12 +64,14 @@ function CreateProduct() {
 
     setselectedimage(newSelectedImages);
   };
+
   const removeImage = (index) => {
     const newSelectedImages = [...selectedimage];
     newSelectedImages.splice(index, 1);
     setselectedimage(newSelectedImages);
   };
-  //Assembly Fetch
+
+  //Assembly Fetchpo`
   useEffect(() => {
     axios
       .get(BASE_URL + "/assembly/fetchTable")
@@ -177,37 +179,36 @@ function CreateProduct() {
       });
     } else {
       const formData = new FormData();
-      formData.append('code', code);
-      formData.append('name', name);
-      formData.append('slct_category', slct_category);
-      formData.append('unit', unit);
-      formData.append('slct_binLocation', slct_binLocation);
-      formData.append('unitMeasurement', unitMeasurement);
-      formData.append('slct_manufacturer', slct_manufacturer);
-      formData.append('details', details);
-      formData.append('thresholds', thresholds);
-      formData.append('selectedimage', selectedimage);
-      formData.append('assemblies', JSON.stringify(assembly));
-      formData.append('sparepart', JSON.stringify(spareParts));
-      formData.append('subpart', JSON.stringify(subparting));
-      
-      axios.post(`${BASE_URL}/product/create`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        if(res.status === 200){
-          SuccessInserted(res);
-        }
-        else if(res.status === 201){
-          Duplicate_Message();
-        }
-        else{
-          ErrorInserted();
-        }
-      })
+      formData.append("code", code);
+      formData.append("name", name);
+      formData.append("slct_category", slct_category);
+      formData.append("unit", unit);
+      formData.append("slct_binLocation", slct_binLocation);
+      formData.append("unitMeasurement", unitMeasurement);
+      formData.append("slct_manufacturer", slct_manufacturer);
+      formData.append("details", details);
+      formData.append("thresholds", thresholds);
+      formData.append("selectedimage", selectedimage);
+      formData.append("assemblies", JSON.stringify(assembly));
+      formData.append("sparepart", JSON.stringify(spareParts));
+      formData.append("subpart", JSON.stringify(subparting));
+
+      axios
+        .post(`${BASE_URL}/product/create`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            SuccessInserted(res);
+          } else if (res.status === 201) {
+            Duplicate_Message();
+          } else {
+            ErrorInserted();
+          }
+        });
     }
     setValidated(true); //for validations
   };
@@ -546,7 +547,9 @@ function CreateProduct() {
                       width: "720px",
                       padding: 10,
                     }}>
-                    <Dropzone onDrop={onDropImage}>
+                    <Dropzone
+                      onDrop={onDropImage}
+                      onChange={(e) => setselectedimage(e.target.value)}>
                       {({ getRootProps, getInputProps }) => (
                         <div
                           className="w-100 h-100"
