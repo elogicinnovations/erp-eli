@@ -46,6 +46,7 @@ const PR_PO = require("./pr_toPO.model");
 const PR_PO_asmbly = require("./pr_toPO_asmbly.model");
 const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
+const PO_Received = require("./po_received.model");
 
 
 // const SparePart = require("./sparePart.model");
@@ -251,6 +252,14 @@ Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
 Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 
+//P0_received
+PR_PO.hasMany(PO_Received, { foreignKey: "pr_po_id" });
+PO_Received.belongsTo(PR_PO, {foreignKey: "pr_po_id" });
+
+PR.hasMany(PO_Received, { foreignKey: "pr_id" });
+PO_Received.belongsTo(PR, { foreignKey: "pr_id" });
+
+
 
 module.exports = { 
                     MasterList, 
@@ -300,5 +309,6 @@ module.exports = {
                     PR_PO,
                     PR_PO_asmbly,
                     PR_PO_spare,
-                    PR_PO_subpart
+                    PR_PO_subpart,
+                    PO_Received
                 };

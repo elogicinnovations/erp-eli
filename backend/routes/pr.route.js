@@ -30,6 +30,54 @@ router.route('/fetchTable').get(async (req, res) => {
     }
   });
 
+  router.route('/fetchTableToReceive').get(async (req, res) => {
+    try {
+     
+      const data = await PR.findAll({
+        where: {
+          status: 'To-Receive'
+        }
+      });
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
+//View Receiving
+router.route('/viewToReceive').get(async (req, res) => {
+  try {
+      const data = await PR.findAll({
+      where: {
+          id: req.query.id,
+      }
+      // ,
+      // include: {
+      //   model: MasterList, required: true
+      // }
+      });
+
+      if (!data) {
+      // No record found
+      return res.status(404).json({ message: 'Cost center not found' });
+      
+      }
+      // console.log(data)
+      return res.json(data);
+      
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'An error occurred' });
+  }
+});
+
   
 router.route('/fetchTable_PO').get(async (req, res) => {
   try {
