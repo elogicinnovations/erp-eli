@@ -23,9 +23,6 @@ import Collapse from '@mui/material/Collapse';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 
-
-
-
 function Sidebar() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [openAdministrator, setOpenAdministrator] = useState(false);
@@ -539,8 +536,8 @@ function Sidebar() {
         </div>
 
           <div className="logout-container">
-                <Link to={'/'} className='logout'>
-                  <SignOut size={20}/>  Logout
+            <Link to={'/'} className='logout' onClick={() => { localStorage.removeItem('accessToken') }}>
+              <SignOut size={20}/> Logout
                 </Link>
             </div>  
         

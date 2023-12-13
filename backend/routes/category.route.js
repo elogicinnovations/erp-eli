@@ -40,13 +40,16 @@ router.route('/create').post(async (req, res) => {
       
 
         // Check if the supplier code is already exists in the table
-        const existingDataCode = await Category.findOne({
+        const existingDataCode = await Category.findAll({
           where: {
-            category_code: req.body.categoryCode
+            [Op.or] : [
+              { category_code: { [Op.eq] : req.body.categoryCode }},
+              { category_name : { [Op.eq] : req.body.categoryName }}
+            ]
           },
         });
     
-        if (existingDataCode) {
+        if (existingDataCode.length > 0) {
           res.status(201).send('Exist');
         } else {
           const newData = await Category.create({
