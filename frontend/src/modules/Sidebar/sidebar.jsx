@@ -271,9 +271,9 @@ function Sidebar() {
                     <ListItemText primary="Product Manufacturer" />
                   </ListItem>
                 </NavLink>
-                  <ListItem button className='Employeesub-menu'>
+                  {/* <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Price Options" />
-                  </ListItem>
+                  </ListItem> */}
                   </List>
                   <NavLink
                   to='/subParts'
@@ -469,13 +469,13 @@ function Sidebar() {
                 </NavLink>
           </Collapse>
 
-          <ListItem button className={`menu-item ${activeMenu === 'ASSET MANAGEMENT' ? 'active' : ''}`}
+          {/* <ListItem button className={`menu-item ${activeMenu === 'ASSET MANAGEMENT' ? 'active' : ''}`}
             onClick={() => {
               setActiveMenu(activeMenu === 'ASSET MANAGEMENT' ? '' : 'ASSET MANAGEMENT');
             }}>
             <Coins size={20}/>
             <ListItemText primary="ASSET MANAGEMENT" />
-          </ListItem>
+          </ListItem> */}
 
           <ListItem
           button

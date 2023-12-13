@@ -1,9 +1,9 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { Issuance, MasterList, CostCenter } = require("../db/models/associations"); 
-const Issued_Product = require('../db/models/issued_product.model')
-const Inventory = require('../db/models/issued_product.model')
+const { Issuance, MasterList, CostCenter, Inventory, IssuedProduct, IssuedAssembly,IssuedSpare, IssuedSubpart } = require("../db/models/associations"); 
+// const Issued_Product = require('../db/models/issued_product.model')
+// const Inventory = require('../db/models/issued_product.model')
 
 
 // Get All Issuance
@@ -63,15 +63,46 @@ try {
             const inventory_id = product_issued.inventory_id
             const quantityee = product_issued.quantity
             const Name = product_issued.name
+            const Type = product_issued.type
             console.log('value' + inventory_id)
             console.log('Name' + Name)
             console.log('quantityee' + quantityee)
-             Issued_Product.create({
-                issuance_id: issuanceee_ID,
-                inventory_id: inventory_id,
-                quantity: quantityee,
-                status: 'Deployed'
-            });
+
+
+            if (Type === 'Product'){
+                IssuedProduct.create({
+                    issuance_id: issuanceee_ID,
+                    inventory_id: inventory_id,
+                    quantity: quantityee,
+                    status: 'Deployed'
+                });
+            }
+            else if(Type === 'Assembly'){
+                IssuedAssembly.create({
+                    issuance_id: issuanceee_ID,
+                    inventory_Assembly_id: inventory_id,
+                    quantity: quantityee,
+                    status: 'Deployed'
+                });
+            }
+            else if(Type === 'Spare'){
+                IssuedSpare.create({
+                    issuance_id: issuanceee_ID,
+                    inventory_Spare_id: inventory_id,
+                    quantity: quantityee,
+                    status: 'Deployed'
+                });
+            }
+            else if(Type === 'Subpart'){
+                IssuedSubpart.create({
+                    issuance_id: issuanceee_ID,
+                    inventory_Subpart_id: inventory_id,
+                    quantity: quantityee,
+                    status: 'Deployed'
+                });
+            }
+
+             
           }
     
 
