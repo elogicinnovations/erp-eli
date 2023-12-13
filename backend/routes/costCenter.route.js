@@ -51,7 +51,7 @@ router.route('/create').post(async (req, res) => {
     }
 });
 
-//Init-update
+//Get cost center that inner join on masterlist
 router.route('/initUpdate').get(async (req, res) => {
       try {
           const data = await CostCenter.findAll({

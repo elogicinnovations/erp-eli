@@ -14,7 +14,11 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
+  CircleNotch, 
 } from "@phosphor-icons/react";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from "react-bootstrap/Form";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -69,11 +73,14 @@ function ProductList() {
     }
   };
 
-  useEffect(() => {
+  const reloadTable  = () => {
     axios
       .get(BASE_URL + "/product/fetchTable")
       .then((res) => setproduct(res.data))
       .catch((err) => console.log(err));
+}
+  useEffect(() => {
+    reloadTable()
   }, []);
 
   function formatDate(isoDate) {
@@ -157,8 +164,69 @@ function ProductList() {
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
-  useEffect(() => {
-    // Initialize DataTable when role data is available
+
+
+  //This section when user click the checkbox in th, should check all the checkbox in td
+  const [show, setShow] = useState(false);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
+  const handleCheckboxChange = (productId) => {
+  const updatedCheckboxes = [...selectedCheckboxes];
+
+  if (updatedCheckboxes.includes(productId)) {
+    updatedCheckboxes.splice(updatedCheckboxes.indexOf(productId), 1);
+  } else {
+    updatedCheckboxes.push(productId);
+  }
+
+  setSelectedCheckboxes(updatedCheckboxes);
+  setShowChangeStatusButton(updatedCheckboxes.length > 0);
+};
+
+const handleSelectAllChange = () => {
+  const allProductIds = product.map((data) => data.product_id);
+  setSelectedCheckboxes(selectAllChecked ? [] : allProductIds);
+  setShowChangeStatusButton(!selectAllChecked);
+  $("input[type='checkbox']").prop("checked", !selectAllChecked);
+};
+
+
+
+const [selectedStatus, setSelectedStatus] = useState('Active'); // Add this state
+
+const handleStatusChange = (event) => {
+  setSelectedStatus(event.target.value);
+};
+
+const handleSave = () => {
+  axios.put(BASE_URL + "/product/statusupdate", {
+    productIds: selectedCheckboxes,
+    status: selectedStatus,
+  })
+  .then((res) => {
+    if (res.status === 200) {
+      swal({
+        title: 'Status Updating!',
+        text: 'The status has been updated successfully.',
+        icon: 'success',
+        button: 'OK'
+      }).then(() => {
+        handleClose();
+        reloadTable();
+      });
+    } 
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+};
+
+    useEffect(() => {
     if ($("#order-listing").length > 0 && product.length > 0) {
       $("#order-listing").DataTable();
     }
@@ -200,17 +268,28 @@ function ProductList() {
               </div>
 
               <div className="button-create-side">
+              {showChangeStatusButton ? (
+                <div className="Buttonmodal-change">
+                  <button className="buttonchanges" onClick={handleShow}>
+                    <span style={{}}>
+                      <CircleNotch size={25} />
+                    </span>
+                    Change Status
+                  </button>
+                </div>
+              ) : (
                 <div className="Buttonmodal-new">
-                  <Link
-                    to="/createProduct"
-                    className="button">
+                  <Link to="/createProduct" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Product
                   </Link>
                 </div>
-              </div>
+              )}
+            </div>
+
+
             </div>
           </div>
           <div className="table-containss">
@@ -218,9 +297,17 @@ function ProductList() {
               <table id="order-listing">
                 <thead>
                   <tr>
+                    <th className="tableh" id="check">
+                      <input
+                        type="checkbox"
+                        checked={selectAllChecked}
+                        onChange={handleSelectAllChange}
+                      />
+                    </th>
                     <th className="tableh">Product Code</th>
                     <th className="tableh">Item Name</th>
                     <th className="tableh">U/M</th>
+                    <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
                     <th className="tableh">Date Modified</th>
                     <th className="tableh">Action</th>
@@ -229,18 +316,26 @@ function ProductList() {
                 <tbody>
                   {product.map((data, i) => (
                     <tr key={i}>
+                      <td>
+                        <input type="checkbox" 
+                        checked={selectedCheckboxes.includes(data.product_id)}
+                        onChange={() => handleCheckboxChange(data.product_id)}
+                        />
+                        </td>
                       <td
                         onClick={() =>
                           navigate(`/productSupplier/${data.product_id}`)
                         }>
                         {data.product_code}
                       </td>
+
                       <td
                         onClick={() =>
                           navigate(`/productSupplier/${data.product_id}`)
                         }>
                         {data.product_name}
                       </td>
+
                       <td
                         onClick={() =>
                           navigate(`/productSupplier/${data.product_id}`)
@@ -249,18 +344,38 @@ function ProductList() {
                           ? data.product_unitMeasurement
                           : "--"}
                       </td>
+                      
+                      <td
+                        onClick={() => 
+                          navigate(`/productSupplier/${data.product_id}`)}>
+                          <div
+                            className="colorstatus"
+                            style={{
+                              backgroundColor: data.product_status === 'Active' ? 'green' : 'red',
+                              color: 'white',
+                              padding: '5px',
+                              borderRadius: '5px',
+                              textAlign: 'center',  
+                              width: '80px'
+                            }}>
+                            {data.product_status}
+                          </div>
+                        </td>
+
                       <td
                         onClick={() =>
                           navigate(`/productSupplier/${data.product_id}`)
                         }>
                         {formatDate(data.createdAt)}
                       </td>
+
                       <td
                         onClick={() =>
                           navigate(`/productSupplier/${data.product_id}`)
                         }>
                         {formatDate(data.updatedAt)}
                       </td>
+
                       <td>
                         {isVertical[data.product_id] ? (
                           <DotsThreeCircle
@@ -283,7 +398,8 @@ function ProductList() {
                           {setButtonVisibles(data.product_id) && (
                             <div
                               className="choices"
-                              style={{ position: "absolute" }}>                             
+                              style={{ position: "absolute" }}>    
+                              <Link to={`/updateProduct/${data.product_id}`} style={{fontSize:'12px'}} className='btn'>Update</Link>                         
                               <button
                                 className="btn"
                                 type="button"
@@ -294,10 +410,6 @@ function ProductList() {
                           )}
                         </div>
                       </td>
-                      {/* <td>
-                        <Link to={`/updateProduct/${data.product_id}`}className='btn'><NotePencil size={32}/></Link>
-                        <button className='btn' type="button" onClick={() => handleDelete(data.product_id)}><Trash size={32} color="#e60000" /></button>
-                        </td> */}
                     </tr>
                   ))}
                 </tbody>
@@ -306,6 +418,37 @@ function ProductList() {
           </div>
         </div>
       </div>
+            <Modal size="md" show={show} onHide={handleClose} backdrop="static" animation={false}>
+              <Modal.Header closeButton>
+                <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <Form.Group controlId="exampleForm.ControlInput2">
+                <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
+                <Form.Select
+                  style={{ height: "40px", fontSize: "15px" }}
+                  onChange={handleStatusChange}
+                  value={selectedStatus}>
+                    <option value="Active">
+                      Active
+                    </option>
+                    <option value="Inactive">
+                      Inactive
+                    </option>
+                </Form.Select>
+              </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="outline-warning" onClick={handleSave}
+                style={{ fontSize: "20px" }}>
+                  Save
+                </Button>
+                <Button variant="outline-secondary" onClick={handleClose}
+                style={{ fontSize: "20px" }}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
     </div>
   );
 }

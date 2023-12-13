@@ -61,6 +61,10 @@ const Product = sequelize.define('product', {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,
+  },
+  product_status: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

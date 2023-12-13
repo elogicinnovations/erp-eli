@@ -55,7 +55,7 @@ router.route('/fetchTable').get(async (req, res) => {
   //     },
   //   });
     const data = await Product.findAll({
-      attributes: ['product_id', 'product_code', 'product_name', 'product_unitMeasurement', 'createdAt', 'updatedAt']
+      attributes: ['product_id', 'product_code', 'product_name', 'product_unitMeasurement', 'createdAt', 'updatedAt', 'product_status']
     });
 
     if (data) {
@@ -73,9 +73,6 @@ router.route('/fetchTable').get(async (req, res) => {
 
 
 router.route('/fetchTableEdit').get(async (req, res) => {
- 
-  // const suppCode = req.query.id; // Access query parameter using req.query
-  //  console.log('pasok: ' + req.query.id)
 
     try {
         const data = await Product.findAll({
@@ -170,7 +167,6 @@ router.route('/create').post(
   
           //Spareparts
           const selectedSpare = JSON.parse(req.body.sparepart);
-
           for (const spareDropdown of selectedSpare) {
             const spareValue = spareDropdown.value;
     
@@ -183,7 +179,6 @@ router.route('/create').post(
 
           //Subparts
           const selectedSubparting = JSON.parse(req.body.subpart);
-
           for (const subpartDropdown of selectedSubparting) {
             const subpartValue = subpartDropdown.value;
     
@@ -194,9 +189,27 @@ router.route('/create').post(
             });
           }
 
+          //Supplier
+          const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
+
+          for (const supplier of selectedSuppliers) {
+            const { supplier_code, price } = supplier;
+          
+            const InsertedSupp = await ProductTAGSupplier.create({
+              product_id: IdData,
+              supplier_code: supplier_code,
+              product_price: price
+            });
+            const Inventories = InsertedSupp.id;
+            await Inventory.create({
+              product_tag_supp_id: Inventories,
+              quantity: 0
+            });
+
+          }
+
 
           res.status(200).json(newData);
-          // console.log(newDa)
         }
       } catch (err) {
         console.error(err);
@@ -211,7 +224,6 @@ router.route('/update').put(
   
   async (req, res) => {
   try {
-      
       // Check if the supplier code is already exists in the table
       const existingDataCode = await Product.findOne({
         where: {
@@ -224,22 +236,13 @@ router.route('/update').put(
       if (existingDataCode) {
         res.status(201).send('Exist');
       } else {
-
-
           let image_blob, image_blobFiletype;
-
-
-          // image_blob = req.files.selectedimage[0].buffer;
-
-          // image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
 
           if (req.files.selectedimage) {
               image_blob = req.files.selectedimage[0].buffer;
 
               image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
-
-          }
-          else{
+          } else {
               image_blob = null;
 
               image_blobFiletype = null;
@@ -263,6 +266,28 @@ router.route('/update').put(
           }
         )
         ;
+
+        if(newData) {
+          const deleteSuppliertag = ProductTAGSupplier.destroy({
+            where : {
+              product_id: req.body.id,
+            }
+          })
+          if(deleteSuppliertag){
+            
+            const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
+            for (const supplier of selectedSuppliers) {
+              const { supplier_code, price } = supplier;
+            
+              await ProductTAGSupplier.create({
+                product_id: req.body.id,
+                supplier_code: supplier_code,
+                product_price: price
+              });
+            }
+
+          }
+        }
   
         res.status(200).json(newData);
         // console.log(newDa)
@@ -377,6 +402,26 @@ router.route('/delete/:table_id').delete(async (req, res) => {
 
   
 });
+
+
+router.route('/statusupdate').put(async (req, res) => {
+  try {
+    const { productIds, status } = req.body;
+
+    for (const productId of productIds) {
+      await Product.update(
+        { product_status: status },
+        { where: { product_id: productId } }
+      );
+    }
+
+    res.status(200).json({ message: 'Products updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 
