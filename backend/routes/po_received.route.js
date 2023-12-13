@@ -12,7 +12,7 @@ router.use(session({
 
 
 //-------------------------------------------------//
-router.route('/insertToInventory').post(async (req, res) => {
+router.route('/fetchView').post(async (req, res) => {
     try {
             const newData = await PO_Received.create({
             pr_id: req.body.pr_id,
@@ -29,6 +29,5 @@ router.route('/insertToInventory').post(async (req, res) => {
       res.status(500).send('An error occurred');
     }
 });
-//-------------------------------------------------//
 
 module.exports = router;
