@@ -63,12 +63,6 @@ useEffect(() => {
 }, [id]);
 
 
-// const handlePriceChange = (index, value) => {
-//   const updatedTable = [...tableSupp];
-//   updatedTable[index].supplier_price = value;
-//   setTableSupp(updatedTable);
-// };
-
 const handlePriceChange = (index, value) => {
   const updatedTable = [...tableSupp];
   updatedTable[index].supplier_price = value;

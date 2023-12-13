@@ -1,8 +1,7 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const sequelize = require('../db/config/sequelize.config');
-const { ProductTAGSupplier, Product, Inventory, PR, Supplier, Category } = require("../db/models/associations"); 
-// const ProductTAGSupplier = require('../db/models/productTAGsupplier.model');
+const { ProductTAGSupplier, Product, PR, Supplier, Category } = require("../db/models/associations"); 
 
 
 router.route('/fetchTable').get(async (req, res) => {
@@ -10,6 +9,11 @@ router.route('/fetchTable').get(async (req, res) => {
       
       console.log(req.query.id)
       const data = await ProductTAGSupplier.findAll({
+        include:[{
+          model: Supplier,
+          required: true
+        }],
+        
         where: {product_id: req.query.id}
       });
   
@@ -83,126 +87,6 @@ router.route('/fetchProduct').get(async (req, res) => { // for fetching product 
     console.error(err);
     res.status(500).json("Error");
   }
-});
-
-
-router.route('/ADD_taggingSupplier').post(async (req, res) => {
-  try {
-    const productId = req.body.id;
-    const selectedSupplier = req.body.selectedItem;
-
-    // console.log(selectedSupplier);
-
-    // Check if a record with the same product_code and supplier_code already exists
-    const existingRecord = await ProductTAGSupplier.findOne({
-      where: {
-        product_id: productId,
-        supplier_code: selectedSupplier.id,
-      },
-    });
-
-    if (existingRecord) {
-        // Record already exists, so skip insertion
-        console.log('Record already exists');
-        res.status(201).send('Record already exists');
-
-        
-      } else {
-        // Record doesn't exist, so insert it
-        const newProduct = await ProductTAGSupplier.create({
-          product_id: productId,
-          supplier_code: selectedSupplier.id,
-        });
-
-        if(newProduct){
-
-          const generated_product_id = newProduct.id;
-
-          await Inventory.create({
-            product_tag_supp_id	: generated_product_id,
-            quantity: 0
-          })
-
-
-          console.log('Selected supplier saved successfully');
-          res.status(200).json(newProduct); // Send the newly added product data in the response
-        }
-      }
-
-      // const newProduct = await ProductTAGSupplier.create({
-      //   product_code: productId,
-      //   supplier_code: selectedSupplier.id,
-      // });
-    
-      // console.log('Selected supplier saved successfully');
-      // res.status(200).json(newProduct); // Send the newly added product data in the response
-    
-
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('An error occurred');
-  }
-});
-
-
-
-router.route('/updatePrice').put(async (req, res) => {
-    try {
-      const id = req.body.table_id;
-      const price = req.body.price;
-
-      let finalPrice;
-
-      if (price === ''){
-        finalPrice = null
-      }else{
-        finalPrice = price
-      }
-      // console.log(updatemasterID)
-  
-      // Update the record in the table
-      const [affectedRows] = await ProductTAGSupplier.update(
-        {
-          product_price: finalPrice,
-        },
-        {
-          where: { id: id },
-        }
-      );
-
-      res.status(200).json({ message: "Data updated successfully", affectedRows });
-    
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('An error occurred');
-    }
-  });
-
-
-  
-router.route('/delete/:table_id').delete(async (req, res) => {
-  const id = req.params.table_id;
-
-  ProductTAGSupplier.destroy({
-    where : {
-      id: id
-    }
-  }).then(
-      (del) => {
-          if(del){
-              res.json({success : true})
-          }
-          else{
-              res.status(400).json({success : false})
-          }
-      }
-  ).catch(
-      (err) => {
-          console.error(err)
-          res.status(409)
-      }
-  );
 });
 
 

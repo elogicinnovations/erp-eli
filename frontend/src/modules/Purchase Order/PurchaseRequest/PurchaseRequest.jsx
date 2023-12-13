@@ -73,26 +73,36 @@ function PurchaseRequest() {
      reloadTable()
     }, []);
 
-const handleGoButtonClick = () => {
-  if (!startDate && !endDate && !selectedStatus) {
-    return;
-  }
+    const handleGoButtonClick = () => {
+      if (!startDate || !endDate || !selectedStatus) {
+        swal({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Please fill in all filter sections!',
+        });
+        return;
+      }
+    
+      const filteredData = allPR.filter((data) => {
+        const createdAt = new Date(data.createdAt);
+    
+        console.log('startDate:', startDate);
+        console.log('endDate:', endDate);
+        console.log('createdAt:', createdAt);
 
-  const filteredData = allPR.filter((data) => {
-    const createdAt = new Date(data.createdAt);
-
-    const isWithinDateRange =
-      (!startDate || createdAt >= startDate) &&
-      (!endDate || createdAt <= endDate);
-
-    const isMatchingStatus =
-      !selectedStatus || data.status === selectedStatus;
-
-    return isWithinDateRange && isMatchingStatus;
-  });
-
-  setFilteredPR(filteredData);
-};
+        const isWithinDateRange =
+        (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
+        (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
+    
+        const isMatchingStatus =
+          selectedStatus === 'All Status' || data.status === selectedStatus;
+    
+        return isWithinDateRange && isMatchingStatus;
+      });
+    
+      setFilteredPR(filteredData);
+    };
+    
 
   const clearFilters = () => {
     setStartDate(null);
@@ -305,10 +315,12 @@ const handleGoButtonClick = () => {
                               <Form.Select aria-label="item status"
                                 value={selectedStatus}
                               onChange={handleStatusChange}
-                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}>
+                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                required>
                                   <option value="" disabled selected>
                                     Select Status
                                   </option>
+                                  <option value="All Status">All Status</option>
                                   <option value="For-Approval">For-Approval</option>
                                   <option value="For-Rejustify">For-Rejustify</option>
                                   <option value="For-Canvassing">For-Canvassing</option>

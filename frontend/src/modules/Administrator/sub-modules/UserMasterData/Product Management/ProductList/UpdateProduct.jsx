@@ -10,16 +10,17 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 import cls_unit from '../../../../../../assets/global/unit';
-
+import Select from 'react-select';
 import Dropzone from 'react-dropzone';
 
 function UpdateProduct() {
   const navigate = useNavigate();
   const { id } = useParams();
-  // const [product, setproduct] = useState([]); // for fetching product data
+  const [product, setproduct] = useState([]); // for fetching product data that tag to supplier
   const [validated, setValidated] = useState(false);// for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
+  const [supplier, setsupplier] = useState([]); // for fetching supplier data
   const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
@@ -33,39 +34,61 @@ function UpdateProduct() {
   const [details, setDetails] = useState('');
   const [thresholds, setThresholds] = useState('');
 
+  const [price, setPrice] = useState({});
+  const [addPriceInput, setaddPriceInputbackend] = useState([]);
+  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]);
 
+  const [fetchSupp, setFetchSupp] = useState([]); 
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
 
 
 
   //fetching data for edit
-
-  useEffect(() => {   
-    // console.log('code' + id)
-    axios.get(BASE_URL + '/product/fetchTableEdit', {
-        params: {
-          id: id
-        }
-      })
-    //   .then(res => setsupplier(res.data))
-    .then(res => {
-        setCode(res.data[0].product_code);
-        setName(res.data[0].product_name);
-        setslct_category(res.data[0].product_category);
-        setunit(res.data[0].product_unit);
-        setslct_binLocation(res.data[0].product_location);
-        setunitMeasurement(res.data[0].product_unitMeasurement);
-        setslct_manufacturer(res.data[0].product_manufacturer);
-        setDetails(res.data[0].product_details);
-        setThresholds(res.data[0].product_threshold);
-        const imageBlob = res.data[0].image_blob;
-        const fileType = res.data[0].file_type;
-        const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
-        setselectedimage({ url: blobUrl, type: fileType });
+//-----------------------------fetching data for edit
+useEffect(() => {   
+  // console.log('code' + id)
+  axios.get(BASE_URL + '/product/fetchTableEdit', {
+      params: {
+        id: id
+      }
     })
-      .catch(err => console.log(err));
-  }, []);
+  .then(res => {
+      setCode(res.data[0].product_code)
+      setName(res.data[0].product_name);
+      setslct_category(res.data[0].product_category);
+      setunit(res.data[0].product_unit);
+      setslct_binLocation(res.data[0].product_location);
+      setunitMeasurement(res.data[0].product_unitMeasurement);
+      setslct_manufacturer(res.data[0].product_manufacturer);
+      setDetails(res.data[0].product_details);
+      setThresholds(res.data[0].product_threshold);
+      const imageBlob = res.data[0].image_blob;
+      const fileType = res.data[0].file_type;
+      const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
+      setselectedimage({ url: blobUrl, type: fileType });
+  })
+    .catch(err => console.log(err));
+}, []);
 
 
+  const handleSelectChange = (selectedOptions) => {
+    setSelectedDropdownOptions(selectedOptions);
+    // Update the table with the selected options and the previously removed rows
+    const updatedTable = [
+      ...product.filter((row) => selectedOptions.some((option) => option.value === row.supplier_code)),
+      ...selectedOptions
+        .filter((option) => !product.some((row) => row.supplier_code === option.value))
+        .map((option) => ({
+          supplier_code: option.value,
+          supplier: {
+            supplier_name: option.label.split('/ Name: ')[1].trim(),
+          },
+        })),
+    ];
+  
+    setproduct(updatedTable);
+  };
 
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
@@ -86,10 +109,54 @@ function UpdateProduct() {
             icon: 'error',
             button: 'OK'
         })
-    }
-    
+      }
   };
 
+
+  const handlePriceChange = (index, value) => {
+    const updatedTable = [...product];
+    updatedTable[index].product_price = value;
+  
+    const serializedPrice = updatedTable.map((row) => ({
+      price: row.product_price || '',
+      suppliercodes: row.supplier_code
+    }));
+  
+    setproduct(updatedTable);
+    setaddPriceInputbackend(serializedPrice);
+  
+    const productTAGSuppliersData = updatedTable.map((row) => ({
+      price: row.product_price || '',
+      supplier_code: row.supplier_code
+    }));
+    setProductTAGSuppliers(productTAGSuppliersData);
+  
+    return updatedTable;
+  };
+
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/productTAGsupplier/fetchTable', {
+      params: {
+        id: id
+      }
+    })
+      .then(res => {
+        const data = res.data;
+        setproduct(data);
+        const selectedOptions = data.map((row) => ({
+          value: row.supplier_code,
+          label: `Supplier Code: ${row.supplier_code} / Name: ${row.supplier.supplier_name}`,
+        }));
+        setSelectedDropdownOptions(selectedOptions);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
+  
+   //when user click the Add supplier button
+  const handleAddSupp = () => {
+    setShowDropdown(true);
+  };
 
   // for Unit on change function
   const handleChangeUnit = (event) => {
@@ -147,6 +214,7 @@ function UpdateProduct() {
       });
   }, []);
 
+
   const update = async e => {
     e.preventDefault();
 
@@ -163,13 +231,6 @@ function UpdateProduct() {
           });
     }
     else{
-      // axios
-      // .post(`${BASE_URL}/product/create`, {
-      //   name, slct_category, unit,
-      //   slct_binLocation, unitMeasurement,
-      //   slct_manufacturer, details, thresholds,
-      //   selectedimage
-      // })
       const formData = new FormData();
       formData.append('id', id);
       formData.append('code', code);
@@ -182,6 +243,7 @@ function UpdateProduct() {
       formData.append('details', details);
       formData.append('thresholds', thresholds);
       formData.append('selectedimage', selectedimage);
+      formData.append('productTAGSuppliers', JSON.stringify(productTAGSuppliers));
 
       axios.put(`${BASE_URL}/product/update`, formData, {
         headers: {
@@ -200,17 +262,10 @@ function UpdateProduct() {
           ErrorInserted();
         }
       })
-
-      // .catch((err) => {
-      //   console.error(err);
-      //   // ErrorInserted();
-      // });
     }
-
     setValidated(true); //for validations
-
-    
   };
+
   const SuccessInserted = (res) => {
     swal({
       title: 'Product Created',
@@ -265,12 +320,12 @@ function UpdateProduct() {
                             }}
                           ></span>
                         </div>
-                        <Form  noValidate validated={validated} onSubmit={update}>
+                        <Form noValidate validated={validated} onSubmit={update}>
                           <div className="row mt-3">
                           <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Item Code: </Form.Label>
-                                <Form.Control required type="text" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control required type="text" value={code} onChange={(e) => setCode(e.target.value)} style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-4">
@@ -285,13 +340,10 @@ function UpdateProduct() {
 
                                   <Form.Select 
                                     aria-label="" 
-                                    onChange={handleFormChangeCategory} 
+                                    onChange={handleFormChangeCategory}
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
-                                    value={slct_category}
-                                  >
-
-
+                                    value={slct_category}>
                                       <option disabled value=''>
                                           Select Category ...
                                       </option>
@@ -314,9 +366,7 @@ function UpdateProduct() {
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={unit}
-                                    onChange={handleChangeUnit}
-                                   
-                                  >
+                                    onChange={handleChangeUnit}>
                                       <option disabled value=''>
                                           Select Unit ...
                                       </option>
@@ -336,10 +386,7 @@ function UpdateProduct() {
                                     onChange={handleFormChangeBinLocation} 
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
-                                    value={slct_binLocation}
-                                  >
-
-
+                                    value={slct_binLocation}>
                                       <option disabled value=''>
                                           Select Bin Location ...
                                       </option>
@@ -362,9 +409,7 @@ function UpdateProduct() {
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
                                     value={unitMeasurement}
-                                    onChange={handleChangeMeasurement}
-                                   
-                                  >
+                                    onChange={handleChangeMeasurement}>
                                       <option disabled value=''>
                                           Select Unit Measurement ...
                                       </option>
@@ -384,10 +429,7 @@ function UpdateProduct() {
                                     onChange={handleFormChangeManufacturer} 
                                     required
                                     style={{ height: '40px', fontSize: '15px' }}
-                                    value={slct_manufacturer}
-                                  >
-
-
+                                    value={slct_manufacturer}>
                                       <option disabled value=''>
                                           Select Manufacturer ...
                                       </option>
@@ -404,7 +446,7 @@ function UpdateProduct() {
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Details Here: </Form.Label>
-                                <Form.Control as="textarea" value={details}  onChange={(e) => setDetails(e.target.value)} placeholder="Enter item name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control as="textarea" value={details} onChange={(e) => setDetails(e.target.value)} style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                         </div>
 
@@ -425,11 +467,11 @@ function UpdateProduct() {
                           ></span>
                         </div>
 
-                          <div className="row mt-3">
+                        <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
-                                <Form.Control required value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" placeholder="Minimum Stocking" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
                             <div className="col-6">
@@ -463,16 +505,92 @@ function UpdateProduct() {
                                   </div>              
                               </Form.Group>   
                             </div>
-
                           </div>
-                        
-                        <div className='save-cancel'>
-                        <Button  type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>Update</Button>
-                        <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                            Close
-                        </Link>
-                        </div>
-                      </Form>
+
+                          <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
+                              Product Supplier
+                              <p className='fs-15'>Assigns product to supplier(s)</p>
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  height: '0.5px',
+                                  width: '-webkit-fill-available',
+                                  background: '#FFA500',
+                                  top: '65%',
+                                  left: '15rem',
+                                  transform: 'translateY(-50%)',
+                                }}
+                              ></span>
+                          </div>
+
+                              <div className="main-of-all-tables">
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th className='tableh'>Supplier Code</th>
+                                        <th className='tableh'>Name</th>
+                                        <th className='tableh'>Email</th>
+                                        <th className='tableh'>Contact</th>
+                                        <th className='tableh'>Address</th>
+                                        <th className='tableh'>Receiving Area</th>
+                                        <th className='tableh'>Price</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    {product.map((prod,i) =>(
+                                        <tr key={i}>
+                                          <td>{prod.supplier.supplier_code}</td>
+                                          <td>{prod.supplier.supplier_name}</td>
+                                          <td>{prod.supplier.supplier_email}</td>
+                                          <td>{prod.supplier.supplier_number}</td>
+                                          <td>{prod.supplier.supplier_address}</td>
+                                          <td>{prod.supplier.supplier_receiving}</td>
+                                          <td>
+                                            <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
+                                            <input
+                                              type="number"
+                                              style={{ height: '50px' }}
+                                              value={prod.product_price || ''}
+                                              onChange={(e) => handlePriceChange(i, e.target.value)}
+                                            />
+                                          </td>
+                                        </tr>
+                                      ))}
+
+                                    </tbody>
+                                    {showDropdown && (
+                                        <div className="dropdown mt-3">
+                                           <Select
+                                                isMulti
+                                                options={fetchSupp.map((supplier) => ({
+                                                  value: supplier.supplier_code,
+                                                  label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
+
+                                                }))}
+                                                value={selectedDropdownOptions}
+                                                onChange={handleSelectChange}
+                                              />
+                                        </div>
+                                      )}
+                                        <Button
+                                        variant="outline-warning"
+                                        onClick={handleAddSupp}
+                                        size="md"
+                                        style={{ fontSize: '15px', marginTop: '10px' }}
+                                          
+                                        >
+                                          Add Supplier
+                                        </Button>
+                                  </table>
+                                </div>
+
+                          <div className='save-cancel'>
+                            <Button  type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>Update</Button>
+                              <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                                  Close
+                              </Link>
+                          </div>
+                        </Form>
             </div>
         </div>
     </div>

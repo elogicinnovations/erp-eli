@@ -225,7 +225,7 @@ function App() {
                     element={<UpdateCostCenter/>}
                   />
                   <Route
-                    path="/viewCostCenter"
+                    path="/viewCostCenter/:id"
                     element={<ViewCostCenter/>}
                   />
           <Route

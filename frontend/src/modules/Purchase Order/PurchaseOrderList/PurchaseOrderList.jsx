@@ -71,19 +71,27 @@ const [pr_req, setPr_req] = useState([]);
 
     //Function when user click the Go button to filter
     const handleGoButtonClick = () => {
-      if (!startDate && !endDate && !selectedStatus) {
+      if (!startDate || !endDate || !selectedStatus) {
+        swal({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Please fill in all filter sections!',
+        });
         return;
       }
     
       const filteredData = allPR.filter((data) => {
         const createdAt = new Date(data.createdAt);
-    
+        console.log('startDate:', startDate);
+        console.log('endDate:', endDate);
+        console.log('createdAt:', createdAt);
+
         const isWithinDateRange =
-          (!startDate || createdAt >= startDate) &&
-          (!endDate || createdAt <= endDate);
+        (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
+        (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
     
         const isMatchingStatus =
-          !selectedStatus || data.status === selectedStatus;
+          selectedStatus === 'All Status' || data.status === selectedStatus;
     
         return isWithinDateRange && isMatchingStatus;
       });
@@ -251,14 +259,18 @@ const [pr_req, setPr_req] = useState([]);
                               </div>
                               <Form.Select aria-label="item status"
                                 value={selectedStatus}
-                              onChange={handleStatusChange}
-                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}>
+                                onChange={handleStatusChange}
+                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                required
+                                title="Status is required">
                                   <option value="" disabled selected>
                                     Select Status
                                   </option>
+                                  <option value="All Status">All Status</option>
                                   <option value="For-Approval">For-Approval</option>
                                   <option value="For-Rejustify">For-Rejustify</option>
                                   <option value="For-Canvassing">For-Canvassing</option>
+                                  <option value="To-Received">To-Received</option>
                                   <option value="Cancelled">Cancelled</option>
                                 </Form.Select>  
                                   <button className='goesButton' onClick={handleGoButtonClick}>
@@ -299,8 +311,7 @@ const [pr_req, setPr_req] = useState([]);
                                       data.status === 'To-Receive' ?
                                       navigate(`/PO_receive/${data.id}`) :
                                       navigate(`/purchaseOrderListPreview/${data.id}`)
-                                  }
-                                >
+                                  }>
                                   {data.pr_num}
                                 </td>
 
@@ -358,16 +369,6 @@ const [pr_req, setPr_req] = useState([]);
                                         }>
                                    {data.remarks}
                                 </td>
-
-{/*                           
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.pr_num}</td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>--</td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>
-                                  <button className='btn btn-secondary' style={{fontSize: '12px'}}>
-                                          {data.status}
-                                  </button></td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{formatDatetime(data.updatedAt)}</td>
-                                <td onClick={() => navigate(`/purchaseOrderListPreview/${data.id}`)}>{data.remarks}</td> */}
                               </tr>
                             ))}
                           </tbody>
