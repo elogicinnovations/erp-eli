@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR_product = require('../db/models/pr_products.model')
-const {PR_product, Product, PR} = require('../db/models/associations')
+const {PR_product, Product, PR, PO_Received} = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({

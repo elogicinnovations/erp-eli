@@ -63,7 +63,7 @@ function ReceivingManagementPreview() {
 const [products, setProducts] = useState([]);
 
 useEffect(() => {
-  axios.get(BASE_URL + '/PR_product/fetchView',{
+  axios.get(BASE_URL + '/PO_received/fetchView',{
     params:{
       id: id
     }
@@ -71,41 +71,6 @@ useEffect(() => {
     .then(res => setProducts(res.data))
     .catch(err => console.log(err));
 }, []);
-
-    
-  // const [showDropdown, setShowDropdown] = useState(false);
-  // const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  // const [rotatedIcons, setRotatedIcons] = useState(Array(data.length).fill(false));
-  // const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-
-
-  // const toggleDropdown = (event, index) => {
-  //   // Check if the clicked icon is already open, close it
-  //   if (index === openDropdownIndex) {
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = !newRotatedIcons[index];
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(false);
-  //     setOpenDropdownIndex(null);
-  //   } else {
-  //     // If a different icon is clicked, close the currently open dropdown and open the new one
-  //     setRotatedIcons(Array(data.length).fill(false));
-  //     const iconPosition = event.currentTarget.getBoundingClientRect();
-  //     setDropdownPosition({
-  //       top: iconPosition.bottom + window.scrollY,
-  //       left: iconPosition.left + window.scrollX,
-  //     });
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = true;
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(true);
-  //     setOpenDropdownIndex(index);
-  //   }
-  // };
 
 
   const [showModal, setShowModal] = useState(false);
