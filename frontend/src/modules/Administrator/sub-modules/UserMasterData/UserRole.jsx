@@ -263,6 +263,10 @@ function UserRole() {
                             onClick={() => {
                               toggleButtons(data.col_id);
                             }}
+                            style={{
+                              transition:
+                                "transform 0.3s ease-in-out, color 0.3s ease-in-out",
+                            }}
                           />
                         ) : (
                           <DotsThreeCircleVertical
@@ -271,8 +275,13 @@ function UserRole() {
                             onClick={() => {
                               toggleButtons(data.col_id);
                             }}
+                            style={{
+                              transition:
+                                "transform 0.3s ease-in-out, color 0.3s ease-in-out",
+                            }}
                           />
                         )}
+
                         <div>
                           {setButtonVisibles(data.col_id) && (
                             <div
