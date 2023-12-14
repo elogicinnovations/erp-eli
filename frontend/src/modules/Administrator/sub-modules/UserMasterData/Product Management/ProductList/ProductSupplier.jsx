@@ -57,9 +57,9 @@ function ProductSupplier() {
   const [productTAGSuppliers, setProductTAGSuppliers] = useState([]);
 
   const [activeTab, setActiveTab] = useState('Assembly');
-  const [Assembly, setAssembly] = useState([]);
-  const [Subparts, setSubParts] = useState([]);
-  const [Spareparts, setSpareparts] = useState([]);
+  const [Assembly, setAssembly] = useState([]); //for fetching ng assembly na may where clause id
+  const [Subparts, setSubParts] = useState([]); //for fetching ng subparts na may where clause id
+  const [Spareparts, setSpareparts] = useState([]); //for fetching ng spareparts na may where clause id
 
 //------------------------------for tagging of supplier ---------------------------//
 
@@ -493,11 +493,11 @@ function ProductSupplier() {
                                                           </tr>
                                                       </thead>
                                                       <tbody>
-                                                        {supplier.map((data,i) =>(
+                                                        {product.map((data,i) =>(
                                                           <tr>
-                                                              <td>{data.supplier_code}</td>
-                                                              <td>{data.supplier_name}</td>
-                                                              <td>{data.supplier_number}</td>
+                                                              <td>{data.supplier.supplier_code}</td>
+                                                              <td>{data.supplier.supplier_name}</td>
+                                                              <td>{data.supplier.supplier_number}</td>
                                                           </tr>
                                                           ))}
                                                       </tbody>

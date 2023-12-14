@@ -79,7 +79,7 @@ function UpdateAssemblyForm() {
   const [assembly_supp, setAssembly_supp] = useState([]);
   useEffect(() => {
     axios
-      .get(BASE_URL + "/supplier_assembly/fetchAssigned", {
+      .get(BASE_URL + "/assembly_supplier/fetchAssigned", {
         params: {
           id: id,
         },
@@ -89,15 +89,15 @@ function UpdateAssemblyForm() {
   }, [id]);
 
   //Fetching For Association of Assembly and Spare Part
-  const [Spareparts, setSpareparts] = useState([]);
+  const [sparePart, setSpareSpart] = useState([]);
   useEffect(() => {
     axios
-      .get(BASE_URL + "/spare_assembly/fetchspareTable", {
+      .get(BASE_URL + "/assembly_spare/fetchspareTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSpareparts(res.data))
+      .then((res) => setSpareSpart(res.data))
       .catch((err) => console.log(err));
   }, [id]);
 
@@ -113,6 +113,7 @@ function UpdateAssemblyForm() {
       .then((res) => setSubParts(res.data))
       .catch((err) => console.log(err));
   }, []);
+
   //for supplier selection values
   const [spareParts, setSparePart] = useState([]);
   const handleSelectChange = (selectedOptions) => {
@@ -158,7 +159,7 @@ function UpdateAssemblyForm() {
             name,
             supp,
             desc,
-            spareParts,
+            sparePart,
           },
         })
         .then((res) => {
@@ -265,41 +266,71 @@ function UpdateAssemblyForm() {
                     Sub Parts:{" "}
                   </Form.Label>
 
-                  <Form.Select disabled={!isReadOnly}>
-                    {Subparts.map((sparts, i) => (
-                      <option
-                        key={i}
-                        value={sparts.id}>
-                        {sparts.subPart.subPart_name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Spare Parts:
-                    <Form.Select>
-                      {Spareparts.map((spares, i) => (
+                  {isReadOnly && (
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      style={{ height: "40px" }}>
+                      {fetchSub.map((fetchSparts, i) => (
                         <option
                           key={i}
-                          value={spares.sparePart.id}>
-                          {spares.sparePart.spareParts_name}
+                          value={fetchSparts.id}>
+                          {fetchSparts.subPart_name}
                         </option>
                       ))}
                     </Form.Select>
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    // isDisabled={!isReadOnly}
-                    options={fetchSparePart.map((sparePart) => ({
-                      value: sparePart.id,
-                      label: sparePart.spareParts_name,
-                    }))}
-                    onChange={handleSelectChange}
-                  />
+                  )}
+                  {!isReadOnly && (
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      style={{ height: "40px" }}>
+                      {Subparts.map((sparts, i) => (
+                        <option
+                          key={i}
+                          value={sparts.id}>
+                          {sparts.subPart.subPart_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  )}
                 </Form.Group>
+              </div>
+              <div className="col-6">
+                {isReadOnly && (
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Spare Parts:
+                    </Form.Label>
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      style={{ height: "40px" }}>
+                      {fetchSparePart.map((fetchSpares, i) => (
+                        <option
+                          key={i}
+                          value={fetchSpares.id}>
+                          {fetchSpares.spareParts_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                )}
+                {!isReadOnly && (
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Spare Parts:
+                    </Form.Label>
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      style={{ height: "40px" }}>
+                      {sparePart.map((spares, i) => (
+                        <option
+                          key={i}
+                          value={spares.id}>
+                          {spares.spareParts.spareParts_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                )}
               </div>
             </div>
 

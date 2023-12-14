@@ -152,7 +152,8 @@ router.route("/create").post(
             product_details: req.body.details,
             product_threshold: finalThreshold,
             product_image: image_blob,
-            product_imageType: image_blobFiletype
+            product_imageType: image_blobFiletype,
+            product_status: 'Active'
           });
 
           //Assembly

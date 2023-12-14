@@ -31,6 +31,9 @@ const Inventory_Subpart = require("./inventory_subpart.model");
 
 const Issuance = require("./issuance.model");
 const IssuedProduct = require("./issued_product.model");
+const IssuedAssembly = require("./issued_assembly.model");
+const IssuedSpare = require("./issued_spare.model");
+const IssuedSubpart = require("./issued_subpart.model");
 const IssuedReturn = require("./issued_return.model");
 
 
@@ -132,11 +135,36 @@ Issuance.belongsTo(MasterList, { foreignKey: "transported_by" });
 CostCenter.hasMany(Issuance, { foreignKey: "issued_to" });
 Issuance.belongsTo(CostCenter, { foreignKey: "issued_to" });
 
+
+//issuance product table
 Issuance.hasMany(IssuedProduct, { foreignKey: "issuance_id" });
 IssuedProduct.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
 Inventory.hasMany(IssuedProduct, { foreignKey: "inventory_id" });
 IssuedProduct.belongsTo(Inventory, { foreignKey: "inventory_id"});
+
+//issuance assembly table
+Issuance.hasMany(IssuedAssembly, { foreignKey: "issuance_id" });
+IssuedAssembly.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory_Assembly.hasMany(IssuedAssembly, { foreignKey: "inventory_Assembly_id" });
+IssuedAssembly.belongsTo(Inventory_Assembly, { foreignKey: "inventory_Assembly_id"});
+
+//issuance spare table
+Issuance.hasMany(IssuedSpare, { foreignKey: "issuance_id" });
+IssuedSpare.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory_Spare.hasMany(IssuedSpare, { foreignKey: "inventory_Spare_id" });
+IssuedSpare.belongsTo(Inventory_Spare, { foreignKey: "inventory_Spare_id"});
+
+//issuance subpart table
+Issuance.hasMany(IssuedSubpart, { foreignKey: "issuance_id" });
+IssuedSubpart.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory_Subpart.hasMany(IssuedSubpart, { foreignKey: "inventory_Subpart_id" });
+IssuedSubpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_Subpart_id"});
+
+
 
 Inventory.hasMany(IssuedReturn, { foreignKey: "inventory_id" });
 IssuedReturn.belongsTo(Inventory, { foreignKey: "inventory_id" });
@@ -296,6 +324,9 @@ module.exports = {
                     Inventory_Subpart,
                     Issuance,
                     IssuedProduct,
+                    IssuedAssembly,
+                    IssuedSpare,
+                    IssuedSubpart,
                     IssuedReturn,
 
 

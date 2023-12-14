@@ -61,6 +61,10 @@ const handleAddProdClick = () => { // para pag display ng drop down for add prod
   
 };
 
+
+
+
+
 const handleSelectChange_Prod = (selectedOptions) => {
   setAddProduct(selectedOptions);
 };
@@ -76,6 +80,7 @@ const handleQuantityChange = (value, productValue) => {
     // Use the updatedInputs directly to create the serializedProducts array
     const serializedProducts = addProduct.map((product) => ({
       quantity: updatedInputs[product.value] || '',
+      type: product.type,
       inventory_id: product.inventory_id,
       code: product.code,
       name: product.name,
@@ -576,8 +581,7 @@ const ErrorInserted = () => {
                                                   })))
                                                 }
                                                   onChange={handleSelectChange_Prod}
-                                                />
-                                       
+                                                />                                      
                                         )}
 
                                         
