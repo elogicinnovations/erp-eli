@@ -297,7 +297,7 @@ router.route('/approve_PO').post(async (req, res) => {
 });
 
 
-router.route('/received').post(async (req, res) => {
+router.route('/receivedPRD').post(async (req, res) => {
   try {
     const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
      
@@ -318,4 +318,71 @@ router.route('/received').post(async (req, res) => {
      res.status(500).send('An error occurred');
    }
 });
+
+router.route('/receivedAssembly').post(async (req, res) => {
+  try {
+    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+     
+       const received_newData = await PR_PO_asmbly.update({
+        quantity_received: totalValue,
+        quality_assurance: qualityAssurance,
+       },
+       {
+         where: { id: id }
+       }); 
+       console.log()
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
+
+router.route('/receivedSparePart').post(async (req, res) => {
+  try {
+    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+     
+       const received_newData = await PR_PO_spare.update({
+        quantity_received: totalValue,
+        quality_assurance: qualityAssurance,
+       },
+       {
+         where: { id: id }
+       }); 
+       console.log()
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
+
+router.route('/receivedSubPart').post(async (req, res) => {
+  try {
+    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+     
+       const received_newData = await PR_PO_subpart.update({
+        quantity_received: totalValue,
+        quality_assurance: qualityAssurance,
+       },
+       {
+         where: { id: id }
+       }); 
+       console.log()
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
+
 module.exports = router;
