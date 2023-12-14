@@ -124,7 +124,7 @@ app.use("/PR_subpart", PR_subpart);
 app.use("/PR_history", PR_history);
 app.use("/PR_rejustify", PR_rejustify);
 app.use("/PR_PO", PR_PO);
-app.use("/Received", PO_Receveid);
+app.use("/PO_Received", PO_Receveid);
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);

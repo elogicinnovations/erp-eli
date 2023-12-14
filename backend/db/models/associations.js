@@ -253,11 +253,11 @@ Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 
 //P0_received
-PR_PO.hasMany(PO_Received, { foreignKey: "pr_id" });
-PO_Received.belongsTo(PR_PO, {foreignKey: "pr_id" });
+PR_PO.hasMany(PO_Received, { foreignKey: "pr_canvassed_prds_id" });
+PO_Received.belongsTo(PR_PO, { foreignKey: "pr_canvassed_prds_id" });
+// PO_Received.hasMany(PR_PO, { foreignKey: "received_id" });
+// PR_PO.belongsTo(PO_Received, {foreignKey: "received_id" });
 
-PR.hasMany(PO_Received, { foreignKey: "pr_id" });
-PO_Received.belongsTo(PR, { foreignKey: "pr_id" });
 
 
 

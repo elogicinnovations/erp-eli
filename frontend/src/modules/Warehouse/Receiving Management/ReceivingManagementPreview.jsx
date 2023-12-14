@@ -40,6 +40,9 @@ function ReceivingManagementPreview() {
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
 
+  const [quantity, setQuantity] = useState();
+  const [qualityAssurance, setQualityAssurance] = useState('Inactive');
+
 
   // -------------------- fetch data value --------------------- //
   useEffect(() => {   
@@ -63,7 +66,7 @@ function ReceivingManagementPreview() {
 const [products, setProducts] = useState([]);
 
 useEffect(() => {
-  axios.get(BASE_URL + '/PO_received/fetchView',{
+  axios.get(BASE_URL + '/PR_PO/fetchView_product',{
     params:{
       id: id
     }
@@ -122,8 +125,8 @@ const add = async e => {
   }
   else{
 
-    axios.post(`${BASE_URL}/PO_Received/insertToInventory`, {
-      id: id,
+    axios.put(`${BASE_URL}/PR_PO/received`, { 
+      id,quantity, qualityAssurance
     })
     .then((res) => {
       console.log(res);
@@ -153,6 +156,73 @@ const add = async e => {
   
 };
 
+const [quantityReceived, setQuantityReceived] = useState({});
+const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) => {
+
+  const totalReceived = (quantityDelivered + value);
+
+  if (parseInt(totalReceived) > parseInt(quantityReceived)) 
+  {
+    swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Quantity received is not more than ordered quantity and quantity delivered',
+    });
+  }              
+  else
+  {
+    const totalValue = value + quantityDelivered;
+    axios.post(BASE_URL + '/PR_PO/received', 
+    { 
+      totalValue, id, quantityReceived
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        swal({
+          title: 'Received Successfully',
+          text: 'The item has been added to inventory.',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          // reloadTable();
+        });
+      } else {
+      swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Please contact our support'
+      });
+    }
+    })
+  }
+  };
+
+  const handleActiveStatus= (qualityAssurance) => 
+  {
+      axios.post(BASE_URL + '/PR_PO/received', 
+      { 
+        id, qualityAssurance
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: 'Received Successfully',
+            text: 'The item has been added to inventory.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+            // reloadTable();
+          });
+        } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+      });
+  }
+
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -173,7 +243,7 @@ const add = async e => {
                 </div>
                 </Col>
             </Row>
-                        <Form noValidate validated={validated} onSubmit={add}>
+              <Form noValidate validated={validated} onSubmit={add}>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Purchase Request Details
                           <span
@@ -252,28 +322,31 @@ const add = async e => {
                                             </thead>
                                             <tbody>
                                                   {products.map((data,i) =>(
-                                                    <tr key={i}>
-                                                    <td>{data.product.product_code}</td>
-                                                    <td>{data.product.product_name}</td>
+                                                    <tr key={data.id}>
+                                                    <td>{data.product_tag_supplier.product.product_code}</td>
+                                                    <td>{data.product_tag_supplier.product.product_name}</td>
                                                     <td>{data.quantity}</td>
-                                                    <td>{data.product.product_unitMeasurement}</td>
-                                                    <td></td>
+                                                    <td>{data.product_tag_supplier.product.product_unitMeasurement}</td>
+                                                    <td>{data.quantity_received}</td>
                                                     <td>
-                                                        <Form.Group controlId="exampleForm.ControlInput1">
-                                                            <Form.Control type="number" style={{height:'40px', fontSize:'15px'}} placeholder='0.0'/>
-                                                        </Form.Group>
+                                                    <input
+                                                          type="number"
+                                                          onBlur={(e) => handleQuantityChange(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
                                                     </td>
                                                     <td>
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
                                                         defaultChecked={FormData.ustatus} // Set defaultChecked based on ustatus
+                                                        onChange={(e) => handleActiveStatus(data.id, qualityAssurance)}
+                                                        // onChange={handleActiveStatus}
                                                         />
                                                         </div>
                                                     </td>
-                                                    {/* <td>
-                                                        <button type="button" className='move_btn'><ArrowUUpLeft size={20} /><p1>Move To Inventory</p1></button>
-                                                    </td> */}
                                                     </tr>
                                                   ))}
                                         </tbody>
