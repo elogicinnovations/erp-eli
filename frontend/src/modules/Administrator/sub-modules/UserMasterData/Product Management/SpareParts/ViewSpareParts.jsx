@@ -68,7 +68,6 @@ function ViewSpareParts() {
                 </div>
 
                 </div> */}
-                <Header />
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
                         <div className="emp-text-side">

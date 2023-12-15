@@ -528,22 +528,7 @@ useEffect(() => {
                                   />
                                 </Form.Group>
                               </div>
-                              <div className="col-4">
-                                <Form.Group controlId="exampleForm.ControlInput2">
-                                  <Form.Label style={{ fontSize: "20px" }}>
-                                    Sub Parts:{" "}
-                                  </Form.Label>
-                                  <Select
-                                    isMulti
-                                    options={fetchSubPart.map((subpart) => ({
-                                      value: subpart.id,
-                                      label: subpart.subPart_name,
-                                    }))}
-                                    onChange={handleSubpartChange}
-                                    value={subparting}
-                                  />
-                                </Form.Group>
-                              </div>
+                            
                               <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: "20px" }}>
@@ -557,6 +542,22 @@ useEffect(() => {
                                     }))}
                                     onChange={handleSparepartChange}
                                     value={spareParts}
+                                  />
+                                </Form.Group>
+                              </div>
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: "20px" }}>
+                                    Sub Parts:{" "}
+                                  </Form.Label>
+                                  <Select
+                                    isMulti
+                                    options={fetchSubPart.map((subpart) => ({
+                                      value: subpart.id,
+                                      label: subpart.subPart_name,
+                                    }))}
+                                    onChange={handleSubpartChange}
+                                    value={subparting}
                                   />
                                 </Form.Group>
                               </div>

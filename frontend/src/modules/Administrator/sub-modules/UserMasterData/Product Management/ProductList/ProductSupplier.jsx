@@ -421,7 +421,35 @@ function ProductSupplier() {
                                                 </table>
                                             </div>
                                       </Tab>
-                                    <Tab eventKey="Subparts" title={<span style={{fontSize: '20px' }}>Sub Parts</span>}>
+                                  
+                                      <Tab eventKey="ordered list" title={<span style={{fontSize: '20px' }}>Spare Parts</span>}>
+                                          <div className="orderhistory-side">
+                                              <div className="printersbtn">
+
+                                              </div>
+                                          </div>
+                                          <div className="main-of-all-tables">
+                                              <table id="ordered-listing">
+                                                      <thead>
+                                                          <tr>
+                                                              <th>Supplier Code</th>
+                                                              <th>Spare-Part Name</th>
+                                                              <th>Description</th>
+                                                          </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {Spareparts.map((sparepart, i) =>(
+                                                          <tr key={i}>
+                                                              <td>{sparepart.sparePart.spareParts_code}</td>
+                                                              <td>{sparepart.sparePart.spareParts_name}</td>
+                                                              <td>{sparepart.sparePart.spareParts_desc}</td>
+                                                          </tr>
+                                                        ))}
+                                                      </tbody>
+                                              </table>
+                                          </div>
+                                      </Tab>
+                                      <Tab eventKey="Subparts" title={<span style={{fontSize: '20px' }}>Sub Parts</span>}>
                                             <div className="productandprint">
 
                                                 <div className="printbtns">
@@ -450,33 +478,6 @@ function ProductSupplier() {
                                                 </table>
                                             </div>
                                     </Tab>
-                                      <Tab eventKey="ordered list" title={<span style={{fontSize: '20px' }}>Spare Parts</span>}>
-                                          <div className="orderhistory-side">
-                                              <div className="printersbtn">
-
-                                              </div>
-                                          </div>
-                                          <div className="main-of-all-tables">
-                                              <table id="ordered-listing">
-                                                      <thead>
-                                                          <tr>
-                                                              <th>Supplier Code</th>
-                                                              <th>Spare-Part Name</th>
-                                                              <th>Description</th>
-                                                          </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                        {Spareparts.map((sparepart, i) =>(
-                                                          <tr key={i}>
-                                                              <td>{sparepart.sparePart.spareParts_code}</td>
-                                                              <td>{sparepart.sparePart.spareParts_name}</td>
-                                                              <td>{sparepart.sparePart.spareParts_desc}</td>
-                                                          </tr>
-                                                        ))}
-                                                      </tbody>
-                                              </table>
-                                          </div>
-                                      </Tab>
                                       <Tab eventKey="SupplierTab" title={<span style={{fontSize: '20px' }}>Supplier</span>}>
                                           <div className="orderhistory-side">
                                               <div className="printersbtn">

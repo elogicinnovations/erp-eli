@@ -290,6 +290,7 @@ function formatDatetime(datetime) {
                                 <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
 
                                 <DatePicker
+                                  required
                                   selected={dateNeed}
                                   onChange={(date) => setDateNeed(date)}
                                   dateFormat="yyyy-MM-dd"
@@ -305,7 +306,7 @@ function formatDatetime(datetime) {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
-                                <Form.Control onChange={e => setUseFor(e.target.value)} placeholder='Enter where/whom will use' type="text" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control required onChange={e => setUseFor(e.target.value)} placeholder='Enter where/whom will use' type="text" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">

@@ -430,21 +430,7 @@ function CreateProduct() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Sub Parts:{" "}
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    options={fetchSubPart.map((subpart) => ({
-                      value: subpart.id,
-                      label: subpart.subPart_name,
-                    }))}
-                    onChange={handleSubpartChange}
-                  />
-                </Form.Group>
-              </div>
+            
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
@@ -457,6 +443,21 @@ function CreateProduct() {
                       label: sparePart.spareParts_name,
                     }))}
                     onChange={handleSparepartChange}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Sub Parts:{" "}
+                  </Form.Label>
+                  <Select
+                    isMulti
+                    options={fetchSubPart.map((subpart) => ({
+                      value: subpart.id,
+                      label: subpart.subPart_name,
+                    }))}
+                    onChange={handleSubpartChange}
                   />
                 </Form.Group>
               </div>
