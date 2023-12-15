@@ -17,7 +17,22 @@ const Inventory = sequelize.define('inventory_prd', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
-  }
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: false
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
 });
 
 module.exports = Inventory;

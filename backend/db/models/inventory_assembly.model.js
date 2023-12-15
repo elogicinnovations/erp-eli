@@ -17,6 +17,11 @@ const Inventory_Assembly = sequelize.define('inventory_assembly', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: false
   }
 });
 

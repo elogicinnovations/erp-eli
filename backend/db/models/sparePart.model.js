@@ -19,6 +19,10 @@ const SpareParts = sequelize.define('spareParts', {
   spareParts_desc: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  threshhold: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   }
 });
 

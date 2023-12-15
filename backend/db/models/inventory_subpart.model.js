@@ -17,6 +17,11 @@ const Inventory_Subpart = sequelize.define('inventory_subpart', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: false
   }
 });
 

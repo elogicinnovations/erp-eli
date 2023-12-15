@@ -39,7 +39,7 @@ const navigate = useNavigate()
 
       useEffect(() => { //fetch assembly for inventory
         axios.get(BASE_URL + '/inventory/fetchInvetory_assembly')
-          .then(res => setAssembly(res.data))
+          .then(res => setAssembly(res.data)) 
           .catch(err => console.log(err));
       }, []);
 

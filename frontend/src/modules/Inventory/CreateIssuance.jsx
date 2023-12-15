@@ -69,8 +69,17 @@ const handleSelectChange_Prod = (selectedOptions) => {
   setAddProduct(selectedOptions);
 };
 
-const handleQuantityChange = (value, productValue) => {
-  // Update the quantityInputs state for the corresponding product
+const handleQuantityChange = (value, productValue, product_quantity_available) => {
+    // // Convert input value to a number
+    const inputValue = parseInt(value, 10);
+
+    // Check if the input value is greater than the available quantity
+    if (inputValue > product_quantity_available) {
+      // If greater, set the value to the maximum available quantity
+      value = product_quantity_available.toString();
+    }
+
+
   setQuantityInputs((prevInputs) => {
     const updatedInputs = {
       ...prevInputs,
@@ -79,6 +88,7 @@ const handleQuantityChange = (value, productValue) => {
 
     // Use the updatedInputs directly to create the serializedProducts array
     const serializedProducts = addProduct.map((product) => ({
+
       quantity: updatedInputs[product.value] || '',
       type: product.type,
       inventory_id: product.inventory_id,
@@ -466,7 +476,7 @@ const ErrorInserted = () => {
                                                         <input
                                                           type="number"
                                                           value={quantityInputs[product.value] || ''}
-                                                          onChange={(e) => handleQuantityChange(e.target.value, product.value)}
+                                                          onChange={(e) => handleQuantityChange(e.target.value, product.value, product.quantity_available)}
                                                           required
                                                           placeholder="Input quantity"
                                                           style={{ height: '40px', width: '120px', fontSize: '15px' }}

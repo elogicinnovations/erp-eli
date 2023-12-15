@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { Issuance, MasterList, CostCenter, Inventory, IssuedProduct, IssuedAssembly,IssuedSpare, IssuedSubpart } = require("../db/models/associations"); 
+const { Issuance, MasterList, CostCenter, Inventory, IssuedProduct, IssuedAssembly,IssuedSpare, IssuedSubpart, Inventory_Assembly, Inventory_Spare, Inventory_Subpart, ProductTAGSupplier } = require("../db/models/associations"); 
 // const Issued_Product = require('../db/models/issued_product.model')
 // const Inventory = require('../db/models/issued_product.model')
 
@@ -69,20 +69,74 @@ try {
             console.log('quantityee' + quantityee)
 
 
-            if (Type === 'Product'){
+            if (Type === 'Product') {
                 IssuedProduct.create({
                     issuance_id: issuanceee_ID,
                     inventory_id: inventory_id,
                     quantity: quantityee,
                     status: 'Deployed'
                 });
+            
+                Inventory.findAll({
+                    where: {
+                        inventory_id: inventory_id
+                    }
+                })
+                .then(_inventory => {
+                    _inventory.forEach(item => {
+                        const db_quantity = item.quantity;
+                        const updateQuantity = db_quantity - quantityee;
+            
+                        Inventory.update(
+                            {
+                                quantity: updateQuantity
+                            },
+                            {
+                                where: {
+                                    inventory_id: inventory_id
+                                }
+                            }
+                        );
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory:', error);
+                });
             }
+            
             else if(Type === 'Assembly'){
                 IssuedAssembly.create({
                     issuance_id: issuanceee_ID,
                     inventory_Assembly_id: inventory_id,
                     quantity: quantityee,
                     status: 'Deployed'
+                });
+
+                Inventory_Assembly.findAll({
+                    where: {
+                        inventory_id: inventory_id
+                    }
+                })
+
+                .then(_inventory => {
+                    _inventory.forEach(item => {
+                        const db_quantity = item.quantity;
+                        const updateQuantity = db_quantity - quantityee;
+            
+                        Inventory_Assembly.update(
+                            {
+                                quantity: updateQuantity
+                            },
+                            {
+                                where: {
+                                    inventory_id: inventory_id
+                                }
+                            }
+                        );
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory:', error);
                 });
             }
             else if(Type === 'Spare'){
@@ -92,6 +146,34 @@ try {
                     quantity: quantityee,
                     status: 'Deployed'
                 });
+
+
+                Inventory_Spare.findAll({
+                    where: {
+                        inventory_id: inventory_id
+                    }
+                })
+
+                .then(_inventory => {
+                    _inventory.forEach(item => {
+                        const db_quantity = item.quantity;
+                        const updateQuantity = db_quantity - quantityee;
+            
+                        Inventory_Spare.update(
+                            {
+                                quantity: updateQuantity
+                            },
+                            {
+                                where: {
+                                    inventory_id: inventory_id
+                                }
+                            }
+                        );
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory:', error);
+                });
             }
             else if(Type === 'Subpart'){
                 IssuedSubpart.create({
@@ -99,6 +181,33 @@ try {
                     inventory_Subpart_id: inventory_id,
                     quantity: quantityee,
                     status: 'Deployed'
+                });
+
+                Inventory_Subpart.findAll({
+                    where: {
+                        inventory_id: inventory_id
+                    }
+                })
+
+                .then(_inventory => {
+                    _inventory.forEach(item => {
+                        const db_quantity = item.quantity;
+                        const updateQuantity = db_quantity - quantityee;
+            
+                        Inventory_Subpart.update(
+                            {
+                                quantity: updateQuantity
+                            },
+                            {
+                                where: {
+                                    inventory_id: inventory_id
+                                }
+                            }
+                        );
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory:', error);
                 });
             }
 

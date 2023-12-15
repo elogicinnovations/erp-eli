@@ -252,8 +252,8 @@ const [issuedProduct, setIssuedProduct] = useState([]);
                                         <tbody>
                                             {issuedProduct.map((data, i) => (
                                             <tr key={i}>
-                                                <td>{data.inventory.product_tag_supplier.product.product_code}</td>
-                                                <td>{data.inventory.product_tag_supplier.product.product_name}</td>
+                                                <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
+                                                <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
                                                   <Form.Group controlId="exampleForm.ControlInput1">

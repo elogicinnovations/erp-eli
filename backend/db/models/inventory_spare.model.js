@@ -17,6 +17,11 @@ const Inventory_Spare = sequelize.define('inventory_spare', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: false
   }
 });
 

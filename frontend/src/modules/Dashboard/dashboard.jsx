@@ -43,13 +43,119 @@ import {
   
   import * as $ from 'jquery';
 
-  const data = [
-    { name: 'In Stock', value: 400 },
-    { name: 'Low Stock', value: 300 },
-    { name: 'Out of Stock', value: 300 },
-    { name: 'On Order', value: 300 },
+
+
+  const data2 = [
+    {
+      month: 'January',
+      Ordered: 4000,
+      Received: 2400,
+      Returned: 2400,
+    },
+    {
+      month: 'Febuary',
+      Ordered: 4000,
+      Received: 2400,
+      Returned: 2400,
+    },
+    {
+      month: 'March',
+      Ordered: 4000,
+      Received: 2400,
+      Returned: 2400,
+    },
+    {
+      month: 'April',
+      Ordered: 4000,
+      Received: 2400,
+      Returned: 2400,
+    },
+  ];
+  
+  const supplierData = [
+    { name: 'Supplier A', time: 3 },
+    { name: 'Supplier B', time: 6 },
+    { name: 'Supplier C', time: 9 },
+    // Add more data as needed
+  ];
+  const barColors = ['#8884d8', '#82ca9d', '#ffc658'];
+
+  // const sample = [
+  //   { 
+  //     sample: 'sample',
+  //     status: 'Storage',
+  //     supplier: 'Supplier',
+  //     employee: 'Employee',
+  //     quantity: '10',
+  //     slstat: 'Low',
+  //   },
+  //   { 
+  //     sample: 'sample',
+  //     status: 'Storage',
+  //     supplier: 'Supplier',
+  //     employee: 'Employee',
+  //     quantity: '10',
+  //     slstat: 'High',
+  //   },
+  //   { 
+  //     sample: 'sample',
+  //     status: 'Deployed',
+  //     supplier: 'Supplier',
+  //     employee: 'Employee',
+  //     quantity: '10',
+  //     slstat: 'Low',
+  //   },
+  //   { 
+  //     sample: 'sample',
+  //     status: 'Deployed',
+  //     supplier: 'Supplier',
+  //     employee: 'Employee',
+  //     quantity: '10',
+  //     slstat: 'Low',
+  //   },
+  //   { 
+  //     sample: 'sample',
+  //     status: 'Deployed',
+  //     supplier: 'Supplier',
+  //     employee: 'Employee',
+  //     quantity: '10',
+  //     slstat: 'High',
+  //   },
+  //   { 
+  //     sample: 'sample',
+  //     status: 'Storage',
+  //     supplier: 'Supplier',
+  //     employee: 'Employee',
+  //     quantity: '10',
+  //     slstat: 'High',
+  //   },
+  // ];
+
+function Dashboard() {
+  const [productIssued, setProductIssued] = useState('');
+  const [inventoryCount, setinventoryCount] = useState('');
+  const [stockValue, setStockValue] = useState('');
+  const [supplierCount, setSupplierCount] = useState('');
+  const [orderedCount, setOrderedCount] = useState('');
+  const [outStockCount, setOutStockCount] = useState('');
+  const [lowStockCount, setLowCount] = useState('');
+  const [inStockCount, setInCount] = useState('');
+
+  const StockLeveleData = [
+    { name: 'In Stock', value: inStockCount },
+    { name: 'Low Stock', value: lowStockCount },
+    { name: 'Out of Stock', value: outStockCount },
+    { name: 'On Order', value: orderedCount },
   ];
 
+  const [countInventory, setCountInventory] = useState([]);
+
+  useEffect(() => {
+    // Make a fetch request to your Express route
+    axios.get(BASE_URL + '/Dashboard/countInventory')
+      .then(res => setCountInventory(res.data))
+      .catch(error => console.error(error));
+  }, []);
   const data1 = [
     {
       month: 'January',
@@ -113,100 +219,54 @@ import {
     },
   ];
 
-  const data2 = [
-    {
-      month: 'January',
-      Ordered: 4000,
-      Received: 2400,
-      Returned: 2400,
-    },
-    {
-      month: 'Febuary',
-      Ordered: 4000,
-      Received: 2400,
-      Returned: 2400,
-    },
-    {
-      month: 'March',
-      Ordered: 4000,
-      Received: 2400,
-      Returned: 2400,
-    },
-    {
-      month: 'April',
-      Ordered: 4000,
-      Received: 2400,
-      Returned: 2400,
-    },
-  ];
-  
-  const supplierData = [
-    { name: 'Supplier A', time: 3 },
-    { name: 'Supplier B', time: 6 },
-    { name: 'Supplier C', time: 9 },
-    // Add more data as needed
-  ];
-  const barColors = ['#8884d8', '#82ca9d', '#ffc658'];
 
-  const sample = [
-    { 
-      sample: 'sample',
-      status: 'Storage',
-      supplier: 'Supplier',
-      employee: 'Employee',
-      quantity: '10',
-      slstat: 'Low',
-    },
-    { 
-      sample: 'sample',
-      status: 'Storage',
-      supplier: 'Supplier',
-      employee: 'Employee',
-      quantity: '10',
-      slstat: 'High',
-    },
-    { 
-      sample: 'sample',
-      status: 'Deployed',
-      supplier: 'Supplier',
-      employee: 'Employee',
-      quantity: '10',
-      slstat: 'Low',
-    },
-    { 
-      sample: 'sample',
-      status: 'Deployed',
-      supplier: 'Supplier',
-      employee: 'Employee',
-      quantity: '10',
-      slstat: 'Low',
-    },
-    { 
-      sample: 'sample',
-      status: 'Deployed',
-      supplier: 'Supplier',
-      employee: 'Employee',
-      quantity: '10',
-      slstat: 'High',
-    },
-    { 
-      sample: 'sample',
-      status: 'Storage',
-      supplier: 'Supplier',
-      employee: 'Employee',
-      quantity: '10',
-      slstat: 'High',
-    },
-  ];
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchCountIssued')
+      .then(res => setProductIssued(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
-function Dashboard() {
-  // const navigate = useNavigate()
-  // useEffect(() => {
-  //   console.log(localStorage.getItem('accessToken'));
-  //   if(localStorage.getItem('accessToken') === null){
-  //     navigate('/');
-  //   }
-  // }, [])
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchCountInventory')
+      .then(res => setinventoryCount(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchValueInventory')
+      .then(res => setStockValue(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchCountSupplier')
+      .then(res => setSupplierCount(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchCountOrdered')
+      .then(res => setOrderedCount(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchOutStock')
+      .then(res => setOutStockCount(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchLowStock')
+      .then(res => setLowCount(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchInStock')
+      .then(res => setInCount(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <div className="main-of-containers">
@@ -251,7 +311,7 @@ function Dashboard() {
                       </div>
                       <div className="tab-value">
                         <div className="tab-count">
-                          1,441
+                          {productIssued}
                         </div>
                         <div className="tab-percent">
                         <TrendUp size={25} weight='bold' style={{color: '#42eb42'}}/><p1>25% </p1> vs last month
@@ -270,7 +330,7 @@ function Dashboard() {
                       </div>
                       <div className="tab-value">
                         <div className="tab-count">
-                          543
+                          {inventoryCount}
                         </div>
                         <div className="tab-percent">
                         <TrendDown size={25} weight='bold' style={{color: 'red'}}/><p1>25%</p1> vs last month
@@ -289,7 +349,7 @@ function Dashboard() {
                       </div>
                       <div className="tab-value">
                         <div className="tab-count">
-                          849
+                          {stockValue}
                         </div>
                         <div className="tab-percent">
                         <TrendDown size={25} weight='bold' style={{color: 'red'}}/><p1>25%</p1> vs last month
@@ -308,7 +368,7 @@ function Dashboard() {
                       </div>
                       <div className="tab-value">
                         <div className="tab-count">
-                          732
+                          {supplierCount}
                         </div>
                         <div className="tab-percent">
                         <TrendUp size={25} weight='bold' style={{color: '#42eb42'}}/><p1>25%</p1> vs last month
@@ -358,7 +418,7 @@ function Dashboard() {
                       <ResponsiveContainer width="100%" height="90%">
                         <PieChart width={400} height={300}>
                           <Pie
-                            data={data}
+                            data={StockLeveleData}
                             cx="50%"
                             cy={120}
                             innerRadius={60}
@@ -377,7 +437,7 @@ function Dashboard() {
                             ))}
                             {/* Display total amount in the middle */}
                             <Label
-                              value={`${data.reduce((sum, entry) => sum + entry.value, 0)}`}
+                              value={`${StockLeveleData.reduce((sum, entry) => sum + entry.value, 0)}`}
                               position="center"
                               fill='#212529'
                               fontSize={20}
@@ -402,6 +462,7 @@ function Dashboard() {
                               <span style={{ fontSize: 15, color: '#212529'}}>{value}</span>
                             )}
                           />
+                          <Tooltip/>
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -424,7 +485,7 @@ function Dashboard() {
                           </tr>
                           </thead>
                           <tbody>
-                            {sample.map((data,i) =>(
+                            {/* {sample.map((data,i) =>(
                               <tr key={i}>
                                 <td className='dashtd'>{data.sample}</td>
                                 <td className='dashtd'>{data.sample}</td>
@@ -433,7 +494,7 @@ function Dashboard() {
                                 <td className='dashtd'>{data.sample}</td>
                                 <td className='dashtd'>{data.sample}</td>
                               </tr>
-                            ))}
+                            ))} */}
                           </tbody>
                         </table>
                       </div>
@@ -509,7 +570,7 @@ function Dashboard() {
                       <div className="tab">
                         <div className="tab-data">
                           <div className="tvalue">
-                            1,441
+                            {orderedCount}
                           </div>
                           <div className="tlabel">
                             Ordered
@@ -587,19 +648,19 @@ function Dashboard() {
                           <table className='dash-table'>
                             <thead>
                             <tr>
-                                <th>Item Name</th>
-                                <th>Supplier</th>
-                                <th>Location</th>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Number of Request</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {sample.map((data,i) =>(
+                            {/* {issuedProduct.map((data,i) =>(
                               <tr key={i}>
                                 <td className='dashtd'>{data.sample}</td>
                                 <td className='highlight'>{data.supplier}</td>
                                 <td className='dashtd'>{data.sample}</td>
                               </tr>
-                            ))}
+                            ))} */}
                             </tbody>
                           </table>
                         </div>

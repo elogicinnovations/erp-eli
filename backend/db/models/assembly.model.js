@@ -19,6 +19,10 @@ const Assembly = sequelize.define('assembly', {
   assembly_desc: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  threshhold: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   }
 });
 

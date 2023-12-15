@@ -19,6 +19,10 @@ const SubPart = sequelize.define('subPart', {
   subPart_desc: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  threshhold: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   }
 });
 
