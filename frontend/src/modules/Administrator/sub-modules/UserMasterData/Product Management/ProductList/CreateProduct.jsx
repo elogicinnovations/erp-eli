@@ -13,9 +13,7 @@ import cls_unit from "../../../../../../assets/global/unit";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
 import { X } from "@phosphor-icons/react";
-import {
-  green,
-} from "@mui/material/colors";
+import { green } from "@mui/material/colors";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 
@@ -44,7 +42,7 @@ function CreateProduct() {
   const [subparting, setsubparting] = useState([]);
   const [assembly, setassemblies] = useState([]);
   const [productStatus, setproductStatus] = useState(true);
-  
+
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
   const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); // for storing the supplier code and price
@@ -54,10 +52,10 @@ function CreateProduct() {
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
   const [selectedimage, setselectedimage] = useState([]);
-  const [status, setStatus] = useState('Active');
+  const [status, setStatus] = useState("Active");
 
   const onDropImage = (acceptedFiles) => {
-  const newSelectedImages = [...selectedimage];
+    const newSelectedImages = [...selectedimage];
 
     acceptedFiles.forEach((file) => {
       if (
@@ -103,9 +101,10 @@ function CreateProduct() {
 
   //Supplier Fetch
   useEffect(() => {
-    axios.get(BASE_URL + '/supplier/fetchTable')
-      .then(res => setFetchSupp(res.data))
-      .catch(err => console.log(err));
+    axios
+      .get(BASE_URL + "/supplier/fetchTable")
+      .then((res) => setFetchSupp(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
   //Assembly Fetch
@@ -177,27 +176,27 @@ function CreateProduct() {
   const handleAddSuppClick = () => {
     setShowDropdown(true);
   };
-  
+
   const handlePriceinput = (value, priceValue) => {
     setPriceInput((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
         [priceValue]: value,
       };
-      
+
       const serializedPrice = supp.map((supp) => ({
-        price: updatedInputs[supp.value] || '',
-        suppliercode: supp.codes
+        price: updatedInputs[supp.value] || "",
+        suppliercode: supp.codes,
       }));
-    
+
       setaddPriceInputbackend(serializedPrice);
-      
+
       const productTAGSuppliersData = supp.map((supp) => ({
         supplier_code: supp.codes,
-        price: updatedInputs[supp.value] || '',
+        price: updatedInputs[supp.value] || "",
       }));
       setProductTAGSuppliers(productTAGSuppliersData);
-  
+
       console.log("Price Inputted:", productTAGSuppliersData);
       return updatedInputs;
     });
@@ -250,39 +249,40 @@ function CreateProduct() {
       });
     } else {
       const formData = new FormData();
-      formData.append('code', code);
-      formData.append('name', name);
-      formData.append('slct_category', slct_category);
-      formData.append('unit', unit);
-      formData.append('slct_binLocation', slct_binLocation);
-      formData.append('unitMeasurement', unitMeasurement);
-      formData.append('slct_manufacturer', slct_manufacturer);
-      formData.append('details', details);
-      formData.append('thresholds', thresholds);
-      formData.append('selectedimage', selectedimage);
-      formData.append('assemblies', JSON.stringify(assembly));
-      formData.append('sparepart', JSON.stringify(spareParts));
-      formData.append('subpart', JSON.stringify(subparting));
-      formData.append('productTAGSuppliers', JSON.stringify(productTAGSuppliers));
+      formData.append("code", code);
+      formData.append("name", name);
+      formData.append("slct_category", slct_category);
+      formData.append("unit", unit);
+      formData.append("slct_binLocation", slct_binLocation);
+      formData.append("unitMeasurement", unitMeasurement);
+      formData.append("slct_manufacturer", slct_manufacturer);
+      formData.append("details", details);
+      formData.append("thresholds", thresholds);
+      formData.append("selectedimage", selectedimage);
+      formData.append("assemblies", JSON.stringify(assembly));
+      formData.append("sparepart", JSON.stringify(spareParts));
+      formData.append("subpart", JSON.stringify(subparting));
+      formData.append(
+        "productTAGSuppliers",
+        JSON.stringify(productTAGSuppliers)
+      );
 
-
-      axios.post(`${BASE_URL}/product/create`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        if(res.status === 200){
-          SuccessInserted(res);
-        }
-        else if(res.status === 201){
-          Duplicate_Message();
-        }
-        else{
-          ErrorInserted();
-        }
-      })
+      axios
+        .post(`${BASE_URL}/product/create`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            SuccessInserted(res);
+          } else if (res.status === 201) {
+            Duplicate_Message();
+          } else {
+            ErrorInserted();
+          }
+        });
     }
     setValidated(true); //for validations
   };
@@ -315,15 +315,13 @@ function CreateProduct() {
     });
   };
 
-  const handleActiveStatus= e => {
-
-    if(status === 'Active'){
-        setStatus('Inactive')
+  const handleActiveStatus = (e) => {
+    if (status === "Active") {
+      setStatus("Inactive");
+    } else {
+      setStatus("Active");
     }
-    else{
-        setStatus('Active')
-    }
-  }
+  };
 
   return (
     <div className="main-of-containers">
@@ -383,6 +381,7 @@ function CreateProduct() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
+                    maxLength={50}
                   />
                 </Form.Group>
               </div>
@@ -611,10 +610,16 @@ function CreateProduct() {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
-                    onChange={(e) => setThresholds(e.target.value)}
-                    type="number"
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const sanitizedValue = inputValue.replace(/\D/g, "");
+                      setThresholds(sanitizedValue);
+                    }}
+                    type="text"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
+                    maxLength={10}
+                    pattern="[0-9]*"
                   />
                 </Form.Group>
               </div>
@@ -699,101 +704,115 @@ function CreateProduct() {
               </div>
             </div>
 
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
-                    Supplier List
-                    <span
-                      style={{
-                        position: 'absolute',
-                        height: '0.5px',
-                        width: '-webkit-fill-available',
-                        background: '#FFA500',
-                        top: '85%',
-                        left: '12rem',
-                        transform: 'translateY(-50%)',
-                      }}
-                    ></span>
-                  </div>
-                        <div className="supplier-table">
-                            <div className="table-containss">
-                                <div className="main-of-all-tables">
-                                    <table id='order-listing'>
-                                            <thead>
-                                            <tr>
-                                                <th className='tableh'>Supplier Code</th>
-                                                <th className='tableh'>Name</th>
-                                                <th className='tableh'>Email</th>
-                                                <th className='tableh'>Contact</th>
-                                                <th className='tableh'>Address</th>
-                                                <th className='tableh'>Price</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "30px",
+              }}>
+              Supplier List
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "85%",
+                  left: "12rem",
+                  transform: "translateY(-50%)",
+                }}></span>
+            </div>
+            <div className="supplier-table">
+              <div className="table-containss">
+                <div className="main-of-all-tables">
+                  <table id="order-listing">
+                    <thead>
+                      <tr>
+                        <th className="tableh">Supplier Code</th>
+                        <th className="tableh">Name</th>
+                        <th className="tableh">Email</th>
+                        <th className="tableh">Contact</th>
+                        <th className="tableh">Address</th>
+                        <th className="tableh">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {supp.length > 0 ? (
+                        supp.map((supp) => (
+                          <tr>
+                            <td>{supp.codes}</td>
+                            <td>{supp.names}</td>
+                            <td>{supp.email}</td>
+                            <td>{supp.contact}</td>
+                            <td>{supp.address}</td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: "20px",
+                                  marginRight: "5px",
+                                }}>
+                                ₱
+                              </span>
+                              <input
+                                type="number"
+                                style={{ height: "50px" }}
+                                placeholder="Input Price"
+                                value={priceInput[supp.value] || ""}
+                                onChange={(e) =>
+                                  handlePriceinput(e.target.value, supp.value)
+                                }
+                                required
+                              />
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan="6"
+                            style={{ textAlign: "center" }}>
+                            No Supplier selected
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                    {showDropdown && (
+                      <div className="dropdown mt-3">
+                        <Select
+                          isMulti
+                          options={fetchSupp.map((supp) => ({
+                            value: supp.supplier_code,
+                            label: (
+                              <div>
+                                Supplier Code:{" "}
+                                <strong>{supp.supplier_code}</strong> / Name:{" "}
+                                <strong>{supp.supplier_name}</strong>
+                              </div>
+                            ),
+                            codes: supp.supplier_code,
+                            names: supp.supplier_name,
+                            email: supp.supplier_email,
+                            contact: supp.supplier_number,
+                            address: supp.supplier_address,
+                            price: supp.supplier_price,
+                          }))}
+                          onChange={handleSelectChange_Supp}
+                        />
+                      </div>
+                    )}
 
-                                              {supp.length > 0 ? (
-                                                supp.map((supp) => (
-                                                  <tr>
-                                                    <td>{supp.codes}</td>
-                                                    <td>{supp.names}</td>
-                                                    <td>{supp.email}</td>
-                                                    <td>{supp.contact}</td>
-                                                    <td>{supp.address}</td>
-                                                    <td>
-                                                    <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
-                                                      <input
-                                                        type="number"
-                                                        style={{height: '50px'}}
-                                                        placeholder="Input Price"
-                                                        value={priceInput[supp.value] || ''}
-                                                        onChange={(e) => handlePriceinput(e.target.value, supp.value)}
-                                                        required
-                                                      />
-                                                    </td>
-                                                  </tr>
-                                                ))
-                                              ) : (
-                                                <tr>
-                                                  <td colSpan="6" style={{ textAlign: 'center' }}>
-                                                    No Supplier selected
-                                                  </td>
-                                              </tr>
-                                              )}
-                                          </tbody>
-                                          {showDropdown && (
-                                              <div className="dropdown mt-3">
-                                                <Select
-                                                  isMulti
-                                                  options={fetchSupp.map((supp) => ({
-                                                    value: supp.supplier_code,
-                                                    label: <div>
-                                                    Supplier Code: <strong>{supp.supplier_code}</strong> / 
-                                                    Name: <strong>{supp.supplier_name}</strong> 
-                                                  </div>,
-                                                  codes: supp.supplier_code,
-                                                  names: supp.supplier_name,
-                                                  email: supp.supplier_email,
-                                                  contact: supp.supplier_number,
-                                                  address: supp.supplier_address,
-                                                  price: supp.supplier_price
-                                                  }))}
-                                                  onChange={handleSelectChange_Supp}
-                                                />
-                                              </div>
-                                            )}
-
-                                            <Button
-                                              variant="outline-warning"
-                                              onClick={handleAddSuppClick}
-                                              size="md"
-                                              style={{ fontSize: '15px', marginTop: '10px' }}
-                                            >
-                                              Add Supplier
-                                            </Button>
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
-
+                    <Button
+                      variant="outline-warning"
+                      onClick={handleAddSuppClick}
+                      size="md"
+                      style={{ fontSize: "15px", marginTop: "10px" }}>
+                      Add Supplier
+                    </Button>
+                  </table>
+                </div>
+              </div>
+            </div>
 
             <div className="save-cancel">
               <Button
@@ -808,7 +827,7 @@ function CreateProduct() {
                 className="btn btn-secondary btn-md"
                 size="md"
                 style={{ fontSize: "20px", margin: "0px 5px" }}>
-                Close
+                Cancel
               </Link>
             </div>
           </Form>

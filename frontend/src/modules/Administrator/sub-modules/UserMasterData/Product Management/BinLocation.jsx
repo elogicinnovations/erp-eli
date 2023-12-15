@@ -439,7 +439,7 @@ function BinLocation() {
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
                         {isVertical[data.bin_id] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -447,7 +447,7 @@ function BinLocation() {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {

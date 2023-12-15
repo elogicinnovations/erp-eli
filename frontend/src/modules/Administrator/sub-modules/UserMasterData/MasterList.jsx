@@ -639,7 +639,7 @@ function MasterList() {
                       <td>{data.col_status}</td>
                       <td>
                         {isVertical[data.col_id] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -647,7 +647,7 @@ function MasterList() {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -702,13 +702,14 @@ function MasterList() {
           <Modal.Title style={{ fontSize: "24px" }}>New User</Modal.Title>
           <div className="form-group d-flex flex-row ">
             <React.Fragment>
+              <label className="userstatus">User Status</label>
               <input
                 type="checkbox"
                 name="cstatus"
+                className="toggle-switch" // Add the custom class
                 onChange={handleFormChange}
                 defaultChecked={FormData.ustatus} // Set defaultChecked based on ustatus
               />
-              <label className="userstatus">User Status</label>
             </React.Fragment>
           </div>
         </Modal.Header>

@@ -409,7 +409,7 @@ function ProductCategory() {
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
                         {isVertical[data.category_code] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -417,7 +417,7 @@ function ProductCategory() {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {

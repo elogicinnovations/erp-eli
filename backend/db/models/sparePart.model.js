@@ -1,7 +1,7 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const SpareParts = sequelize.define('spareParts', {
+const SpareParts = sequelize.define("spareParts", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
