@@ -23,9 +23,6 @@ import Collapse from '@mui/material/Collapse';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 
-
-
-
 function Sidebar() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [openAdministrator, setOpenAdministrator] = useState(false);
@@ -514,6 +511,18 @@ function Sidebar() {
                     <ListItemText primary="Purchase Order Transaction Report" />
                   </ListItem>
                 </NavLink>
+                <NavLink
+                  to='/historicalData'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                <ListItem
+                  button
+                  className={`adminsub-menu ${location.pathname.startsWith('/historicalData') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Historical Data" />
+                  </ListItem>
+                </NavLink>
           </Collapse>
 
           <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
@@ -527,8 +536,8 @@ function Sidebar() {
         </div>
 
           <div className="logout-container">
-                <Link to={'/'} className='logout'>
-                  <SignOut size={20}/>  Logout
+            <Link to={'/'} className='logout' onClick={() => { localStorage.removeItem('accessToken') }}>
+              <SignOut size={20}/> Logout
                 </Link>
             </div>  
         

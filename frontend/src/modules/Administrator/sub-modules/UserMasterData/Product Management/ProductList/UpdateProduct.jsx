@@ -16,7 +16,7 @@ import Dropzone from 'react-dropzone';
 function UpdateProduct() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [product, setproduct] = useState([]); // for fetching product data that tag to supplier
+  
   const [validated, setValidated] = useState(false);// for form validation
 
   const [category, setcategory] = useState([]); // for fetching category data
@@ -35,54 +35,194 @@ function UpdateProduct() {
   const [fetchSparePart, setFetchPart] = useState([]); //for retrieveing ng mga sparepart
   const [fetchSubPart, setFetchsub] = useState([]); //for retrieving ng mga subpart
   const [fetchAssembly, setAssembly] = useState([]); //for retrieving ng mga assembly
+  const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier
+  const [tablesupplier, settablesupplier] = useState([]); // for fetching product data that tag to supplier in table
 
   const [spareParts, setSparePart] = useState([]); //for handling ng onchange sa dropdown ng spareparts
   const [subparting, setsubparting] = useState([]); //for handling ng onchange sa dropdown ng subpart
   const [assembly, setassemblies] = useState([]); //for handling ng onchange sa dropdown ng assembly
+  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at product code
 
-  const [price, setPrice] = useState({});
-  const [addPriceInput, setaddPriceInputbackend] = useState([]);
-  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); //fetch of supplier that been used in where clause to display in dropdown and table
-
-  const [fetchSupp, setFetchSupp] = useState([]); 
+  const [price, setPrice] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
 
+    // const handlePriceChange = (index, value) => { 
+  //   const updatedTable = [...tablesupplier];
+  //   updatedTable[index].product_price = value;
+  
+  //   // const serializedPrice = updatedTable.map((row) => ({
+  //   //   price: row.product_price || '',
+  //   //   suppliercodes: row.supplier_code
+  //   // }));
+
+  //   // setaddPriceInputbackend(serializedPrice);
+  
+  //   const productTAGSuppliersData = updatedTable.map((row) => ({
+  //     price: row.product_price || '',
+  //     supplier_code: row.supplier_code
+  //   }));
+  //   setProductTAGSuppliers(productTAGSuppliersData);
+  //   settablesupplier(updatedTable);
+
+  //   return updatedTable;
+  // }; for back up lang to 
 
   //fetching of assembly in dropdown
   useEffect(() => {
-    axios.get(BASE_URL + '/productAssembly/fetchassemblyTable',{
+    axios.get(BASE_URL + '/productAssembly/fetchassemblyTable', {
       params: {
         id: id
       }
     })
-      .then(res => setAssembly(res.data))
+      .then(res => {
+        const data = res.data;
+        setAssembly(data);
+        const selectedAssembly = data.map((row) => ({
+          value: row.assembly_id,
+          label: row.assembly.assembly_name,
+        }));
+        setassemblies(selectedAssembly);
+      })
       .catch(err => console.log(err));
-  }, []);
+  }, [id]);
 
   //fetching of subparts in dropdown
   useEffect(() => {
-    axios.get(BASE_URL + '/productSubpart/fetchsubpartTable',{
+    axios.get(BASE_URL + '/productSubpart/fetchsubpartTable', {
       params: {
         id: id
       }
     })
-      .then(res => setFetchsub(res.data))
+      .then(res => {
+        const data = res.data;
+        setFetchsub(data);
+        const selectedSubparts = data.map((row) => ({
+          value: row.subPart_id,
+          label: row.subPart.subPart_name,
+        }));
+        setsubparting(selectedSubparts);
+      })
       .catch(err => console.log(err));
-  }, []);
+  }, [id]);
 
   //fetching of spareparts in dropdown
   useEffect(() => {
-    axios.get(BASE_URL + '/productSparepart/fetchsparepartTable',{
+    axios.get(BASE_URL + '/productSparepart/fetchsparepartTable', {
       params: {
         id: id
       }
     })
-      .then(res => setFetchPart(res.data))
+      .then(res => {
+        const data = res.data;
+        setFetchPart(data);
+        const selectedSpareparts = data.map((row) => ({
+          value: row.sparePart_id,
+          label: row.sparePart.spareParts_name,
+        }));
+        setSparePart(selectedSpareparts);
+      })
       .catch(err => console.log(err));
-  }, []);
+  }, [id]);
 
 
+    //for onchange dropdown of spareparts
+    const handleSparepartChange = (selectedSpareOptions) => {
+      setSparePart(selectedSpareOptions);
+    };
+  
+    //for onchange dropdown of subparts
+    const handleSubpartChange = (selectedSubOption) => {
+      setsubparting(selectedSubOption);
+    };
+  
+    //for onchange dropdown of assembly
+    const handleAssemblyChange = (selectedAssemblyOptions) => {
+      setassemblies(selectedAssemblyOptions);
+    };
+
+  //add supplier button dropdown
+  const handleSelectChange = (selectedOptions) => {
+    setProductTAGSuppliers(selectedOptions);
+    const updatedTable = [
+      ...tablesupplier.filter((row) => selectedOptions.some((option) => option.value === row.supplier.supplier_code)),
+      ...selectedOptions
+        .filter((option) => !tablesupplier.some((row) => row.supplier.supplier_code === option.value))
+        .map((option) => ({
+          supplier_code: option.value,
+          supplier: {
+            supplier_name: option.label.split('/ Name: ')[1].trim(),
+            supplier_code: option.suppcodes,
+            supplier_email: option.email,
+            supplier_number: option.number,
+            supplier_address: option.address,
+            supplier_receiving: option.receiving,
+          },
+        })),
+    ];
+    settablesupplier(updatedTable);
+  };
+  
+// const handlePriceChange = (index, value) => {
+//   const updatedTable = [...tablesupplier];
+//   updatedTable[index].product_price = value;
+
+//   const productTAGSuppliersData = productTAGSuppliers.map((row) => {
+//     if (row.value === updatedTable[index].supplier_code) {
+//       return {
+//         ...row,
+//         price: value,
+//       };
+//     }
+//     return row;
+//   });
+
+//   setProductTAGSuppliers(productTAGSuppliersData);
+//   settablesupplier(updatedTable);
+
+//   return updatedTable;
+// };
+
+const handlePriceChange = (index, value) => {
+  const updatedTable = [...tablesupplier];
+  updatedTable[index].product_price = value;
+
+  const productTAGSuppliersData = productTAGSuppliers.map((row) => {
+    if (row.value === updatedTable[index].supplier_code) {
+      return {
+        ...row,
+        price: value,
+      };
+    }
+    return row;
+  });
+
+  setProductTAGSuppliers(productTAGSuppliersData);
+  settablesupplier(updatedTable);
+};
+
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/productTAGsupplier/fetchTable', {
+      params: {
+        id: id
+      }
+    })
+      .then(res => {
+        const data = res.data;
+        settablesupplier(data);
+        setPrice(res.data[0].product_price)
+        const selectedSupplierOptions = data.map((row) => ({
+          value: row.supplier.supplier_code,
+          label: `Supplier Code: ${row.supplier_code} / Name: ${row.supplier.supplier_name}`,
+          price: row.product_price,
+        }));
+        setProductTAGSuppliers(selectedSupplierOptions);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
+  
 //-----------------------------fetching data for edit
 useEffect(() => {   
   // console.log('code' + id)
@@ -110,23 +250,7 @@ useEffect(() => {
 }, []);
 
 
-  const handleSelectChange = (selectedOptions) => {
-    setSelectedDropdownOptions(selectedOptions);
-    // Update the table with the selected options and the previously removed rows
-    const updatedTable = [
-      ...product.filter((row) => selectedOptions.some((option) => option.value === row.supplier_code)),
-      ...selectedOptions
-        .filter((option) => !product.some((row) => row.supplier_code === option.value))
-        .map((option) => ({
-          supplier_code: option.value,
-          supplier: {
-            supplier_name: option.label.split('/ Name: ')[1].trim(),
-          },
-        })),
-    ];
-  
-    setproduct(updatedTable);
-  };
+
 
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
@@ -150,46 +274,6 @@ useEffect(() => {
       }
   };
 
-
-  const handlePriceChange = (index, value) => {
-    const updatedTable = [...product];
-    updatedTable[index].product_price = value;
-  
-    const serializedPrice = updatedTable.map((row) => ({
-      price: row.product_price || '',
-      suppliercodes: row.supplier_code
-    }));
-  
-    setproduct(updatedTable);
-    setaddPriceInputbackend(serializedPrice);
-  
-    const productTAGSuppliersData = updatedTable.map((row) => ({
-      price: row.product_price || '',
-      supplier_code: row.supplier_code
-    }));
-    setProductTAGSuppliers(productTAGSuppliersData);
-  
-    return updatedTable;
-  };
-
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/productTAGsupplier/fetchTable', {
-      params: {
-        id: id
-      }
-    })
-      .then(res => {
-        const data = res.data;
-        setproduct(data);
-        const selectedOptions = data.map((row) => ({
-          value: row.supplier_code,
-          label: `Supplier Code: ${row.supplier_code} / Name: ${row.supplier.supplier_name}`,
-        }));
-        setSelectedDropdownOptions(selectedOptions);
-      })
-      .catch(err => console.log(err));
-  }, [id]);
 
     //Supplier Fetch
     useEffect(() => {
@@ -252,22 +336,6 @@ useEffect(() => {
     setslct_manufacturer(event.target.value);
   };
 
-  //for onchange dropdown of spareparts
-  const handleSparepartChange = (selectedOptions) => {
-    setSparePart(selectedOptions);
-  };
-
-  //for onchange dropdown of subparts
-  const handleSubpartChange = (selectedOption) => {
-    setsubparting(selectedOption);
-  };
-
-  //for onchange dropdown of assembly
-  const handleAssemblyChange = (selectedOptions) => {
-    setassemblies(selectedOptions);
-  };
-
-
   useEffect(() => {
     axios.get(BASE_URL + '/binLocation/fetchTable')
       .then(response => {
@@ -307,8 +375,6 @@ useEffect(() => {
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-    // if required fields has NO value
-    //    console.log('requried')
         swal({
             icon: 'error',
             title: 'Fields are required',
@@ -328,6 +394,9 @@ useEffect(() => {
       formData.append('details', details);
       formData.append('thresholds', thresholds);
       formData.append('selectedimage', selectedimage);
+      formData.append('assemblies', JSON.stringify(assembly));
+      formData.append('sparepart', JSON.stringify(spareParts));
+      formData.append('subpart', JSON.stringify(subparting));
       formData.append('productTAGSuppliers', JSON.stringify(productTAGSuppliers));
 
       axios.put(`${BASE_URL}/product/update`, formData, {
@@ -455,6 +524,7 @@ useEffect(() => {
                                       label: assembly.assembly_name,
                                     }))}
                                     onChange={handleAssemblyChange}
+                                    value={assembly}
                                   />
                                 </Form.Group>
                               </div>
@@ -470,6 +540,7 @@ useEffect(() => {
                                       label: subpart.subPart_name,
                                     }))}
                                     onChange={handleSubpartChange}
+                                    value={subparting}
                                   />
                                 </Form.Group>
                               </div>
@@ -485,6 +556,7 @@ useEffect(() => {
                                       label: sparePart.spareParts_name,
                                     }))}
                                     onChange={handleSparepartChange}
+                                    value={spareParts}
                                   />
                                 </Form.Group>
                               </div>
@@ -671,7 +743,7 @@ useEffect(() => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                    {product.map((prod,i) =>(
+                                    {tablesupplier.map((prod,i) =>(
                                         <tr key={i}>
                                           <td>{prod.supplier.supplier_code}</td>
                                           <td>{prod.supplier.supplier_name}</td>
@@ -684,7 +756,7 @@ useEffect(() => {
                                             <input
                                               type="number"
                                               style={{ height: '50px' }}
-                                              value={prod.product_price || ''}
+                                              value={prod.product_price}
                                               onChange={(e) => handlePriceChange(i, e.target.value)}
                                             />
                                           </td>
@@ -699,9 +771,13 @@ useEffect(() => {
                                                 options={fetchSupp.map((supplier) => ({
                                                   value: supplier.supplier_code,
                                                   label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
-
+                                                  suppcodes: supplier.supplier_code,
+                                                  email: supplier.supplier_email, 
+                                                  number: supplier.supplier_number, 
+                                                  address: supplier.supplier_address,
+                                                  receiving: supplier.supplier_receiving,
                                                 }))}
-                                                value={selectedDropdownOptions}
+                                                value={productTAGSuppliers}
                                                 onChange={handleSelectChange}
                                               />
                                         </div>

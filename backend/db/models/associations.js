@@ -89,6 +89,8 @@ Product_Assembly.belongsTo(Product, { foreignKey: "product_id"});
 Assembly.hasMany(Product_Assembly, { foreignKey: "assembly_id"});
 Product_Assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
+// Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
+// Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
 
 
 // product_spareparts` table
@@ -281,8 +283,8 @@ Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 
 //P0_received
-PR_PO.hasMany(PO_Received, { foreignKey: "pr_po_id" });
-PO_Received.belongsTo(PR_PO, {foreignKey: "pr_po_id" });
+PR_PO.hasMany(PO_Received, { foreignKey: "pr_id" });
+PO_Received.belongsTo(PR_PO, {foreignKey: "pr_id" });
 
 PR.hasMany(PO_Received, { foreignKey: "pr_id" });
 PO_Received.belongsTo(PR, { foreignKey: "pr_id" });

@@ -11,7 +11,7 @@ router.use(session({
 }));
 
 
-router.route('/fetchView').get(async (req, res) => {
+router.route('/fetchViewSubpart').get(async (req, res) => {
     try {
      
       const data = await PR_subPart.findAll({

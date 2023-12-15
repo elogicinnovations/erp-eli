@@ -1269,7 +1269,16 @@ input[type="number"]::-webkit-clear-button {
 
 .filter{
   display: flex;
+  flex-direction: column;
   z-index: 5;
+}
+
+.cat-filter{
+  display: flex;
+}
+
+.date-filter{
+  display: flex;
 }
 
 .export p1{

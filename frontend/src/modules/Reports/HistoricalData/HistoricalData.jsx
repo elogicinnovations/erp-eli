@@ -37,7 +37,7 @@ import {
   
   import * as $ from 'jquery';
 
-function POTransactionReports() {
+function HistoricalData() {
 
     
 // Artifitial data
@@ -87,7 +87,7 @@ const [endDate, setEndDate] = useState(null);
 
                 <div className="dropdown-and-iconics">
                     <div className="emp-text-side">
-                            <p>Purchase Order Reports</p>
+                            <p>Historical Data</p>
                         </div>
                     <div className="dropdown-side">
                     </div>
@@ -170,15 +170,13 @@ const [endDate, setEndDate] = useState(null);
                         <table id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>PO Number</th>
-                                    <th className='tableh'>PO Date</th>
                                     <th className='tableh'>Product Code</th>
-                                    <th className='tableh'>Product</th>
+                                    <th className='tableh'>Product Name</th>
                                     <th className='tableh'>UOM</th>
                                     <th className='tableh'>Supplier</th>
-                                    <th className='tableh'>Unit Cost</th>
-                                    <th className='tableh'>Quantity</th>
-                                    <th className='tableh'>Total</th>
+                                    <th className='tableh'>Recent Price</th>
+                                    <th className='tableh'>Current Price</th>
+                                    <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -186,13 +184,15 @@ const [endDate, setEndDate] = useState(null);
                                         <tr key={i}>
                                         <td>{data.samA}</td>
                                         <td>{data.samB}</td>
-                                        <td>{data.samC}</td>
-                                        <td>{data.samD}</td>
                                         <td>{data.samE}</td>
                                         <td>{data.samE}</td>
                                         <td>{data.samE}</td>
                                         <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
+                                        <td>
+                                            <button>
+                                                View More
+                                            </button>
+                                        </td>
                                         </tr>
                                       ))}
                             </tbody>
@@ -206,4 +206,4 @@ const [endDate, setEndDate] = useState(null);
   )
 }
 
-export default POTransactionReports
+export default HistoricalData
