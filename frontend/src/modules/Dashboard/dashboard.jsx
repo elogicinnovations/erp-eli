@@ -44,7 +44,7 @@ import {
   import * as $ from 'jquery';
 
 
-
+///tryyyy
   const data2 = [
     {
       month: 'January',
