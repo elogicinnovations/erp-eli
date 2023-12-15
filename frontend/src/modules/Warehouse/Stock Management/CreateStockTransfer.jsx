@@ -64,33 +64,7 @@ function CreateStockTransfer() {
   
   const [dateNeeded, setDateNeeded] = useState(null);
 
-  const toggleDropdown = (event, index) => {
-    // Check if the clicked icon is already open, close it
-    if (index === openDropdownIndex) {
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = !newRotatedIcons[index];
-        return newRotatedIcons;
-      });
-      setShowDropdown(false);
-      setOpenDropdownIndex(null);
-    } else {
-      // If a different icon is clicked, close the currently open dropdown and open the new one
-      setRotatedIcons(Array(data.length).fill(false));
-      const iconPosition = event.currentTarget.getBoundingClientRect();
-      setDropdownPosition({
-        top: iconPosition.bottom + window.scrollY,
-        left: iconPosition.left + window.scrollX,
-      });
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = true;
-        return newRotatedIcons;
-      });
-      setShowDropdown(true);
-      setOpenDropdownIndex(index);
-    }
-  };
+  
 
 
   const [showModal, setShowModal] = useState(false);
@@ -128,6 +102,43 @@ function CreateStockTransfer() {
   const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.target.value);};
   const [remarks, setRemarks] = useState();
   const [prNum, setPrNum] = useState('');
+  const [fetchProduct, setFetchProduct] = useState([]);
+  const [fetchAssembly, setFetchAssembly] = useState([]);
+  const [fetchSpare, setFetchSpare] = useState([]);
+  const [fetchSubPart, setFetchSubPart] = useState([]);
+  const [product, setProduct] = useState([]);
+
+  //for supplier selection values
+const selectProduct = (selectedOptions) => {
+  setProduct(selectedOptions);
+};
+
+
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/product/fetchTable')
+      .then(res => setFetchProduct(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/assembly/fetchTable')
+      .then(res => setFetchAssembly(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/sparePart/fetchTable')
+      .then(res => setFetchSpare(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/subpart/fetchTable')
+      .then(res => setFetchSubPart(res.data))
+      .catch(err => console.log(err));
+  }, []);
+  
 
   useEffect(() => {   
     axios.get(BASE_URL + '/StockTransfer/lastPRNumber')
@@ -139,6 +150,11 @@ function CreateStockTransfer() {
     })
     .catch(err => console.log(err));
   }, []);
+
+  const displayDropdown = () => {
+    setShowDropdown(true);
+  };
+  
 
   return (
     <div className="main-of-containers">
@@ -279,58 +295,74 @@ function CreateStockTransfer() {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                                  {data.map((data,i) =>(
-                                                    <tr key={i}>
-                                                    <td>{data.samA}</td>
-                                                    <td>{data.samC}</td>
-                                                    <td>{data.samC}</td>
-                                                    <td>{data.samD}</td>
-                                                    <td>{data.samE}</td>
-                                                    <td>{data.samE}</td>
-                                                    <td>
-                                                    <DotsThreeCircle
-                                                        size={32}
-                                                        className="dots-icon"
-                                                        style={{
-                                                        cursor: 'pointer',
-                                                        transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
-                                                        color: rotatedIcons[i] ? '#666' : '#000',
-                                                        transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
-                                                        }}
-                                                        onClick={(event) => toggleDropdown(event, i)}
-                                                    />
-                                                    <div
-                                                        className='choices'
-                                                        style={{
-                                                        position: 'fixed',
-                                                        top: dropdownPosition.top - 30 + 'px',
-                                                        left: dropdownPosition.left - 100 + 'px',
-                                                        opacity: showDropdown ? 1 : 0,
-                                                        visibility: showDropdown ? 'visible' : 'hidden',
-                                                        transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-                                                        boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                                                        }}
-                                                    >
-                                                    <button className='btn'>
-                                                    <Link to="/updatePurchaseRequest" style={{textDecoration: 'none', color: '#252129'}}>
-                                                        Update
-                                                        </Link>
-                                                        </button>
-                                                    <button className='btn'>Delete</button>
-                                                    </div>
-                                                    </td>
-                                                    </tr>
-                                                  ))}
+                                            {showDropdown && (
+                                        <div className="dropdown mt-3">
+                                          <Select
+                                                  isMulti
+                                                  options={fetchProduct.map(prod => ({
+                                                    value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
+                                                    label: <div>
+                                                      Product Code: <strong>{prod.product_code}</strong> / 
+                                                      Product Name: <strong>{prod.product_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Product',
+                                                    values: prod.product_id,
+                                                    code: prod.product_code,
+                                                    name: prod.product_name,
+                                                    created: prod.createdAt
+                                                  }))
+                                                  .concat(fetchAssembly.map(assembly => ({
+                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Assembly Code: <strong>{assembly.assembly_code}</strong> / 
+                                                      Assembly Name: <strong>{assembly.assembly_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Assembly',
+                                                    values: assembly.id,
+                                                    code: assembly.assembly_code,
+                                                    name: assembly.assembly_name,
+                                                    created: assembly.createdAt
+                                                  })))
+                                                  .concat(fetchSpare.map(spare => ({
+                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Product Part Code: <strong>{spare.spareParts_code}</strong> / 
+                                                      Product Part Name: <strong>{spare.spareParts_name}</strong> / 
+                                                    </div>,
+                                                    type: 'Spare',
+                                                    values: spare.id,
+                                                    code: spare.spareParts_code,
+                                                    name: spare.spareParts_name,
+                                                    created: spare.createdAt
+                                                  })))
+                                                  .concat(fetchSubPart.map(subPart => ({
+                                                    value: `${subPart.id}_${subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
+                                                    label: <div>
+                                                      Product Sub-Part Code: <strong>{subPart.subPart_code}</strong> / 
+                                                      Product Sub-Part Name: <strong>{subPart.subPart_name}</strong> / 
+                                                    </div>,
+                                                    type: 'SubPart',
+                                                    values: subPart.id,
+                                                    code: subPart.subPart_code,
+                                                    name: subPart.subPart_name,
+                                                    created: subPart.createdAt
+                                                  })))
+                                                }
+                                                  onChange={selectProduct}
+                                                />
+
+                                        </div>
+                                      )}
                                         </tbody>
-                                  <div className="item">
-                                      <div className="new_item">
-                                          <button onClick={handleShow} >
-                                          <span style={{marginRight: '4px'}}>
-                                          </span>
-                                          <Plus size={20} /> New Item
-                                          </button>
-                                      </div>
-                                  </div>
+                                              <div className="item">
+                                                      <div className="new_item">
+                                                          <button type="button" onClick={displayDropdown}>
+                                                            <span style={{marginRight: '4px'}}>
+                                                            </span>
+                                                            <Plus size={20} /> New Item
+                                                          </button>
+                                                      </div>
+                                                  </div>
                                     </table>
                                 </div>
                             </div>
@@ -342,55 +374,7 @@ function CreateStockTransfer() {
                         </Link>
                         </div>
                         
-        <Modal show={showModal} onHide={handleClose} size="xl">
-          <Form>
-            <Modal.Header closeButton>
-              <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
-            </Modal.Header>
-              <Modal.Body>
-                        <div className="table-containss">
-                            <div className="main-of-all-tables">
-                                <table id='order2-listing'>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Code</th>
-                                            <th className='tableh'>Product Name</th>
-                                            <th className='tableh'>Category</th>
-                                            <th className='tableh'>UOM</th>
-                                            <th className='tableh'>Supplier</th>
-                                            <th className='tableh'>Contact</th>
-                                            <th className='tableh'>Price</th>
-                                            <th className='tableh'></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {data.map((data,i) =>(
-                                                <tr key={i}>
-                                                <td>{data.samA}</td>
-                                                <td>{data.samC}</td>
-                                                <td>{data.samD}</td>
-                                                <td>{data.samE}</td>
-                                                <td>{data.samE}</td>
-                                                <td>{data.samE}</td>
-                                                <td>{data.samE}</td>
-                                                <td><button type='button' className='btn canvas'><PlusCircle size={32}/></button></td>
-                                                </tr>
-                                                ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="warning" size="md" style={{ fontSize: '20px' }}>
-                        Save
-                    </Button>
-                </Modal.Footer>
-            </Form>
-          </Modal>
+        
                         </Form>
                        
             </div>
