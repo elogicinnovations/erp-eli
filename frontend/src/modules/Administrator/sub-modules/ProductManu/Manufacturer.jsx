@@ -382,7 +382,7 @@ function Productvariants() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          <div className="settings-search-master">
+          {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
               <div className="dropdown-side"></div>
               <div className="iconic-side">
@@ -398,7 +398,7 @@ function Productvariants() {
                 <h3>User Name</h3>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="Employeetext-button">
             <div className="employee-and-button">

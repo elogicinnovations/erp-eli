@@ -78,13 +78,10 @@ function formatDatetime(datetime) {
         </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
 
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
-                        <div className="emp-text-side">
-                            <p>Receiving Management</p>
-                        </div>
                     </div>
                     <div className="iconic-side">
                         <div className="gearsides">
@@ -102,9 +99,12 @@ function formatDatetime(datetime) {
                     </div>
                 </div>
 
-                </div>
+                </div> */}
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
+                        <div className="emp-text-side">
+                            <p>Receiving Management</p>
+                        </div>
                         <div className="button-create-side">
                           <div className="col-2" style={{zIndex: '3'}}>
                               <Form.Group controlId="exampleForm.ControlInput2" className='date'>

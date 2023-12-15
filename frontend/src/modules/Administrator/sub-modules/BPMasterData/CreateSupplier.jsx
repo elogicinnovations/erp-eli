@@ -201,7 +201,7 @@ function CreateSupplier() {
             <Sidebar />
         </div> */}
         <div className="right-of-main-containers">
-          <div className="right-body-contents">
+          <div className="right-body-contentss">
             <div className='create-head-back' style={{display: 'flex', alignItems: 'center', borderBottom: '1px solid #5A5D5A', padding: 15}}>
                
                 <Link style={{ fontSize: '1.5rem' }} to="/Supplier">

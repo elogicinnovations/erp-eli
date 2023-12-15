@@ -65,7 +65,7 @@ function ViewAssembly() {
       </div> */}
 
       <div className="right-of-main-containers">
-        <div className="right-body-contents">
+        <div className="right-body-contentss">
           <div className="headers-text">
             <div className="arrowandtitle">
               <Link to="/assemblyForm">

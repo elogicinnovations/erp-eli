@@ -121,7 +121,7 @@ import {
                 <Sidebar/>
             </div> */}
             <div className="right-of-main-containers">
-                <div className="right-body-contents">
+                <div className="right-body-contentss">
                 <Form noValidate validated={validated} onSubmit={add}>
                 <h1>Add Sub Parts</h1>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>

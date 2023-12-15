@@ -83,12 +83,9 @@ const [endDate, setEndDate] = useState(null);
     <div className="main-of-containers">
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
 
                 <div className="dropdown-and-iconics">
-                    <div className="emp-text-side">
-                            <p>Purchase Order Reports</p>
-                        </div>
                     <div className="dropdown-side">
                     </div>
                     <div className="iconic-side">
@@ -107,9 +104,12 @@ const [endDate, setEndDate] = useState(null);
                     </div>
                 </div>
 
-                </div>
+                </div> */}
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
+                    <div className="emp-text-side">
+                            <p>Purchase Order Reports</p>
+                        </div>
                         <div className="button-create-side">
                         <div className="filter">
                         <div className="cat-filter">
@@ -155,6 +155,7 @@ const [endDate, setEndDate] = useState(null);
                                 <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
                           </div>
+                          <button className='genbutton'>Generate</button>
                         </div>
                         </div>
                         <div className='export-refresh'>

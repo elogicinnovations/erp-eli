@@ -207,7 +207,7 @@ function PurchaseRequest() {
         </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
 
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
@@ -230,10 +230,14 @@ function PurchaseRequest() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
+                        <div className="emp-text-side">
+                            <p>Purchase Request</p>
+                        </div>
+                      <div className="resp">
                         <div className="button-create-side">
                           <div style={{ position: "relative", marginBottom: "15px" }}>
                                 <DatePicker
@@ -311,7 +315,7 @@ function PurchaseRequest() {
                               <Form.Select aria-label="item status"
                                 value={selectedStatus}
                               onChange={handleStatusChange}
-                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 required>
                                   <option value="" disabled selected>
                                     Select Status
@@ -337,7 +341,7 @@ function PurchaseRequest() {
                                     </Link>
                             </div>
                         </div>
-
+                      </div>
                     </div>
                 </div>
                 <div className="table-containss">

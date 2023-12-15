@@ -152,7 +152,7 @@ function Supplier() {
             </div> */}
             <div className="right-of-main-containers">
                 <div className="right-body-contents">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
 
                         <div className="dropdown-and-iconics">
                             <div className="dropdown-side">
@@ -174,7 +174,7 @@ function Supplier() {
                             </div>
                         </div>
 
-                    </div>
+                    </div> */}
 
                     <div className="Employeetext-button">
                         <div className="employee-and-button">
