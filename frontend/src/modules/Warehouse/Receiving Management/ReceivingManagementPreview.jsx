@@ -229,7 +229,7 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          // reloadTable();
+          window.location.reload();
         });
       } else {
       swal({
@@ -263,7 +263,7 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            // reloadTable();
+            window.location.reload();
           });
         } else {
         swal({
@@ -304,7 +304,7 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          // reloadTable();
+          window.location.reload();
         });
       } else {
       swal({
@@ -338,7 +338,7 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            // reloadTable();
+            window.location.reload();
           });
         } else {
         swal({
@@ -378,7 +378,7 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          // reloadTable();
+          window.location.reload();
         });
       } else {
       swal({
@@ -412,7 +412,7 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            // reloadTable();
+            window.location.reload();
           });
         } else {
         swal({
@@ -452,7 +452,7 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          // reloadTable();
+          window.location.reload();
         });
       } else {
       swal({
@@ -486,6 +486,7 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
             icon: 'success',
             button: 'OK'
           }).then(() => {
+            window.location.reload();
             // reloadTable();
           });
         } else {
