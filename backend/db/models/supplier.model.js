@@ -1,14 +1,14 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const Supplier = sequelize.define('supplier', {
+const Supplier = sequelize.define("suppliers", {
   supplier_code: {
     type: DataTypes.STRING,
     unique: true,
-    
+
     primaryKey: true,
   },
-  supplier_name: { 
+  supplier_name: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: false,
@@ -77,7 +77,7 @@ const Supplier = sequelize.define('supplier', {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,
-  }
+  },
 });
 
 module.exports = Supplier;
