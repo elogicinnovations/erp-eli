@@ -42,6 +42,7 @@ import {
   } from "@phosphor-icons/react";
   
   import * as $ from 'jquery';
+import Header from '../../partials/header';
 
   const data = [
     { name: 'In Stock', value: 400 },
@@ -199,14 +200,9 @@ import {
     },
   ];
 
+
 function Dashboard() {
-  // const navigate = useNavigate()
-  // useEffect(() => {
-  //   console.log(localStorage.getItem('accessToken'));
-  //   if(localStorage.getItem('accessToken') === null){
-  //     navigate('/');
-  //   }
-  // }, [])
+
 
   return (
     <div className="main-of-containers">
@@ -216,7 +212,7 @@ function Dashboard() {
         {/* <div className="right-of-main-container"> */}
             <div className="right-body-content">
               <div className="dashboard-container">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
                   <div className="dropdown-and-iconic">
                       <div className="dropdown-side">
                           <div className="emp-text-side">
@@ -233,11 +229,12 @@ function Dashboard() {
                               <UserCircle size={35}/>
                           </div>
                           <div className="username">
-                            <h3>User Name</h3>
+                            <h3>{username}</h3>
                           </div>
                       </div>
                   </div>
-                </div>
+                </div> */}
+                <Header />
                 <div className="dashboard-content">
                   <div className="preview-tabs">
                     <div className="tabs">

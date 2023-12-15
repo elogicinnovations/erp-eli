@@ -35,6 +35,7 @@ import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstr
 import "../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import Header from "../../../../partials/header";
 
 function UserRole() {
   function formatDate(isoDate) {
@@ -191,7 +192,7 @@ function UserRole() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          <div className="settings-search-master">
+          {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
               <div className="dropdown-side"></div>
               <div className="iconic-side">
@@ -207,7 +208,8 @@ function UserRole() {
                 <h3>User Name</h3>
               </div>
             </div>
-          </div>{" "}
+          </div>{" "} */}
+          <Header />
           {/*Setting search*/}
           <div className="Employeetext-button">
             <div className="employee-and-button">

@@ -32,6 +32,7 @@ import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import { fontSize } from "@mui/system";
+import Header from "../../../../../../partials/header";
 
 function ProductList() {
   const navigate = useNavigate();
@@ -244,7 +245,8 @@ const handleSave = () => {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          <div className="settings-search-master">
+
+          {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
               <div className="dropdown-side"></div>
               <div className="iconic-side">
@@ -262,7 +264,10 @@ const handleSave = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
+
+          <Header />
+
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">

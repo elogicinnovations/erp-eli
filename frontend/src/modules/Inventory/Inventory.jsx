@@ -23,6 +23,7 @@ import {
   } from "@phosphor-icons/react";
 
 import * as $ from 'jquery';  
+import Header from '../../partials/header';
 
 function Inventory() {
 const navigate = useNavigate()
@@ -258,7 +259,7 @@ const navigate = useNavigate()
                 <div className="right-of-main-containers">
                     <div className="right-body-contents">
 
-                    <div className="settings-search-master">
+                    {/* <div className="settings-search-master">
 
                         <div className="dropdown-and-iconics">
                             <div className="dropdown-side">
@@ -280,7 +281,8 @@ const navigate = useNavigate()
                             </div>
                         </div>
 
-                        </div>
+                        </div> */}
+                        <Header />
                         <div className="tabbutton-sides">
                             <Tabs
                                 defaultActiveKey="inventory"

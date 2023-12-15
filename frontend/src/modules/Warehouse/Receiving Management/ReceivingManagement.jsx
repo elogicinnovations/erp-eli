@@ -34,6 +34,7 @@ import {
   import '../../../assets/skydash/js/off-canvas';
   
   import * as $ from 'jquery';
+import Header from '../../../partials/header';
 
 function ReceivingManagement() {
   const [PurchaseRequest, setPurchaseRequest] = useState([]); 
@@ -78,7 +79,7 @@ function formatDatetime(datetime) {
         </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
 
                 <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
@@ -102,7 +103,9 @@ function formatDatetime(datetime) {
                     </div>
                 </div>
 
-                </div>
+                </div> */}
+
+                <Header />
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
                         <div className="button-create-side">

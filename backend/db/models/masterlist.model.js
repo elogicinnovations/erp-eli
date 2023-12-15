@@ -46,6 +46,9 @@ const MasterList = sequelize.define("masterlist", {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,
+    // validate: {
+    //   is: /^[0-9a-zA-Z]{8}$/i
+    // }
   },
   col_status: {
     type: DataTypes.STRING,

@@ -309,6 +309,7 @@ useEffect(() => {
       e.stopPropagation();
     // if required fields has NO value
     //    console.log('requried')
+    // console.log();
         swal({
             icon: 'error',
             title: 'Fields are required',
@@ -685,6 +686,7 @@ useEffect(() => {
                                               type="number"
                                               style={{ height: '50px' }}
                                               value={prod.product_price || ''}
+                                              onKeyDown={(e) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
                                               onChange={(e) => handlePriceChange(i, e.target.value)}
                                             />
                                           </td>
@@ -699,7 +701,6 @@ useEffect(() => {
                                                 options={fetchSupp.map((supplier) => ({
                                                   value: supplier.supplier_code,
                                                   label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
-
                                                 }))}
                                                 value={selectedDropdownOptions}
                                                 onChange={handleSelectChange}

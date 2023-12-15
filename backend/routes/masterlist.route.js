@@ -193,6 +193,21 @@ router.route("/createMaster").post(async (req, res) => {
     } else {
       // Convert boolean status to "Active" or "Inactive"
       const status = req.body.cstatus ? "Active" : "Inactive";
+
+      // Validate the password
+      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\S{8,}$/;
+        if (!passwordRegex.test(req.body.cpass)) {
+          return res.status(400).json({
+            errors: [
+              {
+                field: 'col_Pass',
+                message:
+                'Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one digit, and no spaces.',
+              },
+            ],
+          });
+        }
+
       // console.log('tyr: ' + req.body.crole)
       // Insert a new record into the table
       const newData = await MasterList.create({
@@ -210,8 +225,27 @@ router.route("/createMaster").post(async (req, res) => {
       // console.log(newDa)
     }
   } catch (err) {
+    // console.error(err.name);
+    // if(err.name === 'SequelizeValidationError'){
+    //   console.log("Error Path: ",err.errors[0].path);
+    //   return res.status(400).json({errorPath: err.errors[0].path})
+    // }
+
+    // res.status(500).send("An error occurred");
+
+    if (err.name === 'SequelizeValidationError') {
+      const validationErrors = err.errors.map(error => ({
+        field: error.path,
+        message: error.message,
+      }));
+
+      // Send validation errors with a 400 status code
+      res.status(400).json({ errors: validationErrors });
+    } else {
+      // Handle other types of errors
     console.error(err);
     res.status(500).send("An error occurred");
+  }
   }
 });
 

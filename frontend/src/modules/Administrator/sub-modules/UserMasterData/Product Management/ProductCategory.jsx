@@ -30,6 +30,7 @@ import "../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.boot
 import "../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import Header from "../../../../../partials/header";
 
 function ProductCategory() {
   const [category, setcategory] = useState([]); // for table
@@ -143,6 +144,9 @@ function ProductCategory() {
               ]);
 
               setShowModal(false);
+
+              setcategoryCode("");
+              setcategoryName("");
             });
           } else if (response.status === 201) {
             swal({
@@ -219,7 +223,10 @@ function ProductCategory() {
     setShowModal(false);
   };
 
-  const handleShow = () => setShowModal(true);
+  const handleShow = () => {
+    setValidated(false);
+    setShowModal(true);
+  };
 
   const handleModalToggle = (updateData = null) => {
     setUpdateModalShow(!updateModalShow);
@@ -349,7 +356,7 @@ function ProductCategory() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          <div className="settings-search-master">
+          {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
               <div className="dropdown-side"></div>
               <div className="iconic-side">
@@ -367,7 +374,9 @@ function ProductCategory() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
+
+          <Header />
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -485,6 +494,7 @@ function ProductCategory() {
                   type="text"
                   placeholder="Enter Name of the Category Code..."
                   style={{ height: "40px", fontSize: "15px" }}
+                  value={categoryCode}
                   onChange={(e) => setcategoryCode(e.target.value)}
                   required
                 />
@@ -499,6 +509,7 @@ function ProductCategory() {
                 <Form.Control
                   type="text"
                   placeholder="Enter Name of the Category Name..."
+                  value={categoryName}
                   style={{ height: "40px", fontSize: "15px" }}
                   onChange={(e) => setcategoryName(e.target.value)}
                   required
