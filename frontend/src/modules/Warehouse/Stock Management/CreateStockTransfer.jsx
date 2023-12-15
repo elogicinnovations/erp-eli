@@ -11,6 +11,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import subwarehouse from "../../../assets/global/subwarehouse";
 import {
     ArrowCircleLeft,
     Plus,
@@ -58,6 +59,8 @@ function CreateStockTransfer() {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(Array(data.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const [slct_masterlist, setslct_masterlist] = useState([]); // for getting the value of selected masterlist
   
   const [dateNeeded, setDateNeeded] = useState(null);
 
@@ -110,6 +113,33 @@ function CreateStockTransfer() {
     }
   }, []);
 
+  const [masterList, setMasteList] = useState([]); 
+  useEffect(() => {
+    axios.get(BASE_URL + '/masterList/masterTable')
+      .then(response => {
+        setMasteList(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching master list:', error);
+      });
+  }, []);
+
+  const [select_masterlist, setSelect_Masterlist] = useState([]);
+  const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.target.value);};
+  const [remarks, setRemarks] = useState();
+  const [prNum, setPrNum] = useState('');
+
+  useEffect(() => {   
+    axios.get(BASE_URL + '/StockTransfer/lastPRNumber')
+    .then(res => {
+      const prNumber = res.data !== null ? res.data : 0;
+      
+      // Increment the value by 1
+      setPrNum(prNumber + 1);
+    })
+    .catch(err => console.log(err));
+  }, []);
+
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -158,8 +188,11 @@ function CreateStockTransfer() {
                                         <option disabled value=''>
                                           Select Site
                                         </option>
-                                            <option>
-                                            </option>
+                                        {subwarehouse.map((name, index) => (
+                                        <option key={index} value={name}>
+                                            {name}
+                                        </option>
+                                        ))}
                                     </Form.Select>
                               </Form.Group>
                                 </div>
@@ -175,38 +208,45 @@ function CreateStockTransfer() {
                                         <option disabled value=''>
                                           Select Site
                                         </option>
-                                            <option>
-                                            </option>
+                                        {subwarehouse.map((name, index) => (
+                                        <option key={index} value={name}>
+                                            {name}
+                                        </option>
+                                        ))}
                                     </Form.Select>
                               </Form.Group>
                                 </div>
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Reference code: </Form.Label>
-                                <Form.Control readOnly type="text" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control readOnly type="text" value={prNum}  style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                               <Form.Label style={{ fontSize: '20px' }}>Received By: </Form.Label>   
-                                  <Form.Select 
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      defaultValue=''
-                                    >
-                                        <option disabled value=''>
-                                          Select Employee
-                                        </option>
-                                            <option>
-                                            </option>
+                              <Form.Select
+                                    onChange={handleFormChangeMasterList} 
+                                    required
+                                    style={{ height: "40px", fontSize: "15px" }}
+                                    defaultValue="">
+                                    <option
+                                      disabled
+                                      value="">
+                                      Select Employee
+                                    </option>
+                                    {masterList.map(masterList => (
+                                          <option key={masterList.col_id} value={masterList.col_id}>
+                                            {masterList.col_Fname}
+                                          </option>
+                                        ))}
                                     </Form.Select>
                               </Form.Group>
                                 </div>
                           </div>
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}} onChange={e => setRemarks(e.target.value)}/>
                             </Form.Group>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Product List

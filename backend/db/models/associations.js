@@ -51,7 +51,7 @@ const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
 const PO_Received = require("./po_received.model");
 
-const StockTransfer = require("./stock_mgmt.model");
+const StockTransfer = require("./stockTransfer.model");
 
 
 // const SparePart = require("./sparePart.model");

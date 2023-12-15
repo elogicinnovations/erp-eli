@@ -74,6 +74,7 @@ import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPos
 import ProtectedRoutes from "./hooks/protectedRoute";
 import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
+import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
 
 function App() {
   return (
@@ -345,6 +346,12 @@ function App() {
               <Route
                     path="/historicalData"
                     element={<HistoricalData/>}
+              />
+
+              
+              <Route
+                    path="/stockTransfer"
+                    element={<StockTransfer/>}
               />
              
         </Routes>

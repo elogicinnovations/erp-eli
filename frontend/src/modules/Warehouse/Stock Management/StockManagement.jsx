@@ -37,36 +37,6 @@ import {
 
 function StockManagement() {
 
-    
-// Artifitial data
-
-const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
-      
-// Artifitial data
-
-
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -114,6 +84,27 @@ const data = [
         }
       }, []);
 
+       //date format
+    function formatDatetime(datetime) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      };
+      return new Date(datetime).toLocaleString('en-US', options);
+    }
+
+
+    const [stockTransfer, setStockTransfer] = useState([]);
+
+    // Fetch Data
+    useEffect(() => {
+    axios.get(BASE_URL + '/StockTransfer/fetchTable')
+    .then(res => setStockTransfer(res.data))
+    .catch(err => console.log(err));
+    }, []);
 
   return (
     <div className="main-of-containers">
@@ -124,7 +115,7 @@ const data = [
             <div className="right-body-contents">
                 <div className="settings-search-master">
 
-                <div className="dropdown-and-iconics">
+                {/* <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
                         <div className="emp-text-side">
                             <p>Stock Management</p>
@@ -144,7 +135,7 @@ const data = [
                           <h3>User Name</h3>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 </div>
                 <div className="Employeetext-button">
@@ -218,13 +209,13 @@ const data = [
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {data.map((data,i) =>(
+                                      {stockTransfer.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.samA}</td>
-                                        <td>{data.samB}</td>
-                                        <td>{data.samC}</td>
-                                        <td>{data.samD}</td>
-                                        <td>{data.samE}</td>
+                                        <td>{data.stock_id}</td>
+                                        <td>{data.remarks}</td>
+                                        <td>{formatDatetime(data.createdAt)}</td>
+                                        <td>{data.source}</td>
+                                        <td>{data.destination}</td>
                                           <td>
                                           <DotsThreeCircle
                                               size={32}
