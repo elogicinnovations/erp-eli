@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import SettingsRouting from "./modules/settings/settings-routing";
 
 import Login from "./modules/Login/login";
+import SystemSettings from "./modules/SystemSettings/SystemSettings";
 import Supplier from "./modules/Administrator/sub-modules/BPMasterData/Supplier"
 import ViewSupplier from "./modules/Administrator/sub-modules/BPMasterData/ViewSupplier"
 import CreateSupplier from "./modules/Administrator/sub-modules/BPMasterData/CreateSupplier"
@@ -71,6 +72,7 @@ import Sidebar from "./modules/Sidebar/sidebar";
 
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 import ProtectedRoutes from "./hooks/protectedRoute";
+import Header from "./modules/Sidebar/header";
 
 function App() {
   return (
@@ -98,6 +100,7 @@ function App() {
       </DataProvider>
 
     <div className="main-of-containers">
+      
         <div className="left-of-main-containers">
             <Sidebar/>
         </div>
@@ -105,13 +108,18 @@ function App() {
         <div className="mid-of-main-containers">
         </div>
 
-        <div className="right-of-main-container">
+        <div className="right-of-main-container"><Header/>
       <DataProvider>
         <ProtectedRoutes>
         <Routes>
           <Route
             path="/dashboard"
             element={<Dashboard />}
+          />
+
+          <Route
+            path="/systemSettings"
+            element={<SystemSettings />}
           />
 
           {/* User Master Data */}

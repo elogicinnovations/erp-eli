@@ -256,9 +256,9 @@ const navigate = useNavigate()
             <Sidebar />
             </div> */}
                 <div className="right-of-main-containers">
-                    <div className="right-body-contents">
+                    <div className="right-body-contentss">
 
-                    <div className="settings-search-master">
+                    {/* <div className="settings-search-master">
 
                         <div className="dropdown-and-iconics">
                             <div className="dropdown-side">
@@ -280,7 +280,7 @@ const navigate = useNavigate()
                             </div>
                         </div>
 
-                        </div>
+                        </div> */}
                         <div className="tabbutton-sides">
                             <Tabs
                                 defaultActiveKey="inventory"

@@ -156,7 +156,7 @@ function ViewSupplier() {
             <Sidebar />
             </div> */}
                 <div className="right-of-main-containers">
-                    <div className="right-body-contents">
+                    <div className="right-body-contentss">
                         <div className="headers-text">
                             <div className="arrowandtitle">
                                 <Link to='/supplier'><ArrowCircleLeft size={50} color="#60646c" weight="fill" /></Link>

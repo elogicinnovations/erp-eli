@@ -199,27 +199,18 @@ function CreateSupplier() {
       {/* <div className="left-of-main-containers">
             <Sidebar />
         </div> */}
-      <div className="right-of-main-containers">
-        <div className="right-body-contents">
-          <div
-            className="create-head-back"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderBottom: "1px solid #5A5D5A",
-              padding: 15,
-            }}>
-            <Link
-              style={{ fontSize: "1.5rem" }}
-              to="/Supplier">
-              <ArrowCircleLeft
-                size={44}
-                color="#60646c"
-                weight="fill"
-              />
-            </Link>
-            <h1>Supplier</h1>
-          </div>
+        <div className="right-of-main-containers">
+          <div className="right-body-contentss">
+            <div className='create-head-back' style={{display: 'flex', alignItems: 'center', borderBottom: '1px solid #5A5D5A', padding: 15}}>
+               
+                <Link style={{ fontSize: '1.5rem' }} to="/Supplier">
+                    <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+                </Link>
+                <h1>
+                    Supplier
+                </h1>              
+            </div>
+
 
           <Container className="mt-5">
             <Form

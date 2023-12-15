@@ -276,7 +276,7 @@ function Dashboard() {
         {/* <div className="right-of-main-container"> */}
             <div className="right-body-content">
               <div className="dashboard-container">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
                   <div className="dropdown-and-iconic">
                       <div className="dropdown-side">
                           <div className="emp-text-side">
@@ -297,7 +297,7 @@ function Dashboard() {
                           </div>
                       </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="dashboard-content">
                   <div className="preview-tabs">
                     <div className="tabs">

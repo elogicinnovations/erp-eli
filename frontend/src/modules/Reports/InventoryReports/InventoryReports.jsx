@@ -67,6 +67,10 @@ const data = [
   ]
       
 // Artifitial data
+
+const navigate = useNavigate();
+const [startDate, setStartDate] = useState(null);
+const [endDate, setEndDate] = useState(null);
   
     useEffect(() => {
         if ($('#order-listing').length > 0) {
@@ -79,11 +83,8 @@ const data = [
     <div className="main-of-containers">
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                <div className="settings-search-master">
+                {/* <div className="settings-search-master">
                 <div className="dropdown-and-iconics">
-                        <div className="emp-text-side">
-                            <p>Inventory Reports</p>
-                        </div>
                     <div className="dropdown-side">
                     </div>
                     <div className="iconic-side">
@@ -102,16 +103,20 @@ const data = [
                     </div>
                 </div>
 
-                </div>
+                </div> */}
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
+                        <div className="emp-text-side">
+                            <p>Inventory Reports</p>
+                        </div>
                         <div className="button-create-side">
                         <div className="filter">
+                        <div className="cat-filter">
                           <div className="warehouse-filter">
                           <Form.Select aria-label="item status"
                             style={{width: '250px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}>
                             <option value="" disabled selected>
-                              Warehouse
+                              Location
                             </option>
                           </Form.Select>
                           </div>
@@ -123,6 +128,34 @@ const data = [
                             </option>
                           </Form.Select>
                           </div>
+                        </div>
+                        <div className="date-filter">
+                          <div style={{zIndex: '3'}}>
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
+                                <DatePicker
+                                  selected={startDate}
+                                  onChange={(date) => setStartDate(date)}
+                                  dateFormat="MM/dd/yyyy"
+                                  placeholderText="Start Date"
+                                  className="form-control"
+                                />
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
+                              </Form.Group>
+                          </div>
+                          <div style={{zIndex: '3'}}>
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
+                                <DatePicker
+                                  selected={endDate}
+                                  onChange={(date) => setEndDate(date)}
+                                  dateFormat="MM/dd/yyyy"
+                                  placeholderText="End Date"
+                                  className="form-control"
+                                />
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
+                              </Form.Group>
+                          </div>
+                          <button className='genbutton'>Generate</button>
+                        </div>
                         </div>
                         <div className='export-refresh'>
                             <button className='export'>

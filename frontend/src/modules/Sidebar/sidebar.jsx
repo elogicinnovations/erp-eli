@@ -195,9 +195,9 @@ function Sidebar() {
                     <ListItemText primary="Master List" />
                   </ListItem>
                 </NavLink>
-                  <ListItem button className='Employeesub-menu'>
+                  {/* <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Employee Type" />
-                  </ListItem>
+                  </ListItem> */}
                   <NavLink
                   to='/userRole'
                   style={{ textDecoration: 'none', color: 'inherit' }}
@@ -344,7 +344,7 @@ function Sidebar() {
                 </List>
               </Collapse>
 
-              <ListItem button className='adminsub-menu' onClick={toggleAssetSetup}>
+              {/* <ListItem button className='adminsub-menu' onClick={toggleAssetSetup}>
                 <ListItemText primary="Asset Setup" />
                 {openAssetSetup ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
@@ -367,7 +367,7 @@ function Sidebar() {
                     <ListItemText primary="Model" />
                   </ListItem>
                 </List>
-              </Collapse>
+              </Collapse> */}
 
             </List>
           </Collapse>
@@ -525,20 +525,20 @@ function Sidebar() {
                 </NavLink>
           </Collapse>
 
-          <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
+          {/* <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
               onClick={() => {
                 setActiveMenu(activeMenu === 'ACTIVITY LOGS' ? '' : 'ACTIVITY LOGS');
               }}>
             <Files size={20}/>
             <ListItemText primary="ACTIVITY LOGS" />
-          </ListItem>
+          </ListItem> */}
         </List>
         </div>
 
           <div className="logout-container">
-            <Link to={'/'} className='logout' onClick={() => { localStorage.removeItem('accessToken') }}>
+            {/* <Link to={'/'} className='logout' onClick={() => { localStorage.removeItem('accessToken') }}>
               <SignOut size={20}/> Logout
-                </Link>
+                </Link> */}
             </div>  
         
     </div>
