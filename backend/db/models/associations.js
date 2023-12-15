@@ -89,6 +89,8 @@ Product_Assembly.belongsTo(Product, { foreignKey: "product_id"});
 Assembly.hasMany(Product_Assembly, { foreignKey: "assembly_id"});
 Product_Assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
+// Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
+// Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
 
 
 // product_spareparts` table

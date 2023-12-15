@@ -230,9 +230,9 @@ router.route('/update').put(
   
   async (req, res) => {
   try {
-      // Check if the supplier code is already exists in the table
       const existingDataCode = await Product.findOne({
         where: {
+          product_id: { [Op.ne]: req.body.id },
           product_code: req.body.code,
         },
       });
@@ -259,7 +259,8 @@ router.route('/update').put(
               image_blobFiletype = null;
           }
 
-          const newData = await Product.update({
+          const newData = await Product.update(
+        {
           product_code: req.body.code,
           product_name: req.body.name,
           product_category: req.body.slct_category,
@@ -275,28 +276,83 @@ router.route('/update').put(
           {
             where: { product_id: req.body.id },
           }
-        )
-        ;
+        );
 
-        if(newData) {
-          const deleteSuppliertag = ProductTAGSupplier.destroy({
-            where : {
-              product_id: req.body.id,
-            }
-          })
-          if(deleteSuppliertag){
-            
-            const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
-            for (const supplier of selectedSuppliers) {
-              const { supplier_code, price } = supplier;
-            
-              await ProductTAGSupplier.create({
+        if(newData){
+          
+          const deleteassembly = Product_Assembly.destroy({
+              where: {
+                product_id: req.body.id
+              },
+          });
+
+          if(deleteassembly) {
+            const selectedAssemblies = JSON.parse(req.body.assemblies);
+            console.log(selectedAssemblies);
+            for (const assemblyDropdown of selectedAssemblies) {
+              const assemblyValue = assemblyDropdown.value;
+              await Product_Assembly.create({
                 product_id: req.body.id,
-                supplier_code: supplier_code,
-                product_price: price
+                assembly_id: assemblyValue
               });
             }
+          } //delete assembly end
 
+          const deletesubpart = Product_Subparts.destroy({
+              where: {
+                product_id: req.body.id
+              },
+          });
+
+          if(deletesubpart) {
+            const selectedSubparting = JSON.parse(req.body.subpart);
+            for (const subpartDropdown of selectedSubparting) {
+              const subpartValue = subpartDropdown.value;
+      
+              console.log(subpartValue)
+              await Product_Subparts.create({
+                product_id: req.body.id,
+                subPart_id: subpartValue
+              });
+            }
+          } //delete subpart end
+
+          const deletesparepart = Product_Spareparts.destroy({
+            where: {
+              product_id: req.body.id
+            },
+          })
+
+          if(deletesparepart) {
+            const selectedSpare = JSON.parse(req.body.sparepart);
+            for (const spareDropdown of selectedSpare) {
+              const spareValue = spareDropdown.value;
+      
+              console.log(spareValue)
+              await Product_Spareparts.create({
+                product_id: req.body.id,
+                sparePart_id: spareValue
+              });
+            }
+          } //delete sparepart end
+
+          const deletesupplier = ProductTAGSupplier.destroy({
+            where: {
+              product_id: req.body.id
+            },
+          });
+
+          if(deletesupplier){
+            const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
+            console.log(selectedSuppliers)
+            for (const supplier of selectedSuppliers) {
+              const { value, price } = supplier;
+              await ProductTAGSupplier.create({
+                product_id: req.body.id,
+                supplier_code: value,
+                product_price: price
+               });
+             }
           }
         }
   
@@ -310,105 +366,71 @@ router.route('/update').put(
   }
 );
 
-router.route("/update").put(
-  upload.fields([{ name: "selectedimage", maxCount: 1 }]),
+// router.route("/update").put(
+//   upload.fields([{ name: "selectedimage", maxCount: 1 }]),
 
-  async (req, res) => {
-    try {
-      // Check if the supplier code is already exists in the table
-      const existingDataCode = await Product.findOne({
-        where: {
-          // product_code: req.body.binLocationName, //dapat ma generate pag meron na assembly at parts
-          product_code: req.body.code,
-          product_id: { [Op.ne]: req.body.id },
-        },
-      });
+//   async (req, res) => {
+//     try {
+//       // Check if the supplier code is already exists in the table
+//       const existingDataCode = await Product.findOne({
+//         where: {
+//           // product_code: req.body.binLocationName, //dapat ma generate pag meron na assembly at parts
+//           product_code: req.body.code,
+//           product_id: { [Op.ne]: req.body.id },
+//         },
+//       });
 
-      if (existingDataCode) {
-        res.status(201).send("Exist");
-      } else {
-        let image_blob, image_blobFiletype;
+//       if (existingDataCode) {
+//         res.status(201).send("Exist");
+//       } else {
+//         let image_blob, image_blobFiletype;
 
-        // image_blob = req.files.selectedimage[0].buffer;
+//         // image_blob = req.files.selectedimage[0].buffer;
 
-        // image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
+//         // image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
 
-        if (req.files.selectedimage) {
-          image_blob = req.files.selectedimage[0].buffer;
+//         if (req.files.selectedimage) {
+//           image_blob = req.files.selectedimage[0].buffer;
 
-          image_blobFiletype = mime.lookup(
-            req.files.selectedimage[0].originalname
-          );
-        } else {
-          image_blob = null;
+//           image_blobFiletype = mime.lookup(
+//             req.files.selectedimage[0].originalname
+//           );
+//         } else {
+//           image_blob = null;
 
-          image_blobFiletype = null;
-        }
+//           image_blobFiletype = null;
+//         }
 
-        const newData = await Product.update(
-          {
-            product_code: req.body.code,
-            product_name: req.body.name,
-            product_category: req.body.slct_category,
-            product_unit: req.body.unit,
-            product_location: req.body.slct_binLocation,
-            product_unitMeasurement: req.body.unitMeasurement,
-            product_manufacturer: req.body.slct_manufacturer,
-            product_details: req.body.details,
-            product_threshold: req.body.thresholds,
-            product_image: image_blob,
-            product_imageType: image_blobFiletype,
-          },
-          {
-            where: { product_id: req.body.id },
-          }
-        );
-        res.status(200).json(newData);
-        // console.log(newDa)
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("An error occurred");
-    }
-  }
-);
+//         const newData = await Product.update(
+//           {
+//             product_code: req.body.code,
+//             product_name: req.body.name,
+//             product_category: req.body.slct_category,
+//             product_unit: req.body.unit,
+//             product_location: req.body.slct_binLocation,
+//             product_unitMeasurement: req.body.unitMeasurement,
+//             product_manufacturer: req.body.slct_manufacturer,
+//             product_details: req.body.details,
+//             product_threshold: req.body.thresholds,
+//             product_image: image_blob,
+//             product_imageType: image_blobFiletype,
+//           },
+//           {
+//             where: { product_id: req.body.id },
+//           }
+//         );
+//         res.status(200).json(newData);
+//         // console.log(newDa)
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).send("An error occurred");
+//     }
+//   }
+// );
 
 router.route("/delete/:table_id").delete(async (req, res) => {
   const id = req.params.table_id;
-
-  // await ProductTAGSupplier.findAll({
-  //   where: {
-  //     product_id: id,
-  //   },
-  // })
-  //   .then((check) => {
-  //     if (check && check.length > 0) {
-  //       res.status(202).json({ success: true });
-  //     }
-
-  //     else{
-  //       Product.destroy({
-  //         where : {
-  //           product_id: id
-  //         }
-  //       }).then(
-  //           (del) => {
-  //               if(del){
-  //                   res.json({success : true})
-  //               }
-  //               else{
-  //                   res.status(400).json({success : false})
-  //               }
-  //           }
-  //       ).catch(
-  //           (err) => {
-  //               console.error(err)
-  //               res.status(409)
-  //           }
-  //       );
-  //     }
-  //   })
-
   Product.destroy({
     where: {
       product_id: id,

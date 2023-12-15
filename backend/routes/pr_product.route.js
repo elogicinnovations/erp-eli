@@ -11,7 +11,7 @@ router.use(session({
     saveUninitialized: true
 }));
 
-router.route('/fetchView').get(async (req, res) => {
+router.route('/fetchPrProduct').get(async (req, res) => {
     try {
      
       const data = await PR_product.findAll({

@@ -81,53 +81,106 @@ function CreatePurchaseRequest() {
 
 
   
-const add = async e => {
+// const add = async e => {
+//   e.preventDefault();
+
+//   const form = e.currentTarget;
+//   if (form.checkValidity() === false) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//       swal({
+//           icon: 'error',
+//           title: 'Fields are required',
+//           text: 'Please fill the red text fields'
+//         });
+//   }
+//   else{
+
+//     axios.post(`${BASE_URL}/PR/create`, {
+//        prNum, dateNeed, useFor, remarks, addProductbackend
+//     })
+//     .then((res) => {
+//       console.log(res);
+//       if (res.status === 200) {
+//         swal({
+//           title: 'The Purchase sucessfully request!',
+//           text: 'The Purchase Request has been added successfully.',
+//           icon: 'success',
+//           button: 'OK'
+//         }).then(() => {
+//           navigate('/purchaseRequest')
+          
+//         });
+//       } else {
+//         swal({
+//           icon: 'error',
+//           title: 'Something went wrong',
+//           text: 'Please contact our support'
+//         });
+//       }
+//     })
+
+//   }
+//   setValidated(true); //for validations
+// };
+
+
+const add = async (e) => {
   e.preventDefault();
 
   const form = e.currentTarget;
   if (form.checkValidity() === false) {
     e.preventDefault();
     e.stopPropagation();
-  // if required fields has NO value
-  //    console.log('requried')
-      swal({
-          icon: 'error',
-          title: 'Fields are required',
-          text: 'Please fill the red text fields'
-        });
-  }
-  else{
+    swal({
+      icon: 'error',
+      title: 'Fields are required',
+      text: 'Please fill the red text fields',
+    });
+  } else {
+    try {
+      const response = await axios.post(`${BASE_URL}/PR/create`, {
+        prNum,
+        dateNeed,
+        useFor,
+        remarks,
+        addProductbackend,
+      });
 
-    axios.post(`${BASE_URL}/PR/create`, {
-       prNum, dateNeed, useFor, remarks, addProductbackend
-    })
-    .then((res) => {
-      console.log(res);
-      if (res.status === 200) {
+      console.log(response);
+
+      if (response.status === 200) {
         swal({
-          title: 'The Purchase sucessfully request!',
+          title: 'The Purchase request was successful!',
           text: 'The Purchase Request has been added successfully.',
           icon: 'success',
-          button: 'OK'
+          button: 'OK',
         }).then(() => {
-          navigate('/purchaseRequest')
-          
+          navigate('/purchaseRequest');
         });
       } else {
         swal({
           icon: 'error',
           title: 'Something went wrong',
-          text: 'Please contact our support'
+          text: 'Please contact our support',
         });
       }
-    })
+    } catch (error) {
+      console.error(error);
 
+      swal({
+        icon: 'error',
+        title: 'Request failed',
+        text:
+          error.response?.data?.error ||
+          'Please select a Product to request!',
+      });
+    }
   }
 
-  setValidated(true); //for validations
-
-  
+  setValidated(true); // for validations
 };
+
 
 const displayDropdown = () => {
   setShowDropdown(true);
@@ -307,7 +360,6 @@ function formatDatetime(datetime) {
                                                       placeholder="Input quantity"
                                                       style={{ height: '40px', width: '120px', fontSize: '15px' }}
                                                     />
-                                                    
                                                   </div>
                                                 </td>
                                                 <td >{formatDatetime(product.created)}</td>
@@ -320,7 +372,6 @@ function formatDatetime(datetime) {
                                                       placeholder="Input description"
                                                       style={{ height: '40px', width: '120px', fontSize: '15px' }}
                                                     />
-                                                    
                                                   </div>
                                                 </td>
                                               </tr>

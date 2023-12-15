@@ -36,18 +36,31 @@ function PurchaseRequestPreview() {
   const [useFor, setUseFor] = useState('');
   const [remarks, setRemarks] = useState('');
   const [product, setProduct] = useState([]); //para pag fetch ng mga registered products
-  const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create
-  const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa assembly na selected sa pag create
-  const [spareSelectedFetch, setSpareSelectedFetch] = useState([]); //para pag display sa spare na selected sa pag create
-  const [subPartSelectedFetch, setSubPartSelectedFetch] = useState([]); //para pag display sa subpart na selected sa pag create
+
+
+  
+ 
   const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch ng product na e select
-  const [fetchAssembly, setFetchAssembly] = useState([]); // para sa pag fetch ng assembly na e select
-  const [fetchSpare, setFetchSpare] = useState([]);
-  const [fetchSubPart, setFetchSubPart] = useState([]);
+
+  const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create patungong table
+  const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch nang lahat na product sa select dropdown
+  const [valuePRproduct, setvaluePRproduct] = useState([]); //para mafetch yung specific product data sa dropdown
+
+  const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa assembly na selected sa pag create patungong table
+  const [fetchAssembly, setFetchAssembly] = useState([]); // para sa pag fetch nang lahat assembly sa select dropdown
+  const [valuePRassembly, setvaluePRassembly] = useState([]); //para mafetch yung specific assembly data sa dropdown
+
+  const [spareSelectedFetch, setSpareSelectedFetch] = useState([]); //para pag display sa spare na selected sa pag create
+  const [fetchSpare, setFetchSpare] = useState([]); // para sa pag fetch nang lahat na spare sa select dropdown
+  const [valuePRspare, setvalueSpare] = useState([]); //para mafetch yung specific spare data sa dropdown
+
+  const [subPartSelectedFetch, setSubPartSelectedFetch] = useState([]); //para pag display sa subpart na selected sa pag create patungong table
+  const [fetchSubPart, setFetchSubPart] = useState([]); // para sa pag fetch nang lahat na subpart sa select dropdown
+  const [valuePRsub, setvaluePRsub] = useState([]); //para mafetch yung specific subpart data sa dropdown
+
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
 
@@ -81,10 +94,6 @@ function PurchaseRequestPreview() {
     }).then(async (approve) => {
       if (approve) {
         try {
-        
-
-
-
           axios.post(`${BASE_URL}/PR/approve`, null, {
             params:{
               id: id,
@@ -170,6 +179,8 @@ function PurchaseRequestPreview() {
     }
   };
   
+
+  {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
   useEffect(() => {
     axios.get(BASE_URL + '/product/fetchTable')
       .then(res => setFetchProduct(res.data))
@@ -193,40 +204,88 @@ function PurchaseRequestPreview() {
       .then(res => setFetchSubPart(res.data))
       .catch(err => console.log(err));
   }, []);
-  
+  {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
 
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_product/fetchView',{
-      params: {id: id}
-    })
-      .then(res => setProductSelectedFetch(res.data))
-      .catch(err => console.log(err));
-  }, []);
 
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_assembly/fetchView',{
-      params: {id: id}
-    })
-      .then(res => setAssemblySelectedFetch(res.data))
-      .catch(err => console.log(err));
-  }, []);
 
+  //Where clause sa product PR
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_spare/fetchView',{
-      params: {id: id}
+    axios.get(BASE_URL + '/PR_product/fetchPrProduct', {
+      params: {
+        id: id
+      }
     })
-      .then(res => setSpareSelectedFetch(res.data))
+      .then(res => {
+        const data = res.data;
+        setProductSelectedFetch(data);
+        const selectedPRproduct = data.map((row) => ({
+          value: row.product_id,
+          label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
+        }));
+        setvaluePRproduct(selectedPRproduct);
+      })
       .catch(err => console.log(err));
-  }, []);
-  
+  }, [id]);
+
+  //Where clause ng assembly
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_subpart/fetchView',{
-      params: {id: id}
+    axios.get(BASE_URL + '/PR_assembly/fetchViewAssembly', {
+      params: {
+        id: id
+      }
     })
-      .then(res => setSubPartSelectedFetch(res.data))
+      .then(res => {
+        const data = res.data;
+        setAssemblySelectedFetch(data);
+        const selectedPRAssembly = data.map((row) => ({
+          value: row.id,
+          label: `Assembly Code: ${row.assembly.assembly_code} / Name: ${row.assembly.assembly_name}`,
+        }));
+        setvaluePRassembly(selectedPRAssembly);
+      })
       .catch(err => console.log(err));
-  }, []);
+  }, [id]);
+
+
+  //Where clause sa spare parts
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_spare/fetchViewSpare', {
+      params: {
+        id: id
+      }
+    })
+      .then(res => {
+        const data = res.data;
+        setSpareSelectedFetch(data);
+        const selectedPRspare = data.map((row) => ({
+          value: row.id,
+          label: `Spare Code: ${row.sparePart.spareParts_code} / Name: ${row.sparePart.spareParts_name}`,
+        }));
+        setvalueSpare(selectedPRspare);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
+
+
   
+  //Where clause sa sub parts
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_subpart/fetchViewSubpart', {
+      params: {
+        id: id
+      }
+    })
+      .then(res => {
+        const data = res.data;
+        setSubPartSelectedFetch(data);
+        const selectedPRsub = data.map((row) => ({
+          value: row.id,
+          label: `SubPart Code: ${row.subPart.subPart_code} / Name: ${row.subPart.subPart_name}`,
+        }));
+        setvaluePRsub(selectedPRsub);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
 
 
 
@@ -237,37 +296,24 @@ function PurchaseRequestPreview() {
       }
     })
     .then(res => {
-      // console.log('Response data:', res.data); // Log the entire response data
       setPrNum(res.data.pr_num);
       setStatus(res.data.status);
       setDateCreated(res.data.createdAt);
-      // Update this line to parse the date string correctly
       const parsedDate = new Date(res.data.date_needed);
       setDateNeed(parsedDate);
-
       setUseFor(res.data.used_for);
       setRemarks(res.data.remarks);
       setProduct(res.date.product_id);
-
-
-
-   
-      
-
     })
     .catch(err => {
       console.error(err);
-      // Handle error state or show an error message to the user
     });
   }, [id]);
-
-
-
-  console.log('Status:'+ status);
   
   const selectProduct = (selectedOptions) => {
     setProduct(selectedOptions);
 };
+
 const displayDropdown = () => {
   setShowDropdown(true);
 };
@@ -382,12 +428,8 @@ const update = async e => {
         });
       }
     })
-
   }
-
   setValidated(true); //for validations
-
-  
 };
 
   return (
@@ -510,13 +552,13 @@ const update = async e => {
                                               productSelectedFetch.length > 0 ? (
                                               productSelectedFetch.map((product) => (
                                                 <tr >
-                                                  <td >{product.product.product_code}</td>
-                                                  <td > 
+                                                  <td>{product.product.product_code}</td>
+                                                  <td> 
                                                     {product.quantity}
                                                   </td>
-                                                  <td >{product.product.product_unitMeasurement}</td>                                           
-                                                  <td >{product.product.product_name}</td>  
-                                                  <td >
+                                                  <td>{product.product.product_unitMeasurement}</td>                                           
+                                                  <td>{product.product.product_name}</td>  
+                                                  <td>
                                                     {product.description}
                                                   </td>
                                                 </tr>
@@ -534,11 +576,11 @@ const update = async e => {
                                               assemblySelectedFetch.length > 0 ? (
                                                 assemblySelectedFetch.map((product) => (
                                                 <tr >
-                                                  <td >{product.assembly.assembly_code}</td>
-                                                  <td > {product.quantity}</td>
-                                                  <td > -- </td>                                           
-                                                  <td >{product.assembly.assembly_name}</td>  
-                                                  <td >{product.description}</td>
+                                                  <td>{product.assembly.assembly_code}</td>
+                                                  <td> {product.quantity}</td>
+                                                  <td> -- </td>                                           
+                                                  <td>{product.assembly.assembly_name}</td>  
+                                                  <td>{product.description}</td>
                                                 </tr>
                                               ))
                                             ) : (
@@ -631,28 +673,10 @@ const update = async e => {
                                             </tbody>
                                         {showDropdown && (
                                         <div className="dropdown mt-3">
-                                          
-                                          {/* <Select
-                                            isMulti
-                                            options={fetchProduct.map(prod => ({
-                                              value: prod.product_id,
-                                              label: <div>
-                                                Product Code: <strong>{prod.product_code}</strong> / 
-                                                Product Name: <strong>{prod.product_name}</strong> / 
-                                                
-                                              </div>,
-                                              code: prod.product_code,
-                                              name: prod.product_name,
-                                              um: prod.product_unitMeasurement,
-                                              created: prod.createdAt
-                                            }))}
-                                            onChange={selectProduct}
-                                          /> */}
-
                                               <Select
                                                   isMulti
                                                   options={fetchProduct.map(prod => ({
-                                                    value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
+                                                    value: `${prod.product_id}_${prod.product_code}_Product`, 
                                                     label: <div>
                                                       Product Code: <strong>{prod.product_code}</strong> / 
                                                       Product Name: <strong>{prod.product_name}</strong> / 
@@ -664,7 +688,7 @@ const update = async e => {
                                                     created: prod.createdAt
                                                   }))
                                                   .concat(fetchAssembly.map(assembly => ({
-                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
+                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, 
                                                     label: <div>
                                                       Assembly Code: <strong>{assembly.assembly_code}</strong> / 
                                                       Assembly Name: <strong>{assembly.assembly_name}</strong> / 
@@ -676,7 +700,7 @@ const update = async e => {
                                                     created: assembly.createdAt
                                                   })))
                                                   .concat(fetchSpare.map(spare => ({
-                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`, // Indicate that it's an assembly
+                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`,
                                                     label: <div>
                                                       Product Part Code: <strong>{spare.spareParts_code}</strong> / 
                                                       Product Part Name: <strong>{spare.spareParts_name}</strong> / 
@@ -701,6 +725,7 @@ const update = async e => {
                                                   })))
                                                 }
                                                   onChange={selectProduct}
+                                                  value={[...valuePRproduct, ...valuePRassembly, ...valuePRspare, ...valuePRsub]}
                                                 />
                                         </div>
                                       )}
@@ -720,9 +745,6 @@ const update = async e => {
                             </div>
                         
                         <div className='save-cancel'>
-                              {/* {!isReadOnly && (
-                                <Button type='button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
-                              )} */}
                               {isReadOnly && (
                                 <Button type='submit' className='btn btn-success' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                               )}
@@ -822,63 +844,58 @@ const update = async e => {
                               }                                         
                         </div>
                         </Form>
-        <Modal show={showModal} onHide={handleClose}>
-          <Form>
-            <Modal.Header closeButton>
-              <Modal.Title style={{ fontSize: '24px' }}>For Rejustification</Modal.Title>     
-            </Modal.Header>
-              <Modal.Body>
-              <div className="row mt-3">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
-                                <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                  <DatePicker
-                                    readOnly
-                                    selected={dateNeed}
-                                    onChange={(date) => setDateNeed(date)}
-                                    dateFormat="MM/dd/yyyy"
-                                    placeholderText="Start Date"
-                                    className="form-control"
-                                  />
-                            </Form.Group>
+              <Modal show={showModal} onHide={handleClose}>
+                <Form>
+                  <Modal.Header closeButton>
+                    <Modal.Title style={{ fontSize: '24px' }}>For Rejustification</Modal.Title>     
+                  </Modal.Header>
+                    <Modal.Body>
+                    <div className="row mt-3">
+                                  <div className="col-6">
+                                    <Form.Group controlId="exampleForm.ControlInput1">
+                                      <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
+                                      <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
+                                    </Form.Group>
+                                  </div>
+                                  <div className="col-6">
+                                  <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
+                                      <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
+                                        <DatePicker
+                                          readOnly
+                                          selected={dateNeed}
+                                          onChange={(date) => setDateNeed(date)}
+                                          dateFormat="MM/dd/yyyy"
+                                          placeholderText="Start Date"
+                                          className="form-control"
+                                        />
+                                  </Form.Group>
+                                    </div>
+                                </div>
+                                
+                              <div className="row">
+                                  <Form.Group controlId="exampleForm.ControlInput1">
+                                      <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                      <Form.Control as="textarea"  onChange={e => setRejustifyRemarks(e.target.value)}  placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
+                                  </Form.Group>
+                                <div className="col-6">
+                                  <Form.Group controlId="exampleForm.ControlInput1">
+                                      <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
+                                      <input type="file" onChange={handleFileChange} />
+                                  </Form.Group>
+
+                                  </div>
                               </div>
-                          </div>
-                          
-                        <div className="row">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"  onChange={e => setRejustifyRemarks(e.target.value)}  placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
-                            </Form.Group>
-                          <div className="col-6">
-                            {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
-                                  <Paperclip size={20} />Upload Attachment
-                              </Link> */}
-
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
-                                {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
-                                <input type="file" onChange={handleFileChange} />
-                            </Form.Group>
-
-                            </div>
-                        </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                        Cancel
-                    </Button>
-                    <Button type="button" onClick={handleUploadRejustify} variant="warning" size="md" style={{ fontSize: '20px' }}>
-                        Save
-                    </Button>
-                </Modal.Footer>
-            </Form>
-          </Modal>
+                      </Modal.Body>
+                      <Modal.Footer>
+                          <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
+                              Cancel
+                          </Button>
+                          <Button type="button" onClick={handleUploadRejustify} variant="warning" size="md" style={{ fontSize: '20px' }}>
+                              Save
+                          </Button>
+                      </Modal.Footer>
+                  </Form>
+                </Modal>
                        
                        
             </div>
