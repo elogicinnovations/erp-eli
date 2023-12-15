@@ -40,7 +40,6 @@ function ReceivingManagementPreview() {
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
 
-
   // -------------------- fetch data value --------------------- //
   useEffect(() => {   
     axios.get(BASE_URL + '/PR/viewToReceive', {
@@ -61,16 +60,65 @@ function ReceivingManagementPreview() {
 // -------------------- end fetch data value --------------------- //
 
 const [products, setProducts] = useState([]);
+const [assembly, setAssembly] = useState([]);
+const [sparePart, setSparePart] = useState([]);
+const [subPart, setSubPart] = useState([]);
+const [checkedStatus, setcheckedStatus] = useState();
+const [quantity, setQuantity] = useState();
+const [qualityAssurance, setQualityAssurance] = useState(false);
+
 
 useEffect(() => {
-  axios.get(BASE_URL + '/PO_received/fetchView',{
+  axios.get(BASE_URL + '/PR_PO/fetchView_product',{
     params:{
       id: id
     }
   })
-    .then(res => setProducts(res.data))
+    .then(res => {
+      setProducts(res.data);
+
+      // Check if the status is "Active" and set suppStatus accordingly
+      if (res.data[0].quality_assurance === "Active") {
+        setcheckedStatus(true)
+        setQualityAssurance('Active'); // Check the checkbox
+    } else if (res.data[0].quality_assurance === "Inactive") {
+        setcheckedStatus(false)
+        setQualityAssurance('Inactive'); // Uncheck the checkbox
+    }
+    })
     .catch(err => console.log(err));
 }, []);
+
+useEffect(() => {
+  axios.get(BASE_URL + '/PR_PO/fetchView_asmbly',{
+    params:{
+      id: id
+    }
+  })
+    .then(res => setAssembly(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => {
+  axios.get(BASE_URL + '/PR_PO/fetchView_spare',{
+    params:{
+      id: id
+    }
+  })
+    .then(res => setSparePart(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => {
+  axios.get(BASE_URL + '/PR_PO/fetchView_subpart',{
+    params:{
+      id: id
+    }
+  })
+    .then(res => setSubPart(res.data))
+    .catch(err => console.log(err));
+}, []);
+
 
 
   const [showModal, setShowModal] = useState(false);
@@ -122,8 +170,8 @@ const add = async e => {
   }
   else{
 
-    axios.post(`${BASE_URL}/PO_Received/insertToInventory`, {
-      id: id,
+    axios.put(`${BASE_URL}/PR_PO/received`, { 
+      id,quantity, qualityAssurance
     })
     .then((res) => {
       console.log(res);
@@ -153,6 +201,305 @@ const add = async e => {
   
 };
 
+//-----------------------------------Start of Received Product----------------------------------------//
+const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) => {
+
+  const totalReceived = (quantityDelivered + value);
+
+  if (parseInt(totalReceived) > parseInt(quantityReceived)) 
+  {
+    swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Quantity received is not more than ordered quantity and quantity delivered',
+    });
+  }              
+  else
+  {
+    const totalValue = value + quantityDelivered;
+    axios.post(BASE_URL + '/PR_PO/receivedPRD', 
+    { 
+      totalValue, id, quantityReceived
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        swal({
+          title: 'Received Successfully',
+          text: 'The item has been added to inventory.',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+      swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Please contact our support'
+      });
+    }
+    })
+  }
+  };
+
+  const handleActiveStatus= (id, qualityAssurance) => 
+  {
+    if(status === 'Active'){
+      setStatus('Inactive')
+      }
+      else{
+          setStatus('Active')
+      }
+
+    axios.post(BASE_URL + '/PR_PO/receivedPRD', 
+      { 
+        id, qualityAssurance
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: 'Received Successfully',
+            text: 'The item has been added to inventory.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+      });
+  }
+//-----------------------------------End of Received Product----------------------------------------//
+
+//-----------------------------------Start of Received Assembly----------------------------------------//
+const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDelivered) => {
+
+  const totalReceived = (quantityDelivered + value);
+
+  if (parseInt(totalReceived) > parseInt(quantityReceived)) 
+  {
+    swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Quantity received is not more than ordered quantity and quantity delivered',
+    });
+  }              
+  else
+  {
+    const totalValue = value + quantityDelivered;
+    axios.post(BASE_URL + '/PR_PO/receivedAssembly', 
+    { 
+      totalValue, id, quantityReceived
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        swal({
+          title: 'Received Successfully',
+          text: 'The item has been added to inventory.',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+      swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Please contact our support'
+      });
+    }
+    })
+  }
+  };
+
+  const handleActiveStatusAssembly= (id, qualityAssurance) => 
+  {
+    if(qualityAssurance === 'Active'){
+      setQualityAssurance('Inactive')
+  }
+  else{
+    setQualityAssurance('Active')
+  }
+
+      axios.post(BASE_URL + '/PR_PO/receivedAssembly', 
+      { 
+        id, qualityAssurance
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: 'Received Successfully',
+            text: 'The item has been added to inventory.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+      });
+  }
+//-----------------------------------End of Received Assembly----------------------------------------//
+//-----------------------------------Start of Received Spare Part----------------------------------------//
+const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDelivered) => {
+
+  const totalReceived = (quantityDelivered + value);
+
+  if (parseInt(totalReceived) > parseInt(quantityReceived)) 
+  {
+    swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Quantity received is not more than ordered quantity and quantity delivered',
+    });
+  }              
+  else
+  {
+    const totalValue = value + quantityDelivered;
+    axios.post(BASE_URL + '/PR_PO/receivedSparePart', 
+    { 
+      totalValue, id, quantityReceived
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        swal({
+          title: 'Received Successfully',
+          text: 'The item has been added to inventory.',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+      swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Please contact our support'
+      });
+    }
+    })
+  }
+  };
+
+  const handleActiveStatusSparePart= (id, qualityAssurance) => 
+  {
+    if(qualityAssurance === 'Active'){
+      setQualityAssurance('Inactive')
+  }
+  else{
+    setQualityAssurance('Active')
+  }
+
+      axios.post(BASE_URL + '/PR_PO/receivedSparePart', 
+      { 
+        id, qualityAssurance
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: 'Received Successfully',
+            text: 'The item has been added to inventory.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+      });
+  }
+//-----------------------------------End of Received Spare Part----------------------------------------//
+//-----------------------------------Start of Received Sub Part----------------------------------------//
+const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelivered) => {
+
+  const totalReceived = (quantityDelivered + value);
+
+  if (parseInt(totalReceived) > parseInt(quantityReceived)) 
+  {
+    swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Quantity received is not more than ordered quantity and quantity delivered',
+    });
+  }              
+  else
+  {
+    const totalValue = value + quantityDelivered;
+    axios.post(BASE_URL + '/PR_PO/receivedSubPart', 
+    { 
+      totalValue, id, quantityReceived
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        swal({
+          title: 'Received Successfully',
+          text: 'The item has been added to inventory.',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+      swal({
+        icon: 'error',
+        title: 'Something went wrong',
+        text: 'Please contact our support'
+      });
+    }
+    })
+  }
+  };
+
+  const handleActiveStatusSubPart= (id, qualityAssurance) => 
+  {
+    if(qualityAssurance === 'Active'){
+      setQualityAssurance('Inactive')
+  }
+  else{
+    setQualityAssurance('Active')
+  }
+
+      axios.post(BASE_URL + '/PR_PO/receivedSubPart', 
+      { 
+        id, qualityAssurance
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: 'Received Successfully',
+            text: 'The item has been added to inventory.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+            window.location.reload();
+            // reloadTable();
+          });
+        } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+      }
+      });
+  }
+//-----------------------------------End of Received Sub Part----------------------------------------//
+
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -173,7 +520,7 @@ const add = async e => {
                 </div>
                 </Col>
             </Row>
-                        <Form noValidate validated={validated} onSubmit={add}>
+              <Form noValidate validated={validated} onSubmit={add}>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Purchase Request Details
                           <span
@@ -252,28 +599,116 @@ const add = async e => {
                                             </thead>
                                             <tbody>
                                                   {products.map((data,i) =>(
-                                                    <tr key={i}>
-                                                    <td>{data.product.product_code}</td>
-                                                    <td>{data.product.product_name}</td>
+                                                    <tr key={data.id}>
+                                                    <td>{data.product_tag_supplier.product.product_code}</td>
+                                                    <td>{data.product_tag_supplier.product.product_name}</td>
                                                     <td>{data.quantity}</td>
-                                                    <td>{data.product.product_unitMeasurement}</td>
-                                                    <td></td>
+                                                    <td>{data.product_tag_supplier.product.product_unitMeasurement}</td>
+                                                    <td>{data.quantity_received}</td>
                                                     <td>
-                                                        <Form.Group controlId="exampleForm.ControlInput1">
-                                                            <Form.Control type="number" style={{height:'40px', fontSize:'15px'}} placeholder='0.0'/>
-                                                        </Form.Group>
+                                                    <input
+                                                          type="number"
+                                                          onBlur={(e) => handleQuantityChange(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
                                                     </td>
                                                     <td>
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
-                                                        defaultChecked={FormData.ustatus} // Set defaultChecked based on ustatus
+                                                        defaultChecked={checkedStatus} // Set defaultChecked based on ustatus
+                                                        onChange={(e) => handleActiveStatus(data.id, qualityAssurance)}
+                                                        
                                                         />
                                                         </div>
                                                     </td>
-                                                    {/* <td>
-                                                        <button type="button" className='move_btn'><ArrowUUpLeft size={20} /><p1>Move To Inventory</p1></button>
-                                                    </td> */}
+                                                    </tr>
+                                                  ))}
+
+                                                  
+                                                  {assembly.map((data,i) =>(
+                                                    <tr key={data.id}>
+                                                    <td>{data.assembly_supplier.assembly.assembly_code}</td>
+                                                    <td>{data.assembly_supplier.assembly.assembly_name}</td>
+                                                    <td>{data.quantity}</td>
+                                                    <td></td>
+                                                    <td>{data.quantity_received}</td>
+                                                    <td>
+                                                    <input
+                                                          type="number"
+                                                          onBlur={(e) => handleQuantityChangeAssembly(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <div className="tab_checkbox">
+                                                        <input
+                                                        type="checkbox"
+                                                        defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
+                                                        onChange={(e) => handleActiveStatusAssembly(data.id, qualityAssurance)}
+                                                        />
+                                                        </div>
+                                                    </td>
+                                                    </tr>
+                                                  ))}
+
+                                                  {sparePart.map((data,i) =>(
+                                                    <tr key={data.id}>
+                                                    <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
+                                                    <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
+                                                    <td>{data.quantity}</td>
+                                                    <td></td>
+                                                    <td>{data.quantity_received}</td>
+                                                    <td>
+                                                    <input
+                                                          type="number"
+                                                          onBlur={(e) => handleQuantityChangeSparePart(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <div className="tab_checkbox">
+                                                        <input
+                                                        type="checkbox"
+                                                        defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
+                                                        onChange={(e) => handleActiveStatusSparePart(data.id, qualityAssurance)}
+                                                        />
+                                                        </div>
+                                                    </td>
+                                                    </tr>
+                                                  ))}
+
+                                                  {subPart.map((data,i) =>(
+                                                    <tr key={data.id}>
+                                                    <td>{data.subpart_supplier.subPart.subPart_code}</td>
+                                                    <td>{data.subpart_supplier.subPart.subPart_name}</td>
+                                                    <td>{data.quantity}</td>
+                                                    <td></td>
+                                                    <td>{data.quantity_received}</td>
+                                                    <td>
+                                                    <input
+                                                          type="number"
+                                                          onBlur={(e) => handleQuantityChangeSubPart(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          required
+                                                          placeholder="Input quantity"
+                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <div className="tab_checkbox">
+                                                        <input
+                                                        type="checkbox"
+                                                        defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
+                                                        onChange={(e) => handleActiveStatusSubPart(data.id, qualityAssurance)}
+                                                        />
+                                                        </div>
+                                                    </td>
                                                     </tr>
                                                   ))}
                                         </tbody>

@@ -19,6 +19,13 @@ const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
   product_tag_supplier_ID: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  quantity_received: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  quality_assurance: {
+    type: DataTypes.STRING,
   }
 });
 

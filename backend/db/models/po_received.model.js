@@ -8,7 +8,7 @@ const POReceived = sequelize.define('po_received', {
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id: {
+  pr_canvassed_prds_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
