@@ -237,8 +237,8 @@ router.route('/update').put(
         },
       });
 
-      if (existingDataCode) {
-        res.status(201).send("Exist");
+      if (!existingDataCode) {
+        res.status(201).send("Not Exist");
       } else {
           let image_blob, image_blobFiletype;
 

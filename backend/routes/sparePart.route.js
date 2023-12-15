@@ -61,6 +61,7 @@ router.route('/fetchTable').get(async (req, res) => {
 router.route('/create').post(async (req, res) => {
     try {
        const {code, name, supp, desc, SubParts, SpareaddPriceInput} = req.body;
+
         // Check if the supplier code is already exists in the table
         console.log(code);
         const existingDataCode = await SparePart.findOne({
@@ -97,6 +98,7 @@ router.route('/create').post(async (req, res) => {
             });
           }
 
+          if(Array.isArray(SubParts)){
           for (const subPart of SubParts) {
             const subPartValue = subPart.value;
 
@@ -107,25 +109,25 @@ router.route('/create').post(async (req, res) => {
                 subPart_id: subPartValue,
             });
           }
+          }
     
-    
-          res.status(200).json();
+          return res.status(200).json();
         }
       } catch (err) {
         console.error(err);
-        res.status(500).send('An error occurred');
+        return res.status(500).send('An error occurred');
       }
 });
 
 
 router.route('/update').put(async (req, res) => {
   try {
-
+    const {id, code, name, supp, desc, SubParts, addPriceInput} = req.body;
     // Check if the email already exists in the table for other records
     const existingData = await SparePart.findOne({
       where: {
-        spareParts_code: req.query.code,
-        id: { [Op.ne]: req.query.id }, // Exclude the current record
+        spareParts_code: code,
+        id: { [Op.ne]: id }, // Exclude the current record
       },
     });
 
@@ -136,47 +138,49 @@ router.route('/update').put(async (req, res) => {
       // Update the record in the table
       const affectedRows = await SparePart.update(
         {
-          spareParts_code: req.query.code.toUpperCase(),
-          spareParts_name: req.query.name,
-          spareParts_desc: req.query.desc
+          spareParts_code: code ? code.toUpperCase() : null,
+          spareParts_name: name,
+          spareParts_desc: desc
         },
         {
-          where: { id: req.query.id },
+          where: { id: id },
         }
       );
 
       if(affectedRows){
         const deletesubpart  = SparePart_SubPart.destroy({
           where : {
-            sparePart_id: req.query.id
+            sparePart_id: id
           }
         })
         if(deletesubpart){
-          for (const subPart of req.query.SubParts) {
+
+          if(Array.isArray(SubParts)){
+            for (const subPart of SubParts) {
             const subPartValue = subPart.value;
   
               console.log('subpart value: ' + subPartValue)
           
               await SparePart_SubPart.create({
-                sparePart_id: req.query.id,
+                  sparePart_id: id,
                 subPart_id: subPartValue,
               });
         }
+          }
       }
-
 
         const deletesupp  = SparePart_Supplier.destroy({
           where : {
-            sparePart_id: req.query.id
+            sparePart_id: id
           }
         })
         if(deletesupp){
-          for (const supplier of req.query.addPriceInput) {
+          for (const supplier of addPriceInput) {
             const supplierValue = supplier.code;
             const supplierPrice = supplier.price;
     
             await SparePart_Supplier.create({
-                sparePart_id: req.query.id,
+                sparePart_id: id,
                 supplier_code: supplierValue,
                 supplier_price: supplierPrice
             });
@@ -212,8 +216,6 @@ router.route('/update').put(async (req, res) => {
       //   }
       //   );
       // }
-
-
 
       res.status(200).json();
     }

@@ -756,7 +756,8 @@ useEffect(() => {
                                             <input
                                               type="number"
                                               style={{ height: '50px' }}
-                                              value={prod.product_price}
+                                              value={prod.product_price || ''}
+                                              onKeyDown={(e) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
                                               onChange={(e) => handlePriceChange(i, e.target.value)}
                                             />
                                           </td>

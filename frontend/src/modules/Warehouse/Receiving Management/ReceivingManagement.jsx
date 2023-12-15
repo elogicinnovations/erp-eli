@@ -28,6 +28,7 @@ import {
   import '../../../assets/skydash/js/off-canvas';
   
   import * as $ from 'jquery';
+import Header from '../../../partials/header';
 
 function ReceivingManagement() {
   const navigate = useNavigate();

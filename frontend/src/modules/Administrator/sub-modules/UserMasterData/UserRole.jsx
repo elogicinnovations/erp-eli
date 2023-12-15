@@ -35,6 +35,7 @@ import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstr
 import "../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import Header from "../../../../partials/header";
 
 function UserRole() {
   function formatDate(isoDate) {

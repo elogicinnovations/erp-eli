@@ -31,6 +31,7 @@ import "../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.boot
 import "../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import Header from "../../../../../partials/header";
 
 function BinLocation() {
   // Artifitial data
@@ -86,7 +87,10 @@ function BinLocation() {
     setShowModal(false);
   };
 
-  const handleShow = () => setShowModal(true);
+  const handleShow = () => {
+    setValidated(false);
+    setShowModal(true);
+  };
 
   useEffect(() => {
     axios
@@ -192,6 +196,10 @@ function BinLocation() {
               ]);
 
               setShowModal(false);
+
+              setbinLocationName("");
+              setbinLocationSubName("");
+              setbinLocationRemarks("");
             });
           } else if (response.status === 201) {
             swal({
@@ -529,6 +537,7 @@ function BinLocation() {
                   placeholder="Enter Name of the Bin Location..."
                   style={{ height: "40px", fontSize: "15px" }}
                   required
+                  value={binLocationName}
                   onChange={(e) => setbinLocationName(e.target.value)}
                 />
               </Form.Group>
@@ -543,6 +552,7 @@ function BinLocation() {
                   placeholder="Enter Sub-Name of the Bin Location..."
                   style={{ height: "40px", fontSize: "15px" }}
                   required
+                  value={binLocationSubName}
                   onChange={(e) => setbinLocationSubName(e.target.value)}
                 />
               </Form.Group>
@@ -554,6 +564,7 @@ function BinLocation() {
                   type="text"
                   placeholder="Enter Bin Location Remarks..."
                   style={{ height: "40px", fontSize: "15px" }}
+                  value={binLocationRemarks}
                   onChange={(e) => setbinLocationRemarks(e.target.value)}
                 />
               </Form.Group>

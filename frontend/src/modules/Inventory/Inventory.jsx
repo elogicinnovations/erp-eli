@@ -23,6 +23,7 @@ import {
   } from "@phosphor-icons/react";
 
 import * as $ from 'jquery';  
+import Header from '../../partials/header';
 
 function Inventory() {
 const navigate = useNavigate()

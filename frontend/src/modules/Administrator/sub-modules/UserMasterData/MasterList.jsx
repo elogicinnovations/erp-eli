@@ -34,6 +34,7 @@ import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstr
 import "../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import Header from "../../../../partials/header";
 
 function MasterList() {
   const [masterListt, setmasterListt] = useState([]);
@@ -279,63 +280,72 @@ function MasterList() {
           icon: "error",
           button: "OK",
         });
-      } else if (formData.caddress === "") {
+      }
+      if (formData.caddress === "") {
         swal({
           title: "Required Field",
           text: "Address is Required",
           icon: "error",
           button: "OK",
         });
-      } else if (formData.cnum === "") {
+      }
+      if (formData.cnum === "") {
         swal({
           title: "Required Field",
           text: "Contact is Required",
           icon: "error",
           button: "OK",
         });
-      } else if (!isValidPhoneNumber(formData.cnum)) {
+      }
+       if (!isValidPhoneNumber(formData.cnum)) {
         swal({
           title: "Invalid Phone Number Format",
           text: "Please enter a valid number",
           icon: "error",
           button: "OK",
         });
-      } else if (formData.cemail === "") {
+      }
+       if (formData.cemail === "") {
         swal({
           title: "Required Field",
           text: "Email is Required",
           icon: "error",
           button: "OK",
         });
-      } else if (!isValidEmail(formData.cemail)) {
+      }
+       if (!isValidEmail(formData.cemail)) {
         swal({
           title: "Invalid Email Format",
           text: "Please enter a valid email address",
           icon: "error",
           button: "OK",
         });
-      } else if (formData.cuname === "") {
+      }
+       if (formData.cuname === "") {
         swal({
           title: "Required Field",
           text: "Username is Required",
           icon: "error",
           button: "OK",
         });
-      } else if (formData.crole === "") {
+      }
+       if (formData.crole === "") {
         swal({
           title: "Required Field",
           text: "Access Role is Required",
           icon: "error",
           button: "OK",
         });
-      } else if (formData.cpass === "") {
+      }
+       if (formData.cpass === "") {
         swal({
           title: "Required Field",
           text: "Password is Required",
           icon: "error",
           button: "OK",
         });
-      } else if (formData.cpass != formData.cpass2) {
+      }
+       if (formData.cpass != formData.cpass2) {
         swal({
           title: "Password error",
           text: "Please confirm your password",
@@ -401,6 +411,14 @@ function MasterList() {
         }
       }
     } catch (err) {
+      if(err.response.status === 400){
+        swal({
+          icon: "error",
+          title: 'Ops...',
+          text: err.response.data.errors[0].message
+        });
+      }
+      else
       console.log(err);
     }
   };
@@ -694,6 +712,8 @@ function MasterList() {
           <div className="pagination-contains"></div>
         </div>
       </div>
+
+      {/* Add User */}
       <Modal
         show={showModal}
         onHide={handleClose}

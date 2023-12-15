@@ -167,8 +167,7 @@ const update = async (e) => {
   } else {
 
     axios
-      .put(`${BASE_URL}/sparePart/update`, null, {
-        params: {
+      .put(`${BASE_URL}/sparePart/update`,{
           id,
           code,
           name,
@@ -176,8 +175,6 @@ const update = async (e) => {
           desc,
           SubParts,
           addPriceInput
-        }
-        
       })
       .then((res) => {
         if (res.status === 200) {

@@ -42,6 +42,7 @@ import {
   } from "@phosphor-icons/react";
   
   import * as $ from 'jquery';
+import Header from '../../partials/header';
 
 
 ///tryyyy
@@ -293,7 +294,7 @@ function Dashboard() {
                               <UserCircle size={35}/>
                           </div>
                           <div className="username">
-                            <h3>User Name</h3>
+                            <h3>{username}</h3>
                           </div>
                       </div>
                   </div>

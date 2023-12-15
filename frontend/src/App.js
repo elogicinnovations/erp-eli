@@ -73,12 +73,14 @@ import Sidebar from "./modules/Sidebar/sidebar";
 import { DataProvider } from './modules/Forgot Password/sub-modules/data/dataPost';
 import ProtectedRoutes from "./hooks/protectedRoute";
 import Header from "./modules/Sidebar/header";
+import GuestRoute from "./hooks/guestRoute";
 
 function App() {
   return (
     <Router>
     <div className="app">
       <DataProvider>
+        <GuestRoute>
         <Routes>
           <Route
             path="/"
@@ -97,6 +99,7 @@ function App() {
             element={<ConfirmPass />}
           />
         </Routes>
+        </GuestRoute>
       </DataProvider>
 
     <div className="main-of-containers">
