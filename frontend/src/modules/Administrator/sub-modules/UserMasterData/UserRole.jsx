@@ -257,7 +257,7 @@ function UserRole() {
                         {/* Render the icon based on the state */}
                         {/* Render the icon based on the state */}
                         {isVertical[data.col_id] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -269,7 +269,7 @@ function UserRole() {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {

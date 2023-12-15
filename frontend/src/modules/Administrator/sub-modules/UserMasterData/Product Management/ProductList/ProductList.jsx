@@ -14,10 +14,10 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
-  CircleNotch, 
+  CircleNotch,
 } from "@phosphor-icons/react";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -73,14 +73,14 @@ function ProductList() {
     }
   };
 
-  const reloadTable  = () => {
+  const reloadTable = () => {
     axios
       .get(BASE_URL + "/product/fetchTable")
       .then((res) => setproduct(res.data))
       .catch((err) => console.log(err));
-}
+  };
   useEffect(() => {
-    reloadTable()
+    reloadTable();
   }, []);
 
   function formatDate(isoDate) {
@@ -169,7 +169,6 @@ function ProductList() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-
   //This section when user click the checkbox in th, should check all the checkbox in td
   const [show, setShow] = useState(false);
   const [selectAllChecked, setSelectAllChecked] = useState(false);
@@ -178,57 +177,56 @@ function ProductList() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  
+
   const handleCheckboxChange = (productId) => {
-  const updatedCheckboxes = [...selectedCheckboxes];
+    const updatedCheckboxes = [...selectedCheckboxes];
 
-  if (updatedCheckboxes.includes(productId)) {
-    updatedCheckboxes.splice(updatedCheckboxes.indexOf(productId), 1);
-  } else {
-    updatedCheckboxes.push(productId);
-  }
+    if (updatedCheckboxes.includes(productId)) {
+      updatedCheckboxes.splice(updatedCheckboxes.indexOf(productId), 1);
+    } else {
+      updatedCheckboxes.push(productId);
+    }
 
-  setSelectedCheckboxes(updatedCheckboxes);
-  setShowChangeStatusButton(updatedCheckboxes.length > 0);
-};
+    setSelectedCheckboxes(updatedCheckboxes);
+    setShowChangeStatusButton(updatedCheckboxes.length > 0);
+  };
 
-const handleSelectAllChange = () => {
-  const allProductIds = product.map((data) => data.product_id);
-  setSelectedCheckboxes(selectAllChecked ? [] : allProductIds);
-  setShowChangeStatusButton(!selectAllChecked);
-  $("input[type='checkbox']").prop("checked", !selectAllChecked);
-};
+  const handleSelectAllChange = () => {
+    const allProductIds = product.map((data) => data.product_id);
+    setSelectedCheckboxes(selectAllChecked ? [] : allProductIds);
+    setShowChangeStatusButton(!selectAllChecked);
+    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  };
 
+  const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
 
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
 
-const [selectedStatus, setSelectedStatus] = useState('Active'); // Add this state
-
-const handleStatusChange = (event) => {
-  setSelectedStatus(event.target.value);
-};
-
-const handleSave = () => {
-  axios.put(BASE_URL + "/product/statusupdate", {
-    productIds: selectedCheckboxes,
-    status: selectedStatus,
-  })
-  .then((res) => {
-    if (res.status === 200) {
-      swal({
-        title: 'Status Updating!',
-        text: 'The status has been updated successfully.',
-        icon: 'success',
-        button: 'OK'
-      }).then(() => {
-        handleClose();
-        reloadTable();
+  const handleSave = () => {
+    axios
+      .put(BASE_URL + "/product/statusupdate", {
+        productIds: selectedCheckboxes,
+        status: selectedStatus,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: "Status Updating!",
+            text: "The status has been updated successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleClose();
+            reloadTable();
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
       });
-    } 
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-};
+  };
 
   useEffect(() => {
     // Initialize DataTable when role data is available
@@ -270,36 +268,42 @@ const handleSave = () => {
               </div>
 
               <div className="button-create-side">
-              {showChangeStatusButton ? (
-                <div className="Buttonmodal-change">
-                  <button className="buttonchanges" onClick={handleShow}>
-                    <span style={{}}>
-                      <CircleNotch size={25} />
-                    </span>
-                    Change Status
-                  </button>
-                </div>
-              ) : (
-                <div className="Buttonmodal-new">
-                  <Link to="/createProduct" className="button">
-                    <span style={{}}>
-                      <Plus size={25} />
-                    </span>
-                    New Product
-                  </Link>
-                </div>
-              )}
-            </div>
-
-
+                {showChangeStatusButton ? (
+                  <div className="Buttonmodal-change">
+                    <button
+                      className="buttonchanges"
+                      onClick={handleShow}>
+                      <span style={{}}>
+                        <CircleNotch size={25} />
+                      </span>
+                      Change Status
+                    </button>
+                  </div>
+                ) : (
+                  <div className="Buttonmodal-new">
+                    <Link
+                      to="/createProduct"
+                      className="button">
+                      <span style={{}}>
+                        <Plus size={25} />
+                      </span>
+                      New Product
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+              <table
+                className="table-hover"
+                id="order-listing">
                 <thead>
                   <tr>
-                    <th className="tableh" id="check">
+                    <th
+                      className="tableh"
+                      id="check">
                       <input
                         type="checkbox"
                         checked={selectAllChecked}
@@ -319,11 +323,12 @@ const handleSave = () => {
                   {product.map((data, i) => (
                     <tr key={i}>
                       <td>
-                        <input type="checkbox" 
-                        checked={selectedCheckboxes.includes(data.product_id)}
-                        onChange={() => handleCheckboxChange(data.product_id)}
+                        <input
+                          type="checkbox"
+                          checked={selectedCheckboxes.includes(data.product_id)}
+                          onChange={() => handleCheckboxChange(data.product_id)}
                         />
-                        </td>
+                      </td>
                       <td
                         onClick={() =>
                           navigate(`/productSupplier/${data.product_id}`)
@@ -346,23 +351,27 @@ const handleSave = () => {
                           ? data.product_unitMeasurement
                           : "--"}
                       </td>
-                      
+
                       <td
-                        onClick={() => 
-                          navigate(`/productSupplier/${data.product_id}`)}>
-                          <div
-                            className="colorstatus"
-                            style={{
-                              backgroundColor: data.product_status === 'Active' ? 'green' : 'red',
-                              color: 'white',
-                              padding: '5px',
-                              borderRadius: '5px',
-                              textAlign: 'center',  
-                              width: '80px'
-                            }}>
-                            {data.product_status}
-                          </div>
-                        </td>
+                        onClick={() =>
+                          navigate(`/productSupplier/${data.product_id}`)
+                        }>
+                        <div
+                          className="colorstatus"
+                          style={{
+                            backgroundColor:
+                              data.product_status === "Active"
+                                ? "green"
+                                : "red",
+                            color: "white",
+                            padding: "5px",
+                            borderRadius: "5px",
+                            textAlign: "center",
+                            width: "80px",
+                          }}>
+                          {data.product_status}
+                        </div>
+                      </td>
 
                       <td
                         onClick={() =>
@@ -380,7 +389,7 @@ const handleSave = () => {
 
                       <td>
                         {isVertical[data.product_id] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -388,7 +397,7 @@ const handleSave = () => {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -400,8 +409,13 @@ const handleSave = () => {
                           {setButtonVisibles(data.product_id) && (
                             <div
                               className="choices"
-                              style={{ position: "absolute" }}>    
-                              <Link to={`/updateProduct/${data.product_id}`} style={{fontSize:'12px'}} className='btn'>Update</Link>                         
+                              style={{ position: "absolute" }}>
+                              <Link
+                                to={`/updateProduct/${data.product_id}`}
+                                style={{ fontSize: "12px" }}
+                                className="btn">
+                                Update
+                              </Link>
                               <button
                                 className="btn"
                                 type="button"
@@ -423,37 +437,42 @@ const handleSave = () => {
           </div>
         </div>
       </div>
-            <Modal size="md" show={show} onHide={handleClose} backdrop="static" animation={false}>
-              <Modal.Header closeButton>
-                <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
-                <Form.Select
-                  style={{ height: "40px", fontSize: "15px" }}
-                  onChange={handleStatusChange}
-                  value={selectedStatus}>
-                    <option value="Active">
-                      Active
-                    </option>
-                    <option value="Inactive">
-                      Inactive
-                    </option>
-                </Form.Select>
-              </Form.Group>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="outline-warning" onClick={handleSave}
-                style={{ fontSize: "20px" }}>
-                  Save
-                </Button>
-                <Button variant="outline-secondary" onClick={handleClose}
-                style={{ fontSize: "20px" }}>
-                  Close
-                </Button>
-              </Modal.Footer>
-            </Modal>
+      <Modal
+        size="md"
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="exampleForm.ControlInput2">
+            <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
+            <Form.Select
+              style={{ height: "40px", fontSize: "15px" }}
+              onChange={handleStatusChange}
+              value={selectedStatus}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-warning"
+            onClick={handleSave}
+            style={{ fontSize: "20px" }}>
+            Save
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={handleClose}
+            style={{ fontSize: "20px" }}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

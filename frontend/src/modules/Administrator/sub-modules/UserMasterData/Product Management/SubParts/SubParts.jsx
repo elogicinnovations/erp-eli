@@ -394,6 +394,9 @@ function SubParts() {
     }));
   };
 
+  const closeVisible = () => {
+    setVisibleButtons({});
+  };
   const closeVisibleButtons = () => {
     setVisibleButtons({});
     setIsVertical({});
@@ -489,7 +492,7 @@ function SubParts() {
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
                         {isVertical[data.id] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -497,7 +500,7 @@ function SubParts() {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {

@@ -79,7 +79,7 @@ function UpdateAssemblyForm() {
   const [assembly_supp, setAssembly_supp] = useState([]);
   useEffect(() => {
     axios
-      .get(BASE_URL + "/assembly_supplier/fetchAssigned", {
+      .get(BASE_URL + "/supplier_assembly/fetchAssigned", {
         params: {
           id: id,
         },
@@ -89,15 +89,15 @@ function UpdateAssemblyForm() {
   }, [id]);
 
   //Fetching For Association of Assembly and Spare Part
-  const [sparePart, setSpareSpart] = useState([]);
+  const [spareParts, setSpareParts] = useState([]);
   useEffect(() => {
     axios
-      .get(BASE_URL + "/assembly_spare/fetchspareTable", {
+      .get(BASE_URL + "/spare_assembly/fetchinTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSpareSpart(res.data))
+      .then((res) => setSpareParts(res.data))
       .catch((err) => console.log(err));
   }, [id]);
 
@@ -112,13 +112,7 @@ function UpdateAssemblyForm() {
       })
       .then((res) => setSubParts(res.data))
       .catch((err) => console.log(err));
-  }, []);
-
-  //for supplier selection values
-  const [spareParts, setSparePart] = useState([]);
-  const handleSelectChange = (selectedOptions) => {
-    setSparePart(selectedOptions);
-  };
+  }, [id]);
 
   const [supp, setSupp] = useState([]);
   const handleSelectChange_Supp = (selectedOptions) => {
@@ -159,7 +153,8 @@ function UpdateAssemblyForm() {
             name,
             supp,
             desc,
-            sparePart,
+            spareParts,
+            Subparts,
           },
         })
         .then((res) => {
@@ -321,11 +316,11 @@ function UpdateAssemblyForm() {
                     <Form.Select
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
-                      {sparePart.map((spares, i) => (
+                      {spareParts.map((sparePart) => (
                         <option
-                          key={i}
-                          value={spares.id}>
-                          {spares.spareParts.spareParts_name}
+                          key={sparePart.spareParts.id}
+                          value={sparePart.spareParts.id}>
+                          {sparePart.spareParts.spareParts_name}
                         </option>
                       ))}
                     </Form.Select>

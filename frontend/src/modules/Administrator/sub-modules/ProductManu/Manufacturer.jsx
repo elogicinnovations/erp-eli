@@ -441,7 +441,7 @@ function Productvariants() {
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
                         {isVertical[data.manufacturer_code] ? (
-                          <DotsThreeCircle
+                          <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -449,7 +449,7 @@ function Productvariants() {
                             }}
                           />
                         ) : (
-                          <DotsThreeCircleVertical
+                          <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {
