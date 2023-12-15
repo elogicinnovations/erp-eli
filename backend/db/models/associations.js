@@ -51,6 +51,8 @@ const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
 const PO_Received = require("./po_received.model");
 
+const StockTransfer = require("./stock_mgmt.model");
+
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -281,14 +283,9 @@ Assembly_Supplier.belongsTo(Assembly, { foreignKey: "assembly_id"});
 Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
 Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
-
-//P0_received
-PR_PO.hasMany(PO_Received, { foreignKey: "pr_canvassed_prds_id" });
-PO_Received.belongsTo(PR_PO, { foreignKey: "pr_canvassed_prds_id" });
-// PO_Received.hasMany(PR_PO, { foreignKey: "received_id" });
-// PR_PO.belongsTo(PO_Received, {foreignKey: "received_id" });
-
-
+//Stock Transfer
+MasterList.hasMany(StockTransfer, { foreignKey: "col_id" });
+StockTransfer.belongsTo(MasterList, { foreignKey: "col_id" });
 
 
 module.exports = { 
@@ -343,5 +340,7 @@ module.exports = {
                     PR_PO_asmbly,
                     PR_PO_spare,
                     PR_PO_subpart,
-                    PO_Received
+                    PO_Received,
+
+                    StockTransfer
                 };
