@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Sidebar from '../../Sidebar/sidebar';
 import '../../../assets/global/style.css';
 import '../../styles/react-style.css';
@@ -11,6 +11,10 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+// import ExportToPDF from './export';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; // Import autoTable
 import {
     MagnifyingGlass,
     Gear, 
@@ -39,73 +43,158 @@ import {
 import Header from '../../../partials/header';
 
 function POTransactionReports() {
+  const tableRef = useRef(null);
 
-    
-// Artifitial data
+  // const exportToPdf = () => {
+  //   const input = tableRef.current;
 
-const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
+  //   if (input) {
+  //     html2canvas(input)
+  //       .then((canvas) => {
+  //         const imgData = canvas.toDataURL('image/png');
+  //         const pdf = new jsPDF('p', 'mm', 'a4');
+  //         pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.width, input.clientHeight / input.clientWidth * pdf.internal.pageSize.width);
+  //         pdf.save('exported-table.pdf');
+  //       });
+  //   }
+  // };
+  const exportToPdf = () => {
+    const pdf = new jsPDF('p', 'pt', 'letter');
+    const totalPagesExp = '{total_pages_count_string}';
+  
+    // Adjust your page settings as needed
+    // const pdfWidth = 612;
+    // const pdfHeight = 792;
+    const pdfWidth = 612;
+    const pdfHeight = 792;
+    const pageMargin = 40;
+    const contentWidth = pdfWidth - 2 * pageMargin;
+    const contentHeight = pdfHeight - 2 * pageMargin;
+    const lineHeight = 20;
+  
+    const allData = [
+      ...PO_prd,
+      ...PO_assmbly,
+      ...PO_spare,
+      ...PO_subpart
+    ];
+  
+    let cursorY = pageMargin;
+    let currentPage = 1;
+    // console.log(allData);
+
+  
+    const generatePageContent = (data) => {
+      // Construct the content of each page based on the data
+      const tableRows = data.map((rowData) => {
+        return Object.values(rowData).map(value => String(value));
+      });
+
+      // const tableRows = allData.map((rowData) => {
+      //   // Construct an array for each row, representing the values in the table
+      //   return [
+      //     rowData.pr_id,
+      //     rowData.purchase_req.updatedAt,
+      //     rowData.product_tag_supplier.product.product_code,
+      //     rowData.product_tag_supplier.product.product_name,
+      //     rowData.product_tag_supplier.product.product_unitMeasurement,
+      //     rowData.product_tag_supplier.supplier.supplier_name,
+      //     rowData.product_tag_supplier.product_price,
+      //     rowData.quantity,
+      //     rowData.product_tag_supplier.product_price * rowData.quantity
+      //   ];
+        
+      // });
       
-// Artifitial data
+  
+      const startY = cursorY;
+  const remainingPageSpace = contentHeight - (startY - pageMargin);
+  const maxRowsPerPage = Math.floor(remainingPageSpace / lineHeight);
+
+  const slicedRows = tableRows.slice(0, maxRowsPerPage);
+  cursorY += slicedRows.length * lineHeight;
+
+  const tableHeader = ['PO Number', 'PO Date', 'Product Code', 'Product', 'UOM', 'Supplier', 'Unit Cost', 'Quantity', 'Total'];
+  pdf.text(tableHeader, pageMargin, startY);
+  pdf.autoTable({
+    startY: cursorY,
+    head: [tableHeader], // Add your table header
+    body: slicedRows
+  });
+
+  if (tableRows.length > maxRowsPerPage) {
+    pdf.addPage();
+    currentPage++;
+    cursorY = pageMargin;
+    generatePageContent(tableRows.slice(maxRowsPerPage));
+  }
+    };
+  
+    generatePageContent(allData);
+  
+    // Add total pages count in the footer
+    const pageCountOptions = {
+      totalPages: totalPagesExp,
+      pageCounter: currentPage
+    };
+    pdf.putTotalPages(pageCountOptions);
+    
+    pdf.save('exported-table.pdf');
+  };
+  
+  
 
 const navigate = useNavigate();
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
+
+
+const [PO_prd, setPO_prd] = useState([]);
+const [PO_assmbly, setPO_assmbly] = useState([]);
+const [PO_spare, setPO_spare] = useState([]);
+const [PO_subpart, setPO_subpart] = useState([]);
   
-    useEffect(() => {
-        if ($('#order-listing').length > 0) {
-          $('#order-listing').DataTable();
-        }
-      }, []);
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_PO/PO_PRD')
+    .then(res => setPO_prd(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_PO/PO_asmbly')
+    .then(res => setPO_assmbly(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_PO/PO_spare')
+    .then(res => setPO_spare(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_PO/PO_subpart')
+    .then(res => setPO_subpart(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+
+
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($('#order-listing').length > 0 && PO_prd.length > 0) {
+      $('#order-listing').DataTable();
+    }
+  }, [PO_prd]);
 
 
   return (
     <div className="main-of-containers">
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
-
-                </div> */}
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
                     <div className="emp-text-side">
@@ -159,17 +248,21 @@ const [endDate, setEndDate] = useState(null);
                           <button className='genbutton'>Generate</button>
                         </div>
                         </div>
-                        <div className='export-refresh'>
-                            <button className='export'>
+                          <div className='export-refresh'>
+                            {/* <button className='export'>
                                  <Export size={20} weight="bold" /> <p1>Export</p1>
-                            </button>
-                            </div>
+                            </button> */}
+                              <button className='export' onClick={exportToPdf}>
+                                <Export size={20} weight="bold" /> <p1>Export</p1>
+                              </button>
+                          </div>
                         </div>
                     </div>
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
+                       {/* <ExportToPDF tableId="order-listing" tableData={PO_prd} /> */}
+                       <table ref={tableRef} id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>PO Number</th>
@@ -184,20 +277,62 @@ const [endDate, setEndDate] = useState(null);
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {data.map((data,i) =>(
+                                      {PO_prd.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.samA}</td>
-                                        <td>{data.samB}</td>
-                                        <td>{data.samC}</td>
-                                        <td>{data.samD}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
+                                        <td>{data.pr_id}</td>
+                                        <td>{data.purchase_req.updatedAt}</td>
+                                        <td>{data.product_tag_supplier.product.product_code}</td>
+                                        <td>{data.product_tag_supplier.product.product_name}</td>
+                                        <td>{data.product_tag_supplier.product.product_unitMeasurement}</td>
+                                        <td>{data.product_tag_supplier.supplier.supplier_name}</td>
+                                        <td>{data.product_tag_supplier.product_price}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.product_tag_supplier.product_price * data.quantity}</td>
                                         </tr>
                                       ))}
-                            </tbody>
+
+                                      {PO_assmbly.map((data,i) =>(
+                                        <tr key={i}>
+                                        <td>{data.pr_id}</td>
+                                        <td>{data.purchase_req.updatedAt}</td>
+                                        <td>{data.assembly_supplier.assembly.assembly_code}</td>
+                                        <td>{data.assembly_supplier.assembly.assembly_name}</td>
+                                        <td>--</td>
+                                        <td>{data.assembly_supplier.supplier.supplier_name}</td>
+                                        <td>{data.assembly_supplier.supplier_price}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.assembly_supplier.supplier_price * data.quantity}</td>
+                                        </tr>
+                                      ))}
+
+                                      {PO_spare.map((data,i) =>(
+                                        <tr key={i}>
+                                          <td>{data.pr_id}</td>
+                                          <td>{data.purchase_req.updatedAt}</td>
+                                          <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
+                                          <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
+                                          <td>--</td>
+                                          <td>{data.sparepart_supplier.supplier.supplier_name}</td>
+                                          <td>{data.sparepart_supplier.supplier_price}</td>
+                                          <td>{data.quantity}</td>
+                                          <td>{data.sparepart_supplier.supplier_price * data.quantity}</td>
+                                        </tr>
+                                      ))}
+
+                                      {PO_subpart.map((data,i) =>(
+                                        <tr key={i}>
+                                          <td>{data.pr_id}</td>
+                                          <td>{data.purchase_req.updatedAt}</td>
+                                          <td>{data.subpart_supplier.subPart.subPart_code}</td>
+                                          <td>{data.subpart_supplier.subPart.subPart_name}</td>
+                                          <td>--</td>
+                                          <td>{data.subpart_supplier.supplier.supplier_name}</td>
+                                          <td>{data.subpart_supplier.supplier_price}</td>
+                                          <td>{data.quantity}</td>
+                                          <td>{data.subpart_supplier.supplier_price * data.quantity}</td>
+                                        </tr>
+                                      ))}
+                            </tbody> 
                         </table>
                     </div>
                 </div>

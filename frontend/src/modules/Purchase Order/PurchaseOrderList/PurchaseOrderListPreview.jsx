@@ -84,7 +84,7 @@ function PurchaseOrderListPreview() {
 
 
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_product/fetchView',{
+    axios.get(BASE_URL + '/PR_product/fetchPrProduct',{
       params:{
         id: id
       }
@@ -95,7 +95,7 @@ function PurchaseOrderListPreview() {
 
 
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_assembly/fetchView',{
+    axios.get(BASE_URL + '/PR_assembly/fetchViewAssembly',{
       params:{
         id: id
       }
@@ -105,7 +105,7 @@ function PurchaseOrderListPreview() {
   }, []);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_spare/fetchView',{
+    axios.get(BASE_URL + '/PR_spare/fetchViewSpare',{
       params: {id: id}
     })
       .then(res => setSpare(res.data))
@@ -113,7 +113,7 @@ function PurchaseOrderListPreview() {
   }, []);
   
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_subpart/fetchView',{
+    axios.get(BASE_URL + '/PR_subpart/fetchViewSubpart',{
       params: {id: id}
     })
       .then(res => setSubpart(res.data))

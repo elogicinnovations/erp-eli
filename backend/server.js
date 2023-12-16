@@ -74,6 +74,10 @@ const PO_Receveid = require("./routes/po_received.route");
 
 const Dashboard = require("./routes/dashboard.route");
 
+const Report_inv = require("./routes/report_inventory.route");
+
+const Report_PO = require("./routes/report_PO.route");
+
 const authenticateToken = require('./middleware/token_authentication.middleware');
 
 const jwt = require('jsonwebtoken');
@@ -129,6 +133,8 @@ app.use("/PR_PO", PR_PO);
 app.use("/PO_Received", PO_Receveid);
 
 app.use("/Dashboard", Dashboard);
+app.use("/report_inv", Report_inv);
+app.use("/report_PO", Report_PO);
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);

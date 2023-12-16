@@ -141,6 +141,14 @@ function Dashboard() {
   const [outStockCount, setOutStockCount] = useState('');
   const [lowStockCount, setLowCount] = useState('');
   const [inStockCount, setInCount] = useState('');
+  const [mostReqItem, setMostReqItem] = useState([]);
+
+
+  useEffect(() => { //fetch product for inventory
+    axios.get(BASE_URL + '/Dashboard/fetchMostReqItem')
+      .then(res => setMostReqItem(res.data))
+      .catch(err => console.log(err));
+  }, []);
 
   const StockLeveleData = [
     { name: 'In Stock', value: inStockCount },
@@ -655,13 +663,13 @@ function Dashboard() {
                             </tr>
                             </thead>
                             <tbody>
-                            {/* {issuedProduct.map((data,i) =>(
-                              <tr key={i}>
-                                <td className='dashtd'>{data.sample}</td>
-                                <td className='highlight'>{data.supplier}</td>
-                                <td className='dashtd'>{data.sample}</td>
-                              </tr>
-                            ))} */}
+                                {mostReqItem.map((data,i) =>(
+                                  <tr key={i}>
+                                    <td className='dashtd'>{data.sample}</td>
+                                    <td className='highlight'>{data.supplier}</td>
+                                    <td className='dashtd'>{data.sample}</td>
+                                  </tr>
+                                ))}
                             </tbody>
                           </table>
                         </div>
