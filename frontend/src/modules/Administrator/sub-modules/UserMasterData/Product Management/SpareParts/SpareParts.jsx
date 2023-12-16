@@ -98,8 +98,8 @@ function SpareParts() {
     
           if (response.status === 200) {
             swal({
-              title: 'The Product Part has been deleted!',
-              text: 'The Product Part has been deleted successfully.',
+              title: 'The Product Spare-Part Delete Succesful!',
+              text: 'The Product Spare-Part has been Deleted successfully.',
               icon: 'success',
               button: 'OK'
             }).then(() => {

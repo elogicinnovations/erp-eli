@@ -49,7 +49,7 @@ function ViewAssembly() {
   //for spare parts
   useEffect(() => {
     axios
-      .get(BASE_URL + "/spare_assembly/fetchspareTable", {
+      .get(BASE_URL + "/spare_assembly/fetchinTable", {
         params: {
           id: id,
         },
@@ -144,8 +144,8 @@ function ViewAssembly() {
                     <tbody>
                       {Spareparts.map((spares, i) => (
                         <tr key={i}>
-                          <td>{spares.sparePart.spareParts_code}</td>
-                          <td>{spares.sparePart.spareParts_name}</td>
+                          <td>{spares.spareParts.spareParts_code}</td>
+                          <td>{spares.sparepart.spareParts_name}</td>
                           <td>{spares.sparePart.spareParts_desc}</td>
                         </tr>
                       ))}

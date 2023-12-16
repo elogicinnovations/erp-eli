@@ -96,8 +96,8 @@ function AssemblyForm() {
              
             if (response.status === 200) {
               swal({
-                title: 'The Assembly has been deleted!',
-                text: 'The Assembly has been deleted successfully.',
+                title: 'The Product Assembly Delete Successful!',
+                text: 'The Product Assembly has been Deleted successfully.',
                 icon: 'success',
                 button: 'OK'
               }).then(() => {

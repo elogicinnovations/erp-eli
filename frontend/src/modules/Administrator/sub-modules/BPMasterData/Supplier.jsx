@@ -97,10 +97,10 @@ function Supplier() {
              
               if (response.status === 200) {
                 swal({
-                  title: 'The Supplier has been deleted!',
-                  text: 'The Supplier has been updated successfully.',
-                  icon: 'success',
-                  button: 'OK'
+                  title: "Suppliers Delete Succesful!",
+                  text: "The Suppliers has been Deleted Successfully.",
+                  icon: "success",
+                  button: "OK",
                 }).then(() => {
                   setsupplier(prev => prev.filter(data => data.supplier_code !== table_id));
                   

@@ -140,7 +140,7 @@ function CreateSupplier() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       console.log(suppName, suppCode);
@@ -166,8 +166,8 @@ function CreateSupplier() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Creation successful!",
-              text: "You successfully added a new supplier.",
+              title: "Suppliers Add Succesful!",
+              text: "The Suppliers has been Added Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -175,10 +175,9 @@ function CreateSupplier() {
             });
           } else if (response.status === 201) {
             swal({
-              title: "Supplier Code Exist",
-              text: "Supplier code is already exist please fill other supplier",
+              title: "Suppliers is Already Exist",
+              text: "Please Input a New Suppliers ",
               icon: "error",
-              button: "OK",
             });
           }
         });
@@ -194,29 +193,39 @@ function CreateSupplier() {
     }
   };
 
+  const generateRandomCode = () => {
+    const randomCode = Math.floor(100000000000 + Math.random() * 900000000000);
+    return randomCode.toString();
+  };
+
+  const handleGenerateCode = () => {
+    const randomCode = generateRandomCode();
+    setsuppCode(randomCode);
+  };
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
             <Sidebar />
         </div> */}
-        <div className="right-of-main-containers">
-          <div className="right-body-contentss">
-            <div className='create-head-back' style={{display: 'flex', alignItems: 'center', borderBottom: '1px solid #5A5D5A', padding: 15}}>
-               
-                <Link style={{ fontSize: '1.5rem' }} to="/Supplier">
-                    <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
-                </Link>
-                <h1>
-                    Supplier
-                </h1>              
-            </div>
-
+      <div className="right-of-main-containers">
+        <div className="right-body-contentss">
+          <div
+            className="create-head-back"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              borderBottom: "1px solid #5A5D5A",
+              padding: 15,
+            }}>
+            <Link style={{ fontSize: "1.5rem" }} to="/Supplier">
+              <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+            </Link>
+            <h1>Supplier</h1>
+          </div>
 
           <Container className="mt-5">
-            <Form
-              noValidate
-              validated={validated}
-              onSubmit={handleFormSubmit}>
+            <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
               <Row>
                 <Col>
                   <label style={{ fontSize: 30, fontWeight: "bold" }}>
@@ -282,6 +291,9 @@ function CreateSupplier() {
                     maxLength={10}
                     placeholder="Supplier Code"
                   />
+                  <Button variant="primary" onClick={handleGenerateCode}>
+                    Generate Code
+                  </Button>
                 </Col>
               </Row>
 
@@ -343,9 +355,7 @@ function CreateSupplier() {
                     onChange={handleChange}
                     style={{ fontSize: 15 }}>
                     {countries.map((country) => (
-                      <option
-                        key={country.value}
-                        value={country.value}>
+                      <option key={country.value} value={country.value}>
                         {country.label}
                       </option>
                     ))}
@@ -540,15 +550,11 @@ function CreateSupplier() {
                         style={{ fontSize: 13, width: "350%" }}
                         defaultValue=""
                         onChange={handleChangeReceiving}>
-                        <option
-                          disabled
-                          value="">
+                        <option disabled value="">
                           Select City ...
                         </option>
                         {warehouse.map((city, index) => (
-                          <option
-                            key={index}
-                            value={city}>
+                          <option key={index} value={city}>
                             {city}
                           </option>
                         ))}
@@ -557,7 +563,21 @@ function CreateSupplier() {
                   </div>
                 </Col>
               </Row>
-
+              <Row>
+                <Col>
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Remarks:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      // onChange={(e) => setDetails(e.target.value)}
+                      placeholder="Enter item name"
+                      style={{ height: "100px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
               <Row>
                 <Col>
                   <Button

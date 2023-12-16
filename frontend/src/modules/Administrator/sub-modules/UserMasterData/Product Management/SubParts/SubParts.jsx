@@ -219,8 +219,8 @@ function SubParts() {
             if (response.status === 200) {
               // Sub Part created successfully
               swal({
-                title: "Creation successful!",
-                text: "You successfully added a new Sub Part.",
+                title: "Product Sub-Parts Add Succesful!",
+                text: "The Product Sub-Parts has been Added Successfully.",
                 icon: "success",
                 button: "OK",
               }).then(() => {
@@ -283,8 +283,8 @@ function SubParts() {
 
       if (response.status === 200) {
         swal({
-          title: "Update successful!",
-          text: "The Sub Part has been updated successfully.",
+          title: "Product Sub-Parts Update Succesful!",
+          text: "The Product Sub-Parts has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -349,8 +349,8 @@ function SubParts() {
 
           if (response.status === 200) {
             swal({
-              title: "The Sub Part has been deleted!",
-              text: "The Sub Part has been updated successfully.",
+              title: "Product Sub-Parts Delete Succesful!",
+              text: "The Product Sub-Parts has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {

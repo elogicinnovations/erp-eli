@@ -451,18 +451,19 @@ router.route("/delete/:table_id").delete(async (req, res) => {
                 },
               })
                 .then((deletedInventory) => {
-                  if (deletedInventory) {
+                  // if (deletedInventory) {
                     res.status(200).json({ success: true });
-                  } else {
-                    res.status(400).json({ success: false });
-                  }
+                  // } else {
+                    // res.status(400).json({ success: false });
+                  // }
                 })
                 .catch((err) => {
                   console.error(err);
                   res.status(409);
                 });
             } else {
-              res.status(400).json({ success: false });
+              // res.status(400).json({ success: false });
+              res.status(200).json({ success: true });
             }
           })
           .catch((err) => {

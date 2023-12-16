@@ -112,14 +112,16 @@ function ProductList() {
           );
           if (response.status === 200) {
             swal({
-              title: "The Product has been deleted!",
-              text: "The Product has been deleted successfully.",
+              title: "Product List Delete Succesful!",
+              text: "The Product List has been Delete Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
+              
               setproduct((prev) =>
                 prev.filter((data) => data.product_code !== table_id)
               );
+              reloadTable();
             });
           } else if (response.status === 202) {
             swal({
@@ -136,6 +138,7 @@ function ProductList() {
           }
         } catch (err) {
           console.log(err);
+          
         }
       } else {
         swal({
