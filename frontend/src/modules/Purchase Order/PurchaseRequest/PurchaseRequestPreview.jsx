@@ -38,9 +38,6 @@ function PurchaseRequestPreview() {
   const [product, setProduct] = useState([]); //para pag fetch ng mga registered products
 
 
-  
- 
-  const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -67,6 +64,8 @@ function PurchaseRequestPreview() {
 
   const [files, setFiles] = useState([]);
   const [rejustifyRemarks, setRejustifyRemarks] = useState('');
+
+  const [ProductQuant, setProductQuant] = useState([]);
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
@@ -207,6 +206,41 @@ function PurchaseRequestPreview() {
   {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
 
 
+    const selectProduct = (selectedProductOptions) => {
+      setvaluePRproduct(selectedProductOptions);
+      const updateProducttable = [
+        ...productSelectedFetch.filter((row) => selectedProductOptions.some((option) => option.value === row.product.product_code)),
+        ...selectedProductOptions
+        .filter((option) => !productSelectedFetch.some((row) => row.product.product_code === option.value))
+        .map((option) => ({
+          product_code: option.value,
+          product: {
+            product_name: option.label.split('/ Name: ')[1].trim(),
+            product_unitMeasurement: option.prodUM,
+            product_code: option.prodcode,
+          }
+        }))
+      ];
+      setProductSelectedFetch(updateProducttable);
+    };
+
+    const InputQuantandDescription = (index, value) => {
+        const updateProducttable = [...productSelectedFetch];
+        updateProducttable[index].quantity = value;
+
+        const valuePRproductData = valuePRproduct.map((row) =>{
+          if(row.value === updateProducttable[index].product_code){
+            return {
+              ...row,
+              quants: value, //ito yung ibabato papuntang useeffect
+            }
+          }
+          return row;
+        });
+        setvaluePRproduct(valuePRproductData);
+        setProductSelectedFetch(updateProducttable);
+    };
+
 
   //Where clause sa product PR
   useEffect(() => {
@@ -221,6 +255,7 @@ function PurchaseRequestPreview() {
         const selectedPRproduct = data.map((row) => ({
           value: row.product_id,
           label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
+          quants: row.quantity,
         }));
         setvaluePRproduct(selectedPRproduct);
       })
@@ -303,46 +338,18 @@ function PurchaseRequestPreview() {
       setDateNeed(parsedDate);
       setUseFor(res.data.used_for);
       setRemarks(res.data.remarks);
-      setProduct(res.date.product_id);
+      setProduct(res.data.product_id);
     })
     .catch(err => {
       console.error(err);
     });
   }, [id]);
   
-  const selectProduct = (selectedOptions) => {
-    setProduct(selectedOptions);
-};
-
-const displayDropdown = () => {
-  setShowDropdown(true);
-};
-
- 
-const handleInputChange = (value, productValue, inputType) => {
-  setInputValues((prevInputs) => ({
-    ...prevInputs,
-    [productValue]: {
-      ...prevInputs[productValue],
-      [inputType]: value,
-    },
-  }));
-};
+  const displayDropdown = () => {
+    setShowDropdown(true);
+  };  
 
 
-useEffect(() => {
-  const serializedProducts = product.map((product) => ({
-    type: product.type,
-    value: product.values,
-    quantity: inputValues[product.value]?.quantity || '',
-    desc: inputValues[product.value]?.desc || '',
-  }));
-
-  setAddProductbackend(serializedProducts);
-
-  console.log("Selected Products:", serializedProducts);
-  
-}, [inputValues, product]);
 
 
   const [showModal, setShowModal] = useState(false);
@@ -404,7 +411,6 @@ const update = async e => {
         dateNeed, 
         useFor, 
         remarks, 
-        addProductbackend
       }
        
     })
@@ -547,185 +553,48 @@ const update = async e => {
                                             </tr>
                                             </thead>
                                             <tbody>
-
-                                            {!isReadOnly && (
-                                              productSelectedFetch.length > 0 ? (
-                                              productSelectedFetch.map((product) => (
-                                                <tr >
-                                                  <td>{product.product.product_code}</td>
-                                                  <td> 
-                                                    {product.quantity}
-                                                  </td>
-                                                  <td>{product.product.product_unitMeasurement}</td>                                           
-                                                  <td>{product.product.product_name}</td>  
+                                              {productSelectedFetch.map((prodPR,i) =>(
+                                                <tr key={i}>
+                                                  <td>{prodPR.product && prodPR.product.product_code}</td>
                                                   <td>
-                                                    {product.description}
+                                                  <Form.Control 
+                                                      type="number" 
+                                                      placeholder='input quality'
+                                                      value={prodPR.quantity || ''}
+                                                      onChange={(e) => InputQuantandDescription(i, e.target.value)}
+                                                      style={{ height: '40px', width: '120px', fontSize: '15px'}}/>
                                                   </td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-
-                                            {!isReadOnly && (
-                                              assemblySelectedFetch.length > 0 ? (
-                                                assemblySelectedFetch.map((product) => (
-                                                <tr >
-                                                  <td>{product.assembly.assembly_code}</td>
-                                                  <td> {product.quantity}</td>
-                                                  <td> -- </td>                                           
-                                                  <td>{product.assembly.assembly_name}</td>  
-                                                  <td>{product.description}</td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-                                          {!isReadOnly && (
-                                              spareSelectedFetch.length > 0 ? (
-                                                spareSelectedFetch.map((spare) => (
-                                                <tr >
-                                                  <td >{spare.sparePart.spareParts_code}</td>
-                                                  <td > {spare.quantity}</td>
-                                                  <td > -- </td>                                           
-                                                  <td >{spare.sparePart.spareParts_name}</td>  
-                                                  <td >{spare.description}</td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-                                            {!isReadOnly && (
-                                              subPartSelectedFetch.length > 0 ? (
-                                                subPartSelectedFetch.map((subpart) => (
-                                                <tr >
-                                                  <td >{subpart.subPart.subPart_code}</td>
-                                                  <td > {subpart.quantity}</td>
-                                                  <td > -- </td>                                           
-                                                  <td >{subpart.subPart.subPart_name}</td>  
-                                                  <td >{subpart.description}</td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-
-                                            {isReadOnly && (
-                                              product.length > 0 ? (
-                                              product.map((product) => (
-                                                <tr key={product.value}>
-                                                  <td >{product.code}</td>
-                                                  <td > 
-                                                    <div className='d-flex flex-direction-row align-items-center'>
-                                                      <input
-                                                        type="number"
-                                                        value={inputValues[product.value]?.quantity || ''}
-                                                        onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
-                                                        required
-                                                        placeholder="Input quantity"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                      />
-                                                      
-                                                    </div>
-                                                  </td>
-                                                  <td >{product.um}</td>                                           
-                                                  <td >{product.name}</td>  
-                                                  <td >
-                                                    <div className='d-flex flex-direction-row align-items-center'>
-                                                      <input                                              
-                                                        as="textarea"
-                                                        value={inputValues[product.value]?.desc || ''}
-                                                        onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
+                                                  <td>{prodPR.product.product_unitMeasurement}</td>
+                                                  <td>{prodPR.product.product_name}</td>
+                                                  <td>
+                                                      <Form.Control                                               
+                                                        type="text"
+                                                        value={prodPR.description}
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
                                                         placeholder="Input description"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                        style={{ height: '40px', width: '180px', fontSize: '15px', overflowY: 'auto'}}
                                                       />
-                                                      
-                                                    </div>
                                                   </td>
                                                 </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-                                          )} {/* end ng isReadOnly*/}
+                                              ))}
+
+                                              
                                             </tbody>
                                         {showDropdown && (
                                         <div className="dropdown mt-3">
                                               <Select
                                                   isMulti
-                                                  options={fetchProduct.map(prod => ({
-                                                    value: `${prod.product_id}_${prod.product_code}_Product`, 
-                                                    label: <div>
-                                                      Product Code: <strong>{prod.product_code}</strong> / 
-                                                      Product Name: <strong>{prod.product_name}</strong> / 
-                                                    </div>,
+                                                  options={fetchProduct.map(product => ({
+                                                    value: product.product_id,
+                                                    label: `Product Code: ${product.product_code} / Name: ${product.product_name}`,
                                                     type: 'Product',
-                                                    values: prod.product_id,
-                                                    code: prod.product_code,
-                                                    name: prod.product_name,
-                                                    created: prod.createdAt
+                                                    prodcode: product.product_code,
+                                                    prodUM: product.product_unitMeasurement,
+                                                    prodname: product.product_name,
                                                   }))
-                                                  .concat(fetchAssembly.map(assembly => ({
-                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, 
-                                                    label: <div>
-                                                      Assembly Code: <strong>{assembly.assembly_code}</strong> / 
-                                                      Assembly Name: <strong>{assembly.assembly_name}</strong> / 
-                                                    </div>,
-                                                    type: 'Assembly',
-                                                    values: assembly.id,
-                                                    code: assembly.assembly_code,
-                                                    name: assembly.assembly_name,
-                                                    created: assembly.createdAt
-                                                  })))
-                                                  .concat(fetchSpare.map(spare => ({
-                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`,
-                                                    label: <div>
-                                                      Product Part Code: <strong>{spare.spareParts_code}</strong> / 
-                                                      Product Part Name: <strong>{spare.spareParts_name}</strong> / 
-                                                    </div>,
-                                                    type: 'Spare',
-                                                    values: spare.id,
-                                                    code: spare.spareParts_code,
-                                                    name: spare.spareParts_name,
-                                                    created: spare.createdAt
-                                                  })))
-                                                  .concat(fetchSubPart.map(subPart => ({
-                                                    value: `${subPart.id}_${subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
-                                                    label: <div>
-                                                      Product Sub-Part Code: <strong>{subPart.subPart_code}</strong> / 
-                                                      Product Sub-Part Name: <strong>{subPart.subPart_name}</strong> / 
-                                                    </div>,
-                                                    type: 'SubPart',
-                                                    values: subPart.id,
-                                                    code: subPart.subPart_code,
-                                                    name: subPart.subPart_name,
-                                                    created: subPart.createdAt
-                                                  })))
                                                 }
+                                                  value={valuePRproduct}
                                                   onChange={selectProduct}
-                                                  value={[...valuePRproduct, ...valuePRassembly, ...valuePRspare, ...valuePRsub]}
                                                 />
                                         </div>
                                       )}
@@ -746,19 +615,17 @@ const update = async e => {
                         
                         <div className='save-cancel'>
                               {isReadOnly && (
-                                <Button type='submit' className='btn btn-success' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                                <Button type='submit' variant='outline-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                               )}
                                {isReadOnly && (
-                                <Button type='button' onClick={handleCancelEdit} className='btn btn-danger' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Cancel Edit</Button>
+                                <Button type='button' onClick={handleCancelEdit} variant='outline-secondary' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Cancel Edit</Button>
                               )}
-
 
 
                               {status === 'For-Approval' ? (
                                 <>
                                   {!isReadOnly && (
                                     <Button
-                                    
                                       type='button'
                                       onClick={handleApproveClick}
                                       className='btn btn-warning'
@@ -767,9 +634,7 @@ const update = async e => {
                                     >
                                       Approve
                                     </Button>
-
                                   )}
-
                                     {!isReadOnly && (
                                       <Button
                                         type='button'

@@ -13,6 +13,7 @@ const CostCenter = require("./costcenter.model");
 
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model")
+const Subpart_image = require("./subpart_image.model")
 
 const SparePart = require("./sparePart.model");
 const SparePart_SubPart = require("./sparePart_subPart.model");
@@ -74,6 +75,25 @@ Subpart_supplier.belongsTo(SubPart, { foreignKey: "subpart_id"});
 
 Supplier.hasMany(Subpart_supplier, { foreignKey: "supplier_code"});
 Subpart_supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+//subpart tag in bin location
+BinLocation.hasMany(SubPart, { foreignKey: "bin_id"});
+SubPart.belongsTo(BinLocation, { foreignKey: "bin_id"});
+
+
+//subpart tag in manufacturer
+Manufacturer.hasMany(SubPart, { foreignKey: "subPart_Manufacturer"});
+SubPart.belongsTo(Manufacturer, { foreignKey: "subPart_Manufacturer"});
+
+//subpart tag category
+Category.hasMany(SubPart, { foreignKey: "category_code"});
+SubPart.belongsTo(Category, { foreignKey: "category_code"});
+
+//subpart tag image
+SubPart.hasMany(Subpart_image, { foreignKey: "subpart_id"});
+Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id"});
+
+
 
 //product tag supplier table
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
@@ -310,6 +330,7 @@ module.exports = {
 
                     SubPart,
                     Subpart_supplier,
+                    Subpart_image,
                     
                     SparePart,
                     SparePart_SubPart,

@@ -42,6 +42,7 @@ const manufacturer = require("./routes/manufacturer.route");
 
 const subPart = require("./routes/subPart.route");
 const subPart_supplier = require("./routes/subpart_supplier.route");
+const subPart_image = require("./routes/subpart_image.route");
 
 const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
@@ -99,6 +100,7 @@ app.use("/manufacturer", manufacturer);
 
 app.use("/subpart", subPart);
 app.use("/subpartSupplier", subPart_supplier);
+app.use("/subPart_image", subPart_image);
 
 app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);

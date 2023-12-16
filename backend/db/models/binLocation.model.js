@@ -4,7 +4,7 @@ const { DataTypes } = require('sequelize');
 const BinLocation = sequelize.define('binLocation', {
   bin_id: {
     type: DataTypes.INTEGER,
-    allowNull: true,
+    allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
