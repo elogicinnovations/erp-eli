@@ -73,8 +73,13 @@ const PR_PO = require("./routes/pr_toPO.route");
 const PO_Receveid = require("./routes/po_received.route");
 
 const StockTransfer = require("./routes/stockTransfer.route");
+const StockTransfer_prod = require("./routes/stockTransfer_product.route");
+const StockTransfer_assembly = require("./routes/stockTransfer_assembly.route");
+const StockTransfer_spare = require("./routes/stockTransfer_spare.route");
+const StockTransfer_subpart = require("./routes/stockTransfer_subpart.route");
 
 const Dashboard = require("./routes/dashboard.route");
+const Setting = require("./routes/settings.route");
 
 const authenticateToken = require('./middleware/token_authentication.middleware');
 
@@ -130,7 +135,13 @@ app.use("/PR_rejustify", PR_rejustify);
 app.use("/PR_PO", PR_PO);
 app.use("/PO_Received", PO_Receveid);
 app.use("/StockTransfer", StockTransfer)
+app.use("/StockTransfer_prod", StockTransfer_prod);
+app.use("/StockTransfer_assembly", StockTransfer_assembly);
+app.use("/StockTransfer_spare", StockTransfer_spare);
+app.use("/StockTransfer_subpart", StockTransfer_subpart);
 
+
+app.use("/Setting", Setting);
 app.use("/Dashboard", Dashboard);
 
 

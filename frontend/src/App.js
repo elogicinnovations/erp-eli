@@ -75,6 +75,7 @@ import ProtectedRoutes from "./hooks/protectedRoute";
 import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
+import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
 
 function App() {
   return (
@@ -353,6 +354,17 @@ function App() {
                     path="/stockTransfer"
                     element={<StockTransfer/>}
               />
+
+              <Route
+                    path="/stockManagementPreview/:id"
+                    element={<StockManagementPreview/>}
+              />
+
+              <Route
+                    path="/settingView/:id"
+                    element={<SystemSettings/>}
+              />
+
              
         </Routes>
         </ProtectedRoutes>

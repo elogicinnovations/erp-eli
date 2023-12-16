@@ -106,6 +106,12 @@ function StockManagement() {
     .catch(err => console.log(err));
     }, []);
 
+
+    const [updateModalShow, setUpdateModalShow] = useState(false);
+    const handleModalToggle = () => {
+      setUpdateModalShow(!updateModalShow);
+    };
+
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -197,7 +203,7 @@ function StockManagement() {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
+                        <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Transfer ID</th>
@@ -211,12 +217,12 @@ function StockManagement() {
                                 <tbody>
                                       {stockTransfer.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.stock_id}</td>
-                                        <td>{data.remarks}</td>
-                                        <td>{formatDatetime(data.createdAt)}</td>
-                                        <td>{data.source}</td>
-                                        <td>{data.destination}</td>
-                                          <td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.stock_id}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.remarks}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{formatDatetime(data.createdAt)}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.source}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.destination}</td>
+                                        <td>
                                           <DotsThreeCircle
                                               size={32}
                                               className="dots-icon"
@@ -242,13 +248,10 @@ function StockManagement() {
                                           >
                                               {/* Your dropdown content here */}
                                               
-                                          <button className='btn' onClick={() => navigate(`/stockManagementPreview`)}>View</button>
+                                          {/* <Link to={`/initUpdateCostCenter/${data.stock_id}`} onClick={() => handleModalToggle(data)} style={{fontSize:'12px'}} className='btn'>Update</Link> */}
                                           <button className='btn'>Cancel</button>
                                           </div>
                                           </td>
-                                        {/* <td>
-                                        <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
-                                        </td> */}
                                         </tr>
                                       ))}
                             </tbody>
