@@ -6,6 +6,8 @@ import '../../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
+import cls_unit from '../../../../../../assets/global/unit';
+import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
 import Select from 'react-select';
@@ -28,6 +30,14 @@ const [addPriceInput, setaddPriceInputbackend] = useState([]);
 
 const [tableSupp, setTableSupp] = useState([]);
 
+const [unit, setunit] = useState('');
+const [slct_binLocation, setslct_binLocation] = useState([]);
+const [binLocation, setbinLocation] = useState([]); 
+const [unitMeasurement, setunitMeasurement] = useState('');
+const [slct_manufacturer, setslct_manufacturer] = useState([]);
+const [manufacturer, setManufacturer] = useState([]);
+const [thresholds, setThresholds] = useState('');
+
 const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
 const [isReadOnly, setReadOnly] = useState(false);
@@ -48,6 +58,11 @@ useEffect(() => {
       setCode(res.data[0].spareParts_code);
       setName(res.data[0].spareParts_name);
       setDesc(res.data[0].spareParts_desc);
+      setunit(res.data[0].spareParts_unit);
+      setslct_binLocation(res.data[0].spareParts_location);
+      setunitMeasurement(res.data[0].spareParts_unitMeasurement);
+      setslct_manufacturer(res.data[0].spareParts_manufacturer);
+      setThresholds(res.data[0].threshhold);
 
 
       // Ensure that the API response contains an array of subParts
@@ -111,6 +126,26 @@ useEffect(() => {
     .catch(err => console.log(err));
 }, []);
 
+useEffect(() => {
+  axios.get(BASE_URL + '/binLocation/fetchTable')
+    .then(response => {
+      setbinLocation(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching roles:', error);
+    });
+}, []);
+
+useEffect(() => {
+  axios.get(BASE_URL + '/manufacturer/retrieve')
+    .then(response => {
+      setManufacturer(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching roles:', error);
+    });
+}, []);
+
 
 useEffect(() => {
   axios.get(BASE_URL + '/subPart/fetchTable')
@@ -152,6 +187,23 @@ const handleEditClick = () => {
 const handleAddSupp = () => {
   setShowDropdown(true);
 };
+
+const handleChangeUnit = (event) => {
+  setunit(event.target.value);
+};
+
+const handleFormChangeBinLocation = (event) => {
+  setslct_binLocation(event.target.value);
+};
+
+const handleChangeMeasurement = (event) => {
+  setunitMeasurement(event.target.value);
+};
+
+const handleFormChangeManufacturer = (event) => {
+  setslct_manufacturer(event.target.value);
+};
+
 const update = async (e) => {
   e.preventDefault();
 
@@ -174,7 +226,12 @@ const update = async (e) => {
           supp,
           desc,
           SubParts,
-          addPriceInput
+          addPriceInput,
+          unit,
+          unitMeasurement,
+          slct_manufacturer,
+          slct_binLocation,
+          thresholds
       })
       .then((res) => {
         if (res.status === 200) {
@@ -255,13 +312,13 @@ const update = async (e) => {
                           <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Code: </Form.Label>
-                                <Form.Control readOnly={!isReadOnly} value={code} onChange={(e) => setCode(e.target.value) } required type="text" placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control disabled={!isReadOnly} value={code} onChange={(e) => setCode(e.target.value) } required type="text" placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Name: </Form.Label>
-                                <Form.Control type="text" value={name} readOnly={!isReadOnly}  onChange={(e) => setName(e.target.value) } required placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control type="text" value={name} disabled={!isReadOnly}  onChange={(e) => setName(e.target.value) } required placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-4">
@@ -285,13 +342,157 @@ const update = async (e) => {
                                 </Form.Group>
                               </div>
                           </div>
+
+                          <div className="row">
+                              <div className="col-6">
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: '20px' }}>Unit: </Form.Label>
+                                    <Form.Select
+                                      disabled={!isReadOnly}
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      value={unit}
+                                      onChange={handleChangeUnit}>
+                                        <option disabled value=''>
+                                            Select Unit ...
+                                        </option>
+                                      {cls_unit.map((unit, index) => (
+                                        <option key={index} value={unit}>
+                                            {unit}
+                                        </option>
+                                      ))}
+                                    </Form.Select>
+                                  </Form.Group>
+                              </div>
+
+                              <div className="col-6">
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: '20px' }}>Bin Location: </Form.Label>
+                                    <Form.Select 
+                                      disabled={!isReadOnly}
+                                      aria-label="" 
+                                      onChange={handleFormChangeBinLocation} 
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      value={slct_binLocation}>
+                                        <option disabled value=''>
+                                            Select Bin Location ...
+                                        </option>
+                                          {binLocation.map(binLocation => (
+                                            <option key={binLocation.bin_id} value={binLocation.bin_id}>
+                                              {binLocation.bin_name}
+                                            </option>
+                                          ))}
+                                    </Form.Select>
+                                  </Form.Group>
+                              </div>
+                          </div>
+
+                          <div className="row">
+                              <div className="col-6">
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
+                                    <Form.Select
+                                      disabled={!isReadOnly}
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      value={unitMeasurement}
+                                      onChange={handleChangeMeasurement}>
+                                        <option disabled value=''>
+                                            Select Unit Measurement ...
+                                        </option>
+                                      {cls_unitMeasurement.map((unitM, index) => (
+                                        <option key={index} value={unitM}>
+                                            {unitM}
+                                        </option>
+                                      ))}
+                                      </Form.Select>
+                                  </Form.Group>
+                              </div>
+                              <div className="col-6">
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
+                                    <Form.Select 
+                                      disabled={!isReadOnly}
+                                      aria-label="" 
+                                      onChange={handleFormChangeManufacturer} 
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      value={slct_manufacturer}>
+                                        <option disabled value=''>
+                                            Select Manufacturer ...
+                                        </option>
+                                          {manufacturer.map(manufacturer => (
+                                            <option key={manufacturer.manufacturer_code} value={manufacturer.manufacturer_code}>
+                                              {manufacturer.manufacturer_name}
+                                            </option>
+                                          ))}
+                                    </Form.Select>
+                                  </Form.Group>
+                              </div>
+                          </div>
                        
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Details: </Form.Label>
-                                <Form.Control readOnly={!isReadOnly} value={desc} onChange={(e) => setDesc(e.target.value) } as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control disabled={!isReadOnly} value={desc} onChange={(e) => setDesc(e.target.value) } as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                         </div>
+                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
+                          Notification Thresholds
+                          <p className='fs-5'>Sets your preferred thresholds.</p>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              height: '0.5px',
+                              width: '-webkit-fill-available',
+                              background: '#FFA500',
+                              top: '65%',
+                              left: '21rem',
+                              transform: 'translateY(-50%)',
+                            }}
+                          ></span>
+                        </div>
+
+                        <div className="row mt-3">
+                            <div className="col-6">
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
+                                <Form.Control  disabled={!isReadOnly} value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" style={{height: '40px', fontSize: '15px'}}/>
+                                </Form.Group>
+                            </div>
+                            {/* <div className="col-6">
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
+                                  <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
+                                      <Dropzone onDrop={onDropImage}>
+                                          {({ getRootProps, getInputProps }) => (
+                                          <div className='w-100 h-100' {...getRootProps()}>
+                                              <input
+                                                  ref={fileInputRef}
+                                                  type="file"
+                                                  style={{display: 'none'}}
+                                              />
+                                              <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
+                                                <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
+                                              </div>
+                                              {selectedimage && 
+                                                  <div className='d-flex align-items-center justify-content-center' style={{border: "1px green solid", width: '100%', height: '5em'}}>
+                                                    <p 
+                                                      style={{color: 'green', fontSize: '15px',}}>
+                                                        Uploaded Image: {selectedimage.name}
+                                                    </p>
+                                                  </div>}
+                                          </div>
+                                          )}
+                                      </Dropzone>
+                                      
+                                  </div>              
+                              </Form.Group>   
+                            </div> */}
+                          </div>
                         
 
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>

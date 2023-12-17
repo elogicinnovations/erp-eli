@@ -20,6 +20,27 @@ const SpareParts = sequelize.define("spareParts", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  spareParts_unit: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+  spareParts_location: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: false,
+  },
+  spareParts_unitMeasurement: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
+
+  spareParts_manufacturer: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: false,
+  },
   threshhold: {
     type: DataTypes.INTEGER,
     allowNull: true,

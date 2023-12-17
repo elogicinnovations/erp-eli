@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./modules/Login/login";
 import SystemSettings from "./modules/SystemSettings/SystemSettings";
+import ProfileSettings from "./modules/SystemSettings/ProfileSettings";
 import Supplier from "./modules/Administrator/sub-modules/BPMasterData/Supplier"
 import ViewSupplier from "./modules/Administrator/sub-modules/BPMasterData/ViewSupplier"
 import CreateSupplier from "./modules/Administrator/sub-modules/BPMasterData/CreateSupplier"
@@ -126,6 +127,11 @@ function App() {
           <Route
             path="/systemSettings"
             element={<SystemSettings />}
+          />
+
+          <Route
+            path="/profileSettings"
+            element={<ProfileSettings />}
           />
 
           {/* User Master Data */}

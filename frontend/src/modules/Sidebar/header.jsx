@@ -162,15 +162,15 @@ const Header = () => {
                         ))}
                       </div>
                       <div className="profile-content">
-                        <button className='profile-card'>
+                        <Link to='/profileSettings' className='profile-card'>
                         <UserCircleGear size={25} style={{ marginRight: '10px' }} />Profile
-                        </button>
+                        </Link>
                         <button className='profile-card'>
                         <Files size={25} style={{ marginRight: '10px' }} />Activity Logs
                         </button>
-                        <button className='profile-card'>
+                        <Link to={'/'} className='profile-card' onClick={() => { localStorage.removeItem('accessToken') }}>
                         <SignOut size={25} style={{ marginRight: '10px' }} />Logout
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   )}
