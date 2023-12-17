@@ -20,6 +20,7 @@ import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 
 import * as $ from 'jquery';
+import { FormControl } from '@mui/base';
 
 function CreatePurchaseRequest() {
   const navigate = useNavigate()
@@ -353,7 +354,7 @@ function formatDatetime(datetime) {
                                                 <td >{product.name}</td>                                           
                                                 <td > 
                                                   <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input
+                                                    <Form.Control
                                                       type="number"
                                                       value={inputValues[product.value]?.quantity || ''}
                                                       onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
@@ -366,12 +367,12 @@ function formatDatetime(datetime) {
                                                 <td >{formatDatetime(product.created)}</td>
                                                 <td >
                                                   <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input                                              
-                                                      as="textarea"
+                                                    <Form.Control                                              
+                                                      type='text'
                                                       value={inputValues[product.value]?.desc || ''}
                                                       onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
                                                       placeholder="Input description"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                      style={{ height: '40px', width: '150px', fontSize: '15px', overflowY: 'auto' }}
                                                     />
                                                   </div>
                                                 </td>

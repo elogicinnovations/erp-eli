@@ -223,149 +223,131 @@ router.route("/create").post(
       }
 });
 
-router.route('/update').put(
-  upload.fields([
-      { name: 'selectedimage', maxCount: 1 },
-    ]),
-  
+
+router.route("/update").post(
   async (req, res) => {
+  
   try {
-      const existingDataCode = await Product.findOne({
+    console.log(req.query.id)
+    const existingDataCode = await Product.findOne({
+      where: {
+        product_code: req.query.code,
+        product_id: { [Op.ne]: req.query.id },
+      },
+    });
+
+    if (existingDataCode) {
+      return res.status(201).send("Exist");
+    } else {
+      let finalThreshold;
+      if (req.query.thresholds === "") {
+      finalThreshold = 0;
+      } else {
+      finalThreshold = req.query.thresholds;
+      }
+      const Product_newData = await Product.update(
+        {
+          product_code: req.query.code,
+          product_name: req.query.name,
+          product_category: req.query.slct_category,
+          product_unit: req.query.unit,
+          product_location: req.query.slct_binLocation,
+          product_unitMeasurement: req.query.unitMeasurement,
+          product_manufacturer: req.query.slct_manufacturer,
+          product_details: req.query.details,
+          product_threshold: finalThreshold,
+        },
+        {
+          where: {
+            product_id: req.query.id,
+          },
+        }
+      );
+
+      if (Product_newData) {
+        const deleteassembly = Product_Assembly.destroy({
+          where: {
+            product_id: req.query.id
+          },
+      });
+
+      if(deleteassembly) {
+        const selectedAssemblies = req.query.assembly;
+        console.log(selectedAssemblies);
+        for (const assemblyDropdown of selectedAssemblies) {
+          const assemblyValue = assemblyDropdown.value;
+          await Product_Assembly.create({
+            product_id: req.query.id,
+            assembly_id: assemblyValue
+          });
+        }
+      } //delete assembly end
+
+      const deletesubpart = Product_Subparts.destroy({
+          where: {
+            product_id: req.query.id
+          },
+      });
+
+      if(deletesubpart) {
+        const selectedSubparting = req.query.subparting
+        for (const subpartDropdown of selectedSubparting) {
+          const subpartValue = subpartDropdown.value;
+  
+          console.log(subpartValue)
+          await Product_Subparts.create({
+            product_id: req.query.id,
+            subPart_id: subpartValue
+          });
+        }
+      } //delete subpart end
+
+      const deletesparepart = Product_Spareparts.destroy({
         where: {
-          product_id: { [Op.ne]: req.body.id },
-          product_code: req.body.code,
+          product_id: req.query.id
+        },
+      })
+
+      if(deletesparepart) {
+        const selectedSpare = req.query.spareParts
+        for (const spareDropdown of selectedSpare) {
+          const spareValue = spareDropdown.value;
+  
+          console.log(spareValue)
+          await Product_Spareparts.create({
+            product_id: req.query.id,
+            sparePart_id: spareValue
+          });
+        }
+      } //delete sparepart end
+
+      const deletesupplier = ProductTAGSupplier.destroy({
+        where: {
+          product_id: req.query.id
         },
       });
 
-      if (!existingDataCode) {
-        res.status(201).send("Not Exist");
-      } else {
-          let image_blob, image_blobFiletype;
-
-          let finalThreshold;
-          if (req.body.thresholds === "") {
-            finalThreshold = 0;
-          } else {
-            finalThreshold = req.body.thresholds;
-          }
-
-          if (req.files.selectedimage) {
-              image_blob = req.files.selectedimage[0].buffer;
-
-              image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
-          } else {
-              image_blob = null;
-
-              image_blobFiletype = null;
-          }
-
-          const newData = await Product.update(
-        {
-          product_code: req.body.code,
-          product_name: req.body.name,
-          product_category: req.body.slct_category,
-          product_unit: req.body.unit,
-          product_location: req.body.slct_binLocation,
-          product_unitMeasurement: req.body.unitMeasurement,
-          product_manufacturer: req.body.slct_manufacturer,
-          product_details: req.body.details,
-          product_threshold: finalThreshold,
-          product_image: image_blob,
-          product_imageType: image_blobFiletype
-        },
-          {
-            where: { product_id: req.body.id },
-          }
-        );
-
-        if(newData){
-          
-          const deleteassembly = Product_Assembly.destroy({
-              where: {
-                product_id: req.body.id
-              },
-          });
-
-          if(deleteassembly) {
-            const selectedAssemblies = JSON.parse(req.body.assemblies);
-            console.log(selectedAssemblies);
-            for (const assemblyDropdown of selectedAssemblies) {
-              const assemblyValue = assemblyDropdown.value;
-              await Product_Assembly.create({
-                product_id: req.body.id,
-                assembly_id: assemblyValue
-              });
-            }
-          } //delete assembly end
-
-          const deletesubpart = Product_Subparts.destroy({
-              where: {
-                product_id: req.body.id
-              },
-          });
-
-          if(deletesubpart) {
-            const selectedSubparting = JSON.parse(req.body.subpart);
-            for (const subpartDropdown of selectedSubparting) {
-              const subpartValue = subpartDropdown.value;
-      
-              console.log(subpartValue)
-              await Product_Subparts.create({
-                product_id: req.body.id,
-                subPart_id: subpartValue
-              });
-            }
-          } //delete subpart end
-
-          const deletesparepart = Product_Spareparts.destroy({
-            where: {
-              product_id: req.body.id
-            },
-          })
-
-          if(deletesparepart) {
-            const selectedSpare = JSON.parse(req.body.sparepart);
-            for (const spareDropdown of selectedSpare) {
-              const spareValue = spareDropdown.value;
-      
-              console.log(spareValue)
-              await Product_Spareparts.create({
-                product_id: req.body.id,
-                sparePart_id: spareValue
-              });
-            }
-          } //delete sparepart end
-
-          const deletesupplier = ProductTAGSupplier.destroy({
-            where: {
-              product_id: req.body.id
-            },
-          });
-
-          if(deletesupplier){
-            const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
-            console.log(selectedSuppliers)
-            for (const supplier of selectedSuppliers) {
-              const { value, price } = supplier;
-              await ProductTAGSupplier.create({
-                product_id: req.body.id,
-                supplier_code: value,
-                product_price: price
-               });
-             }
-          }
-        }
-  
-        res.status(200).json(newData);
-        // console.log(newDa)
+      if(deletesupplier){
+        const selectedSuppliers = req.query.productTAGSuppliers
+        console.log(selectedSuppliers)
+        for (const supplier of selectedSuppliers) {
+          const { value, price } = supplier;
+          await ProductTAGSupplier.create({
+            product_id: req.query.id,
+            supplier_code: value,
+            product_price: price
+           });
+         }
       }
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("An error occurred");
-    }
-  }
-);
+      }
 
+      res.status(200).json();
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred");
+  }
+});  
 // router.route("/update").put(
 //   upload.fields([{ name: "selectedimage", maxCount: 1 }]),
 

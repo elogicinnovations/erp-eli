@@ -30,6 +30,7 @@ import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufac
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
 import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/SubParts"
+import UpdateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/UpdateSubParts"
 import CreateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/CreateSubParts"
 import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
 import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
@@ -203,6 +204,11 @@ function App() {
                     path="/createsubParts"
                     element={<CreateSubParts/>}
                   />
+                  <Route
+                    path="/updatesubParts/:id"
+                    element={<UpdateSubParts/>}
+                  />
+                  
 
 
           <Route
