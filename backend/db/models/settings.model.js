@@ -17,7 +17,7 @@ const Settings = sequelize.define('setting', {
   email: {
     type: DataTypes.STRING,
   },
-  steet: {
+  street: {
     type: DataTypes.STRING,
   },
   barangay: {

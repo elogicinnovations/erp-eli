@@ -17,7 +17,7 @@ router.route('/create').post(async (req, res) => {
         name: req.body.name,
         phone: req.body.phone,
         email: req.body.email,
-        steet: req.body.steet,
+        street: req.body.street,
         barangay: req.body.barangay,
         city: req.body.city,
         zipcode: req.body.zipcode
@@ -30,10 +30,10 @@ router.route('/create').post(async (req, res) => {
   }
 });
 
-router.route('/fetchdata').get(async (req, res) => {
+router.route('/SettingView').get(async (req, res) => {
   try {
    
-    const data = await Settings.findOne({
+    const data = await Settings.findAll({
         where: {
           id: req.query.id
         }
