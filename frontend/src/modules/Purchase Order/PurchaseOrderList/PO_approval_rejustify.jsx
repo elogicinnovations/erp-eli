@@ -48,29 +48,14 @@ function POApprovalRejustify() {
   // for remarks 
   const [files, setFiles] = useState([]);
   const [rejustifyRemarks, setRejustifyRemarks] = useState('');
-//   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
-//   const [quantityInputs, setQuantityInputs] = useState({});
-//   const handleAddToTablePO = (itemId) => {
-//     // Find the item in table 1 by ID
-//     const selectedItem = suppProducts.find((item) => item.id === itemId);
+  // State to keep track of the selected row in table1
+  const [selectedRow, setSelectedRow] = useState(null);
 
-//      // Check if the item already exists in table 2
-//     const isItemInTablePO = addProductPO.some((item) => item.id === itemId);
-
-
-//     if (selectedItem && !isItemInTablePO) {
-//       // Transfer the item to table 2
-//       setAddProductPO([...addProductPO, selectedItem]);
-
-//       // Optionally, you can remove the item from table 1 if needed
-//       const updatedTable1Data = suppProducts.filter((item) => item.id !== itemId);
-//       setSuppProducts(updatedTable1Data);
-//     }
-//     // handleClose()
-  
-//     return selectedItem
-    
-//   };
+  // Handle row click in table1
+  const handleRowClick = (data) => {
+    // Set the selected row
+    setSelectedRow(data);
+  };
 
 const [showModal, setShowModal] = useState(false);
 
@@ -82,85 +67,85 @@ const handleClose = () => {
 
 
 useEffect(() => {
-    axios.get(BASE_URL + '/PR_PO/fetchView_product',{
+    axios.get(BASE_URL + '/PR_PO/fetchCanvassedSupplier_spare',{
       params:{
         id: id
       }
-    })
-      .then(res => setAddProductPO(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_PO/fetchView_asmbly',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAddAssemblyPO(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_PO/fetchView_spare',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAddSparePO(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_PO/fetchView_subpart',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAddSubpartPO(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-
-
-
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_product/fetchPrProduct',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setProducts(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_assembly/fetchViewAssembly',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAssembly(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_spare/fetchViewSpare',{
-      params: {id: id}
     })
       .then(res => setSpare(res.data))
       .catch(err => console.log(err));
   }, []);
+
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_PO/fetchView_asmbly',{
+  //     params:{
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => setAddAssemblyPO(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_PO/fetchView_spare',{
+  //     params:{
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => setAddSparePO(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_PO/fetchView_subpart',{
+  //     params:{
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => setAddSubpartPO(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
+
+
+
+
+
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_product/fetchPrProduct',{
+  //     params:{
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => setProducts(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
+
+
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_assembly/fetchViewAssembly',{
+  //     params:{
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => setAssembly(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_spare/fetchViewSpare',{
+  //     params: {id: id}
+  //   })
+  //     .then(res => setSpare(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
   
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_subpart/fetchViewSubpart',{
-      params: {id: id}
-    })
-      .then(res => setSubpart(res.data))
-      .catch(err => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/PR_subpart/fetchViewSubpart',{
+  //     params: {id: id}
+  //   })
+  //     .then(res => setSubpart(res.data))
+  //     .catch(err => console.log(err));
+  // }, []);
 
   useEffect(() => {
     axios.get(BASE_URL + '/PR/fetchView', {
@@ -335,83 +320,6 @@ useEffect(() => {
     setFiles(e.target.files);
   };
 
-
-//   const handleQuantityChange = (value, productValue) => {
-//     // Update the quantityInputs state for the corresponding product
-//     setQuantityInputs((prevInputs) => {
-//       const updatedInputs = {
-//         ...prevInputs,
-//         [productValue]: value,
-//       };
-  
-//       // Use the updatedInputs directly to create the serializedProducts array
-//       const serializedProducts = addProductPO.map((product) => ({
-//         quantity: updatedInputs[product.id] || '',
-//         tagSupplier_ID: product.id
-//       }));
-
-//   //     console.log("Value:", value);
-//   // console.log("Product Value:", productValue);
-//   // console.log("Updated Inputs:", updatedInputs);
-  
-//       setAddProductbackend(serializedProducts);
-  
-//       console.log("Selected Products:", serializedProducts);
-  
-//       // Return the updatedInputs to be used as the new state
-//       return updatedInputs;
-//     });
-//   };
-
-//   const add = async e => {
-//     e.preventDefault();
-  
-//     const form = e.currentTarget;
-//     if (form.checkValidity() === false) {
-//       e.preventDefault();
-//       e.stopPropagation();
-//     // if required fields has NO value
-//     //    console.log('requried')
-//         swal({
-//             icon: 'error',
-//             title: 'Fields are required',
-//             text: 'Please fill the red text fields'
-//           });
-//     }
-//     else{
-  
-//       axios.post(`${BASE_URL}/PR_PO/save`, {
-//         addProductbackend,
-//         id: id,
-//       })
-//       .then((res) => {
-//         console.log(res);
-//         if (res.status === 200) {
-//           swal({
-//             title: 'The Purchase sucessfully request!',
-//             text: 'The Purchase been added successfully.',
-//             icon: 'success',
-//             button: 'OK'
-//           }).then(() => {
-//             navigate('/purchaseOrderList')
-            
-//           });
-//         } else {
-//           swal({
-//             icon: 'error',
-//             title: 'Something went wrong',
-//             text: 'Please contact our support'
-//           });
-//         }
-//       })
-  
-//     }
-  
-//     setValidated(true); //for validations
-  
-    
-//   };
-
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -499,57 +407,29 @@ useEffect(() => {
                         <div className="table-containss">
                             <div className="main-of-all-tables">
                                 <table id=''>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Product Code</th>
-                                            <th className='tableh'>Quantity</th>
-                                            <th className='tableh'>Product Name</th>
-                                            <th className='tableh'>Description</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {products.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.product.product_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.product.product_name}</td>
-                                                    <td>{data.description}</td>
-                                                
-                                                  </tr>
-                                                ))}
-
-
-                                                {assembly.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.assembly.assembly_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.assembly.assembly_name}</td>
-                                                    <td>{data.description}</td>
-                                                
-                                                  </tr>
-                                                ))}
-
-                                                {spare.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.sparePart.spareParts_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.sparePart.spareParts_name}</td>
-                                                    <td>{data.description}</td>
-                                                
-                                                  </tr>
-                                                ))}
-
-                                                {subpart.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.subPart.subPart_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.subPart.subPart_name}</td>
-                                                    <td>{data.description}</td>
-                                                
-                                                  </tr>
-                                                ))}
-                                    </tbody>
-                                </table>
+                                  <thead>
+                                    <tr>
+                                        <th className='tableh'>Supplier</th>
+                                        <th className='tableh'>Quantity Order</th>
+                                        <th className='tableh'>Amount</th>
+                                        <th className='tableh'>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {spare.map((data,i) =>(
+                                      <tr key={i}>
+                                        <td>{data.sparepart_supplier.supplier.supplier_name}</td>
+                                        <td>{data.total_quantity}</td>
+                                        <td>{data.total_price}</td>
+                                        <td>
+                                            <button type='button' 
+                                              // onClick={() => handleCanvass(data.product_id)}
+                                              className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                              </table>
                             </div>
                         </div>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
@@ -569,109 +449,18 @@ useEffect(() => {
                         <div className="table-containss">
                             <div className="main-of-all-tables">
                                 <table id='' className='tab-po'>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Code</th>
-                                            <th className='tableh'>Quantity</th>
-                                            <th className='tableh'>Product</th>
-                                            <th className='tableh'>Supplier</th>
-                                            <th className='tableh'>Price</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {addProductPO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.product_tag_supplier.product.product_code}</td>
-                                                  <td>
-                                                        {data.quantity}
-                                                        {/* <div className='d-flex flex-direction-row align-items-center'>
-                                                            <input
-                                                            type="number"
-                                                            value={quantityInputs[data.id] || ''}
-                                                            onChange={(e) => handleQuantityChange(e.target.value, data.id)}
-                                                            required
-                                                            placeholder="Input quantity"
-                                                            style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                            />
-                                                            /{data.quantity}
-                                                        </div> */}
-                                                  </td>
-                                                  <td>{data.product_tag_supplier.product.product_name}</td>
-                                                  <td>{data.product_tag_supplier.supplier.supplier_name}</td>
-                                                  <td>{data.product_tag_supplier.product_price}</td>
+                                  <thead>
+                                    <tr>
+                                        <th className='tableh'>Code</th>
+                                        <th className='tableh'>Product Name</th>
+                                        <th className='tableh'>Category</th>
+                                        <th className='tableh'>UOM</th>
+                                        <th className='tableh'>Price</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
                                           
-                                                </tr>
-                                                ))}
-
-                                              {addAssemblyPO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.assembly_supplier.assembly.assembly_code}</td>
-                                                  <td>
-                                                      {/* <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsAss[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        /> */}
-                                                        {data.quantity}
-                                                      {/* </div> */}
-                                                  </td>
-                                                  <td>{data.assembly_supplier.assembly.assembly_name}</td>
-                                                  <td>{data.assembly_supplier.supplier.supplier_name}</td>
-                                                  <td>{data.assembly_supplier.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
-
-                                              {addSparePO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
-                                                  <td>
-                                                      {/* <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsAss[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        /> */}
-                                                        {data.quantity}
-                                                      {/* </div> */}
-                                                  </td>
-                                                  <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
-                                                  <td>{data.sparepart_supplier.supplier.supplier_name}</td>
-                                                  <td>{data.sparepart_supplier.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
-
-                                              {addSubpartPO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.subpart_supplier.subPart.subPart_code}</td>
-                                                  <td>
-                                                      {/* <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsAss[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        /> */}
-                                                        {data.quantity}
-                                                      {/* </div> */}
-                                                  </td>
-                                                  <td>{data.subpart_supplier.subPart.subPart_name}</td>
-                                                  <td>{data.subpart_supplier.supplier.supplier_name}</td>
-                                                  <td>{data.subpart_supplier.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
-                                    </tbody>
+                                  </tbody>
                                 </table>
                             </div>
                         </div>
@@ -680,7 +469,7 @@ useEffect(() => {
                           className='btn btn-danger' 
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
                           onClick={() => handleCancel(id)}
-                          >Cancel 
+                          >Re-Canvass 
                         </Button>   
 
 

@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {where, Op} = require('sequelize')
+const {where, Op, fn, col} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR_PO = require('../db/models/pr_toPO.model')
 const { PR, PR_PO,
@@ -16,7 +16,8 @@ const { PR, PR_PO,
         SubPart,
         Subpart_supplier
       } = require('../db/models/associations')
-const session = require('express-session')
+const session = require('express-session');
+const Supplier_SparePart = require('../db/models/sparePart_supplier..model');
 
 router.use(session({
     secret: 'secret-key',
@@ -173,7 +174,75 @@ router.route('/fetchView_product').get(async (req, res) => {
 
 
 
+  //for approval view
+  // router.route('/fetchCanvassedSupplier_spare').get(async (req, res) => {
+  //   try {
+  //     const data = await PR_PO_spare.findAll({
+  //       attributes: [
+  //         'sparepart_supplier.supplier_code',
+  //         [fn('SUM', col('quantity')), 'total_quantity'],
+  //         [fn('SUM', col('sparepart_supplier.supplier_price')), 'total_price'],
+  //         [fn('MAX', col('purchase_req_canvassed_spare.id')), 'spres_id'],
+  //         'sparepart_supplier.id', // Include the 'id' column in the SELECT list
+  //         // Add other aggregated columns or use sequelize.literal for complex expressions
+  //       ],
+  //       include: [
+  //         {
+  //           model: Supplier_SparePart,
+  //           as: 'sparepart_supplier',
+  //           required: true,
+  //           include: [
+  //             {
+  //               model: Supplier,
+  //               required: true,
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //       group: [
+  //         'sparepart_supplier.supplier_code',
+  //         'sparepart_supplier.id', // Include the 'id' column in the GROUP BY clause
+  //       ],
+  //     });
 
+  router.route('/fetchCanvassedSupplier_spare').get(async (req, res) => {
+    try {
+      const data = await PR_PO_spare.findAll({
+        attributes: [
+          'pr_id',
+          [fn('SUM', col('quantity')), 'Totalquantity'],
+        ],
+        include: [
+          {
+            model: Supplier_SparePart,
+            as: 'sparepart_supplier',
+            required: true,
+            include: [
+              {
+                model: Supplier,
+                required: true,
+              },
+            ],
+          },
+        ],
+        group: ['pr_id'], 
+      });
+  
+      if (data) {
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+  
+  
+
+
+  //save
 router.route('/save').post(async (req, res) => {
     try {
        const {id, addProductbackend, addAssemblybackend, addSparebackend, addSubpartbackend} = req.body;
