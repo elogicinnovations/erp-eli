@@ -161,7 +161,7 @@ function BinLocation() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       // if required fields has value (GOOD)
@@ -176,8 +176,8 @@ function BinLocation() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Creation successful!",
-              text: "You successfully added a new Bin Location.",
+              title: "Bin Location Add Succesful!",
+              text: "The Bin Location has been Added Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -203,10 +203,9 @@ function BinLocation() {
             });
           } else if (response.status === 201) {
             swal({
-              title: "Bin Location Name Exist",
-              text: "Bin Location is already exist please fill other Bin Location",
+              title: "Bin Location is Already Exist",
+              text: "Please Input a New Bin Location",
               icon: "error",
-              button: "OK",
             });
           }
         });
@@ -249,8 +248,8 @@ function BinLocation() {
 
       if (response.status === 200) {
         swal({
-          title: "Update successful!",
-          text: "The Bin Location has been updated successfully.",
+          title: "Bin Location Update Succesful!",
+          text: "The Bin Location has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -316,8 +315,8 @@ function BinLocation() {
 
           if (response.status === 200) {
             swal({
-              title: "The Bin Location has been deleted!",
-              text: "The Bin Location has been updated successfully.",
+              title: "Bin Location Delete Succesful!",
+              text: "The Bin Location has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -514,13 +513,8 @@ function BinLocation() {
           </div>
         </div>
       </div>
-      <Modal
-        show={showModal}
-        onHide={handleClose}>
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleFormSubmit}>
+      <Modal show={showModal} onHide={handleClose}>
+        <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
           <Modal.Header closeButton>
             <Modal.Title style={{ fontSize: "24px" }}>
               New Bin Location
@@ -551,7 +545,6 @@ function BinLocation() {
                   type="text"
                   placeholder="Enter Sub-Name of the Bin Location..."
                   style={{ height: "40px", fontSize: "15px" }}
-                  required
                   value={binLocationSubName}
                   onChange={(e) => setbinLocationSubName(e.target.value)}
                 />
@@ -566,6 +559,7 @@ function BinLocation() {
                   style={{ height: "40px", fontSize: "15px" }}
                   value={binLocationRemarks}
                   onChange={(e) => setbinLocationRemarks(e.target.value)}
+                  required
                 />
               </Form.Group>
             </div>
@@ -589,17 +583,10 @@ function BinLocation() {
         </Form>
       </Modal>
 
-      <Modal
-        show={updateModalShow}
-        onHide={() => handleModalToggle()}>
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleUpdateSubmit}>
+      <Modal show={updateModalShow} onHide={() => handleModalToggle()}>
+        <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title
-              className="modal-titles"
-              style={{ fontSize: "24px" }}>
+            <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
               Update Bin Location
             </Modal.Title>
 

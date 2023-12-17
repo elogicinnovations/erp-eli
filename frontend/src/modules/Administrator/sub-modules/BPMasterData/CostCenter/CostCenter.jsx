@@ -96,10 +96,10 @@ function CostCenter() {
 
             if (response.status === 200) {
               swal({
-                title: 'Deleted!',
-                text: 'The Cost Center has been deleted successfully.',
-                icon: 'success',
-                button: 'OK'
+                title: "Cost Center Delete Succesful!",
+                text: "The Cost Center has been Deleted Successfully.",
+                icon: "success",
+                button: "OK",
               }).then(() => {
                 setCostCenter(prev => prev.filter(data => data.id !== id));
                 

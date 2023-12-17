@@ -139,8 +139,8 @@ function SubParts() {
 
           if (response.status === 200) {
             swal({
-              title: "The Sub Part has been deleted!",
-              text: "The Sub Part has been updated successfully.",
+              title: "Product Sub-Parts Delete Succesful!",
+              text: "The Product Sub-Parts has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -159,6 +159,7 @@ function SubParts() {
               text: "Please contact our support",
             });
           }
+
         } catch (err) {
           console.log(err);
         }

@@ -1,7 +1,7 @@
 const sequelize = require("../config/sequelize.config");
 const { DataTypes } = require("sequelize");
 
-const Spare_Assembly = sequelize.define("assembly_spares", {
+const Spare_Assembly = sequelize.define("assembly_spare", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,

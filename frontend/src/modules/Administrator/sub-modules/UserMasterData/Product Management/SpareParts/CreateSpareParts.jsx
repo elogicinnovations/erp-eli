@@ -159,28 +159,27 @@ const add = async e => {
       thresholds
     })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.status === 200) {
         swal({
-          title: 'The Spare Parts sucessfully added!',
-          text: 'The Spare Parts has been updated successfully.',
-          icon: 'success',
-          button: 'OK'
+          title: "Product Spare-Part Add Succesful!",
+          text: "The Product Spare-Part has been Added Successfully.",
+          icon: "success",
+          button: "OK",
         }).then(() => {
-         navigate('/spareParts')
-          
+          navigate("/spareParts");
         });
       } else if (res.status === 201) {
         swal({
-          icon: 'error',
-          title: 'Code Already Exist',
-          text: 'Please input another code'
+          title: "Product Spare-Part is Already Exist",
+          text: "Please Input a New Product Spare-Part ",
+          icon: "error",
         });
       } else {
         swal({
-          icon: 'error',
-          title: 'Something went wrong',
-          text: 'Please contact our support'
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
         });
       }
     })

@@ -44,6 +44,8 @@ function UpdateAssemblyForm() {
   // const [manufacturer, setManufacturer] = useState([]);
   // const [thresholds, setThresholds] = useState('');
   
+  const [priceInput, setPriceInput] = useState({});
+  const [addPriceInput, setaddPriceInputbackend] = useState([]);
   useEffect(() => {
     axios
       .get(BASE_URL + "/assembly/fetchTableEdit", {
@@ -212,14 +214,17 @@ function UpdateAssemblyForm() {
             // slct_manufacturer,
             // slct_binLocation,
             // thresholds
+            // spareParts,
+            // Subparts,
+            // addPriceInput
           },
         })
         .then((res) => {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Assembly sucessfully updated!",
-              text: "The Assembly has been updated successfully.",
+              title: "The Product Assembly Update Succesful!",
+              text: "The Product Assembly has been Updated Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -227,9 +232,9 @@ function UpdateAssemblyForm() {
             });
           } else if (res.status === 201) {
             swal({
+              title: "Product Assembly is Already Exist",
+              text: "Please Input a New Product Assembly ",
               icon: "error",
-              title: "Code Already Exist",
-              text: "Please input another code",
             });
           } else {
             swal({
@@ -244,6 +249,34 @@ function UpdateAssemblyForm() {
     setValidated(true); //for validations
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "e" || isNaN(e.key)) {
+      e.preventDefault();
+    }
+    e.target.value = e.target.value.replace(/[^0-9.]/);
+  };
+
+  const handlePriceinput = (value, priceValue) => {
+    setPriceInput((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [priceValue]: value,
+      };
+
+      // Use the updatedInputs directly to create the serializedProducts array
+      const serializedPrice = supp.map((supp) => ({
+        price: updatedInputs[supp.value] || "",
+        code: supp.codes,
+      }));
+
+      setaddPriceInputbackend(serializedPrice);
+
+      console.log("Price Inputted:", serializedPrice);
+
+      // Return the updatedInputs to be used as the new state
+      return updatedInputs;
+    });
+  };
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -251,10 +284,7 @@ function UpdateAssemblyForm() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={update}>
+          <Form noValidate validated={validated} onSubmit={update}>
             <h1>Update Assembly Parts</h1>
             <div
               className="gen-info"
@@ -323,9 +353,7 @@ function UpdateAssemblyForm() {
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
                       {fetchSub.map((fetchSparts, i) => (
-                        <option
-                          key={i}
-                          value={fetchSparts.id}>
+                        <option key={i} value={fetchSparts.id}>
                           {fetchSparts.subPart_name}
                         </option>
                       ))}
@@ -336,9 +364,7 @@ function UpdateAssemblyForm() {
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
                       {Subparts.map((sparts, i) => (
-                        <option
-                          key={i}
-                          value={sparts.id}>
+                        <option key={i} value={sparts.id}>
                           {sparts.subPart.subPart_name}
                         </option>
                       ))}
@@ -356,9 +382,7 @@ function UpdateAssemblyForm() {
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
                       {fetchSparePart.map((fetchSpares, i) => (
-                        <option
-                          key={i}
-                          value={fetchSpares.id}>
+                        <option key={i} value={fetchSpares.id}>
                           {fetchSpares.spareParts_name}
                         </option>
                       ))}
@@ -373,11 +397,9 @@ function UpdateAssemblyForm() {
                     <Form.Select
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
-                      {spareParts.map((sparePart) => (
-                        <option
-                          key={sparePart.spareParts.id}
-                          value={sparePart.spareParts.id}>
-                          {sparePart.spareParts.spareParts_name}
+                      {spareParts.map((spares, i) => (
+                        <option key={i} value={spares.id}>
+                          {spares.sparePart.sparePart_name}
                         </option>
                       ))}
                     </Form.Select>
@@ -571,20 +593,48 @@ function UpdateAssemblyForm() {
                     <tbody>
                       {assembly_supp.map((data, i) => (
                         <tr key={i}>
+                          <td>{data.supplier.supplier_code}</td>
                           <td>{data.supplier.supplier_name}</td>
-                          <td></td>
+                          <td>{data.supplier.supplier_email}</td>
+                          <td>{data.supplier.supplier_number}</td>
+                          <td>{data.supplier.supplier_address}</td>
+                          <td>{data.supplier_price}</td>
                         </tr>
                       ))}
 
                       {supp.length > 0 ? (
                         supp.map((supp) => (
                           <tr>
-                            <td key={supp.value}>{supp.label}</td>
+                            <td>{supp.codes}</td>
+                            <td>{supp.names}</td>
+                            <td>{supp.email}</td>
+                            <td>{supp.contact}</td>
+                            <td>{supp.address}</td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: "20px",
+                                  marginRight: "5px",
+                                }}>
+                                ₱
+                              </span>
+                              <input
+                                type="number"
+                                style={{ height: "50px" }}
+                                placeholder="Input Price"
+                                value={priceInput[supp.value] || ""}
+                                onChange={(e) =>
+                                  handlePriceinput(e.target.value, supp.value)
+                                }
+                                required
+                                onInput={handleKeyPress}
+                              />
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td></td>
+                          <td>No Supplier selected</td>
                         </tr>
                       )}
 
@@ -594,7 +644,19 @@ function UpdateAssemblyForm() {
                             isMulti
                             options={fetchSupp.map((supp) => ({
                               value: supp.supplier_code,
-                              label: supp.supplier_name,
+                              label: (
+                                <div>
+                                  Supplier Code:{" "}
+                                  <strong>{supp.supplier_code}</strong> / Name:{" "}
+                                  <strong>{supp.supplier_name}</strong>
+                                </div>
+                              ),
+                              codes: supp.supplier_code,
+                              names: supp.supplier_name,
+                              email: supp.supplier_email,
+                              contact: supp.supplier_number,
+                              address: supp.supplier_address,
+                              price: supp.supplier_price,
                             }))}
                             onChange={handleSelectChange_Supp}
                           />
@@ -621,6 +683,7 @@ function UpdateAssemblyForm() {
                   type="submit"
                   className="btn btn-warning"
                   size="md"
+                  onClick={update}
                   style={{ fontSize: "20px", margin: "0px 5px" }}>
                   Save
                 </Button>

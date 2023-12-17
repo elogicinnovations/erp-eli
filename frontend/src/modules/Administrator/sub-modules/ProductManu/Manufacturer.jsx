@@ -125,7 +125,7 @@ function Productvariants() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       axios
@@ -169,8 +169,8 @@ function Productvariants() {
 
           if (response.status === 200) {
             swal({
-              title: "The Manufacturer has been deleted!",
-              text: "The Manufacturer has been updated successfully.",
+              title: "Product Manufacturer Delete Succesful!",
+              text: "The Product Manufacturer has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -206,8 +206,8 @@ function Productvariants() {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Manufacturer Created",
-      text: "The manufacturer has been added successfully",
+      title: "Product Manufacturer Add Succesful!",
+      text: "The Product Manufacturer has been Added Successfully.",
       icon: "success",
       button: "OK",
     }).then(() => {
@@ -233,10 +233,9 @@ function Productvariants() {
   };
   const Duplicate_Message = () => {
     swal({
-      title: "Manufacturer Already Exist",
-      text: "The input other manufacturer",
+      title: "Product Manufacturer is Already Exist",
+      text: "Please Input a New Product Manufacturer ",
       icon: "error",
-      button: "OK",
     });
   };
 
@@ -305,8 +304,8 @@ function Productvariants() {
 
       if (response.status === 200) {
         swal({
-          title: "Update successful!",
-          text: "The Manufacturer has been updated successfully.",
+          title: "Product Manufacturer Update Succesful!",
+          text: "The Product Manufacturer has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -332,9 +331,9 @@ function Productvariants() {
         });
       } else if (response.status === 202) {
         swal({
+          title: "Product Manufacturer is Already Exist",
+          text: "Please Input a New Product Manufacturer ",
           icon: "error",
-          title: "Manufacturer already exists",
-          text: "Please input another Manufacturer",
         });
       } else {
         swal({
@@ -506,10 +505,7 @@ function Productvariants() {
         backdrop="static"
         keyboard={false}
         size="lg">
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={addManufacturer}>
+        <Form noValidate validated={validated} onSubmit={addManufacturer}>
           <Modal.Header closeButton>
             <Modal.Title style={{ fontSize: "24px" }}>
               Create Manufacturer
@@ -609,10 +605,7 @@ function Productvariants() {
         backdrop="static"
         keyboard={false}
         size="lg">
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleUpdateSubmit}>
+        <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
             <Modal.Title style={{ fontSize: "24px" }}>
               Update Manufacturer

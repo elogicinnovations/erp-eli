@@ -201,25 +201,24 @@ import cls_unit from "../../../../../../assets/global/unit";
         // console.log(res);
         if (res.status === 200) {
           swal({
-            title: 'The SubParts sucessfully added!',
-            text: 'The SubParts has been created successfully.',
-            icon: 'success',
-            button: 'OK'
+            title: "Product Sub-Parts Add Succesful!",
+            text: "The Product Sub-Parts has been Added Successfully.",
+            icon: "success",
+            button: "OK",
           }).then(() => {
-            navigate('/subParts')
-            
+            navigate("/subParts");
           });
         } else if (res.status === 201) {
           swal({
-            icon: 'error',
-            title: 'Code Already Exist',
-            text: 'Please input another code'
+            icon: "error",
+            title: "Code Already Exist",
+            text: "Please input another code",
           });
         } else {
           swal({
-            icon: 'error',
-            title: 'Something went wrong',
-            text: 'Please contact our support'
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
           });
         }
       })

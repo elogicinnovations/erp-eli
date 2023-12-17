@@ -362,8 +362,8 @@ function MasterList() {
 
         if (response.status === 200) {
           swal({
-            title: "User Added!",
-            text: "The user has been added successfully.",
+            title: "Master List Add Succesful!",
+            text: "The User has been Added Successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {
@@ -444,8 +444,8 @@ function MasterList() {
 
       if (response.status === 200) {
         swal({
-          title: "Update successful!",
-          text: "The user has been updated successfully.",
+          title: "Master List Update Successful!",
+          text: "The User has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -515,10 +515,10 @@ function MasterList() {
           );
           if (response.data.success) {
             swal({
-              title: "The Masterlist has been deleted!",
-              text: "The Master List has been updated successfully.",
-              icon: "success",
-              button: "OK",
+                title: "Master List Delete Succesfully!",
+                text: "The User has been Deleted Successfully.",
+                icon: "success",
+                button: "OK",
             }).then(() => {
               reloadTable();
             });

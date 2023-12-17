@@ -166,7 +166,7 @@ function CreateAssemblyForm() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       axios
@@ -187,8 +187,8 @@ function CreateAssemblyForm() {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Assembly sucessfully added!",
-              text: "The Assembly has been updated successfully.",
+              title: "The Product Assembly Add Succesful!",
+              text: "The Product Assembly has been Added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -196,9 +196,9 @@ function CreateAssemblyForm() {
             });
           } else if (res.status === 201) {
             swal({
+              title: "Product Assembly is Already Exist",
+              text: "Please Input a New Product Assembly ",
               icon: "error",
-              title: "Code Already Exist",
-              text: "Please input another code",
             });
           } else {
             swal({
@@ -226,10 +226,7 @@ function CreateAssemblyForm() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={add}>
+          <Form noValidate validated={validated} onSubmit={add}>
             <h1>Add Assembly Parts</h1>
             <div
               className="gen-info"
