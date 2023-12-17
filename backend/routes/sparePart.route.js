@@ -101,7 +101,8 @@ router.route('/create').post(async (req, res) => {
             
             await Inventory_Spare.create({
               spare_tag_supp_id: SupplierSpare_ID.id,
-              quantity: 0
+              quantity: 0,
+              price: supplierPrices
             });
           }
 

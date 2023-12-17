@@ -209,7 +209,8 @@ router.route("/create").post(
             const Inventories = InsertedSupp.id;
             await Inventory.create({
               product_tag_supp_id: Inventories,
-              quantity: 0
+              quantity: 0,
+              price: price
             });
 
           }

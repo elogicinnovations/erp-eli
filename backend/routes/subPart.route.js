@@ -102,7 +102,8 @@ router.route('/fetchTable').get(async (req, res) => {
             });
             await Inventory_Subpart.create({
               subpart_tag_supp_id: SupplierSubpart_ID.id,
-              quantity: 0
+              quantity: 0,
+              price: supplierPrices
             });
           }
           res.status(200).json();

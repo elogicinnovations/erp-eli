@@ -102,7 +102,8 @@ router.route("/create").post(async (req, res) => {
 
         await Inventory_Assembly.create({
           assembly_tag_supp_id: SupplierAssembly_ID.id,
-          quantity: 0
+          quantity: 0,
+          price: supplierPrice
         });
       
     
