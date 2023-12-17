@@ -38,12 +38,12 @@ function UpdateAssemblyForm() {
 
   // const [unit, setunit] = useState('');
   // const [slct_binLocation, setslct_binLocation] = useState([]);
-  // const [binLocation, setbinLocation] = useState([]); 
+  // const [binLocation, setbinLocation] = useState([]);
   // const [unitMeasurement, setunitMeasurement] = useState('');
   // const [slct_manufacturer, setslct_manufacturer] = useState([]);
   // const [manufacturer, setManufacturer] = useState([]);
   // const [thresholds, setThresholds] = useState('');
-  
+
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
   useEffect(() => {
@@ -141,7 +141,7 @@ function UpdateAssemblyForm() {
   //       console.error('Error fetching roles:', error);
   //     });
   // }, []);
-  
+
   // useEffect(() => {
   //   axios.get(BASE_URL + '/manufacturer/retrieve')
   //     .then(response => {
@@ -170,15 +170,15 @@ function UpdateAssemblyForm() {
   // const handleChangeUnit = (event) => {
   //   setunit(event.target.value);
   // };
-  
+
   // const handleFormChangeBinLocation = (event) => {
   //   setslct_binLocation(event.target.value);
   // };
-  
+
   // const handleChangeMeasurement = (event) => {
   //   setunitMeasurement(event.target.value);
   // };
-  
+
   // const handleFormChangeManufacturer = (event) => {
   //   setslct_manufacturer(event.target.value);
   // };
@@ -196,7 +196,7 @@ function UpdateAssemblyForm() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       axios

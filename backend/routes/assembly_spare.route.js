@@ -17,29 +17,33 @@ router.use(
   })
 );
 
-router.route("/fetchinTable").get(async (req, res) => {
+router.route("/fetchSpareAssembly").get(async (req, res) => {
   try {
     const data = await Assembly_SparePart.findAll({
+      include: [
+        {
+          model: SparePart,
+          required: true,
+        },
+        {
+          model: Assembly,
+          required: true,
+          attributes: ["assembly_name"],
+        },
+      ],
       where: {
-        assembly_id: req.query.id
+        assembly_id: req.query.id,
       },
-      include: {
-        model: SparePart,
-        required: true
-      }
-  });
-
-  if (data) {
-    // console.log(data);
+    });
+    console.log("Query result:", data);
+    // if (!data) {
+    //   return res.status(404).json();
+    // }
     return res.json(data);
-  } else {
-    res.status(400);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
   }
-} catch (err) {
-  console.error(err);
-  res.status(500).json("Error");
-}
 });
-
 
 module.exports = router;

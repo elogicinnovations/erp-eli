@@ -5,7 +5,6 @@ const Supplier = sequelize.define("suppliers", {
   supplier_code: {
     type: DataTypes.STRING,
     unique: true,
-
     primaryKey: true,
   },
   supplier_name: {

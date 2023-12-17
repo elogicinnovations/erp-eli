@@ -69,7 +69,9 @@ router.route("/fetchTable").get(async (req, res) => {
         "product_unitMeasurement",
         "createdAt",
         "updatedAt",
-        'product_status'
+        "product_image",
+        "product_imageType",
+        "product_status",
       ],
     });
 
@@ -85,10 +87,7 @@ router.route("/fetchTable").get(async (req, res) => {
   }
 });
 
-
-
-router.route('/fetchTableEdit').get(async (req, res) => {
-
+router.route("/fetchTableEdit").get(async (req, res) => {
   try {
     const data = await Product.findAll({
       where: {
@@ -109,7 +108,7 @@ router.route('/fetchTableEdit').get(async (req, res) => {
 });
 
 router.route("/create").post(
-  upload.fields([{ name: "selectedimage", maxCount: 1 }]),
+  upload.single("selectedimage"),
 
   async (req, res) => {
     try {
@@ -119,117 +118,110 @@ router.route("/create").post(
       } else {
         finalThreshold = req.body.thresholds;
       }
-        const existingDataCode = await Product.findOne({
-          where: {
-            product_code: req.body.code, 
-          },
-        });
-    
-        if (existingDataCode) {
-          res.status(201).send('Exist');
+      const existingDataCode = await Product.findOne({
+        where: {
+          product_code: req.body.code,
+        },
+      });
+
+      if (existingDataCode) {
+        res.status(201).send("Exist");
+      } else {
+        let image_blob, image_blobFiletype;
+        if (req.file) {
+          const uploadedImage = req.file;
+          image_blob = uploadedImage.buffer;
+          image_blobFiletype = mime.lookup(uploadedImage.originalname);
         } else {
-            let image_blob, image_blobFiletype;
-            if (req.files.selectedimage) {
-                image_blob = req.files.selectedimage[0].buffer;
-
-                image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
-
-            }
-            else{
-                image_blob = null;
-
-                image_blobFiletype = null;
-            }
-
-            const newData = await Product.create({
-            product_code: req.body.code,
-            product_name: req.body.name,
-            product_category: req.body.slct_category,
-            product_unit: req.body.unit,
-            product_location: req.body.slct_binLocation,
-            product_unitMeasurement: req.body.unitMeasurement,
-            product_manufacturer: req.body.slct_manufacturer,
-            product_details: req.body.details,
-            product_threshold: finalThreshold,
-            product_image: image_blob,
-            product_imageType: image_blobFiletype,
-            product_status: 'Active'
-          });
-
-          //Assembly
-          const IdData = newData.product_id;
-          const selectedAssemblies = JSON.parse(req.body.assemblies);
-
-          for (const assemblyDropdown of selectedAssemblies) {
-            const assemblyValue = assemblyDropdown.value;
-    
-            console.log(assemblyValue);
-    
-            await Product_Assembly.create({
-              product_id: IdData,
-              assembly_id: assemblyValue
-            });
-          }
-  
-          //Spareparts
-          const selectedSpare = JSON.parse(req.body.sparepart);
-          for (const spareDropdown of selectedSpare) {
-            const spareValue = spareDropdown.value;
-    
-            console.log(spareValue)
-            await Product_Spareparts.create({
-              product_id: IdData,
-              sparePart_id: spareValue
-            });
-          }
-
-          //Subparts
-          const selectedSubparting = JSON.parse(req.body.subpart);
-          for (const subpartDropdown of selectedSubparting) {
-            const subpartValue = subpartDropdown.value;
-    
-            console.log(subpartValue)
-            await Product_Subparts.create({
-              product_id: IdData,
-              subPart_id: subpartValue
-            });
-          }
-
-          //Supplier
-          const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
-
-          for (const supplier of selectedSuppliers) {
-            const { supplier_code, price } = supplier;
-          
-            const InsertedSupp = await ProductTAGSupplier.create({
-              product_id: IdData,
-              supplier_code: supplier_code,
-              product_price: price
-            });
-            const Inventories = InsertedSupp.id;
-            await Inventory.create({
-              product_tag_supp_id: Inventories,
-              quantity: 0,
-              price: price
-            });
-
-          }
-
-
-          res.status(200).json(newData);
+          image_blob = null;
+          image_blobFiletype = null;
         }
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('An error occurred');
+
+        const newData = await Product.create({
+          product_code: req.body.code,
+          product_name: req.body.name,
+          product_category: req.body.slct_category,
+          product_unit: req.body.unit,
+          product_location: req.body.slct_binLocation,
+          product_unitMeasurement: req.body.unitMeasurement,
+          product_manufacturer: req.body.slct_manufacturer,
+          product_details: req.body.details,
+          product_threshold: finalThreshold,
+          product_image: image_blob,
+          product_imageType: image_blobFiletype,
+          product_status: "Active",
+        });
+
+        //Assembly
+        const IdData = newData.product_id;
+        const selectedAssemblies = JSON.parse(req.body.assemblies);
+
+        for (const assemblyDropdown of selectedAssemblies) {
+          const assemblyValue = assemblyDropdown.value;
+
+          console.log(assemblyValue);
+
+          await Product_Assembly.create({
+            product_id: IdData,
+            assembly_id: assemblyValue,
+          });
+        }
+
+        //Spareparts
+        const selectedSpare = JSON.parse(req.body.sparepart);
+        for (const spareDropdown of selectedSpare) {
+          const spareValue = spareDropdown.value;
+
+          console.log(spareValue);
+          await Product_Spareparts.create({
+            product_id: IdData,
+            sparePart_id: spareValue,
+          });
+        }
+
+        //Subparts
+        const selectedSubparting = JSON.parse(req.body.subpart);
+        for (const subpartDropdown of selectedSubparting) {
+          const subpartValue = subpartDropdown.value;
+
+          console.log(subpartValue);
+          await Product_Subparts.create({
+            product_id: IdData,
+            subPart_id: subpartValue,
+          });
+        }
+
+        //Supplier
+        const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
+
+        for (const supplier of selectedSuppliers) {
+          const { supplier_code, price } = supplier;
+
+          const InsertedSupp = await ProductTAGSupplier.create({
+            product_id: IdData,
+            supplier_code: supplier_code,
+            product_price: price,
+          });
+          const Inventories = InsertedSupp.id;
+          await Inventory.create({
+            product_tag_supp_id: Inventories,
+            quantity: 0,
+            price: price,
+          });
+        }
+
+        res.status(200).json(newData);
       }
-});
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("An error occurred");
+    }
+  }
+);
 
-
-router.route("/update").post(
-  async (req, res) => {
-  
+router.route("/update").post(async (req, res) => {
   try {
-    console.log(req.query.id)
+    console.log(req.query.id);
     const existingDataCode = await Product.findOne({
       where: {
         product_code: req.query.code,
@@ -242,9 +234,9 @@ router.route("/update").post(
     } else {
       let finalThreshold;
       if (req.query.thresholds === "") {
-      finalThreshold = 0;
+        finalThreshold = 0;
       } else {
-      finalThreshold = req.query.thresholds;
+        finalThreshold = req.query.thresholds;
       }
       const Product_newData = await Product.update(
         {
@@ -268,78 +260,78 @@ router.route("/update").post(
       if (Product_newData) {
         const deleteassembly = Product_Assembly.destroy({
           where: {
-            product_id: req.query.id
-          },
-      });
-
-      if(deleteassembly) {
-        const selectedAssemblies = req.query.assembly;
-        console.log(selectedAssemblies);
-        for (const assemblyDropdown of selectedAssemblies) {
-          const assemblyValue = assemblyDropdown.value;
-          await Product_Assembly.create({
             product_id: req.query.id,
-            assembly_id: assemblyValue
-          });
-        }
-      } //delete assembly end
+          },
+        });
 
-      const deletesubpart = Product_Subparts.destroy({
+        if (deleteassembly) {
+          const selectedAssemblies = req.query.assembly;
+          console.log(selectedAssemblies);
+          for (const assemblyDropdown of selectedAssemblies) {
+            const assemblyValue = assemblyDropdown.value;
+            await Product_Assembly.create({
+              product_id: req.query.id,
+              assembly_id: assemblyValue,
+            });
+          }
+        } //delete assembly end
+
+        const deletesubpart = Product_Subparts.destroy({
           where: {
-            product_id: req.query.id
+            product_id: req.query.id,
           },
-      });
+        });
 
-      if(deletesubpart) {
-        const selectedSubparting = req.query.subparting
-        for (const subpartDropdown of selectedSubparting) {
-          const subpartValue = subpartDropdown.value;
-  
-          console.log(subpartValue)
-          await Product_Subparts.create({
+        if (deletesubpart) {
+          const selectedSubparting = req.query.subparting;
+          for (const subpartDropdown of selectedSubparting) {
+            const subpartValue = subpartDropdown.value;
+
+            console.log(subpartValue);
+            await Product_Subparts.create({
+              product_id: req.query.id,
+              subPart_id: subpartValue,
+            });
+          }
+        } //delete subpart end
+
+        const deletesparepart = Product_Spareparts.destroy({
+          where: {
             product_id: req.query.id,
-            subPart_id: subpartValue
-          });
+          },
+        });
+
+        if (deletesparepart) {
+          const selectedSpare = req.query.spareParts;
+          for (const spareDropdown of selectedSpare) {
+            const spareValue = spareDropdown.value;
+
+            console.log(spareValue);
+            await Product_Spareparts.create({
+              product_id: req.query.id,
+              sparePart_id: spareValue,
+            });
+          }
+        } //delete sparepart end
+
+        const deletesupplier = ProductTAGSupplier.destroy({
+          where: {
+            product_id: req.query.id,
+          },
+        });
+
+        if (deletesupplier) {
+          const selectedSuppliers = req.query.productTAGSuppliers;
+          console.log(selectedSuppliers);
+          for (const supplier of selectedSuppliers) {
+            const { value, price } = supplier;
+            await ProductTAGSupplier.create({
+              product_id: req.query.id,
+              supplier_code: value,
+              product_price: price,
+            });
+          }
         }
-      } //delete subpart end
-
-      const deletesparepart = Product_Spareparts.destroy({
-        where: {
-          product_id: req.query.id
-        },
-      })
-
-      if(deletesparepart) {
-        const selectedSpare = req.query.spareParts
-        for (const spareDropdown of selectedSpare) {
-          const spareValue = spareDropdown.value;
-  
-          console.log(spareValue)
-          await Product_Spareparts.create({
-            product_id: req.query.id,
-            sparePart_id: spareValue
-          });
-        }
-      } //delete sparepart end
-
-      const deletesupplier = ProductTAGSupplier.destroy({
-        where: {
-          product_id: req.query.id
-        },
-      });
-
-      if(deletesupplier){
-        const selectedSuppliers = req.query.productTAGSuppliers
-        console.log(selectedSuppliers)
-        for (const supplier of selectedSuppliers) {
-          const { value, price } = supplier;
-          await ProductTAGSupplier.create({
-            product_id: req.query.id,
-            supplier_code: value,
-            product_price: price
-           });
-         }
-      }
       }
 
       res.status(200).json();
@@ -348,7 +340,7 @@ router.route("/update").post(
     console.error(err);
     res.status(500).send("An error occurred");
   }
-});  
+});
 // router.route("/update").put(
 //   upload.fields([{ name: "selectedimage", maxCount: 1 }]),
 
@@ -435,9 +427,9 @@ router.route("/delete/:table_id").delete(async (req, res) => {
               })
                 .then((deletedInventory) => {
                   // if (deletedInventory) {
-                    res.status(200).json({ success: true });
+                  res.status(200).json({ success: true });
                   // } else {
-                    // res.status(400).json({ success: false });
+                  // res.status(400).json({ success: false });
                   // }
                 })
                 .catch((err) => {
@@ -463,8 +455,7 @@ router.route("/delete/:table_id").delete(async (req, res) => {
     });
 });
 
-
-router.route('/statusupdate').put(async (req, res) => {
+router.route("/statusupdate").put(async (req, res) => {
   try {
     const { productIds, status } = req.body;
 
@@ -475,15 +466,11 @@ router.route('/statusupdate').put(async (req, res) => {
       );
     }
 
-    res.status(200).json({ message: 'Products updated successfully' });
+    res.status(200).json({ message: "Products updated successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-
 
 module.exports = router;

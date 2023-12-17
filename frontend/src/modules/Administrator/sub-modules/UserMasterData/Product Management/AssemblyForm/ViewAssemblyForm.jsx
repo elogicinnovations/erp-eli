@@ -34,6 +34,7 @@ function ViewAssembly() {
   };
 
   console.log(Subparts);
+  console.log(Spareparts);
   //for sub parts
   useEffect(() => {
     axios
@@ -49,14 +50,14 @@ function ViewAssembly() {
   //for spare parts
   useEffect(() => {
     axios
-      .get(BASE_URL + "/spare_assembly/fetchinTable", {
+      .get(BASE_URL + "/assembly_spare/fetchSpareAssembly", {
         params: {
           id: id,
         },
       })
       .then((res) => setSpareparts(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [id]);
 
   return (
     <div className="main-of-containers">
@@ -69,11 +70,7 @@ function ViewAssembly() {
           <div className="headers-text">
             <div className="arrowandtitle">
               <Link to="/assemblyForm">
-                <ArrowCircleLeft
-                  size={50}
-                  color="#60646c"
-                  weight="fill"
-                />
+                <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
               </Link>
               <div className="titletext">
                 <h1>Assembly Summary</h1>
@@ -142,11 +139,11 @@ function ViewAssembly() {
                       </tr>
                     </thead>
                     <tbody>
-                      {Spareparts.map((spares, i) => (
+                      {Spareparts.map((spare, i) => (
                         <tr key={i}>
-                          <td>{spares.spareParts.spareParts_code}</td>
-                          <td>{spares.sparepart.spareParts_name}</td>
-                          <td>{spares.sparePart.spareParts_desc}</td>
+                          <td>{spare.spareParts.spareParts_code}</td>
+                          <td>{spare.spareParts.spareParts_name}</td>
+                          <td>{spare.spareParts.spareParts_desc}</td>
                         </tr>
                       ))}
                     </tbody>

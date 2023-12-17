@@ -52,6 +52,8 @@ function CreateProduct() {
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
   const [selectedimage, setselectedimage] = useState([]);
+  const [productImage, setProductImage] = useState([]);
+  const [productImageType, setProductImageType] = useState([]);
   const [status, setStatus] = useState("Active");
 
   const onDropImage = (acceptedFiles) => {
@@ -258,7 +260,11 @@ function CreateProduct() {
       formData.append("slct_manufacturer", slct_manufacturer);
       formData.append("details", details);
       formData.append("thresholds", thresholds);
-      formData.append("selectedimage", selectedimage);
+      // formData.append("selectedimage", selectedimage);
+      if (selectedimage.length > 0) {
+        const image = selectedimage[0];
+        formData.append("selectedimage", image);
+      }
       formData.append("assemblies", JSON.stringify(assembly));
       formData.append("sparepart", JSON.stringify(spareParts));
       formData.append("subpart", JSON.stringify(subparting));
@@ -626,9 +632,7 @@ function CreateProduct() {
                       width: "720px",
                       padding: 10,
                     }}>
-                    <Dropzone
-                      onDrop={onDropImage}
-                      onChange={(e) => setselectedimage(e.target.value)}>
+                    <Dropzone onDrop={onDropImage}>
                       {({ getRootProps, getInputProps }) => (
                         <div
                           className="w-100 h-100"
@@ -638,6 +642,7 @@ function CreateProduct() {
                             ref={fileInputRef}
                             type="file"
                             style={{ display: "none" }}
+                            {...getInputProps()}
                           />
                           <div
                             className="d-flex align-items-center"
@@ -677,7 +682,7 @@ function CreateProduct() {
                                       </span>
                                       <X
                                         size={20}
-                                        onClick={removeImage}
+                                        onClick={() => removeImage(index)}
                                         className="removeButton"
                                       />
                                     </div>
