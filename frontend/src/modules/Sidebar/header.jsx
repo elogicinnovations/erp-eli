@@ -3,6 +3,7 @@ import { Bell, BellRinging, ChartLineDown, Files, Gear, SignOut, UserCircle, Use
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const navigate = useNavigate();
     const [showNotifications, setShowNotifications] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const notificationRef = useRef(null);
@@ -96,9 +97,10 @@ const Header = () => {
           <div className="settings-search-master">
             <div className="dropdown-and-iconic">
               <div className="iconic-side">
-                <Link to='/systemSettings' className="settings">
+                <button onClick={() => navigate(`/SettingView/1`)} className="settings">
+                {/* <button onClick={() => navigate(`/stockManagementPreview/1`)} className="settings"> */}
                   <Gear size={35} />
-                </Link>
+                </button>
                 <div className="notification-wrapper" ref={notificationRef}>
                   <button className="notification" onClick={toggleNotifications}>
                     <Bell size={35} />

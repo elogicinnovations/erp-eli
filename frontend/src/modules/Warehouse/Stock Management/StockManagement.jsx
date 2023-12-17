@@ -7,17 +7,20 @@ import BASE_URL from '../../../assets/global/url';
 import Button from 'react-bootstrap/Button';
 import swal from 'sweetalert';
 import { Link, useNavigate } from 'react-router-dom';
+import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
+    MagnifyingGlass,
     Gear, 
     Bell,
     UserCircle,
     Plus,
+    Trash,
+    NotePencil,
     DotsThreeCircle,
-    CalendarBlank,
-    XCircle,
+    CalendarBlank
   } from "@phosphor-icons/react";
   import '../../../assets/skydash/vendors/feather/feather.css';
   import '../../../assets/skydash/vendors/css/vendor.bundle.base.css';
@@ -31,45 +34,12 @@ import {
   import '../../../assets/skydash/js/off-canvas';
   
   import * as $ from 'jquery';
-import Header from '../../../partials/header';
 
 function StockManagement() {
-
-    
-// Artifitial data
-
-const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
-      
-// Artifitial data
-
 
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState('');
-  const [filteredPR, setFilteredPR] = useState([]);
 
   
 
@@ -108,60 +78,13 @@ const data = [
   };
 
   
+    useEffect(() => {
+        if ($('#order-listing').length > 0) {
+          $('#order-listing').DataTable();
+        }
+      }, []);
 
-  const handleXCircleClick = () => {
-    setStartDate(null);
-  };
-  
-  const handleXClick = () => {
-    setEndDate(null);
-  };
-  
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
-  };
-  
-
-  //function when user click the clear filter button
-  const clearFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setSelectedStatus('');
-
-    // reloadTable();
-  };
-
-  // const handleGoButtonClick = () => {
-  //   if (!startDate || !endDate || !selectedStatus) {
-  //     swal({
-  //       icon: 'error',
-  //       title: 'Oops...',
-  //       text: 'Please fill in all filter sections!',
-  //     });
-  //     return;
-  //   }
-  
-  //   const filteredData = allPR.filter((data) => {
-  //     const createdAt = new Date(data.createdAt);
-  //     console.log('startDate:', startDate);
-  //     console.log('endDate:', endDate);
-  //     console.log('createdAt:', createdAt);
-
-  //     const isWithinDateRange =
-  //     (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
-  //     (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
-  
-  //     const isMatchingStatus =
-  //       selectedStatus === 'All Status' || data.status === selectedStatus;
-  
-  //     return isWithinDateRange && isMatchingStatus;
-  //   });
-  
-  //   setFilteredPR(filteredData);
-  // };
-  //
-
-    //date format
+       //date format
     function formatDatetime(datetime) {
       const options = {
         year: 'numeric',
@@ -173,24 +96,21 @@ const data = [
       return new Date(datetime).toLocaleString('en-US', options);
     }
 
-     //date format
-  function formatDatetime(datetime) {
-    const options = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    };
-    return new Date(datetime).toLocaleString('en-US', options);
-  }
 
+    const [stockTransfer, setStockTransfer] = useState([]);
+
+    // Fetch Data
     useEffect(() => {
-        if ($('#order-listing').length > 0) {
-          $('#order-listing').DataTable();
-        }
-      }, []);
+    axios.get(BASE_URL + '/StockTransfer/fetchTable')
+    .then(res => setStockTransfer(res.data))
+    .catch(err => console.log(err));
+    }, []);
 
+
+    const [updateModalShow, setUpdateModalShow] = useState(false);
+    const handleModalToggle = () => {
+      setUpdateModalShow(!updateModalShow);
+    };
 
   return (
     <div className="main-of-containers">
@@ -199,10 +119,13 @@ const data = [
         </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                {/* <div className="settings-search-master">
+                <div className="settings-search-master">
 
-                <div className="dropdown-and-iconics">
+                {/* <div className="dropdown-and-iconics">
                     <div className="dropdown-side">
+                        <div className="emp-text-side">
+                            <p>Stock Management</p>
+                        </div>
                     </div>
                     <div className="iconic-side">
                         <div className="gearsides">
@@ -218,112 +141,55 @@ const data = [
                           <h3>User Name</h3>
                         </div>
                     </div>
-                </div>
-
                 </div> */}
+
+                </div>
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
-                        <div className="emp-text-side">
-                            <p>Stock Management</p>
-                        </div>
                         <div className="button-create-side">
-                        <div style={{ position: "relative", marginBottom: "15px" }}>
+                          <div className="col-2" style={{zIndex: '3'}}>
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
-                                  // selected={startDate}
-                                  // onChange={(date) => setStartDate(date)}
-                                  placeholderText="Choose Date From"
-                                  dateFormat="yyyy-MM-dd"
-                                  wrapperClassName="custom-datepicker-wrapper"
-                                  popperClassName="custom-popper"
-                                  style={{fontFamily: 'Poppins, Source Sans Pro'}}
+                                  selected={startDate}
+                                  onChange={(date) => setStartDate(date)}
+                                  dateFormat="MM/dd/yyyy"
+                                  placeholderText="Start Date"
+                                  className="form-control"
                                 />
-                                <CalendarBlank
-                                  size={20}
-                                  weight="thin"
-                                  style={{
-                                    position: "absolute",
-                                    left: "8px",
-                                    top: "50%",
-                                    transform: "translateY(-50%)",
-                                    cursor: 'pointer',
-                                  }}
-                                />
-                                {startDate && (
-                                  <XCircle
-                                    size={16}
-                                    weight="thin"
-                                    style={{
-                                      position: "absolute",
-                                      right: "19px",
-                                      top: "50%",
-                                      transform: "translateY(-50%)",
-                                      cursor: 'pointer',
-                                    }}
-                                    // onClick={handleXCircleClick}
-                                  />
-                                )}
-                              </div>
-
-                              <div style={{ position: "relative", marginBottom: "15px" }}>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
+                              </Form.Group>
+                          </div>
+                          <div className="col-2" style={{zIndex: '3'}}>
+                              <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
-                                  // selected={endDate}
-                                  // onChange={(date) => setEndDate(date)}
-                                  placeholderText="Choose Date To"
-                                  dateFormat="yyyy-MM-dd"
-                                  wrapperClassName="custom-datepicker-wrapper"
-                                  popperClassName="custom-popper"
-                                  style={{fontFamily: 'Poppins, Source Sans Pro'}}
+                                  selected={endDate}
+                                  onChange={(date) => setEndDate(date)}
+                                  dateFormat="MM/dd/yyyy"
+                                  placeholderText="End Date"
+                                  className="form-control"
                                 />
-                                <CalendarBlank
-                                  size={20}
-                                  weight="thin"
-                                  // selected={endDate}
-                                  // onChange={(date) => setEndDate(date)}
-                                  style={{
-                                    position: "absolute",
-                                    left: "8px",
-                                    top: "50%",
-                                    transform: "translateY(-50%)",
-                                    cursor: 'pointer',
-                                  }}
-                                />
-                                {endDate && (
-                                  <XCircle
-                                    size={16}
-                                    weight="thin"
-                                    style={{
-                                      position: "absolute",
-                                      right: "19px",
-                                      top: "50%",
-                                      transform: "translateY(-50%)",
-                                      cursor: 'pointer',
-                                    }}
-                                    // onClick={handleXClick}
-                                  />
-                                )}
-                              </div>
-                              <Form.Select aria-label="item status"
-                                value={selectedStatus}
-                                // onChange={handleStatusChange}
-                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
-                                required
-                                title="Status is required">
-                                  <option value="" disabled selected>
-                                    Select Status
-                                  </option>
-                                  <option value="All Status">All Status</option>
-                                  <option value="For-Approval">For-Approval</option>
-                                  <option value="For-Rejustify">For-Rejustify</option>
-                                  <option value="For-Canvassing">For-Canvassing</option>
-                                  <option value="To-Received">To-Received</option>
-                                  <option value="Cancelled">Cancelled</option>
-                                </Form.Select>  
-                                  <button className='goesButton' > {/**onClick={handleGoButtonClick} */}
-                                    GO
-                                  </button>
-                                  <button className='Filterclear' > {/**onClick={clearFilters} */}
-                                    Clear Filter
-                                  </button>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
+                              </Form.Group>
+                          </div>
+                          <div className="col-4">
+                              <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Select 
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      defaultValue=''
+                                    >
+                                        <option disabled value=''>
+                                          Status
+                                        </option>
+                                            <option>
+                                            </option>
+                                    </Form.Select>
+                              </Form.Group>
+                                </div>
+                                  <Button variant="secondary" size="md"style={{ fontSize: '20px' }}>
+                                      Go
+                                  </Button>
                         <div className="Buttonmodal-new">
                                 <Link to="/createStockTransfer" className='button'>
                                 <span style={{ }}>
@@ -337,28 +203,26 @@ const data = [
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
+                        <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Transfer ID</th>
                                     <th className='tableh'>Description</th>
                                     <th className='tableh'>Date Transfered</th>
                                     <th className='tableh'>Source Warehouse</th>
-                                    <th className='tableh'>Target Warehouse</th>
-                                    <th className='tableh'>Quantity</th>
+                                    <th className='tableh'>Destination</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {data.map((data,i) =>(
+                                      {stockTransfer.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.samA}</td>
-                                        <td>{data.samB}</td>
-                                        <td>{data.samC}</td>
-                                        <td>{data.samD}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
-                                          <td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.stock_id}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.remarks}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{formatDatetime(data.createdAt)}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.source}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.destination}</td>
+                                        <td>
                                           <DotsThreeCircle
                                               size={32}
                                               className="dots-icon"
@@ -384,13 +248,10 @@ const data = [
                                           >
                                               {/* Your dropdown content here */}
                                               
-                                          <button className='btn' onClick={() => navigate(`/stockManagementPreview`)}>View</button>
+                                          {/* <Link to={`/initUpdateCostCenter/${data.stock_id}`} onClick={() => handleModalToggle(data)} style={{fontSize:'12px'}} className='btn'>Update</Link> */}
                                           <button className='btn'>Cancel</button>
                                           </div>
                                           </td>
-                                        {/* <td>
-                                        <button className='btn'><Trash size={20} style={{color: 'red'}}/></button>
-                                        </td> */}
                                         </tr>
                                       ))}
                             </tbody>

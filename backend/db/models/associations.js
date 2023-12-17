@@ -52,6 +52,12 @@ const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
 const PO_Received = require("./po_received.model");
 
+const StockTransfer = require("./stockTransfer.model");
+const StockTransfer_prod = require("./stockTransfer_product.model");
+const StockTransfer_assembly = require("./stockTransfer_assembly.model");
+const StockTransfer_spare = require("./stockTransfer_spare.model");
+const StockTransfer_subpart = require("./stockTransfer_subpart.model");
+
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -302,11 +308,41 @@ Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
 Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 
-//P0_received
-PR_PO.hasMany(PO_Received, { foreignKey: "pr_canvassed_prds_id" });
-PO_Received.belongsTo(PR_PO, { foreignKey: "pr_canvassed_prds_id" });
-// PO_Received.hasMany(PR_PO, { foreignKey: "received_id" });
-// PR_PO.belongsTo(PO_Received, {foreignKey: "received_id" });
+
+//--------------Stock Transfer Masterlist table
+MasterList.hasMany(StockTransfer, { foreignKey: "col_id" });
+StockTransfer.belongsTo(MasterList, { foreignKey: "col_id" });
+
+//--------------Stock Transfer Product table
+StockTransfer.hasMany(StockTransfer_prod, { foreignKey: "pr_id"});
+StockTransfer_prod.belongsTo(StockTransfer, { foreignKey: "pr_id"});
+
+Product.hasMany(StockTransfer_prod, { foreignKey: "product_id"});
+StockTransfer_prod.belongsTo(Product, { foreignKey: "product_id"});
+
+//-------------Stock Transfer Assembly table
+StockTransfer.hasMany(StockTransfer_assembly, { foreignKey: "pr_id"});
+StockTransfer_assembly.belongsTo(StockTransfer, { foreignKey: "pr_id"});
+
+Assembly.hasMany(StockTransfer_assembly, { foreignKey: "assembly_id"});
+StockTransfer_assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+//-------------Stock Transfer Spare table
+StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "pr_id"});
+StockTransfer_spare.belongsTo(StockTransfer, { foreignKey: "pr_id"});
+
+SparePart.hasMany(StockTransfer_spare, { foreignKey: "spare_id"});
+StockTransfer_spare.belongsTo(SparePart, { foreignKey: "spare_id"});
+
+//-------------Stock Transfer Subpart table
+StockTransfer.hasMany(StockTransfer_subpart, { foreignKey: "pr_id"});
+StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "pr_id"});
+
+SubPart.hasMany(StockTransfer_subpart, { foreignKey: "subPart_id"});
+StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "subPart_id"});
+
+
+
 
 
 
@@ -364,5 +400,11 @@ module.exports = {
                     PR_PO_asmbly,
                     PR_PO_spare,
                     PR_PO_subpart,
-                    PO_Received
+                    PO_Received,
+
+                    StockTransfer,
+                    StockTransfer_prod,
+                    StockTransfer_assembly,
+                    StockTransfer_spare,
+                    StockTransfer_subpart,
                 };

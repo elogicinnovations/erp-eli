@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import swal from 'sweetalert';
+import axios from 'axios';
+import BASE_URL from '../../assets/global/url';
 
 function SystemSettings() {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const [name, setName]= useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [street, setStreet] = useState('');
+  const [barangay, setBarangay] = useState('');
+  const [city, setCity] = useState('');
+  const [zipcode, setZipcode] = useState('');
+
+  const [validated, setValidated] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -26,7 +41,94 @@ function SystemSettings() {
     setIsEditMode(false);
     // You may want to reset form values or handle other cleanup tasks here
   };
+
+
+  const add = async e => {
+    e.preventDefault();
   
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+        swal({
+            icon: 'error',
+            title: 'Fields are required',
+            text: 'Please fill the red text fields'
+          });
+    }
+    else{
+      axios
+      .post(BASE_URL + '/Settings/create', 
+        { 
+          name, phone, email, street, barangay, city, zipcode
+        })
+      .then((res) => {
+        console.log(res);
+        if(res.status === 200){
+          SuccessInserted(res);
+        }
+        else if(res.status === 201){
+          Duplicate_Message();
+        }
+        else{
+          ErrorInserted();
+        }
+      })
+    }
+    setValidated(true); //for validations
+  };
+  
+  const SuccessInserted = (res) => {
+    swal({
+      title: 'Cost Center Created',
+      text: 'The Cost Center has been added successfully',
+      icon: 'success',
+      button: 'OK'
+    })
+    .then(() => {
+     
+     navigate('/costCenter')
+  
+  
+    })
+  }
+
+  const Duplicate_Message = () => {
+    swal({
+      title: 'Cost Center Already Exist',
+      text: 'Please input other cost center name',
+      icon: 'error',
+      button: 'OK'
+    })
+  }
+  const ErrorInserted = () => {
+    swal({
+      title: 'Something went wrong',
+      text: 'Please Contact our Support',
+      icon: 'error',
+      button: 'OK'
+    })  
+  }
+
+useEffect(() => {   
+  axios.get(BASE_URL + '/Setting/fetchdata', {
+    params: {
+      id: id
+    }
+    })
+  .then(res => {
+      setName(res.data[0].name);
+      setPhone(res.data[0].phone);
+      setEmail(res.data[0].email);
+      setStreet(res.data[0].street);
+      setBarangay(res.data[0].barangay);
+      setCity(res.data[0].city);
+      setZipcode(res.data[0].zipcode);
+      
+       
+  })
+    .catch(err => console.log(err));
+}, []);
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -49,16 +151,18 @@ function SystemSettings() {
               }}
             ></span>
           </div>
-          <Form>
+          <Form noValidate validated={validated} onSubmit={add}>
             <div className="row mt-3">
               <div className="col-9">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: '20px' }}>Company: </Form.Label>
+                  <Form.Label style={{ fontSize: '20px' }}>Company Name: </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter name"
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    value = {name}
+                    onChange={e => setName(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
@@ -135,7 +239,8 @@ function SystemSettings() {
                     type="text"
                     placeholder="Enter Phone Number..."
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    onChange={e => setPhone(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
@@ -146,7 +251,8 @@ function SystemSettings() {
                     type="text"
                     placeholder="Enter Email..."
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    onChange={e => setEmail(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
@@ -159,7 +265,8 @@ function SystemSettings() {
                     type="text"
                     placeholder="Enter Building or Street..."
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    onChange={e => setStreet(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
@@ -170,7 +277,8 @@ function SystemSettings() {
                     type="text"
                     placeholder="Enter Barangay..."
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    onChange={e => setBarangay(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
@@ -183,7 +291,8 @@ function SystemSettings() {
                     type="text"
                     placeholder="Enter City..."
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    onChange={e => setCity(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
@@ -194,15 +303,14 @@ function SystemSettings() {
                     type="text"
                     placeholder="Enter Zipcode..."
                     style={{ height: '40px', fontSize: '15px' }}
-                    disabled={!isEditMode}
+                    onChange={e => setZipcode(e.target.value)}
+                    // disabled={!isEditMode}
                   />
                 </Form.Group>
               </div>
             </div>
 
             <div className="save-cancel">
-          {!isEditMode ? (
-            <>
             <Link
                 to='/dashboard'
                 type="button"
@@ -212,36 +320,14 @@ function SystemSettings() {
               >
                 Cancel</Link>
             <Button
-              type="button"
+              type="submit"
               className="btn btn-primary"
               size="md"
               style={{ fontSize: '20px', margin: '0px 5px' }}
-              onClick={handleEditClick}
             >
-              Edit
+              Save Changes
             </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                type="button"
-                className="btn btn-secondary btn-md"
-                size="md"
-                style={{ fontSize: '20px', margin: '0px 5px' }}
-                onClick={handleCancelClick}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                className="btn btn-warning"
-                size="md"
-                style={{ fontSize: '20px', margin: '0px 5px' }}
-              >
-                Update
-              </Button>
-            </>
-          )}
+          
         </div>
           </Form>
         </div>

@@ -289,11 +289,11 @@ const handleGoButtonClick = () => {
                                 <tbody>
                                 {filteredPR.map((data, i) => (
                                         <tr key={i}>
-                                        <td>{data.id}</td>
-                                        <td></td>
-                                        <td><Link to={`/viewToReceive/${data.id}`}>{data.status}</Link></td>
-                                        <td>{formatDatetime(data.createdAt)}</td>
-                                        <td>{data.remarks}</td>
+                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{data.id}</td>
+                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}></td>
+                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{data.status}</td>
+                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{formatDatetime(data.createdAt)}</td>
+                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{data.remarks}</td>
                                         </tr>
                                       ))}
                               </tbody>
