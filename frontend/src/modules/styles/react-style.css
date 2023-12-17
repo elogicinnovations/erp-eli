@@ -1273,16 +1273,35 @@ input[type="number"]::-webkit-clear-button {
 
 /* Jerome's CSS */
 
-button.profile-card:hover {
+.up-button{
+  display: flex;
+  justify-content: end;
+}
+
+.up-container{
+  width: 100%;
+}
+
+.reminder {
+  width: 100%;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  padding: 40px 0 20px 0;
+}
+
+.profile-card:hover {
   border-radius: 10px;
   background-color: #ededed;
+  color: black;
+  text-decoration: none;
 }
 
 .user-title {
   font-size: 15px;
 }
 
-button.profile-card {
+.profile-card {
   border: none;
   padding: 10px;
   background-color: transparent;
@@ -1290,6 +1309,8 @@ button.profile-card {
   font-size: 15px;
   font-weight: 500;
   margin: 0 20px;
+  color: black;
+  text-decoration: none;
 }
 
 .profile-content {
