@@ -121,12 +121,12 @@ const Login = () => {
                           </div>
 
                           <div className="remember-forgot">
-                              <div className="rememberme">
+                              {/* <div className="rememberme">
                                   <label className="remembertext">
                                       <input type="checkbox" />
                                       Remember me
                                   </label>
-                              </div>
+                              </div> */}
                               <div className="forgot-passcontent">
                                 <Link to="/forgotpass" style={{display: 'contents'}}>
                                   <div className="fpass-word">Forgot Password?</div>

@@ -245,7 +245,7 @@ function CreateProduct() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       const formData = new FormData();
@@ -289,8 +289,8 @@ function CreateProduct() {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Product Created",
-      text: "The Product has been added successfully",
+      title: "Product List Add Succesful!",
+      text: "The Product List has been Added Successfully.",
       icon: "success",
       button: "OK",
     }).then(() => {
@@ -299,10 +299,9 @@ function CreateProduct() {
   };
   const Duplicate_Message = () => {
     swal({
-      title: "Product Already Exist",
-      text: "The input other product",
+      title: "Product List is Already Exist",
+      text: "Please Input a New Product List ",
       icon: "error",
-      button: "OK",
     });
   };
 
@@ -320,6 +319,12 @@ function CreateProduct() {
       setStatus("Inactive");
     } else {
       setStatus("Active");
+    }
+  };
+
+  const uploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -351,10 +356,7 @@ function CreateProduct() {
                 transform: "translateY(-50%)",
               }}></span>
           </div>
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={add}>
+          <Form noValidate validated={validated} onSubmit={add}>
             <div className="row mt-3">
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
@@ -397,9 +399,7 @@ function CreateProduct() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Category ...
                     </option>
                     {category.map((category) => (
@@ -430,7 +430,7 @@ function CreateProduct() {
                   />
                 </Form.Group>
               </div>
-            
+
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
@@ -472,15 +472,11 @@ function CreateProduct() {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeUnit}>
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Unit ...
                     </option>
                     {cls_unit.map((unit, index) => (
-                      <option
-                        key={index}
-                        value={unit}>
+                      <option key={index} value={unit}>
                         {unit}
                       </option>
                     ))}
@@ -498,9 +494,7 @@ function CreateProduct() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Bin Location ...
                     </option>
                     {binLocation.map((binLocation) => (
@@ -526,15 +520,11 @@ function CreateProduct() {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeMeasurement}>
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Unit Measurement ...
                     </option>
                     {cls_unitMeasurement.map((unitM, index) => (
-                      <option
-                        key={index}
-                        value={unitM}>
+                      <option key={index} value={unitM}>
                         {unitM}
                       </option>
                     ))}
@@ -552,9 +542,7 @@ function CreateProduct() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Manufacturer ...
                     </option>
                     {manufacturer.map((manufacturer) => (
@@ -656,6 +644,7 @@ function CreateProduct() {
                             style={{ width: "700px", height: "2.5em" }}>
                             <p
                               className="fs-5 w-100 p-3 btn btn-secondary"
+                              onClick={uploadClick}
                               style={{ color: "white", fontWeight: "bold" }}>
                               Drag and drop a file here, or click to select a
                               file
@@ -770,9 +759,7 @@ function CreateProduct() {
                         ))
                       ) : (
                         <tr>
-                          <td
-                            colSpan="6"
-                            style={{ textAlign: "center" }}>
+                          <td colSpan="6" style={{ textAlign: "center" }}>
                             No Supplier selected
                           </td>
                         </tr>

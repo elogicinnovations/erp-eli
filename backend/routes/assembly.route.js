@@ -63,7 +63,7 @@ router.route("/fetchTableEdit").get(async (req, res) => {
 
 router.route("/create").post(async (req, res) => {
   try {
-    const { code, name, desc, spareParts, addPriceInput, subparting } =
+    const { code, name, desc, spareParts, addPriceInput, subparting, unit, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} =
       req.body;
     // Check if the supplier code is already exists in the table
     console.log(code);
@@ -76,10 +76,16 @@ router.route("/create").post(async (req, res) => {
     if (existingDataCode) {
       return res.status(201).send("Exist");
     } else {
+      const threshholdValue = thresholds === '' ? "0" : thresholds; 
       const spare_newData = await Assembly.create({
         assembly_code: code.toUpperCase(),
         assembly_name: name,
         assembly_desc: desc,
+        assembly_unit: unit,
+        assembly_location: slct_binLocation,
+        assembly_manufacturer: slct_manufacturer,
+        threshhold: threshholdValue,
+        assembly_unitMeasurement: unitMeasurement
       });
 
       const createdID = spare_newData.id;
@@ -96,7 +102,8 @@ router.route("/create").post(async (req, res) => {
 
         await Inventory_Assembly.create({
           assembly_tag_supp_id: SupplierAssembly_ID.id,
-          quantity: 0
+          quantity: 0,
+          price: supplierPrice
         });
       
     

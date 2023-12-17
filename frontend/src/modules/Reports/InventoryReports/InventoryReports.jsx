@@ -43,42 +43,72 @@ function InventoryReports() {
     
 // Artifitial data
 
-const data = [
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-    {
-      samA: 'asd',
-      samB: 'asd',
-      samC: 'asd',
-      samD: 'asd',
-      samE: 'asd',
-    },
-  ]
+// const data = [
+//     {
+//       samA: 'asd',
+//       samB: 'asd',
+//       samC: 'asd',
+//       samD: 'asd',
+//       samE: 'asd',
+//     },
+//     {
+//       samA: 'asd',
+//       samB: 'asd',
+//       samC: 'asd',
+//       samD: 'asd',
+//       samE: 'asd',
+//     },
+//     {
+//       samA: 'asd',
+//       samB: 'asd',
+//       samC: 'asd',
+//       samD: 'asd',
+//       samE: 'asd',
+//     },
+//   ]
       
 // Artifitial data
 
 const navigate = useNavigate();
 const [startDate, setStartDate] = useState(null);
 const [endDate, setEndDate] = useState(null);
-  
-    useEffect(() => {
-        if ($('#order-listing').length > 0) {
-          $('#order-listing').DataTable();
-        }
-      }, []);
 
+const [invetory_prd, setInvetory_prd] = useState([]);
+const [invetory_assmbly, setInvetory_assmbly] = useState([]);
+const [invetory_spare, setInvetory_spare] = useState([]);
+const [invetory_subpart, setInvetory_subpart] = useState([]);
+  
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_inv/inventoryPRD')
+    .then(res => setInvetory_prd(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_inv/inventoryAssmbly')
+    .then(res => setInvetory_assmbly(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_inv/inventorySpare')
+    .then(res => setInvetory_spare(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+useEffect(() => { //fetch product for inventory
+  axios.get(BASE_URL + '/report_inv/inventorySubpart')
+    .then(res => setInvetory_subpart(res.data))
+    .catch(err => console.log(err));
+}, []);
+
+  
+useEffect(() => {
+  // Initialize DataTable when role data is available
+  if ($('#order2-listing').length > 0 && invetory_prd.length > 0) {
+    $('#order2-listing').DataTable();
+  }
+}, [invetory_prd]);
 
   return (
     <div className="main-of-containers">
@@ -182,19 +212,59 @@ const [endDate, setEndDate] = useState(null);
                                 </tr>
                                 </thead>
                                 <tbody>
-                                      {data.map((data,i) =>(
+                                      {invetory_prd.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.samA}</td>
-                                        <td>{data.samB}</td>
-                                        <td>{data.samC}</td>
-                                        <td>{data.samD}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
-                                        <td>{data.samE}</td>
+                                        <td>{data.product_tag_supplier.product.product_code}</td>
+                                        <td>{data.product_tag_supplier.product.product_name}</td>
+                                        <td>{data.product_tag_supplier.product.product_unitMeasurement}</td>
+                                        <td>{data.product_tag_supplier.product.product_details}</td>
+                                        <td>--</td>
+                                        <td>{data.price}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.price * data.quantity}</td>
                                         </tr>
                                       ))}
-                            </tbody>
+
+                                      {invetory_assmbly.map((data,i) =>(
+                                        <tr key={i}>
+                                        <td>{data.assembly_supplier.assembly.assembly_code}</td>
+                                        <td>{data.assembly_supplier.assembly.assembly_name}</td>
+                                        <td>--</td>
+                                        <td>{data.assembly_supplier.assembly.assembly_desc}</td>
+                                        <td>--</td>
+                                        <td>{data.price}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.price * data.quantity}</td>
+                                        </tr>
+                                      ))}
+
+                                      {invetory_spare.map((data,i) =>(
+                                        <tr key={i}>
+                                        <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
+                                        <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
+                                        <td>--</td>
+                                        <td>{data.sparepart_supplier.sparePart.spareParts_desc}</td>
+                                        <td>--</td>
+                                        <td>{data.price}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.price * data.quantity}</td>
+                                        </tr>
+                                      ))}
+
+                                      
+                                      {invetory_subpart.map((data,i) =>(
+                                        <tr key={i}>
+                                          <td>{data.subpart_supplier.subPart.subPart_code}</td>
+                                          <td>{data.subpart_supplier.subPart.subPart_name}</td>
+                                          <td>--</td>
+                                          <td>{data.subpart_supplier.subPart.subPart_desc}</td>
+                                          <td>--</td>
+                                          <td>{data.price}</td>
+                                          <td>{data.quantity}</td>
+                                          <td>{data.price * data.quantity}</td>
+                                        </tr>
+                                      ))}
+                                </tbody>
                         </table>
                     </div>
                 </div>

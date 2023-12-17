@@ -9,6 +9,8 @@ import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import Select from "react-select";
 import { Button, InputGroup, Form } from "react-bootstrap";
+// import cls_unit from '../../../../../../assets/global/unit';
+// import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 // import Button from "react-bootstrap/Button";
 import { Trash, NotePencil } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
@@ -33,6 +35,17 @@ function UpdateAssemblyForm() {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
+
+  // const [unit, setunit] = useState('');
+  // const [slct_binLocation, setslct_binLocation] = useState([]);
+  // const [binLocation, setbinLocation] = useState([]); 
+  // const [unitMeasurement, setunitMeasurement] = useState('');
+  // const [slct_manufacturer, setslct_manufacturer] = useState([]);
+  // const [manufacturer, setManufacturer] = useState([]);
+  // const [thresholds, setThresholds] = useState('');
+  
+  const [priceInput, setPriceInput] = useState({});
+  const [addPriceInput, setaddPriceInputbackend] = useState([]);
   useEffect(() => {
     axios
       .get(BASE_URL + "/assembly/fetchTableEdit", {
@@ -44,6 +57,11 @@ function UpdateAssemblyForm() {
         setCode(res.data[0].assembly_code);
         setName(res.data[0].assembly_name);
         setDesc(res.data[0].assembly_desc);
+        // setunit(res.data[0].assembly_unit);
+        // setslct_binLocation(res.data[0].assembly_location);
+        // setunitMeasurement(res.data[0].assembly_unitMeasurement);
+        // setslct_manufacturer(res.data[0].assembly_manufacturer);
+        // setThresholds(res.data[0].threshhold);
       })
       .catch((err) => console.log(err));
   }, [id]);
@@ -114,6 +132,26 @@ function UpdateAssemblyForm() {
       .catch((err) => console.log(err));
   }, [id]);
 
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/binLocation/fetchTable')
+  //     .then(response => {
+  //       setbinLocation(response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching roles:', error);
+  //     });
+  // }, []);
+  
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/manufacturer/retrieve')
+  //     .then(response => {
+  //       setManufacturer(response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching roles:', error);
+  //     });
+  // }, []);
+
   const [supp, setSupp] = useState([]);
   const handleSelectChange_Supp = (selectedOptions) => {
     setSupp(selectedOptions);
@@ -128,6 +166,22 @@ function UpdateAssemblyForm() {
   const handleEditClick = () => {
     setReadOnly(true);
   };
+
+  // const handleChangeUnit = (event) => {
+  //   setunit(event.target.value);
+  // };
+  
+  // const handleFormChangeBinLocation = (event) => {
+  //   setslct_binLocation(event.target.value);
+  // };
+  
+  // const handleChangeMeasurement = (event) => {
+  //   setunitMeasurement(event.target.value);
+  // };
+  
+  // const handleFormChangeManufacturer = (event) => {
+  //   setslct_manufacturer(event.target.value);
+  // };
 
   //Update
   const update = async (e) => {
@@ -155,14 +209,22 @@ function UpdateAssemblyForm() {
             desc,
             spareParts,
             Subparts,
+            // unit,
+            // unitMeasurement,
+            // slct_manufacturer,
+            // slct_binLocation,
+            // thresholds
+            // spareParts,
+            // Subparts,
+            // addPriceInput
           },
         })
         .then((res) => {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Assembly sucessfully updated!",
-              text: "The Assembly has been updated successfully.",
+              title: "The Product Assembly Update Succesful!",
+              text: "The Product Assembly has been Updated Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -170,9 +232,9 @@ function UpdateAssemblyForm() {
             });
           } else if (res.status === 201) {
             swal({
+              title: "Product Assembly is Already Exist",
+              text: "Please Input a New Product Assembly ",
               icon: "error",
-              title: "Code Already Exist",
-              text: "Please input another code",
             });
           } else {
             swal({
@@ -187,6 +249,34 @@ function UpdateAssemblyForm() {
     setValidated(true); //for validations
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "e" || isNaN(e.key)) {
+      e.preventDefault();
+    }
+    e.target.value = e.target.value.replace(/[^0-9.]/);
+  };
+
+  const handlePriceinput = (value, priceValue) => {
+    setPriceInput((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [priceValue]: value,
+      };
+
+      // Use the updatedInputs directly to create the serializedProducts array
+      const serializedPrice = supp.map((supp) => ({
+        price: updatedInputs[supp.value] || "",
+        code: supp.codes,
+      }));
+
+      setaddPriceInputbackend(serializedPrice);
+
+      console.log("Price Inputted:", serializedPrice);
+
+      // Return the updatedInputs to be used as the new state
+      return updatedInputs;
+    });
+  };
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -194,10 +284,7 @@ function UpdateAssemblyForm() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={update}>
+          <Form noValidate validated={validated} onSubmit={update}>
             <h1>Update Assembly Parts</h1>
             <div
               className="gen-info"
@@ -266,9 +353,7 @@ function UpdateAssemblyForm() {
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
                       {fetchSub.map((fetchSparts, i) => (
-                        <option
-                          key={i}
-                          value={fetchSparts.id}>
+                        <option key={i} value={fetchSparts.id}>
                           {fetchSparts.subPart_name}
                         </option>
                       ))}
@@ -279,9 +364,7 @@ function UpdateAssemblyForm() {
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
                       {Subparts.map((sparts, i) => (
-                        <option
-                          key={i}
-                          value={sparts.id}>
+                        <option key={i} value={sparts.id}>
                           {sparts.subPart.subPart_name}
                         </option>
                       ))}
@@ -299,9 +382,7 @@ function UpdateAssemblyForm() {
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
                       {fetchSparePart.map((fetchSpares, i) => (
-                        <option
-                          key={i}
-                          value={fetchSpares.id}>
+                        <option key={i} value={fetchSpares.id}>
                           {fetchSpares.spareParts_name}
                         </option>
                       ))}
@@ -316,11 +397,9 @@ function UpdateAssemblyForm() {
                     <Form.Select
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
-                      {spareParts.map((sparePart) => (
-                        <option
-                          key={sparePart.spareParts.id}
-                          value={sparePart.spareParts.id}>
-                          {sparePart.spareParts.spareParts_name}
+                      {spareParts.map((spares, i) => (
+                        <option key={i} value={spares.id}>
+                          {spares.sparePart.sparePart_name}
                         </option>
                       ))}
                     </Form.Select>
@@ -328,6 +407,93 @@ function UpdateAssemblyForm() {
                 )}
               </div>
             </div>
+
+            {/* <div className="row">
+                <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: '20px' }}>Unit: </Form.Label>
+                      <Form.Select
+                        aria-label=""
+                        required
+                        style={{ height: '40px', fontSize: '15px' }}
+                        value={unit}
+                        onChange={handleChangeUnit}>
+                          <option disabled value=''>
+                              Select Unit ...
+                          </option>
+                        {cls_unit.map((unit, index) => (
+                          <option key={index} value={unit}>
+                              {unit}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                </div>
+
+                <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: '20px' }}>Bin Location: </Form.Label>
+                      <Form.Select 
+                        aria-label="" 
+                        onChange={handleFormChangeBinLocation} 
+                        required
+                        style={{ height: '40px', fontSize: '15px' }}
+                        value={slct_binLocation}>
+                          <option disabled value=''>
+                              Select Bin Location ...
+                          </option>
+                            {binLocation.map(binLocation => (
+                              <option key={binLocation.bin_id} value={binLocation.bin_id}>
+                                {binLocation.bin_name}
+                              </option>
+                            ))}
+                      </Form.Select>
+                    </Form.Group>
+                </div>
+            </div>
+
+            <div className="row">
+                <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
+                      <Form.Select
+                        aria-label=""
+                        required
+                        style={{ height: '40px', fontSize: '15px' }}
+                        value={unitMeasurement}
+                        onChange={handleChangeMeasurement}>
+                          <option disabled value=''>
+                              Select Unit Measurement ...
+                          </option>
+                        {cls_unitMeasurement.map((unitM, index) => (
+                          <option key={index} value={unitM}>
+                              {unitM}
+                          </option>
+                        ))}
+                        </Form.Select>
+                    </Form.Group>
+                </div>
+                <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
+                      <Form.Select 
+                        aria-label="" 
+                        onChange={handleFormChangeManufacturer} 
+                        required
+                        style={{ height: '40px', fontSize: '15px' }}
+                        value={slct_manufacturer}>
+                          <option disabled value=''>
+                              Select Manufacturer ...
+                          </option>
+                            {manufacturer.map(manufacturer => (
+                              <option key={manufacturer.manufacturer_code} value={manufacturer.manufacturer_code}>
+                                {manufacturer.manufacturer_name}
+                              </option>
+                            ))}
+                      </Form.Select>
+                    </Form.Group>
+                </div>
+            </div> */}
 
             <div className="row">
               <Form.Group controlId="exampleForm.ControlInput1">
@@ -342,6 +508,59 @@ function UpdateAssemblyForm() {
                 />
               </Form.Group>
             </div>
+            {/* <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
+              Notification Thresholds
+              <p className='fs-5'>Sets your preferred thresholds.</p>
+              <span
+                style={{
+                  position: 'absolute',
+                  height: '0.5px',
+                  width: '-webkit-fill-available',
+                  background: '#FFA500',
+                  top: '65%',
+                  left: '21rem',
+                  transform: 'translateY(-50%)',
+                }}
+              ></span>
+            </div>
+
+            <div className="row mt-3">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
+                    <Form.Control value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" style={{height: '40px', fontSize: '15px'}}/>
+                    </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
+                      <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
+                          <Dropzone onDrop={onDropImage}>
+                              {({ getRootProps, getInputProps }) => (
+                              <div className='w-100 h-100' {...getRootProps()}>
+                                  <input
+                                      ref={fileInputRef}
+                                      type="file"
+                                      style={{display: 'none'}}
+                                  />
+                                  <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
+                                    <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
+                                  </div>
+                                  {selectedimage && 
+                                      <div className='d-flex align-items-center justify-content-center' style={{border: "1px green solid", width: '100%', height: '5em'}}>
+                                        <p 
+                                          style={{color: 'green', fontSize: '15px',}}>
+                                            Uploaded Image: {selectedimage.name}
+                                        </p>
+                                      </div>}
+                              </div>
+                              )}
+                          </Dropzone>
+                          
+                      </div>              
+                  </Form.Group>   
+                </div>
+              </div> */}
 
             <div
               className="gen-info"
@@ -374,20 +593,48 @@ function UpdateAssemblyForm() {
                     <tbody>
                       {assembly_supp.map((data, i) => (
                         <tr key={i}>
+                          <td>{data.supplier.supplier_code}</td>
                           <td>{data.supplier.supplier_name}</td>
-                          <td></td>
+                          <td>{data.supplier.supplier_email}</td>
+                          <td>{data.supplier.supplier_number}</td>
+                          <td>{data.supplier.supplier_address}</td>
+                          <td>{data.supplier_price}</td>
                         </tr>
                       ))}
 
                       {supp.length > 0 ? (
                         supp.map((supp) => (
                           <tr>
-                            <td key={supp.value}>{supp.label}</td>
+                            <td>{supp.codes}</td>
+                            <td>{supp.names}</td>
+                            <td>{supp.email}</td>
+                            <td>{supp.contact}</td>
+                            <td>{supp.address}</td>
+                            <td>
+                              <span
+                                style={{
+                                  fontSize: "20px",
+                                  marginRight: "5px",
+                                }}>
+                                ₱
+                              </span>
+                              <input
+                                type="number"
+                                style={{ height: "50px" }}
+                                placeholder="Input Price"
+                                value={priceInput[supp.value] || ""}
+                                onChange={(e) =>
+                                  handlePriceinput(e.target.value, supp.value)
+                                }
+                                required
+                                onInput={handleKeyPress}
+                              />
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td></td>
+                          <td>No Supplier selected</td>
                         </tr>
                       )}
 
@@ -397,7 +644,19 @@ function UpdateAssemblyForm() {
                             isMulti
                             options={fetchSupp.map((supp) => ({
                               value: supp.supplier_code,
-                              label: supp.supplier_name,
+                              label: (
+                                <div>
+                                  Supplier Code:{" "}
+                                  <strong>{supp.supplier_code}</strong> / Name:{" "}
+                                  <strong>{supp.supplier_name}</strong>
+                                </div>
+                              ),
+                              codes: supp.supplier_code,
+                              names: supp.supplier_name,
+                              email: supp.supplier_email,
+                              contact: supp.supplier_number,
+                              address: supp.supplier_address,
+                              price: supp.supplier_price,
                             }))}
                             onChange={handleSelectChange_Supp}
                           />
@@ -424,6 +683,7 @@ function UpdateAssemblyForm() {
                   type="submit"
                   className="btn btn-warning"
                   size="md"
+                  onClick={update}
                   style={{ fontSize: "20px", margin: "0px 5px" }}>
                   Save
                 </Button>

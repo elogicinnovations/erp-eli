@@ -20,6 +20,7 @@ import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 
 import * as $ from 'jquery';
+import { FormControl } from '@mui/base';
 
 function CreatePurchaseRequest() {
   const navigate = useNavigate()
@@ -151,10 +152,10 @@ const add = async (e) => {
 
       if (response.status === 200) {
         swal({
-          title: 'The Purchase request was successful!',
-          text: 'The Purchase Request has been added successfully.',
-          icon: 'success',
-          button: 'OK',
+          title: "Purchase Request Add Succesful!",
+                text: "The Purchase Request has been Added Successfully.",
+                icon: "success",
+                button: "OK",
         }).then(() => {
           navigate('/purchaseRequest');
         });
@@ -189,7 +190,20 @@ const displayDropdown = () => {
 //for supplier selection values
 const selectProduct = (selectedOptions) => {
     setProduct(selectedOptions);
-};
+   // Update input values based on selected options
+   const newInputValues = {};
+
+   selectedOptions.forEach((selectedOption) => {
+     const { value} = selectedOption;
+     newInputValues[value] = {
+       quantity: '', // Clear quantity input
+       desc: '',     // Clear description input
+     };
+   });
+
+   setInputValues({ ...inputValues, ...newInputValues });
+ };
+
 
 
 const handleInputChange = (value, productValue, inputType) => {
@@ -278,7 +292,7 @@ function formatDatetime(datetime) {
                             }}
                           ></span>
                         </div>
-                          <div className="row mt-3">
+                          <div className="row mt-3" style={{ position: "relative", marginBottom: "20px" }}>
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>PR cont. #: </Form.Label>
@@ -302,7 +316,7 @@ function formatDatetime(datetime) {
                             </Form.Group>
                               </div>
                           </div>
-                        <div className="row">
+                        <div className="row" style={{  marginBottom: "30px" }}>
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
@@ -316,7 +330,7 @@ function formatDatetime(datetime) {
                             </Form.Group>
                             </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                        <div className="gen-info" style={{ fontSize: '20px', position: 'sticky', paddingTop: '20px' }}>
                           Order Items
                           <span
                             style={{
@@ -353,10 +367,16 @@ function formatDatetime(datetime) {
                                                 <td >{product.name}</td>                                           
                                                 <td > 
                                                   <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input
+                                                    <Form.Control
                                                       type="number"
                                                       value={inputValues[product.value]?.quantity || ''}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
+                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity') 
+                                                    }
+                                                    onInput={(e) => {
+                                                      e.preventDefault();
+                                                      const validInput = e.target.value.replace(/[^0-9]/g, ''); // Replace non-numeric characters
+                                                      e.target.value = validInput;
+                                                    }}
                                                       required
                                                       placeholder="Input quantity"
                                                       style={{ height: '40px', width: '120px', fontSize: '15px' }}
@@ -366,12 +386,12 @@ function formatDatetime(datetime) {
                                                 <td >{formatDatetime(product.created)}</td>
                                                 <td >
                                                   <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input                                              
-                                                      as="textarea"
+                                                    <Form.Control                                              
+                                                      type='text'
                                                       value={inputValues[product.value]?.desc || ''}
                                                       onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
                                                       placeholder="Input description"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                      style={{ height: '40px', width: '150px', fontSize: '15px', overflowY: 'auto' }}
                                                     />
                                                   </div>
                                                 </td>

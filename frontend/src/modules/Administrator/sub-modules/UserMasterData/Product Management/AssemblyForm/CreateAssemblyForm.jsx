@@ -9,6 +9,8 @@ import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import Select from "react-select";
 import Button from "react-bootstrap/Button";
+import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
+import cls_unit from "../../../../../../assets/global/unit";
 import { Trash, NotePencil } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -31,6 +33,13 @@ function CreateAssemblyForm() {
   const [fetchSubPart, setFetchsub] = useState([]);
   const [spareParts, setSparePart] = useState([]);
   const [subparting, setsubparting] = useState([]);
+  const [thresholds, setThresholds] = useState("");
+  const [manufacturer, setManufacturer] = useState([]);
+  const [unit, setUnit] = useState("");
+  const [binLocation, setbinLocation] = useState([]);
+  const [slct_binLocation, setslct_binLocation] = useState("")
+  const [slct_manufacturer, setslct_manufacturer] = useState("")
+  const [unitMeasurement, setUnitMeasurement] = useState("")
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
@@ -68,6 +77,28 @@ function CreateAssemblyForm() {
       .catch((err) => console.log(err));
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/binLocation/fetchTable")
+      .then((response) => {
+        setbinLocation(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching roles:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/manufacturer/retrieve")
+      .then((response) => {
+        setManufacturer(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching roles:", error);
+      });
+  }, []);
+
   //for supplier selection values
   const handleSelectChange = (selectedOptions) => {
     setSparePart(selectedOptions);
@@ -83,6 +114,22 @@ function CreateAssemblyForm() {
 
   const handleAddSuppClick = () => {
     setShowDropdown(true);
+  };
+  
+  const handleChangeUnit = (event) => {
+    setUnit(event.target.value);
+  };
+  
+  const handleFormChangeBinLocation = (event) => {
+    setslct_binLocation(event.target.value);
+  };
+
+  const handleChangeMeasurement = (event) => {
+    setUnitMeasurement(event.target.value);
+  };
+  
+  const handleFormChangeManufacturer = (event) => {
+    setslct_manufacturer(event.target.value);
   };
 
   const handlePriceinput = (value, priceValue) => {
@@ -119,7 +166,7 @@ function CreateAssemblyForm() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       axios
@@ -130,13 +177,18 @@ function CreateAssemblyForm() {
           spareParts,
           addPriceInput,
           subparting,
+          unit,
+          slct_binLocation,
+          unitMeasurement,
+          slct_manufacturer,
+          thresholds
         })
         .then((res) => {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Assembly sucessfully added!",
-              text: "The Assembly has been updated successfully.",
+              title: "The Product Assembly Add Succesful!",
+              text: "The Product Assembly has been Added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -144,9 +196,9 @@ function CreateAssemblyForm() {
             });
           } else if (res.status === 201) {
             swal({
+              title: "Product Assembly is Already Exist",
+              text: "Please Input a New Product Assembly ",
               icon: "error",
-              title: "Code Already Exist",
-              text: "Please input another code",
             });
           } else {
             swal({
@@ -174,10 +226,7 @@ function CreateAssemblyForm() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
-          <Form
-            noValidate
-            validated={validated}
-            onSubmit={add}>
+          <Form noValidate validated={validated} onSubmit={add}>
             <h1>Add Assembly Parts</h1>
             <div
               className="gen-info"
@@ -262,6 +311,111 @@ function CreateAssemblyForm() {
                 </Form.Group>
               </div>
             </div>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue=""
+                    onChange={handleChangeUnit}>
+                    <option
+                      disabled
+                      value="">
+                      Select Unit ...
+                    </option>
+                    {cls_unit.map((unit, index) => (
+                      <option
+                        key={index}
+                        value={unit}>
+                        {unit}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Bin Location:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    onChange={handleFormChangeBinLocation}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue="">
+                    <option
+                      disabled
+                      value="">
+                      Select Bin Location ...
+                    </option>
+                    {binLocation.map((binLocation) => (
+                      <option
+                        key={binLocation.bin_id}
+                        value={binLocation.bin_id}>
+                        {binLocation.bin_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Unit of Measurement:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue=""
+                    onChange={handleChangeMeasurement}>
+                    <option
+                      disabled
+                      value="">
+                      Select Unit Measurement ...
+                    </option>
+                    {cls_unitMeasurement.map((unitM, index) => (
+                      <option
+                        key={index}
+                        value={unitM}>
+                        {unitM}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Manufacturer:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    onChange={handleFormChangeManufacturer}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue="">
+                    <option
+                      disabled
+                      value="">
+                      Select Manufacturer ...
+                    </option>
+                    {manufacturer.map((manufacturer) => (
+                      <option
+                        key={manufacturer.manufacturer_code}
+                        value={manufacturer.manufacturer_code}>
+                        {manufacturer.manufacturer_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
 
             <div className="row">
               <Form.Group controlId="exampleForm.ControlInput1">
@@ -274,6 +428,128 @@ function CreateAssemblyForm() {
                 />
               </Form.Group>
             </div>
+
+<div
+  className="gen-info"
+  style={{
+    fontSize: "20px",
+    position: "relative",
+    paddingTop: "30px",
+  }}>
+  Notification Thresholds
+  <p>Sets your preferred thresholds.</p>
+  <span
+    style={{
+      position: "absolute",
+      height: "0.5px",
+      width: "-webkit-fill-available",
+      background: "#FFA500",
+      top: "65%",
+      left: "21rem",
+      transform: "translateY(-50%)",
+    }}></span>
+</div>
+
+<div className="row mt-3">
+  <div className="col-6">
+    <Form.Group controlId="exampleForm.ControlInput1">
+      <Form.Label style={{ fontSize: "20px" }}>
+        Critical Inventory Thresholds:{" "}
+      </Form.Label>
+      <Form.Control
+        onChange={(e) => {
+          const inputValue = e.target.value;
+          const sanitizedValue = inputValue.replace(/\D/g, "");
+          setThresholds(sanitizedValue);
+        }}
+        type="text"
+        placeholder="Minimum Stocking"
+        style={{ height: "40px", fontSize: "15px" }}
+        maxLength={10}
+        pattern="[0-9]*"
+      />
+    </Form.Group>
+  </div>
+  {/* <div className="col-6">
+    <Form.Group controlId="exampleForm.ControlInput1">
+      <Form.Label style={{ fontSize: "20px" }}>
+        Image Upload:{" "}
+      </Form.Label>
+      <div
+        style={{
+          border: "1px #DFE3E7 solid",
+          height: "auto",
+          maxHeight: "140px",
+          fontSize: "15px",
+          width: "720px",
+          padding: 10,
+        }}>
+        <Dropzone
+          onDrop={onDropImage}
+          onChange={(e) => setselectedimage(e.target.value)}>
+          {({ getRootProps, getInputProps }) => (
+            <div
+              className="w-100 h-100"
+              style={{ width: "700px" }}
+              {...getRootProps()}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                style={{ display: "none" }}
+              />
+              <div
+                className="d-flex align-items-center"
+                style={{ width: "700px", height: "2.5em" }}>
+                <p
+                  className="fs-5 w-100 p-3 btn btn-secondary"
+                  style={{ color: "white", fontWeight: "bold" }}>
+                  Drag and drop a file here, or click to select a
+                  file
+                </p>
+              </div>
+              {selectedimage.length > 0 && (
+                <div
+                  className="d-flex align-items-center justify-content-center"
+                  style={{
+                    border: "1px green solid",
+                    width: "700px",
+                    height: "5em",
+                    padding: "1rem",
+                    overflowY: "auto",
+                  }}>
+                  Uploaded Images:
+                  <p
+                    style={{
+                      color: "green",
+                      fontSize: "15px",
+                      display: "flex",
+                      height: "4em",
+                      flexDirection: "column",
+                    }}>
+                    {selectedimage.map((image, index) => (
+                      <div key={index}>
+                        <div className="imgContainer">
+                          <span className="imgUpload">
+                            {image.name}
+                          </span>
+                          <X
+                            size={20}
+                            onClick={removeImage}
+                            className="removeButton"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </Dropzone>
+      </div>
+    </Form.Group>
+  </div> */}
+</div>
 
             <div
               className="gen-info"

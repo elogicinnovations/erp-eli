@@ -13,6 +13,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./modules/Login/login";
 import SystemSettings from "./modules/SystemSettings/SystemSettings";
+import ProfileSettings from "./modules/SystemSettings/ProfileSettings";
 import Supplier from "./modules/Administrator/sub-modules/BPMasterData/Supplier"
 import ViewSupplier from "./modules/Administrator/sub-modules/BPMasterData/ViewSupplier"
 import CreateSupplier from "./modules/Administrator/sub-modules/BPMasterData/CreateSupplier"
@@ -30,6 +31,7 @@ import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufac
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
 import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/SubParts"
+import UpdateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/UpdateSubParts"
 import CreateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/CreateSubParts"
 import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
 import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
@@ -127,6 +129,11 @@ function App() {
             element={<SystemSettings />}
           />
 
+          <Route
+            path="/profileSettings"
+            element={<ProfileSettings />}
+          />
+
           {/* User Master Data */}
 
           <Route
@@ -205,6 +212,11 @@ function App() {
                     path="/createsubParts"
                     element={<CreateSubParts/>}
                   />
+                  <Route
+                    path="/updatesubParts/:id"
+                    element={<UpdateSubParts/>}
+                  />
+                  
 
 
           <Route

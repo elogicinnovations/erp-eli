@@ -35,13 +35,15 @@ function UpdateProduct() {
   const [fetchSparePart, setFetchPart] = useState([]); //for retrieveing ng mga sparepart
   const [fetchSubPart, setFetchsub] = useState([]); //for retrieving ng mga subpart
   const [fetchAssembly, setAssembly] = useState([]); //for retrieving ng mga assembly
-  const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier
-  const [tablesupplier, settablesupplier] = useState([]); // for fetching product data that tag to supplier in table
 
+  const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier sa dropdown
+  const [tablesupplier, settablesupplier] = useState([]); // for fetching product data that tag to supplier in table
+  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at product code
+  
   const [spareParts, setSparePart] = useState([]); //for handling ng onchange sa dropdown ng spareparts
   const [subparting, setsubparting] = useState([]); //for handling ng onchange sa dropdown ng subpart
   const [assembly, setassemblies] = useState([]); //for handling ng onchange sa dropdown ng assembly
-  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at product code
+  
 
   const [price, setPrice] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -241,10 +243,10 @@ useEffect(() => {
       setslct_manufacturer(res.data[0].product_manufacturer);
       setDetails(res.data[0].product_details);
       setThresholds(res.data[0].product_threshold);
-      const imageBlob = res.data[0].image_blob;
-      const fileType = res.data[0].file_type;
-      const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
-      setselectedimage({ url: blobUrl, type: fileType });
+      // const imageBlob = res.data[0].image_blob;
+      // const fileType = res.data[0].file_type;
+      // const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
+      // setselectedimage({ url: blobUrl, type: fileType });
   })
     .catch(err => console.log(err));
 }, []);
@@ -253,26 +255,26 @@ useEffect(() => {
 
 
   // ----------------------------------- for image upload --------------------------//
-  const fileInputRef = useRef(null);
-  const [selectedimage, setselectedimage] = useState(null);
+  // const fileInputRef = useRef(null);
+  // const [selectedimage, setselectedimage] = useState(null);
 
-  const onDropImage = (acceptedFiles) => {
-    const selectedFile = acceptedFiles[0];
+  // const onDropImage = (acceptedFiles) => {
+  //   const selectedFile = acceptedFiles[0];
 
-    if (
-        selectedFile.type === 'image/png' || 
-        selectedFile.type === 'image/jpeg') 
-        {
-          setselectedimage(selectedFile);
-    } else {
-        swal({
-            title: 'Invalid file type',
-            text: 'Please select a  PNG, or JPG file.',
-            icon: 'error',
-            button: 'OK'
-        })
-      }
-  };
+  //   if (
+  //       selectedFile &&  // Check if selectedFile is not undefined
+  //       (selectedFile.type === 'image/png' || selectedFile.type === 'image/jpeg')
+  //   ) {
+  //       setselectedimage(selectedFile);
+  //   } else {
+  //       swal({
+  //           title: 'Invalid file type',
+  //           text: 'Please select a  PNG, or JPG file.',
+  //           icon: 'error',
+  //           button: 'OK'
+  //       })
+  //     }
+  // };
 
 
     //Supplier Fetch
@@ -368,90 +370,68 @@ useEffect(() => {
   }, []);
 
 
-  const update = async e => {
+  const update = async (e) => {
     e.preventDefault();
 
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-        swal({
-            icon: 'error',
-            title: 'Fields are required',
-            text: 'Please fill the red text fields'
-          });
-    }
-    else{
-      const formData = new FormData();
-      formData.append('id', id);
-      formData.append('code', code);
-      formData.append('name', name);
-      formData.append('slct_category', slct_category);
-      formData.append('unit', unit);
-      formData.append('slct_binLocation', slct_binLocation);
-      formData.append('unitMeasurement', unitMeasurement);
-      formData.append('slct_manufacturer', slct_manufacturer);
-      formData.append('details', details);
-      formData.append('thresholds', thresholds);
-      formData.append('selectedimage', selectedimage);
-      formData.append('assemblies', JSON.stringify(assembly));
-      formData.append('sparepart', JSON.stringify(spareParts));
-      formData.append('subpart', JSON.stringify(subparting));
-      formData.append('productTAGSuppliers', JSON.stringify(productTAGSuppliers));
-
-      axios.put(`${BASE_URL}/product/update`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        if(res.status === 200){
-          SuccessInserted(res);
-        }
-        else if(res.status === 201){
-          Duplicate_Message();
-        }
-        else{
-          ErrorInserted();
-        }
-      })
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
+      });
+    } else {
+      axios
+        .post(`${BASE_URL}/product/update`, null, {
+          params: {
+            id,
+            code,
+            name,
+            slct_category,
+            unit,
+            slct_binLocation,
+            unitMeasurement,
+            slct_manufacturer,
+            details,
+            thresholds,
+            // selectedimage,
+            assembly,
+            spareParts,
+            subparting,
+            productTAGSuppliers,            
+          },
+        })
+        .then((res) => {
+          // console.log(res);
+          if (res.status === 200) {
+            swal({
+              title: "The Product sucessfully updated!",
+              text: "The Product has been updated successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/productList");
+            });
+          } else if (res.status === 201) {
+            swal({
+              icon: "error",
+              title: "Product code Already Exist",
+              text: "Please input another code",
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        });
     }
     setValidated(true); //for validations
   };
-
-  const SuccessInserted = (res) => {
-    swal({
-      title: 'Product Updated',
-      text: 'The Product has been updated successfully',
-      icon: 'success',
-      button: 'OK'
-    })
-    .then(() => {
-     
-     navigate('/productList')
-
-
-    })
-  }
-  const Duplicate_Message = () => {
-    swal({
-      title: 'Product Already Exist',
-      text: 'The input other product',
-      icon: 'error',
-      button: 'OK'
-    })
-  }
-
-  const ErrorInserted = () => {
-    swal({
-      title: 'Something went wrong',
-      text: 'Please Contact our Support',
-      icon: 'error',
-      button: 'OK'
-    })  
-  }
-
+  console.log(subparting)
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -682,10 +662,8 @@ useEffect(() => {
                                 </Form.Group>
                             </div>
                             <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
+                              {/* <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-                                  {/* <input className="form-control" type="file" 
-                                  onChange={handleFileChange}/> */}
                                   <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
                                       <Dropzone onDrop={onDropImage}>
                                           {({ getRootProps, getInputProps }) => (
@@ -710,7 +688,7 @@ useEffect(() => {
                                       </Dropzone>
                                       
                                   </div>              
-                              </Form.Group>   
+                              </Form.Group>    */}
                             </div>
                           </div>
 

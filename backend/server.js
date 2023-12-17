@@ -42,6 +42,7 @@ const manufacturer = require("./routes/manufacturer.route");
 
 const subPart = require("./routes/subPart.route");
 const subPart_supplier = require("./routes/subpart_supplier.route");
+const subPart_image = require("./routes/subpart_image.route");
 
 const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
@@ -81,6 +82,10 @@ const StockTransfer_subpart = require("./routes/stockTransfer_subpart.route");
 const Dashboard = require("./routes/dashboard.route");
 const Setting = require("./routes/settings.route");
 
+const Report_inv = require("./routes/report_inventory.route");
+
+const Report_PO = require("./routes/report_PO.route");
+
 const authenticateToken = require('./middleware/token_authentication.middleware');
 
 const jwt = require('jsonwebtoken');
@@ -106,6 +111,7 @@ app.use("/manufacturer", manufacturer);
 
 app.use("/subpart", subPart);
 app.use("/subpartSupplier", subPart_supplier);
+app.use("/subPart_image", subPart_image);
 
 app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);
@@ -143,6 +149,8 @@ app.use("/StockTransfer_subpart", StockTransfer_subpart);
 
 app.use("/Setting", Setting);
 app.use("/Dashboard", Dashboard);
+app.use("/report_inv", Report_inv);
+app.use("/report_PO", Report_PO);
 
 
 app.listen(port, () => {

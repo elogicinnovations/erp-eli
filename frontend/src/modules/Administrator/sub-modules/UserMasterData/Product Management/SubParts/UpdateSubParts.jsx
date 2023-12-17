@@ -1,242 +1,254 @@
-import React, {useState, useEffect, useRef} from 'react'
-import Sidebar from '../../../../../Sidebar/sidebar';
-import '../../../../../../assets/global/style.css';
-import { Link, useNavigate } from 'react-router-dom';
-import '../../../../../styles/react-style.css';
-import Form from 'react-bootstrap/Form';
-import axios from 'axios';
-import BASE_URL from '../../../../../../assets/global/url';
-import swal from 'sweetalert';
-import Button from 'react-bootstrap/Button';
+import React, { useEffect, useState } from "react";
+import "../../../../../../assets/global/style.css";
+import "../../../../styles/react-style.css";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import BASE_URL from "../../../../../../assets/global/url";
+import Button from "react-bootstrap/Button";
+import swal from "sweetalert";
+import Form from "react-bootstrap/Form";
 import Select from 'react-select';
-import {
-    Plus,
-    Trash,
-    NotePencil,
-    X,
-  } from "@phosphor-icons/react";
-import Dropzone from "react-dropzone";
-import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
+// import * as $ from "jquery";
+import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
+import cls_unit from '../../../../../../assets/global/unit';
 
-  function CreateSubParts() {
-  const [validated, setValidated] = useState(false);
-  const navigate = useNavigate();
-  const [category, setcategory] = useState([]);
+function UpdateSubparts() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [validated, setValidated] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
+    const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
+    const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier
+    const [category, setcategory] = useState([]);
 
-  const [binLocation, setbinLocation] = useState([]);
-  const [manufacturer, setManufacturer] = useState([]);
-  
 
-  const [unit, setunit] = useState("");
-  const [unitMeasurement, setunitMeasurement] = useState("");
-  const [thresholds, setThresholds] = useState("");
-  const [slct_binLocation, setslct_binLocation] = useState([]);
-  const [slct_manufacturer, setslct_manufacturer] = useState([]);
-  const [slct_category, setslct_category] = useState([]); 
-  const [selectedimage, setselectedimage] = useState([]);
-  const fileInputRef = useRef(null);
-
-  const [code, setCode] = useState('');
-  const [subpartName, setsubpartName] = useState('');
-  const [details, setDetails] = useState('');
-  const [priceInput, setPriceInput] = useState({});
-  const [SubaddPriceInput, setaddPriceInputbackend] = useState([]);
-
-  const [supp, setSupp] = useState([]);
-  const [fetchSupp, setFetchSupp] = useState([]); 
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const handleAddSuppClick = () => {
-    setShowDropdown(true);
-  };
-
-  const handleSelectChange_Supp = (selectedOptions) => {
-    setSupp(selectedOptions);
-  };
-
-  // for Unit on change function
-  const handleChangeUnit = (event) => {
-    setunit(event.target.value);
-  };
-  // for Unit Measurement on change function
-  const handleChangeMeasurement = (event) => {
-    setunitMeasurement(event.target.value);
-  };
-  // for Bin Location on change function
-  const handleFormChangeBinLocation = (event) => {
-    setslct_binLocation(event.target.value);
-  };
-  // for Unit Measurement on change function
-  const handleFormChangeManufacturer = (event) => {
-    setslct_manufacturer(event.target.value);
-  };
-
-  // for Catergory on change function
-  const handleFormChangeCategory = (event) => {
-    setslct_category(event.target.value);
-  };
-  
-  console.log(slct_binLocation)
-
-  useEffect(() => {
-      axios.get(BASE_URL + '/supplier/fetchTable')
-        .then(res => setFetchSupp(res.data))
-        .catch(err => console.log(err));
-    }, []);
     
+    const [prodcode, setprodcode] = useState("")
+    const [prodname, setprodname] = useState("")
+    const [produnit, setprodunit] = useState("");
+    const [prodlocation, setprodlocation] = useState([]);
+    const [prodmeasurement, setprodmeasurement] = useState("");
+    const [prodmanufacture, setprodmanufacture] = useState("");
+    const [prodthreshold, setprodthreshold] = useState("");
+    const [proddetails, setproddetails] = useState("");
+    const [prodcategory, setprodcategory] = useState([]);
+    const [tablesupplier, settablesupplier] = useState([]); // for fetching supplier na nakatag sa subparts
+    const [subpartTAGSuppliers, setsubpartTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at subpart id
 
-    const handlePriceinput = (value, priceValue) => {
-      setPriceInput((prevInputs) => {
-        const updatedInputs = {
-          ...prevInputs,
-          [priceValue]: value,
+    useEffect(() => {
+        axios
+          .get(BASE_URL + "/subpart/fetchsubpartEdit", {
+            params: {
+              id: id,
+            },
+          })
+          .then((res) => {
+            setprodcode(res.data[0].subPart_code);
+            setprodname(res.data[0].subPart_name);
+            setprodunit(res.data[0].subPart_unit);
+            setprodlocation(res.data[0].subPart_location);
+            setprodmeasurement(res.data[0].subPart_unitMeasurement);
+            setprodmanufacture(res.data[0].subPart_Manufacturer);
+            setprodthreshold(res.data[0].threshhold);
+            setproddetails(res.data[0].subPart_desc);
+            setprodcategory(res.data[0].category_code)
+          })
+          .catch((err) => console.log(err));
+      }, [id]);
+
+      const handleSelectChange = (selectedOptions) => {
+        setsubpartTAGSuppliers(selectedOptions);
+        const updatedTable = [
+          ...tablesupplier.filter((row) => selectedOptions.some((option) => option.value === row.supplier.supplier_code)),
+          ...selectedOptions
+            .filter((option) => !tablesupplier.some((row) => row.supplier.supplier_code === option.value))
+            .map((option) => ({
+              supplier_code: option.value,
+              supplier: {
+                supplier_name: option.label.split('/ Name: ')[1].trim(),
+                supplier_code: option.suppcodes,
+                supplier_email: option.email,
+                supplier_number: option.number,
+                supplier_address: option.address,
+                supplier_receiving: option.receiving,
+              },
+            })),
+        ];
+        settablesupplier(updatedTable);
+      };
+
+      const handlePriceChange = (index, value) => {
+        const updatedTable = [...tablesupplier];
+        updatedTable[index].supplier_price = value;
+      
+        const subpartTAGSuppliersData = subpartTAGSuppliers.map((row) => {
+          if (row.value === updatedTable[index].supplier_code) {
+            return {
+              ...row,
+              price: value,
+            };
+          }
+          return row;
+        });
+      
+        setsubpartTAGSuppliers(subpartTAGSuppliersData);
+        settablesupplier(updatedTable);
+      };
+
+      useEffect(() => {
+        axios.get(BASE_URL + '/subpartSupplier/fetchSubSupplier', {
+          params: {
+            id: id
+          }
+        })
+          .then(res => {
+            const data = res.data;
+            settablesupplier(data);
+            const selectedSupplierOptions = data.map((row) => ({
+              value: row.supplier.supplier_code,
+              label: `Supplier Code: ${row.supplier_code} / Name: ${row.supplier.supplier_name}`,
+              price: row.supplier_price,
+            }));
+            setsubpartTAGSuppliers(selectedSupplierOptions);
+          })
+          .catch(err => console.log(err));
+      }, [id]);
+
+    //   console.log(prodcode)
+
+      //Bin Location Fetch
+      useEffect(() => {
+        axios.get(BASE_URL + '/binLocation/fetchTable')
+          .then(response => {
+            setbinLocation(response.data);
+          })
+          .catch(error => {
+            console.error('Error fetching roles:', error);
+          });
+      }, []);
+
+      //Manufacture Fetch
+      useEffect(() => {
+        axios.get(BASE_URL + '/manufacturer/retrieve')
+          .then(response => {
+            setManufacturer(response.data);
+          })
+          .catch(error => {
+            console.error('Error fetching roles:', error);
+          });
+      }, []);
+
+        //Supplier Fetch
+        useEffect(() => {
+        axios.get(BASE_URL + '/supplier/fetchTable')
+          .then(res => setFetchSupp(res.data))
+          .catch(err => console.log(err));
+      }, []);
+
+      //category fetch
+      useEffect(() => {
+        axios.get(BASE_URL + '/category/fetchTable')
+          .then(response => {
+            setcategory(response.data);
+          })
+          .catch(error => {
+            console.error('Error fetching roles:', error);
+          });
+      }, []);
+
+        // for Unit on change function
+        const handleChangeUnit = (event) => {
+            setprodunit(event.target.value);
         };
-    
-        // Use the updatedInputs directly to create the serializedProducts array
-        const serializedPrice = supp.map((supp) => ({
-          price: updatedInputs[supp.value] || '',
-          code: supp.codes
-        }));
-    
-        setaddPriceInputbackend(serializedPrice);
-    
-        console.log("Price Inputted:", serializedPrice);
-    
-        // Return the updatedInputs to be used as the new state
-        return updatedInputs;
-      });
-    };
 
-    useEffect(() => {
-      axios
-        .get(BASE_URL + "/binLocation/fetchTable")
-        .then((response) => {
-          setbinLocation(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching roles:", error);
-        });
-    }, []);
+        // for Bin Location on change function
+        const handleFormChangeBinLocation = (event) => {
+            setprodlocation(event.target.value);
+        };
 
+        // for Manufacturer on change function
+        const handleFormChangeManufacturer = (event) => {
+            setprodmanufacture(event.target.value);
+        };
 
-    useEffect(() => {
-      axios
-        .get(BASE_URL + "/manufacturer/retrieve")
-        .then((response) => {
-          setManufacturer(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching roles:", error);
-        });
-    }, []);
+        // for Unit Measurement on change function
+        const handleChangeMeasurement = (event) => {
+            setprodmeasurement(event.target.value);
+        };
 
-    useEffect(() => {
-      axios
-        .get(BASE_URL + "/category/fetchTable")
-        .then((response) => {
-          setcategory(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching roles:", error);
-        });
-    }, []);
+        //for category on change function
+        const handleFormChangeCategory = (event) => {
+            setprodcategory(event.target.value);
+        };
+        //when user click the Add supplier button
+        const handleAddSupp = () => {
+            setShowDropdown(true);
+        };
 
-    const onDropImage = (acceptedFiles) => {
-      const newSelectedImages = [...selectedimage];
-  
-      acceptedFiles.forEach((file) => {
-        if (
-          (file.type === "image/png" || file.type === "image/jpeg") &&
-          newSelectedImages.length < 5
-        ) {
-          newSelectedImages.push(file);
-        } else {
-          swal({
-            title: "Invalid file type or maximum limit reached",
-            text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
-            icon: "error",
-            button: "OK",
-          });
-        }
-      });
-  
-      setselectedimage(newSelectedImages);
-    };
-  
-    const removeImage = (index) => {
-      const newSelectedImages = [...selectedimage];
-      newSelectedImages.splice(index, 1);
-      setselectedimage(newSelectedImages);
-    };
-  
-
-  const add = async e => {
-    e.preventDefault();
-  
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-        swal({
-            icon: 'error',
-            title: 'Fields are required',
-            text: 'Please fill the red text fields'
-          });
-    }
-    else{
-      axios.post(`${BASE_URL}/subpart/createsubpart`, {
-        code, 
-        subpartName, 
-        details, 
-        SubaddPriceInput,
-        unit, 
-        slct_binLocation,
-        unitMeasurement,
-        slct_manufacturer,
-        thresholds,
-        slct_category,
-      })
-      .then((res) => {
-        // console.log(res);
-        if (res.status === 200) {
-          swal({
-            title: "Product Sub-Parts Add Succesful!",
-            text: "The Product Sub-Parts has been Added Successfully.",
-            icon: "success",
-            button: "OK",
-          }).then(() => {
-            navigate("/subParts");
-          });
-        } else if (res.status === 201) {
-          swal({
-            icon: "error",
-            title: "Code Already Exist",
-            text: "Please input another code",
-          });
-        } else {
-          swal({
-            icon: "error",
-            title: "Something went wrong",
-            text: "Please contact our support",
-          });
-        }
-      })
-  
-    }
-    setValidated(true); //for validations
-  };
-
-
-    return(
+          const update = async (e) => {
+            e.preventDefault();
+        
+            const form = e.currentTarget;
+            if (form.checkValidity() === false) {
+              e.preventDefault();
+              e.stopPropagation();
+              swal({
+                icon: "error",
+                title: "Fields are required",
+                text: "Please fill the red text fields",
+              });
+            } else {
+              axios
+                .post(`${BASE_URL}/subpart/update`, null, {
+                  params: {
+                    id,
+                    prodcode,
+                    prodname,
+                    produnit,
+                    prodlocation,
+                    prodmeasurement,
+                    prodmanufacture,
+                    proddetails,
+                    prodthreshold,
+                    prodcategory,
+                    subpartTAGSuppliers,
+                  },
+                })
+                .then((res) => {
+                  // console.log(res);
+                  if (res.status === 200) {
+                    swal({
+                      title: "The SubPart sucessfully updated!",
+                      text: "The SubPart has been updated successfully.",
+                      icon: "success",
+                      button: "OK",
+                    }).then(() => {
+                      navigate("/subParts");
+                    });
+                  } else if (res.status === 201) {
+                    swal({
+                      icon: "error",
+                      title: "Subpart code Already Exist",
+                      text: "Please input another code",
+                    });
+                  } else {
+                    swal({
+                      icon: "error",
+                      title: "Something went wrong",
+                      text: "Please contact our support",
+                    });
+                  }
+                });
+            }
+            setValidated(true); //for validations
+          };
+    return (
         <div className="main-of-containers">
-            {/* <div className="left-of-main-containers">
-                <Sidebar/>
-            </div> */}
             <div className="right-of-main-containers">
                 <div className="right-body-contentss">
-                <Form noValidate validated={validated} onSubmit={add}>
-                <h1>Add Sub Parts</h1>
+                <Form noValidate validated={validated} onSubmit={update}>
+                <h1>Update Sub Parts</h1>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           General Information
                           <span
@@ -257,42 +269,35 @@ import cls_unit from "../../../../../../assets/global/unit";
                                   <div className="col-4">
                                     <Form.Group controlId="exampleForm.ControlInput1">
                                       <Form.Label style={{ fontSize: '20px' }}>SubParts Code </Form.Label>
-                                      <Form.Control required onChange={(e) => setCode(e.target.value) } type="text" placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
+                                      <Form.Control value={prodcode} required onChange={(e) => setprodcode(e.target.value) } type="text" placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
                                     </Form.Group>
                                   </div>
                                   <div className="col-4">
                                     <Form.Group controlId="exampleForm.ControlInput1">
                                       <Form.Label style={{ fontSize: '20px' }}>SubParts Name </Form.Label>
-                                      <Form.Control required onChange={(e) => setsubpartName(e.target.value) } type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                      <Form.Control required value={prodname} onChange={(e) => setprodname(e.target.value)} type="text" placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
                                     </Form.Group>
                                   </div>
                                   <div className="col-4">
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: "20px" }}>
-                                      Category:{" "}
-                                    </Form.Label>
-
-                                    <Form.Select
-                                      aria-label=""
-                                      onChange={handleFormChangeCategory}
-                                      required
-                                      style={{ height: "40px", fontSize: "15px" }}
-                                      defaultValue="">
-                                      <option
-                                        disabled
-                                        value="">
-                                        Select Category
-                                      </option>
-                                      {category.map((category) => (
-                                        <option
-                                          key={category.category_code}
-                                          value={category.category_code}>
-                                          {category.category_name}
-                                        </option>
-                                      ))}
-                                    </Form.Select>
-                                  </Form.Group>
-                                </div>
+                                    <Form.Group controlId="exampleForm.ControlInput2">
+                                        <Form.Label style={{ fontSize: '20px' }}>Category: </Form.Label>
+                                        <Form.Select 
+                                            aria-label="" 
+                                            onChange={handleFormChangeCategory}
+                                            required
+                                            style={{ height: '40px', fontSize: '15px' }}
+                                            value={prodcategory}>
+                                            <option disabled value=''>
+                                                Select Category ...
+                                            </option>
+                                                {category.map(category => (
+                                                <option key={category.category_code} value={category.category_code}>
+                                                    {category.category_name}
+                                                </option>
+                                                ))}
+                                        </Form.Select>
+                                        </Form.Group>
+                                    </div>
                               </div>
 
                               <div className="row">
@@ -303,12 +308,8 @@ import cls_unit from "../../../../../../assets/global/unit";
                                       aria-label=""
                                       style={{ height: "40px", fontSize: "15px" }}
                                       defaultValue=""
+                                      value={produnit}
                                       onChange={handleChangeUnit}>
-                                      <option
-                                        disabled
-                                        value="">
-                                        Select Unit ...
-                                      </option>
                                       {cls_unit.map((unit, index) => (
                                         <option
                                           key={index}
@@ -327,14 +328,8 @@ import cls_unit from "../../../../../../assets/global/unit";
                                     <Form.Select
                                       aria-label=""
                                       onChange={handleFormChangeBinLocation}
-                                      required
-                                      style={{ height: "40px", fontSize: "15px" }}
-                                      defaultValue="">
-                                      <option
-                                        disabled
-                                        value="">
-                                        Select Bin Location ...
-                                      </option>
+                                      value={prodlocation}
+                                      style={{ height: "40px", fontSize: "15px" }}>
                                       {binLocation.map((binLocation) => (
                                         <option
                                           key={binLocation.bin_id}
@@ -355,14 +350,9 @@ import cls_unit from "../../../../../../assets/global/unit";
                                     </Form.Label>
                                     <Form.Select
                                       aria-label=""
+                                      value={prodmeasurement}
                                       style={{ height: "40px", fontSize: "15px" }}
-                                      defaultValue=""
                                       onChange={handleChangeMeasurement}>
-                                      <option
-                                        disabled
-                                        value="">
-                                        Select Unit Measurement ...
-                                      </option>
                                       {cls_unitMeasurement.map((unitM, index) => (
                                         <option
                                           key={index}
@@ -382,13 +372,8 @@ import cls_unit from "../../../../../../assets/global/unit";
                                       aria-label=""
                                       onChange={handleFormChangeManufacturer}
                                       required
-                                      style={{ height: "40px", fontSize: "15px" }}
-                                      defaultValue="">
-                                      <option
-                                        disabled
-                                        value="">
-                                        Select Manufacturer ...
-                                      </option>
+                                      value={prodmanufacture}
+                                      style={{ height: "40px", fontSize: "15px" }}>
                                       {manufacturer.map((manufacturer) => (
                                         <option
                                           key={manufacturer.manufacturer_code}
@@ -411,18 +396,19 @@ import cls_unit from "../../../../../../assets/global/unit";
                                       onChange={(e) => {
                                         const inputValue = e.target.value;
                                         const sanitizedValue = inputValue.replace(/\D/g, "");
-                                        setThresholds(sanitizedValue);
+                                        setprodthreshold(sanitizedValue);
                                       }}
                                       type="text"
                                       placeholder="Minimum Stocking"
                                       style={{ height: "40px", fontSize: "15px" }}
                                       maxLength={10}
                                       pattern="[0-9]*"
+                                      value={prodthreshold}
                                     />
                                   </Form.Group>
                                 </div>
                                 <div className="col-6">
-                                  <Form.Group controlId="exampleForm.ControlInput1">
+                                  {/* <Form.Group controlId="exampleForm.ControlInput1">
                                     <Form.Label style={{ fontSize: "20px" }}>
                                       Image Upload:{" "}
                                     </Form.Label>
@@ -498,18 +484,18 @@ import cls_unit from "../../../../../../assets/global/unit";
                                         )}
                                       </Dropzone>
                                     </div>
-                                  </Form.Group>
+                                  </Form.Group> */}
                                 </div>
                               </div>   
 
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Details</Form.Label>
                                 <Form.Control
-                                    onChange={(e) => setDetails(e.target.value)}
+                                    onChange={(e) => setproddetails(e.target.value)}
                                     as="textarea"
                                     placeholder="Enter details"
                                     style={{ height: '100px', fontSize: '15px', resize: 'none' }}
-                                />
+                                    value={proddetails}/>
                             </Form.Group>  
 
                   
@@ -525,8 +511,8 @@ import cls_unit from "../../../../../../assets/global/unit";
                                 top: '85%',
                                 left: '12rem',
                                 transform: 'translateY(-50%)',
-                                }}
-                            ></span>
+                                }}>
+                            </span>
                             </div>
                             <div className="supplier-table">
                                 <div className="table-containss">
@@ -544,24 +530,23 @@ import cls_unit from "../../../../../../assets/global/unit";
                                                 </thead>
                                                 <tbody>
 
-                                                {supp.length > 0 ? (
-                                                    supp.map((supp) => (
-                                                    <tr>
-                                                        <td>{supp.codes}</td>
-                                                        <td>{supp.names}</td>
-                                                        <td>{supp.email}</td>
-                                                        <td>{supp.contact}</td>
-                                                        <td>{supp.address}</td>
+                                                {tablesupplier.length > 0 ? (
+                                                    tablesupplier.map((supp, i) => (
+                                                    <tr key={i}>
+                                                        <td>{supp.supplier.supplier_code}</td>
+                                                        <td>{supp.supplier.supplier_name}</td>
+                                                        <td>{supp.supplier.supplier_name}</td>
+                                                        <td>{supp.supplier.supplier_number}</td>
+                                                        <td>{supp.supplier.supplier_address}</td>
                                                         <td>
                                                         <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
                                                         <input
                                                             type="number"
-                                                            style={{height: '50px'}}
-                                                            placeholder="Input Price"
-                                                            value={priceInput[supp.value] || ''}
-                                                            onChange={(e) => handlePriceinput(e.target.value, supp.value)}
-                                                            required
-                                                        />
+                                                            style={{ height: '50px' }}
+                                                            value={supp.supplier_price || ''}
+                                                            onKeyDown={(e) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
+                                                            onChange={(e) => handlePriceChange(i, e.target.value)}
+                                                            />
                                                         </td>
                                                     </tr>
                                                     ))
@@ -574,28 +559,25 @@ import cls_unit from "../../../../../../assets/global/unit";
                                             {showDropdown && (
                                                 <div className="dropdown mt-3">
                                                     <Select
-                                                    isMulti
-                                                    options={fetchSupp.map((supp) => ({
-                                                        value: supp.supplier_code,
-                                                        label: <div>
-                                                        Supplier Code: <strong>{supp.supplier_code}</strong> / 
-                                                        Name: <strong>{supp.supplier_name}</strong> 
-                                                    </div>,
-                                                    codes: supp.supplier_code,
-                                                    names: supp.supplier_name,
-                                                    email: supp.supplier_email,
-                                                    contact: supp.supplier_number,
-                                                    address: supp.supplier_address,
-                                                    price: supp.supplier_price
-                                                    }))}
-                                                    onChange={handleSelectChange_Supp}
-                                                    />
+                                                        isMulti
+                                                        options={fetchSupp.map((supplier) => ({
+                                                         value: supplier.supplier_code,
+                                                          label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
+                                                         suppcodes: supplier.supplier_code,
+                                                         email: supplier.supplier_email, 
+                                                         number: supplier.supplier_number, 
+                                                         address: supplier.supplier_address,
+                                                         receiving: supplier.supplier_receiving,
+                                                        }))}
+                                                            value={subpartTAGSuppliers}
+                                                            onChange={handleSelectChange}
+                                                        />
                                                 </div>
                                                 )}
 
                                                 <Button
                                                 variant="outline-warning"
-                                                onClick={handleAddSuppClick}
+                                                onClick={handleAddSupp}
                                                 size="md"
                                                 style={{ fontSize: '15px', marginTop: '10px' }}
                                                 >
@@ -618,6 +600,6 @@ import cls_unit from "../../../../../../assets/global/unit";
                 </div>
             </div>
     )
-  }
+}
 
-  export default CreateSubParts;
+export default UpdateSubparts;

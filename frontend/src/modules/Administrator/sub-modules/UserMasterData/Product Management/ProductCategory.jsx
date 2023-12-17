@@ -110,7 +110,7 @@ function ProductCategory() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       // if required fields has value (GOOD)
@@ -125,8 +125,8 @@ function ProductCategory() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Creation successful!",
-              text: "You successfully added a new Category.",
+              title: "Product Category Add Succesful!",
+              text: "The Product has been Added Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -150,10 +150,9 @@ function ProductCategory() {
             });
           } else if (response.status === 201) {
             swal({
-              title: "Category Exist",
-              text: "Category is already exist please fill other supplier",
+              title: "Product Category is Already Exist",
+              text: "Please Input a New Product Category",
               icon: "error",
-              button: "OK",
             });
           }
         });
@@ -178,8 +177,8 @@ function ProductCategory() {
 
           if (response.status === 200) {
             swal({
-              title: "The Category has been deleted!",
-              text: "The Category has been updated successfully.",
+              title: "Product Category Delete Succesful!",
+              text: "The Product has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -279,8 +278,8 @@ function ProductCategory() {
 
       if (response.status === 200) {
         swal({
-          title: "Update successful!",
-          text: "The Category has been updated successfully.",
+          title: "Product Category Update Succesful!",
+          text: "The Product has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -471,13 +470,8 @@ function ProductCategory() {
           </div>
         </div>
       </div>
-      <Modal
-        show={showModal}
-        onHide={handleClose}>
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleFormSubmit}>
+      <Modal show={showModal} onHide={handleClose}>
+        <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
           <Modal.Header closeButton>
             <Modal.Title style={{ fontSize: "24px" }}>New Category</Modal.Title>
           </Modal.Header>
@@ -547,17 +541,10 @@ function ProductCategory() {
         </Form>
       </Modal>
 
-      <Modal
-        show={updateModalShow}
-        onHide={() => handleModalToggle()}>
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleUpdateSubmit}>
+      <Modal show={updateModalShow} onHide={() => handleModalToggle()}>
+        <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title
-              className="modal-titles"
-              style={{ fontSize: "24px" }}>
+            <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
               Update Category
             </Modal.Title>
 

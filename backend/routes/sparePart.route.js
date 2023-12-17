@@ -60,7 +60,7 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
-       const {code, name, supp, desc, SubParts, SpareaddPriceInput} = req.body;
+       const {code, name, supp, desc, SubParts, SpareaddPriceInput, unit, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} = req.body;
 
         // Check if the supplier code is already exists in the table
         console.log(code);
@@ -73,10 +73,17 @@ router.route('/create').post(async (req, res) => {
         if (existingDataCode) {
           return res.status(201).send('Exist');
         } else {
+          const threshholdValue = thresholds === '' ? "0" : thresholds; 
           const spare_newData = await SparePart.create({
             spareParts_code: code.toUpperCase(),
             spareParts_name: name,
-            spareParts_desc: desc
+            spareParts_desc: desc,
+            spareParts_unit: unit,
+            spareParts_unit: unit,
+            spareParts_location: slct_binLocation,
+            spareParts_manufacturer: slct_manufacturer,
+            threshhold: threshholdValue,
+            spareParts_unitMeasurement: unitMeasurement
           });
 
           const createdID = spare_newData.id;
@@ -94,7 +101,8 @@ router.route('/create').post(async (req, res) => {
             
             await Inventory_Spare.create({
               spare_tag_supp_id: SupplierSpare_ID.id,
-              quantity: 0
+              quantity: 0,
+              price: supplierPrices
             });
           }
 
@@ -122,7 +130,7 @@ router.route('/create').post(async (req, res) => {
 
 router.route('/update').put(async (req, res) => {
   try {
-    const {id, code, name, supp, desc, SubParts, addPriceInput} = req.body;
+    const {id, code, name, supp, desc, SubParts, addPriceInput, unit, slct_binLocation, unitMeasurement, slct_manufacturer, thresholds} = req.body;
     // Check if the email already exists in the table for other records
     const existingData = await SparePart.findOne({
       where: {
@@ -135,12 +143,18 @@ router.route('/update').put(async (req, res) => {
       res.status(201).send('Exist');
     } else {
 
+      const threshholdValue = thresholds === '' ? "0" : thresholds; 
       // Update the record in the table
       const affectedRows = await SparePart.update(
         {
           spareParts_code: code ? code.toUpperCase() : null,
           spareParts_name: name,
-          spareParts_desc: desc
+          spareParts_desc: desc,
+          spareParts_unit: unit,
+          spareParts_location: slct_binLocation,
+          spareParts_unitMeasurement: unitMeasurement,
+          spareParts_manufacturer: slct_manufacturer,
+          threshhold: threshholdValue
         },
         {
           where: { id: id },

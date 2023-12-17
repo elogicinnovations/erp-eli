@@ -125,8 +125,8 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-    axios.get(BASE_URL + '/PR_product/fetchView',{
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_product/fetchPrProduct',{
       params:{
         id: id
       }
@@ -135,8 +135,9 @@ useEffect(() => {
       .catch(err => console.log(err));
   }, []);
 
+
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_assembly/fetchView',{
+    axios.get(BASE_URL + '/PR_assembly/fetchViewAssembly',{
       params:{
         id: id
       }
@@ -146,20 +147,16 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_spare/fetchView',{
-      params:{
-        id: id
-      }
+    axios.get(BASE_URL + '/PR_spare/fetchViewSpare',{
+      params: {id: id}
     })
       .then(res => setSpare(res.data))
       .catch(err => console.log(err));
   }, []);
-
+  
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_subpart/fetchView',{
-      params:{
-        id: id
-      }
+    axios.get(BASE_URL + '/PR_subpart/fetchViewSubpart',{
+      params: {id: id}
     })
       .then(res => setSubpart(res.data))
       .catch(err => console.log(err));
