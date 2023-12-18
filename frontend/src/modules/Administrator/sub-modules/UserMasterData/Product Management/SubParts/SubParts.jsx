@@ -137,7 +137,7 @@ function SubParts() {
 
           if (response.status === 200) {
             swal({
-              title: "Product Sub-Parts Delete Succesful!",
+              title: "Product Sub-Parts Delete Successful!",
               text: "The Product Sub-Parts has been Deleted Successfully.",
               icon: "success",
               button: "OK",
@@ -296,7 +296,6 @@ function SubParts() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.subPart_code);
-                              closeVisibleButtons();
                             }}
                           />
                         ) : (
@@ -305,7 +304,6 @@ function SubParts() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.subPart_code);
-                              closeVisibleButtons();
                             }}
                           />
                         )}

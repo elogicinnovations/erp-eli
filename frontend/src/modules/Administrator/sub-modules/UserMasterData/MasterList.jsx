@@ -362,7 +362,7 @@ function MasterList() {
 
         if (response.status === 200) {
           swal({
-            title: "Master List Add Succesful!",
+            title: "User Add Successful!",
             text: "The User has been Added Successfully.",
             icon: "success",
             button: "OK",
@@ -414,8 +414,9 @@ function MasterList() {
       if (err.response.status === 400) {
         swal({
           icon: "error",
-          title: "Ops...",
-          text: err.response.data.errors[0].message,
+          title: "Email Format Wrong",
+          // text: err.response.data.errors[0].message,
+          text: "Email must be (username@domain.com)",
         });
       } else console.log(err);
     }
@@ -442,7 +443,7 @@ function MasterList() {
 
       if (response.status === 200) {
         swal({
-          title: "Master List Update Successful!",
+          title: "User Update Successful!",
           text: "The User has been Updated Successfully.",
           icon: "success",
           button: "OK",
@@ -513,7 +514,7 @@ function MasterList() {
           );
           if (response.data.success) {
             swal({
-              title: "Master List Delete Succesfully!",
+              title: "User Delete Successful!",
               text: "The User has been Deleted Successfully.",
               icon: "success",
               button: "OK",

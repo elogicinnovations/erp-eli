@@ -166,7 +166,7 @@ function CreateSupplier() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Suppliers Add Succesful!",
+              title: "Suppliers Add Successful!",
               text: "The Suppliers has been Added Successfully.",
               icon: "success",
               button: "OK",

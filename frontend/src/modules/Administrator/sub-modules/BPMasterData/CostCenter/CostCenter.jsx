@@ -101,7 +101,7 @@ function CostCenter() {
 
           if (response.status === 200) {
             swal({
-              title: "Cost Center Delete Succesful!",
+              title: "Cost Center Delete Successful!",
               text: "The Cost Center has been Deleted Successfully.",
               icon: "success",
               button: "OK",

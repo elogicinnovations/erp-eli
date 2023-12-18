@@ -101,7 +101,7 @@ function Supplier() {
 
           if (response.status === 200) {
             swal({
-              title: "Suppliers Delete Succesful!",
+              title: "Suppliers Delete Successful!",
               text: "The Suppliers has been Deleted Successfully.",
               icon: "success",
               button: "OK",
@@ -332,7 +332,7 @@ function Supplier() {
                                   Update
                                 </Link>
                               </button>
-                              <button
+                              {/* <button
                                 className="btn"
                                 type="button"
                                 onClick={() => {
@@ -340,7 +340,7 @@ function Supplier() {
                                   closeVisibleButtons();
                                 }}>
                                 Delete
-                              </button>
+                              </button> */}
                             </div>
                           )}
                         </div>

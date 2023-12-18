@@ -124,8 +124,8 @@ function UserRole() {
 
           if (response.status === 200) {
             swal({
-              title: "User Role Delete Succesful!",
-              text: "The User has been Deleted Successfully.",
+              title: "User Role Delete Successful!",
+              text: "The User Role has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {

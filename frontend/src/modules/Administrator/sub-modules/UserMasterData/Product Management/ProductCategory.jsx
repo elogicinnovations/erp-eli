@@ -125,7 +125,7 @@ function ProductCategory() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Product Category Add Succesful!",
+              title: "Product Category Add Successful!",
               text: "The Product has been Added Successfully.",
               icon: "success",
               button: "OK",
@@ -278,7 +278,7 @@ function ProductCategory() {
 
       if (response.status === 200) {
         swal({
-          title: "Product Category Update Succesful!",
+          title: "Product Category Update Successful!",
           text: "The Product has been Updated Successfully.",
           icon: "success",
           button: "OK",

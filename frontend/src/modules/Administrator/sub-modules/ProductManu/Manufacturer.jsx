@@ -169,7 +169,7 @@ function Productvariants() {
 
           if (response.status === 200) {
             swal({
-              title: "Product Manufacturer Delete Succesful!",
+              title: "Product Manufacturer Delete Successful!",
               text: "The Product Manufacturer has been Deleted Successfully.",
               icon: "success",
               button: "OK",
@@ -206,7 +206,7 @@ function Productvariants() {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Product Manufacturer Add Succesful!",
+      title: "Product Manufacturer Add Successful!",
       text: "The Product Manufacturer has been Added Successfully.",
       icon: "success",
       button: "OK",
@@ -304,7 +304,7 @@ function Productvariants() {
 
       if (response.status === 200) {
         swal({
-          title: "Product Manufacturer Update Succesful!",
+          title: "Product Manufacturer Update Successful!",
           text: "The Product Manufacturer has been Updated Successfully.",
           icon: "success",
           button: "OK",

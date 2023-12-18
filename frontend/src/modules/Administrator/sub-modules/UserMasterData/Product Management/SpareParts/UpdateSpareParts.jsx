@@ -142,12 +142,12 @@ function UpdateSpareParts() {
       });
   }, []);
 
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/subPart/fetchTable")
-      .then((res) => setFetchSubPart(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/subPart/fetchTable")
+  //     .then((res) => setFetchSubPart(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   //for supplier selection values
   const handleSelectChange = (selectedOptions) => {
@@ -274,6 +274,32 @@ function UpdateSpareParts() {
   //     });
   //     }, []);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/subPart_SparePart/fetchsubpartTable", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const data = res.data;
+        // setFetchSubPart(data);
+        const selectedSubParts = data.map((row) => ({
+          value: row.subPart_id,
+          label: row.subPart.subPart_name,
+        }));
+        setSubParts(selectedSubParts);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/subPart/fetchTable")
+      .then((res) => setFetchSubPart(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -349,6 +375,7 @@ function UpdateSpareParts() {
                       label: subPart.subPart_name, // Set label to subPart_name for options
                     }))}
                     onChange={handleSelectChange_SubPart}
+                    value={SubParts}
                     // value={SubParts.map((selectedOption) => ({
                     //   value: selectedOption.subPart_code,
                     //   label: selectedOption.subPart_code, // Set label to subPart_code for selected value

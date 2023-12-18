@@ -198,7 +198,7 @@ function CreateSubParts() {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "Product Sub-Parts Add Succesful!",
+              title: "Product Sub-Parts Add Successful!",
               text: "The Product Sub-Parts has been Added Successfully.",
               icon: "success",
               button: "OK",

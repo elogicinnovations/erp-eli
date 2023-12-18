@@ -273,7 +273,6 @@ function SpareParts() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.spareParts_code);
-                              closeVisibleButtons();
                             }}
                           />
                         ) : (
@@ -282,7 +281,6 @@ function SpareParts() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.spareParts_code);
-                              closeVisibleButtons();
                             }}
                           />
                         )}
@@ -299,7 +297,10 @@ function SpareParts() {
                                 Update
                               </Link>
                               <button
-                                onClick={() => handleDelete(data.id)}
+                                onClick={() => {
+                                  handleDelete(data.id);
+                                  closeVisibleButtons();
+                                }}
                                 className="btn">
                                 Delete
                               </button>

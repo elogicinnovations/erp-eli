@@ -275,7 +275,6 @@ function AssemblyForm() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.assembly_code);
-                              closeVisibleButtons();
                             }}
                           />
                         ) : (
@@ -284,7 +283,6 @@ function AssemblyForm() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.assembly_code);
-                              closeVisibleButtons();
                             }}
                           />
                         )}
@@ -300,7 +298,10 @@ function AssemblyForm() {
                                 Update
                               </Link>
                               <button
-                                onClick={() => handleDelete(data.id)}
+                                onClick={() => {
+                                  handleDelete(data.id);
+                                  closeVisibleButtons();
+                                }}
                                 className="btn">
                                 Delete
                               </button>

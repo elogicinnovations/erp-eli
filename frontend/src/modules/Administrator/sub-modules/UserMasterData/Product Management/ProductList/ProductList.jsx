@@ -112,8 +112,8 @@ function ProductList() {
           );
           if (response.status === 200) {
             swal({
-              title: "Product List Delete Succesful!",
-              text: "The Product List has been Delete Successfully.",
+              title: "Product List Delete Successful!",
+              text: "The Product List has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -410,7 +410,6 @@ function ProductList() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.product_id);
-                              closeVisibleButtons();
                             }}
                           />
                         ) : (
@@ -419,7 +418,6 @@ function ProductList() {
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.product_id);
-                              closeVisibleButtons();
                             }}
                           />
                         )}

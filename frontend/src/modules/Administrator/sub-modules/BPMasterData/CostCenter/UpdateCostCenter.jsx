@@ -93,7 +93,7 @@ function UpdateCostCenter() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Cost Center Update Succesful!",
+              title: "Cost Center Update Successful!",
               text: "The Cost Center has been Updated Successfully.",
               icon: "success",
               button: "OK",

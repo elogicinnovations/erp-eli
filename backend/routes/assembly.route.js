@@ -1,7 +1,13 @@
-const router = require('express').Router()
-const {where, Op} = require('sequelize')
-const sequelize = require('../db/config/sequelize.config');
-const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart, Inventory_Assembly} = require('../db/models/associations')
+const router = require("express").Router();
+const { where, Op } = require("sequelize");
+const sequelize = require("../db/config/sequelize.config");
+const {
+  Assembly_Supplier,
+  Assembly,
+  Assembly_SparePart,
+  Assembly_SubPart,
+  Inventory_Assembly,
+} = require("../db/models/associations");
 
 const session = require("express-session");
 
@@ -63,8 +69,19 @@ router.route("/fetchTableEdit").get(async (req, res) => {
 
 router.route("/create").post(async (req, res) => {
   try {
-    const { code, name, desc, spareParts, addPriceInput, subparting, unit, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} =
-      req.body;
+    const {
+      code,
+      name,
+      desc,
+      spareParts,
+      addPriceInput,
+      subparting,
+      unit,
+      slct_binLocation,
+      slct_manufacturer,
+      thresholds,
+      unitMeasurement,
+    } = req.body;
     // Check if the supplier code is already exists in the table
     console.log(code);
     const existingDataCode = await Assembly.findOne({
@@ -76,7 +93,7 @@ router.route("/create").post(async (req, res) => {
     if (existingDataCode) {
       return res.status(201).send("Exist");
     } else {
-      const threshholdValue = thresholds === '' ? "0" : thresholds; 
+      const threshholdValue = thresholds === "" ? "0" : thresholds;
       const spare_newData = await Assembly.create({
         assembly_code: code.toUpperCase(),
         assembly_name: name,
@@ -85,7 +102,7 @@ router.route("/create").post(async (req, res) => {
         assembly_location: slct_binLocation,
         assembly_manufacturer: slct_manufacturer,
         threshhold: threshholdValue,
-        assembly_unitMeasurement: unitMeasurement
+        assembly_unitMeasurement: unitMeasurement,
       });
 
       const createdID = spare_newData.id;
@@ -103,10 +120,8 @@ router.route("/create").post(async (req, res) => {
         await Inventory_Assembly.create({
           assembly_tag_supp_id: SupplierAssembly_ID.id,
           quantity: 0,
-          price: supplierPrice
+          price: supplierPrice,
         });
-      
-    
       }
 
       for (const sparePart of spareParts) {

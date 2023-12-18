@@ -43,6 +43,10 @@ function UpdateAssemblyForm() {
   // const [slct_manufacturer, setslct_manufacturer] = useState([]);
   // const [manufacturer, setManufacturer] = useState([]);
   // const [thresholds, setThresholds] = useState('');
+  const [spareParts, setspareParts] = useState([]);
+  const handleSpareClick = (selectedOptions) => {
+    setspareParts(selectedOptions);
+  };
 
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
@@ -107,20 +111,22 @@ function UpdateAssemblyForm() {
   }, [id]);
 
   //Fetching For Association of Assembly and Spare Part
-  const [spareParts, setSpareParts] = useState([]);
+  const [spareAssembly, setSpareAssembly] = useState([]);
   useEffect(() => {
     axios
-      .get(BASE_URL + "/spare_assembly/fetchinTable", {
+      .get(BASE_URL + "/spare_assembly/fetchSpareAssembly", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSpareParts(res.data))
+      .then((res) => {
+        setSpareAssembly(res.data);
+      })
       .catch((err) => console.log(err));
   }, [id]);
 
   //Fetching For Association of Assembly and Subpart
-  const [Subparts, setSubParts] = useState([]);
+  const [subAssembly, setSubAssembly] = useState([]);
   useEffect(() => {
     axios
       .get(BASE_URL + "/assembly_subparts/fetchinTable", {
@@ -128,7 +134,7 @@ function UpdateAssemblyForm() {
           id: id,
         },
       })
-      .then((res) => setSubParts(res.data))
+      .then((res) => setSubAssembly(res.data))
       .catch((err) => console.log(err));
   }, [id]);
 
@@ -207,8 +213,8 @@ function UpdateAssemblyForm() {
             name,
             supp,
             desc,
-            spareParts,
-            Subparts,
+            // spareParts,
+            // Subparts,
             // unit,
             // unitMeasurement,
             // slct_manufacturer,
@@ -223,7 +229,7 @@ function UpdateAssemblyForm() {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Product Assembly Update Succesful!",
+              title: "The Product Assembly Update Successful!",
               text: "The Product Assembly has been Updated Successfully.",
               icon: "success",
               button: "OK",
@@ -363,7 +369,7 @@ function UpdateAssemblyForm() {
                     <Form.Select
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
-                      {Subparts.map((sparts, i) => (
+                      {subAssembly.map((sparts, i) => (
                         <option key={i} value={sparts.id}>
                           {sparts.subPart.subPart_name}
                         </option>
@@ -378,15 +384,14 @@ function UpdateAssemblyForm() {
                     <Form.Label style={{ fontSize: "20px" }}>
                       Spare Parts:
                     </Form.Label>
-                    <Form.Select
-                      disabled={!isReadOnly}
-                      style={{ height: "40px" }}>
-                      {fetchSparePart.map((fetchSpares, i) => (
-                        <option key={i} value={fetchSpares.id}>
-                          {fetchSpares.spareParts_name}
-                        </option>
-                      ))}
-                    </Form.Select>
+                    <Select
+                      isMulti
+                      options={fetchSparePart.map((sparePart) => ({
+                        value: sparePart.id,
+                        label: sparePart.spareParts_name,
+                      }))}
+                      // onChange={handleSelectChange}
+                    />
                   </Form.Group>
                 )}
                 {!isReadOnly && (
@@ -397,9 +402,9 @@ function UpdateAssemblyForm() {
                     <Form.Select
                       disabled={!isReadOnly}
                       style={{ height: "40px" }}>
-                      {spareParts.map((spares, i) => (
+                      {spareAssembly.map((spares, i) => (
                         <option key={i} value={spares.id}>
-                          {spares.sparePart.sparePart_name}
+                          {spares.sparePart.spareParts_name}
                         </option>
                       ))}
                     </Form.Select>

@@ -101,6 +101,13 @@ function CreateProduct() {
     setproductStatus(e.target.checked); // Update the status Active or Inactive
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "e" || isNaN(e.key)) {
+      e.preventDefault();
+    }
+    e.target.value = e.target.value.replace(/[^0-9.]/);
+  };
+
   //Supplier Fetch
   useEffect(() => {
     axios
@@ -295,7 +302,7 @@ function CreateProduct() {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Product List Add Succesful!",
+      title: "Product List Add Successful!",
       text: "The Product List has been Added Successfully.",
       icon: "success",
       button: "OK",
@@ -607,14 +614,18 @@ function CreateProduct() {
                   <Form.Control
                     onChange={(e) => {
                       const inputValue = e.target.value;
-                      const sanitizedValue = inputValue.replace(/\D/g, "");
+                      const sanitizedValue = inputValue
+                        .replace(/\D/g, "")
+                        .substring(0, 10);
                       setThresholds(sanitizedValue);
                     }}
-                    type="text"
+                    onInput={handleKeyPress}
+                    type="number" // Change type to "text"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
-                    maxLength={10}
-                    pattern="[0-9]*"
+                    title="Please enter a valid number"
+                    min="0"
+                    max="9999999999"
                   />
                 </Form.Group>
               </div>

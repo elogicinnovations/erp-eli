@@ -37,9 +37,9 @@ function CreateAssemblyForm() {
   const [manufacturer, setManufacturer] = useState([]);
   const [unit, setUnit] = useState("");
   const [binLocation, setbinLocation] = useState([]);
-  const [slct_binLocation, setslct_binLocation] = useState("")
-  const [slct_manufacturer, setslct_manufacturer] = useState("")
-  const [unitMeasurement, setUnitMeasurement] = useState("")
+  const [slct_binLocation, setslct_binLocation] = useState("");
+  const [slct_manufacturer, setslct_manufacturer] = useState("");
+  const [unitMeasurement, setUnitMeasurement] = useState("");
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
@@ -115,11 +115,11 @@ function CreateAssemblyForm() {
   const handleAddSuppClick = () => {
     setShowDropdown(true);
   };
-  
+
   const handleChangeUnit = (event) => {
     setUnit(event.target.value);
   };
-  
+
   const handleFormChangeBinLocation = (event) => {
     setslct_binLocation(event.target.value);
   };
@@ -127,7 +127,7 @@ function CreateAssemblyForm() {
   const handleChangeMeasurement = (event) => {
     setUnitMeasurement(event.target.value);
   };
-  
+
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
   };
@@ -181,13 +181,13 @@ function CreateAssemblyForm() {
           slct_binLocation,
           unitMeasurement,
           slct_manufacturer,
-          thresholds
+          thresholds,
         })
         .then((res) => {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Product Assembly Add Succesful!",
+              title: "The Product Assembly Add Successful!",
               text: "The Product Assembly has been Added successfully.",
               icon: "success",
               button: "OK",
@@ -320,15 +320,11 @@ function CreateAssemblyForm() {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeUnit}>
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Unit ...
                     </option>
                     {cls_unit.map((unit, index) => (
-                      <option
-                        key={index}
-                        value={unit}>
+                      <option key={index} value={unit}>
                         {unit}
                       </option>
                     ))}
@@ -346,9 +342,7 @@ function CreateAssemblyForm() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Bin Location ...
                     </option>
                     {binLocation.map((binLocation) => (
@@ -374,15 +368,11 @@ function CreateAssemblyForm() {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeMeasurement}>
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Unit Measurement ...
                     </option>
                     {cls_unitMeasurement.map((unitM, index) => (
-                      <option
-                        key={index}
-                        value={unitM}>
+                      <option key={index} value={unitM}>
                         {unitM}
                       </option>
                     ))}
@@ -400,9 +390,7 @@ function CreateAssemblyForm() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Manufacturer ...
                     </option>
                     {manufacturer.map((manufacturer) => (
@@ -429,48 +417,48 @@ function CreateAssemblyForm() {
               </Form.Group>
             </div>
 
-<div
-  className="gen-info"
-  style={{
-    fontSize: "20px",
-    position: "relative",
-    paddingTop: "30px",
-  }}>
-  Notification Thresholds
-  <p>Sets your preferred thresholds.</p>
-  <span
-    style={{
-      position: "absolute",
-      height: "0.5px",
-      width: "-webkit-fill-available",
-      background: "#FFA500",
-      top: "65%",
-      left: "21rem",
-      transform: "translateY(-50%)",
-    }}></span>
-</div>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "30px",
+              }}>
+              Notification Thresholds
+              <p>Sets your preferred thresholds.</p>
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "65%",
+                  left: "21rem",
+                  transform: "translateY(-50%)",
+                }}></span>
+            </div>
 
-<div className="row mt-3">
-  <div className="col-6">
-    <Form.Group controlId="exampleForm.ControlInput1">
-      <Form.Label style={{ fontSize: "20px" }}>
-        Critical Inventory Thresholds:{" "}
-      </Form.Label>
-      <Form.Control
-        onChange={(e) => {
-          const inputValue = e.target.value;
-          const sanitizedValue = inputValue.replace(/\D/g, "");
-          setThresholds(sanitizedValue);
-        }}
-        type="text"
-        placeholder="Minimum Stocking"
-        style={{ height: "40px", fontSize: "15px" }}
-        maxLength={10}
-        pattern="[0-9]*"
-      />
-    </Form.Group>
-  </div>
-  {/* <div className="col-6">
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Critical Inventory Thresholds:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const sanitizedValue = inputValue.replace(/\D/g, "");
+                      setThresholds(sanitizedValue);
+                    }}
+                    type="text"
+                    placeholder="Minimum Stocking"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    maxLength={10}
+                    pattern="[0-9]*"
+                  />
+                </Form.Group>
+              </div>
+              {/* <div className="col-6">
     <Form.Group controlId="exampleForm.ControlInput1">
       <Form.Label style={{ fontSize: "20px" }}>
         Image Upload:{" "}
@@ -549,7 +537,7 @@ function CreateAssemblyForm() {
       </div>
     </Form.Group>
   </div> */}
-</div>
+            </div>
 
             <div
               className="gen-info"

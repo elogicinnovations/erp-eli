@@ -416,8 +416,8 @@ function UpdateProduct() {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Product sucessfully updated!",
-              text: "The Product has been updated successfully.",
+              title: "Product List Update Successful!",
+              text: "The Product List has been Update Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {

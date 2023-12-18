@@ -248,7 +248,7 @@ function BinLocation() {
 
       if (response.status === 200) {
         swal({
-          title: "Bin Location Update Succesful!",
+          title: "Bin Location Update Successful!",
           text: "The Bin Location has been Updated Successfully.",
           icon: "success",
           button: "OK",
@@ -315,7 +315,7 @@ function BinLocation() {
 
           if (response.status === 200) {
             swal({
-              title: "Bin Location Delete Succesful!",
+              title: "Bin Location Delete Successful!",
               text: "The Bin Location has been Deleted Successfully.",
               icon: "success",
               button: "OK",

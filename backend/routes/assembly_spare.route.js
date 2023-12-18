@@ -35,10 +35,9 @@ router.route("/fetchSpareAssembly").get(async (req, res) => {
         assembly_id: req.query.id,
       },
     });
-    console.log("Query result:", data);
-    // if (!data) {
-    //   return res.status(404).json();
-    // }
+    if (!data) {
+      return res.status(404).json();
+    }
     return res.json(data);
   } catch (error) {
     console.error(error);
