@@ -251,7 +251,7 @@ function ForgotPass() {
                           onChange={(e) => setEmail(e.target.value)} ></CustomInput>
                       </div>
                      <div className="fg-submitbutton">
-                        <CustomButton className="fg-button" onClick={sendEmail} slots={{ root: 'span' }}>Submit</CustomButton>
+                        <button className="button-pass" onClick={sendEmail} slots={{ root: 'span' }}>Submit</button>
                      </div>
 
                      <div class="remembered-text">

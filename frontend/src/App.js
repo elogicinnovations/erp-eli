@@ -84,7 +84,7 @@ function App() {
     <Router>
     <div className="app">
       <DataProvider>
-        <GuestRoute>
+        {/* <GuestRoute> */}
         <Routes>
           <Route
             path="/"
@@ -103,7 +103,7 @@ function App() {
             element={<ConfirmPass />}
           />
         </Routes>
-        </GuestRoute>
+        {/* </GuestRoute> */}
       </DataProvider>
 
     <div className="main-of-containers">
