@@ -19,7 +19,12 @@ const PR_history = sequelize.define('purchase_req_history', {
   remarks: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  isRead: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
 });
 
 module.exports = PR_history;

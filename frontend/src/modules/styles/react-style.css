@@ -1370,6 +1370,7 @@ button.clear-all {
   border: none;
   background-color: transparent;
   padding: 10px;
+  font-size: 16px;
 }
 
 .notif-container {
@@ -2659,4 +2660,22 @@ div#ordered-listing_length label {
 
 .imgUpload {
   padding-right: 3rem;
+}
+
+.notification-item {
+  transition: background-color 0.3s ease;
+}
+
+.notification-item:hover {
+  background-color: #e0e0e0;
+}
+
+.notification-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
 }
