@@ -1,7 +1,13 @@
-const router = require('express').Router()
-const {where, Op} = require('sequelize')
-const sequelize = require('../db/config/sequelize.config');
-const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart, Inventory_Assembly, BinLocation, Category, Manufacturer} = require('../db/models/associations')
+const router = require("express").Router();
+const { where, Op } = require("sequelize");
+const sequelize = require("../db/config/sequelize.config");
+const {
+  Assembly_Supplier,
+  Assembly,
+  Assembly_SparePart,
+  Assembly_SubPart,
+  Inventory_Assembly,
+} = require("../db/models/associations");
 
 const session = require("express-session");
 
@@ -63,7 +69,8 @@ router.route("/fetchTableEdit").get(async (req, res) => {
 
 router.route("/create").post(async (req, res) => {
   try {
-    const { code, 
+    const { 
+      code, 
       name, 
       desc, 
       spareParts, 
@@ -87,7 +94,7 @@ router.route("/create").post(async (req, res) => {
     if (existingDataCode) {
       return res.status(201).send("Exist");
     } else {
-      const threshholdValue = thresholds === '' ? "0" : thresholds; 
+      const threshholdValue = thresholds === "" ? "0" : thresholds;
       const spare_newData = await Assembly.create({
         assembly_code: code.toUpperCase(),
         assembly_name: name,
@@ -115,10 +122,8 @@ router.route("/create").post(async (req, res) => {
         await Inventory_Assembly.create({
           assembly_tag_supp_id: SupplierAssembly_ID.id,
           quantity: 0,
-          price: supplierPrice
+          price: supplierPrice,
         });
-      
-    
       }
 
       for (const sparePart of spareParts) {

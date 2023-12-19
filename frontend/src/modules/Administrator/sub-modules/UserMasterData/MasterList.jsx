@@ -297,7 +297,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (!isValidPhoneNumber(formData.cnum)) {
+      if (!isValidPhoneNumber(formData.cnum)) {
         swal({
           title: "Invalid Phone Number Format",
           text: "Please enter a valid number",
@@ -305,7 +305,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (formData.cemail === "") {
+      if (formData.cemail === "") {
         swal({
           title: "Required Field",
           text: "Email is Required",
@@ -313,7 +313,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (!isValidEmail(formData.cemail)) {
+      if (!isValidEmail(formData.cemail)) {
         swal({
           title: "Invalid Email Format",
           text: "Please enter a valid email address",
@@ -321,7 +321,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (formData.cuname === "") {
+      if (formData.cuname === "") {
         swal({
           title: "Required Field",
           text: "Username is Required",
@@ -329,7 +329,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (formData.crole === "") {
+      if (formData.crole === "") {
         swal({
           title: "Required Field",
           text: "Access Role is Required",
@@ -337,7 +337,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (formData.cpass === "") {
+      if (formData.cpass === "") {
         swal({
           title: "Required Field",
           text: "Password is Required",
@@ -345,7 +345,7 @@ function MasterList() {
           button: "OK",
         });
       }
-       if (formData.cpass != formData.cpass2) {
+      if (formData.cpass != formData.cpass2) {
         swal({
           title: "Password error",
           text: "Please confirm your password",
@@ -362,7 +362,7 @@ function MasterList() {
 
         if (response.status === 200) {
           swal({
-            title: "Master List Add Succesful!",
+            title: "User Add Successful!",
             text: "The User has been Added Successfully.",
             icon: "success",
             button: "OK",
@@ -411,15 +411,14 @@ function MasterList() {
         }
       }
     } catch (err) {
-      if(err.response.status === 400){
+      if (err.response.status === 400) {
         swal({
           icon: "error",
-          title: 'Ops...',
-          text: err.response.data.errors[0].message
+          title: "Email Format Wrong",
+          // text: err.response.data.errors[0].message,
+          text: "Email must be (username@domain.com)",
         });
-      }
-      else
-      console.log(err);
+      } else console.log(err);
     }
   };
 
@@ -444,7 +443,7 @@ function MasterList() {
 
       if (response.status === 200) {
         swal({
-          title: "Master List Update Successful!",
+          title: "User Update Successful!",
           text: "The User has been Updated Successfully.",
           icon: "success",
           button: "OK",
@@ -515,10 +514,10 @@ function MasterList() {
           );
           if (response.data.success) {
             swal({
-                title: "Master List Delete Succesfully!",
-                text: "The User has been Deleted Successfully.",
-                icon: "success",
-                button: "OK",
+              title: "User Delete Successful!",
+              text: "The User has been Deleted Successfully.",
+              icon: "success",
+              button: "OK",
             }).then(() => {
               reloadTable();
             });
@@ -567,14 +566,36 @@ function MasterList() {
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
   const toggleButtons = (userId) => {
-    setVisibleButtons((prevVisibleButtons) => ({
-      ...prevVisibleButtons,
-      [userId]: !prevVisibleButtons[userId],
-    }));
-    setIsVertical((prevIsVertical) => ({
-      ...prevIsVertical,
-      [userId]: !prevIsVertical[userId],
-    }));
+    setVisibleButtons((prevVisibleButtons) => {
+      const updatedVisibleButtons = { ...prevVisibleButtons };
+
+      // Close buttons for other items
+      Object.keys(updatedVisibleButtons).forEach((key) => {
+        if (key !== userId) {
+          updatedVisibleButtons[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updatedVisibleButtons[userId] = !prevVisibleButtons[userId];
+
+      return updatedVisibleButtons;
+    });
+
+    setIsVertical((prevIsVertical) => {
+      const updateVertical = { ...prevIsVertical };
+
+      Object.keys(updateVertical).forEach((key) => {
+        if (key !== userId) {
+          updateVertical[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updateVertical[userId] = !prevIsVertical[userId];
+
+      return updateVertical;
+    });
   };
 
   const closeVisibleButtons = () => {
@@ -714,10 +735,7 @@ function MasterList() {
       </div>
 
       {/* Add User */}
-      <Modal
-        show={showModal}
-        onHide={handleClose}
-        size="xl">
+      <Modal show={showModal} onHide={handleClose} size="xl">
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: "24px" }}>New User</Modal.Title>
           <div className="form-group d-flex flex-row ">
@@ -871,15 +889,11 @@ function MasterList() {
                       onChange={handleFormChange}
                       required
                       style={{ height: "40px", fontSize: "15px" }}>
-                      <option
-                        disabled
-                        value="">
+                      <option disabled value="">
                         Role
                       </option>
                       {roles.map((role) => (
-                        <option
-                          key={role.col_id}
-                          value={role.col_id}>
+                        <option key={role.col_id} value={role.col_id}>
                           {role.col_rolename}
                         </option>
                       ))}
@@ -977,9 +991,7 @@ function MasterList() {
         size="xl">
         <form onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title
-              className="modal-titles"
-              style={{ fontSize: "24px" }}>
+            <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
               Update User
             </Modal.Title>
 
@@ -1125,15 +1137,11 @@ function MasterList() {
                       onChange={handleUpdateFormChange}
                       required
                       style={{ height: "40px", fontSize: "15px" }}>
-                      <option
-                        disabled
-                        value="">
+                      <option disabled value="">
                         Role
                       </option>
                       {roles.map((role) => (
-                        <option
-                          key={role.col_roleID}
-                          value={role.col_id}>
+                        <option key={role.col_roleID} value={role.col_id}>
                           {role.col_rolename}
                         </option>
                       ))}

@@ -97,8 +97,8 @@ function EditRole() {
       // Handle the response as needed
       if (response.status === 200) {
         swal({
-          title: "User Role Update Succesful!",
-          text: "The User has been Updated Successfully.",
+          title: "User Role Update Successful!",
+          text: "The User Role has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {

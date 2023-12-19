@@ -112,12 +112,11 @@ function ProductList() {
           );
           if (response.status === 200) {
             swal({
-              title: "Product List Delete Succesful!",
-              text: "The Product List has been Delete Successfully.",
+              title: "Product List Delete Successful!",
+              text: "The Product List has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
-              
               setproduct((prev) =>
                 prev.filter((data) => data.product_code !== table_id)
               );
@@ -138,7 +137,6 @@ function ProductList() {
           }
         } catch (err) {
           console.log(err);
-          
         }
       } else {
         swal({
@@ -154,14 +152,36 @@ function ProductList() {
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
   const toggleButtons = (userId) => {
-    setVisibleButtons((prevVisibleButtons) => ({
-      ...prevVisibleButtons,
-      [userId]: !prevVisibleButtons[userId],
-    }));
-    setIsVertical((prevIsVertical) => ({
-      ...prevIsVertical,
-      [userId]: !prevIsVertical[userId],
-    }));
+    setVisibleButtons((prevVisibleButtons) => {
+      const updatedVisibleButtons = { ...prevVisibleButtons };
+
+      // Close buttons for other items
+      Object.keys(updatedVisibleButtons).forEach((key) => {
+        if (key !== userId) {
+          updatedVisibleButtons[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updatedVisibleButtons[userId] = !prevVisibleButtons[userId];
+
+      return updatedVisibleButtons;
+    });
+
+    setIsVertical((prevIsVertical) => {
+      const updateVertical = { ...prevIsVertical };
+
+      Object.keys(updateVertical).forEach((key) => {
+        if (key !== userId) {
+          updateVertical[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updateVertical[userId] = !prevIsVertical[userId];
+
+      return updateVertical;
+    });
   };
 
   const closeVisibleButtons = () => {
@@ -246,7 +266,6 @@ function ProductList() {
       </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-
           {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
               <div className="dropdown-side"></div>
@@ -275,9 +294,7 @@ function ProductList() {
               <div className="button-create-side">
                 {showChangeStatusButton ? (
                   <div className="Buttonmodal-change">
-                    <button
-                      className="buttonchanges"
-                      onClick={handleShow}>
+                    <button className="buttonchanges" onClick={handleShow}>
                       <span style={{}}>
                         <CircleNotch size={25} />
                       </span>
@@ -286,9 +303,7 @@ function ProductList() {
                   </div>
                 ) : (
                   <div className="Buttonmodal-new">
-                    <Link
-                      to="/createProduct"
-                      className="button">
+                    <Link to="/createProduct" className="button">
                       <span style={{}}>
                         <Plus size={25} />
                       </span>
@@ -301,14 +316,10 @@ function ProductList() {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table
-                className="table-hover"
-                id="order-listing">
+              <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
-                    <th
-                      className="tableh"
-                      id="check">
+                    <th className="tableh" id="check">
                       <input
                         type="checkbox"
                         checked={selectAllChecked}

@@ -1,5 +1,4 @@
-const { Sequelize, Op } = require('sequelize');
-
+const { Sequelize, Op } = require("sequelize");
 
 const sequelize = new Sequelize({
   host: "localhost",
@@ -8,7 +7,7 @@ const sequelize = new Sequelize({
   username: "root",
   password: "",
   timezone: "+08:00", // Asia/Manila timezone
-  alter: false,
+  alter: true,
 });
 
 sequelize

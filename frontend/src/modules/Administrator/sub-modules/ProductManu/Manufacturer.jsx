@@ -169,7 +169,7 @@ function Productvariants() {
 
           if (response.status === 200) {
             swal({
-              title: "Product Manufacturer Delete Succesful!",
+              title: "Product Manufacturer Delete Successful!",
               text: "The Product Manufacturer has been Deleted Successfully.",
               icon: "success",
               button: "OK",
@@ -206,7 +206,7 @@ function Productvariants() {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Product Manufacturer Add Succesful!",
+      title: "Product Manufacturer Add Successful!",
       text: "The Product Manufacturer has been Added Successfully.",
       icon: "success",
       button: "OK",
@@ -304,7 +304,7 @@ function Productvariants() {
 
       if (response.status === 200) {
         swal({
-          title: "Product Manufacturer Update Succesful!",
+          title: "Product Manufacturer Update Successful!",
           text: "The Product Manufacturer has been Updated Successfully.",
           icon: "success",
           button: "OK",
@@ -350,19 +350,41 @@ function Productvariants() {
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
   const toggleButtons = (userId) => {
-    setVisibleButtons((prevVisibleButtons) => ({
-      ...prevVisibleButtons,
-      [userId]: !prevVisibleButtons[userId],
-    }));
-    setIsVertical((prevIsVertical) => ({
-      ...prevIsVertical,
-      [userId]: !prevIsVertical[userId],
-    }));
+    setVisibleButtons((prevVisibleButtons) => {
+      const updatedVisibleButtons = { ...prevVisibleButtons };
+
+      // Close buttons for other items
+      Object.keys(updatedVisibleButtons).forEach((key) => {
+        if (key !== userId) {
+          updatedVisibleButtons[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updatedVisibleButtons[userId] = !prevVisibleButtons[userId];
+
+      return updatedVisibleButtons;
+    });
+
+    setIsVertical((prevIsVertical) => {
+      const updateVertical = { ...prevIsVertical };
+
+      Object.keys(updateVertical).forEach((key) => {
+        if (key !== userId) {
+          updateVertical[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updateVertical[userId] = !prevIsVertical[userId];
+
+      return updateVertical;
+    });
   };
 
   const closeVisibleButtons = () => {
-    setVisibleButtons({});
-    setIsVertical({});
+    setVisibleButtons("");
+    setIsVertical("");
   };
 
   const setButtonVisibles = (userId) => {

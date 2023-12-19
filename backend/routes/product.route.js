@@ -9,7 +9,6 @@ const {
   Product_Assembly,
   Product_Spareparts,
   Product_Subparts,
-  productTAGsupplierHistory,
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer"); // Import multer
@@ -213,13 +212,10 @@ router.route("/create").post(
               quantity: 0,
               price: price
             });
-            const Histories = InsertedSupp.id;
-            await productTAGsupplierHistory.create({
-            product_id: IdData,
-            supplier_code: supplier_code,
-            product_price: price
-          });
+
           }
+
+
           res.status(200).json(newData);
         }
       } catch (err) {
@@ -342,13 +338,6 @@ router.route("/update").post(
             supplier_code: value,
             product_price: price
            });
-
-           const Histories = InsertedSupp.id;
-            await productTAGsupplierHistory.create({
-            product_id: req.query.id,
-            supplier_code: value,
-            product_price: price
-          });
          }
       }
       }

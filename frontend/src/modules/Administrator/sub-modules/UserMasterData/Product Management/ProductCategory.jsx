@@ -125,7 +125,7 @@ function ProductCategory() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Product Category Add Succesful!",
+              title: "Product Category Add Successful!",
               text: "The Product has been Added Successfully.",
               icon: "success",
               button: "OK",
@@ -278,7 +278,7 @@ function ProductCategory() {
 
       if (response.status === 200) {
         swal({
-          title: "Product Category Update Succesful!",
+          title: "Product Category Update Successful!",
           text: "The Product has been Updated Successfully.",
           icon: "success",
           button: "OK",
@@ -330,14 +330,36 @@ function ProductCategory() {
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
   const toggleButtons = (userId) => {
-    setVisibleButtons((prevVisibleButtons) => ({
-      ...prevVisibleButtons,
-      [userId]: !prevVisibleButtons[userId],
-    }));
-    setIsVertical((prevIsVertical) => ({
-      ...prevIsVertical,
-      [userId]: !prevIsVertical[userId],
-    }));
+    setVisibleButtons((prevVisibleButtons) => {
+      const updatedVisibleButtons = { ...prevVisibleButtons };
+
+      // Close buttons for other items
+      Object.keys(updatedVisibleButtons).forEach((key) => {
+        if (key !== userId) {
+          updatedVisibleButtons[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updatedVisibleButtons[userId] = !prevVisibleButtons[userId];
+
+      return updatedVisibleButtons;
+    });
+
+    setIsVertical((prevIsVertical) => {
+      const updateVertical = { ...prevIsVertical };
+
+      Object.keys(updateVertical).forEach((key) => {
+        if (key !== userId) {
+          updateVertical[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updateVertical[userId] = !prevIsVertical[userId];
+
+      return updateVertical;
+    });
   };
 
   const closeVisibleButtons = () => {

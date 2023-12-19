@@ -181,7 +181,7 @@ function CreateSupplier() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Suppliers Add Succesful!",
+              title: "Suppliers Add Successful!",
               text: "The Suppliers has been Added Successfully.",
               icon: "success",
               button: "OK",
@@ -313,12 +313,12 @@ function CreateSupplier() {
                   </label>
                   <Form.Control
                     className="p-3 fs-3"
-                    type="text" // Change type to "text" to allow hyphens
+                    type="text"
                     value={suppTin}
                     onChange={handleTinChange}
                     pattern="^[0-9-]+$"
                     placeholder="000–123–456–001"
-                    maxLength={setMaxTinLength}
+                    // maxLength={setMaxTinLength}
                   />
                 </Col>
                 <Col>

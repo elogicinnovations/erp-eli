@@ -248,7 +248,7 @@ function BinLocation() {
 
       if (response.status === 200) {
         swal({
-          title: "Bin Location Update Succesful!",
+          title: "Bin Location Update Successful!",
           text: "The Bin Location has been Updated Successfully.",
           icon: "success",
           button: "OK",
@@ -315,7 +315,7 @@ function BinLocation() {
 
           if (response.status === 200) {
             swal({
-              title: "Bin Location Delete Succesful!",
+              title: "Bin Location Delete Successful!",
               text: "The Bin Location has been Deleted Successfully.",
               icon: "success",
               button: "OK",
@@ -361,15 +361,38 @@ function BinLocation() {
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
   const toggleButtons = (userId) => {
-    setVisibleButtons((prevVisibleButtons) => ({
-      ...prevVisibleButtons,
-      [userId]: !prevVisibleButtons[userId],
-    }));
-    setIsVertical((prevIsVertical) => ({
-      ...prevIsVertical,
-      [userId]: !prevIsVertical[userId],
-    }));
+    setVisibleButtons((prevVisibleButtons) => {
+      const updatedVisibleButtons = { ...prevVisibleButtons };
+
+      // Close buttons for other items
+      Object.keys(updatedVisibleButtons).forEach((key) => {
+        if (key !== userId) {
+          updatedVisibleButtons[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updatedVisibleButtons[userId] = !prevVisibleButtons[userId];
+
+      return updatedVisibleButtons;
+    });
+
+    setIsVertical((prevIsVertical) => {
+      const updateVertical = { ...prevIsVertical };
+
+      Object.keys(updateVertical).forEach((key) => {
+        if (key !== userId) {
+          updateVertical[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updateVertical[userId] = !prevIsVertical[userId];
+
+      return updateVertical;
+    });
   };
+
   const closeVisibleButtons = () => {
     setVisibleButtons({});
     setIsVertical({});
