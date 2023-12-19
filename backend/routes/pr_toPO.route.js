@@ -8,7 +8,8 @@ const { PR, PR_PO,
         PR_PO_subpart, 
         PR_history, 
         ProductTAGSupplier, 
-        Product, Supplier, 
+        Product, 
+        Supplier,
         Assembly, 
         Assembly_Supplier,  
         SparePart, 
@@ -17,7 +18,6 @@ const { PR, PR_PO,
         Subpart_supplier
       } = require('../db/models/associations')
 const session = require('express-session');
-const Supplier_SparePart = require('../db/models/sparePart_supplier..model');
 
 router.use(session({
     secret: 'secret-key',
@@ -180,64 +180,101 @@ router.route('/fetchView_product').get(async (req, res) => {
   //     const data = await PR_PO_spare.findAll({
   //       attributes: [
   //         'sparepart_supplier.supplier_code',
-  //         [fn('SUM', col('quantity')), 'total_quantity'],
-  //         [fn('SUM', col('sparepart_supplier.supplier_price')), 'total_price'],
+  //         // [fn('SUM', col('quantity')), 'total_quantity'],
+  //         // [fn('SUM', col('sparepart_supplier.supplier_price')), 'total_price'],
   //         [fn('MAX', col('purchase_req_canvassed_spare.id')), 'spres_id'],
-  //         'sparepart_supplier.id', // Include the 'id' column in the SELECT list
+  //         // 'sparepart_supplier.id', // Include the 'id' column in the SELECT list
   //         // Add other aggregated columns or use sequelize.literal for complex expressions
-  //       ],
-  //       include: [
-  //         {
-  //           model: Supplier_SparePart,
-  //           as: 'sparepart_supplier',
-  //           required: true,
-  //           include: [
-  //             {
-  //               model: Supplier,
-  //               required: true,
-  //             },
-  //           ],
-  //         },
   //       ],
   //       group: [
   //         'sparepart_supplier.supplier_code',
-  //         'sparepart_supplier.id', // Include the 'id' column in the GROUP BY clause
   //       ],
   //     });
+  
+     
+  //     if (data) {
+  //       return res.json(data);
+  //     } else {
+  //       res.status(400);
+  //     }
+  //   } catch (error) {
+  //     // Handle errors
+  //     console.error(error);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // });
+
+
 
   router.route('/fetchCanvassedSupplier_spare').get(async (req, res) => {
     try {
-      const data = await PR_PO_spare.findAll({
+      const data_quantity = await PR_PO_spare.findAll({
         attributes: [
-          'pr_id',
-          [fn('SUM', col('quantity')), 'Totalquantity'],
+          'sparepart_suppliers.supplier_code',
+          [fn('SUM', col('quantity')), 'total_quantity'],
+          [fn('SUM', col('sparepart_supplier.supplier_price')), 'total_price'],
         ],
-        include: [
-          {
-            model: Supplier_SparePart,
-            as: 'sparepart_supplier',
-            required: true,
-            include: [
-              {
-                model: Supplier,
-                required: true,
-              },
-            ],
-          },
-        ],
-        group: ['pr_id'], 
+        include: [{
+          model: SparePart_Supplier,
+          required: true,
+          attributes: ['supplier_code'],
+
+            include: [{
+              model: Supplier,
+              required: true
+            }],
+
+
+          // where: {
+          //   id: col('spare_suppliers_ID'), // Assuming 'id' is the primary key in Supplier_SparePart
+          // },
+        }],
+        group: ['sparepart_supplier.supplier_code'], // Group by supplier code
       });
   
-      if (data) {
-        return res.json(data);
-      } else {
-        res.status(400);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
+      res.json(data_quantity);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+  
+
+
+  // router.route('/').get(async (req, res) => {
+  //   try {
+  //     const data = await PR_history.findAll({
+  //       where: {
+  //         isRead: false, // Fetch only unread notifications
+  //       },
+  //       attributes: ['pr_id', [sequelize.fn('max', sequelize.col('createdAt')), 'latestCreatedAt']],
+  //       group: ['pr_id'],
+  //       raw: true,
+  //     });
+  
+  //     const prIds = data.map(entry => entry.pr_id);
+  
+  //     const latestData = await PR_history.findAll({
+  //       where: {
+  //         pr_id: {
+  //           [Op.in]: prIds,
+  //         },
+  //         createdAt: {
+  //           [Op.in]: data.map(entry => entry.latestCreatedAt),
+  //         },
+  //       },
+  //     });
+  
+  //     if (latestData) {
+  //       return res.json(latestData);
+  //     } else {
+  //       res.status(400);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json("Error");
+  //   }
+  // });
   
   
 
