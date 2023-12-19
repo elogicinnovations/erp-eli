@@ -77,14 +77,8 @@ function StockManagement() {
     }
   };
 
-  
-    useEffect(() => {
-        if ($('#order-listing').length > 0) {
-          $('#order-listing').DataTable();
-        }
-      }, []);
 
-       //date format
+    //date format
     function formatDatetime(datetime) {
       const options = {
         year: 'numeric',
@@ -111,6 +105,64 @@ function StockManagement() {
     const handleModalToggle = () => {
       setUpdateModalShow(!updateModalShow);
     };
+
+    useEffect(() => {
+      if ($('#order-listing').length > 0  && stockTransfer.length > 0) {
+        $('#order-listing').DataTable();
+      }
+    }, [stockTransfer]);
+
+    
+    const handleDelete = async id => {
+      swal({
+        title: "Are you sure?",
+        text: "Once Cancelled, all stock transfer will return to inventory!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          try {
+            const response = await axios.delete(BASE_URL + `/stockTransfer/delete/${id}`);
+
+            if (response.status === 200) {
+              swal({
+                title: "Cancelled Stock Transfer!",
+                text: "The Stock Transfer has been Cancelled Successfully.",
+                icon: "success",
+                button: "OK",
+              }).then(() => {
+                setStockTransfer(prev => prev.filter(data => data.id !== id));
+                window.location.reload();
+              });
+            } else if (response.status === 202) {
+              swal({
+                icon: 'error',
+                title: 'Delete Prohibited',
+                text: 'You cannot delete Stock Trasnfer that is used'
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support'
+              });
+            }
+
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          swal({
+            title: "Cancel",
+            text: "",
+            icon: "warning",
+          });
+        }
+      });
+    }; 
+
+
 
   return (
     <div className="main-of-containers">
@@ -249,7 +301,7 @@ function StockManagement() {
                                               {/* Your dropdown content here */}
                                               
                                           {/* <Link to={`/initUpdateCostCenter/${data.stock_id}`} onClick={() => handleModalToggle(data)} style={{fontSize:'12px'}} className='btn'>Update</Link> */}
-                                          <button className='btn'>Cancel</button>
+                                          <button onClick={() => handleDelete(data.stock_id)} className='btn'>Cancel</button>
                                           </div>
                                           </td>
                                         </tr>

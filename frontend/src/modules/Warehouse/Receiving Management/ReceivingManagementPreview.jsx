@@ -81,7 +81,7 @@ useEffect(() => {
       if (res.data[0].quality_assurance === "Active") {
         setcheckedStatus(true)
         setQualityAssurance('Active'); // Check the checkbox
-    } else if (res.data[0].quality_assurance === "Inactive") {
+    } else if (res.data[0].status === "Inactive") {
         setcheckedStatus(false)
         setQualityAssurance('Inactive'); // Uncheck the checkbox
     }
@@ -129,17 +129,17 @@ useEffect(() => {
     setShowModal(false);
   };
 
-  useEffect(() => {
-    if ($('#order-listing').length > 0) {
-      $('#order-listing').DataTable();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if ($('#order-listing').length > 0) {
+  //     $('#order-listing').DataTable();
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if ($('#order2-listing').length > 0) {
-      $('#order2-listing').DataTable();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if ($('#order2-listing').length > 0) {
+  //     $('#order2-listing').DataTable();
+  //   }
+  // }, []);
 
 //date format
 function formatDatetime(datetime) {
@@ -242,18 +242,11 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
   }
   };
 
-  const handleActiveStatus= (id, qualityAssurance) => 
+  const onChangeProd= (value, id) => 
   {
-    if(status === 'Active'){
-      setStatus('Inactive')
-      }
-      else{
-          setStatus('Active')
-      }
-
-    axios.post(BASE_URL + '/PR_PO/receivedPRD', 
+    axios.post(BASE_URL + '/PR_PO/receivedPRDQA', 
       { 
-        id, qualityAssurance
+        value, id
       })
       .then((res) => {
         if (res.status === 200) {
@@ -319,14 +312,7 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
 
   const handleActiveStatusAssembly= (id, qualityAssurance) => 
   {
-    if(qualityAssurance === 'Active'){
-      setQualityAssurance('Inactive')
-  }
-  else{
-    setQualityAssurance('Active')
-  }
-
-      axios.post(BASE_URL + '/PR_PO/receivedAssembly', 
+       axios.post(BASE_URL + '/PR_PO/receivedAssembly', 
       { 
         id, qualityAssurance
       })
@@ -618,9 +604,8 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
-                                                        defaultChecked={checkedStatus} // Set defaultChecked based on ustatus
-                                                        onChange={(e) => handleActiveStatus(data.id, qualityAssurance)}
-                                                        
+                                                        onChange={(e) => onChangeProd(qualityAssurance, data.id,)}
+                                                        defaultChecked={checkedStatus}
                                                         />
                                                         </div>
                                                     </td>
@@ -717,7 +702,7 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                             </div>
                         
                         <div className='save-cancel'>
-                        <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
+                        <Button type='button' onClick={() => navigate(`/receivingManagement`)} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
                         </div>
                         
                         </Form>

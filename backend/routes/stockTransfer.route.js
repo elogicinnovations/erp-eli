@@ -142,5 +142,30 @@ router.route('/fetchView').get(async (req, res) => {
 });
 
 
+//Delete
+router.route('/delete/:param_id').delete(async (req, res) => 
+{
+  const id = req.params.param_id;
+  await StockTransfer.destroy({
+            where : {
+              stock_id: id
+            }
+        }).then(
+            (del) => {
+                if(del){
+                    res.json({success : true})
+                }
+                else{
+                    res.status(400).json({success : false})
+                }
+            }
+        ).catch(
+            (err) => {
+                console.error(err)
+                res.status(409)
+            }
+        );
+      });
+
 
   module.exports = router;

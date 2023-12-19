@@ -57,6 +57,7 @@ const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
+const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
 
 
 // const SparePart = require("./sparePart.model");
@@ -104,6 +105,9 @@ Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id"});
 //product tag supplier table
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
+
+Product.hasMany(productTAGsupplierHistory, { foreignKey: "product_id" });
+productTAGsupplierHistory.belongsTo(Product, { foreignKey: "product_id" });
 
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
 ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
@@ -407,4 +411,5 @@ module.exports = {
                     StockTransfer_assembly,
                     StockTransfer_spare,
                     StockTransfer_subpart,
+                    productTAGsupplierHistory,
                 };

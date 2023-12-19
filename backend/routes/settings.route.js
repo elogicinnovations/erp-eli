@@ -51,6 +51,34 @@ router.route('/SettingView').get(async (req, res) => {
 });
 
 
+router.route('/update/').put(async (req, res) => {
+  try {
+    const id = req.body.id;
+    
+    const [affectedRows] = await Settings.update(
+      {
+        name: req.body.name,
+        phone: req.body.phone,
+        email: req.body.email,
+        street: req.body.street,
+        barangay: req.body.barangay,
+        city: req.body.city,
+        zipcode: req.body.zipcode,
+      },
+      {
+        where: { id: id },
+      }
+    );
+
+    res.status(200).json({ message: "Data updated successfully", affectedRows });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+});
+
+
 
 
 module.exports = router;

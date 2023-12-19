@@ -348,6 +348,11 @@ function App() {
                         path="/receivingManagementPreview"
                         element={<ReceivingManagementPreview/>}
                       />
+
+                       <Route
+                        path="/receivingManagementPreviewId/:id"
+                        element={<ReceivingManagementPreview/>}
+                      />
               <Route
                     path="/inventoryReports"
                     element={<InventoryReports/>}

@@ -10,6 +10,7 @@ import axios from 'axios';
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 import cls_unit from '../../../../../../assets/global/unit';
 import Dropzone from 'react-dropzone';
+import Modal from "react-bootstrap/Modal";
 import Multiselect from 'multiselect-react-dropdown';
 import Select from 'react-select';
 import {
@@ -178,6 +179,38 @@ function ProductSupplier() {
       .catch(err => console.log(err));
   }, []);
 
+//show model for supplier
+const [updateModalShow, setUpdateModalShow] = useState(false);
+const [supplierId, setSupplierId] = useState('');
+const [updateFormData, setUpdateFormData] = useState({
+  // category_name: "",
+  // category_remarks: "",
+  // category_code: null,
+  supplierId: "",
+});
+
+
+
+
+  const handleModalToggle = (updateData = null) => {
+    setUpdateModalShow(!updateModalShow);
+    if (updateData) {
+      setUpdateFormData({
+        // category_code: updateData.category_code,
+        // category_name: updateData.category_name,
+        // category_remarks: updateData.category_remarks,
+        supplierId: updateData.prod_id,
+
+      });
+    } else {
+      setUpdateFormData({
+        // category_code: "",
+        // category_name: "",
+        // category_remarks: "",
+        supplierId: "",
+      });
+    }
+  };
 
   return (
     <div className="main-of-containers">
@@ -481,24 +514,27 @@ function ProductSupplier() {
                                       <Tab eventKey="SupplierTab" title={<span style={{fontSize: '20px' }}>Supplier</span>}>
                                           <div className="orderhistory-side">
                                               <div className="printersbtn">
-
                                               </div>
                                           </div>
                                           <div className="main-of-all-tables">
-                                              <table id="ordered-listing">
+                                              <table className='table-hover' id="ordered-listing">
                                                       <thead>
                                                           <tr>
-                                                              <th>Supplier Code</th>
-                                                              <th>Supplier Name</th>
-                                                              <th>Contact</th>
+                                                              <th className='tableh'>Supplier Code</th>
+                                                              <th className='tableh'>Supplier Name</th>
+                                                              <th className='tableh'>Contact</th>
                                                           </tr>
                                                       </thead>
                                                       <tbody>
                                                         {product.map((data,i) =>(
                                                           <tr>
-                                                              <td>{data.supplier.supplier_code}</td>
-                                                              <td>{data.supplier.supplier_name}</td>
-                                                              <td>{data.supplier.supplier_number}</td>
+                                                              <td onClick={() => {handleModalToggle(data)}}>{data.supplier.supplier_code}</td>
+                                                              <td onClick={() => {handleModalToggle(data)}}>{data.supplier.supplier_name}</td>
+                                                              <td onClick={() => {handleModalToggle(data)}}>{data.supplier.supplier_number}</td>
+                                                              
+                                                              {/* <td>{data.supplier.supplier_code}</td> */}
+                                                              {/* <td>{data.supplier.supplier_name}</td> */}
+                                                              {/* <td>{data.supplier.supplier_number}</td> */}
                                                           </tr>
                                                           ))}
                                                       </tbody>
@@ -509,6 +545,87 @@ function ProductSupplier() {
                                 </div>
                             </div>
                         </div>
+
+
+                        <Modal show={handleModalToggle} >
+        <Form noValidate validated={validated} >
+          <Modal.Header closeButton>
+            <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
+              Update Categsssory {supplierId}
+            </Modal.Title>
+
+            <div className="form-group d-flex flex-row "></div>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Category Code:{" "}
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  // value={updateFormData.category_code}
+                  // onChange={handleUpdateFormChange}
+                  name="category_code"
+                  placeholder="Enter Name of the Category..."
+                  style={{ height: "40px", fontSize: "15px" }}
+                  required
+                  readOnly
+                />
+              </Form.Group>
+            </div>
+            <div>
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Category Name:{" "}
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  value={updateFormData.category_name}
+                  // onChange={handleUpdateFormChange}
+                  name="category_name"
+                  placeholder="Enter Name of the Category..."
+                  style={{ height: "40px", fontSize: "15px" }}
+                  required
+                />
+              </Form.Group>
+            </div>
+            <div>
+              <Form.Group controlId="exampleForm.ControlInput2">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Category Remarks:{" "}
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  // value={updateFormData.category_remarks}
+                  // onChange={handleUpdateFormChange}
+                  name="category_remarks"
+                  placeholder="Enter Category Remarks..."
+                  style={{ height: "40px", fontSize: "15px" }}
+                  required
+                />
+              </Form.Group>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              type="submit"
+              variant="warning"
+              className=""
+              style={{ fontSize: "20px" }}>
+              Update
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setUpdateModalShow(!updateModalShow)}
+              style={{ fontSize: "20px" }}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+
+
                         <div className='save-cancel'>
                           <Link to='/productList' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                               Close

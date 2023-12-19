@@ -43,38 +43,51 @@ function SystemSettings() {
   };
 
 
-  const add = async e => {
+   // ----------------------------------Start Handle Submit------------------------------//
+   const handleFormSubmit = async (e) => {
     e.preventDefault();
-  
+
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-        swal({
-            icon: 'error',
-            title: 'Fields are required',
-            text: 'Please fill the red text fields'
-          });
-    }
-    else{
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
+      });
+    } else {
       axios
-      .post(BASE_URL + '/Settings/create', 
-        { 
-          name, phone, email, street, barangay, city, zipcode
+        .put(BASE_URL + "/Setting/update/", {
+          id,
+          name,
+          phone,
+          email,
+          street,
+          barangay,
+          city,
+          zipcode
         })
-      .then((res) => {
-        console.log(res);
-        if(res.status === 200){
-          SuccessInserted(res);
-        }
-        else if(res.status === 201){
-          Duplicate_Message();
-        }
-        else{
-          ErrorInserted();
-        }
-      })
+        .then((response) => {
+          if (response.status === 200) {
+            swal({
+              title: "Setting Update Succesful!",
+              text: "The Setting has been Updated Successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/settingView/1");
+            });
+          } else if (response.status === 201) {
+            swal({
+              title: "Setting is Already Exist",
+              text: "Please Input a New Setting ",
+              icon: "error",
+            });
+          }
+        });
     }
+
     setValidated(true); //for validations
   };
   
@@ -87,9 +100,7 @@ function SystemSettings() {
     })
     .then(() => {
      
-     navigate('/costCenter')
-  
-  
+     navigate('/systemSettings')  
     })
   }
 
@@ -111,7 +122,7 @@ function SystemSettings() {
   }
 
 useEffect(() => {   
-  axios.get(BASE_URL + '/Setting/fetchdata', {
+  axios.get(BASE_URL + '/Setting/SettingView', {
     params: {
       id: id
     }
@@ -151,7 +162,7 @@ useEffect(() => {
               }}
             ></span>
           </div>
-          <Form noValidate validated={validated} onSubmit={add}>
+          <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
             <div className="row mt-3">
               <div className="col-9">
                 <Form.Group controlId="exampleForm.ControlInput1">
@@ -239,6 +250,7 @@ useEffect(() => {
                     type="text"
                     placeholder="Enter Phone Number..."
                     style={{ height: '40px', fontSize: '15px' }}
+                    value={phone}
                     onChange={e => setPhone(e.target.value)}
                     // disabled={!isEditMode}
                   />
@@ -252,6 +264,7 @@ useEffect(() => {
                     placeholder="Enter Email..."
                     style={{ height: '40px', fontSize: '15px' }}
                     onChange={e => setEmail(e.target.value)}
+                    value={email}
                     // disabled={!isEditMode}
                   />
                 </Form.Group>
@@ -266,6 +279,7 @@ useEffect(() => {
                     placeholder="Enter Building or Street..."
                     style={{ height: '40px', fontSize: '15px' }}
                     onChange={e => setStreet(e.target.value)}
+                    value={street}
                     // disabled={!isEditMode}
                   />
                 </Form.Group>
@@ -278,6 +292,7 @@ useEffect(() => {
                     placeholder="Enter Barangay..."
                     style={{ height: '40px', fontSize: '15px' }}
                     onChange={e => setBarangay(e.target.value)}
+                    value={barangay}
                     // disabled={!isEditMode}
                   />
                 </Form.Group>
@@ -292,6 +307,7 @@ useEffect(() => {
                     placeholder="Enter City..."
                     style={{ height: '40px', fontSize: '15px' }}
                     onChange={e => setCity(e.target.value)}
+                    value={city}
                     // disabled={!isEditMode}
                   />
                 </Form.Group>
@@ -304,6 +320,7 @@ useEffect(() => {
                     placeholder="Enter Zipcode..."
                     style={{ height: '40px', fontSize: '15px' }}
                     onChange={e => setZipcode(e.target.value)}
+                    value={zipcode}
                     // disabled={!isEditMode}
                   />
                 </Form.Group>
