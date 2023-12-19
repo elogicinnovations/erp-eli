@@ -10,28 +10,36 @@ router.use(session({
     saveUninitialized: true
 }));
 
-// router.route('/fetchCanvass').get(async (req, res) => {
-//     try {
-//       const data = await Subpart_supplier.findAll({
-//         include: [{
-//           model: Supplier,
-//           required: true
-//         },
-//       ],
-//         where: {subpart_id: req.query.sub_id}
-//       });
-  
-//       if (data) {
-//         // console.log(data);
-//         return res.json(data);
-//       } else {
-//         res.status(400);
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json("Error");
-//     }
-//   });
+router.route('/fetchCanvass').get(async (req, res) => {
+  try {
+    console.log(req.query.sub_id)
+    const data = await Subpart_supplier.findAll({
+      include: [
+        {
+          model: SubPart,
+          required: true,
+        },
+
+        {
+          model: Supplier,
+          required: true,
+        },
+      ],
+      where: { subpart_id: req.query.sub_id },
+      // where: { subpart_id: req.query['sub_id'] },
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+  });
 
   router.route('/fetchSubSupplier').get(async (req, res) => {
     try {

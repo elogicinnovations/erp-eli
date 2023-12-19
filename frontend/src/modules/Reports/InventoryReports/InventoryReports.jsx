@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Sidebar from '../../Sidebar/sidebar';
 import '../../../assets/global/style.css';
 import '../../styles/react-style.css';
@@ -11,6 +11,8 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import {
     MagnifyingGlass,
     Gear, 
@@ -40,34 +42,66 @@ import Header from '../../../partials/header';
 
 function InventoryReports() {
 
-    
-// Artifitial data
+  const tableRef = useRef(null);
 
-// const data = [
-//     {
-//       samA: 'asd',
-//       samB: 'asd',
-//       samC: 'asd',
-//       samD: 'asd',
-//       samE: 'asd',
-//     },
-//     {
-//       samA: 'asd',
-//       samB: 'asd',
-//       samC: 'asd',
-//       samD: 'asd',
-//       samE: 'asd',
-//     },
-//     {
-//       samA: 'asd',
-//       samB: 'asd',
-//       samC: 'asd',
-//       samD: 'asd',
-//       samE: 'asd',
-//     },
-//   ]
       
-// Artifitial data
+  const exportToPdf = () => {
+    const input = tableRef.current;
+  
+    if (input) {
+      const pdf = new jsPDF({
+        orientation: 'landscape', // Change the orientation to landscape
+        unit: 'mm',
+        format: 'a4',
+        margin: { left: 0, right: 0 }, // Set left and right margins to zero
+      });
+            // Add a custom header text
+        const headerText = '';
+        pdf.text(headerText, 10, 10); // Adjust the coordinates as needed
+
+
+       // Customize styles for autoTable
+    const styles = {
+      font: 'helvetica',
+      fontSize: 10,
+      textColor: 0,
+      lineColor: 200,
+      lineWidth: 0.1,
+      fontStyle: 'normal',
+    };
+
+    // Customize header styles
+    const headerStyles = { 
+                          fillColor: [200, 200, 200], 
+                          textColor: 0, 
+                          fontStyle: 'bold' 
+                        };
+
+  
+      // Use autoTable to directly add the table content to the PDF
+      pdf.autoTable({
+        html: '#' + input.id, // Use the original table ID
+        startY: 10, // You can adjust the starting Y position as needed
+        columnStyles: { 
+            0: { cellWidth: 35 }, 
+            1: { cellWidth: 35 }, 
+            2: { cellWidth: 25 }, 
+            3: { cellWidth: 40 }, 
+            4: { cellWidth: 30 }, 
+            5: { cellWidth: 20 }, 
+            6: { cellWidth: 30 }, 
+            7: { cellWidth: 20 }, 
+            8: { cellWidth: 30 } 
+          },
+          headStyles: headerStyles,
+      });
+  
+      // Save the PDF
+      pdf.save('Inventory Report.pdf');
+    }
+  };
+
+
 
 const navigate = useNavigate();
 const [startDate, setStartDate] = useState(null);
@@ -190,7 +224,7 @@ useEffect(() => {
                         </div>
                         <div className='export-refresh'>
                             <button className='export'>
-                                 <Export size={20} weight="bold" /> <p1>Export</p1>
+                                 <Export size={20} weight="bold" onClick={exportToPdf}/> <p1>Export</p1>
                             </button>
                             </div>
                         </div>
@@ -198,7 +232,7 @@ useEffect(() => {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table id='order-listing'>
+                        <table ref={tableRef} id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Product Code</th>

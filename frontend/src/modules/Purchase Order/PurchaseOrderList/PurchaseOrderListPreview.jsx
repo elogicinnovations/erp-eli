@@ -710,7 +710,7 @@ const handleQuantityChange_Subpart = (value, productValue) => {
                                                   <td>{data.description}</td>
                                                   <td>
                                                       <button type='button' 
-                                                        onClick={() => handleCanvassSubpart(data.subPart_id)}
+                                                        onClick={() => handleCanvassSubpart(data.subPart.id)}
                                                         className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
                                                   </td>
                                                 </tr>

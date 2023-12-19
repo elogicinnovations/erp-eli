@@ -11,10 +11,9 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-// import ExportToPDF from './export';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable'; // Import autoTable
+import 'jspdf-autotable';
+
 import {
     MagnifyingGlass,
     Gear, 
@@ -45,103 +44,50 @@ import Header from '../../../partials/header';
 function POTransactionReports() {
   const tableRef = useRef(null);
 
+// good but not in proper format
   // const exportToPdf = () => {
   //   const input = tableRef.current;
-
+  
   //   if (input) {
-  //     html2canvas(input)
-  //       .then((canvas) => {
-  //         const imgData = canvas.toDataURL('image/png');
-  //         const pdf = new jsPDF('p', 'mm', 'a4');
-  //         pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.width, input.clientHeight / input.clientWidth * pdf.internal.pageSize.width);
-  //         pdf.save('exported-table.pdf');
-  //       });
+  //     const pdf = new jsPDF('p', 'mm', 'a4');
+  
+  //     // Set the width and height of the PDF page
+  //     const pdfWidth = pdf.internal.pageSize.width;
+  
+  //     // Use autoTable to directly add the table content to the PDF
+  //     pdf.autoTable({
+  //       html: '#' + input.id, // Use the original table ID
+  //       startY: 0, // You can adjust the starting Y position as needed
+  //     });
+  
+  //     // Save the PDF
+  //     pdf.save('exported-table.pdf');
   //   }
   // };
+
   const exportToPdf = () => {
-    const pdf = new jsPDF('p', 'pt', 'letter');
-    const totalPagesExp = '{total_pages_count_string}';
+    const input = tableRef.current;
   
-    // Adjust your page settings as needed
-    // const pdfWidth = 612;
-    // const pdfHeight = 792;
-    const pdfWidth = 612;
-    const pdfHeight = 792;
-    const pageMargin = 40;
-    const contentWidth = pdfWidth - 2 * pageMargin;
-    const contentHeight = pdfHeight - 2 * pageMargin;
-    const lineHeight = 20;
-  
-    const allData = [
-      ...PO_prd,
-      ...PO_assmbly,
-      ...PO_spare,
-      ...PO_subpart
-    ];
-  
-    let cursorY = pageMargin;
-    let currentPage = 1;
-    // console.log(allData);
-
-  
-    const generatePageContent = (data) => {
-      // Construct the content of each page based on the data
-      const tableRows = data.map((rowData) => {
-        return Object.values(rowData).map(value => String(value));
+    if (input) {
+      const pdf = new jsPDF({
+        orientation: 'landscape', // Change the orientation to landscape
+        unit: 'mm',
+        format: 'a4',
+        margin: { left: 0, right: 0 }, // Set left and right margins to zero
       });
-
-      // const tableRows = allData.map((rowData) => {
-      //   // Construct an array for each row, representing the values in the table
-      //   return [
-      //     rowData.pr_id,
-      //     rowData.purchase_req.updatedAt,
-      //     rowData.product_tag_supplier.product.product_code,
-      //     rowData.product_tag_supplier.product.product_name,
-      //     rowData.product_tag_supplier.product.product_unitMeasurement,
-      //     rowData.product_tag_supplier.supplier.supplier_name,
-      //     rowData.product_tag_supplier.product_price,
-      //     rowData.quantity,
-      //     rowData.product_tag_supplier.product_price * rowData.quantity
-      //   ];
-        
-      // });
-      
   
-      const startY = cursorY;
-  const remainingPageSpace = contentHeight - (startY - pageMargin);
-  const maxRowsPerPage = Math.floor(remainingPageSpace / lineHeight);
-
-  const slicedRows = tableRows.slice(0, maxRowsPerPage);
-  cursorY += slicedRows.length * lineHeight;
-
-  const tableHeader = ['PO Number', 'PO Date', 'Product Code', 'Product', 'UOM', 'Supplier', 'Unit Cost', 'Quantity', 'Total'];
-  pdf.text(tableHeader, pageMargin, startY);
-  pdf.autoTable({
-    startY: cursorY,
-    head: [tableHeader], // Add your table header
-    body: slicedRows
-  });
-
-  if (tableRows.length > maxRowsPerPage) {
-    pdf.addPage();
-    currentPage++;
-    cursorY = pageMargin;
-    generatePageContent(tableRows.slice(maxRowsPerPage));
-  }
-    };
+      // Use autoTable to directly add the table content to the PDF
+      pdf.autoTable({
+        html: '#' + input.id, // Use the original table ID
+        startY: 10, // You can adjust the starting Y position as needed
+        columnStyles: { 0: { cellWidth: 25 }, 1: { cellWidth: 25 }, 2: { cellWidth: 30 }, 3: { cellWidth: 40 }, 4: { cellWidth: 20 }, 5: { cellWidth: 40 }, 6: { cellWidth: 30 }, 7: { cellWidth: 20 }, 8: { cellWidth: 30 } },
+      });
   
-    generatePageContent(allData);
-  
-    // Add total pages count in the footer
-    const pageCountOptions = {
-      totalPages: totalPagesExp,
-      pageCounter: currentPage
-    };
-    pdf.putTotalPages(pageCountOptions);
-    
-    pdf.save('exported-table.pdf');
+      // Save the PDF
+      pdf.save('PurchaseOrder Report.pdf');
+    }
   };
-  
+
   
 
 const navigate = useNavigate();
@@ -182,6 +128,17 @@ useEffect(() => { //fetch product for inventory
 }, []);
 
 
+  //date format
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
 
   useEffect(() => {
     // Initialize DataTable when role data is available
@@ -280,7 +237,7 @@ useEffect(() => { //fetch product for inventory
                                       {PO_prd.map((data,i) =>(
                                         <tr key={i}>
                                         <td>{data.pr_id}</td>
-                                        <td>{data.purchase_req.updatedAt}</td>
+                                        <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
                                         <td>{data.product_tag_supplier.product.product_code}</td>
                                         <td>{data.product_tag_supplier.product.product_name}</td>
                                         <td>{data.product_tag_supplier.product.product_unitMeasurement}</td>
@@ -294,7 +251,7 @@ useEffect(() => { //fetch product for inventory
                                       {PO_assmbly.map((data,i) =>(
                                         <tr key={i}>
                                         <td>{data.pr_id}</td>
-                                        <td>{data.purchase_req.updatedAt}</td>
+                                        <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
                                         <td>{data.assembly_supplier.assembly.assembly_code}</td>
                                         <td>{data.assembly_supplier.assembly.assembly_name}</td>
                                         <td>--</td>
@@ -308,7 +265,7 @@ useEffect(() => { //fetch product for inventory
                                       {PO_spare.map((data,i) =>(
                                         <tr key={i}>
                                           <td>{data.pr_id}</td>
-                                          <td>{data.purchase_req.updatedAt}</td>
+                                          <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
                                           <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
                                           <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
                                           <td>--</td>
@@ -322,7 +279,7 @@ useEffect(() => { //fetch product for inventory
                                       {PO_subpart.map((data,i) =>(
                                         <tr key={i}>
                                           <td>{data.pr_id}</td>
-                                          <td>{data.purchase_req.updatedAt}</td>
+                                          <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
                                           <td>{data.subpart_supplier.subPart.subPart_code}</td>
                                           <td>{data.subpart_supplier.subPart.subPart_name}</td>
                                           <td>--</td>
