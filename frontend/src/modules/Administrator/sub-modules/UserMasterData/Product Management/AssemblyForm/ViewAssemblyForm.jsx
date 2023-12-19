@@ -105,7 +105,6 @@ function ViewAssembly() {
                       <tr>
                         <th>Supplier Code</th>
                         <th>Sub-Part Name</th>
-                        <th>Supplier Name</th>
                         <th>Description</th>
                       </tr>
                     </thead>
@@ -114,7 +113,6 @@ function ViewAssembly() {
                         <tr key={i}>
                           <td>{sparts.subPart.subPart_code}</td>
                           <td>{sparts.subPart.subPart_name}</td>
-                          <td>{sparts.subPart.supplier}</td>
                           <td>{sparts.subPart.subPart_desc}</td>
                         </tr>
                       ))}
@@ -144,8 +142,8 @@ function ViewAssembly() {
                     <tbody>
                       {Spareparts.map((spares, i) => (
                         <tr key={i}>
-                          <td>{spares.spareParts.spareParts_code}</td>
-                          <td>{spares.sparepart.spareParts_name}</td>
+                          <td>{spares.sparePart.spareParts_code}</td>
+                          <td>{spares.sparePart.spareParts_name}</td>
                           <td>{spares.sparePart.spareParts_desc}</td>
                         </tr>
                       ))}

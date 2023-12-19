@@ -79,4 +79,30 @@ router.route('/fetchTable').get(async (req, res) => {
         return res.status(500).json({ message: 'An error occurred' });
     }
 });
+
+
+router.route('/fetchsubpartTable').get(async (req, res) => {
+  try {
+      const data = await SparePart_SubPart.findAll({
+        include:[{
+           model: SubPart,
+           required: true 
+        }],
+        where: {
+            id: req.query.id,
+        },
+      });
+
+      if (!data) {
+      return res.status(404).json();
+      
+      }
+      // console.log(data)
+      return res.json(data);
+      
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'An error occurred' });
+  }
+});
 module.exports = router;

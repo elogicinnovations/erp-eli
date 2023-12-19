@@ -86,7 +86,6 @@ Subpart_supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 BinLocation.hasMany(SubPart, { foreignKey: "bin_id"});
 SubPart.belongsTo(BinLocation, { foreignKey: "bin_id"});
 
-
 //subpart tag in manufacturer
 Manufacturer.hasMany(SubPart, { foreignKey: "subPart_Manufacturer"});
 SubPart.belongsTo(Manufacturer, { foreignKey: "subPart_Manufacturer"});
@@ -98,7 +97,6 @@ SubPart.belongsTo(Category, { foreignKey: "category_code"});
 //subpart tag image
 SubPart.hasMany(Subpart_image, { foreignKey: "subpart_id"});
 Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id"});
-
 
 
 //product tag supplier table
@@ -307,6 +305,17 @@ Assembly_Supplier.belongsTo(Assembly, { foreignKey: "assembly_id"});
 Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
 Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+//assembly tag category
+Category.hasMany(Assembly, { foreignKey: "category_code"});
+Assembly.belongsTo(Category, { foreignKey: "category_code"});
+
+//assembly tag bin location
+BinLocation.hasMany(Assembly, { foreignKey: "bin_id"});
+Assembly.belongsTo(BinLocation, { foreignKey: "bin_id"});
+
+//assembly tag manufacturer
+Manufacturer.hasMany(Assembly, { foreignKey: "assembly_manufacturer"});
+Assembly.belongsTo(Manufacturer, { foreignKey: "assembly_manufacturer"});
 
 
 //--------------Stock Transfer Masterlist table

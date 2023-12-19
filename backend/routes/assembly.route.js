@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart, Inventory_Assembly} = require('../db/models/associations')
+const {Assembly_Supplier, Assembly, Assembly_SparePart, Assembly_SubPart, Inventory_Assembly, BinLocation, Category, Manufacturer} = require('../db/models/associations')
 
 const session = require("express-session");
 
@@ -63,7 +63,18 @@ router.route("/fetchTableEdit").get(async (req, res) => {
 
 router.route("/create").post(async (req, res) => {
   try {
-    const { code, name, desc, spareParts, addPriceInput, subparting, unit, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} =
+    const { code, 
+      name, 
+      desc, 
+      spareParts, 
+      addPriceInput, 
+      subparting, 
+      unit, 
+      slct_binLocation, 
+      slct_manufacturer, 
+      thresholds, 
+      unitMeasurement,
+      slct_category} =
       req.body;
     // Check if the supplier code is already exists in the table
     console.log(code);
@@ -82,10 +93,11 @@ router.route("/create").post(async (req, res) => {
         assembly_name: name,
         assembly_desc: desc,
         assembly_unit: unit,
-        assembly_location: slct_binLocation,
+        bin_id: slct_binLocation,
         assembly_manufacturer: slct_manufacturer,
         threshhold: threshholdValue,
-        assembly_unitMeasurement: unitMeasurement
+        assembly_unitMeasurement: unitMeasurement,
+        category_code: slct_category
       });
 
       const createdID = spare_newData.id;
@@ -134,11 +146,11 @@ router.route("/create").post(async (req, res) => {
   }
 });
 
-router.route("/update").post(async (req, res) => {
+router.route("/update").post(
+  async (req, res) => {
+  
   try {
-    //  const {code, name, supp, desc, spareParts} = req.query;
-    // Check if the supplier code is already exists in the table\
-    console.log(req.query.code);
+    console.log(req.query.id)
     const existingDataCode = await Assembly.findOne({
       where: {
         assembly_code: req.query.code,
@@ -147,13 +159,24 @@ router.route("/update").post(async (req, res) => {
     });
 
     if (existingDataCode) {
-      return res.status(201).send("Exist");
+      res.status(201).send('Exist');
     } else {
-      const spare_newData = await Assembly.update(
+      let finalThreshold;
+      if (req.query.thresholds === "") {
+      finalThreshold = 0;
+      } else {
+      finalThreshold = req.query.thresholds;
+      }
+      const Assembly_newData = await Assembly.update(
         {
-          assembly_code: req.query.code.toUpperCase(),
+          assembly_code: req.query.code,
           assembly_name: req.query.name,
           assembly_desc: req.query.desc,
+          assembly_unit: req.query.unit,
+          bin_id: req.query.slct_binLocation,
+          assembly_unitMeasurement: req.query.unitMeasurement,
+          assembly_manufacturer: req.query.slct_manufacturer,
+          threshhold: finalThreshold,
         },
         {
           where: {
@@ -162,42 +185,72 @@ router.route("/update").post(async (req, res) => {
         }
       );
 
-      if (spare_newData) {
-        const deletesparepart = Assembly_SparePart.destroy({
+      if (Assembly_newData) {
+      const deletesparepart = Assembly_SparePart.destroy({
           where: {
+            sparePart_id: req.query.id
+          },
+      });
+
+      if(deletesparepart) {
+        const selectedSparepart = req.query.spareParts
+        for (const sparepartDropdown of selectedSparepart) {
+          const sparepartValue = sparepartDropdown.value;
+  
+          console.log(sparepartValue)
+          await Assembly_SparePart.create({
             assembly_id: req.query.id,
+            sparePart_id: sparepartValue
+          });
+        }
+      } //delete spare part end
+
+        const deletesubpart = Assembly_SubPart.destroy({
+          where: {
+            subPart_id: req.query.id
           },
         });
-        if (deletesparepart) {
-          for (const subPart of req.query.spareParts) {
-            const subPartValue = subPart.value;
 
-            // console.log('subpart id' + subPartValue)
+        if(deletesubpart) {
+          const selectedSubpart = req.query.Subparts
+          for (const sparepartDropdown of selectedSubpart) {
+            const subpartValue = sparepartDropdown.value;
 
-            await Assembly_SparePart.create({
+            console.log(subpartValue)
+            await Assembly_SubPart.create({
               assembly_id: req.query.id,
-              sparePart_id: subPartValue,
+              subPart_id: subpartValue
             });
           }
-        } //delete sparePart if end
+        }
 
-        const deletesupp = Assembly_Supplier.destroy({
+        const deletesupplier = Assembly_Supplier.destroy({
           where: {
-            assembly_id: req.query.id,
+            assembly_id: req.query.id
           },
         });
-        if (deletesupp) {
-          for (const supplier of req.query.supp) {
-            const suppValue = supplier.value;
 
-            // console.log('subpart id' + subPartValue)
+        if(deletesupplier){
+          const selectedSuppliers = req.query.addPriceInput
+          console.log(selectedSuppliers)
+          for (const supplier of selectedSuppliers) {
+            const { value, price } = supplier;
 
             await Assembly_Supplier.create({
               assembly_id: req.query.id,
-              supplier_code: suppValue,
-            });
-          }
-        } //delete supplier if end
+              supplier_code: value,
+              supplier_price: price
+             });
+
+            //  await Inventory_Assembly.create({
+            //   assembly_tag_supp_id: SupplierID.id,
+            //   quantity: 0,
+            //   price: price
+            // });
+           }
+        }
+
+        
       }
 
       res.status(200).json();
@@ -206,7 +259,7 @@ router.route("/update").post(async (req, res) => {
     console.error(err);
     res.status(500).send("An error occurred");
   }
-});
+});  
 
 router.route("/delete/:table_id").delete(async (req, res) => {
   const id = req.params.table_id;

@@ -206,23 +206,32 @@ function PurchaseRequestPreview() {
   {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
 
 
-    const selectProduct = (selectedProductOptions) => {
-      setvaluePRproduct(selectedProductOptions);
-      const updateProducttable = [
-        ...productSelectedFetch.filter((row) => selectedProductOptions.some((option) => option.value === row.product.product_code)),
-        ...selectedProductOptions
-        .filter((option) => !productSelectedFetch.some((row) => row.product.product_code === option.value))
+  const selectProduct = (selectedProductOptions) => {
+    setvaluePRproduct(selectedProductOptions);
+  
+    const existingProductCodes = productSelectedFetch.map((row) => row.product.product_code);
+  
+    const updateProducttable = [
+      ...productSelectedFetch,
+      ...selectedProductOptions
+        .filter(
+          (option) => !existingProductCodes.includes(option.value)
+        )
         .map((option) => ({
           product_code: option.value,
           product: {
             product_name: option.label.split('/ Name: ')[1].trim(),
             product_unitMeasurement: option.prodUM,
             product_code: option.prodcode,
-          }
-        }))
-      ];
-      setProductSelectedFetch(updateProducttable);
-    };
+          },
+          quantity: 0, // Set a default quantity value
+        })),
+    ];
+  
+    setProductSelectedFetch(updateProducttable);
+    // console.log(updateProducttable)
+  };
+  
 
     const InputQuantandDescription = (index, value) => {
         const updateProducttable = [...productSelectedFetch];
@@ -555,7 +564,7 @@ const update = async e => {
                                             <tbody>
                                               {productSelectedFetch.map((prodPR,i) =>(
                                                 <tr key={i}>
-                                                  <td>{prodPR.product && prodPR.product.product_code}</td>
+                                                  <td>{prodPR.product.product_code}</td>
                                                   <td>
                                                   <Form.Control 
                                                       type="number" 

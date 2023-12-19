@@ -252,7 +252,7 @@ useEffect(() => {
 }, []);
 
 
-
+// console.log(productTAGSuppliers);
 
   // ----------------------------------- for image upload --------------------------//
   // const fileInputRef = useRef(null);

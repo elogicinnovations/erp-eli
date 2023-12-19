@@ -55,6 +55,7 @@ import ViewAssembly  from "./modules/Inventory/ViewAssembly"
 import ViewSpare  from "./modules/Inventory/ViewSpare"
 import ViewSubpart from "./modules/Inventory/ViewSubpart"
 import PurchaseRequest from "./modules/Purchase Order/PurchaseRequest/PurchaseRequest";
+import PRNotification from "./modules/Purchase Order/PurchaseRequest/PRnotification";
 import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
 import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
 import PurchaseOrderList from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderList";
@@ -306,6 +307,10 @@ function App() {
                   <Route
                         path="/purchaseRequestPreview/:id"
                         element={<PurchaseRequestPreview/>}
+                      />
+                      <Route
+                        path="/PRredirect/:id"
+                        element={<PRNotification/>}
                       />
           <Route
             path="/purchaseOrderList"

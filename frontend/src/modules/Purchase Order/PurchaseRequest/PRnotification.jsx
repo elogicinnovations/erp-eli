@@ -39,8 +39,22 @@ function PurchaseRequest() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [filteredPR, setFilteredPR] = useState([]);
-  const [allPR, setAllPR] = useState([]);
+  const [filteredPR, setFilteredPR] = useState([]); // for filtering dropdown
+  const [allPR, setAllPR] = useState([]); //for fetch the PR data
+
+  const [redirectPR, setredirectPR] = useState([]); //to fetch the specific data when user click the notification
+  useEffect(() => {
+    axios.get(BASE_URL + '/PR_history/fetchSpecificPR', {
+      params: {
+        id: id
+      }
+    })
+      .then(res => {
+        const data = res.data;
+        setredirectPR(data);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
 
   const handleXCircleClick = () => {
     setStartDate(null);
@@ -118,7 +132,6 @@ function PurchaseRequest() {
     }).then(async (cancel) => {
       if (cancel) {
         try {
-          // console.log(row_status)
           if (
             row_status !== "For-Approval" &&
             row_status !== "For-Rejustification"
@@ -189,7 +202,6 @@ function PurchaseRequest() {
   }
 
   useEffect(() => {
-    // Initialize DataTable when role data is available
     if ($("#order-listing").length > 0 && PR.length > 0) {
       $("#order-listing").DataTable();
     }
@@ -197,36 +209,8 @@ function PurchaseRequest() {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-                        <div className="emp-text-side">
-                            <p>Purchase Request</p>
-                        </div>
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -325,7 +309,6 @@ function PurchaseRequest() {
                     <option value="For-Approval">For-Approval</option>
                     <option value="For-Rejustify">For-Rejustify</option>
                     <option value="For-Canvassing">For-Canvassing</option>
-                    <option value="To-Receive">To Receive</option>
                     <option value="Cancelled">Cancelled</option>
                   </Form.Select>
                   <button className="goesButton" onClick={handleGoButtonClick}>
@@ -359,9 +342,9 @@ function PurchaseRequest() {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
-                {filteredPR.length > 0 ? (
+                {redirectPR.length > 0 ? (
                   <tbody>
-                    {filteredPR.map((data, i) => (
+                    {redirectPR.map((data, i) => (
                       <tr key={i}>
                         <td
                           onClick={() =>
@@ -414,6 +397,105 @@ function PurchaseRequest() {
                     </tr>
                   </tbody>
                 )}
+                {/* {filteredPR.length > 0 || redirectPR.length > 0 ? (
+                  <tbody>
+                    {redirectPR.length > 0
+                      ? redirectPR.map((prdirect, i) => (
+                  <tr key={i}>
+                    <td
+                      onClick={() =>
+                        navigate(`/purchaseRequestPreview/${prdirect.id}`)
+                      }>
+                      {prdirect.pr_num}
+                    </td>
+                    <td
+                      onClick={() =>
+                        navigate(`/purchaseRequestPreview/${prdirect.id}`)
+                      }>
+                      --
+                    </td>
+                    <td
+                      onClick={() =>
+                        navigate(`/purchaseRequestPreview/${prdirect.id}`)
+                      }>
+                      <p className="" style={{ fontSize: "12px" }}>
+                        {prdirect.status}
+                      </p>
+                    </td>
+                    <td
+                      onClick={() =>
+                        navigate(`/purchaseRequestPreview/${prdirect.id}`)
+                      }>
+                      {formatDatetime(prdirect.createdAt)}
+                    </td>
+                    <td
+                      onClick={() =>
+                        navigate(`/purchaseRequestPreview/${prdirect.id}`)
+                      }>
+                      {prdirect.remarks}
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => CancelRequest(prdirect.id, prdirect.status)}>
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                    ))
+                  : filteredPR.map((data, i) => (
+                      <tr key={i}>
+                        <td
+                          onClick={() =>
+                            navigate(`/purchaseRequestPreview/${data.id}`)
+                          }>
+                          {data.pr_num}
+                        </td>
+                        <td
+                          onClick={() =>
+                            navigate(`/purchaseRequestPreview/${data.id}`)
+                          }>
+                          --
+                        </td>
+                        <td
+                          onClick={() =>
+                            navigate(`/purchaseRequestPreview/${data.id}`)
+                          }>
+                          <p className="" style={{ fontSize: "12px" }}>
+                            {data.status}
+                          </p>
+                        </td>
+                        <td
+                          onClick={() =>
+                            navigate(`/purchaseRequestPreview/${data.id}`)
+                          }>
+                          {formatDatetime(data.createdAt)}
+                        </td>
+                        <td
+                          onClick={() =>
+                            navigate(`/purchaseRequestPreview/${data.id}`)
+                          }>
+                          {data.remarks}
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => CancelRequest(data.id, data.status)}>
+                            Cancel
+                          </button>
+                        </td>
+                      </tr>
+                          ))}
+                    </tbody>
+                  ) : (
+                    <tbody>
+                      <tr>
+                        <td colSpan="6" style={{ textAlign: "center" }}>
+                          No matches found.
+                        </td>
+                      </tr>
+                    </tbody>
+                  )} */}
               </table>
             </div>
           </div>
