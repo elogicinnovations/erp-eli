@@ -70,9 +70,12 @@ function ViewSpareParts() {
                 </div> */}
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
-                        <div className="emp-text-side">
-                            <p>Sub Parts</p>
+                    <div className="arrowandtitle">
+                        <Link to='/spareParts'><ArrowCircleLeft size={50} color="#60646c" weight="fill" /></Link>
+                        <div className="titletext">
+                            <h1>Sub Parts</h1>
                         </div>
+                    </div>
                     </div>
                 </div>
                 <div className="table-containss">

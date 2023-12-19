@@ -668,49 +668,38 @@ padding: 10px; /* Adjust the padding as needed */
   background-position: left;
   background-image: url("../../assets/image/programmingbg.jpg");
   box-shadow: 0 0.4rem 5rem rgba(0, 0, 0, 0.1000000015);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .blurbg-forgot {
-  width: 97%;
-  height: 87rem;
+  width: 90%;
+  height: 90%;
   position: absolute;
-  left: 3rem;
-  top: 5rem;
-  background-color: rgba(187, 185, 185, 0.3);
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.fgpass-lefts {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  background-color: rgba(187, 185, 185, 0.5);
+  border-radius: 5vh;
 }
 
 .fgpass-rights {
-  flex: 1;
+  width: 50%;
+  position: absolute;
+  height: 100%;
+  right: 2.5%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  position: relative;
+  justify-content: center;
+  top: 0px;
 }
 
 .right-fg-content {
-  width: 85%;
-  height: 80vh;
-  margin-top: 1rem;
-  margin-right: 2rem;
+  width: 80%;
+  height: 80%;
   background-color: #ffffff;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   position: absolute;
+  border-radius: 3vh;
+  padding: 10vh
 }
 
 .bglogo {
@@ -718,25 +707,21 @@ padding: 10px; /* Adjust the padding as needed */
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 150px;
+  height: 100px;
 }
 
 .bglogo .slashlogo {
   width: 50%;
-  height: 200%;
 }
 
 .forgot-text-question {
   position: relative;
-  top: 2rem;
   font-size: 3.5rem;
   font-family: Poppins, "Source Sans Pro";
-  left: 12rem;
 }
 
 .emailandinput {
   position: relative;
-  top: 4rem;
   display: flex;
   height: 50vh;
   flex-direction: column;
@@ -745,23 +730,19 @@ padding: 10px; /* Adjust the padding as needed */
 .emailfonts {
   position: relative;
   font-family: Poppins, "Source Sans Pro";
-  left: 12rem;
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 .email-input {
   position: relative;
   font-family: Poppins, "Source Sans Pro";
-  left: 12rem;
   font-size: 3rem;
-  top: 2rem;
-  width: 75%;
+  width: 100%;
 }
 
 .fg-submitbutton {
   position: relative;
-  top: 4rem;
-  padding: 40px;
+  padding: 30px 0;
 }
 
 .fg-button {
@@ -770,8 +751,6 @@ padding: 10px; /* Adjust the padding as needed */
 
 .remembered-text {
   position: relative;
-  top: 4rem;
-  left: 12rem;
   width: 70%;
   height: 40px;
   font-family: Poppins, "Source Sans Pro";
@@ -779,8 +758,10 @@ padding: 10px; /* Adjust the padding as needed */
 }
 .back-login {
   position: relative;
-  top: 4rem;
-  left: 12rem;
+}
+
+.MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiInputBase-colorPrimary.css-q0jhri-MuiInputBase-root-MuiInput-root {
+  width: 100%;
 }
 
 /*OTP Css*/
@@ -791,9 +772,12 @@ input[type="number"]::-webkit-clear-button {
 }
 
 .main-onetimepass {
-  height: 100vh;
   display: flex;
+  width: 100%;
+  height: 100vh;
   position: relative;
+  align-items: center;
+  justify-content: center;
   background-size: 50% 100%;
   background-repeat: no-repeat;
   background-position: left;
@@ -802,46 +786,31 @@ input[type="number"]::-webkit-clear-button {
 }
 
 .otpass-blurd {
-  width: 97%;
-  height: 87rem;
+  width: 90%;
+  height: 90%;
   position: absolute;
-  left: 3rem;
-  top: 5rem;
-  background-color: rgba(187, 185, 185, 0.3);
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.otp-lefts {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  background-color: rgba(187, 185, 185, 0.5);
+  border-radius: 5vh;
 }
 
 .right-otpass {
-  flex: 1;
+  width: 50%;
+  position: absolute;
+  height: 100%;
+  right: 2.5%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  position: relative;
+  justify-content: center;
+  top: 0px;
 }
 
 .otp-rightbox {
-  width: 85%;
-  height: 80vh;
-  margin-top: 1rem;
-  margin-right: 2rem;
+  position: relative;
+  width: 80%;
+  height: 80%;
+  border-radius: 3vh;
   background-color: #ffffff;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  position: absolute;
+  padding: 8vh;
 }
 
 .otp-slashlogo {
@@ -849,12 +818,11 @@ input[type="number"]::-webkit-clear-button {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 150px;
+  height: 15%;
 }
 
 .otp-slashlogo .slashlogo {
   width: 50%;
-  height: 200%;
 }
 
 .verificationstext {
@@ -865,29 +833,30 @@ input[type="number"]::-webkit-clear-button {
 
 .otpverify-text {
   font-size: 3.5rem;
-  margin-left: 12rem;
 }
 
 .remain-times {
   font-size: 2rem;
-  margin-left: 12rem;
-  margin-top: 1rem;
 }
 
 .code-box {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: 65%;
-  left: 12rem;
+  justify-content: center;
+  width: 100%;
   position: relative;
-  top: 5rem;
+  top: 3rem;
+}
+
+.css-1p7c4e3{
+  padding: 10px;
 }
 
 .button-otp-submit {
   position: relative;
-  top: 9rem;
-  height: 7vh;
+  top: 6rem;
+  display: flex;
+  justify-content: center;
 }
 
 .continue-submit {
@@ -906,32 +875,31 @@ input[type="number"]::-webkit-clear-button {
   font-family: Poppins, "Source Sans Pro";
   color: #000000;
   font-size: 2rem;
-  margin-left: 12rem;
-  margin-top: 0.5rem;
 }
 
 .resendButton {
-  height: 35px;
-  width: 90px;
+  height: 7px;
+  width: 94px;
   background-color: inherit;
   font-family: Poppins, "Source Sans Pro";
   color: #ffa500;
   font-size: 2rem;
   margin-left: 1rem;
+  margin-top: -9px;
   border: none;
   background-color: inherit;
 }
 
 .backtofg {
   position: relative;
-  top: 8rem;
-  left: 12rem;
+  top: 6rem;
 }
 
 /*Confirm Password Css*/
 .confirm-pass-left {
+  display: flex;
   width: 100%;
-  height: 96.3rem;
+  height: 100vh;
   position: relative;
   overflow: hidden;
   background-size: 50% 100%;
@@ -940,110 +908,80 @@ input[type="number"]::-webkit-clear-button {
   background-image: url("../../assets/image/programmingbg.jpg");
   box-shadow: 0 0.4rem 5rem rgba(0, 0, 0, 0.1000000015);
   background-color: #ffffff;
-}
-
-.confirm-blur-bg {
-  width: 183rem;
-  height: 87rem;
+  align-items: center;
+  justify-content: center;
+  }
+  
+  .confirm-blur-bg {
+  width: 90%;
+  height: 90%;
   position: absolute;
-  left: 3rem;
-  top: 4rem;
   background-color: rgba(187, 185, 185, 0.5);
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
+  border-radius: 5vh;
+  }
 
-.confirm-pass-right {
-  width: 95.5rem;
-  height: 96.3rem;
-  position: absolute;
-  left: 95rem;
-  top: 0;
-  background-repeat: no-repeat;
-  opacity: 50;
+  .confirm-pass-right {
+    display: flex;
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    align-items: center;
 }
 
 .cpass-box-container {
-  position: relative;
-  width: 95.7%;
-  height: 90.5%;
-  top: 4rem;
-  left: 1rem;
+  width: 90%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cpass-white-box {
   position: relative;
-  width: 78%;
-  height: 84%;
-  border-radius: 8px;
-  left: 11rem;
+  width: 80%;
+  height: 80%;
+  border-radius: 3vh;
   background-color: #ffffff;
-  top: 6rem;
+  padding: 10vh;
 }
 
 .setup-text {
-  width: 50rem;
-  height: 10rem;
-  font-size: 4rem;
+  font-size: 30px;
   font-weight: 500;
-  line-height: 0.9090909091;
-  letter-spacing: -0.275rem;
   color: #000000;
   font-family: Poppins, "Source Sans Pro";
-  left: 11rem;
-  position: relative; /* Add relative positioning */
-  top: 12rem;
+  position: relative;
+  line-height: normal;
 }
 
 .enternew-text {
   position: relative;
-  top: 7rem;
   color: #000000;
-  left: 11rem;
+  font-size: 15px;
 }
 
 .firstinput-pass {
   position: relative;
-  top: 10rem;
-  left: 11rem;
-  width: 84%;
-  height: 10%;
 }
 
 .secondinput-pass {
   position: relative;
-  top: 13.5rem;
-  left: 11rem;
-  width: 84%;
-  height: 10%;
 }
 
 .Newpass-label {
   position: relative;
-  bottom: 1rem;
   font-size: 2rem;
   font-weight: 500;
-  line-height: 0.9090909091;
   font-family: Poppins, "Source Sans Pro";
 }
 
 .confirmpass-label {
   position: relative;
-  bottom: 1rem;
   font-size: 2rem;
   font-weight: 500;
-  line-height: 0.9090909091;
   font-family: Poppins, "Source Sans Pro";
-}
-
-.submit-pass-button {
-  position: relative;
-  top: 17rem;
-  left: 11rem;
-  width: 84%;
-  height: 10%;
 }
 
 .button-pass {
@@ -1051,11 +989,16 @@ input[type="number"]::-webkit-clear-button {
   background-color: #333;
   color: #ffffff;
   border-radius: 8px;
-  padding: 13px 223px;
+  padding: 13px 100px;
   cursor: pointer;
   transition: all 150ms ease;
   border: none;
   font-size: 1.8rem;
+}
+
+.submit-pass-button {
+  display: flex;
+  justify-content: center;
 }
 
 .button-pass:hover {
@@ -1072,23 +1015,21 @@ input[type="number"]::-webkit-clear-button {
   cursor: not-allowed;
 }
 
-.backto-Otp {
-  position: relative;
-  top: 16rem;
-  left: 11rem;
-  width: 84%;
-  height: 10%;
-}
-
 .alphanumeric {
   position: relative;
   bottom: 1rem;
 }
 
 .password-match {
-  position: relative;
-  height: 2rem;
-  top: 0.5rem;
+  padding: 10px 0;
+}
+
+.css-1wm6k0c{
+  width: 100%;
+}
+
+.css-1dywxfi {
+  max-width: 100%;
 }
 
 /*Sidebar CSS*/
@@ -1272,6 +1213,27 @@ input[type="number"]::-webkit-clear-button {
 }
 
 /* Jerome's CSS */
+
+/* App.css */
+.loading-spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+  margin-top: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.container-cpass {
+  height: 100vh;
+}
 
 .up-button{
   display: flex;
@@ -2246,10 +2208,7 @@ td.autho {
 }
 
 .restrictions {
-  display: block;
-  background-color: white;
-  position: absolute;
-  z-index: 1;
+  padding: 10px 0
 }
 
 div#order-listing_wrapper {

@@ -374,7 +374,7 @@ function OTP() {
                      </div> {/*codebox close div*/}
                       
                     <div className='button-otp-submit'>
-                        <CustomButton onClick={handlesubmitCode} class="continue-submit">Submit</CustomButton>
+                        <button onClick={handlesubmitCode} class="button-pass">Submit</button>
                     </div>
 
                     <div className="resendcodes-content">
