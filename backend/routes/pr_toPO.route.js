@@ -438,15 +438,17 @@ router.route('/receivedPRD').post(async (req, res) => {
 
 router.route('/receivedPRDQA').post(async (req, res) => {
   try {
-    const {status, id } = req.body;
+    const {qualityAssurancePRD, id } = req.body;
+
+    console.log(qualityAssurancePRD)
 
         const receivedQA_newData = await PR_PO.update({
-        quality_assurance: status,
+        quality_assurance: qualityAssurancePRD,
        },
        {
          where: { id: id }
        }); 
-       console.log("************************"+value);
+
        
      res.status(200).json();
      
@@ -508,11 +510,11 @@ router.route('/transactionDelivered').post(async (req, res) => {
 
 router.route('/receivedAssembly').post(async (req, res) => {
   try {
-    const {totalValue, id, qualityAssurance, asm_suppID} = req.body;
+    const {totalValue, id, qualityAssuranceASM, asm_suppID} = req.body;
      
        const received_newData = await PR_PO_asmbly.update({
         quantity_received: totalValue,
-        quality_assurance: qualityAssurance,
+        quality_assurance: qualityAssuranceASM,
        },
        {
          where: { id: id }
@@ -535,11 +537,11 @@ router.route('/receivedAssembly').post(async (req, res) => {
 
 router.route('/receivedSparePart').post(async (req, res) => {
   try {
-    const {totalValue, id, qualityAssurance, spare_suppID} = req.body;
+    const {totalValue, id, qualityAssuranceSpare, spare_suppID} = req.body;
      
        const received_newData = await PR_PO_spare.update({
         quantity_received: totalValue,
-        quality_assurance: qualityAssurance,
+        quality_assurance: qualityAssuranceSpare,
        },
        {
          where: { id: id }
@@ -564,11 +566,11 @@ router.route('/receivedSparePart').post(async (req, res) => {
 
 router.route('/receivedSubPart').post(async (req, res) => {
   try {
-    const {totalValue, id, subpart_suppID, qualityAssurance} = req.body;
+    const {totalValue, id, subpart_suppID, qualityAssuranceSub} = req.body;
      
        const received_newData = await PR_PO_subpart.update({
         quantity_received: totalValue,
-        quality_assurance: qualityAssurance,
+        quality_assurance: qualityAssuranceSub,
        },
        {
          where: { id: id }

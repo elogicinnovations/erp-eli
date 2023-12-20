@@ -20,7 +20,7 @@ const UserRole = sequelize.define('userRole', {
     unique: false,
   },
   col_authorization: {
-    type: DataTypes.STRING(2000), // Change to STRING type
+    type: DataTypes.STRING(5000), // Change to STRING type
     allowNull: true,
     get() {
       // Deserialize the JSON string to an array

@@ -63,9 +63,15 @@ const [products, setProducts] = useState([]);
 const [assembly, setAssembly] = useState([]);
 const [sparePart, setSparePart] = useState([]);
 const [subPart, setSubPart] = useState([]);
-const [checkedStatus, setcheckedStatus] = useState();
-const [quantity, setQuantity] = useState();
-const [qualityAssurance, setQualityAssurance] = useState(false);
+const [qualityAssurancePRD, setQualityAssurancePRD] = useState('false');
+const [qualityAssuranceASM, setQualityAssuranceASM] = useState('false');
+const [qualityAssuranceSpare, setQualityAssuranceSpare] = useState('false');
+const [qualityAssuranceSub, setQualityAssuranceSub] = useState('false');
+
+const [checkPRD, setCheckPRD] = useState(false);
+const [checkASM, setCheckASM] = useState(false);
+const [checkSpare, setCheckSpare] = useState(false);
+const [checkSub, setCheckSub] = useState(false);
 
 
 
@@ -80,15 +86,6 @@ const reloadTable_prod = () =>  {
   })
     .then(res => {
       setProducts(res.data);
-
-      // Check if the status is "Active" and set suppStatus accordingly
-      if (res.data[0].quality_assurance === "Active") {
-        setcheckedStatus(true)
-        setQualityAssurance('Active'); // Check the checkbox
-    } else if (res.data[0].status === "Inactive") {
-        setcheckedStatus(false)
-        setQualityAssurance('Inactive'); // Uncheck the checkbox
-    }
     })
     .catch(err => console.log(err));
 }
@@ -247,6 +244,9 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered, pr
         }).then(() => {
           // window.location.reload();
           reloadTable_prod()
+          reloadTable_asm()
+          reloadTable_spare()
+          reloadTable_subPart()
         });
       } else {
       swal({
@@ -261,16 +261,17 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered, pr
 
   const onChangeProd= (id) => 
   {
-    if (status === "Active") 
+    if (qualityAssurancePRD === 'false') 
     {
-      setStatus("Inactive");
+      setQualityAssurancePRD('true')
+      setCheckPRD(true)
     } else {
-      setStatus("Active");
+      setQualityAssurancePRD('false')
+      setCheckPRD(false)
     }
-
     axios.post(BASE_URL + '/PR_PO/receivedPRDQA', 
       { 
-        status, id
+         id, qualityAssurancePRD
       })
       .then((res) => {
         if (res.status === 200) {
@@ -282,6 +283,9 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered, pr
           }).then(() => {
             // window.location.reload();
             reloadTable_prod()
+            reloadTable_asm()
+            reloadTable_spare()
+            reloadTable_subPart()
           });
         } else {
         swal({
@@ -324,7 +328,10 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
           button: 'OK'
         }).then(() => {
           // window.location.reload();
+          reloadTable_prod()
           reloadTable_asm()
+          reloadTable_spare()
+          reloadTable_subPart()
         });
       } else {
       swal({
@@ -337,11 +344,21 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
   }
   };
 
-  const handleActiveStatusAssembly= (id, qualityAssurance) => 
+  const handleActiveStatusAssembly= (id) => 
   {
+    if (qualityAssuranceASM == 'false') 
+    {
+      setQualityAssuranceASM('true')
+      setCheckASM(true)
+    } else {
+      setQualityAssuranceASM('false')
+      setCheckASM(false)
+    }
+
+ 
        axios.post(BASE_URL + '/PR_PO/receivedAssembly', 
       { 
-        id, qualityAssurance
+        id, qualityAssuranceASM
       })
       .then((res) => {
         if (res.status === 200) {
@@ -352,7 +369,10 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
             button: 'OK'
           }).then(() => {
             // window.location.reload();
+            reloadTable_prod()
             reloadTable_asm()
+            reloadTable_spare()
+            reloadTable_subPart()
           });
         } else {
         swal({
@@ -393,7 +413,10 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
           button: 'OK'
         }).then(() => {
           // window.location.reload();
+          reloadTable_prod()
+          reloadTable_asm()
           reloadTable_spare()
+          reloadTable_subPart()
         });
       } else {
       swal({
@@ -406,18 +429,21 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
   }
   };
 
-  const handleActiveStatusSparePart= (id, qualityAssurance) => 
+  const handleActiveStatusSparePart= (id) => 
   {
-    if(qualityAssurance === 'Active'){
-      setQualityAssurance('Inactive')
-  }
-  else{
-    setQualityAssurance('Active')
-  }
+  
+    if (qualityAssuranceSpare === 'false') 
+    {
+      setQualityAssuranceSpare('true')
+      setCheckSpare(true)
+    } else {
+      setQualityAssuranceSpare('false')
+      setCheckSpare(false)
+    }
 
       axios.post(BASE_URL + '/PR_PO/receivedSparePart', 
       { 
-        id, qualityAssurance
+        id, qualityAssuranceSpare
       })
       .then((res) => {
         if (res.status === 200) {
@@ -428,7 +454,10 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
             button: 'OK'
           }).then(() => {
             // window.location.reload();
+            reloadTable_prod()
+            reloadTable_asm()
             reloadTable_spare()
+            reloadTable_subPart()
           });
         } else {
         swal({
@@ -469,6 +498,9 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
           button: 'OK'
         }).then(() => {
           // window.location.reload();
+          reloadTable_prod()
+          reloadTable_asm()
+          reloadTable_spare()
           reloadTable_subPart()
         });
       } else {
@@ -482,18 +514,20 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
   }
   };
 
-  const handleActiveStatusSubPart= (id, qualityAssurance) => 
+  const handleActiveStatusSubPart= (id) => 
   {
-    if(qualityAssurance === 'Active'){
-      setQualityAssurance('Inactive')
-  }
-  else{
-    setQualityAssurance('Active')
-  }
-
+    if (qualityAssuranceSub === 'false') 
+    {
+      setQualityAssuranceSub('true')
+      setCheckSub(true)
+    } else {
+      setQualityAssuranceSub('false')
+      setCheckSub(false)
+    }
+  
       axios.post(BASE_URL + '/PR_PO/receivedSubPart', 
       { 
-        id, qualityAssurance
+        id, qualityAssuranceSub
       })
       .then((res) => {
         if (res.status === 200) {
@@ -504,7 +538,10 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
             button: 'OK'
           }).then(() => {
             // window.location.reload();
-            reloadTable_subPart();
+            reloadTable_prod()
+            reloadTable_asm()
+            reloadTable_spare()
+            reloadTable_subPart()
           });
         } else {
         swal({
@@ -693,8 +730,8 @@ const handleDoneReceived = () => {
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
-                                                        onChange={(e) => onChangeProd(data.id,)}
-                                                        defaultChecked={checkedStatus}
+                                                        onChange={(e) => onChangeProd(data.id)}
+                                                        checked={data.quality_assurance === 'true' ? true : false}
                                                         />
                                                         </div>
                                                     </td>
@@ -722,8 +759,8 @@ const handleDoneReceived = () => {
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
-                                                        defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
-                                                        onChange={(e) => handleActiveStatusAssembly(data.id, qualityAssurance)}
+                                                        checked={data.quality_assurance === 'true' ? true : false}
+                                                        onChange={(e) => handleActiveStatusAssembly(data.id)}
                                                         />
                                                         </div>
                                                     </td>
@@ -750,8 +787,8 @@ const handleDoneReceived = () => {
                                                           <div className="tab_checkbox">
                                                           <input
                                                           type="checkbox"
-                                                          defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
-                                                          onChange={(e) => handleActiveStatusSparePart(data.id, qualityAssurance)}
+                                                          checked={data.quality_assurance === 'true' ? true : false}
+                                                          onChange={(e) => handleActiveStatusSparePart(data.id)}
                                                           />
                                                           </div>
                                                       </td>
@@ -778,8 +815,8 @@ const handleDoneReceived = () => {
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
-                                                        defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
-                                                        onChange={(e) => handleActiveStatusSubPart(data.id, qualityAssurance)}
+                                                        checked={data.quality_assurance === 'true' ? true : false}
+                                                        onChange={(e) => handleActiveStatusSubPart(data.id)}
                                                         />
                                                         </div>
                                                     </td>
