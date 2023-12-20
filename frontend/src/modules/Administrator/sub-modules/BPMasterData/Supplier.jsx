@@ -26,6 +26,8 @@ import '../../../../assets/skydash/js/off-canvas';
 
 import * as $ from 'jquery';  
 
+import { jwtDecode } from "jwt-decode";
+
 
 
 function Supplier() {
@@ -143,6 +145,22 @@ function Supplier() {
         }
       }, [supplier]);
       
+      const [authrztn, setauthrztn] = useState([]);
+      useEffect(() => {
+
+        var decoded = jwtDecode(localStorage.getItem('accessToken'));
+        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+          .then((res) => {
+            if(res.status === 200){
+              setauthrztn(res.data.authorization);
+            }
+        })
+          .catch((err) => {
+            console.error(err);
+        });
+
+      }, [authrztn]);
+
     const navigate = useNavigate();
     return(
 
@@ -185,12 +203,14 @@ function Supplier() {
                             <div className="button-create-side">
                             <div className="Buttonmodal-new">
                                 <Link to={'/CreateSupplier'} style={{textDecoration: 'none', backgroundColor: 'inherit'}}>
+                                { authrztn.includes('Supplier - Add') && (
                                 <button>
                                     <span style={{ }}>
                                     <Plus size={25} />
                                     </span>
                                     Create New
                                 </button>
+                                )}
                                 </Link>
                                 </div>
                             </div>
@@ -232,6 +252,8 @@ function Supplier() {
                                                     }}
                                                     onClick={(event) => toggleDropdown(event, i)}
                                                 />
+
+
                                                 <div
                                                     className='choices'
                                                     style={{
@@ -242,17 +264,25 @@ function Supplier() {
                                                     visibility: showDropdown ? 'visible' : 'hidden',
                                                     transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
                                                     boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                                                    }}
-                                                >
+                                                    }}>
+
                                                     {/* Your dropdown content here */}
                                                     
+                                                    { authrztn.includes('Supplier - Edit') && (
                                                     <button className='btn'  type='button' >
                                                         <Link to={`/editSupp/${data.supplier_code}`} style={{textDecoration:'none', color:'#252129'}}>Update</Link>
                                                     </button>
+                                                    )}
+
+                                                    { authrztn.includes('Supplier - Delete') && (
                                                     <button className='btn' type='button' onClick={() => handleDelete(data.supplier_code)}>
                                                         Delete
                                                     </button>
+                                                    )}
+
                                                 </div>
+
+
                                                 </td>
                                                 {/* <td>
                                                     <button className='btn'  type='button' >

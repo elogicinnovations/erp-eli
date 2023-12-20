@@ -31,6 +31,7 @@ import "../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import Header from "../../../../../partials/header";
+import { jwtDecode } from "jwt-decode";
 
 function ProductCategory() {
   const [category, setcategory] = useState([]); // for table
@@ -348,6 +349,22 @@ function ProductCategory() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
+        const [authrztn, setauthrztn] = useState([]);
+      useEffect(() => {
+
+        var decoded = jwtDecode(localStorage.getItem('accessToken'));
+        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+          .then((res) => {
+            if(res.status === 200){
+              setauthrztn(res.data.authorization);
+            }
+        })
+          .catch((err) => {
+            console.error(err);
+        });
+
+      }, [authrztn]);
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -382,12 +399,15 @@ function ProductCategory() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
+                  { authrztn.includes('Product Categories - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Category
                   </button>
+                  )}
+
                 </div>
               </div>
             </div>
@@ -436,6 +456,8 @@ function ProductCategory() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
+
+                              { authrztn.includes('Product Categories - Edit') && (
                               <button
                                 className="btn"
                                 type="button"
@@ -445,6 +467,9 @@ function ProductCategory() {
                                 }}>
                                 Update
                               </button>
+                              )}
+
+                              { authrztn.includes('Product Categories - Delete') && (
                               <button
                                 className="btn"
                                 type="button"
@@ -454,14 +479,18 @@ function ProductCategory() {
                                 }}>
                                 Delete
                               </button>
+                              )}
+
                             </div>
                           )}
                         </div>
                       </td>
-                      {/* <td>
+                      {
+                      /*  <td>
                                             <button className='btn'  type='button' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
                                             <button className='btn' type='button' onClick={() => handleDelete(data.category_code)}><Trash size={32} color="#e60000" /></button>
-                                          </td> */}
+                          </td> */
+                      }
                     </tr>
                   ))}
                 </tbody>

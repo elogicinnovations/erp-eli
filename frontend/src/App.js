@@ -84,28 +84,18 @@ function App() {
     <Router>
     <div className="app">
       <DataProvider>
-        <GuestRoute>
+        {/* <GuestRoute> */}
         <Routes>
-          <Route
-            path="/"
-            element={<Login />}
-          />
-          <Route
-            path="/forgotpass"
-            element={<ForgotPass />}
-          />
-          <Route
-            path="/OTP"
-            element={<OTP />}
-          />
-            <Route
-            path="/ConfirmPassword/:email?"
-            element={<ConfirmPass />}
-          />
+          <Route path="/" element={<Login />}/>
+          <Route path="/forgotpass" element={<ForgotPass />}/>
+          <Route path="/OTP" element={<OTP />}/>
+          <Route path="/ConfirmPassword/:email?" element={<ConfirmPass />} />
         </Routes>
-        </GuestRoute>
+        {/* </GuestRoute> */}
       </DataProvider>
 
+      <DataProvider>
+          <ProtectedRoutes>
     <div className="main-of-containers">
       
         <div className="left-of-main-containers">
@@ -116,177 +106,60 @@ function App() {
         </div>
 
         <div className="right-of-main-container"><Header/>
-      <DataProvider>
-        <ProtectedRoutes>
+
         <Routes>
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
+              <Route path="/dashboard" element={<Dashboard />}/>
 
-          <Route
-            path="/systemSettings"
-            element={<SystemSettings />}
-          />
+              <Route path="/systemSettings" element={<SystemSettings />}/>
 
-          <Route
-            path="/profileSettings"
-            element={<ProfileSettings />}
-          />
+              <Route path="/profileSettings" element={<ProfileSettings />}/>
 
           {/* User Master Data */}
 
-          <Route
-            path="/userRole"
-            element={<Rbac />}
-          />
+              <Route path="/userRole" element={<Rbac />}/>
 
-          <Route
-            path="/createRole"
-            element={<CreateRole />}
-          />
+              <Route path="/createRole" element={<CreateRole />}/>
 
-          <Route
-            path="/editRole/:id"
-            element={<EditRole />}
-          />
+              <Route path="/editRole/:id" element={<EditRole />}/>
 
-          <Route
-            path="/masterList"
-            element={<MasterList/>}
-          />
+              <Route path="/masterList" element={<MasterList/>}/>
 
           {/*BP Master Data*/}
-          <Route
-            path="/Supplier"
-            element={<Supplier />}
-          />
-                <Route
-                  path="/createSupplier"
-                  element={<CreateSupplier />}
-                />
-                <Route
-                  path="/editSupp/:id"
-                  element={<EditSupplier/>}
-                />
-                <Route
-                  path="/viewsupplier/:id"
-                  element={<ViewSupplier />}
-                />
+              <Route path="/Supplier" element={<Supplier />}/>
 
-          <Route
-            path="/productCategory"
-            element={<ProductCategory/>}
-          />
+                    <Route path="/createSupplier" element={<CreateSupplier />}/>
+                    <Route path="/editSupp/:id" element={<EditSupplier/>}/>
+                    <Route path="/viewsupplier/:id" element={<ViewSupplier />}/>
+
+              <Route path="/productCategory" element={<ProductCategory/>}/>
           
-          <Route
-            path="/ProductManu"
-            element={<ProductManu />}
-          />
-          <Route
-            path="/binLocation"
-            element={<BinLocation/>}
-          />
+              <Route path="/ProductManu" element={<ProductManu />}/>
+              <Route path="/binLocation" element={<BinLocation/>}/>
          
-          <Route
-            path="/productList"
-            element={<ProductList/>}
-          />
-                  <Route
-                    path="/createProduct"
-                    element={<CreateProduct/>}
-                  />
-                  <Route
-                    path="/updateProduct/:id"
-                    element={<UpdateProduct/>}
-                  />
-                  <Route
-                    path="/productSupplier/:id"
-                    element={<ProductSupplier/>}
-                  />
-          <Route
-            path="/subParts"
-            element={<SubParts/>}
-          />
-                  <Route
-                    path="/createsubParts"
-                    element={<CreateSubParts/>}
-                  />
-                  <Route
-                    path="/updatesubParts/:id"
-                    element={<UpdateSubParts/>}
-                  />
-                  
-
-
-          <Route
-            path="/spareParts"
-            element={<SpareParts/>}
-          />
-                  <Route
-                    path="/createSpareParts"
-                    element={<CreateSpareParts/>}
-                  />
-                  <Route
-                    path="/updateSpareParts/:id"
-                    element={<UpdateSpareParts/>}
-                  />
-                   <Route
-                    path="/viewSpareParts/:id"
-                    element={<ViewSpareParts/>}
-                  />
-          <Route
-            path="/assemblyForm"
-            element={<AssemblyForm/>}
-          />
-                  <Route
-                    path="/createAssemblyForm"
-                    element={<CreateAssemblyForm/>}
-                  />
-                  <Route
-                    path="/updateAssemblyForm/:id"
-                    element={<UpdateAssemblyForm/>}
-                  />
-                  <Route 
-                    path="/viewAssembleForm/:id"
-                    element={<ViewAssemblyeForm/>}
-                  />
-          <Route
-            path="/costCenter"
-            element={<CostCenter/>}
-          />     
-                  <Route
-                    path="/createCostCenter"
-                    element={<CreateCostCenter/>}
-                  />
-                  <Route
-                    path="/initUpdateCostCenter/:id"
-                    element={<UpdateCostCenter/>}
-                  />
-                  <Route
-                    path="/viewCostCenter/:id"
-                    element={<ViewCostCenter/>}
-                  />
-          <Route
-            path="/inventory"
-            element={<Inventory/>}
-          />
-                  <Route
-                    path="/createIssuance"
-                    element={<CreateIssuance/>}
-                  />
-                  <Route
-                    path="/viewInventory/:id"
-                    element={<ViewInventory/>}
-                  />
-                   <Route
-                    path="/viewAssembly/:id"
-                    element={<ViewAssembly/>}
-                  />
-                    <Route
-                    path="/viewSpare/:id"
-                    element={<ViewSpare/>}
-                  />
+              <Route path="/productList" element={<ProductList/>}/>
+                      <Route path="/createProduct" element={<CreateProduct/>}/>
+                      <Route path="/updateProduct/:id" element={<UpdateProduct/>}/>
+                      <Route path="/productSupplier/:id" element={<ProductSupplier/>}/>
+              <Route path="/subParts" element={<SubParts/>}/>
+                      <Route path="/createsubParts" element={<CreateSubParts/>}/>
+                      <Route path="/updatesubParts/:id" element={<UpdateSubParts/>}/>
+              <Route path="/spareParts" element={<SpareParts/>}/>
+                      <Route path="/createSpareParts" element={<CreateSpareParts/>}/>
+                      <Route path="/updateSpareParts/:id" element={<UpdateSpareParts/>}/>
+                      <Route path="/viewSpareParts/:id" element={<ViewSpareParts/>}/>
+              <Route path="/assemblyForm" element={<AssemblyForm/>}/>
+                      <Route path="/createAssemblyForm" element={<CreateAssemblyForm/>}/>
+                      <Route path="/updateAssemblyForm/:id" element={<UpdateAssemblyForm/>}/>
+                      <Route path="/viewAssembleForm/:id" element={<ViewAssemblyeForm/>}/>
+              <Route path="/costCenter" element={<CostCenter/>}/>
+                      <Route path="/createCostCenter" element={<CreateCostCenter/>}/>
+                      <Route path="/initUpdateCostCenter/:id" element={<UpdateCostCenter/>}/>
+                      <Route path="/viewCostCenter/:id" element={<ViewCostCenter/>}/>
+              <Route path="/inventory" element={<Inventory/>}/>
+                      <Route path="/createIssuance" element={<CreateIssuance/>}/>
+                      <Route path="/viewInventory/:id" element={<ViewInventory/>}/>
+                      <Route path="/viewAssembly/:id" element={<ViewAssembly/>}/>
+                      <Route path="/viewSpare/:id" element={<ViewSpare/>}/>
                    <Route
                     path="/viewSubpart/:id"
                     element={<ViewSubpart/>}
@@ -379,10 +252,13 @@ function App() {
 
              
         </Routes>
+
+            </div>
+          </div>
         </ProtectedRoutes>
       </DataProvider>
-      </div>
-      </div>
+
+
       </div>
     </Router>
   );
