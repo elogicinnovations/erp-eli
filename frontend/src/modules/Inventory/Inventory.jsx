@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import Sidebar from '../Sidebar/sidebar';
 import axios from 'axios';
 import Modal from 'react-bootstrap/Modal';
@@ -25,7 +25,7 @@ import {
 import * as $ from 'jquery';  
 import Header from '../../partials/header';
 
-function Inventory() {
+const  Inventory = ({ activeTab, onSelect }) => {
 const navigate = useNavigate()
     const [inventory, setInventory] = useState([]);
     const [assembly, setAssembly] = useState([]);
@@ -303,6 +303,8 @@ const navigate = useNavigate()
                         </div> */}
                         <div className="tabbutton-sides">
                             <Tabs
+                                activeKey={activeTab}
+                                onSelect={onSelect}
                                 defaultActiveKey="inventory"
                                 transition={false}
                                 id="noanim-tab-example"

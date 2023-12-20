@@ -575,10 +575,10 @@ function BinLocation() {
             </div>
             <div>
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Remarks: </Form.Label>
+                <Form.Label style={{ fontSize: "20px" }}>Description: </Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter Bin Location Remarks..."
+                  placeholder="Enter Bin Location Description..."
                   style={{ height: "40px", fontSize: "15px" }}
                   value={binLocationRemarks}
                   onChange={(e) => setbinLocationRemarks(e.target.value)}
@@ -650,13 +650,13 @@ function BinLocation() {
             </div>
             <div>
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Remarks: </Form.Label>
+                <Form.Label style={{ fontSize: "20px" }}>Description: </Form.Label>
                 <Form.Control
                   type="text"
                   value={updateFormData.bin_remarks}
                   onChange={handleUpdateFormChange}
                   name="bin_remarks"
-                  placeholder="Enter Bin Location Remarks..."
+                  placeholder="Enter Bin Location Description..."
                   style={{ height: "40px", fontSize: "15px" }}
                 />
               </Form.Group>

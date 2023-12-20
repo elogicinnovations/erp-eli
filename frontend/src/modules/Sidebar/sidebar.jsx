@@ -22,6 +22,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
+import '../../assets/image/SBF.png'
 
 function Sidebar() {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -141,6 +142,9 @@ function Sidebar() {
       <div className='sidebar-main-content'>
         
         <div className="logo-head-sidebars">
+          <div className="sbf-logo">
+            <img className="sbflogo" src={require('../../assets/image/SBF.png')} alt="SBF Logo" />
+          </div>
         </div>
 
           <div className="spacefor-sidebar">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import Header from "./layouts/header";
 // import Login from "./layouts/login";
@@ -81,6 +81,11 @@ import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement"
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
 
 function App() {
+  const [activeTab, setActiveTab] = useState("inventory");
+
+  const handleTabSelect = (key) => {
+    setActiveTab(key);
+  };
   return (
     <Router>
     <div className="app">
@@ -120,10 +125,7 @@ function App() {
       <DataProvider>
         <ProtectedRoutes>
         <Routes>
-          <Route
-            path="/dashboard"
-            element={<Dashboard />}
-          />
+        <Route path="/dashboard" element={<Dashboard setActiveTab={setActiveTab} />} />
 
           <Route
             path="/systemSettings"
@@ -272,6 +274,25 @@ function App() {
             path="/inventory"
             element={<Inventory/>}
           />
+                <Route
+                          path="/invent"
+                          element={
+                            <Inventory activeTab={activeTab} onSelect={handleTabSelect} />
+                          }
+                        />
+                <Route
+                          path="/issuance"
+                          element={
+                            <Inventory activeTab={activeTab} onSelect={handleTabSelect} />
+                          }
+                        />
+                <Route
+                          path="/return"
+                          element={
+                            <Inventory activeTab={activeTab} onSelect={handleTabSelect} />
+                          }
+                        />
+
                   <Route
                     path="/createIssuance"
                     element={<CreateIssuance/>}
