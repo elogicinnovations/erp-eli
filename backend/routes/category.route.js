@@ -5,6 +5,7 @@ const sequelize = require('../db/config/sequelize.config');
 const { Category, Product } = require("../db/models/associations"); 
 const session = require('express-session')
 
+
 router.use(session({
     secret: 'secret-key',
     resave: false,
@@ -67,6 +68,32 @@ router.route('/create').post(async (req, res) => {
       }
 });
 
+// router.route('/importCategory').post(upload.single('file'), async (req, res) => {
+//     try {
+//       const results = [];
+//       const fileStream = fs.createReadStream(req.file.path)
+//       console.log(results)
+//         .pipe(csv())
+//         .on('data', (data) => results.push(data))
+//         .on('end', async () => {
+//           console.log(data)
+//           const mappedData = results.map((csvRow) => {
+//             return {
+//               category_code: csvRow.Code,
+//               category_name: csvRow.Name,
+//               category_remarks: csvRow.Remarks,
+//             };
+//           });
+  
+//           await Category.bulkCreate(mappedData);
+//           res.json({ success: true, data: mappedData });
+//         });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ success: false, error: 'Internal Server Error' });
+//     }
+//     fs.unlinkSync(req.file.path);
+//   });
 
 
 router.route('/update/:param_id').put(async (req, res) => {
