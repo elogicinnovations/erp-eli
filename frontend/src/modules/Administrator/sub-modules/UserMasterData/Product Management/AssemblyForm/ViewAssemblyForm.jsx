@@ -34,6 +34,7 @@ function ViewAssembly() {
   };
 
   console.log(Subparts);
+  console.log(Spareparts);
   //for sub parts
   useEffect(() => {
     axios
@@ -49,14 +50,14 @@ function ViewAssembly() {
   //for spare parts
   useEffect(() => {
     axios
-      .get(BASE_URL + "/spare_assembly/fetchinTable", {
+      .get(BASE_URL + "/spare_assembly/fetchSpareAssembly", {
         params: {
           id: id,
         },
       })
       .then((res) => setSpareparts(res.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [id]);
 
   return (
     <div className="main-of-containers">
@@ -69,11 +70,7 @@ function ViewAssembly() {
           <div className="headers-text">
             <div className="arrowandtitle">
               <Link to="/assemblyForm">
-                <ArrowCircleLeft
-                  size={50}
-                  color="#60646c"
-                  weight="fill"
-                />
+                <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
               </Link>
               <div className="titletext">
                 <h1>Assembly Summary</h1>
@@ -105,7 +102,6 @@ function ViewAssembly() {
                       <tr>
                         <th>Supplier Code</th>
                         <th>Sub-Part Name</th>
-                        <th>Supplier Name</th>
                         <th>Description</th>
                       </tr>
                     </thead>
@@ -114,7 +110,6 @@ function ViewAssembly() {
                         <tr key={i}>
                           <td>{sparts.subPart.subPart_code}</td>
                           <td>{sparts.subPart.subPart_name}</td>
-                          <td>{sparts.subPart.supplier}</td>
                           <td>{sparts.subPart.subPart_desc}</td>
                         </tr>
                       ))}
@@ -144,8 +139,8 @@ function ViewAssembly() {
                     <tbody>
                       {Spareparts.map((spares, i) => (
                         <tr key={i}>
-                          <td>{spares.spareParts.spareParts_code}</td>
-                          <td>{spares.sparepart.spareParts_name}</td>
+                          <td>{spares.sparePart.spareParts_code}</td>
+                          <td>{spares.sparePart.spareParts_name}</td>
                           <td>{spares.sparePart.spareParts_desc}</td>
                         </tr>
                       ))}

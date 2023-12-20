@@ -38,7 +38,6 @@ function SubParts() {
   const [subParts, setSubParts] = useState([]);
   const [supplier, setSupplier] = useState([]);
 
-
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(
@@ -118,7 +117,6 @@ function SubParts() {
     subPart_code: "",
   });
 
-
   const handleDelete = async (table_id) => {
     swal({
       title: "Are you sure?",
@@ -139,7 +137,7 @@ function SubParts() {
 
           if (response.status === 200) {
             swal({
-              title: "Product Sub-Parts Delete Succesful!",
+              title: "Product Sub-Parts Delete Successful!",
               text: "The Product Sub-Parts has been Deleted Successfully.",
               icon: "success",
               button: "OK",
@@ -159,7 +157,6 @@ function SubParts() {
               text: "Please contact our support",
             });
           }
-
         } catch (err) {
           console.log(err);
         }
@@ -172,23 +169,43 @@ function SubParts() {
       }
     });
   };
+
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
   const toggleButtons = (userId) => {
-    setVisibleButtons((prevVisibleButtons) => ({
-      ...prevVisibleButtons,
-      [userId]: !prevVisibleButtons[userId],
-    }));
-    setIsVertical((prevIsVertical) => ({
-      ...prevIsVertical,
-      [userId]: !prevIsVertical[userId],
-    }));
+    setVisibleButtons((prevVisibleButtons) => {
+      const updatedVisibleButtons = { ...prevVisibleButtons };
+
+      // Close buttons for other items
+      Object.keys(updatedVisibleButtons).forEach((key) => {
+        if (key !== userId) {
+          updatedVisibleButtons[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updatedVisibleButtons[userId] = !prevVisibleButtons[userId];
+
+      return updatedVisibleButtons;
+    });
+
+    setIsVertical((prevIsVertical) => {
+      const updateVertical = { ...prevIsVertical };
+
+      Object.keys(updateVertical).forEach((key) => {
+        if (key !== userId) {
+          updateVertical[key] = false;
+        }
+      });
+
+      // Toggle buttons for the clicked item
+      updateVertical[userId] = !prevIsVertical[userId];
+
+      return updateVertical;
+    });
   };
 
-  const closeVisible = () => {
-    setVisibleButtons({});
-  };
   const closeVisibleButtons = () => {
     setVisibleButtons({});
     setIsVertical({});
@@ -238,9 +255,7 @@ function SubParts() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  <Link
-                    to="/createsubParts"
-                    className="button">
+                  <Link to="/createsubParts" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
@@ -274,41 +289,46 @@ function SubParts() {
                       <td>{formatDate(data.createdAt)}</td>
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
-                      <DotsThreeCircle
-                        size={32}
-                        className="dots-icon"
-                        style={{
-                        cursor: 'pointer',
-                        transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
-                        color: rotatedIcons[i] ? '#666' : '#000',
-                        transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
-                        }}
-                        onClick={(event) => toggleDropdown(event, i)}/>
-                    <div
-                        className='choices'
-                        style={{
-                        position: 'fixed',
-                        top: dropdownPosition.top - 30 + 'px',
-                        left: dropdownPosition.left - 100 + 'px',
-                        opacity: showDropdown ? 1 : 0,
-                        visibility: showDropdown ? 'visible' : 'hidden',
-                        transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-                        boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                        }}>
-                        
-                    <Link to={`/updatesubParts/${data.id}`} 
-                    style={{fontSize:'12px'}} className='btn'>
-                      Update
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleDelete(data.id);
-                        closeVisibleButtons();
-                      }}
-                      className="btn">
-                      Delete
-                    </button>
-                    </div>
+                        {" "}
+                        {isVertical[data.subPart_code] ? (
+                          <DotsThreeCircleVertical
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.subPart_code);
+                            }}
+                          />
+                        ) : (
+                          <DotsThreeCircle
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.subPart_code);
+                            }}
+                          />
+                        )}
+                        <div>
+                          {setButtonVisibles(data.subPart_code) && (
+                            <div
+                              className="choices"
+                              style={{ position: "absolute" }}>
+                              <Link
+                                to={`/updatesubParts/${data.id}`}
+                                style={{ fontSize: "12px" }}
+                                className="btn">
+                                Update
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  handleDelete(data.id);
+                                  closeVisibleButtons();
+                                }}
+                                className="btn">
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

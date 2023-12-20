@@ -4,20 +4,27 @@ const mysql = require("mysql");
 const app = express();
 
 const port = 8083;
-require('dotenv').config();
+require("dotenv").config();
 
-
-app.use(cors({
-  origin: "http://localhost:3000",
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json()); // Add this line to parse incoming JSON data
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
 
@@ -51,8 +58,7 @@ const subPart_SparePart = require("./routes/sparePart_subPart.route");
 const assembly = require("./routes/assembly.route");
 const spare_assembly = require("./routes/assembly_spare.route");
 const supplier_assembly = require("./routes/assembly_supplier.route");
-const subpart_assembly = require("./routes/assembly_subparts.route")
-
+const subpart_assembly = require("./routes/assembly_subparts.route");
 
 const costCenter = require("./routes/costCenter.route");
 
@@ -60,14 +66,14 @@ const inventory = require("./routes/inventory.route");
 
 const issuance = require("./routes/issuance.route");
 const issued_product = require("./routes/issued_product.route");
-const issued_return = require("./routes/issued_return.route")
+const issued_return = require("./routes/issued_return.route");
 const returned = require("./routes/returned.route");
 
 const PR = require("./routes/pr.route");
 const PR_product = require("./routes/pr_product.route");
-const PR_assembly= require("./routes/pr_assembly.route");
-const PR_spare= require("./routes/pr_spare.route");
-const PR_subpart= require("./routes/pr_subpart.route");
+const PR_assembly = require("./routes/pr_assembly.route");
+const PR_spare = require("./routes/pr_spare.route");
+const PR_subpart = require("./routes/pr_subpart.route");
 const PR_history = require("./routes/pr_historical.route");
 const PR_rejustify = require("./routes/pr_rejustify.route");
 const PR_PO = require("./routes/pr_toPO.route");
@@ -86,10 +92,10 @@ const Report_inv = require("./routes/report_inventory.route");
 
 const Report_PO = require("./routes/report_PO.route");
 
-const authenticateToken = require('./middleware/token_authentication.middleware');
+const authenticateToken = require("./middleware/token_authentication.middleware");
 
-const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -117,8 +123,6 @@ app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);
 app.use("/subPart_SparePart", subPart_SparePart);
 
-
-
 app.use("/assembly", assembly);
 app.use("/spare_assembly", spare_assembly);
 app.use("/supplier_assembly", supplier_assembly);
@@ -128,7 +132,7 @@ app.use("/inventory", inventory);
 
 app.use("/issuance", issuance);
 app.use("/issued_product", issued_product);
-app.use("/issuedReturn", issued_return)
+app.use("/issuedReturn", issued_return);
 app.use("/returend", returned);
 
 app.use("/PR", PR);
@@ -140,18 +144,16 @@ app.use("/PR_history", PR_history);
 app.use("/PR_rejustify", PR_rejustify);
 app.use("/PR_PO", PR_PO);
 app.use("/PO_Received", PO_Receveid);
-app.use("/StockTransfer", StockTransfer)
+app.use("/StockTransfer", StockTransfer);
 app.use("/StockTransfer_prod", StockTransfer_prod);
 app.use("/StockTransfer_assembly", StockTransfer_assembly);
 app.use("/StockTransfer_spare", StockTransfer_spare);
 app.use("/StockTransfer_subpart", StockTransfer_subpart);
 
-
 app.use("/Setting", Setting);
 app.use("/Dashboard", Dashboard);
 app.use("/report_inv", Report_inv);
 app.use("/report_PO", Report_PO);
-
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);

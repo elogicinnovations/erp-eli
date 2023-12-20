@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {where, Op} = require('sequelize')
+const {where, Op, fn, col} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR_PO = require('../db/models/pr_toPO.model')
 const { PR, PR_PO,
@@ -8,7 +8,8 @@ const { PR, PR_PO,
         PR_PO_subpart, 
         PR_history, 
         ProductTAGSupplier, 
-        Product, Supplier, 
+        Product, 
+        Supplier,
         Assembly, 
         Assembly_Supplier,  
         SparePart, 
@@ -16,7 +17,7 @@ const { PR, PR_PO,
         SubPart,
         Subpart_supplier
       } = require('../db/models/associations')
-const session = require('express-session')
+const session = require('express-session');
 
 router.use(session({
     secret: 'secret-key',
@@ -173,7 +174,112 @@ router.route('/fetchView_product').get(async (req, res) => {
 
 
 
+  //for approval view
+  // router.route('/fetchCanvassedSupplier_spare').get(async (req, res) => {
+  //   try {
+  //     const data = await PR_PO_spare.findAll({
+  //       attributes: [
+  //         'sparepart_supplier.supplier_code',
+  //         // [fn('SUM', col('quantity')), 'total_quantity'],
+  //         // [fn('SUM', col('sparepart_supplier.supplier_price')), 'total_price'],
+  //         [fn('MAX', col('purchase_req_canvassed_spare.id')), 'spres_id'],
+  //         // 'sparepart_supplier.id', // Include the 'id' column in the SELECT list
+  //         // Add other aggregated columns or use sequelize.literal for complex expressions
+  //       ],
+  //       group: [
+  //         'sparepart_supplier.supplier_code',
+  //       ],
+  //     });
+  
+     
+  //     if (data) {
+  //       return res.json(data);
+  //     } else {
+  //       res.status(400);
+  //     }
+  //   } catch (error) {
+  //     // Handle errors
+  //     console.error(error);
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  // });
 
+
+
+  router.route('/fetchCanvassedSupplier_spare').get(async (req, res) => {
+    try {
+      const data_quantity = await PR_PO_spare.findAll({
+        attributes: [
+          'sparepart_suppliers.supplier_code',
+          [fn('SUM', col('quantity')), 'total_quantity'],
+          [fn('SUM', col('sparepart_supplier.supplier_price')), 'total_price'],
+        ],
+        include: [{
+          model: SparePart_Supplier,
+          required: true,
+          attributes: ['supplier_code'],
+
+            include: [{
+              model: Supplier,
+              required: true
+            }],
+
+
+          // where: {
+          //   id: col('spare_suppliers_ID'), // Assuming 'id' is the primary key in Supplier_SparePart
+          // },
+        }],
+        group: ['sparepart_supplier.supplier_code'], // Group by supplier code
+      });
+  
+      res.json(data_quantity);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+
+
+  // router.route('/').get(async (req, res) => {
+  //   try {
+  //     const data = await PR_history.findAll({
+  //       where: {
+  //         isRead: false, // Fetch only unread notifications
+  //       },
+  //       attributes: ['pr_id', [sequelize.fn('max', sequelize.col('createdAt')), 'latestCreatedAt']],
+  //       group: ['pr_id'],
+  //       raw: true,
+  //     });
+  
+  //     const prIds = data.map(entry => entry.pr_id);
+  
+  //     const latestData = await PR_history.findAll({
+  //       where: {
+  //         pr_id: {
+  //           [Op.in]: prIds,
+  //         },
+  //         createdAt: {
+  //           [Op.in]: data.map(entry => entry.latestCreatedAt),
+  //         },
+  //       },
+  //     });
+  
+  //     if (latestData) {
+  //       return res.json(latestData);
+  //     } else {
+  //       res.status(400);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json("Error");
+  //   }
+  // });
+  
+  
+
+
+  //save
 router.route('/save').post(async (req, res) => {
     try {
        const {id, addProductbackend, addAssemblybackend, addSparebackend, addSubpartbackend} = req.body;
@@ -299,11 +405,10 @@ router.route('/approve_PO').post(async (req, res) => {
 
 router.route('/receivedPRD').post(async (req, res) => {
   try {
-    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+    const {totalValue, id, quantityReceived} = req.body;
      
        const received_newData = await PR_PO.update({
         quantity_received: totalValue,
-        quality_assurance: qualityAssurance,
        },
        {
          where: { id: id }
@@ -318,6 +423,29 @@ router.route('/receivedPRD').post(async (req, res) => {
      res.status(500).send('An error occurred');
    }
 });
+
+router.route('/receivedPRDQA').post(async (req, res) => {
+  try {
+    const {value, id } = req.body;
+
+        const receivedQA_newData = await PR_PO.update({
+        quality_assurance: value,
+       },
+       {
+         where: { id: id }
+       }); 
+       console.log()
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
+
+
 
 router.route('/receivedAssembly').post(async (req, res) => {
   try {

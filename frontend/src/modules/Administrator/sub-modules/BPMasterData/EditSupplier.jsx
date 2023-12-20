@@ -155,7 +155,7 @@ function EditSupplier() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Suppliers Update Succesful!",
+              title: "Suppliers Update Successful!",
               text: "The Suppliers has been Updated Successfully.",
               icon: "success",
               button: "OK",

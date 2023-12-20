@@ -13,6 +13,31 @@ router.use(session({
 
 
 
+
+router.route('/lastCode').get(async (req, res) => {
+  try {
+    const latestPR = await Supplier.findOne({
+      attributes: [[sequelize.fn('max', sequelize.col('supplier_code')), 'latestNumber']],
+    });
+    let latestNumber = latestPR.getDataValue('latestNumber');
+
+    console.log('Latest Number:', latestNumber);
+
+    // Increment the latestNumber by 1 for a new entry
+    latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+
+    // Do not create a new entry, just return the incremented value
+    return res.json(latestNumber.padStart(4, '0'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+
+
+
+
 router.route('/fetchTable').get(async (req, res) => {
   try {
   //   const data = await MasterList.findAll({

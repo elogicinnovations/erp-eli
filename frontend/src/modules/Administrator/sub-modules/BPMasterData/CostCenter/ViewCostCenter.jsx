@@ -173,9 +173,9 @@ function ViewCostCenter() {
                                   {productIssue.map((data,i) =>(
                                     <tr key={i}>
                                       <td>{data.issuance_id}</td>
-                                      <td>{data.inventory.product_tag_supplier.product.product_code}</td>
-                                      <td>{data.inventory.product_tag_supplier.product.product_name}</td>
-                                      <td>{data.inventory.product_tag_supplier.product_price}</td>
+                                      <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
+                                      <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
+                                      <td>{data.inventory_prd.product_tag_supplier.product_price}</td>
                                       <td>{data.quantity}</td>
                                       <td>{data.status}</td>
                                       <td>{data.createdAt}</td>

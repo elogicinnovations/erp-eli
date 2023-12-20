@@ -27,7 +27,7 @@ import * as $ from "jquery";
 
 function CreateAssemblyForm() {
   const [validated, setValidated] = useState(false);
-
+  const [category, setcategory] = useState([]);
   const [fetchSparePart, setFetchPart] = useState([]);
   const [fetchSupp, setFetchSupp] = useState([]);
   const [fetchSubPart, setFetchsub] = useState([]);
@@ -39,6 +39,7 @@ function CreateAssemblyForm() {
   const [binLocation, setbinLocation] = useState([]);
   const [slct_binLocation, setslct_binLocation] = useState("")
   const [slct_manufacturer, setslct_manufacturer] = useState("")
+  const [slct_category, setslct_category] = useState([]); 
   const [unitMeasurement, setUnitMeasurement] = useState("")
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
@@ -99,6 +100,17 @@ function CreateAssemblyForm() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/category/fetchTable")
+      .then((response) => {
+        setcategory(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching roles:", error);
+      });
+  }, []);
+
   //for supplier selection values
   const handleSelectChange = (selectedOptions) => {
     setSparePart(selectedOptions);
@@ -116,20 +128,29 @@ function CreateAssemblyForm() {
     setShowDropdown(true);
   };
   
+  // for unit on change function
   const handleChangeUnit = (event) => {
     setUnit(event.target.value);
   };
   
+  // for bin location on change function
   const handleFormChangeBinLocation = (event) => {
     setslct_binLocation(event.target.value);
   };
 
+  // for measurement on change function
   const handleChangeMeasurement = (event) => {
     setUnitMeasurement(event.target.value);
   };
   
+  // for manufacture on change function
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
+  };
+
+  // for Catergory on change function
+  const handleFormChangeCategory = (event) => {
+    setslct_category(event.target.value);
   };
 
   const handlePriceinput = (value, priceValue) => {
@@ -181,13 +202,14 @@ function CreateAssemblyForm() {
           slct_binLocation,
           unitMeasurement,
           slct_manufacturer,
-          thresholds
+          thresholds,
+          slct_category,
         })
         .then((res) => {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Product Assembly Add Succesful!",
+              title: "The Product Assembly Add Successful!",
               text: "The Product Assembly has been Added successfully.",
               icon: "success",
               button: "OK",
@@ -249,7 +271,7 @@ function CreateAssemblyForm() {
             </div>
 
             <div className="row">
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Product Code:{" "}
@@ -263,7 +285,7 @@ function CreateAssemblyForm() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Item Name:{" "}
@@ -277,39 +299,66 @@ function CreateAssemblyForm() {
                   />
                 </Form.Group>
               </div>
+                <div className="col-4">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Category:{" "}
+                    </Form.Label>
+
+                    <Form.Select
+                      aria-label=""
+                      onChange={handleFormChangeCategory}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue="">
+                      <option
+                        disabled
+                        value="">
+                        Select Category
+                      </option>
+                      {category.map((category) => (
+                        <option
+                          key={category.category_code}
+                          value={category.category_code}>
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
             </div>
 
             <div className="row">
               <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Sub Parts:{" "}
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    options={fetchSubPart.map((subpart) => ({
-                      value: subpart.id,
-                      label: subpart.subPart_name,
-                    }))}
-                    onChange={handleSubpartChange}
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Spare Parts:{" "}
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    options={fetchSparePart.map((sparePart) => ({
-                      value: sparePart.id,
-                      label: sparePart.spareParts_name,
-                    }))}
-                    onChange={handleSelectChange}
-                  />
-                </Form.Group>
-              </div>
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Spare Parts:{" "}
+                    </Form.Label>
+                    <Select
+                      isMulti
+                      options={fetchSparePart.map((sparePart) => ({
+                        value: sparePart.id,
+                        label: sparePart.spareParts_name,
+                      }))}
+                      onChange={handleSelectChange}
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Sub Parts:{" "}
+                    </Form.Label>
+                    <Select
+                      isMulti
+                      options={fetchSubPart.map((subpart) => ({
+                        value: subpart.id,
+                        label: subpart.subPart_name,
+                      }))}
+                      onChange={handleSubpartChange}
+                    />
+                  </Form.Group>
+                </div>
             </div>
             <div className="row">
               <div className="col-6">
@@ -320,15 +369,11 @@ function CreateAssemblyForm() {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeUnit}>
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Unit ...
                     </option>
                     {cls_unit.map((unit, index) => (
-                      <option
-                        key={index}
-                        value={unit}>
+                      <option key={index} value={unit}>
                         {unit}
                       </option>
                     ))}
@@ -346,9 +391,7 @@ function CreateAssemblyForm() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Bin Location ...
                     </option>
                     {binLocation.map((binLocation) => (
@@ -374,15 +417,11 @@ function CreateAssemblyForm() {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeMeasurement}>
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Unit Measurement ...
                     </option>
                     {cls_unitMeasurement.map((unitM, index) => (
-                      <option
-                        key={index}
-                        value={unitM}>
+                      <option key={index} value={unitM}>
                         {unitM}
                       </option>
                     ))}
@@ -400,9 +439,7 @@ function CreateAssemblyForm() {
                     required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
-                    <option
-                      disabled
-                      value="">
+                    <option disabled value="">
                       Select Manufacturer ...
                     </option>
                     {manufacturer.map((manufacturer) => (
@@ -429,48 +466,48 @@ function CreateAssemblyForm() {
               </Form.Group>
             </div>
 
-<div
-  className="gen-info"
-  style={{
-    fontSize: "20px",
-    position: "relative",
-    paddingTop: "30px",
-  }}>
-  Notification Thresholds
-  <p>Sets your preferred thresholds.</p>
-  <span
-    style={{
-      position: "absolute",
-      height: "0.5px",
-      width: "-webkit-fill-available",
-      background: "#FFA500",
-      top: "65%",
-      left: "21rem",
-      transform: "translateY(-50%)",
-    }}></span>
-</div>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "30px",
+              }}>
+              Notification Thresholds
+              <p>Sets your preferred thresholds.</p>
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "65%",
+                  left: "21rem",
+                  transform: "translateY(-50%)",
+                }}></span>
+            </div>
 
-<div className="row mt-3">
-  <div className="col-6">
-    <Form.Group controlId="exampleForm.ControlInput1">
-      <Form.Label style={{ fontSize: "20px" }}>
-        Critical Inventory Thresholds:{" "}
-      </Form.Label>
-      <Form.Control
-        onChange={(e) => {
-          const inputValue = e.target.value;
-          const sanitizedValue = inputValue.replace(/\D/g, "");
-          setThresholds(sanitizedValue);
-        }}
-        type="text"
-        placeholder="Minimum Stocking"
-        style={{ height: "40px", fontSize: "15px" }}
-        maxLength={10}
-        pattern="[0-9]*"
-      />
-    </Form.Group>
-  </div>
-  {/* <div className="col-6">
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Critical Inventory Thresholds:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const sanitizedValue = inputValue.replace(/\D/g, "");
+                      setThresholds(sanitizedValue);
+                    }}
+                    type="text"
+                    placeholder="Minimum Stocking"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    maxLength={10}
+                    pattern="[0-9]*"
+                  />
+                </Form.Group>
+              </div>
+              {/* <div className="col-6">
     <Form.Group controlId="exampleForm.ControlInput1">
       <Form.Label style={{ fontSize: "20px" }}>
         Image Upload:{" "}
@@ -549,7 +586,7 @@ function CreateAssemblyForm() {
       </div>
     </Form.Group>
   </div> */}
-</div>
+            </div>
 
             <div
               className="gen-info"

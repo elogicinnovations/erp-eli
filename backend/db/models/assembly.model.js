@@ -21,17 +21,15 @@ const Assembly = sequelize.define('assembly', {
     allowNull: true,
     unique: false,
   },
-  assembly_location: {
+  bin_id: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    unique: false,
+    allowNull: false,
   },
   assembly_unitMeasurement: {
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },
-
   assembly_manufacturer: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -53,6 +51,10 @@ const Assembly = sequelize.define('assembly', {
   threshhold: {
     type: DataTypes.INTEGER,
     allowNull: true,
+  },
+  category_code: {
+    type: DataTypes.STRING,
+    allowNull: false,
   }
 });
 

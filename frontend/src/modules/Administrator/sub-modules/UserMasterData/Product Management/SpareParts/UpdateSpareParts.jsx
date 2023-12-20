@@ -41,7 +41,6 @@ const [thresholds, setThresholds] = useState('');
 const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
 const [isReadOnly, setReadOnly] = useState(false);
-const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
 
 
 const navigate = useNavigate();
@@ -63,16 +62,6 @@ useEffect(() => {
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
       setThresholds(res.data[0].threshhold);
-
-
-      // Ensure that the API response contains an array of subParts
-      const existingSubParts = res.data[0].subParts.map(subPart => ({
-        value: subPart.id,
-        label: subPart.subPart_code
-      }));
-
-      // Set SubParts with the formatted data
-      setSubParts(existingSubParts);
     })
     .catch(err => console.log(err));
 }, [id]);
@@ -82,21 +71,47 @@ const handlePriceChange = (index, value) => {
   const updatedTable = [...tableSupp];
   updatedTable[index].supplier_price = value;
 
-  const serializedPrice = updatedTable.map((row) => ({
-    price: row.supplier_price || '',
-    code: row.supplier_code
-  }));
+  const serializedPriceDATA = addPriceInput.map((row) => {
+    if (row.value === updatedTable[index].supplier_code) {
+      return {
+        ...row,
+        price: value,
+      };
+    }
+    return row;
+  });
 
   setTableSupp(updatedTable);
-  setaddPriceInputbackend(serializedPrice);
-
-  console.log("Price Inputted:", serializedPrice);
+  setaddPriceInputbackend(serializedPriceDATA);
 
   // Return the updatedInputs to be used as the new state
   return updatedTable;
 };
 
-//fetch the spareparts in table
+//for supplier selection values
+const handleSelectChange = (selectedOptions) => {
+  setaddPriceInputbackend(selectedOptions);
+  const updatedTable = [
+    ...tableSupp.filter((row) => selectedOptions.some((option) => option.value === row.supplier_code)),
+    ...selectedOptions
+      .filter((option) => !tableSupp.some((row) => row.supplier_code === option.value))
+      .map((option) => ({
+        supplier_code: option.value,
+        supplier: {
+          supplier_name: option.label.split('/ Name: ')[1].trim(),
+          supplier_code: option.suppcodes,
+          supplier_email: option.email,
+          supplier_number: option.number,
+          supplier_address: option.address,
+          supplier_receiving: option.receiving,
+        },
+      })),
+  ];
+
+  setTableSupp(updatedTable);
+};
+
+//fetch the supplier spareparts in table
 useEffect(() => {
   axios.get(BASE_URL + '/supp_SparePart/fetchTableEdit', {
     params: {
@@ -106,18 +121,34 @@ useEffect(() => {
     .then(res => {
       const data = res.data;
       setTableSupp(data);
-
-      // Set selected options based on the table data
       const selectedOptions = data.map((row) => ({
-        value: row.supplier_code,
+        value: row.supplier.supplier_code,
         label: `Supplier Code: ${row.supplier_code} / Name: ${row.supplier.supplier_name}`,
-        // Add other properties as needed
+        price: row.supplier_price,
       }));
-      setSelectedDropdownOptions(selectedOptions);
+      setaddPriceInputbackend(selectedOptions);
     })
     .catch(err => console.log(err));
 }, [id]);
 
+//for fetch the selected subpart on dropdown
+useEffect(() => {
+  axios.get(BASE_URL + '/subPart_SparePart/fetchsubpartTable', {
+    params: {
+      id: id
+    }
+  })
+    .then(res => {
+      const data = res.data;
+      // setFetchSubPart(data);
+      const selectedSubparts = data.map((row) => ({
+        value: row.subPart_id,
+        label: row.subPart.subPart_name,
+      }));
+      setSubParts(selectedSubparts);
+    })
+    .catch(err => console.log(err));
+}, [id]);
 
 
 useEffect(() => {
@@ -154,30 +185,9 @@ useEffect(() => {
 }, []);
 
 
-//for supplier selection values
-const handleSelectChange = (selectedOptions) => {
-  setSelectedDropdownOptions(selectedOptions);
-  // Update the table with the selected options and the previously removed rows
-  const updatedTable = [
-    ...tableSupp.filter((row) => selectedOptions.some((option) => option.value === row.supplier_code)),
-    ...selectedOptions
-      .filter((option) => !tableSupp.some((row) => row.supplier_code === option.value))
-      .map((option) => ({
-        supplier_code: option.value,
-        supplier: {
-          supplier_name: option.label.split('/ Name: ')[1].trim(),
-        },
-      })),
-  ];
-
-  setTableSupp(updatedTable);
-};
-
 const handleSelectChange_SubPart = (selectedOptions) => {
   setSubParts(selectedOptions);
-  console.log(selectedOptions);
 };
-
 
 const handleEditClick = () => {
   // for clicking the button can be editted not readonly
@@ -212,18 +222,17 @@ const update = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     swal({
-      icon: 'error',
-      title: 'Fields are required',
-      text: 'Please fill the required fields',
+      icon: "error",
+      title: "Fields are required",
+      text: "Please fill the red text fields",
     });
   } else {
-
     axios
-      .put(`${BASE_URL}/sparePart/update`,{
+      .post(`${BASE_URL}/sparePart/update`, null, {
+        params: {
           id,
           code,
           name,
-          supp,
           desc,
           SubParts,
           addPriceInput,
@@ -231,65 +240,46 @@ const update = async (e) => {
           unitMeasurement,
           slct_manufacturer,
           slct_binLocation,
-          thresholds
+          thresholds,    
+        },
       })
       .then((res) => {
+        // console.log(res);
         if (res.status === 200) {
           swal({
-            title: 'The Product Part successfully added!',
-            text: 'The Product Part has been updated successfully.',
-            icon: 'success',
-            button: 'OK',
+            title: "The Spare Part sucessfully updated!",
+            text: "The Spare Part has been updated successfully.",
+            icon: "success",
+            button: "OK",
           }).then(() => {
-            navigate('/spareParts');
+            navigate("/spareParts");
           });
         } else if (res.status === 201) {
           swal({
-            icon: 'error',
-            title: 'Code Already Exist',
-            text: 'Please input another code',
+            icon: "error",
+            title: "Spare Part Already Exist",
+            text: "Please input another code",
           });
         } else {
           swal({
-            icon: 'error',
-            title: 'Something went wrong',
-            text: 'Please contact our support',
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
           });
         }
-      })
-      .catch((error) => {
-        console.error(error);
-        swal({
-          icon: 'error',
-          title: 'Error',
-          text: 'An error occurred during the update.',
-        });
       });
   }
-
-  setValidated(true);
+  setValidated(true); //for validations
 };
-
-
-
-// React.useEffect(() => {
-//     $(document).ready(function () {
-//         $('#order-listing').DataTable();
-//     });
-//     }, []);
+console.log(addPriceInput)
 
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a"> 
             
                 <div className='d-flex flex-direction-row'>
-                <h1>Update Spare Parts</h1>
-              
-                
+                    <h1>Update Spare Parts</h1>
                 </div>
                
                 <Form noValidate validated={validated} onSubmit={update}>
@@ -333,10 +323,7 @@ const update = async (e) => {
                                       label: subPart.subPart_name , // Set label to subPart_name for options
                                     }))}
                                     onChange={handleSelectChange_SubPart}
-                                    // value={SubParts.map((selectedOption) => ({
-                                    //   value: selectedOption.subPart_code,
-                                    //   label: selectedOption.subPart_code, // Set label to subPart_code for selected value
-                                    // }))}
+                                    value={SubParts}
                                   />
 
                                 </Form.Group>
@@ -545,29 +532,6 @@ const update = async (e) => {
                                           </td>
                                         </tr>
                                       ))}
-                                     
-                                          {/* {supp.length > 0 ? (
-                                            supp.map((supp) => (
-                                              <tr>
-                                                <td>{supp.codes}</td>
-                                                <td>{supp.name}</td>
-                                                <td>{supp.email}</td>
-                                                <td>{supp.number}</td>
-                                                <td>{supp.address}</td>
-                                                <td>{supp.receving}</td>
-                                              </tr>
-                                            ))
-                                          ) : (
-                                            <tr>
-                                                 <td></td>
-                                                 <td></td>
-                                                 <td></td>
-                                                 <td></td>
-                                                 <td></td>
-                                                 <td></td>
-                                              </tr>
-                                         
-                                          )} */}
 
                                     </tbody>
                                     {showDropdown && (
@@ -577,9 +541,13 @@ const update = async (e) => {
                                                 options={fetchSupp.map((supplier) => ({
                                                   value: supplier.supplier_code,
                                                   label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
-                                                  // Add other properties as needed
+                                                  suppcodes: supplier.supplier_code,
+                                                  email: supplier.supplier_email, 
+                                                  number: supplier.supplier_number, 
+                                                  address: supplier.supplier_address,
+                                                  receiving: supplier.supplier_receiving,
                                                 }))}
-                                                value={selectedDropdownOptions}
+                                                value={addPriceInput}
                                                 onChange={handleSelectChange}
                                               />
                                         </div>

@@ -127,133 +127,97 @@ router.route('/create').post(async (req, res) => {
       }
 });
 
-
-router.route('/update').put(async (req, res) => {
+router.route("/update").post(
+  async (req, res) => {
+  
   try {
-    const {id, code, name, supp, desc, SubParts, addPriceInput, unit, slct_binLocation, unitMeasurement, slct_manufacturer, thresholds} = req.body;
-    // Check if the email already exists in the table for other records
-    const existingData = await SparePart.findOne({
+    console.log(req.query.id)
+    const existingDataCode = await SparePart.findOne({
       where: {
-        spareParts_code: code,
-        id: { [Op.ne]: id }, // Exclude the current record
+        spareParts_code: req.query.code,
+        id: { [Op.ne]: req.query.id },
       },
     });
 
-    if (existingData) {
+    if (existingDataCode) {
       res.status(201).send('Exist');
     } else {
-
-      const threshholdValue = thresholds === '' ? "0" : thresholds; 
-      // Update the record in the table
-      const affectedRows = await SparePart.update(
+      let finalThreshold;
+      if (req.query.thresholds === "") {
+      finalThreshold = 0;
+      } else {
+      finalThreshold = req.query.thresholds;
+      }
+      const Spare_newData = await SparePart.update(
         {
-          spareParts_code: code ? code.toUpperCase() : null,
-          spareParts_name: name,
-          spareParts_desc: desc,
-          spareParts_unit: unit,
-          spareParts_location: slct_binLocation,
-          spareParts_unitMeasurement: unitMeasurement,
-          spareParts_manufacturer: slct_manufacturer,
-          threshhold: threshholdValue
+          spareParts_code: req.query.code,
+          spareParts_name: req.query.name,
+          spareParts_desc: req.query.desc,
+          spareParts_unit: req.query.unit,
+          spareParts_location: req.query.slct_binLocation,
+          spareParts_unitMeasurement: req.query.unitMeasurement,
+          spareParts_manufacturer: req.query.slct_manufacturer,
+          threshhold: finalThreshold,
         },
         {
-          where: { id: id },
+          where: {
+            id: req.query.id,
+          },
         }
       );
 
-      if(affectedRows){
-        const deletesubpart  = SparePart_SubPart.destroy({
-          where : {
-            sparePart_id: id
-          }
-        })
-        if(deletesubpart){
+      if (Spare_newData) {
+      const deletesubpart = SparePart_SubPart.destroy({
+          where: {
+            sparePart_id: req.query.id
+          },
+      });
 
-          if(Array.isArray(SubParts)){
-            for (const subPart of SubParts) {
-            const subPartValue = subPart.value;
+      if(deletesubpart) {
+        const selectedSubparting = req.query.SubParts
+        for (const subpartDropdown of selectedSubparting) {
+          const subpartValue = subpartDropdown.value;
   
-              console.log('subpart value: ' + subPartValue)
-          
-              await SparePart_SubPart.create({
-                  sparePart_id: id,
-                subPart_id: subPartValue,
-              });
+          console.log(subpartValue)
+          await SparePart_SubPart.create({
+            sparePart_id: req.query.id,
+            subPart_id: subpartValue
+          });
         }
-          }
+      } //delete subpart end
+
+      const deletesupplier = SparePart_Supplier.destroy({
+        where: {
+          sparePart_id: req.query.id
+        },
+      });
+
+      if(deletesupplier){
+        const selectedSuppliers = req.query.addPriceInput
+        console.log(selectedSuppliers)
+        for (const supplier of selectedSuppliers) {
+          const { value, price } = supplier;
+          await SparePart_Supplier.create({
+            sparePart_id: req.query.id,
+            supplier_code: value,
+            supplier_price: price
+           });
+         }
       }
-
-        const deletesupp  = SparePart_Supplier.destroy({
-          where : {
-            sparePart_id: id
-          }
-        })
-        if(deletesupp){
-          for (const supplier of addPriceInput) {
-            const supplierValue = supplier.code;
-            const supplierPrice = supplier.price;
-    
-            await SparePart_Supplier.create({
-                sparePart_id: id,
-                supplier_code: supplierValue,
-                supplier_price: supplierPrice
-            });
-          }
-  
-        }
-
       }
-
-      // for (const supplier of req.query.supp) {
-      //   const supplierValue = supplier.value;
-
-      //   console.log(supplierValue)
-      //   await SparePart_Supplier.bulkCreate({
-      //       supplier: supplierValue,
-      //   },
-      //   {
-      //     where: { sparePart_id: req.query.id },
-      //   }
-      //   );
-      // }
-
-      // for (const subPart of req.query.SubParts) {
-      //   const subPartValue = subPart.value;
-
-      //   console.log('subpart id' + subPartValue)
-
-      //   await SparePart_SubPart.bulkCreate({
-      //       subPart_code: subPartValue,
-      //   },
-      //   {
-      //     where: { sparePart_id: req.query.id },
-      //   }
-      //   );
-      // }
 
       res.status(200).json();
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send('An error occurred');
+    res.status(500).send("An error occurred");
   }
-});
+});  
+
 
 
 router.route('/delete/:table_id').delete(async (req, res) => {
     const id = req.params.table_id;
-  
-  
-    // await Product.findAll({
-    //   where: {
-    //     product_manufacturer: id,
-    //   },
-    // })
-    //   .then((check) => {
-    //     if (check && check.length > 0) {
-    //       res.status(202).json({ success: true });
-    //     }
-    //     else{
             await SparePart.destroy({
             where : {
               id: id

@@ -31,6 +31,25 @@ const navigate = useNavigate()
     const [assembly, setAssembly] = useState([]);
     const [spare, setSpare] = useState([]);
     const [subpart, setSubpart] = useState([]);
+    const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
+
+    useEffect(() => {
+      // Fetch issuances and calculate expiration status
+      axios.get(BASE_URL + '/issuance/getIssuance')
+        .then((res) => {
+          const now = new Date();
+          const expirationStatus = {};
+          res.data.forEach((issuance) => {
+            const createdAt = new Date(issuance.createdAt);
+            const threeDaysAgo = new Date(now);
+            threeDaysAgo.setDate(now.getDate() - 3);
+            expirationStatus[issuance.issuance_id] = createdAt < threeDaysAgo;
+          });
+          setIssuanceExpirationStatus(expirationStatus);
+          setIssuance(res.data);
+        })
+        .catch((err) => console.log(err));
+    }, []);
 
     useEffect(() => { //fetch product for inventory
         axios.get(BASE_URL + '/inventory/fetchInvetory_product')
@@ -402,9 +421,14 @@ const navigate = useNavigate()
                                                             <td>{data.masterlist.col_Fname}</td>
                                                             <td>{formatDatetime(data.createdAt)}</td>
                                                             <td>
-                                                                <button onClick={() => navigate(`/returnForm/${data.issuance_id}`)} style={{fontSize:'12px'}}
-                                                                  className='btn'>Return
-                                                                </button>
+                                                              <button
+                                                                onClick={() => navigate(`/returnForm/${data.issuance_id}`)}
+                                                                style={{ fontSize: '12px' }}
+                                                                className='btn'
+                                                                disabled={issuanceExpirationStatus[data.issuance_id]}
+                                                              >
+                                                                Return
+                                                              </button>
                                                             </td>
                                                         </tr>
                                                         ))}

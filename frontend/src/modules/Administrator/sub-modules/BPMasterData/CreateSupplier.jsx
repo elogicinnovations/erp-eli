@@ -41,6 +41,21 @@ function CreateSupplier() {
     setIsChecked(event.target.checked);
   };
 
+  // para sa pag fetch ng last supplier code 
+  useEffect(() => {   
+    axios.get(BASE_URL + '/supplier/lastCode')
+      .then(res => {
+        const code = res.data !== null ? res.data.toString().padStart(4, '0') : '0001';
+        
+        // Increment the value by 1
+        setsuppCode(code);
+      })
+      .catch(err => console.log(err));
+  }, []);
+  
+  
+  
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
@@ -166,7 +181,7 @@ function CreateSupplier() {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Suppliers Add Succesful!",
+              title: "Suppliers Add Successful!",
               text: "The Suppliers has been Added Successfully.",
               icon: "success",
               button: "OK",
@@ -193,15 +208,6 @@ function CreateSupplier() {
     }
   };
 
-  const generateRandomCode = () => {
-    const randomCode = Math.floor(100000000000 + Math.random() * 900000000000);
-    return randomCode.toString();
-  };
-
-  const handleGenerateCode = () => {
-    const randomCode = generateRandomCode();
-    setsuppCode(randomCode);
-  };
 
   return (
     <div className="main-of-containers">
@@ -286,14 +292,14 @@ function CreateSupplier() {
                   </label>
                   <Form.Control
                     className="p-3 fs-3"
-                    onChange={(e) => setsuppCode(e.target.value)}
+                    readOnly
+                    value={suppCode}
+                    // onChange={(e) => setsuppCode(e.target.value)}
                     required
                     maxLength={10}
                     placeholder="Supplier Code"
                   />
-                  <Button variant="primary" onClick={handleGenerateCode}>
-                    Generate Code
-                  </Button>
+                  
                 </Col>
               </Row>
 
@@ -307,12 +313,12 @@ function CreateSupplier() {
                   </label>
                   <Form.Control
                     className="p-3 fs-3"
-                    type="text" // Change type to "text" to allow hyphens
+                    type="text"
                     value={suppTin}
                     onChange={handleTinChange}
                     pattern="^[0-9-]+$"
                     placeholder="000–123–456–001"
-                    maxLength={setMaxTinLength}
+                    // maxLength={setMaxTinLength}
                   />
                 </Col>
                 <Col>

@@ -39,7 +39,6 @@ router.route("/fetchinTable").get(async (req, res) => {
     if (!data) {
       return res.status(404).json();
     }
-
     return res.json(data);
   } catch (error) {
     console.error(error);

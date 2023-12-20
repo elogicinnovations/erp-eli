@@ -91,7 +91,7 @@ function CreateCostCenter() {
   // ----------------------------------Validation------------------------------//
   const SuccessInserted = (res) => {
     swal({
-      title: "Cost Center Add Succesful!",
+      title: "Cost Center Add Successful!",
       text: "The Cost Center has been Added Successfully.",
       icon: "success",
       button: "OK",
@@ -183,6 +183,7 @@ function CreateCostCenter() {
                     placeholder="Enter name"
                     style={{ height: "40px", fontSize: "15px" }}
                     onChange={(e) => setName(e.target.value)}
+                    required
                   />
                 </Form.Group>
               </div>

@@ -52,6 +52,8 @@ function CreateProduct() {
   // ----------------------------------- for image upload --------------------------//
   const fileInputRef = useRef(null);
   const [selectedimage, setselectedimage] = useState([]);
+  const [productImage, setProductImage] = useState([]);
+  const [productImageType, setProductImageType] = useState([]);
   const [status, setStatus] = useState("Active");
 
   const onDropImage = (acceptedFiles) => {
@@ -97,6 +99,13 @@ function CreateProduct() {
 
   const handleStatusChange = (e) => {
     setproductStatus(e.target.checked); // Update the status Active or Inactive
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "e" || isNaN(e.key)) {
+      e.preventDefault();
+    }
+    e.target.value = e.target.value.replace(/[^0-9.]/);
   };
 
   //Supplier Fetch
@@ -258,7 +267,11 @@ function CreateProduct() {
       formData.append("slct_manufacturer", slct_manufacturer);
       formData.append("details", details);
       formData.append("thresholds", thresholds);
-      formData.append("selectedimage", selectedimage);
+      // formData.append("selectedimage", selectedimage);
+      if (selectedimage.length > 0) {
+        const image = selectedimage[0];
+        formData.append("selectedimage", image);
+      }
       formData.append("assemblies", JSON.stringify(assembly));
       formData.append("sparepart", JSON.stringify(spareParts));
       formData.append("subpart", JSON.stringify(subparting));
@@ -289,7 +302,7 @@ function CreateProduct() {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Product List Add Succesful!",
+      title: "Product List Add Successful!",
       text: "The Product List has been Added Successfully.",
       icon: "success",
       button: "OK",
@@ -601,14 +614,18 @@ function CreateProduct() {
                   <Form.Control
                     onChange={(e) => {
                       const inputValue = e.target.value;
-                      const sanitizedValue = inputValue.replace(/\D/g, "");
+                      const sanitizedValue = inputValue
+                        .replace(/\D/g, "")
+                        .substring(0, 10);
                       setThresholds(sanitizedValue);
                     }}
-                    type="text"
+                    onInput={handleKeyPress}
+                    type="number" // Change type to "text"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
-                    maxLength={10}
-                    pattern="[0-9]*"
+                    title="Please enter a valid number"
+                    min="0"
+                    max="9999999999"
                   />
                 </Form.Group>
               </div>
@@ -626,9 +643,7 @@ function CreateProduct() {
                       width: "720px",
                       padding: 10,
                     }}>
-                    <Dropzone
-                      onDrop={onDropImage}
-                      onChange={(e) => setselectedimage(e.target.value)}>
+                    <Dropzone onDrop={onDropImage}>
                       {({ getRootProps, getInputProps }) => (
                         <div
                           className="w-100 h-100"
@@ -638,6 +653,7 @@ function CreateProduct() {
                             ref={fileInputRef}
                             type="file"
                             style={{ display: "none" }}
+                            {...getInputProps()}
                           />
                           <div
                             className="d-flex align-items-center"
@@ -677,7 +693,7 @@ function CreateProduct() {
                                       </span>
                                       <X
                                         size={20}
-                                        onClick={removeImage}
+                                        onClick={() => removeImage(index)}
                                         className="removeButton"
                                       />
                                     </div>

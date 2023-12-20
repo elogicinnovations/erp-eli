@@ -233,30 +233,6 @@ function Sidebar() {
                   </ListItem>
                 </NavLink>
                   <NavLink
-                  to='/binLocation'
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                  activeClassName="active"
-                >
-                  <ListItem
-                    button
-                    className={`Employeesub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
-                  >
-                    <ListItemText primary="Bin Location" />
-                  </ListItem>
-                </NavLink>
-                  <NavLink
-                  to='/productList'
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                  activeClassName="active"
-                >
-                <ListItem
-                  button
-                  className={`Employeesub-menu ${location.pathname.startsWith('/productList') || location.pathname.startsWith('/createProduct') || location.pathname.startsWith('/updateProduct') || location.pathname.startsWith('/productSupplier') ? 'active' : ''}`}
-                >
-                    <ListItemText primary="Product List" />
-                  </ListItem>
-                </NavLink>
-                  <NavLink
                   to='/ProductManu'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -268,10 +244,18 @@ function Sidebar() {
                     <ListItemText primary="Product Manufacturer" />
                   </ListItem>
                 </NavLink>
-                  {/* <ListItem button className='Employeesub-menu'>
-                    <ListItemText primary="Price Options" />
-                  </ListItem> */}
-                  </List>
+                  <NavLink
+                  to='/binLocation'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                  <ListItem
+                    button
+                    className={`Employeesub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
+                  >
+                    <ListItemText primary="Bin Location" />
+                  </ListItem>
+                </NavLink>
                   <NavLink
                   to='/subParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
@@ -308,6 +292,19 @@ function Sidebar() {
                     <ListItemText primary="Product Assembly" />
                   </ListItem>
                 </NavLink>
+                  <NavLink
+                  to='/productList'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  activeClassName="active"
+                >
+                <ListItem
+                  button
+                  className={`Employeesub-menu ${location.pathname.startsWith('/productList') || location.pathname.startsWith('/createProduct') || location.pathname.startsWith('/updateProduct') || location.pathname.startsWith('/productSupplier') ? 'active' : ''}`}
+                >
+                    <ListItemText primary="Product List" />
+                  </ListItem>
+                </NavLink>
+                  </List>
               </Collapse>
 
               <ListItem button className='adminsub-menu' onClick={toggleBPData}>

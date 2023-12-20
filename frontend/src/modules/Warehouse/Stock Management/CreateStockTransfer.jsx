@@ -124,12 +124,12 @@ const add = async (e) => {
 
       if (response.status === 200) {
         swal({
-          title: 'The Purchase request was successful!',
-          text: 'The Purchase Request has been added successfully.',
+          title: 'The Stock Transfer request was successful!',
+          text: 'The Stock Transfer has been added successfully.',
           icon: 'success',
           button: 'OK',
         }).then(() => {
-          navigate('/purchaseRequest');
+          navigate('/stockTransfer');
         });
       } else {
         swal({
@@ -460,7 +460,7 @@ function formatDatetime(datetime) {
                         
                         <div className='save-cancel'>
                           <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                          <Link to='/purchaseRequest' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                          <Link to='/stockTransfer' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                               Close
                           </Link>
                         </div>

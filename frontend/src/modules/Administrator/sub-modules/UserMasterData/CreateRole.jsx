@@ -73,8 +73,8 @@ function Create_role() {
 
         if (response.status === 200) {
           swal({
-            title: "User Role Add Succesful!",
-            text: "The User has been Added Successfully.",
+            title: "User Role Add Successful!",
+            text: "The User Role has been Added Successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {
