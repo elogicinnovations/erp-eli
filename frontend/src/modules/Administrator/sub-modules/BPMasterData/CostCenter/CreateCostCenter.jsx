@@ -60,7 +60,6 @@ function CreateCostCenter() {
       axios
         .post(BASE_URL + "/costCenter/create", {
           name,
-          masterList,
           description,
           select_masterlist,
           status,
@@ -195,7 +194,6 @@ function CreateCostCenter() {
                   <Form.Select
                     aria-label=""
                     onChange={handleFormChangeMasterList}
-                    required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">

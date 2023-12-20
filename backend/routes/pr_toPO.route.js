@@ -438,15 +438,15 @@ router.route('/receivedPRD').post(async (req, res) => {
 
 router.route('/receivedPRDQA').post(async (req, res) => {
   try {
-    const {value, id } = req.body;
+    const {status, id } = req.body;
 
         const receivedQA_newData = await PR_PO.update({
-        quality_assurance: value,
+        quality_assurance: status,
        },
        {
          where: { id: id }
        }); 
-       console.log()
+       console.log("************************"+value);
        
      res.status(200).json();
      

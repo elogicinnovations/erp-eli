@@ -259,11 +259,18 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered, pr
   }
   };
 
-  const onChangeProd= (value, id) => 
+  const onChangeProd= (id) => 
   {
+    if (status === "Active") 
+    {
+      setStatus("Inactive");
+    } else {
+      setStatus("Active");
+    }
+
     axios.post(BASE_URL + '/PR_PO/receivedPRDQA', 
       { 
-        value, id
+        status, id
       })
       .then((res) => {
         if (res.status === 200) {
@@ -686,7 +693,7 @@ const handleDoneReceived = () => {
                                                         <div className="tab_checkbox">
                                                         <input
                                                         type="checkbox"
-                                                        onChange={(e) => onChangeProd(qualityAssurance, data.id,)}
+                                                        onChange={(e) => onChangeProd(data.id,)}
                                                         defaultChecked={checkedStatus}
                                                         />
                                                         </div>
