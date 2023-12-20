@@ -269,20 +269,20 @@ function UserRole() {
                     <tr
                       key={i}
                       className={i % 2 === 0 ? "even-row" : "odd-row"}>
-                      <td>{data.dataValues.col_rolename}</td>
-                      <td className="autho">{data.dataValues.col_authorization}</td>
-                      <td>{data.dataValues.col_desc}</td>
-                      <td>{formatDate(data.dataValues.createdAt)}</td>
-                      <td>{formatDate(data.dataValues.updatedAt)}</td>
+                      <td>{data?.col_rolename}</td>
+                      <td className="autho">{data?.col_authorization}</td>
+                      <td>{data?.col_desc}</td>
+                      <td>{formatDate(data?.createdAt)}</td>
+                      <td>{formatDate(data?.updatedAt)}</td>
                       <td>
                         {/* Render the icon based on the state */}
                         {/* Render the icon based on the state */}
-                        {isVertical[data.dataValues.col_id] ? (
+                        {isVertical[data?.col_id] ? (
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
-                              toggleButtons(data.dataValues.col_id);
+                              toggleButtons(data?.col_id);
                             }}
                             style={{
                               transition:
@@ -294,7 +294,7 @@ function UserRole() {
                             size={32}
                             className="dots-icon"
                             onClick={() => {
-                              toggleButtons(data.dataValues.col_id);
+                              toggleButtons(data.col_id);
                             }}
                             style={{
                               transition:
@@ -304,13 +304,13 @@ function UserRole() {
                         )}
 
                         <div>
-                          {setButtonVisibles(data.dataValues.col_id) && (
+                          {setButtonVisibles(data.col_id) && (
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
                               <button>
                                 <Link
-                                  to={`/editRole/${data.dataValues.col_id}`}
+                                  to={`/editRole/${data.col_id}`}
                                   style={{
                                     color: "black",
                                     textDecoration: "none",
@@ -321,7 +321,7 @@ function UserRole() {
                               <button
                                 className="btn"
                                 onClick={() => {
-                                  handleDelete(data.dataValues.col_id);
+                                  handleDelete(data.col_id);
                                   closeVisibleButtons();
                                 }}>
                                 Delete

@@ -410,17 +410,19 @@ function BinLocation() {
   useEffect(() => {
 
     var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+    console.log("Decoded: ", decoded);
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
       .then((res) => {
         if(res.status === 200){
-          setauthrztn(res.data.authorization);
+          console.log(res);
+          setauthrztn(res.data.col_authorization);
         }
     })
       .catch((err) => {
         console.error(err);
     });
 
-  }, [authrztn]);
+  }, []);
 
 
   return (

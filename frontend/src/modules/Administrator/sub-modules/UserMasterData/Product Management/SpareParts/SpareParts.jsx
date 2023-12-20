@@ -29,6 +29,7 @@ import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import Header from "../../../../../../partials/header";
+import { jwtDecode } from "jwt-decode";
 
 function SpareParts() {
   const [sparePart, setSparePart] = useState([]);
@@ -192,6 +193,25 @@ function SpareParts() {
     }
   }, [sparePart]);
   const navigate = useNavigate();
+
+  const [authrztn, setauthrztn] = useState([]);
+  useEffect(() => {
+
+    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    console.log("Decoded: ", decoded);
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      .then((res) => {
+        if(res.status === 200){
+          console.log(res);
+          setauthrztn(res.data.col_authorization);
+        }
+    })
+      .catch((err) => {
+        console.error(err);
+    });
+
+  }, []);
+  
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -230,12 +250,16 @@ function SpareParts() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
+
+                  { authrztn.includes('Spare Part - Add') && (
                   <Link to="/createSpareParts" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Product
                   </Link>
+                  )}
+
                 </div>
               </div>
             </div>

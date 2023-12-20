@@ -221,6 +221,24 @@ function SubParts() {
     }
   }, [subParts]);
 
+  const [authrztn, setauthrztn] = useState([]);
+  useEffect(() => {
+
+    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    console.log("Decoded: ", decoded);
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      .then((res) => {
+        if(res.status === 200){
+          console.log(res);
+          setauthrztn(res.data.col_authorization);
+        }
+    })
+      .catch((err) => {
+        console.error(err);
+    });
+
+  }, []);
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -255,12 +273,16 @@ function SubParts() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
+                  
+                    {authrztn.includes('Sub-Part - Add') && (
                   <Link to="/createsubParts" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Product
                   </Link>
+                    )}
+
                 </div>
               </div>
             </div>
@@ -312,12 +334,16 @@ function SubParts() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
+                              { authrztn.includes('Sub-Part - Edit') && (
                               <Link
                                 to={`/updatesubParts/${data.id}`}
                                 style={{ fontSize: "12px" }}
                                 className="btn">
                                 Update
                               </Link>
+                              )}
+
+                              { authrztn.includes('Sub-Part - Delete') && (
                               <button
                                 onClick={() => {
                                   handleDelete(data.id);
@@ -326,6 +352,8 @@ function SubParts() {
                                 className="btn">
                                 Delete
                               </button>
+                              )}
+
                             </div>
                           )}
                         </div>
