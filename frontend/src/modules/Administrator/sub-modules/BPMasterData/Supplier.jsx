@@ -196,17 +196,17 @@ function Supplier() {
       useEffect(() => {
 
         var decoded = jwtDecode(localStorage.getItem('accessToken'));
-        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
           .then((res) => {
             if(res.status === 200){
-              setauthrztn(res.data.authorization);
+              setauthrztn(res.data.col_authorization);
             }
         })
           .catch((err) => {
             console.error(err);
         });
 
-      }, [authrztn]);
+      }, []);
 
     const navigate = useNavigate();
     return(

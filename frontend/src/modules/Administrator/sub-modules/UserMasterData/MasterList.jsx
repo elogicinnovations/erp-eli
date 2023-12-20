@@ -35,6 +35,7 @@ import "../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import Header from "../../../../partials/header";
+import { jwtDecode } from 'jwt-decode';
 
 function MasterList() {
   const [masterListt, setmasterListt] = useState([]);
@@ -645,30 +646,23 @@ function MasterList() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
+  const [authrztn, setauthrztn] = useState([]);
   useEffect(() => {
 
     var decoded = jwtDecode(localStorage.getItem('accessToken'));
-
-    //Axios not working....
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
       .then((res) => {
-
-        console.log("response: ", res.data)
-
         if(res.status === 200){
-          console.log(res);
-          setauthrztn(res.data.authorization);
-
-          console.log(authrztn);
-          console.log("Authorized? ", authrztn.includes('Master List - Add'));
+          setauthrztn(res.data.col_authorization);
         }
     })
       .catch((err) => {
         console.error(err);
     });
 
+  }, []);
+
     // console.log("ln 128: ", authorization); // []
-  }, [authrztn]);
 
   return (
     <div className="main-of-containers">

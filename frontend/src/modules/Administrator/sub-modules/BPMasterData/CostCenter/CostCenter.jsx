@@ -315,10 +315,10 @@ function CostCenter() {
   useEffect(() => {
 
     var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
       .then((res) => {
         if(res.status === 200){
-          setauthrztn(res.data.authorization);
+          setauthrztn(res.data.col_authorization);
         }
     })
       .catch((err) => {
@@ -374,12 +374,15 @@ function CostCenter() {
                     </span>
                     Create New
                   </Link> */}
+                  { authrztn.includes('Cost Centre - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     Create New
                   </button>
+                  )}
+
                 </div>
               </div>
             </div>

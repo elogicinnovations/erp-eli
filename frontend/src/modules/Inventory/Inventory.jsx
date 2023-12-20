@@ -9,9 +9,10 @@ import Tabs from 'react-bootstrap/Tabs';
 import Form from 'react-bootstrap/Form';
 import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
+import { jwtDecode } from 'jwt-decode';
 import {
     MagnifyingGlass,
-    Gear, 
+    Gear,
     Bell,
     UserCircle,
     Plus,
@@ -22,7 +23,7 @@ import {
     DotsThreeCircle,
   } from "@phosphor-icons/react";
 
-import * as $ from 'jquery';  
+import * as $ from 'jquery';
 import Header from '../../partials/header';
 
 const  Inventory = ({ activeTab, onSelect }) => {
@@ -59,7 +60,7 @@ const navigate = useNavigate()
 
       useEffect(() => { //fetch assembly for inventory
         axios.get(BASE_URL + '/inventory/fetchInvetory_assembly')
-          .then(res => setAssembly(res.data)) 
+          .then(res => setAssembly(res.data))
           .catch(err => console.log(err));
       }, []);
 
@@ -76,7 +77,7 @@ const navigate = useNavigate()
       }, []);
 
 
-    const [issuance, setIssuance] = useState([]);   
+    const [issuance, setIssuance] = useState([]);
     // Get Issuance
     useEffect(() => {
         axios.get(BASE_URL + '/issuance/getIssuance')
@@ -133,7 +134,7 @@ const navigate = useNavigate()
         }
       });
     };
-    
+
     const handleRetain = (returnId) => {
       // Show confirmation SweetAlert
       swal({
@@ -162,14 +163,14 @@ const navigate = useNavigate()
           }
       });
   };
-  
-    
+
+
 
     // Artificial Data
 
     const [showDropdown, setShowDropdown] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-    
+
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const [validated, setValidated] = useState(false);
@@ -185,7 +186,7 @@ const navigate = useNavigate()
 
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
   const [rotatedIcons, setRotatedIcons] = useState(Array(inventory.length).fill(false));
-  
+
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
     if (index === openDropdownIndex) {
@@ -253,7 +254,7 @@ const navigate = useNavigate()
   }, [returned]);
 
     const tabStyle = {
-        padding: '10px 15px', 
+        padding: '10px 15px',
         margin: '0 10px',
         color: '#333',
         transition: 'color 0.3s',
@@ -270,6 +271,23 @@ const navigate = useNavigate()
       };
       return new Date(datetime).toLocaleString('en-US', options);
     }
+
+    const [authrztn, setauthrztn] = useState([]);
+    useEffect(() => {
+
+      var decoded = jwtDecode(localStorage.getItem('accessToken'));
+      axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+        .then((res) => {
+          if(res.status === 200){
+            setauthrztn(res.data.col_authorization);
+          }
+      })
+        .catch((err) => {
+          console.error(err);
+      });
+
+    }, []);
+
     return (
         <div className="main-of-containers">
             {/* <div className="left-of-main-containers">
@@ -337,7 +355,7 @@ const navigate = useNavigate()
                                                             <td>{data.quantity}</td>
                                                             <td>{data.product_tag_supplier.product_price}</td>
                                                             <td>{data.product_tag_supplier.product_price}</td>
-                                                           
+
                                                         </tr>
                                                         ))}
 
@@ -350,7 +368,7 @@ const navigate = useNavigate()
                                                               <td>{data.quantity}</td>
                                                               <td>{data.assembly_supplier.supplier_price}</td>
                                                               <td>{data.assembly_supplier.supplier_price}</td>
-                                                            
+
                                                         </tr>
                                                         ))}
 
@@ -363,7 +381,7 @@ const navigate = useNavigate()
                                                               <td>{data.quantity}</td>
                                                               <td>{data.sparepart_supplier.supplier_price}</td>
                                                               <td>{data.sparepart_supplier.supplier_price}</td>
-                                                            
+
                                                         </tr>
                                                         ))}
 
@@ -376,7 +394,7 @@ const navigate = useNavigate()
                                                               <td>{data.quantity}</td>
                                                               <td>{data.subpart_supplier.supplier_price}</td>
                                                               <td>{data.subpart_supplier.supplier_price}</td>
-                                                            
+
                                                         </tr>
                                                         ))}
 
@@ -390,13 +408,17 @@ const navigate = useNavigate()
                                 <Tab eventKey="issuance" title={<span style={{...tabStyle, fontSize: '20px' }}>Issuance</span>}>
                                     <div className="tab-titles">
                                         <h1>Issuance</h1>
+
                                         <div>
-                                            <Link to={'/createIssuance'} className="issuance-btn">
-                                            <span style={{marginRight: '4px'}}>
-                                                <Plus size={20} />
-                                            </span>
-                                                Add Issuance
-                                            </Link>
+                                          { authrztn.includes('Inventory Type - Add') && (
+                                              <Link to={'/createIssuance'} className="issuance-btn">
+                                              <span style={{marginRight: '4px'}}>
+                                                  <Plus size={20} />
+                                              </span>
+                                                  Add Issuance
+                                              </Link>
+                                          )}
+
                                         </div>
                                     </div>
                                     <div className="table-containss">
@@ -507,14 +529,14 @@ const navigate = useNavigate()
                                             </table>
                                         </div>
                                     </div>
-                                    
+
                                     <Modal show={showModal} onHide={handleClose}>
                                       <Form noValidate validated={validated}>
                                         <Modal.Header closeButton>
-                                          <Modal.Title style={{ fontSize: '24px' }}>Return Information</Modal.Title>     
+                                          <Modal.Title style={{ fontSize: '24px' }}>Return Information</Modal.Title>
                                         </Modal.Header>
                                           <Modal.Body>
-                                            
+
                                             <div className="row">
                                             <div className="col-6">
                                               <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -553,7 +575,7 @@ const navigate = useNavigate()
                                                   value={issuedReturn?.remarks} disabled as="textarea" style={{fontSize: '16px', height: '100px', maxHeight: '200px', resize: 'none', overflowY: 'auto'}} />
                                               </Form.Group>
                                           </div>
-                                                
+
 
                                             </Modal.Body>
                                             <Modal.Footer>
@@ -565,7 +587,7 @@ const navigate = useNavigate()
                         </div>
 
                 </div>
-            </div>    
+            </div>
         </div>
     );
 }
