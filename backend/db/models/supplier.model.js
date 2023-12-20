@@ -13,7 +13,7 @@ const Supplier = sequelize.define("suppliers", {
     unique: false,
   },
   supplier_tin: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },
@@ -43,7 +43,7 @@ const Supplier = sequelize.define("suppliers", {
     unique: false,
   },
   supplier_number: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },
