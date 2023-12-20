@@ -28,6 +28,8 @@ import * as $ from "jquery";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+import { jwtDecode } from "jwt-decode";
+
 function CostCenter() {
   const [CostCenter, setCostCenter] = useState([]);
 
@@ -309,6 +311,21 @@ function CostCenter() {
     }
   };
   // --
+  const [authrztn, setauthrztn] = useState([]);
+  useEffect(() => {
+
+    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+      .then((res) => {
+        if(res.status === 200){
+          setauthrztn(res.data.authorization);
+        }
+    })
+      .catch((err) => {
+        console.error(err);
+    });
+
+  }, [authrztn]);
 
   return (
     <div className="main-of-containers">
@@ -438,24 +455,30 @@ function CostCenter() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
-                              <Link
-                                to={`/initUpdateCostCenter/${data.id}`}
-                                onClick={() => {
-                                  handleModalToggle(data);
-                                  closeVisibleButtons();
-                                }}
-                                style={{ fontSize: "12px" }}
-                                className="btn">
-                                Update
-                              </Link>
-                              <button
-                                onClick={() => {
-                                  handleDelete(data.id);
-                                  closeVisibleButtons();
-                                }}
-                                className="btn">
-                                Delete
-                              </button>
+                                { authrztn.includes('Cost Centre - Edit') && (
+                                <Link
+                                  to={`/initUpdateCostCenter/${data.id}`}
+                                  onClick={() => {
+                                    handleModalToggle(data);
+                                    closeVisibleButtons();
+                                  }}
+                                  style={{ fontSize: "12px" }}
+                                  className="btn">
+                                  Update
+                                </Link>
+                                )}
+
+                                { authrztn.includes('Cost Centre - Delete') && (
+                                  <button
+                                    onClick={() => {
+                                      handleDelete(data.id);
+                                      closeVisibleButtons();
+                                    }}
+                                    className="btn">
+                                    Delete
+                                  </button>
+                                )}
+
                             </div>
                           )}
                         </div>

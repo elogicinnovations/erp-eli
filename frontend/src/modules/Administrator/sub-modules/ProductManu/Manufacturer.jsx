@@ -9,7 +9,7 @@ import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Form from "react-bootstrap/Form";
-
+import { jwtDecode } from "jwt-decode";
 import {
   MagnifyingGlass,
   Gear,
@@ -397,6 +397,22 @@ function Productvariants() {
     }
   }, [Manufacturer]);
 
+  const [authrztn, setauthrztn] = useState([]);
+  useEffect(() => {
+
+    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      .then((res) => {
+        if(res.status === 200){
+          setauthrztn(res.data.authorization);
+        }
+    })
+      .catch((err) => {
+        console.error(err);
+    });
+
+  }, []);
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -430,12 +446,16 @@ function Productvariants() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  <button onClick={handleShow}>
-                    <span style={{}}>
-                      <Plus size={25} />
-                    </span>
-                    Create New
-                  </button>
+
+                  { authrztn.includes('Product Manufacturer - Add') && (
+                    <button onClick={handleShow}>
+                      <span style={{}}>
+                        <Plus size={25} />
+                      </span>
+                      Create New
+                    </button>
+                  ) }
+
                 </div>
               </div>
             </div>
@@ -484,6 +504,9 @@ function Productvariants() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
+
+
+                              { authrztn.includes('Product Manufacturer - Edit') && (
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -492,6 +515,9 @@ function Productvariants() {
                                 }}>
                                 Update
                               </button>
+                              )}
+
+                              { authrztn.includes('Product Manufacturer - Delete') && (
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -500,6 +526,8 @@ function Productvariants() {
                                 }}>
                                 Delete
                               </button>
+                              )}
+
                             </div>
                           )}
                         </div>

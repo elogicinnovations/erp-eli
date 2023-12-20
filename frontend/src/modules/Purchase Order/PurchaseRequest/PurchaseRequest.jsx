@@ -32,6 +32,7 @@ import "../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import Header from "../../../partials/header";
+import { jwtDecode } from "jwt-decode";
 
 function PurchaseRequest() {
   const { id } = useParams();
@@ -194,6 +195,22 @@ function PurchaseRequest() {
       $("#order-listing").DataTable();
     }
   }, [PR]);
+
+  const [authrztn, setauthrztn] = useState([]);
+  useEffect(() => {
+
+    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      .then((res) => {
+        if(res.status === 200){
+          setauthrztn(res.data.authorization);
+        }
+    })
+      .catch((err) => {
+        console.error(err);
+    });
+
+  }, []);
 
   return (
     <div className="main-of-containers">
@@ -396,6 +413,8 @@ function PurchaseRequest() {
                           {data.remarks}
                         </td>
                         <td>
+                          {/* Cancel Button */}
+                          {/* { authrztn.includes('')} */}
                           <button
                             className="btn btn-danger"
                             onClick={() => CancelRequest(data.id, data.status)}>
