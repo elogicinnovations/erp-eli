@@ -33,6 +33,7 @@ import {
 
 import * as $ from "jquery";
 import Header from "../../../../../../partials/header";
+import { jwtDecode } from "jwt-decode";
 
 function SubParts() {
   const [subParts, setSubParts] = useState([]);
@@ -273,7 +274,7 @@ function SubParts() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  
+
                     {authrztn.includes('Sub-Part - Add') && (
                   <Link to="/createsubParts" className="button">
                     <span style={{}}>
