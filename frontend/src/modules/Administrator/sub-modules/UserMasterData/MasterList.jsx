@@ -411,14 +411,14 @@ function MasterList() {
         }
       }
     } catch (err) {
-      if (err.response.status === 400) {
-        swal({
-          icon: "error",
-          title: "Email Format Wrong",
-          // text: err.response.data.errors[0].message,
-          text: "Email must be (username@domain.com)",
-        });
-      } else console.log(err);
+      // if (err.response.status === 400) {
+      //   swal({
+      //     icon: "error",
+      //     title: "Email Format Wrong",
+      //     // text: err.response.data.errors[0].message,
+      //     text: "Email must be (username@domain.com)",
+      //   });
+      // } else console.log(err);
     }
   };
 
