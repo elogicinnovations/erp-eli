@@ -35,7 +35,9 @@ router.route('/fetchTable').get(async (req, res) => {
      
       const data = await PR.findAll({
         where: {
-          status: 'To-Receive'
+          status: {
+            [Op.or]: ['To-Receive', 'Delivered']
+          }
         }
       });
   

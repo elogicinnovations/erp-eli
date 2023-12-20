@@ -370,7 +370,8 @@ function UpdateSubparts() {
                       <option
                         key={binLocation.bin_id}
                         value={binLocation.bin_id}>
-                        {binLocation.bin_name}
+                          <strong>{binLocation.bin_name + "-"}</strong>
+                          <strong>{binLocation.bin_subname}</strong>
                       </option>
                     ))}
                   </Form.Select>
@@ -572,7 +573,7 @@ function UpdateSubparts() {
                           <tr key={i}>
                             <td>{supp.supplier.supplier_code}</td>
                             <td>{supp.supplier.supplier_name}</td>
-                            <td>{supp.supplier.supplier_name}</td>
+                            <td>{supp.supplier.supplier_email}</td>
                             <td>{supp.supplier.supplier_number}</td>
                             <td>{supp.supplier.supplier_address}</td>
                             <td>

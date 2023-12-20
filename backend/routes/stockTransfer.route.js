@@ -29,23 +29,23 @@ router.route('/fetchTable').get(async (req, res) => {
     }
   });
 
-  router.route('/lastPRNumber').get(async (req, res) => {
-    try {
+  // router.route('/lastPRNumber').get(async (req, res) => {
+  //   try {
 
-        const latestPR = await StockTransfer.findOne({
-            attributes: [[sequelize.fn('max', sequelize.col('reference_code')), 'latestPRNumber']],
-          });
-        const latestPRNumber = latestPR.getDataValue('latestPRNumber');
+  //       const latestPR = await StockTransfer.findOne({
+  //           attributes: [[sequelize.fn('max', sequelize.col('reference_code')), 'latestPRNumber']],
+  //         });
+  //       const latestPRNumber = latestPR.getDataValue('latestPRNumber');
 
-        // console.log('Latest PR Number:', latestPRNumber);
-        return res.json(latestPRNumber);
+  //       // console.log('Latest PR Number:', latestPRNumber);
+  //       return res.json(latestPRNumber);
 
 
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
-    }
-  });
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json("Error");
+  //   }
+  // });
 
 
 
@@ -79,7 +79,11 @@ router.route('/fetchTable').get(async (req, res) => {
                 product_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
-              } );
+              });
+
+
+
+
             } 
             else if (prod_type === "Assembly"){
               await StockTransfer_assembly.create({

@@ -368,7 +368,8 @@ console.log(addPriceInput)
                                         </option>
                                           {binLocation.map(binLocation => (
                                             <option key={binLocation.bin_id} value={binLocation.bin_id}>
-                                              {binLocation.bin_name}
+                                                <strong>{binLocation.bin_name + "-"}</strong>
+                                                <strong>{binLocation.bin_subname}</strong>
                                             </option>
                                           ))}
                                     </Form.Select>

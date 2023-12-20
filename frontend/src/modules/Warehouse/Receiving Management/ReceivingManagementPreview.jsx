@@ -68,7 +68,11 @@ const [quantity, setQuantity] = useState();
 const [qualityAssurance, setQualityAssurance] = useState(false);
 
 
-useEffect(() => {
+
+
+
+
+const reloadTable_prod = () =>  {
   axios.get(BASE_URL + '/PR_PO/fetchView_product',{
     params:{
       id: id
@@ -87,9 +91,12 @@ useEffect(() => {
     }
     })
     .catch(err => console.log(err));
-}, []);
+}
 
-useEffect(() => {
+
+
+
+const reloadTable_asm = () =>  {
   axios.get(BASE_URL + '/PR_PO/fetchView_asmbly',{
     params:{
       id: id
@@ -97,9 +104,9 @@ useEffect(() => {
   })
     .then(res => setAssembly(res.data))
     .catch(err => console.log(err));
-}, []);
+}
 
-useEffect(() => {
+const reloadTable_spare = () =>  {
   axios.get(BASE_URL + '/PR_PO/fetchView_spare',{
     params:{
       id: id
@@ -107,9 +114,10 @@ useEffect(() => {
   })
     .then(res => setSparePart(res.data))
     .catch(err => console.log(err));
-}, []);
+}
 
-useEffect(() => {
+
+const reloadTable_subPart = () =>  {
   axios.get(BASE_URL + '/PR_PO/fetchView_subpart',{
     params:{
       id: id
@@ -117,17 +125,23 @@ useEffect(() => {
   })
     .then(res => setSubPart(res.data))
     .catch(err => console.log(err));
+}
+
+//fetch tables
+useEffect(() => {
+  reloadTable_prod()
+  reloadTable_asm()
+  reloadTable_spare()
+  reloadTable_subPart()
 }, []);
 
+  // const [showModal, setShowModal] = useState(false);
 
-
-  const [showModal, setShowModal] = useState(false);
-
-  const handleShow = () => setShowModal(true);
+  // const handleShow = () => setShowModal(true);
   
-  const handleClose = () => {
-    setShowModal(false);
-  };
+  // const handleClose = () => {
+  //   setShowModal(false);
+  // };
 
   // useEffect(() => {
   //   if ($('#order-listing').length > 0) {
@@ -170,8 +184,10 @@ const add = async e => {
   }
   else{
 
-    axios.put(`${BASE_URL}/PR_PO/received`, { 
-      id,quantity, qualityAssurance
+    axios.post(`${BASE_URL}/PR_PO/update_remarks`, null,{ 
+      params: {
+        remarks, id
+      }
     })
     .then((res) => {
       console.log(res);
@@ -202,7 +218,7 @@ const add = async e => {
 };
 
 //-----------------------------------Start of Received Product----------------------------------------//
-const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) => {
+const handleQuantityChange = (value, id, quantityReceived, quantityDelivered, prd_supplierID) => {
 
   const totalReceived = (quantityDelivered + value);
 
@@ -219,7 +235,7 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
     const totalValue = value + quantityDelivered;
     axios.post(BASE_URL + '/PR_PO/receivedPRD', 
     { 
-      totalValue, id, quantityReceived
+      totalValue, id, quantityReceived, prd_supplierID
     })
     .then((res) => {
       if (res.status === 200) {
@@ -229,7 +245,8 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          window.location.reload();
+          // window.location.reload();
+          reloadTable_prod()
         });
       } else {
       swal({
@@ -256,7 +273,8 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            window.location.reload();
+            // window.location.reload();
+            reloadTable_prod()
           });
         } else {
         swal({
@@ -270,8 +288,9 @@ const handleQuantityChange = (value, id, quantityReceived, quantityDelivered) =>
 //-----------------------------------End of Received Product----------------------------------------//
 
 //-----------------------------------Start of Received Assembly----------------------------------------//
-const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDelivered) => {
+const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDelivered, asm_suppID) => {
 
+  console.log(asm_suppID)
   const totalReceived = (quantityDelivered + value);
 
   if (parseInt(totalReceived) > parseInt(quantityReceived)) 
@@ -287,7 +306,7 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
     const totalValue = value + quantityDelivered;
     axios.post(BASE_URL + '/PR_PO/receivedAssembly', 
     { 
-      totalValue, id, quantityReceived
+      totalValue, id, quantityReceived, asm_suppID
     })
     .then((res) => {
       if (res.status === 200) {
@@ -297,7 +316,8 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          window.location.reload();
+          // window.location.reload();
+          reloadTable_asm()
         });
       } else {
       swal({
@@ -324,7 +344,8 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            window.location.reload();
+            // window.location.reload();
+            reloadTable_asm()
           });
         } else {
         swal({
@@ -337,7 +358,7 @@ const handleQuantityChangeAssembly = (value, id, quantityReceived, quantityDeliv
   }
 //-----------------------------------End of Received Assembly----------------------------------------//
 //-----------------------------------Start of Received Spare Part----------------------------------------//
-const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDelivered) => {
+const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDelivered, spare_suppID) => {
 
   const totalReceived = (quantityDelivered + value);
 
@@ -354,7 +375,7 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
     const totalValue = value + quantityDelivered;
     axios.post(BASE_URL + '/PR_PO/receivedSparePart', 
     { 
-      totalValue, id, quantityReceived
+      totalValue, id, quantityReceived, spare_suppID
     })
     .then((res) => {
       if (res.status === 200) {
@@ -364,7 +385,8 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          window.location.reload();
+          // window.location.reload();
+          reloadTable_spare()
         });
       } else {
       swal({
@@ -398,7 +420,8 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            window.location.reload();
+            // window.location.reload();
+            reloadTable_spare()
           });
         } else {
         swal({
@@ -411,7 +434,7 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
   }
 //-----------------------------------End of Received Spare Part----------------------------------------//
 //-----------------------------------Start of Received Sub Part----------------------------------------//
-const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelivered) => {
+const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelivered, subpart_suppID) => {
 
   const totalReceived = (quantityDelivered + value);
 
@@ -428,7 +451,7 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
     const totalValue = value + quantityDelivered;
     axios.post(BASE_URL + '/PR_PO/receivedSubPart', 
     { 
-      totalValue, id, quantityReceived
+      totalValue, id, quantityReceived, subpart_suppID
     })
     .then((res) => {
       if (res.status === 200) {
@@ -438,7 +461,8 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
           icon: 'success',
           button: 'OK'
         }).then(() => {
-          window.location.reload();
+          // window.location.reload();
+          reloadTable_subPart()
         });
       } else {
       swal({
@@ -472,8 +496,8 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            window.location.reload();
-            // reloadTable();
+            // window.location.reload();
+            reloadTable_subPart();
           });
         } else {
         swal({
@@ -485,6 +509,36 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
       });
   }
 //-----------------------------------End of Received Sub Part----------------------------------------//
+
+
+
+
+const handleDoneReceived = () => {
+
+    axios.post(BASE_URL + '/PR_PO/transactionDelivered', null, { 
+      params: {
+        id
+      }
+    })
+    .then((res) => {
+      if (res.status === 200) {
+        swal({
+          title: 'Update Succesful',
+          text: 'The Purchase Transaction has successfull tagged as delivered',
+          icon: 'success',
+          button: 'OK'
+        }).then(() => {
+          navigate('/receivingManagement')
+        });
+      } else {
+        swal({
+          icon: 'error',
+          title: 'Something went wrong',
+          text: 'Please contact our support'
+        });
+    }
+    });
+}
 
   return (
     <div className="main-of-containers">
@@ -551,8 +605,36 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                         </div>
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" value={remarks} style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control 
+                                    onChange={(e) => setRemarks(e.target.value)}
+                                    as="textarea"
+                                    placeholder="Enter details name" 
+                                    value={remarks} 
+                                    style={{height: '100px', fontSize: '15px'}}
+                                />
                             </Form.Group>
+
+
+                        <div className='save-cancel'>
+                          <Button type='submit' 
+                                  // onClick={() => navigate(`/receivingManagement`)} 
+                                  className='btn btn-warning' 
+                                  size="md" 
+                                  style={{ fontSize: '20px', margin: '0px 5px' }}>
+                              Update Remarks
+                          </Button>
+
+                          <Button type='button' 
+                                  onClick={() => handleDoneReceived()} 
+                                  className='btn btn-success' 
+                                  size="md" 
+                                  style={{ fontSize: '20px', margin: '0px 5px' }}>
+                              Delivered
+                          </Button>
+                        </div>
+                        
+                        </Form>
+                       
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Item List
                           <span
@@ -594,7 +676,7 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                                                     <td>
                                                     <input
                                                           type="number"
-                                                          onBlur={(e) => handleQuantityChange(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          onBlur={(e) => handleQuantityChange(+e.target.value, data.id, +data.quantity, +data.quantity_received, +data.product_tag_supplier_ID)}
                                                           required
                                                           placeholder="Input quantity"
                                                           style={{ height: '40px', width: '120px', fontSize: '15px' }}
@@ -618,12 +700,12 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                                                     <td>{data.assembly_supplier.assembly.assembly_code}</td>
                                                     <td>{data.assembly_supplier.assembly.assembly_name}</td>
                                                     <td>{data.quantity}</td>
-                                                    <td></td>
+                                                    <td>{data.assembly_supplier.assembly.assembly_unitMeasurement}</td>
                                                     <td>{data.quantity_received}</td>
                                                     <td>
                                                     <input
                                                           type="number"
-                                                          onBlur={(e) => handleQuantityChangeAssembly(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          onBlur={(e) => handleQuantityChangeAssembly(+e.target.value, data.id, +data.quantity, +data.quantity_received, +data.assembly_suppliers_ID)}
                                                           required
                                                           placeholder="Input quantity"
                                                           style={{ height: '40px', width: '120px', fontSize: '15px' }}
@@ -643,29 +725,29 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
 
                                                   {sparePart.map((data,i) =>(
                                                     <tr key={data.id}>
-                                                    <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
-                                                    <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td></td>
-                                                    <td>{data.quantity_received}</td>
-                                                    <td>
-                                                    <input
-                                                          type="number"
-                                                          onBlur={(e) => handleQuantityChangeSparePart(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <div className="tab_checkbox">
-                                                        <input
-                                                        type="checkbox"
-                                                        defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
-                                                        onChange={(e) => handleActiveStatusSparePart(data.id, qualityAssurance)}
-                                                        />
-                                                        </div>
-                                                    </td>
+                                                      <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
+                                                      <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
+                                                      <td>{data.quantity}</td>
+                                                      <td>{data.sparepart_supplier.sparePart.spareParts_unitMeasurement}</td>
+                                                      <td>{data.quantity_received}</td>
+                                                      <td>
+                                                      <input
+                                                            type="number"
+                                                            onBlur={(e) => handleQuantityChangeSparePart(+e.target.value, data.id, +data.quantity, +data.quantity_received, +data.spare_suppliers_ID)}
+                                                            required
+                                                            placeholder="Input quantity"
+                                                            style={{ height: '40px', width: '120px', fontSize: '15px' }}
+                                                          />
+                                                      </td>
+                                                      <td>
+                                                          <div className="tab_checkbox">
+                                                          <input
+                                                          type="checkbox"
+                                                          defaultChecked={qualityAssurance} // Set defaultChecked based on ustatus
+                                                          onChange={(e) => handleActiveStatusSparePart(data.id, qualityAssurance)}
+                                                          />
+                                                          </div>
+                                                      </td>
                                                     </tr>
                                                   ))}
 
@@ -674,12 +756,12 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                                                     <td>{data.subpart_supplier.subPart.subPart_code}</td>
                                                     <td>{data.subpart_supplier.subPart.subPart_name}</td>
                                                     <td>{data.quantity}</td>
-                                                    <td></td>
+                                                    <td>{data.subpart_supplier.subPart.subPart_unitMeasurement}</td>
                                                     <td>{data.quantity_received}</td>
                                                     <td>
-                                                    <input
+                                                        <input
                                                           type="number"
-                                                          onBlur={(e) => handleQuantityChangeSubPart(+e.target.value, data.id, +data.quantity, +data.quantity_received)}
+                                                          onBlur={(e) => handleQuantityChangeSubPart(+e.target.value, data.id, +data.quantity, +data.quantity_received, +data.subpart_suppliers_ID)}
                                                           required
                                                           placeholder="Input quantity"
                                                           style={{ height: '40px', width: '120px', fontSize: '15px' }}
@@ -701,11 +783,6 @@ const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelive
                                 </div>
                             </div>
                         
-                        <div className='save-cancel'>
-                        <Button type='button' onClick={() => navigate(`/receivingManagement`)} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
-                        </div>
-                        
-                        </Form>
                        
             </div>
         </div>

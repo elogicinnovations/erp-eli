@@ -15,7 +15,11 @@ const { PR, PR_PO,
         SparePart, 
         SparePart_Supplier, 
         SubPart,
-        Subpart_supplier
+        Subpart_supplier,
+        Inventory,
+        Inventory_Assembly,
+        Inventory_Spare,
+        Inventory_Subpart
       } = require('../db/models/associations')
 const session = require('express-session');
 
@@ -405,7 +409,7 @@ router.route('/approve_PO').post(async (req, res) => {
 
 router.route('/receivedPRD').post(async (req, res) => {
   try {
-    const {totalValue, id, quantityReceived} = req.body;
+    const {totalValue, id, prd_supplierID} = req.body;
      
        const received_newData = await PR_PO.update({
         quantity_received: totalValue,
@@ -413,7 +417,15 @@ router.route('/receivedPRD').post(async (req, res) => {
        {
          where: { id: id }
        }); 
-       console.log()
+
+        await Inventory.update({
+          quantity: totalValue,
+       },
+       {
+         where: { product_tag_supp_id: prd_supplierID }
+       }); 
+
+    
        
      res.status(200).json();
      
@@ -446,10 +458,57 @@ router.route('/receivedPRDQA').post(async (req, res) => {
 });
 
 
+router.route('/update_remarks').post(async (req, res) => {
+  try {
+    const {remarks, id} = req.query;
+
+    console.log(id + remarks)
+     
+       const received_newData = await PR.update({
+        remarks: remarks
+       },
+       {
+         where: { id: id }
+       }); 
+      
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
+
+
+router.route('/transactionDelivered').post(async (req, res) => {
+  try {
+    const {id} = req.query;
+
+    // console.log(id + remarks)
+     
+       const received_newData = await PR.update({
+        status: 'Delivered'
+       },
+       {
+         where: { id: id }
+       }); 
+      //  console.log()
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
+
 
 router.route('/receivedAssembly').post(async (req, res) => {
   try {
-    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+    const {totalValue, id, qualityAssurance, asm_suppID} = req.body;
      
        const received_newData = await PR_PO_asmbly.update({
         quantity_received: totalValue,
@@ -458,7 +517,12 @@ router.route('/receivedAssembly').post(async (req, res) => {
        {
          where: { id: id }
        }); 
-       console.log()
+       await Inventory_Assembly.update({
+        quantity: totalValue,
+     },
+     {
+       where: { assembly_tag_supp_id: asm_suppID }
+     }); 
        
      res.status(200).json();
      
@@ -471,7 +535,7 @@ router.route('/receivedAssembly').post(async (req, res) => {
 
 router.route('/receivedSparePart').post(async (req, res) => {
   try {
-    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+    const {totalValue, id, qualityAssurance, spare_suppID} = req.body;
      
        const received_newData = await PR_PO_spare.update({
         quantity_received: totalValue,
@@ -480,7 +544,14 @@ router.route('/receivedSparePart').post(async (req, res) => {
        {
          where: { id: id }
        }); 
-       console.log()
+
+
+       await Inventory_Spare.update({
+        quantity: totalValue,
+        },
+        {
+          where: { spare_tag_supp_id: spare_suppID }
+        }); 
        
      res.status(200).json();
      
@@ -493,7 +564,7 @@ router.route('/receivedSparePart').post(async (req, res) => {
 
 router.route('/receivedSubPart').post(async (req, res) => {
   try {
-    const {totalValue, id, quantityReceived, qualityAssurance} = req.body;
+    const {totalValue, id, subpart_suppID, qualityAssurance} = req.body;
      
        const received_newData = await PR_PO_subpart.update({
         quantity_received: totalValue,
@@ -502,7 +573,12 @@ router.route('/receivedSubPart').post(async (req, res) => {
        {
          where: { id: id }
        }); 
-       console.log()
+       await Inventory_Subpart.update({
+        quantity: totalValue,
+     },
+     {
+       where: { subpart_tag_supp_id: subpart_suppID }
+     }); 
        
      res.status(200).json();
      

@@ -40,20 +40,21 @@ router.route('/create').post(async (req, res) => {
         
 
         // Check if the supplier code is already exists in the table
-        const existingDataCode = await BinLocation.findAll({
-          where: {
-            [Op.or] : [
-              { bin_name: { [Op.eq] : req.body.binLocationName } },
-              { bin_subname: { [Op.eq] : req.body.binLocationSubName } },
-            ]
-          },
-        });
+        // const existingDataCode = await BinLocation.findAll({
+        //   where: {
+        //     [Op.or] : [
+        //       { bin_name: { [Op.eq] : req.body.binLocationName } },
+        //       { bin_subname: { [Op.eq] : req.body.binLocationSubName } },
+        //     ]
+        //   },
+        // });
     
-        console.log("Existing: ", existingDataCode.length);
+        // console.log("Existing: ", existingDataCode.length);
 
-        if (existingDataCode.length > 0) {
-          res.status(201).send('Exist');
-        } else {
+        // if (existingDataCode.length > 0) {
+        //   res.status(201).send('Exist');
+        // } 
+        // else {
           const newData = await BinLocation.create({
             bin_name: req.body.binLocationName,
             bin_subname: req.body.binLocationSubName,
@@ -62,7 +63,7 @@ router.route('/create').post(async (req, res) => {
     
           res.status(200).json(newData);
           // console.log(newDa)
-        }
+        // }
       } catch (err) {
         console.error(err);
         res.status(500).send('An error occurred');

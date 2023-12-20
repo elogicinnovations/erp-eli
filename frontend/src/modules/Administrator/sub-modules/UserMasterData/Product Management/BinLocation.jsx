@@ -582,7 +582,7 @@ function BinLocation() {
                   style={{ height: "40px", fontSize: "15px" }}
                   value={binLocationRemarks}
                   onChange={(e) => setbinLocationRemarks(e.target.value)}
-                  required
+                  
                 />
               </Form.Group>
             </div>

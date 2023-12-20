@@ -272,7 +272,6 @@ function SubParts() {
                   <tr>
                     <th className="tableh">Code</th>
                     <th className="tableh">Sub Parts Name</th>
-                    <th className="tableh">Supplier</th>
                     <th className="tableh">Details</th>
                     <th className="tableh">Date Created</th>
                     <th className="tableh">Date Modified</th>
@@ -284,7 +283,6 @@ function SubParts() {
                     <tr key={i}>
                       <td>{data.subPart_code}</td>
                       <td>{data.subPart_name}</td>
-                      <td>{data.supplier}</td>
                       <td>{data.subPart_desc}</td>
                       <td>{formatDate(data.createdAt)}</td>
                       <td>{formatDate(data.updatedAt)}</td>

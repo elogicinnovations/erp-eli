@@ -27,8 +27,6 @@ function CreateStockTransfer() {
   const [destination, setDestination] = useState('');
   const [reference_code, setReferenceCode] = useState('');
   const [remarks, setRemarks] = useState('');
-
-  const [prNum, setPrNum] = useState('');
   
   const [product, setProduct] = useState([]);
   const [addProductbackend, setAddProductbackend] = useState([]);
@@ -60,17 +58,6 @@ function CreateStockTransfer() {
       });
   }, []);
 
-// para sa pag fetch ng last pr number 
-  useEffect(() => {   
-    axios.get(BASE_URL + '/PR/lastPRNumber')
-    .then(res => {
-      const prNumber = res.data !== null ? res.data : 0;
-      
-      // Increment the value by 1
-      setPrNum(prNumber + 1);
-    })
-    .catch(err => console.log(err));
-  }, []);
 
   useEffect(() => {
     axios.get(BASE_URL + '/product/fetchTable')

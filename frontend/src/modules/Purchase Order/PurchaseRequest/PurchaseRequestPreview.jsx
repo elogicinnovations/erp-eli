@@ -570,6 +570,7 @@ const update = async e => {
                                                       type="number" 
                                                       placeholder='input quality'
                                                       value={prodPR.quantity || ''}
+                                                      readOnly
                                                       onChange={(e) => InputQuantandDescription(i, e.target.value)}
                                                       style={{ height: '40px', width: '120px', fontSize: '15px'}}/>
                                                   </td>
@@ -579,6 +580,7 @@ const update = async e => {
                                                       <Form.Control                                               
                                                         type="text"
                                                         value={prodPR.description}
+                                                        readOnly
                                                         // onChange={(e) => handleInputChange(i, e.target.value)}
                                                         placeholder="Input description"
                                                         style={{ height: '40px', width: '180px', fontSize: '15px', overflowY: 'auto'}}
@@ -586,6 +588,92 @@ const update = async e => {
                                                   </td>
                                                 </tr>
                                               ))}
+
+
+                                              {assemblySelectedFetch.map((assemblyPR,i) =>(
+                                                <tr>
+                                                  <td>{assemblyPR.assembly.assembly_code}</td>
+                                                  <td>
+                                                  <Form.Control
+                                                        type="number"
+                                                        value={assemblyPR.quantity || ''}
+                                                        readOnly
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
+                                                        placeholder='input quality'
+                                                      />
+                                                  </td>
+                                                  <td>{assemblyPR.assembly.assembly_unitMeasurement}</td>
+                                                  <td>{assemblyPR.assembly.assembly_name}</td>
+                                                  <td>
+                                                      <Form.Control                                              
+                                                        type="text"
+                                                        value={assemblyPR.description}
+                                                        readOnly
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
+                                                        placeholder="Input description"
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
+                                                      />
+                                                  </td>
+                                                </tr>
+                                              ))}
+
+                                              {spareSelectedFetch.map((sparePR,i) =>(
+                                                <tr>
+                                                  <td>{sparePR.sparePart.spareParts_code}</td>
+                                                  <td>
+                                                  <Form.Control
+                                                        type="number"
+                                                        value={sparePR.quantity || ''}
+                                                        readOnly
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
+                                                        placeholder='input quality'
+                                                      />
+                                                  </td>
+                                                  <td>{sparePR.sparePart.spareParts_unitMeasurement}</td>
+                                                  <td>{sparePR.sparePart.spareParts_name}</td>
+                                                  <td>
+                                                      <Form.Control                                              
+                                                        type="text"
+                                                        value={sparePR.description}
+                                                        readOnly
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
+                                                        placeholder="Input description"
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
+                                                      />
+                                                  </td>
+                                                </tr>
+                                              ))}
+
+                                                {subPartSelectedFetch.map((subPR,i) =>(
+                                                <tr>
+                                                  <td>{subPR.subPart.subPart_code}</td>
+                                                  <td>
+                                                  <Form.Control
+                                                        type="number"
+                                                        readOnly
+                                                        value={subPR.quantity || ''}
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
+                                                        placeholder='input quality'
+                                                      />
+                                                  </td>
+                                                  <td>{subPR.subPart.subPart_unitMeasurement}</td>
+                                                  <td>{subPR.subPart.subPart_name}</td>
+                                                  <td>
+                                                      <Form.Control                                              
+                                                        type="text"
+                                                        value={subPR.description}
+                                                        readOnly
+                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
+                                                        placeholder="Input description"
+                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
+                                                      />
+                                                  </td>
+                                                </tr>
+                                              ))}
+
 
                                               
                                             </tbody>
@@ -644,7 +732,7 @@ const update = async e => {
                                       Approve
                                     </Button>
                                   )}
-                                    {!isReadOnly && (
+                                    {/* {!isReadOnly && (
                                       <Button
                                         type='button'
                                         onClick={handleEditClick}
@@ -654,7 +742,7 @@ const update = async e => {
                                       >
                                         <NotePencil /> Edit
                                       </Button>
-                                    )}
+                                    )} */}
 
                                   {!isReadOnly && (
 
@@ -685,7 +773,7 @@ const update = async e => {
 
                                   )}
 
-                                    {!isReadOnly && (
+                                    {/* {!isReadOnly && (
                                       <Button
                                         type='button'
                                         onClick={handleEditClick}
@@ -695,7 +783,7 @@ const update = async e => {
                                       >
                                         <NotePencil /> Edit
                                       </Button>
-                                    )}
+                                    )} */}
 
                                   {!isReadOnly && (
 
