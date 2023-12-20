@@ -25,9 +25,10 @@ router.route("/login").post(async (req, res) => {
       },
     });
 
+    // console.log(user);
     if (user && user.col_Pass === password) {
-      const username = { username: user.col_username }
-      const accessToken = jwt.sign(username, process.env.ACCESS_SECRET_TOKEN);
+      const userData = { username: user.col_username, id: user.col_id }
+      const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
       // localStorage.setItem('access-token', accessToken);
 
       // localStorage.removeItem('access-token');
@@ -375,5 +376,31 @@ router.route("/deleteMaster/:param_id").delete(async (req, res) => {
 //         }
 //     );
 // });
+router.route("/viewAuthorization/:id").get( async (req,res) => {
+  try
+  {
+    const id = req.params.id;
+
+    const user = await MasterList.findByPk(id, {
+      include : {
+        model: UserRole
+      }
+    });
+
+    if(user !== null){
+      const authorization = user.userRole.col_authorization.split(', ');
+
+      return res.json({col_authorization: authorization});
+    }
+    else
+    {
+      return res.status(401);
+    }
+  }
+  catch(err)
+  {
+    return res.status(500);
+  }
+})
 
 module.exports = router;

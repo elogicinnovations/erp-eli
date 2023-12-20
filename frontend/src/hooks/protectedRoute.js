@@ -2,17 +2,23 @@
 
 import React from 'react'
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 
 export default function ProtectedRoutes({ children }) {
 
+    const location = useLocation();
     const navigate = useNavigate()
 
     useEffect(() => {
+      const guestRoute = [
+        '/',
+        'forgotPass',
+        'forgotpass'
+      ]
       console.log(localStorage.getItem('accessToken'));
-      if(localStorage.getItem('accessToken') === null){
+      if(localStorage.getItem('accessToken') === null && guestRoute.includes(location.pathname)){
         navigate('/');
       }
     }, [navigate])

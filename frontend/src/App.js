@@ -92,26 +92,16 @@ function App() {
       <DataProvider>
         {/* <GuestRoute> */}
         <Routes>
-          <Route
-            path="/"
-            element={<Login />}
-          />
-          <Route
-            path="/forgotpass"
-            element={<ForgotPass />}
-          />
-          <Route
-            path="/OTP"
-            element={<OTP />}
-          />
-            <Route
-            path="/ConfirmPassword/:email?"
-            element={<ConfirmPass />}
-          />
+          <Route path="/" element={<Login />}/>
+          <Route path="/forgotpass" element={<ForgotPass />}/>
+          <Route path="/OTP" element={<OTP />}/>
+          <Route path="/ConfirmPassword/:email?" element={<ConfirmPass />} />
         </Routes>
         {/* </GuestRoute> */}
       </DataProvider>
 
+      <DataProvider>
+          <ProtectedRoutes>
     <div className="main-of-containers">
       
         <div className="left-of-main-containers">
@@ -122,74 +112,35 @@ function App() {
         </div>
 
         <div className="right-of-main-container"><Header/>
-      <DataProvider>
-        <ProtectedRoutes>
+
         <Routes>
         <Route path="/dashboard" element={<Dashboard setActiveTab={setActiveTab} />} />
 
-          <Route
-            path="/systemSettings"
-            element={<SystemSettings />}
-          />
+              <Route path="/systemSettings" element={<SystemSettings />}/>
 
-          <Route
-            path="/profileSettings"
-            element={<ProfileSettings />}
-          />
+              <Route path="/profileSettings" element={<ProfileSettings />}/>
 
           {/* User Master Data */}
 
-          <Route
-            path="/userRole"
-            element={<Rbac />}
-          />
+              <Route path="/userRole" element={<Rbac />}/>
 
-          <Route
-            path="/createRole"
-            element={<CreateRole />}
-          />
+              <Route path="/createRole" element={<CreateRole />}/>
 
-          <Route
-            path="/editRole/:id"
-            element={<EditRole />}
-          />
+              <Route path="/editRole/:id" element={<EditRole />}/>
 
-          <Route
-            path="/masterList"
-            element={<MasterList/>}
-          />
+              <Route path="/masterList" element={<MasterList/>}/>
 
           {/*BP Master Data*/}
-          <Route
-            path="/Supplier"
-            element={<Supplier />}
-          />
-                <Route
-                  path="/createSupplier"
-                  element={<CreateSupplier />}
-                />
-                <Route
-                  path="/editSupp/:id"
-                  element={<EditSupplier/>}
-                />
-                <Route
-                  path="/viewsupplier/:id"
-                  element={<ViewSupplier />}
-                />
+              <Route path="/Supplier" element={<Supplier />}/>
 
-          <Route
-            path="/productCategory"
-            element={<ProductCategory/>}
-          />
+                    <Route path="/createSupplier" element={<CreateSupplier />}/>
+                    <Route path="/editSupp/:id" element={<EditSupplier/>}/>
+                    <Route path="/viewsupplier/:id" element={<ViewSupplier />}/>
+
+              <Route path="/productCategory" element={<ProductCategory/>}/>
           
-          <Route
-            path="/ProductManu"
-            element={<ProductManu />}
-          />
-          <Route
-            path="/binLocation"
-            element={<BinLocation/>}
-          />
+              <Route path="/ProductManu" element={<ProductManu />}/>
+              <Route path="/binLocation" element={<BinLocation/>}/>
          
           <Route
             path="/productList"
@@ -410,10 +361,13 @@ function App() {
 
              
         </Routes>
+
+            </div>
+          </div>
         </ProtectedRoutes>
       </DataProvider>
-      </div>
-      </div>
+
+
       </div>
     </Router>
   );

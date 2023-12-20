@@ -1,0 +1,268 @@
+[33mcommit 693f8a782d0218bff40546c92c6776324f4b79cd[m[33m ([m[1;36mHEAD -> [m[1;32mMarjon[m[33m)[m
+Author: nojram00slashtech <113487670+nojram00@users.noreply.github.com>
+Date:   Wed Dec 20 11:10:03 2023 +0800
+
+    ssdsds
+
+[33mcommit b78ebd8f748964a1e1fd3881b75f1ba2933b26fd[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/Marjon[m[33m)[m
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Sun Dec 17 10:50:06 2023 +0800
+
+    inventory price
+
+[33mcommit 0711f7abf910135642d1213ce5938964ba027bf8[m
+Merge: 6ea3ec39 0376e5ee
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Sun Dec 17 10:18:32 2023 +0800
+
+    merge linggo
+
+[33mcommit 6ea3ec39771b0e5d0db99e1cdf31e327fa94ccf8[m
+Merge: 39cb8c98 8b4b0624
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Sun Dec 17 09:40:32 2023 +0800
+
+    Merge remote-tracking branch 'origin/Jerome' into Merging
+
+[33mcommit 39cb8c9857895aa8afb41a6bf8a74bf813b65960[m
+Merge: a28faccd e61df1ac
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Sun Dec 17 09:39:09 2023 +0800
+
+    Merge remote-tracking branch 'origin/Cyrus' into Merging
+
+[33mcommit a28faccd95ad2258a12206e0028fa57ef2071c49[m
+Merge: 423e61f5 fbd22a0b
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Sun Dec 17 09:38:57 2023 +0800
+
+    Merge remote-tracking branch 'origin/Joseph' into Merging
+
+[33mcommit 8b4b06244627f113cf3201104b75bac6c6502e99[m
+Author: SlashJerome <jedeguzman@slashtechsolutions.com>
+Date:   Sun Dec 17 09:11:14 2023 +0800
+
+    JeromeOT
+
+[33mcommit e61df1ac83fb30f7408e5e04532bb9066a2388fc[m
+Author: Cyrus Cy <cmachete@slashtechsolutions.com>
+Date:   Sun Dec 17 04:05:48 2023 +0800
+
+    Stocks / settings
+
+[33mcommit fbd22a0bbb6744c60e3c6a366fe38f520b351595[m
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Sun Dec 17 00:13:52 2023 +0800
+
+    Joseph not complete
+
+[33mcommit 0376e5ee7077c9030b87b420ba50ae66ac9fb51e[m
+Author: SlashHersvin <153711274+SlashHersvin@users.noreply.github.com>
+Date:   Sun Dec 17 00:08:33 2023 +0800
+
+    hersvin updates
+
+[33mcommit 423e61f5822c36e60abd47c7dc079f691aa350b3[m
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Sun Dec 17 00:08:28 2023 +0800
+
+    Export Report
+
+[33mcommit bcfead503e41cd994f45f648a0c0ed1c000fba28[m
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Fri Dec 15 21:02:07 2023 +0800
+
+    updated cy
+
+[33mcommit 09b5c35c8966fafc0082bd824313e3d5783dcb3a[m
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Fri Dec 15 20:38:55 2023 +0800
+
+    stock adding products in progress
+
+[33mcommit f72a9d54b78aee42dc413aac5064552c1285d0d4[m
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Fri Dec 15 17:58:52 2023 +0800
+
+    updated
+
+[33mcommit b3baba722227b40d71ffb10e9b2cb43a8179c4b9[m
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Fri Dec 15 16:16:21 2023 +0800
+
+    lala
+
+[33mcommit d314d874ce7cc8f4e5cd1d0c705e2ee11ba08b5b[m
+Merge: 39d9de73 042bac08
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:52:04 2023 +0800
+
+    Last merge
+
+[33mcommit 39d9de73c51d4e8a747d94bdf5828e4942927d03[m
+Merge: 63856e6e 960bc734
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:45:07 2023 +0800
+
+    Second to the last
+
+[33mcommit 63856e6eacdcd79c8b813fdeb1b8b27e6c7ad322[m
+Merge: 910f5f58 e4195047
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:39:43 2023 +0800
+
+    Merge remote-tracking branch 'origin/Joseph' into Merging
+
+[33mcommit e4195047965e28e68c8d0bac509fccccd0fcf9ca[m
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:39:13 2023 +0800
+
+    SIGE
+
+[33mcommit 910f5f5852b32ba42563eafa775d0f166c9085bb[m
+Merge: b2edef2e 7c105acf
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:37:10 2023 +0800
+
+    Internal Merging
+
+[33mcommit b2edef2e334a1cad8a25a29bdab6597a4fe06bdf[m
+Merge: 156da458 087ee0c0
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:35:45 2023 +0800
+
+    Merge remote-tracking branch 'origin/Cyrus' into Merging
+
+[33mcommit 156da458455086dbdd37dd3fd0efaf1560587a8a[m
+Merge: d8fad775 fb40a456
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:35:16 2023 +0800
+
+    Merge remote-tracking branch 'origin/Joseph' into Merging
+
+[33mcommit d8fad775a4f491f9bcac9037dc3e12e68bca0e80[m
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Fri Dec 15 15:28:36 2023 +0800
+
+    asdsad
+
+[33mcommit 960bc73425856b0ed899f98fdaf61e8093aa8b9d[m
+Author: SlashJerome <jedeguzman@slashtechsolutions.com>
+Date:   Fri Dec 15 15:26:43 2023 +0800
+
+    Sprint4Jerome
+
+[33mcommit 087ee0c02fe8ad29f54d128323939a8ebc019a40[m
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Fri Dec 15 15:26:24 2023 +0800
+
+    stock
+
+[33mcommit 7c105acf103c6ec0b28d8dd5b5ddde6bf1947baa[m
+Author: SlashHersvin <helabastida@slashtechsolutions.com>
+Date:   Fri Dec 15 15:08:48 2023 +0800
+
+    new
+
+[33mcommit fb40a456ae52b0bbf5c01b15a62737374e35e0e7[m
+Merge: 03ca6d0b bb1f81dd
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:02:38 2023 +0800
+
+    Merge branch 'Joseph' of https://github.com/genborja/ERP-SBF into Joseph
+
+[33mcommit 03ca6d0bd7d944443dc1be1216468bf1af66e45b[m
+Author: SlashJoseph <jjumaday@slashtechsolutions.com>
+Date:   Fri Dec 15 15:01:33 2023 +0800
+
+    Joseph
+
+[33mcommit baa26bb95e20ef69bf42bc969b8309d7b601af25[m
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Fri Dec 15 14:49:30 2023 +0800
+
+    haaaa
+
+[33mcommit 042bac08de70d66c03c2512588565655eabc7e22[m
+Author: nojram00slashtech <113487670+nojram00@users.noreply.github.com>
+Date:   Fri Dec 15 14:38:08 2023 +0800
+
+    'new'
+
+[33mcommit 5901f81d2d55fff3bc43976f1600f0158de807e4[m
+Author: SlashHersvin <helabastida@slashtechsolutions.com>
+Date:   Fri Dec 15 14:10:01 2023 +0800
+
+    hersvin
+
+[33mcommit 283e7594809b553d32e18caa7971304a24ee1241[m
+Author: Cyrus Cy <cmachete@slashtechsolutions.com>
+Date:   Fri Dec 15 00:42:23 2023 +0800
+
+    Updated Stock Management
+
+[33mcommit 2bf13abc211d2c3b27b6ff14b230ce88a26e6d74[m
+Merge: c063b8da 13a01ccf
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Thu Dec 14 21:58:29 2023 +0800
+
+    Merge branch 'Cyrus' of https://github.com/Chscodes/ERP-SBF into Cyrus
+
+[33mcommit c063b8dae11985ef14409fc31282c5a0fd7f5d43[m
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Thu Dec 14 21:57:28 2023 +0800
+
+    Updated Warehouse
+
+[33mcommit 13a01ccffcb8a1344a86715f2990995e9d68d311[m
+Author: Cyrus Cy <cmachete@slashtechsolutions.com>
+Date:   Thu Dec 14 21:37:16 2023 +0800
+
+    test
+
+[33mcommit 7c7a8af2ff51c6b0d446c034036ddb4917aa8329[m
+Author: slashChes <cminoza@slashtechsolutions.com>
+Date:   Wed Dec 13 18:00:34 2023 +0800
+
+    test
+
+[33mcommit b42c3448c6aefa2ed4c4c0804c2f958c5415c6ca[m
+Author: cyrusmachete <cmachete@slashtechsolutions.com>
+Date:   Wed Dec 13 17:20:59 2023 +0800
+
+    test
+
+[33mcommit bb1f81dd5796d4b335173d55ca3bfe3285830870[m
+Merge: 1de26210 043813cd
+Author: JosephCode14 <josephjumaday14@gmail.com>
+Date:   Wed Dec 13 14:55:16 2023 +0800
+
+    Merge remote-tracking branch 'origin/Cyrus' into Development
+
+[33mcommit 1de2621010d329d43f65488d170a21f1c00c9c8d[m
+Merge: 0b57e7d8 b1ff79dc
+Author: JosephCode14 <josephjumaday14@gmail.com>
+Date:   Wed Dec 13 14:52:40 2023 +0800
+
+    Merge remote-tracking branch 'origin/Marjon' into Development
+
+[33mcommit 0b57e7d8ee894363e804282ba19e472b6ba85b20[m
+Merge: 531f687d f6387e5a
+Author: JosephCode14 <josephjumaday14@gmail.com>
+Date:   Wed Dec 13 14:52:17 2023 +0800
+
+    Merge remote-tracking branch 'origin/Jerome' into Development
+
+[33mcommit 531f687d6d38904664d9e1c274d1db9dd9d9865d[m
+Merge: 3f41309b 0bf7f89c
+Author: JosephCode14 <josephjumaday14@gmail.com>
+Date:   Wed Dec 13 14:52:06 2023 +0800
+
+    Merge remote-tracking branch 'origin/Hersvin' into Development
+
+[33mcommit 3f41309b8784940d5678c317355e9e30061ba5d2[m
+Merge: befd40f4 85019279
+Author: JosephCode14 <josephjumaday14@gmail.com>
+Date:   Wed Dec 13 14:51:26 2023 +0800
+
+    Merge remote-tracking branch 'origin/Joseph' 

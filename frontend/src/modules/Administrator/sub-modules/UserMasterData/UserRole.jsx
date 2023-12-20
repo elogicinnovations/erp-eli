@@ -269,20 +269,20 @@ function UserRole() {
                     <tr
                       key={i}
                       className={i % 2 === 0 ? "even-row" : "odd-row"}>
-                      <td>{data.col_rolename}</td>
-                      <td className="autho">{data.col_authorization}</td>
-                      <td>{data.col_desc}</td>
-                      <td>{formatDate(data.createdAt)}</td>
-                      <td>{formatDate(data.updatedAt)}</td>
+                      <td>{data?.col_rolename}</td>
+                      <td className="autho">{data?.col_authorization}</td>
+                      <td>{data?.col_desc}</td>
+                      <td>{formatDate(data?.createdAt)}</td>
+                      <td>{formatDate(data?.updatedAt)}</td>
                       <td>
                         {/* Render the icon based on the state */}
                         {/* Render the icon based on the state */}
-                        {isVertical[data.col_id] ? (
+                        {isVertical[data?.col_id] ? (
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
-                              toggleButtons(data.col_id);
+                              toggleButtons(data?.col_id);
                             }}
                             style={{
                               transition:

@@ -32,6 +32,7 @@ import "../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import Header from "../../../../../partials/header";
+import { jwtDecode } from "jwt-decode";
 
 function BinLocation() {
   // Artifitial data
@@ -82,6 +83,10 @@ function BinLocation() {
       setOpenDropdownIndex(index);
     }
   };
+
+
+
+
 
   const handleClose = () => {
     setShowModal(false);
@@ -400,6 +405,26 @@ function BinLocation() {
   const setButtonVisibles = (userId) => {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
+
+  const [authrztn, setauthrztn] = useState([]);
+  useEffect(() => {
+
+    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    console.log("Decoded: ", decoded);
+    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      .then((res) => {
+        if(res.status === 200){
+          console.log(res);
+          setauthrztn(res.data.col_authorization);
+        }
+    })
+      .catch((err) => {
+        console.error(err);
+    });
+
+  }, []);
+
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -434,12 +459,15 @@ function BinLocation() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
+                  { authrztn.includes('Bin Location - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Bin Location
                   </button>
+                  )}
+
                 </div>
               </div>
             </div>
@@ -490,6 +518,8 @@ function BinLocation() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
+
+                               { authrztn.includes('Bin Location - Edit') && (
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -498,6 +528,9 @@ function BinLocation() {
                                 }}>
                                 Update
                               </button>
+                               )}
+
+                              { authrztn.includes('Bin Location - Delete') && (
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -506,6 +539,8 @@ function BinLocation() {
                                 }}>
                                 Delete
                               </button>
+                              )}
+
                             </div>
                           )}
                         </div>

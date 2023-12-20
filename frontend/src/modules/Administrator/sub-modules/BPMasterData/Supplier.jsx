@@ -25,7 +25,11 @@ import "../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
 import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4";
 import "../../../../assets/skydash/js/off-canvas";
 
-import * as $ from "jquery";
+import * as $ from 'jquery';
+
+import { jwtDecode } from "jwt-decode";
+
+
 
 function Supplier() {
   const [supplier, setsupplier] = useState([]);
@@ -181,17 +185,34 @@ function Supplier() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && supplier.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [supplier]);
+      useEffect(() => {
+        // Initialize DataTable when role data is available
+        if ($('#order-listing').length > 0 && supplier.length > 0) {
+          $('#order-listing').DataTable();
+        }
+      }, [supplier]);
 
-  const navigate = useNavigate();
-  return (
-    <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
+      const [authrztn, setauthrztn] = useState([]);
+      useEffect(() => {
+
+        var decoded = jwtDecode(localStorage.getItem('accessToken'));
+        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.uid)
+          .then((res) => {
+            if(res.status === 200){
+              setauthrztn(res.data.authorization);
+            }
+        })
+          .catch((err) => {
+            console.error(err);
+        });
+
+      }, [authrztn]);
+
+    const navigate = useNavigate();
+    return(
+
+        <div className="main-of-containers">
+            {/* <div className="left-of-main-containers">
             <Sidebar />
             </div> */}
       <div className="right-of-main-containers">
@@ -226,135 +247,109 @@ function Supplier() {
                 <p>Supplier</p>
               </div>
 
-              <div className="button-create-side">
-                <div className="Buttonmodal-new">
-                  <Link
-                    to={"/CreateSupplier"}
-                    style={{
-                      textDecoration: "none",
-                      backgroundColor: "inherit",
-                    }}>
-                    <button>
-                      <span style={{}}>
-                        <Plus size={25} />
-                      </span>
-                      Create New
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
-                <thead>
-                  <tr>
-                    <th className="tableh">SUPPLIER Code</th>
-                    <th className="tableh">SUPPLIER NAME</th>
-                    <th className="tableh">CONTACT</th>
-                    <th className="tableh">STATUS</th>
-                    <th className="tableh">Date Created</th>
-                    <th className="tableh">Date Modified</th>
-                    <th className="tableh">ACTION</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {supplier.map((data, i) => (
-                    <tr key={i}>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewSupplier/${data.supplier_code}`)
-                        }>
-                        {data.supplier_code}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewSupplier/${data.supplier_code}`)
-                        }>
-                        {data.supplier_name}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewSupplier/${data.supplier_code}`)
-                        }>
-                        {data.supplier_contactPerson}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewSupplier/${data.supplier_code}`)
-                        }>
-                        {data.supplier_status}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewSupplier/${data.supplier_code}`)
-                        }>
-                        {formatDate(data.createdAt)}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewSupplier/${data.supplier_code}`)
-                        }>
-                        {formatDate(data.updatedAt)}
-                      </td>
-                      <td>
-                        {isVertical[data.supplier_code] ? (
-                          <DotsThreeCircleVertical
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.supplier_code);
-                            }}
-                          />
-                        ) : (
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.supplier_code);
-                            }}
-                          />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.supplier_code) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-                              <button className="btn" type="button">
-                                <Link
-                                  to={`/editSupp/${data.supplier_code}`}
-                                  style={{
-                                    textDecoration: "none",
-                                    color: "#252129",
-                                  }}>
-                                  Update
+                            <div className="button-create-side">
+                            <div className="Buttonmodal-new">
+                                <Link to={'/CreateSupplier'} style={{textDecoration: 'none', backgroundColor: 'inherit'}}>
+                                { authrztn.includes('Supplier - Add') && (
+                                <button>
+                                    <span style={{ }}>
+                                    <Plus size={25} />
+                                    </span>
+                                    Create New
+                                </button>
+                                )}
                                 </Link>
-                              </button>
-                              {/* <button
-                                className="btn"
-                                type="button"
-                                onClick={() => {
-                                  handleDelete(data.supplier_code);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button> */}
+                                </div>
                             </div>
-                          )}
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    </div>
+
+                    <div className="table-containss">
+                        <div className="main-of-all-tables">
+                            <table className='table-hover' id='order-listing'>
+                                    <thead>
+                                    <tr>
+                                        <th className='tableh'>SUPPLIER Code</th>
+                                        <th className='tableh'>SUPPLIER NAME</th>
+                                        <th className='tableh'>CONTACT</th>
+                                        <th className='tableh'>STATUS</th>
+                                        <th className='tableh'>Date Created</th>
+                                        <th className='tableh'>Date Modified</th>
+                                        <th className='tableh'>ACTION</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {supplier.map((data,i) =>(
+                                            <tr key={i}>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_code}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_name}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_contactPerson}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_status}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.createdAt)}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.updatedAt)}</td>
+                                                <td>
+                                                <DotsThreeCircle
+                                                    size={32}
+                                                    className="dots-icon"
+                                                    style={{
+                                                    cursor: 'pointer',
+                                                    transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
+                                                    color: rotatedIcons[i] ? '#666' : '#000',
+                                                    transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
+                                                    }}
+                                                    onClick={(event) => toggleDropdown(event, i)}
+                                                />
+
+
+                                                <div
+                                                    className='choices'
+                                                    style={{
+                                                    position: 'fixed',
+                                                    top: dropdownPosition.top - 30 + 'px',
+                                                    left: dropdownPosition.left - 100 + 'px',
+                                                    opacity: showDropdown ? 1 : 0,
+                                                    visibility: showDropdown ? 'visible' : 'hidden',
+                                                    transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+                                                    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
+                                                    }}>
+
+                                                    {/* Your dropdown content here */}
+
+                                                    { authrztn.includes('Supplier - Edit') && (
+                                                    <button className='btn'  type='button' >
+                                                        <Link to={`/editSupp/${data.supplier_code}`} style={{textDecoration:'none', color:'#252129'}}>Update</Link>
+                                                    </button>
+                                                    )}
+
+                                                    { authrztn.includes('Supplier - Delete') && (
+                                                    <button className='btn' type='button' onClick={() => handleDelete(data.supplier_code)}>
+                                                        Delete
+                                                    </button>
+                                                    )}
+
+                                                </div>
+
+
+                                                </td>
+                                                {/* <td>
+                                                    <button className='btn'  type='button' >
+                                                        <Link to={`/editSupp/${data.supplier_code}`} ><NotePencil size={32} /></Link>
+                                                    </button>
+                                                    <button className='btn' type='button' onClick={() => handleDelete(data.supplier_code)}>
+                                                        <Trash size={32} color="#e60000" />
+                                                    </button>
+                                                </td> */}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Supplier;

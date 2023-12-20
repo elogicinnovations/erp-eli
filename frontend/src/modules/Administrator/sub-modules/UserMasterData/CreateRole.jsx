@@ -148,6 +148,10 @@ function Create_role() {
       "Product Categories - Edit",
       "Product Categories - Delete",
       "Product Categories - View",
+      "Product Manufacturer - Add",
+      "Product Manufacturer - Edit",
+      "Product Manufacturer - Delete",
+      "Product Manufacturer - View",
       "Bin Location - Add",
       "Bin Location - Edit",
       "Bin Location - Delete",
@@ -964,6 +968,106 @@ function Create_role() {
                             <label
                               className="p-3"
                               htmlFor="Product Categories - View"></label>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}>
+                            Product Manufacturer
+                          </td>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Product Manufacturer - Add"
+                              name="vehicle1"
+                              value="Product Manufacturer - Add"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Product Manufacturer - Add"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Product Manufacturers - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Product Manufacturer - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Product Manufacturer - Edit"
+                              name="vehicle1"
+                              value="Product Manufacturer - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Product Manufacturer - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  "Product Manufacturer - Edit"
+                                )
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Product Manufacturer - Edit"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Product Manufacturer - Delete"
+                              name="vehicle1"
+                              value="Product Manufacturer - Delete"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Product Manufacturer - Delete"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  "Product Manufacturer - Delete"
+                                )
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Product Manufacturer - Delete"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Product Manufacturer - View"
+                              name="vehicle1"
+                              value="Product Manufacturer - View"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Product Manufacturer - View"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  "Product Manufacturer - View"
+                                )
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Product Manufacturer - View"></label>
                           </div>
                         </td>
                       </tr>
