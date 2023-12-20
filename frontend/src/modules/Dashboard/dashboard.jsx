@@ -132,7 +132,13 @@ import Header from '../../partials/header';
   //   },
   // ];
 
-function Dashboard() {
+const Dashboard = ({ setActiveTab }) => {
+
+
+  const handleTabClick = (tabKey) => {
+    setActiveTab(tabKey);
+  };
+
   const [productIssued, setProductIssued] = useState('');
   const [inventoryCount, setinventoryCount] = useState('');
   const [stockValue, setStockValue] = useState('');
@@ -309,7 +315,7 @@ function Dashboard() {
                 </div> */}
                 <div className="dashboard-content">
                   <div className="preview-tabs">
-                    <div className="tabs">
+                    <Link to="/issuance"  onClick={() => handleTabClick("issuance")} className="tabs">
                       <div className="tab-title">
                         <div className="asset-icon">
                           <Package weight={'fill'} size={20} style={{color: '#4268fb'}}/>
@@ -326,9 +332,9 @@ function Dashboard() {
                         <TrendUp size={25} weight='bold' style={{color: '#42eb42'}}/><p1>25% </p1> vs last month
                         </div>
                       </div>
-                    </div>
+                    </Link>
 
-                    <div className="tabs">
+                    <Link to="/inventory"  onClick={() => handleTabClick("inventory")} className="tabs">
                       <div className="tab-title">
                         <div className="product-icon">
                         <Coins size={20} style={{color: '#ff8b00'}}/>
@@ -345,7 +351,7 @@ function Dashboard() {
                         <TrendDown size={25} weight='bold' style={{color: 'red'}}/><p1>25%</p1> vs last month
                         </div>
                       </div>
-                    </div>
+                    </Link>
 
                     <div className="tabs">
                       <div className="tab-title">
@@ -366,7 +372,7 @@ function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="tabs">
+                    <Link to='/supplier' className="tabs">
                       <div className="tab-title">
                         <div className="supplier-icon">
                           <MapPin weight='fill' size={20} style={{color: '#b512b5'}}/>
@@ -383,7 +389,7 @@ function Dashboard() {
                         <TrendUp size={25} weight='bold' style={{color: '#42eb42'}}/><p1>25%</p1> vs last month
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                   <div className="inventory-stock">
                     <div className="inventory-box">
@@ -576,7 +582,7 @@ function Dashboard() {
                       </div>
                       <div className="preview-tabs">
                         
-                      <div className="tab">
+                      <Link to='/purchaseOrderList' className="tab">
                         <div className="tab-data">
                           <div className="tvalue">
                             {orderedCount}
@@ -588,8 +594,8 @@ function Dashboard() {
                           <CaretUp size={20} weight='fill' style={{color: '#42eb42'}}/><p1>25% </p1> vs last month
                           </div>
                         </div>
-                      </div>
-                      <div className="tab">
+                      </Link>
+                      <Link to='/receivingManagement' className="tab">
                         <div className="tab-data">
                           <div className="tvalue">
                             1,441
@@ -601,8 +607,8 @@ function Dashboard() {
                           <CaretDown size={20} weight='fill' style={{color: 'red'}}/><p1>25% </p1> vs last month
                           </div>
                         </div>
-                      </div>
-                      <div className="tab">
+                      </Link>
+                      <Link to="/return"  onClick={() => handleTabClick("return")} className="tab">
                         <div className="tab-data">
                           <div className="tvalue">
                             1,441
@@ -614,7 +620,7 @@ function Dashboard() {
                           <CaretUp size={20} weight='fill' style={{color: '#42eb42'}}/><p1>25% </p1> vs last month
                           </div>
                         </div>
-                      </div>
+                      </Link>
                         
                       </div>
                       <ResponsiveContainer width="100%" height={300}>
