@@ -15,7 +15,7 @@ const CostCenter = sequelize.define('cost_center', {
   },
   col_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   description: {
     type: DataTypes.STRING,

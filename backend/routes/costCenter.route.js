@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {where, Op} = require('sequelize')
+const {Sequelize, where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 const { CostCenter, MasterList } = require("../db/models/associations"); 
 
@@ -8,7 +8,16 @@ const { CostCenter, MasterList } = require("../db/models/associations");
 router.route('/getCostCenter').get(async (req, res) => 
 {
     try {
-        const data = await CostCenter.findAll({include: {model: MasterList, required: true}});
+        const data = await CostCenter.findAll({
+          where: {
+            col_Fname: {
+            [Sequelize.Op.ne]: null, // Include rows where col_Fname is not null
+          },
+          },
+          include: {
+            model: MasterList, 
+            required: true},
+          });
 
         if (data) {
         return res.json(data);
@@ -28,7 +37,6 @@ router.route('/create').post(async (req, res) => {
       const existingCostCenter = await CostCenter.findOne({
         where: {
           name: req.body.name
-         
         },
       });
   

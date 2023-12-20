@@ -268,6 +268,7 @@ function CostCenter() {
                 <tbody>
                   {/* <CostContext.Provider value={costData}> */}
                   {CostCenter.map((data, i) => (
+                    data.col_Fname !== null ? (
                     <tr key={i}>
                       <td
                         onClick={() => navigate(`/viewCostCenter/${data.id}`)}>
@@ -343,6 +344,7 @@ function CostCenter() {
                         </div>
                       </td>
                     </tr>
+                    ): null
                   ))}
                 </tbody>
               </table>
