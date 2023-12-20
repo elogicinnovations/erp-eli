@@ -41,20 +41,19 @@ function CreateSupplier() {
     setIsChecked(event.target.checked);
   };
 
-  // para sa pag fetch ng last supplier code 
-  useEffect(() => {   
-    axios.get(BASE_URL + '/supplier/lastCode')
-      .then(res => {
-        const code = res.data !== null ? res.data.toString().padStart(4, '0') : '0001';
-        
+  // para sa pag fetch ng last supplier code
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/supplier/lastCode")
+      .then((res) => {
+        const code =
+          res.data !== null ? res.data.toString().padStart(4, "0") : "0001";
+
         // Increment the value by 1
         setsuppCode(code);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
-  
-  
-  
 
   useEffect(() => {
     axios
@@ -104,14 +103,20 @@ function CreateSupplier() {
   const [maxTinLength, setMaxTinLength] = useState(15);
 
   const handleTinChange = (e) => {
-    const inputValue = e.target.value;
+    const inputValue = e.target.value.replace(/[^0-9-]/g, ""); // Remove non-numeric and non-dash characters
+
+    if (inputValue.length <= maxTinLength) {
+      setsuppTin(inputValue);
+    }
+    // Allow backspace key
+    if (e.key === "Backspace") {
+      return;
+    }
+
+    // Allow only numeric input
     if (e.key === "e" || isNaN(e.key)) {
       e.preventDefault();
-    }
-    const tinPattern = /^[0-9\-]+$/;
-
-    if (inputValue.length <= maxTinLength && tinPattern.test(inputValue)) {
-      setsuppTin(inputValue);
+      return;
     }
   };
 
@@ -208,7 +213,6 @@ function CreateSupplier() {
     }
   };
 
-
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -299,7 +303,6 @@ function CreateSupplier() {
                     maxLength={10}
                     placeholder="Supplier Code"
                   />
-                  
                 </Col>
               </Row>
 
@@ -318,7 +321,7 @@ function CreateSupplier() {
                     onChange={handleTinChange}
                     pattern="^[0-9-]+$"
                     placeholder="000–123–456–001"
-                    // maxLength={setMaxTinLength}
+                    maxLength={setMaxTinLength}
                   />
                 </Col>
                 <Col>

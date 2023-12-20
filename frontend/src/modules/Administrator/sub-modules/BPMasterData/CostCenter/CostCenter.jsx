@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../Sidebar/sidebar";
 import "../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import { Link } from "react-router-dom";
@@ -8,59 +8,63 @@ import swal from "sweetalert";
 import BASE_URL from "../../../../../assets/global/url";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/esm/Button";
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
+  // MagnifyingGlass,
+  // Gear,
+  // Bell,
+  // UserCircle,
   Plus,
-  Trash,
-  NotePencil,
+  // Trash,
+  // NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
 
 import * as $ from "jquery";
-import Header from "../../../../../partials/header";
+// import Header from "../../../../../partials/header";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function CostCenter() {
   const [CostCenter, setCostCenter] = useState([]);
 
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  const [rotatedIcons, setRotatedIcons] = useState(
-    Array(CostCenter.length).fill(false)
-  );
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  // const [showDropdown, setShowDropdown] = useState(false);
+  // const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  // const [rotatedIcons, setRotatedIcons] = useState(
+  //   Array(CostCenter.length).fill(false)
+  // );
+  // const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
-  const toggleDropdown = (event, index) => {
-    // Check if the clicked icon is already open, close it
-    if (index === openDropdownIndex) {
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = !newRotatedIcons[index];
-        return newRotatedIcons;
-      });
-      setShowDropdown(false);
-      setOpenDropdownIndex(null);
-    } else {
-      // If a different icon is clicked, close the currently open dropdown and open the new one
-      setRotatedIcons(Array(CostCenter.length).fill(false));
-      const iconPosition = event.currentTarget.getBoundingClientRect();
-      setDropdownPosition({
-        top: iconPosition.bottom + window.scrollY,
-        left: iconPosition.left + window.scrollX,
-      });
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = true;
-        return newRotatedIcons;
-      });
-      setShowDropdown(true);
-      setOpenDropdownIndex(index);
-    }
-  };
+  // const toggleDropdown = (event, index) => {
+  //   // Check if the clicked icon is already open, close it
+  //   if (index === openDropdownIndex) {
+  //     setRotatedIcons((prevRotatedIcons) => {
+  //       const newRotatedIcons = [...prevRotatedIcons];
+  //       newRotatedIcons[index] = !newRotatedIcons[index];
+  //       return newRotatedIcons;
+  //     });
+  //     setShowDropdown(false);
+  //     setOpenDropdownIndex(null);
+  //   } else {
+  //     // If a different icon is clicked, close the currently open dropdown and open the new one
+  //     setRotatedIcons(Array(CostCenter.length).fill(false));
+  //     const iconPosition = event.currentTarget.getBoundingClientRect();
+  //     setDropdownPosition({
+  //       top: iconPosition.bottom + window.scrollY,
+  //       left: iconPosition.left + window.scrollX,
+  //     });
+  //     setRotatedIcons((prevRotatedIcons) => {
+  //       const newRotatedIcons = [...prevRotatedIcons];
+  //       newRotatedIcons[index] = true;
+  //       return newRotatedIcons;
+  //     });
+  //     setShowDropdown(true);
+  //     setOpenDropdownIndex(index);
+  //   }
+  // };
 
   // Fetch Data
   useEffect(() => {
@@ -134,8 +138,8 @@ function CostCenter() {
     });
   };
 
-  const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
-  const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
+  const [visibleButtons, setVisibleButtons] = useState({});
+  const [isVertical, setIsVertical] = useState({});
 
   const toggleButtons = (userId) => {
     setVisibleButtons((prevVisibleButtons) => {
@@ -181,8 +185,7 @@ function CostCenter() {
 
   //search
   useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && CostCenter.length > 0) {
+    if (CostCenter.length > 0) {
       $("#order-listing").DataTable();
     }
   }, [CostCenter]);
@@ -198,6 +201,114 @@ function CostCenter() {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
+
+  const [name, setName] = useState("");
+  const [select_masterlist, setSelect_Masterlist] = useState([]);
+  const [description, setDescription] = useState("");
+
+  const [validated, setValidated] = useState(false);
+  const [status, setStatus] = useState("Active");
+
+  // ----------------------------------Start Get  Master List------------------------------//
+  const [masterList, setMasteList] = useState([]);
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/masterList/masterTable")
+      .then((response) => {
+        setMasteList(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching master list:", error);
+      });
+  }, []);
+
+  const handleFormChangeMasterList = (event) => {
+    setSelect_Masterlist(event.target.value);
+  };
+
+  // ----------------------------------End Get  Master List------------------------------//
+
+  // ----------------------------------Start Add new Cost center------------------------------//
+  const add = async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the Required text fields",
+      });
+    } else {
+      axios
+        .post(BASE_URL + "/costCenter/create", {
+          name,
+          masterList,
+          description,
+          select_masterlist,
+          status,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            SuccessInserted(res);
+          } else if (res.status === 201) {
+            Duplicate_Message();
+          } else {
+            ErrorInserted();
+          }
+        });
+    }
+    setValidated(true); //for validations
+  };
+  // ----------------------------------End Add new Cost center------------------------------//
+
+  // ----------------------------------Start Search------------------------------//
+  // React.useEffect(() => {
+  //   $(document).ready(function () {
+  //     $("#order-listing").DataTable();
+  //   });
+  // }, []);
+  // ----------------------------------End Serach------------------------------//
+
+  // ----------------------------------Validation------------------------------//
+  const SuccessInserted = (res) => {
+    swal({
+      title: "Cost Center Add Successful!",
+      text: "The Cost Center has been Added Successfully.",
+      icon: "success",
+      button: "OK",
+    }).then(() => {
+      // navigate("/costCenter");
+      handleClose();
+    });
+  };
+  const Duplicate_Message = () => {
+    swal({
+      title: "Cost Center is Already Exist",
+      text: "Please Input a New Cost Center ",
+      icon: "error",
+    });
+  };
+  const ErrorInserted = () => {
+    swal({
+      title: "Something went wrong",
+      text: "Please Contact our Support",
+      icon: "error",
+      button: "OK",
+    });
+  };
+
+  const handleActiveStatus = (e) => {
+    if (status === "Active") {
+      setStatus("Inactive");
+    } else {
+      setStatus("Active");
+    }
+  };
+  // --
 
   return (
     <div className="main-of-containers">
@@ -237,7 +348,7 @@ function CostCenter() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  <Link
+                  {/* <Link
                     to="/createCostCenter"
                     onClick={handleShow}
                     className="button">
@@ -245,7 +356,13 @@ function CostCenter() {
                       <Plus size={25} />
                     </span>
                     Create New
-                  </Link>
+                  </Link> */}
+                  <button onClick={handleShow}>
+                    <span style={{}}>
+                      <Plus size={25} />
+                    </span>
+                    Create New
+                  </button>
                 </div>
               </div>
             </div>
@@ -352,6 +469,109 @@ function CostCenter() {
           </div>
         </div>
       </div>
+
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>
+            <Row>
+              <Col>
+                <h1>Create Cost Center</h1>
+              </Col>
+              <Col>
+                <div className="form-group d-flex flex-row justify-content-center align-items-center">
+                  <label
+                    className="userstatus"
+                    style={{ fontSize: 15, marginRight: 10 }}>
+                    Active Status
+                  </label>
+                  <input
+                    type="checkbox"
+                    name="cstatus"
+                    className="toggle-switch" // Add the custom class
+                    onChange={handleActiveStatus}
+                    defaultChecked={status}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {" "}
+          <Form noValidate validated={validated} onSubmit={add}>
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Cost Center:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter name"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Assign User:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    onChange={handleFormChangeMasterList}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue="">
+                    <option disabled value="">
+                      Select User
+                    </option>
+                    {masterList.map((masterList) => (
+                      <option key={masterList.col_id} value={masterList.col_id}>
+                        {masterList.col_Fname}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Description:{" "}
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  placeholder="Enter details name"
+                  style={{ height: "100px", fontSize: "15px" }}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </Form.Group>
+            </div>
+
+            <div className="save-cancel">
+              <Button
+                type="submit"
+                className="btn btn-warning"
+                size="md"
+                style={{ fontSize: "20px", margin: "0px 5px" }}>
+                Save
+              </Button>
+              <Button
+                onClick={() => {
+                  handleClose();
+                }}
+                className="btn btn-secondary btn-md"
+                size="md"
+                style={{ fontSize: "20px", margin: "0px 5px" }}>
+                Close
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
