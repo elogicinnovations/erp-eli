@@ -144,6 +144,10 @@ function Create_role() {
       "Product List - Edit",
       "Product List - Delete",
       "Product List - View",
+      "Spare Part - Add",
+      "Spare Part - Edit",
+      "Spare Part - Delete",
+      "Spare Part - View",
       "Product Categories - Add",
       "Product Categories - Edit",
       "Product Categories - Delete",
@@ -868,6 +872,106 @@ function Create_role() {
                             <label
                               className="p-3"
                               htmlFor="Product List - View"></label>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}>
+                            Spare Parts
+                          </td>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Spare Part - Add"
+                              name="vehicle1"
+                              value="Spare Part - Add"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Product Categories - Add"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Product Categories - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Product Categories - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Spare Part - Edit"
+                              name="vehicle1"
+                              value="Spare Part - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Spare Part - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  "Spare Part - Edit"
+                                )
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Spare Part - Edit"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Spare Part - Delete"
+                              name="vehicle1"
+                              value="Spare Part - Delete"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Spare Part - Delete"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  "Spare Part - Delete"
+                                )
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Spare Part - Delete"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Product Categories - View"
+                              name="vehicle1"
+                              value="Product Categories - View"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Spare Part - View"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(
+                                  "Spare Part - View"
+                                )
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Spare Part - View"></label>
                           </div>
                         </td>
                       </tr>
