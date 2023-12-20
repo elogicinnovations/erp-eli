@@ -646,7 +646,6 @@ function MasterList() {
   };
 
   useEffect(() => {
-    // addAuthorization();
 
     var decoded = jwtDecode(localStorage.getItem('accessToken'));
 
