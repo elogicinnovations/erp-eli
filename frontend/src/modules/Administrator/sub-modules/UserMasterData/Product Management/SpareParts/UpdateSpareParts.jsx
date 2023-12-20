@@ -42,7 +42,7 @@ const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
 const [isReadOnly, setReadOnly] = useState(false);
 
-
+const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 const navigate = useNavigate();
 const { id } = useParams();
 
@@ -83,9 +83,7 @@ const handlePriceChange = (index, value) => {
 
   setTableSupp(updatedTable);
   setaddPriceInputbackend(serializedPriceDATA);
-
-  // Return the updatedInputs to be used as the new state
-  return updatedTable;
+  setIsSaveButtonDisabled(false);
 };
 
 //for supplier selection values
@@ -109,6 +107,7 @@ const handleSelectChange = (selectedOptions) => {
   ];
 
   setTableSupp(updatedTable);
+  setIsSaveButtonDisabled(false);
 };
 
 //fetch the supplier spareparts in table
@@ -253,6 +252,7 @@ const update = async (e) => {
             button: "OK",
           }).then(() => {
             navigate("/spareParts");
+            setIsSaveButtonDisabled(true);
           });
         } else if (res.status === 201) {
           swal({
@@ -572,7 +572,7 @@ console.log(addPriceInput)
                         </div>
                         <div className='save-cancel'>
                         {isReadOnly && (
-                          <Button type='submit' disabled={!isReadOnly} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
+                          <Button type='submit' disabled={isSaveButtonDisabled} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
                         )    
                       
                         }

@@ -274,7 +274,7 @@ function CreateAssemblyForm() {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Product Code:{" "}
+                    Assembly Code:{" "}
                   </Form.Label>
                   <Form.Control
                     required

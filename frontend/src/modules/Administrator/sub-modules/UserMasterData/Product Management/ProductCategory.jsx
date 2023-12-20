@@ -9,12 +9,8 @@ import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import {
-  Gear,
-  Bell,
-  UserCircle,
+  DownloadSimple,
   Plus,
-  Trash,
-  NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
@@ -227,6 +223,92 @@ function ProductCategory() {
     setShowModal(true);
   };
 
+  {/*bulk upload sa category end*/}
+  // const [showuploadModal, setshowuploadModal] = useState(false);
+
+  // const uploadmodal = () => {
+  //   setshowuploadModal(true);
+  // }
+  // const handlecloseupload = () => setshowuploadModal(false);
+
+  // const [file, setFile] = useState(null);
+  // const handleFileChange = (event) => {
+  //   const selectedFile = event.target.files[0];
+  //   if (selectedFile) {
+  //     setFile(selectedFile);
+  //   } else {
+  //     setFile(null);
+  //   }
+  // };
+
+  // console.log("eot ha" + file)
+  // const handleCSVSuccess = () => {
+  //   swal({
+  //     title: "Import Data!",
+  //     text: "Importing CSV successfully",
+  //     icon: "success",
+  //     button: "Ok",
+  //   }).then(() => {
+  //     handleClose(); // Close the modal
+  //   });
+  // };
+
+  // const handleCSVError = () => {
+  //   swal({
+  //     title: "Import Data Error!",
+  //     text: "Importing CSV Error",
+  //     icon: "error",
+  //     button: "Ok",
+  //   }).then(() => {
+  //     handleClose(); // Close the modal
+  //   });
+  // };
+
+  // const handlenotfound = () => {
+  //   swal({
+  //     title: "Error!",
+  //     text: "CSV Error",
+  //     icon: "error",
+  //     button: "Ok",
+  //   }).then(() => {
+  //     handleClose(); // Close the modal
+  //   });
+  // };
+
+  
+  // const handleImportClick = async () => {
+  //   if (file) {
+  //     const formData = new FormData();
+  //     formData.append('file', file);
+  
+  //     try {
+  //       const response = await axios.post('/category/importCategory', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+  //         console.log(response)
+  //       if (response.data.success) {
+  //         console.log('Import success:', response.data);
+  //         handleCSVSuccess();
+  //       } else {
+  //         console.error('Import failed:', response.data.error);
+  //         handleCSVError();
+  //       }
+  
+  //       handleClose(); // Close the modal
+  //     } catch (error) {
+  //       if (error.response && error.response.status === 400) {
+  //         handlenotfound();
+  //       } else {
+  //         console.error('Error:', error.message);
+  //       }
+  //     }
+  //   }
+  // };
+
+  {/*bulk upload sa category end*/}
+
   const handleModalToggle = (updateData = null) => {
     setUpdateModalShow(!updateModalShow);
     if (updateData) {
@@ -372,9 +454,7 @@ function ProductCategory() {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
+
       <div className="right-of-main-containers">
         <div className="right-body-contents">
           {/* <div className="settings-search-master">
@@ -401,6 +481,14 @@ function ProductCategory() {
               <div className="emp-text-side">
                 <p>Product Category</p>
               </div>
+              {/* <div className="upload-daily-time-records mr-3" onClick={uploadmodal}>
+              <button >
+                <DownloadSimple
+                  size={25}
+                  weight="bold"
+                />
+              </button>
+            </div> */}
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
@@ -640,6 +728,25 @@ function ProductCategory() {
           </Modal.Footer>
         </Form>
       </Modal>
+
+      {/* <Modal show={showuploadModal} onHide={handlecloseupload} backdrop="static" keyboard={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Import CSV File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="formFile" className="mb-3">
+          <Form.Control type="file" accept=".csv" onChange={handleFileChange} required />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+        <Button variant="outline-warning" onClick={handleImportClick}>
+            Import
+          </Button>
+          <Button variant="outline-secondary" onClick={handlecloseupload}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal> */}
     </div>
   );
 }

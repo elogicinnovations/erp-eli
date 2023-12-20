@@ -34,6 +34,8 @@ function UpdateSubparts() {
   const [tablesupplier, settablesupplier] = useState([]); // for fetching supplier na nakatag sa subparts
   const [subpartTAGSuppliers, setsubpartTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at subpart id
 
+  const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/subpart/fetchsubpartEdit", {
@@ -83,6 +85,7 @@ function UpdateSubparts() {
         })),
     ];
     settablesupplier(updatedTable);
+    setIsSaveButtonDisabled(false);
   };
 
   const handlePriceChange = (index, value) => {
@@ -101,6 +104,7 @@ function UpdateSubparts() {
 
     setsubpartTAGSuppliers(subpartTAGSuppliersData);
     settablesupplier(updatedTable);
+    setIsSaveButtonDisabled(false);
   };
 
   useEffect(() => {
@@ -169,29 +173,58 @@ function UpdateSubparts() {
       });
   }, []);
 
+  //input for subpart code
+  const handleSubpartCode = (event) => {
+    setprodcode(event.target.value);
+    setIsSaveButtonDisabled(false);
+  };
+
+  //input for subpart name 
+  const handleSubpartname = (event) => {
+    setprodname(event.target.value);
+    setIsSaveButtonDisabled(false);
+  };
+
+  //input for threshold 
+  const handlethreshold = (event) => {
+    setprodthreshold(event.target.value);
+    setIsSaveButtonDisabled(false);
+  };
+
+  //input for details
+  const handledetails = (event) => {
+    setproddetails(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
+
   // for Unit on change function
   const handleChangeUnit = (event) => {
     setprodunit(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Bin Location on change function
   const handleFormChangeBinLocation = (event) => {
     setprodlocation(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Manufacturer on change function
   const handleFormChangeManufacturer = (event) => {
     setprodmanufacture(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
     setprodmeasurement(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   //for category on change function
   const handleFormChangeCategory = (event) => {
     setprodcategory(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
   //when user click the Add supplier button
   const handleAddSupp = () => {
@@ -237,6 +270,7 @@ function UpdateSubparts() {
               button: "OK",
             }).then(() => {
               navigate("/subParts");
+              setIsSaveButtonDisabled(true);
             });
           } else if (res.status === 201) {
             swal({
@@ -290,7 +324,7 @@ function UpdateSubparts() {
                   <Form.Control
                     value={prodcode}
                     required
-                    onChange={(e) => setprodcode(e.target.value)}
+                    onChange={(e) => handleSubpartCode(e)}
                     type="text"
                     placeholder="Enter item code"
                     style={{ height: "40px", fontSize: "15px" }}
@@ -305,7 +339,7 @@ function UpdateSubparts() {
                   <Form.Control
                     required
                     value={prodname}
-                    onChange={(e) => setprodname(e.target.value)}
+                    onChange={(e) => handleSubpartname(e)}
                     type="text"
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
@@ -429,9 +463,8 @@ function UpdateSubparts() {
                   </Form.Label>
                   <Form.Control
                     onChange={(e) => {
-                      const inputValue = e.target.value;
-                      const sanitizedValue = inputValue.replace(/\D/g, "");
-                      setprodthreshold(sanitizedValue);
+                      const sanitizedValue = e.target.value.replace(/\D/g, "");
+                      handlethreshold({ target: { value: sanitizedValue } });
                     }}
                     type="text"
                     placeholder="Minimum Stocking"
@@ -443,90 +476,13 @@ function UpdateSubparts() {
                 </Form.Group>
               </div>
               <div className="col-6">
-                {/* <Form.Group controlId="exampleForm.ControlInput1">
-                                    <Form.Label style={{ fontSize: "20px" }}>
-                                      Image Upload:{" "}
-                                    </Form.Label>
-                                    <div
-                                      style={{
-                                        border: "1px #DFE3E7 solid",
-                                        height: "auto",
-                                        maxHeight: "140px",
-                                        fontSize: "15px",
-                                        width: "720px",
-                                        padding: 10,
-                                      }}>
-                                      <Dropzone
-                                        onDrop={onDropImage}
-                                        onChange={(e) => setselectedimage(e.target.value)}>
-                                        {({ getRootProps, getInputProps }) => (
-                                          <div
-                                            className="w-100 h-100"
-                                            style={{ width: "700px" }}
-                                            {...getRootProps()}>
-                                            <input
-                                              ref={fileInputRef}
-                                              type="file"
-                                              style={{ display: "none" }}
-                                            />
-                                            <div
-                                              className="d-flex align-items-center"
-                                              style={{ width: "700px", height: "2.5em" }}>
-                                              <p
-                                                className="fs-5 w-100 p-3 btn btn-secondary"
-                                                style={{ color: "white", fontWeight: "bold" }}>
-                                                Drag and drop a file here, or click to select a
-                                                file
-                                              </p>
-                                            </div>
-                                            {selectedimage.length > 0 && (
-                                              <div
-                                                className="d-flex align-items-center justify-content-center"
-                                                style={{
-                                                  border: "1px green solid",
-                                                  width: "700px",
-                                                  height: "5em",
-                                                  padding: "1rem",
-                                                  overflowY: "auto",
-                                                }}>
-                                                Uploaded Images:
-                                                <p
-                                                  style={{
-                                                    color: "green",
-                                                    fontSize: "15px",
-                                                    display: "flex",
-                                                    height: "4em",
-                                                    flexDirection: "column",
-                                                  }}>
-                                                  {selectedimage.map((image, index) => (
-                                                    <div key={index}>
-                                                      <div className="imgContainer">
-                                                        <span className="imgUpload">
-                                                          {image.name}
-                                                        </span>
-                                                        <X
-                                                          size={20}
-                                                          onClick={removeImage}
-                                                          className="removeButton"
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                  ))}
-                                                </p>
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
-                                      </Dropzone>
-                                    </div>
-                                  </Form.Group> */}
               </div>
             </div>
 
             <Form.Group controlId="exampleForm.ControlInput1">
               <Form.Label style={{ fontSize: "20px" }}>Details</Form.Label>
               <Form.Control
-                onChange={(e) => setproddetails(e.target.value)}
+                onChange={(e) => handledetails(e)}
                 as="textarea"
                 placeholder="Enter details"
                 style={{ height: "100px", fontSize: "15px", resize: "none" }}
@@ -645,7 +601,8 @@ function UpdateSubparts() {
                 type="submit"
                 className="btn btn-warning"
                 size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
+                style={{ fontSize: "20px", margin: "0px 5px" }}
+                disabled={isSaveButtonDisabled}>
                 Save
               </Button>
               <Link
