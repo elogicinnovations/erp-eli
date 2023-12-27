@@ -25,7 +25,8 @@ const UserRole = sequelize.define('userRole', {
     get() {
       // Deserialize the JSON string to an array
       const value = this.getDataValue('col_authorization');
-      return value ? JSON.parse(value) : [];
+      return value ? JSON.parse(value).split(', ') : [];
+      // return value.split(', ');
     },
     set(value) {
       // Serialize the array to a JSON string
