@@ -1,8 +1,8 @@
 // sequelize.config.js
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const UserRole = sequelize.define('userRole', {
+const UserRole = sequelize.define("userRole", {
   col_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -30,9 +30,9 @@ const UserRole = sequelize.define('userRole', {
     },
     set(value) {
       // Serialize the array to a JSON string
-      this.setDataValue('col_authorization', JSON.stringify(value));
+      this.setDataValue("col_authorization", JSON.stringify(value));
     },
-  }
+  },
 });
 
 module.exports = UserRole;
