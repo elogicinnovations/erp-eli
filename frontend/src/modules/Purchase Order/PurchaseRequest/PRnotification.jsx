@@ -334,7 +334,7 @@ function PurchaseRequest() {
               <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
-                    <th className="tableh">PR No.</th>
+                    <th className="tableh">PR #.</th>
                     <th className="tableh">Requestor</th>
                     <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>

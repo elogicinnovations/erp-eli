@@ -315,7 +315,7 @@ const Dashboard = ({ setActiveTab }) => {
                 </div> */}
                 <div className="dashboard-content">
                   <div className="preview-tabs">
-                    <Link to="/issuance"  onClick={() => handleTabClick("issuance")} className="tabs">
+                    <Link to="/inventory"  onClick={() => handleTabClick("issuance")} className="tabs">
                       <div className="tab-title">
                         <div className="asset-icon">
                           <Package weight={'fill'} size={20} style={{color: '#4268fb'}}/>
@@ -608,7 +608,7 @@ const Dashboard = ({ setActiveTab }) => {
                           </div>
                         </div>
                       </Link>
-                      <Link to="/return"  onClick={() => handleTabClick("return")} className="tab">
+                      <Link to="/inventory"  onClick={() => handleTabClick("return")} className="tab">
                         <div className="tab-data">
                           <div className="tvalue">
                             1,441

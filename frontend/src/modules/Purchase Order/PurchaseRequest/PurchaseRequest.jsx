@@ -191,10 +191,10 @@ function PurchaseRequest() {
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && PR.length > 0) {
+    if ($("#order-listing").length > 0 && allPR.length > 0) {
       $("#order-listing").DataTable();
     }
-  }, [PR]);
+  }, [allPR]);
 
   const [authrztn, setauthrztn] = useState([]);
   useEffect(() => {
@@ -368,7 +368,7 @@ function PurchaseRequest() {
               <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
-                    <th className="tableh">PR No.</th>
+                    <th className="tableh">PR #.</th>
                     <th className="tableh">Requestor</th>
                     <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
@@ -415,11 +415,14 @@ function PurchaseRequest() {
                         <td>
                           {/* Cancel Button */}
                           {/* { authrztn.includes('')} */}
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => CancelRequest(data.id, data.status)}>
-                            Cancel
-                          </button>
+                          {(data.status !== "Cancelled" && data.status !== "For-Canvassing") && (
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => CancelRequest(data.id, data.status)}
+                            >
+                              Cancel
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}

@@ -11,7 +11,13 @@ import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 
-function CreateIssuance() {
+const CreateIssuance = ({ setActiveTab }) => {
+
+
+  const handleTabClick = (tabKey) => {
+    setActiveTab(tabKey);
+  };
+
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
 
@@ -738,7 +744,7 @@ function CreateIssuance() {
                     Save
                   </Button>
                   <Link
-                    to="/inventory"
+                    to="/inventory"  onClick={() => handleTabClick("issuance")}
                     className="btn btn-secondary btn-md"
                     size="md"
                     style={{ fontSize: "20px", margin: "0px 5px" }}>
