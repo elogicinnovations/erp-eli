@@ -223,30 +223,11 @@ function App() {
                   />
           <Route
             path="/inventory"
-            element={<Inventory/>}
+            element={<Inventory activeTab={activeTab} onSelect={handleTabSelect} />}
           />
-                <Route
-                          path="/invent"
-                          element={
-                            <Inventory activeTab={activeTab} onSelect={handleTabSelect} />
-                          }
-                        />
-                <Route
-                          path="/issuance"
-                          element={
-                            <Inventory activeTab={activeTab} onSelect={handleTabSelect} />
-                          }
-                        />
-                <Route
-                          path="/return"
-                          element={
-                            <Inventory activeTab={activeTab} onSelect={handleTabSelect} />
-                          }
-                        />
 
                   <Route
-                    path="/createIssuance"
-                    element={<CreateIssuance/>}
+                    path="/createIssuance" element={<CreateIssuance setActiveTab={setActiveTab} />}
                   />
                   <Route
                     path="/viewInventory/:id"
@@ -266,7 +247,7 @@ function App() {
                   />
                   <Route
                     path="/returnForm/:id"
-                    element={<ReturnForm/>}
+                    element={<ReturnForm setActiveTab={setActiveTab} />}
                   />
           <Route
             path="/purchaseRequest"

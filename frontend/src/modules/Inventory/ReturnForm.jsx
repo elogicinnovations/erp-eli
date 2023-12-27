@@ -27,8 +27,12 @@ import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
-function ReturnForm() {
-  
+  const ReturnForm = ({ setActiveTab }) => {
+
+
+    const handleTabClick = (tabKey) => {
+      setActiveTab(tabKey);
+    };
 const navigate = useNavigate()
 const [issuedProduct, setIssuedProduct] = useState([]);
 
@@ -169,7 +173,7 @@ const [issuedProduct, setIssuedProduct] = useState([]);
                 
             <Col>
                 <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/inventory">
+                    <Link style={{ fontSize: '1.5rem' }} to="/inventory"  onClick={() => handleTabClick("issuance")}>
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
@@ -270,7 +274,7 @@ const [issuedProduct, setIssuedProduct] = useState([]);
                         
                         <div className='save-cancel'>
                         <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                        <Link to="/inventory" className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                        <Link to="/inventory"  onClick={() => handleTabClick("issuance")} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                             Cancel
                         </Link>
                         </div>
