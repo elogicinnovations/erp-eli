@@ -42,64 +42,63 @@ import Header from '../../../partials/header';
 
 function InventoryReports() {
 
-  const tableRef = useRef(null);
-
-      
-  const exportToPdf = () => {
-    const input = tableRef.current;
+  // const tableRef = useRef(null); wag i-remove para to sa pdf export
   
-    if (input) {
-      const pdf = new jsPDF({
-        orientation: 'landscape', // Change the orientation to landscape
-        unit: 'mm',
-        format: 'a4',
-        margin: { left: 0, right: 0 }, // Set left and right margins to zero
-      });
-            // Add a custom header text
-        const headerText = '';
-        pdf.text(headerText, 10, 10); // Adjust the coordinates as needed
+  // const exportToPdf = () => {
+  //   const input = tableRef.current;
+  
+  //   if (input) {
+  //     const pdf = new jsPDF({
+  //       orientation: 'landscape', // Change the orientation to landscape
+  //       unit: 'mm',
+  //       format: 'a4',
+  //       margin: { left: 0, right: 0 }, // Set left and right margins to zero
+  //     });
+  //           // Add a custom header text
+  //       const headerText = '';
+  //       pdf.text(headerText, 10, 10); // Adjust the coordinates as needed
 
 
-       // Customize styles for autoTable
-    const styles = {
-      font: 'helvetica',
-      fontSize: 10,
-      textColor: 0,
-      lineColor: 200,
-      lineWidth: 0.1,
-      fontStyle: 'normal',
-    };
+  //      // Customize styles for autoTable
+  //   const styles = {
+  //     font: 'helvetica',
+  //     fontSize: 10,
+  //     textColor: 0,
+  //     lineColor: 200,
+  //     lineWidth: 0.1,
+  //     fontStyle: 'normal',
+  //   };
 
-    // Customize header styles
-    const headerStyles = { 
-                          fillColor: [200, 200, 200], 
-                          textColor: 0, 
-                          fontStyle: 'bold' 
-                        };
+  //   // Customize header styles
+  //   const headerStyles = { 
+  //                         fillColor: [200, 200, 200], 
+  //                         textColor: 0, 
+  //                         fontStyle: 'bold' 
+  //                       };
 
   
-      // Use autoTable to directly add the table content to the PDF
-      pdf.autoTable({
-        html: '#' + input.id, // Use the original table ID
-        startY: 10, // You can adjust the starting Y position as needed
-        columnStyles: { 
-            0: { cellWidth: 35 }, 
-            1: { cellWidth: 35 }, 
-            2: { cellWidth: 25 }, 
-            3: { cellWidth: 40 }, 
-            4: { cellWidth: 30 }, 
-            5: { cellWidth: 20 }, 
-            6: { cellWidth: 30 }, 
-            7: { cellWidth: 20 }, 
-            8: { cellWidth: 30 } 
-          },
-          headStyles: headerStyles,
-      });
+  //     // Use autoTable to directly add the table content to the PDF
+  //     pdf.autoTable({
+  //       html: '#' + input.id, // Use the original table ID
+  //       startY: 10, // You can adjust the starting Y position as needed
+  //       columnStyles: { 
+  //           0: { cellWidth: 35 }, 
+  //           1: { cellWidth: 35 }, 
+  //           2: { cellWidth: 25 }, 
+  //           3: { cellWidth: 40 }, 
+  //           4: { cellWidth: 30 }, 
+  //           5: { cellWidth: 20 }, 
+  //           6: { cellWidth: 30 }, 
+  //           7: { cellWidth: 20 }, 
+  //           8: { cellWidth: 30 } 
+  //         },
+  //         headStyles: headerStyles,
+  //     });
   
-      // Save the PDF
-      pdf.save('Inventory Report.pdf');
-    }
-  };
+  //     // Save the PDF
+  //     pdf.save('Inventory Report.pdf');
+  //   }
+  // };
 
 
 
@@ -144,31 +143,49 @@ useEffect(() => {
   }
 }, [invetory_prd]);
 
+
+const [modalshow, setmodalShow] = useState(false);
+
+const handleClose = () => setmodalShow(false);
+const handleShow = () => setmodalShow(true);
+
+const handleExport = () => {
+  // Convert table data to CSV format
+  const csvData = convertTableToCSV();
+
+  // Create a Blob from the CSV data and initiate a download
+  const blob = new Blob([csvData], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'inventoryReport.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Close the modal after exporting
+  handleClose();
+};
+
+const convertTableToCSV = () => {
+  // Access the table headers and rows to convert to CSV format
+  const tableHeaders = Array.from(document.querySelectorAll('#order-listing thead th'))
+    .map(th => th.textContent.trim())
+    .join(',');
+
+  const tableRows = document.querySelectorAll('#order-listing tbody tr');
+  const rows = Array.from(tableRows).map(row =>
+    Array.from(row.children).map(td => td.textContent.trim()).join(',')
+  );
+
+  return `${tableHeaders}\n${rows.join('\n')}`;
+};
+
   return (
     <div className="main-of-containers">
         <div className="right-of-main-containers">
             <div className="right-body-contents">
-                {/* <div className="settings-search-master">
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
 
-                </div> */}
                 <div className="Employeetext-button">
                     <div className="employee-and-button">
                         <div className="emp-text-side">
@@ -223,8 +240,8 @@ useEffect(() => {
                         </div>
                         </div>
                         <div className='export-refresh'>
-                            <button className='export'>
-                                 <Export size={20} weight="bold" onClick={exportToPdf}/> <p1>Export</p1>
+                            <button className='export' onClick={handleShow}>
+                              <Export size={20} weight="bold" /> <p1>Export</p1>
                             </button>
                             </div>
                         </div>
@@ -232,14 +249,14 @@ useEffect(() => {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table ref={tableRef} id='order-listing'>
+                        <table id='order-listing'>
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Product Code</th>
                                     <th className='tableh'>Product Name</th>
                                     <th className='tableh'>UOM</th>
                                     <th className='tableh'>Description</th>
-                                    <th className='tableh'>Destination</th>
+                                    <th className='tableh'>Location</th>
                                     <th className='tableh'>Unit Price</th>
                                     <th className='tableh'>Quantity</th>
                                     <th className='tableh'>Total</th>
@@ -259,7 +276,7 @@ useEffect(() => {
                                         </tr>
                                       ))}
 
-                                      {invetory_assmbly.map((data,i) =>(
+                                      {/* {invetory_assmbly.map((data,i) =>(
                                         <tr key={i}>
                                         <td>{data.assembly_supplier.assembly.assembly_code}</td>
                                         <td>{data.assembly_supplier.assembly.assembly_name}</td>
@@ -297,13 +314,36 @@ useEffect(() => {
                                           <td>{data.quantity}</td>
                                           <td>{data.price * data.quantity}</td>
                                         </tr>
-                                      ))}
+                                      ))} */}
                                 </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <Modal
+              show={modalshow}
+              onHide={handleClose}
+              backdrop="static"
+              keyboard={false}>
+              <Modal.Header closeButton>
+                <Modal.Title
+                style={{fontSize: '25px'}}>Confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <h3>Do you want to Export Inventory Report</h3>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="outline-warning"
+                size='md' style={{fontSize: '18px'}}
+                onClick={handleExport}>Yes</Button>
+                <Button variant="outline-secondary"
+                size='md' style={{fontSize: '18px'}} 
+                onClick={handleClose}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
         </div>
     </div>
   )
