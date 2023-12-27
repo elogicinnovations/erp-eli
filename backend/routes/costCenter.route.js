@@ -5,15 +5,36 @@ const { CostCenter, MasterList } = require("../db/models/associations");
 
 
 // Get All Cost Center
+// router.route('/getCostCenter').get(async (req, res) => 
+// {
+//     try {
+//         const data = await CostCenter.findAll({
+//           where: {
+//             col_Fname: {
+//             [Sequelize.Op.ne]: null, // Include rows where col_Fname is not null
+//           },
+//           },
+//           include: {
+//             model: MasterList, 
+//             required: true},
+//           });
+
+//         if (data) {
+//         return res.json(data);
+//         } else {
+//         res.status(400);
+//         }
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json("Error");
+//     }
+// });
+
 router.route('/getCostCenter').get(async (req, res) => 
 {
     try {
         const data = await CostCenter.findAll({
-          where: {
-            col_Fname: {
-            [Sequelize.Op.ne]: null, // Include rows where col_Fname is not null
-          },
-          },
+         
           include: {
             model: MasterList, 
             required: true},
