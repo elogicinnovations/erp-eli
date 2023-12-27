@@ -326,7 +326,7 @@ function ProductList() {
                         onChange={handleSelectAllChange}
                       />
                     </th>
-                    <th className="tableh">Product Code</th>
+                    <th className="tableh">Item Code</th>
                     <th className="tableh">Item Name</th>
                     <th className="tableh">U/M</th>
                     <th className="tableh">Status</th>

@@ -50,7 +50,7 @@ function ViewAssembly() {
   //for spare parts
   useEffect(() => {
     axios
-      .get(BASE_URL + "/spare_assembly/fetchSpareAssembly", {
+      .get(BASE_URL + "/spare_assembly/fetchinTable", {
         params: {
           id: id,
         },

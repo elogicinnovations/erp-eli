@@ -35,7 +35,7 @@ import "../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 import Header from "../../../../partials/header";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 function MasterList() {
   const [masterListt, setmasterListt] = useState([]);
@@ -113,22 +113,24 @@ function MasterList() {
   const [authorization, setAuthorization] = useState([]);
 
   const addAuthorization = () => {
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    var decoded = jwtDecode(localStorage.getItem("accessToken"));
 
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id).then((res) => {
-      if(res.status === 200){
-        console.log(res);
+    axios
+      .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res);
 
-        setAuthorization(res.data.authorization);
-      }
-    }).catch((err) => {
-      console.error(err);
-    });
-
+          setAuthorization(res.data.authorization);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     // console.log("ln 120: ",authorization);
     // console.log("authorized? ", findAuthorization(authorization === null ? [] : authorization, 'Master List - Add'));
-  }
+  };
 
   useEffect(() => {
     addAuthorization();
@@ -137,14 +139,12 @@ function MasterList() {
   }, []);
 
   const verifyAuthorization = (target) => {
-      var decoded = jwtDecode(localStorage.getItem('accessToken'));
+    var decoded = jwtDecode(localStorage.getItem("accessToken"));
 
-      console.log(decoded.authorization);
-      console.log(decoded.authorization.includes(target))
-      return decoded.authorization.includes(target);
-  }
-
-
+    console.log(decoded.authorization);
+    console.log(decoded.authorization.includes(target));
+    return decoded.authorization.includes(target);
+  };
 
   const reloadTable = () => {
     axios
@@ -591,7 +591,7 @@ function MasterList() {
         console.error("Error fetching roles:", error);
       });
 
-      // console.log("ln 587: ",authorization);
+    // console.log("ln 587: ",authorization);
   }, []);
 
   useEffect(() => {
@@ -648,21 +648,20 @@ function MasterList() {
 
   const [authrztn, setauthrztn] = useState([]);
   useEffect(() => {
-
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+    var decoded = jwtDecode(localStorage.getItem("accessToken"));
+    axios
+      .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
       .then((res) => {
-        if(res.status === 200){
+        if (res.status === 200) {
           setauthrztn(res.data.col_authorization);
         }
-    })
+      })
       .catch((err) => {
         console.error(err);
-    });
-
+      });
   }, []);
 
-    // console.log("ln 128: ", authorization); // []
+  // console.log("ln 128: ", authorization); // []
 
   return (
     <div className="main-of-containers">
@@ -699,13 +698,13 @@ function MasterList() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  { authrztn.includes('Master List - Add') && (
-                  <button onClick={handleShow}>
-                    <span>
-                      <Plus size={25} />
-                    </span>
-                    New User
-                  </button>
+                  {authrztn.includes("Master List - Add") && (
+                    <button onClick={handleShow}>
+                      <span>
+                        <Plus size={25} />
+                      </span>
+                      New User
+                    </button>
                   )}
                 </div>
               </div>
@@ -758,29 +757,27 @@ function MasterList() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
-
-                              { authrztn.includes('Master List - Edit') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleModalToggle(data);
-                                  closeVisibleButtons();
-                                }}>
-                                Update
-                              </button>
+                              {authrztn.includes("Master List - Edit") && (
+                                <button
+                                  className="btn"
+                                  onClick={() => {
+                                    handleModalToggle(data);
+                                    closeVisibleButtons();
+                                  }}>
+                                  Update
+                                </button>
                               )}
 
-                              { authrztn.includes('Master List - Delete') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleDelete(data.col_id);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
+                              {authrztn.includes("Master List - Delete") && (
+                                <button
+                                  className="btn"
+                                  onClick={() => {
+                                    handleDelete(data.col_id);
+                                    closeVisibleButtons();
+                                  }}>
+                                  Delete
+                                </button>
                               )}
-
                             </div>
                           )}
                         </div>
