@@ -12,7 +12,6 @@ import Select from "react-select";
 import { Plus, Trash, NotePencil, X } from "@phosphor-icons/react";
 import Dropzone from "react-dropzone";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
 
 function CreateSubParts() {
   const [validated, setValidated] = useState(false);
@@ -22,7 +21,7 @@ function CreateSubParts() {
   const [binLocation, setbinLocation] = useState([]);
   const [manufacturer, setManufacturer] = useState([]);
 
-  const [unit, setunit] = useState("");
+ 
   const [unitMeasurement, setunitMeasurement] = useState("");
   const [thresholds, setThresholds] = useState("");
   const [slct_binLocation, setslct_binLocation] = useState([]);
@@ -49,10 +48,7 @@ function CreateSubParts() {
     setSupp(selectedOptions);
   };
 
-  // for Unit on change function
-  const handleChangeUnit = (event) => {
-    setunit(event.target.value);
-  };
+
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
     setunitMeasurement(event.target.value);
@@ -187,7 +183,6 @@ function CreateSubParts() {
           subpartName,
           details,
           SubaddPriceInput,
-          unit,
           slct_binLocation,
           unitMeasurement,
           slct_manufacturer,
@@ -309,26 +304,7 @@ function CreateSubParts() {
             </div>
 
             <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeUnit}>
-                    <option disabled value="">
-                      Select Unit ...
-                    </option>
-                    {cls_unit.map((unit, index) => (
-                      <option key={index} value={unit}>
-                        {unit}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Bin Location:{" "}
@@ -353,10 +329,7 @@ function CreateSubParts() {
                   </Form.Select>
                 </Form.Group>
               </div>
-            </div>
-
-            <div className="row">
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Unit of Measurement:{" "}
@@ -377,7 +350,7 @@ function CreateSubParts() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Manufacturer:{" "}
@@ -402,6 +375,10 @@ function CreateSubParts() {
                 </Form.Group>
               </div>
             </div>
+
+            
+
+            
 
             <div className="row">
               <div className="col-6">

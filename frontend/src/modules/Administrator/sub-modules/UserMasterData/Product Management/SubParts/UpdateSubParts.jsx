@@ -10,7 +10,7 @@ import Form from "react-bootstrap/Form";
 import Select from "react-select";
 // import * as $ from "jquery";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
+
 
 function UpdateSubparts() {
   const { id } = useParams();
@@ -24,7 +24,6 @@ function UpdateSubparts() {
 
   const [prodcode, setprodcode] = useState("");
   const [prodname, setprodname] = useState("");
-  const [produnit, setprodunit] = useState("");
   const [prodlocation, setprodlocation] = useState([]);
   const [prodmeasurement, setprodmeasurement] = useState("");
   const [prodmanufacture, setprodmanufacture] = useState("");
@@ -46,7 +45,6 @@ function UpdateSubparts() {
       .then((res) => {
         setprodcode(res.data[0].subPart_code);
         setprodname(res.data[0].subPart_name);
-        setprodunit(res.data[0].subPart_unit);
         setprodlocation(res.data[0].subPart_location);
         setprodmeasurement(res.data[0].subPart_unitMeasurement);
         setprodmanufacture(res.data[0].subPart_Manufacturer);
@@ -197,12 +195,6 @@ function UpdateSubparts() {
     setIsSaveButtonDisabled(false);
   }
 
-  // for Unit on change function
-  const handleChangeUnit = (event) => {
-    setprodunit(event.target.value);
-    setIsSaveButtonDisabled(false);
-  };
-
   // for Bin Location on change function
   const handleFormChangeBinLocation = (event) => {
     setprodlocation(event.target.value);
@@ -250,7 +242,6 @@ function UpdateSubparts() {
             id,
             prodcode,
             prodname,
-            produnit,
             prodlocation,
             prodmeasurement,
             prodmanufacture,
@@ -373,24 +364,7 @@ function UpdateSubparts() {
             </div>
 
             <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    value={produnit}
-                    onChange={handleChangeUnit}>
-                    {cls_unit.map((unit, index) => (
-                      <option key={index} value={unit}>
-                        {unit}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Bin Location:{" "}
@@ -411,10 +385,7 @@ function UpdateSubparts() {
                   </Form.Select>
                 </Form.Group>
               </div>
-            </div>
-
-            <div className="row">
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Unit of Measurement:{" "}
@@ -432,7 +403,7 @@ function UpdateSubparts() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Manufacturer:{" "}
@@ -454,6 +425,10 @@ function UpdateSubparts() {
                 </Form.Group>
               </div>
             </div>
+
+            
+
+            
 
             <div className="row">
               <div className="col-6">
