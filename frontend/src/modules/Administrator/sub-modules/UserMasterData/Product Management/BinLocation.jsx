@@ -34,7 +34,7 @@ import * as $ from "jquery";
 import Header from "../../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
-function BinLocation() {
+function BinLocation({ authrztn }) {
   // Artifitial data
 
   // Artifitial data
@@ -406,23 +406,23 @@ function BinLocation() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-  const [authrztn, setauthrztn] = useState([]);
-  useEffect(() => {
+  // const [authrztn, setauthrztn] = useState([]);
+  // useEffect(() => {
 
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    console.log("Decoded: ", decoded);
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-      .then((res) => {
-        if(res.status === 200){
-          console.log(res);
-          setauthrztn(res.data.col_authorization);
-        }
-    })
-      .catch((err) => {
-        console.error(err);
-    });
+  //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
+  //   console.log("Decoded: ", decoded);
+  //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+  //     .then((res) => {
+  //       if(res.status === 200){
+  //         console.log(res);
+  //         setauthrztn(res.data.col_authorization);
+  //       }
+  //   })
+  //     .catch((err) => {
+  //       console.error(err);
+  //   });
 
-  }, []);
+  // }, []);
 
 
   return (
@@ -459,7 +459,7 @@ function BinLocation() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  { authrztn.includes('Bin Location - Add') && (
+                  { authrztn?.includes('Bin Location - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
@@ -519,7 +519,7 @@ function BinLocation() {
                               className="choices"
                               style={{ position: "absolute" }}>
 
-                               { authrztn.includes('Bin Location - Edit') && (
+                               { authrztn?.includes('Bin Location - Edit') && (
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -530,7 +530,7 @@ function BinLocation() {
                               </button>
                                )}
 
-                              { authrztn.includes('Bin Location - Delete') && (
+                              { authrztn?.includes('Bin Location - Delete') && (
                               <button
                                 className="btn"
                                 onClick={() => {

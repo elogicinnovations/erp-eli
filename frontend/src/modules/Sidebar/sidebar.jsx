@@ -23,8 +23,11 @@ import Collapse from "@mui/material/Collapse";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import "../../assets/image/SBF.png";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import BASE_URL from "../../assets/global/url";
 
-function Sidebar() {
+function Sidebar({ authrztn }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const [openAdministrator, setOpenAdministrator] = useState(false);
   const [openEmployeeData, setOpenEmployeeData] = useState(false);
@@ -34,6 +37,8 @@ function Sidebar() {
   const [openPurchaseOrder, setOpenPurchaseOrder] = useState(false);
   const [openWarehouse, setOpenWarehouse] = useState(false);
   const [openReports, setOpenReports] = useState(false);
+
+  //
 
   const toggleOff = () => {
     setOpenAdministrator(false);
@@ -110,6 +115,8 @@ function Sidebar() {
 
   useEffect(() => {
     const path = location.pathname;
+
+    console.log("Role: ",authrztn)
 
     if (path === "/dashboard") {
       setActiveMenu("DASHBOARD");
@@ -237,6 +244,7 @@ function Sidebar() {
 
               <Collapse in={openEmployeeData}>
                 <List component="div" disablePadding>
+
                   <NavLink
                     to="/masterList"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -305,6 +313,9 @@ function Sidebar() {
                       <ListItemText primary="Product Manufacturer" />
                     </ListItem>
                   </NavLink>
+
+                  {/* Bin Location */}
+                  { authrztn.includes('Bin Location - View') && (
                   <NavLink
                   to='/binLocation'
                   style={{ textDecoration: 'none', color: 'inherit' }}
@@ -317,6 +328,8 @@ function Sidebar() {
                     <ListItemText primary="Bin Location" />
                   </ListItem>
                 </NavLink>
+                  )}
+
                   {/* <NavLink
                   to='/subParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
@@ -380,6 +393,9 @@ function Sidebar() {
 
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>
+                  {/* Cost Center */}
+
+                  { authrztn.includes('Cost Centre - View') && (
                   <NavLink
                     to="/costCenter"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -397,6 +413,8 @@ function Sidebar() {
                       <ListItemText primary="Cost Center" />
                     </ListItem>
                   </NavLink>
+                  )}
+
                   <NavLink
                     to="/supplier"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -444,6 +462,7 @@ function Sidebar() {
             </List>
           </Collapse>
 
+          { authrztn.includes('Inventory Type - View') && (
           <NavLink
             to="/inventory"
             style={{ textDecoration: "none", color: "inherit" }}
@@ -458,6 +477,7 @@ function Sidebar() {
               <ListItemText primary="INVENTORY" />
             </ListItem>
           </NavLink>
+          )}
 
           <ListItem
             button
@@ -524,6 +544,8 @@ function Sidebar() {
           </ListItem>
 
           <Collapse in={openWarehouse}>
+
+            { authrztn.includes('Recieving - View') && (
             <NavLink
               to="/receivingManagement"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -538,6 +560,9 @@ function Sidebar() {
                 <ListItemText primary="Recieving Management" />
               </ListItem>
             </NavLink>
+            )}
+
+
             <NavLink
               to="/stockManagement"
               style={{ textDecoration: "none", color: "inherit" }}

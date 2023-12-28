@@ -453,21 +453,21 @@ function ProductCategory() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-        const [authrztn, setauthrztn] = useState([]);
-      useEffect(() => {
+      //   const [authrztn, setauthrztn] = useState([]);
+      // useEffect(() => {
 
-        var decoded = jwtDecode(localStorage.getItem('accessToken'));
-        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-          .then((res) => {
-            if(res.status === 200){
-              setauthrztn(res.data.col_authorization);
-            }
-        })
-          .catch((err) => {
-            console.error(err);
-        });
+      //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
+      //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      //     .then((res) => {
+      //       if(res.status === 200){
+      //         setauthrztn(res.data.col_authorization);
+      //       }
+      //   })
+      //     .catch((err) => {
+      //       console.error(err);
+      //   });
 
-      }, [authrztn]);
+      // }, [authrztn]);
 
   return (
     <div className="main-of-containers">
@@ -509,7 +509,7 @@ function ProductCategory() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  { authrztn.includes('Product Categories - Add') && (
+                  { authrztn?.includes('Product Categories - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
@@ -567,7 +567,7 @@ function ProductCategory() {
                               className="choices"
                               style={{ position: "absolute" }}>
 
-                              { authrztn.includes('Product Categories - Edit') && (
+                              { authrztn?.includes('Product Categories - Edit') && (
                               <button
                                 className="btn"
                                 type="button"
@@ -579,7 +579,7 @@ function ProductCategory() {
                               </button>
                               )}
 
-                              { authrztn.includes('Product Categories - Delete') && (
+                              { authrztn?.includes('Product Categories - Delete') && (
                               <button
                                 className="btn"
                                 type="button"

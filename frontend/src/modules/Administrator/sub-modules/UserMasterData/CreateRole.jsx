@@ -219,6 +219,10 @@ function Create_role() {
       "Audit Trail - Edit",
       "Audit Trail - Delete",
       "Audit Trail - View",
+      "Purchase Request - Add",
+      "Purchase Request - Edit",
+      "Purchase Request - Delete",
+      "Purchase Request - View"
     ];
 
     const updatedCheckboxes = allCheckboxValues.map((value) => ({

@@ -79,6 +79,7 @@ import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
+import Roles from "./hooks/roles";
 
 function App() {
   const [activeTab, setActiveTab] = useState("inventory");
@@ -105,7 +106,13 @@ function App() {
     <div className="main-of-containers">
       
         <div className="left-of-main-containers">
-            <Sidebar/>
+          <Roles>
+            {
+              (authrztn) => (
+                <Sidebar authrztn={authrztn} />
+              )
+            }
+          </Roles>
         </div>
 
         <div className="mid-of-main-containers">
@@ -128,23 +135,70 @@ function App() {
 
               <Route path="/editRole/:id" element={<EditRole />}/>
 
-              <Route path="/masterList" element={<MasterList/>}/>
+              <Route path="/masterList" element={
+                <Roles>
+                {
+                  (authrztn) => (
+                    <MasterList authrztn={authrztn}/>
+                  )
+                }
+                </Roles>
+              }/>
 
           {/*BP Master Data*/}
-              <Route path="/Supplier" element={<Supplier />}/>
+              <Route path="/Supplier" element={
+                <Roles>
+                {
+                  (authrztn) => (
+                    <Supplier authrztn={authrztn}/>
+                  )
+                }
+                </Roles>
+              }/>
 
                     <Route path="/createSupplier" element={<CreateSupplier />}/>
                     <Route path="/editSupp/:id" element={<EditSupplier/>}/>
                     <Route path="/viewsupplier/:id" element={<ViewSupplier />}/>
 
-              <Route path="/productCategory" element={<ProductCategory/>}/>
+              <Route path="/productCategory" element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <ProductCategory authrztn={authrztn}/>
+                )
+              }
+              </Roles>
+              }/>
           
-              <Route path="/ProductManu" element={<ProductManu />}/>
-              <Route path="/binLocation" element={<BinLocation/>}/>
+              <Route path="/ProductManu" element={
+                <Roles>
+                {
+                  (authrztn) => (
+                    <ProductManu authrztn={authrztn}/>
+                  )
+                }
+                </Roles>}/>
+              <Route path="/binLocation" element={
+                <Roles>
+                  {
+                    (authrztn) => (
+                      <BinLocation authrztn={authrztn}/>
+                    )
+                  }
+                </Roles>
+              }/>
          
           <Route
             path="/productList"
-            element={<ProductList/>}
+            element={
+              <Roles>
+                  {
+                    (authrztn) => (
+                      <ProductList authrztn={authrztn}/>
+                    )
+                  }
+                </Roles>
+              }
           />
                   <Route
                     path="/createProduct"
@@ -156,7 +210,15 @@ function App() {
                   />
                   <Route
                     path="/productSupplier/:id"
-                    element={<ProductSupplier/>}
+                    element={
+                      <Roles>
+                      {
+                        (authrztn) => (
+                          <ProductSupplier authrztn={authrztn}/>
+                        )
+                      }
+                    </Roles>
+                    }
                   />
           <Route
             path="/subParts"
@@ -175,7 +237,15 @@ function App() {
 
           <Route
             path="/spareParts"
-            element={<SpareParts/>}
+            element={
+            <Roles>
+              {
+                (authrztn) => (
+                  <SpareParts authrztn={authrztn}/>
+                )
+              }
+            </Roles>
+            }
           />
                   <Route
                     path="/createSpareParts"
@@ -191,7 +261,15 @@ function App() {
                   />
           <Route
             path="/assemblyForm"
-            element={<AssemblyForm/>}
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <AssemblyForm authrztn={authrztn}/>
+                )
+              }
+            </Roles>
+            }
           />
                   <Route
                     path="/createAssemblyForm"
@@ -207,7 +285,15 @@ function App() {
                   />
           <Route
             path="/costCenter"
-            element={<CostCenter/>}
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <CostCenter authrztn={authrztn}/>
+                )
+              }
+            </Roles>
+            }
           />     
                   <Route
                     path="/createCostCenter"

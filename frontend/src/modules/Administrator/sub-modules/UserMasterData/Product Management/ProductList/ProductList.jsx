@@ -34,7 +34,7 @@ import * as $ from "jquery";
 import { fontSize } from "@mui/system";
 import Header from "../../../../../../partials/header";
 
-function ProductList() {
+function ProductList({ authrztn }) {
   const navigate = useNavigate();
 
   const [product, setproduct] = useState([]);
@@ -292,7 +292,9 @@ function ProductList() {
               </div>
 
               <div className="button-create-side">
-                {showChangeStatusButton ? (
+
+                { authrztn.includes('Product List - Add') && (
+                  showChangeStatusButton ? (
                   <div className="Buttonmodal-change">
                     <button className="buttonchanges" onClick={handleShow}>
                       <span style={{}}>
@@ -310,7 +312,9 @@ function ProductList() {
                       New Product
                     </Link>
                   </div>
+                  )
                 )}
+                
               </div>
             </div>
           </div>
@@ -426,12 +430,16 @@ function ProductList() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
+                              { authrztn.includes('Product List - Edit') && (
                               <Link
                                 to={`/updateProduct/${data.product_id}`}
                                 style={{ fontSize: "12px" }}
                                 className="btn">
                                 Update
                               </Link>
+                              )}
+
+                              { authrztn.includes('Product List - Delete') && (
                               <button
                                 className="btn"
                                 type="button"
@@ -441,6 +449,7 @@ function ProductList() {
                                 }}>
                                 Delete
                               </button>
+                              )}
                             </div>
                           )}
                         </div>

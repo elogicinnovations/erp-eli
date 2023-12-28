@@ -31,7 +31,7 @@ import { jwtDecode } from "jwt-decode";
 
 
 
-function Supplier() {
+function Supplier({ authrztn }) {
   const [supplier, setsupplier] = useState([]);
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -192,21 +192,21 @@ function Supplier() {
         }
       }, [supplier]);
 
-      const [authrztn, setauthrztn] = useState([]);
-      useEffect(() => {
+      // const [authrztn, setauthrztn] = useState([]);
+      // useEffect(() => {
 
-        var decoded = jwtDecode(localStorage.getItem('accessToken'));
-        axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-          .then((res) => {
-            if(res.status === 200){
-              setauthrztn(res.data.col_authorization);
-            }
-        })
-          .catch((err) => {
-            console.error(err);
-        });
+      //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
+      //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+      //     .then((res) => {
+      //       if(res.status === 200){
+      //         setauthrztn(res.data.col_authorization);
+      //       }
+      //   })
+      //     .catch((err) => {
+      //       console.error(err);
+      //   });
 
-      }, []);
+      // }, []);
 
     const navigate = useNavigate();
     return(
