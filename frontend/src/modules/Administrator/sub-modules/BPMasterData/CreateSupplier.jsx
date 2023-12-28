@@ -28,7 +28,7 @@ function CreateSupplier() {
   const [suppCnum, setsuppCnum] = useState("");
   const [suppTelNum, setsuppTelNum] = useState("");
   const [suppTerms, setsuppTerms] = useState("");
-  const [suppVat, setsuppVat] = useState("");
+  const [suppVat, setsuppVat] = useState("12");
   const [suppReceving, setsuppReceving] = useState("");
   const [suppStatus, setsuppStatus] = useState("Active");
   const [supplier, setSupplier] = useState([]);
@@ -514,6 +514,24 @@ function CreateSupplier() {
 
               <Row>
                 <Col>
+                  <label
+                    htmlFor=""
+                    className="label-head"
+                    style={{ fontSize: 20 }}>
+                    Currency:{" "}
+                  </label>
+                  <Form.Control
+                    className="p-3 fs-3"
+                    type="email"
+                    onChange={(e) => setsuppEmail(e.target.value)}
+                    required
+                    placeholder="Enter your email..."
+                  />
+                </Col>
+              </Row>
+
+              <Row>
+                <Col>
                   <div className="d-flex flex-direction-row">
                     <label
                       htmlFor=""
@@ -525,6 +543,7 @@ function CreateSupplier() {
                       <label class="cl-switch">
                         <input
                           type="checkbox"
+                          required
                           checked={isChecked} // Set the initial and current state
                           onChange={handleCheckboxChange} // Handle change event
                         />
@@ -535,14 +554,17 @@ function CreateSupplier() {
                       className="p-3  fs-3"
                       style={{ width: "20%", marginLeft: 50 }}
                       disabled={!isChecked}
+                      required
                       type="text"
+
                       maxLength={3}
                       onInput={(e) =>
                         (e.target.value = e.target.value.replace(/\D/, ""))
                       }
                       onChange={(e) => setsuppVat(e.target.value)}
-                      placeholder="0%"
+                      value={suppVat}
                     />
+                    <div className="percnts">%</div>
                   </div>
                 </Col>
                 <Col>
