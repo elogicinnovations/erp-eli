@@ -415,7 +415,7 @@ function PurchaseRequest() {
                         <td>
                           {/* Cancel Button */}
                           {/* { authrztn.includes('')} */}
-                          {(data.status !== "Cancelled" && data.status !== "For-Canvassing") && (
+                          {(data.status !== "Cancelled" && data.status !== "For-Canvassing" && data.status !== "Delivered") && (
                             <button
                               className="btn btn-danger"
                               onClick={() => CancelRequest(data.id, data.status)}
