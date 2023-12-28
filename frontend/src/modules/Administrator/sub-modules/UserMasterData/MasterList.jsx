@@ -37,7 +37,7 @@ import * as $ from "jquery";
 import Header from "../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
-function MasterList() {
+function MasterList({ authrztn }) {
   const [masterListt, setmasterListt] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
@@ -138,13 +138,13 @@ function MasterList() {
     // console.log("ln 128: ", authorization); // []
   }, []);
 
-  const verifyAuthorization = (target) => {
-    var decoded = jwtDecode(localStorage.getItem("accessToken"));
+  // const verifyAuthorization = (target) => {
+  //   var decoded = jwtDecode(localStorage.getItem("accessToken"));
 
-    console.log(decoded.authorization);
-    console.log(decoded.authorization.includes(target));
-    return decoded.authorization.includes(target);
-  };
+  //   console.log(decoded.authorization);
+  //   console.log(decoded.authorization.includes(target));
+  //   return decoded.authorization.includes(target);
+  // };
 
   const reloadTable = () => {
     axios
@@ -646,20 +646,20 @@ function MasterList() {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-  const [authrztn, setauthrztn] = useState([]);
-  useEffect(() => {
-    var decoded = jwtDecode(localStorage.getItem("accessToken"));
-    axios
-      .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
-      .then((res) => {
-        if (res.status === 200) {
-          setauthrztn(res.data.col_authorization);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  // const [authrztn, setauthrztn] = useState([]);
+  // useEffect(() => {
+  //   var decoded = jwtDecode(localStorage.getItem("accessToken"));
+  //   axios
+  //     .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         setauthrztn(res.data.col_authorization);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }, []);
 
   // console.log("ln 128: ", authorization); // []
 
@@ -698,7 +698,7 @@ function MasterList() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  {authrztn.includes("Master List - Add") && (
+                  {authrztn?.includes("Master List - Add") && (
                     <button onClick={handleShow}>
                       <span>
                         <Plus size={25} />
@@ -757,7 +757,7 @@ function MasterList() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
-                              {authrztn.includes("Master List - Edit") && (
+                              {authrztn?.includes("Master List - Edit") && (
                                 <button
                                   className="btn"
                                   onClick={() => {
@@ -768,7 +768,7 @@ function MasterList() {
                                 </button>
                               )}
 
-                              {authrztn.includes("Master List - Delete") && (
+                              {authrztn?.includes("Master List - Delete") && (
                                 <button
                                   className="btn"
                                   onClick={() => {

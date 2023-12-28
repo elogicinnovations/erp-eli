@@ -35,7 +35,7 @@ import "../../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../../partials/header";
 
-function Productvariants() {
+function Productvariants({ authrztn }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -397,21 +397,21 @@ function Productvariants() {
     }
   }, [Manufacturer]);
 
-  const [authrztn, setauthrztn] = useState([]);
-  useEffect(() => {
+  // const [authrztn, setauthrztn] = useState([]);
+  // useEffect(() => {
 
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-      .then((res) => {
-        if(res.status === 200){
-          setauthrztn(res.data.authorization);
-        }
-    })
-      .catch((err) => {
-        console.error(err);
-    });
+  //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
+  //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+  //     .then((res) => {
+  //       if(res.status === 200){
+  //         setauthrztn(res.data.authorization);
+  //       }
+  //   })
+  //     .catch((err) => {
+  //       console.error(err);
+  //   });
 
-  }, []);
+  // }, []);
 
   return (
     <div className="main-of-containers">

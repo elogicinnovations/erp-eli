@@ -30,11 +30,12 @@ router.route("/fetchuserroleEDIT/:id").get(async (req, res) => {
   const roleId = req.params.id;
 
   try {
-    const data = await UserRole.findAll({
-      where: {
-        col_id: roleId,
-      },
-    });
+    // const data = await UserRole.find({
+    //   where: {
+    //     col_id: roleId,
+    //   },
+    // });
+    const data = await UserRole.findByPk(roleId);
 
     if (!data) {
       // No record found

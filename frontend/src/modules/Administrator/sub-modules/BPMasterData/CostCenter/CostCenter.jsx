@@ -30,7 +30,7 @@ import Col from "react-bootstrap/Col";
 
 import { jwtDecode } from "jwt-decode";
 
-function CostCenter() {
+function CostCenter({ authrztn }) {
   const [CostCenter, setCostCenter] = useState([]);
 
   // const [showDropdown, setShowDropdown] = useState(false);
@@ -311,21 +311,21 @@ function CostCenter() {
     }
   };
   // --
-  const [authrztn, setauthrztn] = useState([]);
-  useEffect(() => {
+  // const [authrztn, setauthrztn] = useState([]);
+  // useEffect(() => {
 
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-      .then((res) => {
-        if(res.status === 200){
-          setauthrztn(res.data.col_authorization);
-        }
-    })
-      .catch((err) => {
-        console.error(err);
-    });
+  //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
+  //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+  //     .then((res) => {
+  //       if(res.status === 200){
+  //         setauthrztn(res.data.col_authorization);
+  //       }
+  //   })
+  //     .catch((err) => {
+  //       console.error(err);
+  //   });
 
-  }, [authrztn]);
+  // }, [authrztn]);
 
   return (
     <div className="main-of-containers">
@@ -374,7 +374,7 @@ function CostCenter() {
                     </span>
                     Create New
                   </Link> */}
-                  { authrztn.includes('Cost Centre - Add') && (
+                  { authrztn?.includes('Cost Centre - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
@@ -458,7 +458,7 @@ function CostCenter() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
-                                { authrztn.includes('Cost Centre - Edit') && (
+                                { authrztn?.includes('Cost Centre - Edit') && (
                                 <Link
                                   to={`/initUpdateCostCenter/${data.id}`}
                                   onClick={() => {
@@ -471,7 +471,7 @@ function CostCenter() {
                                 </Link>
                                 )}
 
-                                { authrztn.includes('Cost Centre - Delete') && (
+                                { authrztn?.includes('Cost Centre - Delete') && (
                                   <button
                                     onClick={() => {
                                       handleDelete(data.id);

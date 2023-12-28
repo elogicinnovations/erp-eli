@@ -31,7 +31,7 @@ import * as $ from "jquery";
 import Header from "../../../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
-function SpareParts() {
+function SpareParts({ authrztn }) {
   const [sparePart, setSparePart] = useState([]);
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -194,23 +194,23 @@ function SpareParts() {
   }, [sparePart]);
   const navigate = useNavigate();
 
-  const [authrztn, setauthrztn] = useState([]);
-  useEffect(() => {
+  // const [authrztn, setauthrztn] = useState([]);
+  // useEffect(() => {
 
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    console.log("Decoded: ", decoded);
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-      .then((res) => {
-        if(res.status === 200){
-          console.log(res);
-          setauthrztn(res.data.col_authorization);
-        }
-    })
-      .catch((err) => {
-        console.error(err);
-    });
+  //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
+  //   console.log("Decoded: ", decoded);
+  //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
+  //     .then((res) => {
+  //       if(res.status === 200){
+  //         console.log(res);
+  //         setauthrztn(res.data.col_authorization);
+  //       }
+  //   })
+  //     .catch((err) => {
+  //       console.error(err);
+  //   });
 
-  }, []);
+  // }, []);
   
   return (
     <div className="main-of-containers">
