@@ -29,7 +29,7 @@ import * as $ from "jquery";
 import Header from "../../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
-function ProductCategory() {
+function ProductCategory({authrztn}) {
   const [category, setcategory] = useState([]); // for table
   const [validated, setValidated] = useState(false);
 

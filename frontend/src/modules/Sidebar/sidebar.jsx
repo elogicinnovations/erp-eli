@@ -330,7 +330,7 @@ function Sidebar({ authrztn }) {
                 </NavLink>
                   )}
 
-                  {/* <NavLink
+                  <NavLink
                   to='/subParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -341,8 +341,8 @@ function Sidebar({ authrztn }) {
                   >
                     <ListItemText primary="Product Sub-Parts" />
                   </ListItem>
-                </NavLink> */}
-                  {/* <NavLink
+                </NavLink>
+                  <NavLink
                   to='/spareParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -353,8 +353,8 @@ function Sidebar({ authrztn }) {
                   >
                     <ListItemText primary="Product Parts" />
                   </ListItem>
-                </NavLink> */}
-                  {/* <NavLink
+                </NavLink>
+                  <NavLink
                   to='/assemblyForm'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -365,7 +365,7 @@ function Sidebar({ authrztn }) {
                 >
                     <ListItemText primary="Product Assembly" />
                   </ListItem>
-                </NavLink> */}
+                </NavLink>
                   <NavLink
                     to="/productList"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -581,14 +581,6 @@ function Sidebar({ authrztn }) {
             </NavLink>
           </Collapse>
 
-          {/* <ListItem button className={`menu-item ${activeMenu === 'ASSET MANAGEMENT' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveMenu(activeMenu === 'ASSET MANAGEMENT' ? '' : 'ASSET MANAGEMENT');
-            }}>
-            <Coins size={20}/>
-            <ListItemText primary="ASSET MANAGEMENT" />
-          </ListItem> */}
-
           <ListItem
             button
             className={`menu-item ${
@@ -648,20 +640,11 @@ function Sidebar({ authrztn }) {
             </NavLink>
           </Collapse>
 
-          {/* <ListItem button className={`menu-item ${activeMenu === 'ACTIVITY LOGS' ? 'active' : ''}`}
-              onClick={() => {
-                setActiveMenu(activeMenu === 'ACTIVITY LOGS' ? '' : 'ACTIVITY LOGS');
-              }}>
-            <Files size={20}/>
-            <ListItemText primary="ACTIVITY LOGS" />
-          </ListItem> */}
         </List>
       </div>
 
       <div className="logout-container">
-        {/* <Link to={'/'} className='logout' onClick={() => { localStorage.removeItem('accessToken') }}>
-              <SignOut size={20}/> Logout
-                </Link> */}
+
       </div>
     </div>
   );

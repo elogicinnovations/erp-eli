@@ -55,6 +55,7 @@ function ProductSupplier() {
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
   const [code, setCode] = useState("");
+  const [prod_id, setProd_id] = useState("");
   const [name, setName] = useState("");
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [unit, setunit] = useState("");
@@ -100,6 +101,7 @@ function ProductSupplier() {
       })
       .then((res) => {
         setCode(res.data[0].product_code);
+        setProd_id(res.data[0].productsID)
         setName(res.data[0].product_name);
         setslct_category(res.data[0].product_category);
         setunit(res.data[0].product_unit);
@@ -274,6 +276,24 @@ function ProductSupplier() {
                 />
               </Form.Group>
             </div>
+
+            <div className="col-4">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Product ID:{" "}
+                </Form.Label>
+                <Form.Control
+                  required
+                  readOnly
+                  type="text"
+                  value={prod_id}
+                  onChange={(e) => setProd_id(e.target.value)}
+                  style={{ height: "40px", fontSize: "15px" }}
+                />
+              </Form.Group>
+            </div>
+
+              
             <div className="col-4">
               <Form.Group controlId="exampleForm.ControlInput1">
                 <Form.Label style={{ fontSize: "20px" }}>
@@ -288,42 +308,28 @@ function ProductSupplier() {
                 />
               </Form.Group>
             </div>
-            <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Category: </Form.Label>
-                <Form.Select
-                  aria-label=""
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={slct_category}
-                  disabled>
-                  {category.map((category) => (
-                    <option
-                      key={category.category_code}
-                      value={category.category_code}>
-                      {category.category_name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </div>
+          
           </div>
 
           <div className="row">
             <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
-                <Form.Select
-                  aria-label=""
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={unit}
-                  disabled>
-                  {cls_unit.map((unit, index) => (
-                    <option key={index} value={unit}>
-                      {unit}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+                  <Form.Label style={{ fontSize: "20px" }}>Category: </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    style={{ height: "40px", fontSize: "15px" }}
+                    value={slct_category}
+                    disabled>
+                    {category.map((category) => (
+                      <option
+                        key={category.category_code}
+                        value={category.category_code}>
+                        {category.category_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                    
             </div>
             <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput2">
@@ -577,7 +583,6 @@ function ProductSupplier() {
                           <tr>
                             <th>Supplier Code</th>
                             <th>Sub-Part Name</th>
-                            <th>Supplier Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
@@ -586,7 +591,6 @@ function ProductSupplier() {
                             <tr>
                               <td>{subpart.subPart.subPart_code}</td>
                               <td>{subpart.subPart.subPart_name}</td>
-                              <td>{subpart.subPart.supplier}</td>
                               <td>{subpart.subPart.subPart_desc}</td>
                             </tr>
                           ))}
