@@ -577,7 +577,6 @@ function ProductSupplier() {
                           <tr>
                             <th>Supplier Code</th>
                             <th>Sub-Part Name</th>
-                            <th>Supplier Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
@@ -586,7 +585,6 @@ function ProductSupplier() {
                             <tr>
                               <td>{subpart.subPart.subPart_code}</td>
                               <td>{subpart.subPart.subPart_name}</td>
-                              <td>{subpart.subPart.supplier}</td>
                               <td>{subpart.subPart.subPart_desc}</td>
                             </tr>
                           ))}
