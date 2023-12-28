@@ -229,28 +229,9 @@ function EditRole() {
       "Receiving - Reject",
       "Stock Management - Add",
       "Stock Management - View",
-<<<<<<< HEAD
       "Stock Management - Approval",
       "Stock Management - Reject",
       "Report - View"
-=======
-      "Asset List - Add",
-      "Asset List - Edit",
-      "Asset List - Delete",
-      "Asset List - View",
-      "Activity Log - Add",
-      "Activity Log - Edit",
-      "Activity Log - Delete",
-      "Activity Log - View",
-      "Audit Trail - Add",
-      "Audit Trail - Edit",
-      "Audit Trail - Delete",
-      "Audit Trail - View",
-      "Purchase Request - Add",
-      "Purchase Request - Edit",
-      "Purchase Request - Delete",
-      "Purchase Request - View"
->>>>>>> origin/Marjon
     ];
 
     const updatedCheckboxes = allCheckboxValues.map((value) => ({
