@@ -13,8 +13,12 @@ const Product = sequelize.define('product', {
     // type: DataTypes.INTEGER,
     allowNull: true,
   },
+  productsID: { // for consolidating of tagging items codes from assembly, spare, subpart
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   product_name: {
-    type: DataTypes.STRING, // Change the column name to col_roleID
+    type: DataTypes.STRING, 
     allowNull: true,
     unique: false,
   },
@@ -23,7 +27,7 @@ const Product = sequelize.define('product', {
     allowNull: true,
     unique: false,
   },
-  product_unit: {
+  product_unit: { // dapat e delete na kasi tinanggal na sa product
     type: DataTypes.STRING,
     allowNull: true,
     unique: false,

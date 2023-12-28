@@ -9,7 +9,6 @@ import "../../../../../styles/react-style.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
 
@@ -24,9 +23,9 @@ function UpdateProduct() {
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
   const [code, setCode] = useState("");
+  const [prod_id, setProd_id] = useState("");
   const [name, setName] = useState("");
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
-  const [unit, setunit] = useState("");
   const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
   const [unitMeasurement, setunitMeasurement] = useState("");
   const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer
@@ -245,9 +244,9 @@ useEffect(() => {
     })
   .then(res => {
       setCode(res.data[0].product_code)
+      setProd_id(res.data[0].productsID)
       setName(res.data[0].product_name);
       setslct_category(res.data[0].product_category);
-      setunit(res.data[0].product_unit);
       setslct_binLocation(res.data[0].product_location);
       setunitMeasurement(res.data[0].product_unitMeasurement);
       setslct_manufacturer(res.data[0].product_manufacturer);
@@ -323,10 +322,6 @@ useEffect(() => {
     setShowDropdown(true);
   };
 
-  // for Unit on change function
-  const handleChangeUnit = (event) => {
-    setunit(event.target.value);
-  };
 
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
@@ -346,6 +341,13 @@ useEffect(() => {
   // for Unit Measurement on change function
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "e" || isNaN(e.key)) {
+      e.preventDefault();
+    }
+    e.target.value = e.target.value.replace(/[^0-9.]/);
   };
 
   useEffect(() => {
@@ -398,10 +400,10 @@ useEffect(() => {
         .post(`${BASE_URL}/product/update`, null, {
           params: {
             id,
+            prod_id,
             code,
             name,
             slct_category,
-            unit,
             slct_binLocation,
             unitMeasurement,
             slct_manufacturer,
@@ -488,6 +490,20 @@ useEffect(() => {
               </div>
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product ID:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      required
+                      type="text"
+                      value={prod_id}
+                      onChange={(e) => setProd_id(e.target.value)}
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Item Name:{" "}
                   </Form.Label>
@@ -499,31 +515,6 @@ useEffect(() => {
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
                   />
-                </Form.Group>
-              </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Category:{" "}
-                  </Form.Label>
-
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeCategory}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={slct_category}>
-                    <option disabled value="">
-                      Select Category ...
-                    </option>
-                    {category.map((category) => (
-                      <option
-                        key={category.category_code}
-                        value={category.category_code}>
-                        {category.category_name}
-                      </option>
-                    ))}
-                  </Form.Select>
                 </Form.Group>
               </div>
             </div>
@@ -542,6 +533,19 @@ useEffect(() => {
                     }))}
                     onChange={handleAssemblyChange}
                     value={assembly}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
                   />
                 </Form.Group>
               </div>
@@ -559,6 +563,19 @@ useEffect(() => {
                     }))}
                     onChange={handleSparepartChange}
                     value={spareParts}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
                   />
                 </Form.Group>
               </div>
@@ -575,6 +592,19 @@ useEffect(() => {
                     }))}
                     onChange={handleSubpartChange}
                     value={subparting}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
                   />
                 </Form.Group>
               </div>
@@ -582,20 +612,25 @@ useEffect(() => {
 
             <div className="row">
               <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
+              <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Category:{" "}
+                  </Form.Label>
+
                   <Form.Select
                     aria-label=""
+                    onChange={handleFormChangeCategory}
                     required
                     style={{ height: "40px", fontSize: "15px" }}
-                    value={unit}
-                    onChange={handleChangeUnit}>
+                    value={slct_category}>
                     <option disabled value="">
-                      Select Unit ...
+                      Select Category ...
                     </option>
-                    {cls_unit.map((unit, index) => (
-                      <option key={index} value={unit}>
-                        {unit}
+                    {category.map((category) => (
+                      <option
+                        key={category.category_code}
+                        value={category.category_code}>
+                        {category.category_name}
                       </option>
                     ))}
                   </Form.Select>
@@ -660,7 +695,7 @@ useEffect(() => {
                   <Form.Select
                     aria-label=""
                     onChange={handleFormChangeManufacturer}
-                    required
+                    
                     style={{ height: "40px", fontSize: "15px" }}
                     value={slct_manufacturer}>
                     <option disabled value="">
@@ -720,8 +755,17 @@ useEffect(() => {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
+                    required
                     value={thresholds}
-                    onChange={(e) => setThresholds(e.target.value)}
+                    // onChange={(e) => setThresholds(e.target.value)}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      const sanitizedValue = inputValue
+                        .replace(/\D/g, "")
+                        .substring(0, 10);
+                      setThresholds(sanitizedValue);
+                    }}
+                    onInput={handleKeyPress}
                     type="number"
                     style={{ height: "40px", fontSize: "15px" }}
                   />

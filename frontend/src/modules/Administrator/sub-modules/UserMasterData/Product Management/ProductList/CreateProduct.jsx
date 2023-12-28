@@ -9,7 +9,6 @@ import "../../../../../styles/react-style.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
 import { X } from "@phosphor-icons/react";
@@ -27,9 +26,9 @@ function CreateProduct() {
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
   const [code, setCode] = useState("");
+  const [prod_id, setProd_id] = useState("");
   const [name, setName] = useState("");
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
-  const [unit, setunit] = useState("");
   const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
   const [unitMeasurement, setunitMeasurement] = useState("");
   const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer
@@ -152,10 +151,6 @@ function CreateProduct() {
     setassemblies(selectedOptions);
   };
 
-  // for Unit on change function
-  const handleChangeUnit = (event) => {
-    setunit(event.target.value);
-  };
 
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
@@ -172,7 +167,7 @@ function CreateProduct() {
     setslct_binLocation(event.target.value);
   };
 
-  // for Unit Measurement on change function
+  // for Manufacturer on change function
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
   };
@@ -259,9 +254,9 @@ function CreateProduct() {
     } else {
       const formData = new FormData();
       formData.append("code", code);
+      formData.append("prod_id", prod_id);
       formData.append("name", name);
       formData.append("slct_category", slct_category);
-      formData.append("unit", unit);
       formData.append("slct_binLocation", slct_binLocation);
       formData.append("unitMeasurement", unitMeasurement);
       formData.append("slct_manufacturer", slct_manufacturer);
@@ -387,6 +382,20 @@ function CreateProduct() {
               </div>
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product ID:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      required
+                      type="text"
+                      onChange={(e) => setProd_id(e.target.value)}
+                      placeholder="Enter product id"
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Item Name:{" "}
                   </Form.Label>
@@ -400,8 +409,101 @@ function CreateProduct() {
                   />
                 </Form.Group>
               </div>
+             
+            </div>
+
+            <div className="row">
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Assembly:{" "}
+                  </Form.Label>
+                  <Select
+                    isMulti
+                    options={fetchAssembly.map((assembly) => ({
+                      value: assembly.id,
+                      label: assembly.assembly_name,
+                    }))}
+                    onChange={handleAssemblyChange}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
+                    
+                  />
+                </Form.Group>
+              </div>
+
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Spare Parts:{" "}
+                  </Form.Label>
+                  <Select
+                    isMulti
+                    options={fetchSparePart.map((sparePart) => ({
+                      value: sparePart.id,
+                      label: sparePart.spareParts_name,
+                    }))}
+                    onChange={handleSparepartChange}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Sub Parts:{" "}
+                  </Form.Label>
+                  <Select
+                    isMulti
+                    options={fetchSubPart.map((subpart) => ({
+                      value: subpart.id,
+                      label: subpart.subPart_name,
+                    }))}
+                    onChange={handleSubpartChange}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Category:{" "}
                   </Form.Label>
@@ -420,77 +522,6 @@ function CreateProduct() {
                         key={category.category_code}
                         value={category.category_code}>
                         {category.category_name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Assembly:{" "}
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    options={fetchAssembly.map((assembly) => ({
-                      value: assembly.id,
-                      label: assembly.assembly_name,
-                    }))}
-                    onChange={handleAssemblyChange}
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Spare Parts:{" "}
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    options={fetchSparePart.map((sparePart) => ({
-                      value: sparePart.id,
-                      label: sparePart.spareParts_name,
-                    }))}
-                    onChange={handleSparepartChange}
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Sub Parts:{" "}
-                  </Form.Label>
-                  <Select
-                    isMulti
-                    options={fetchSubPart.map((subpart) => ({
-                      value: subpart.id,
-                      label: subpart.subPart_name,
-                    }))}
-                    onChange={handleSubpartChange}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeUnit}>
-                    <option disabled value="">
-                      Select Unit ...
-                    </option>
-                    {cls_unit.map((unit, index) => (
-                      <option key={index} value={unit}>
-                        {unit}
                       </option>
                     ))}
                   </Form.Select>
@@ -530,10 +561,13 @@ function CreateProduct() {
                     Unit of Measurement:{" "}
                   </Form.Label>
                   <Form.Select
+                    
                     aria-label=""
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
-                    onChange={handleChangeMeasurement}>
+                    onChange={handleChangeMeasurement}
+                    required
+                    >
                     <option disabled value="">
                       Select Unit Measurement ...
                     </option>
@@ -553,7 +587,7 @@ function CreateProduct() {
                   <Form.Select
                     aria-label=""
                     onChange={handleFormChangeManufacturer}
-                    required
+                    
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">
@@ -613,6 +647,7 @@ function CreateProduct() {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
+                    required
                     onChange={(e) => {
                       const inputValue = e.target.value;
                       const sanitizedValue = inputValue

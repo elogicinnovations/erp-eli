@@ -144,6 +144,7 @@ router.route("/create").post(
             const newData = await Product.create({
             product_code: req.body.code,
             product_name: req.body.name,
+            productsID: req.body.prod_id,
             product_category: req.body.slct_category,
             product_unit: req.body.unit,
             product_location: req.body.slct_binLocation,
@@ -229,7 +230,6 @@ router.route("/update").post(
   async (req, res) => {
   
   try {
-    console.log(req.query.id)
     const existingDataCode = await Product.findOne({
       where: {
         product_code: req.query.code,
@@ -249,6 +249,7 @@ router.route("/update").post(
       const Product_newData = await Product.update(
         {
           product_code: req.query.code,
+          productsID: req.query.prod_id,
           product_name: req.query.name,
           product_category: req.query.slct_category,
           product_unit: req.query.unit,
@@ -274,7 +275,7 @@ router.route("/update").post(
 
       if(deleteassembly) {
         const selectedAssemblies = req.query.assembly;
-        console.log(selectedAssemblies);
+        // console.log(selectedAssemblies);
         for (const assemblyDropdown of selectedAssemblies) {
           const assemblyValue = assemblyDropdown.value;
           await Product_Assembly.create({
@@ -295,7 +296,7 @@ router.route("/update").post(
         for (const subpartDropdown of selectedSubparting) {
           const subpartValue = subpartDropdown.value;
   
-          console.log(subpartValue)
+          // console.log(subpartValue)
           await Product_Subparts.create({
             product_id: req.query.id,
             subPart_id: subpartValue
@@ -314,7 +315,7 @@ router.route("/update").post(
         for (const spareDropdown of selectedSpare) {
           const spareValue = spareDropdown.value;
   
-          console.log(spareValue)
+          // console.log(spareValue)
           await Product_Spareparts.create({
             product_id: req.query.id,
             sparePart_id: spareValue
@@ -330,7 +331,7 @@ router.route("/update").post(
 
       if(deletesupplier){
         const selectedSuppliers = req.query.productTAGSuppliers
-        console.log(selectedSuppliers)
+        // console.log(selectedSuppliers)
         for (const supplier of selectedSuppliers) {
           const { value, price } = supplier;
           await ProductTAGSupplier.create({

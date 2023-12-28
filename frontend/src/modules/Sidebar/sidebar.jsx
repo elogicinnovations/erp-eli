@@ -317,7 +317,7 @@ function Sidebar() {
                     <ListItemText primary="Bin Location" />
                   </ListItem>
                 </NavLink>
-                  {/* <NavLink
+                  <NavLink
                   to='/subParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -328,8 +328,8 @@ function Sidebar() {
                   >
                     <ListItemText primary="Product Sub-Parts" />
                   </ListItem>
-                </NavLink> */}
-                  {/* <NavLink
+                </NavLink>
+                  <NavLink
                   to='/spareParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -340,8 +340,8 @@ function Sidebar() {
                   >
                     <ListItemText primary="Product Parts" />
                   </ListItem>
-                </NavLink> */}
-                  {/* <NavLink
+                </NavLink>
+                  <NavLink
                   to='/assemblyForm'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -352,7 +352,7 @@ function Sidebar() {
                 >
                     <ListItemText primary="Product Assembly" />
                   </ListItem>
-                </NavLink> */}
+                </NavLink>
                   <NavLink
                     to="/productList"
                     style={{ textDecoration: "none", color: "inherit" }}
