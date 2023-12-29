@@ -12,6 +12,11 @@ const Supplier = sequelize.define("suppliers", {
     allowNull: false,
     unique: false,
   },
+  supplier_currency: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: false,
+  },
   supplier_tin: {
     type: DataTypes.STRING,
     allowNull: true,

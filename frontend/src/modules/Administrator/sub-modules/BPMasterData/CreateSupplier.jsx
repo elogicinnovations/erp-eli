@@ -18,6 +18,7 @@ function CreateSupplier() {
   const [validated, setValidated] = useState(false);
 
   const [suppName, setsuppName] = useState("");
+  const [suppCurr, setsuppCurr] = useState("");
   const [suppCode, setsuppCode] = useState("");
   const [suppTin, setsuppTin] = useState("");
   const [suppEmail, setsuppEmail] = useState("");
@@ -168,6 +169,7 @@ function CreateSupplier() {
       axios
         .post(BASE_URL + "/supplier/create", {
           suppName,
+          suppCurr,
           suppCode,
           suppTin,
           suppEmail,
@@ -304,6 +306,28 @@ function CreateSupplier() {
                     placeholder="Supplier Code"
                   />
                 </Col>
+              </Row>
+
+              <Row>
+                <Col>
+                  <label
+                    htmlFor=""
+                    className="label-head"
+                    style={{ fontSize: 20 }}>
+                    Currency:{" "}
+                  </label>
+                  <Form.Select
+                    className="p-3 fs-3"
+                    onChange={(e) => setsuppCurr(e.target.value)}
+                    required
+                    defaultValue=""
+                  >
+                    <option disabled value="">Select currency...</option>
+                    <option value="₱">Peso (₱)</option>
+                    <option value="$">Dollar ($)</option>
+                  </Form.Select>
+                </Col>
+                <Col></Col>
               </Row>
 
               <Row>
@@ -501,24 +525,6 @@ function CreateSupplier() {
                     className="label-head"
                     style={{ fontSize: 20 }}>
                     Email:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    type="email"
-                    onChange={(e) => setsuppEmail(e.target.value)}
-                    required
-                    placeholder="Enter your email..."
-                  />
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Currency:{" "}
                   </label>
                   <Form.Control
                     className="p-3 fs-3"

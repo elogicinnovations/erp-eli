@@ -314,6 +314,7 @@ function CreatePurchaseRequest() {
                     required
                     selected={dateNeed}
                     onChange={(date) => setDateNeed(date)}
+                    minDate={new Date()}
                     dateFormat="yyyy-MM-dd"
                     placeholderText="Start Date"
                     className="form-control"
