@@ -8,36 +8,68 @@ const { Manufacturer, Product } = require("../db/models/associations");
 
 
 router.route('/add').post(async (req, res) => {
+  try {
+    // Check if the supplier code is already exists in the table
+    const existingDataCode = await Manufacturer.findAll({
+      where: {
+        [Op.or]: [
+          { manufacturer_code: { [Op.eq]: req.body.codeManu } },
+          { manufacturer_name: { [Op.eq]: req.body.nameManufacturer } },
+        ],
+      },
+    });
 
-    try {
-      // Check if the supplier code is already exists in the table
-      const existingDataCode = await Manufacturer.findAll({
-        where: {
-          [Op.or] : [
-            { manufacturer_code: { [Op.eq] : req.body.codeManu }},
-            { manufacturer_name : { [Op.eq] : req.body.nameManufacturer }}
-          ]
-        },
+    if (existingDataCode.length > 0) {
+      res.status(201).send('Exist');
+    } else {
+      // Generate the next available code
+      const nextCode = await generateNextCode();
+
+      const newData = await Manufacturer.create({
+        manufacturer_code: nextCode,
+        manufacturer_name: req.body.nameManufacturer,
+        manufacturer_remarks: req.body.descriptManufacturer,
       });
-  
-      if (existingDataCode.length > 0) {
-        res.status(201).send('Exist');
-      } else {
-        const newData = await Manufacturer.create({
-          manufacturer_code: req.body.codeManu,
-          manufacturer_name: req.body.nameManufacturer,
-          manufacturer_remarks: req.body.descriptManufacturer
-        });
-  
-        res.status(200).json(newData);
-        // console.log(newDa)
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('An error occurred');
+
+      res.status(200).json(newData);
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
 });
 
+// Function to generate the next available code
+const generateNextCode = async () => {
+  try {
+    const latestManufacturer = await Manufacturer.findOne({
+      order: [['manufacturer_code', 'DESC']],
+    });
+
+    if (latestManufacturer) {
+      const latestCode = latestManufacturer.manufacturer_code;
+      const codeNumber = parseInt(latestCode.substring(1)) + 1;
+      return `M${codeNumber.toString().padStart(5, '0')}`;
+    } else {
+      // If no existing data, start with M00001
+      return 'M00001';
+    }
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+router.route('/nextcode').get(async (req, res) => {
+  try {
+    // Implement the logic to generate the next available code
+    const nextCode = await generateNextCode();
+    res.status(200).json({ nextCode });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 
 
