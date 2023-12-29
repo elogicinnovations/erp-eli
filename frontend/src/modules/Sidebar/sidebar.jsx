@@ -289,6 +289,9 @@ function Sidebar({ authrztn }) {
 
               <Collapse in={openProductSettings}>
                 <List component="div" disablePadding>
+
+                  {/* Product Categories */}
+                  { authrztn.includes('Product Categories - View') && (
                   <NavLink
                     to="/productCategory"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -301,40 +304,47 @@ function Sidebar({ authrztn }) {
                       <ListItemText primary="Product Categories" />
                     </ListItem>
                   </NavLink>
-                  <NavLink
-                    to="/ProductManu"
-                    style={{ textDecoration: "none", color: "inherit" }}
-                    activeClassName="active">
-                    <ListItem
-                      button
-                      className={`Employeesub-menu ${
-                        location.pathname === "/ProductManu" ? "active" : ""
-                      }`}>
-                      <ListItemText primary="Product Manufacturer" />
-                    </ListItem>
-                  </NavLink>
+                  )}
+
+                  {/* Product Manufacturer */}
+                  { authrztn.includes('Product Manufacturer - View') && (
+                    <NavLink
+                      to="/ProductManu"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      activeClassName="active">
+                      <ListItem
+                        button
+                        className={`Employeesub-menu ${
+                          location.pathname === "/ProductManu" ? "active" : ""
+                        }`}>
+                        <ListItemText primary="Product Manufacturer" />
+                      </ListItem>
+                    </NavLink>
+                  )}
 
                   {/* Bin Location */}
                   { authrztn.includes('Bin Location - View') && (
                   <NavLink
-                  to='/binLocation'
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                  activeClassName="active"
-                >
-                  <ListItem
-                    button
-                    className={`Employeesub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
+                    to='/binLocation'
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    activeClassName="active"
                   >
-                    <ListItemText primary="Bin Location" />
-                  </ListItem>
-                </NavLink>
+                    <ListItem
+                      button
+                      className={`Employeesub-menu ${location.pathname === '/binLocation' ? 'active' : ''}`}
+                    >
+                      <ListItemText primary="Bin Location" />
+                    </ListItem>
+                  </NavLink>
                   )}
 
-                  <NavLink
+                {/* Sub Parts */}
+                { authrztn.includes('Sub-Part - View') && (
+                <NavLink
                   to='/subParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
-                >
+                  >
                   <ListItem
                     button
                     className={`Employeesub-menu ${location.pathname.startsWith('/subParts') || location.pathname.startsWith('/createsubParts') ? 'active' : ''}`}
@@ -342,7 +352,11 @@ function Sidebar({ authrztn }) {
                     <ListItemText primary="Product Sub-Parts" />
                   </ListItem>
                 </NavLink>
-                  <NavLink
+                )}
+
+                {/* Spare Parts */}
+                { authrztn.includes('Spare Part - View') && (
+                <NavLink
                   to='/spareParts'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   activeClassName="active"
@@ -354,18 +368,28 @@ function Sidebar({ authrztn }) {
                     <ListItemText primary="Product Parts" />
                   </ListItem>
                 </NavLink>
+                )}
+
+
+                {/* Product Assembly */}
+                { authrztn.includes('Assembly - View') && (
                   <NavLink
-                  to='/assemblyForm'
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                  activeClassName="active"
-                >
-                <ListItem
-                  button
-                  className={`Employeesub-menu ${location.pathname.startsWith('/assemblyForm') || location.pathname.startsWith('/createAssemblyForm') || location.pathname.startsWith('/updateAssemblyForm') || location.pathname.startsWith('/viewAssembleForm') ? 'active' : ''}`}
-                >
-                    <ListItemText primary="Product Assembly" />
-                  </ListItem>
-                </NavLink>
+                    to='/assemblyForm'
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    activeClassName="active"
+                  >
+                    <ListItem
+                      button
+                      className={`Employeesub-menu ${location.pathname.startsWith('/assemblyForm') || location.pathname.startsWith('/createAssemblyForm') || location.pathname.startsWith('/updateAssemblyForm') || location.pathname.startsWith('/viewAssembleForm') ? 'active' : ''}`}
+                    >
+                      <ListItemText primary="Product Assembly" />
+                    </ListItem>
+                  </NavLink>
+                )}
+
+
+                {/* Product List */}
+                { authrztn.includes('Product List - View') && (
                   <NavLink
                     to="/productList"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -383,6 +407,8 @@ function Sidebar({ authrztn }) {
                       <ListItemText primary="Product List" />
                     </ListItem>
                   </NavLink>
+                )}
+
                 </List>
               </Collapse>
 
@@ -415,6 +441,7 @@ function Sidebar({ authrztn }) {
                   </NavLink>
                   )}
 
+                  { authrztn.includes('Supplier - View') && (
                   <NavLink
                     to="/supplier"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -432,6 +459,8 @@ function Sidebar({ authrztn }) {
                       <ListItemText primary="Suppliers" />
                     </ListItem>
                   </NavLink>
+                  )}    
+
                 </List>
               </Collapse>
 
@@ -496,6 +525,8 @@ function Sidebar({ authrztn }) {
           </ListItem>
 
           <Collapse in={openPurchaseOrder}>
+
+            { authrztn.includes('PR - View') && (
             <NavLink
               to="/purchaseRequest"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -512,6 +543,10 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="Purchase Request" />
               </ListItem>
             </NavLink>
+            )}
+
+
+            { authrztn.includes('PO - View') && (
             <NavLink
               to="/purchaseOrderList"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -527,6 +562,8 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="Purchase Order List" />
               </ListItem>
             </NavLink>
+            )}
+
           </Collapse>
 
           <ListItem
@@ -545,7 +582,7 @@ function Sidebar({ authrztn }) {
 
           <Collapse in={openWarehouse}>
 
-            { authrztn.includes('Recieving - View') && (
+            { authrztn.includes('Receiving - View') && (
             <NavLink
               to="/receivingManagement"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -562,7 +599,7 @@ function Sidebar({ authrztn }) {
             </NavLink>
             )}
 
-
+            { authrztn.includes('Stock Management - View') && (
             <NavLink
               to="/stockManagement"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -579,8 +616,11 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="Stock Transfer" />
               </ListItem>
             </NavLink>
+            )}
+
           </Collapse>
 
+          { authrztn.includes('Report - View') && (
           <ListItem
             button
             className={`menu-item ${
@@ -594,6 +634,8 @@ function Sidebar({ authrztn }) {
             <ListItemText primary="REPORTS" />
             {openReports ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          )}
+
 
           <Collapse in={openReports}>
             <NavLink

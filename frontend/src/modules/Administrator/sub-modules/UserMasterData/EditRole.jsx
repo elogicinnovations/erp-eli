@@ -30,18 +30,20 @@ function EditRole() {
         );
         const roleData = response.data;
 
+        console.log("Role: ",roleData);
         setRole(roleData);
 
+
         // Set the Role Name and Description
-        setRolename(roleData[0].col_rolename);
-        setDesc(roleData[0].col_desc);
+        setRolename(roleData.col_rolename);
+        setDesc(roleData.col_desc);
 
         // Split col_authorization and create an array of checkboxes based on the retrieved role data
-        const authorizationValues = roleData[0].col_authorization.split(", ");
+        const authorizationValues = roleData.col_authorization;
         const checkboxes = authorizationValues.map((value) => ({
           value,
-          rolename: roleData[0].col_rolename,
-          desc: roleData[0].col_desc,
+          rolename: roleData.col_rolename,
+          desc: roleData.col_desc,
           authorization: value,
         }));
 

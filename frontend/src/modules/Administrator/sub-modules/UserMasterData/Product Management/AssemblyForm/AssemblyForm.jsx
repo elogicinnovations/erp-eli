@@ -28,7 +28,7 @@ import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 
-function AssemblyForm() {
+function AssemblyForm({ authrztn }) {
   const [assembly, setAssembly] = useState([]);
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -226,12 +226,16 @@ function AssemblyForm() {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
+
+                  { authrztn.includes('Assembly - Add') && (
                   <Link to="/createAssemblyForm" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Product
                   </Link>
+                  )}
+                  
                 </div>
               </div>
             </div>
@@ -291,12 +295,17 @@ function AssemblyForm() {
                             <div
                               className="choices"
                               style={{ position: "absolute" }}>
+                              
+                              { authrztn.includes('Assembly - Edit') && (
                               <Link
                                 to={`/updateAssemblyForm/${data.id}`}
                                 style={{ fontSize: "12px" }}
                                 className="btn">
                                 Update
                               </Link>
+                              )}
+
+                              { authrztn.includes('Assembly - Delete') && (
                               <button
                                 onClick={() => {
                                   handleDelete(data.id);
@@ -305,6 +314,9 @@ function AssemblyForm() {
                                 className="btn">
                                 Delete
                               </button>
+                              )}
+
+
                             </div>
                           )}
                         </div>

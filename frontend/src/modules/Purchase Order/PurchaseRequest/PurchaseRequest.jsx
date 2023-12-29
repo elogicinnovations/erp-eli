@@ -34,7 +34,7 @@ import * as $ from "jquery";
 import Header from "../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
-function PurchaseRequest() {
+function PurchaseRequest({ authrztn }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
@@ -196,22 +196,6 @@ function PurchaseRequest() {
     }
   }, [allPR]);
 
-  const [authrztn, setauthrztn] = useState([]);
-  useEffect(() => {
-
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-      .then((res) => {
-        if(res.status === 200){
-          setauthrztn(res.data.authorization);
-        }
-    })
-      .catch((err) => {
-        console.error(err);
-    });
-
-  }, []);
-
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -352,12 +336,16 @@ function PurchaseRequest() {
                     Clear Filter
                   </button>
                   <div className="Buttonmodal-new">
+
+                    { authrztn.includes('PR - Add') && (
                     <Link to="/createPurchaseRequest" className="button">
                       <span style={{}}>
                         <Plus size={25} />
                       </span>
                       New PR
                     </Link>
+                    )}
+
                   </div>
                 </div>
               </div>
@@ -414,8 +402,9 @@ function PurchaseRequest() {
                         </td>
                         <td>
                           {/* Cancel Button */}
-                          {/* { authrztn.includes('')} */}
-                          {(data.status !== "Cancelled" && data.status !== "For-Canvassing" && data.status !== "Delivered") && (
+                          { authrztn.includes('PR - Reject') && (
+
+                          data.status !== "Cancelled" && data.status !== "For-Canvassing" && data.status !== "Delivered") && (
                             <button
                               className="btn btn-danger"
                               onClick={() => CancelRequest(data.id, data.status)}
