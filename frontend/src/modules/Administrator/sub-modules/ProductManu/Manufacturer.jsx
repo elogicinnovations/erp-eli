@@ -109,9 +109,25 @@ function Productvariants({ authrztn }) {
   //   }
 
   const [validated, setValidated] = useState(false);
-  const [code, setCode] = useState();
+  const [code, setCode] = useState("");
   const [nameManu, setName] = useState();
   const [descManu, setDescription] = useState();
+  const [nextCode, setNextCode] = useState("");
+
+  useEffect(() => {
+    // Fetch the next code when the modal is opened
+    if (show) {
+      fetchNextCode();
+    }
+  }, [show]);
+
+  const fetchNextCode = () => {
+    // Make a request to the server to get the next available code
+    // You need to implement a corresponding server endpoint for this
+    axios.get(BASE_URL + "/manufacturer/nextcode").then((res) => {
+      setCode(res.data.nextCode); // Assuming the server sends the next code in the response
+    });
+  };
 
   const addManufacturer = async (e) => {
     e.preventDefault();
@@ -227,8 +243,7 @@ function Productvariants({ authrztn }) {
       setCode(""); // Clear the code input field
       setName(""); // Clear the nameManu input field
       setDescription(""); // Clear the descManu input field
-
-      setShow(false);
+      window.location.reload();
     });
   };
   const Duplicate_Message = () => {
@@ -447,14 +462,14 @@ function Productvariants({ authrztn }) {
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
 
-                  { authrztn.includes('Product Manufacturer - Add') && (
+                  {/* { authrztn.includes('Product Manufacturer - Add') && ( */}
                     <button onClick={handleShow}>
                       <span style={{}}>
                         <Plus size={25} />
                       </span>
                       Create New
                     </button>
-                  ) }
+                  {/* ) } */}
 
                 </div>
               </div>
@@ -517,7 +532,7 @@ function Productvariants({ authrztn }) {
                               </button>
                               )}
 
-                              { authrztn.includes('Product Manufacturer - Delete') && (
+                              {/* { authrztn.includes('Product Manufacturer - Delete') && ( */}
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -526,7 +541,7 @@ function Productvariants({ authrztn }) {
                                 }}>
                                 Delete
                               </button>
-                              )}
+                              {/* )} */}
 
                             </div>
                           )}
@@ -587,8 +602,8 @@ function Productvariants({ authrztn }) {
                   <Form.Control
                     type="text"
                     placeholder="Enter code"
-                    required
-                    value={code}
+                    disabled
+                    value={code || nextCode}
                     onChange={(e) => setCode(e.target.value)}
                     style={{ height: "40px", fontSize: "15px" }}
                   />

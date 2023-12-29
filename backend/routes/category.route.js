@@ -38,7 +38,18 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
-      
+          const lastCategory = await Category.findOne({
+            order: [['createdAt', 'DESC']]
+        });
+        
+        let newCategoryCode;
+        if (lastCategory) {
+            const lastCode = lastCategory.category_code;
+            const lastNumber = parseInt(lastCode.substring(1), 10);
+            newCategoryCode = 'C' + (lastNumber + 1).toString().padStart(6, '0');
+        } else {
+            newCategoryCode = 'C000001'; // Initial category code
+        }
 
         // Check if the supplier code is already exists in the table
         const existingDataCode = await Category.findAll({
@@ -54,7 +65,7 @@ router.route('/create').post(async (req, res) => {
           res.status(201).send('Exist');
         } else {
           const newData = await Category.create({
-            category_code: req.body.categoryCode,
+            category_code: newCategoryCode,
             category_name: req.body.categoryName,
             category_remarks: req.body.categoryRemarks
           });
@@ -66,6 +77,28 @@ router.route('/create').post(async (req, res) => {
         console.error(err);
         res.status(500).send('An error occurred');
       }
+});
+
+router.route('/getNextCategoryCode').get(async (req, res) => {
+  try {
+      const lastCategory = await Category.findOne({
+          order: [['createdAt', 'DESC']]
+      });
+
+      let nextCategoryCode;
+      if (lastCategory) {
+          const lastCode = lastCategory.category_code;
+          const lastNumber = parseInt(lastCode.substring(1), 10);
+          nextCategoryCode = 'C' + (lastNumber + 1).toString().padStart(6, '0');
+      } else {
+          nextCategoryCode = 'C000001'; // Initial category code
+      }
+
+      res.json({ nextCategoryCode });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+  }
 });
 
 // router.route('/importCategory').post(upload.single('file'), async (req, res) => {

@@ -140,6 +140,7 @@ router.route('/create').post(async (req, res) => {
           const newData = await Supplier.create({
             supplier_code: req.body.suppCode,
             supplier_name: req.body.suppName,
+            supplier_currency: req.body.suppCurr,
             supplier_tin: finalTin,
             supplier_email: req.body.suppEmail,
             supplier_address: req.body.suppAdd,

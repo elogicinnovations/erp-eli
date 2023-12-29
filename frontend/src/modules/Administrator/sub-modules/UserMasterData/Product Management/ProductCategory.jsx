@@ -75,6 +75,19 @@ function ProductCategory({authrztn}) {
     }
   };
 
+  const [nextCategoryCode, setNextCategoryCode] = useState('');
+
+// Fetch next category code when the component mounts
+useEffect(() => {
+    axios.get(BASE_URL + '/category/getNextCategoryCode')
+        .then(response => {
+            setNextCategoryCode(response.data.nextCategoryCode);
+        })
+        .catch(error => {
+            console.error('Error fetching next category code:', error);
+        });
+}, []);
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/category/fetchTable")
@@ -126,7 +139,9 @@ function ProductCategory({authrztn}) {
               text: "The Product has been Added Successfully.",
               icon: "success",
               button: "OK",
+              
             }).then(() => {
+              window.location.reload();
               const newId = response.data.category_code;
               // console.log(newId)
               setcategory((prev) => [
@@ -509,14 +524,14 @@ function ProductCategory({authrztn}) {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  { authrztn?.includes('Product Categories - Add') && (
+                  {/* { authrztn?.includes('Product Categories - Add') && ( */}
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Category
                   </button>
-                  )}
+                  {/* )} */}
 
                 </div>
               </div>
@@ -579,7 +594,7 @@ function ProductCategory({authrztn}) {
                               </button>
                               )}
 
-                              { authrztn?.includes('Product Categories - Delete') && (
+                              {/* { authrztn?.includes('Product Categories - Delete') && ( */}
                               <button
                                 className="btn"
                                 type="button"
@@ -589,7 +604,7 @@ function ProductCategory({authrztn}) {
                                 }}>
                                 Delete
                               </button>
-                              )}
+                              {/* )} */}
 
                             </div>
                           )}
@@ -625,9 +640,8 @@ function ProductCategory({authrztn}) {
                   type="text"
                   placeholder="Enter Name of the Category Code..."
                   style={{ height: "40px", fontSize: "15px" }}
-                  value={categoryCode}
-                  onChange={(e) => setcategoryCode(e.target.value)}
-                  required
+                  value={nextCategoryCode}
+                  disabled
                 />
               </Form.Group>
             </div>
