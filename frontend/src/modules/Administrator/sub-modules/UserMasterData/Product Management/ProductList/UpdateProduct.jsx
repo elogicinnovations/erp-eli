@@ -834,6 +834,7 @@ useEffect(() => {
                     <th className="tableh">Address</th>
                     <th className="tableh">Receiving Area</th>
                     <th className="tableh">Price</th>
+                    <th className="tableh">VAT</th>
                   </tr>
                 </thead>
                 <tbody>

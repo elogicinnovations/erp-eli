@@ -34,7 +34,24 @@ import * as $ from 'jquery';
       setActiveTab(tabKey);
     };
 const navigate = useNavigate()
+const { id } = useParams();
+const [validated, setValidated] = useState(false);
+const [issuanceCode, setIssuanceCode] = useState('');
+const [remarks, setRemarks] = useState('');
+const [status, setStatus] = useState('To be Return');
+const [quantity, setQuantity] = useState([]);
+const [site, setSite] = useState([]);
+const [costCenter, setCostCenter] = useState('');
+const [dateReceived, setDateReceived] = useState(null);
+const [dateCreated, setDateCreated] = useState(null);
+
 const [issuedProduct, setIssuedProduct] = useState([]);
+const [issuedAssembly, setIssuedAssembly] = useState([]);
+const [issuedSpare, setIssuedSpare] = useState([]);
+const [issuedSubpart, setIssuedSubpart] = useState([]);
+
+// const [issuedConsolidatedData, setIssuedConsolidatedData] = useState([]);
+// const [quantityInputs, setQuantityInputs] = useState({});
 
    
     function formatDatetime(datetime) {
@@ -48,31 +65,100 @@ const [issuedProduct, setIssuedProduct] = useState([]);
       return new Date(datetime).toLocaleString('en-US', options);
     }
 
-    const { id } = useParams();
-    const [validated, setValidated] = useState(false);
-    const [fetchProduct, setFetchProduct] = useState('');
-    const [issuanceCode, setIssuanceCode] = useState('');
-    const [remarks, setRemarks] = useState('');
-    const [status, setStatus] = useState('To be Return');
-    const [quantity, setQuantity] = useState([]);
-    const [site, setSite] = useState([]);
-    const [costCenter, setCostCenter] = useState('');
-    const [dateReceived, setDateReceived] = useState(null);
-    const [dateCreated, setDateCreated] = useState(null);
-
-
 
     useEffect(() => {
-      axios.get(BASE_URL + '/issued_product/getProducts', {
-        params: {
-          id:id
-        }
-      })
-        .then(res => setIssuedProduct(res.data))
-        .catch(err => console.log(err));
-    }, []);
-      
+      const fetchData = async () => {
+        try {
+          const productData = await axios.get(BASE_URL + '/issued_product/getProducts', { params: { id: id } });
+          const assemblyData = await axios.get(BASE_URL + '/issued_product/getAssembly', { params: { id: id } });
+          const spareData = await axios.get(BASE_URL + '/issued_product/getSpare', { params: { id: id } });
+          const subpartData = await axios.get(BASE_URL + '/issued_product/getSubpart', { params: { id: id } });
+    
+          // Add a type property to each item
+          const productWithType = productData.data.map(item => ({ ...item, type: 'product' }));
+          const assemblyWithType = assemblyData.data.map(item => ({ ...item, type: 'assembly' }));
+          const spareWithType = spareData.data.map(item => ({ ...item, type: 'spare' }));
+          const subpartWithType = subpartData.data.map(item => ({ ...item, type: 'subpart' }));
+    
+          // Consolidate data into one array
+          const consolidatedData = [
+            ...productWithType,
+            ...assemblyWithType,
+            ...spareWithType,
+            ...subpartWithType,
+          ];
+    
+          // Update state with the consolidated array
+          setIssuedProduct(consolidatedData.filter(item => item.type === 'product'));
+          setIssuedAssembly(consolidatedData.filter(item => item.type === 'assembly'));
+          setIssuedSpare(consolidatedData.filter(item => item.type === 'spare'));
+          setIssuedSubpart(consolidatedData.filter(item => item.type === 'subpart'));
 
+
+        } catch (err) {
+          console.log(err);
+        }
+      };
+    
+      fetchData();
+    }, [id]);
+
+    const handleQuantityChange = (value, type, index) => {
+      // Create a copy of the appropriate array based on type
+      let updatedArray;
+      switch (type) {
+        case 'product':
+          updatedArray = [...issuedProduct];
+          break;
+        case 'assembly':
+          updatedArray = [...issuedAssembly];
+          break;
+        case 'spare':
+          updatedArray = [...issuedSpare];
+          break;
+        case 'subpart':
+          updatedArray = [...issuedSubpart];
+          break;
+        default:
+          return;
+      }
+  
+      // Update the quantity in the copied array
+      
+      updatedArray[index] = {
+        ...updatedArray[index],
+        quantity: value,
+      };
+
+        // Log the information for debugging
+        console.log(`Type: ${type}, Index: ${index}, Updated Quantity: ${value}`);
+
+  
+      // Update the state based on the type
+      switch (type) {
+        case 'product':
+          setIssuedProduct(updatedArray);
+          break;
+        case 'assembly':
+          setIssuedAssembly(updatedArray);
+          break;
+        case 'spare':
+          setIssuedSpare(updatedArray);
+          break;
+        case 'subpart':
+          setIssuedSubpart(updatedArray);
+          break;
+        default:
+          return;
+      }
+
+      return updatedArray;
+    };
+
+
+
+
+    
     useEffect(() => {
       axios.get(BASE_URL + '/issuance/getIssuance', {
         params: {
@@ -88,10 +174,7 @@ const [issuedProduct, setIssuedProduct] = useState([]);
           setDateCreated(createDate);
           const receiveDate = new Date(res.data[0].updatedAt);
           setDateReceived(receiveDate);
-  
-  
-     
-        
+
   
       })
       .catch(err => {
@@ -100,60 +183,63 @@ const [issuedProduct, setIssuedProduct] = useState([]);
       });
     }, [id]);
     
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+    // const handleSubmit = async (e) => {
+    //   e.preventDefault();
     
-      const form = e.currentTarget;
-      if (form.checkValidity() === false) {
-        e.preventDefault();
-        e.stopPropagation();
+    //   const form = e.currentTarget;
+    //   if (form.checkValidity() === false) {
+    //     e.preventDefault();
+    //     e.stopPropagation();
     
-        swal({
-          icon: 'error',
-          title: 'Fields are required',
-          text: 'Please fill the red text fields',
-        });
-      } else {
-        // Your existing code for form submission
+    //     swal({
+    //       icon: 'error',
+    //       title: 'Fields are required',
+    //       text: 'Please fill the red text fields',
+    //     });
+    //   } else {
+    //     // Your existing code for form submission
     
-        axios.post(`${BASE_URL}/issuedReturn/issueReturn`, null, {
-          params: {
-            id: id,
-            remarks,
-            quantity,
-            status: 'To be Return', // Set the status here
-          },
-        })
-          .then((res) => {
-            // Handle the response as needed
-            console.log(res);
-            if (res.status === 200) {
-              swal({
-                title: 'The Return successfully Done!',
-                text: 'The Quantity has returned successfully.',
-                icon: 'success',
-                button: 'OK',
-              }).then(() => {
-                navigate('/inventory');
-              });
-            } else if (res.status === 201) {
-              swal({
-                icon: 'error',
-                title: 'Code Already Exist',
-                text: 'Please input another code',
-              });
-            } else {
-              swal({
-                icon: 'error',
-                title: 'Something went wrong',
-                text: 'Please contact our support',
-              });
-            }
-          });
-      }
+    //     axios.post(`${BASE_URL}/issuedReturn/issueReturn`, null, {
+    //       params: {
+    //         id: id,
+    //         remarks,
+    //         quantity,
+    //         status: 'To be Return', // Set the status here
+    //       },
+    //     })
+    //       .then((res) => {
+    //         // Handle the response as needed
+    //         console.log(res);
+    //         if (res.status === 200) {
+    //           swal({
+    //             title: 'The Return successfully Done!',
+    //             text: 'The Quantity has returned successfully.',
+    //             icon: 'success',
+    //             button: 'OK',
+    //           }).then(() => {
+    //             navigate('/inventory');
+    //           });
+    //         } else if (res.status === 201) {
+    //           swal({
+    //             icon: 'error',
+    //             title: 'Code Already Exist',
+    //             text: 'Please input another code',
+    //           });
+    //         } else {
+    //           swal({
+    //             icon: 'error',
+    //             title: 'Something went wrong',
+    //             text: 'Please contact our support',
+    //           });
+    //         }
+    //       });
+    //   }
     
-      setValidated(true); // for validations
-    };
+    //   setValidated(true); // for validations
+    // };
+
+
+
 
     useEffect(() => {
       // Initialize DataTable when role data is available
@@ -182,7 +268,10 @@ const [issuedProduct, setIssuedProduct] = useState([]);
                 </div>
                 </Col>
             </Row>
-                        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Form 
+                noValidate validated={validated} 
+                // onSubmit={handleSubmit}
+              >
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Issuance Info
                           <span
@@ -255,17 +344,100 @@ const [issuedProduct, setIssuedProduct] = useState([]);
                                         </thead>
                                         <tbody>
                                             {issuedProduct.map((data, i) => (
-                                            <tr key={i}>
-                                                <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
-                                                <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
-                                                <td>{data.quantity}</td>
-                                                <td>
-                                                  <Form.Group controlId="exampleForm.ControlInput1">
-                                                      <Form.Control onChange={(e) => setQuantity(e.target.value)} type="number" style={{height:'40px', fontSize:'15px'}} placeholder='0.0'/>
-                                                  </Form.Group>
-                                                  </td>
-                                                
-                                            </tr>
+                                              <tr key={i}>
+                                                  <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
+                                                  <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>
+                                                    <input
+                                                      type="text"
+                                                      onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
+                                                      required
+                                                      placeholder="Input quantity"
+                                                      style={{
+                                                        height: "40px",
+                                                        width: "120px",
+                                                        fontSize: "15px",
+                                                      }}
+                                                      min="0"
+                                                      max="9999999999" 
+                                                    />
+                                                </td>
+                                                  
+                                              </tr>
+                                            ))}
+
+                                            {issuedAssembly.map((data, i) => (
+                                              <tr key={i}>
+                                                  <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_code}</td>
+                                                  <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_name}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>
+                                                    <input
+                                                      type="text"
+                                                      onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
+                                                      required
+                                                      placeholder="Input quantity"
+                                                      style={{
+                                                        height: "40px",
+                                                        width: "120px",
+                                                        fontSize: "15px",
+                                                      }}
+                                                      min="0"
+                                                      max="9999999999" 
+                                                    />
+                                                </td>
+                                                 
+                                                  
+                                              </tr>
+                                            ))}
+
+                                            {issuedSpare.map((data, i) => (
+                                              <tr key={i}>
+                                                  <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}</td>
+                                                  <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>
+                                                    <input
+                                                      type="text"
+                                                      onChange={(e) => handleQuantityChange(e.target.value, 'spare', i)}
+                                                      required
+                                                      placeholder="Input quantity"
+                                                      style={{
+                                                        height: "40px",
+                                                        width: "120px",
+                                                        fontSize: "15px",
+                                                      }}
+                                                      min="0"
+                                                      max="9999999999" 
+                                                    />
+                                                </td>
+                                                  
+                                              </tr>
+                                            ))}
+
+                                            {issuedSubpart.map((data, i) => (
+                                              <tr key={i}>
+                                                  <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_code}</td>
+                                                  <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_name}</td>
+                                                  <td>{data.quantity}</td>
+                                                  <td>
+                                                    <input
+                                                      type="text"
+                                                      onChange={(e) => handleQuantityChange(e.target.value, 'subpart', i)}
+                                                      required
+                                                      placeholder="Input quantity"
+                                                      style={{
+                                                        height: "40px",
+                                                        width: "120px",
+                                                        fontSize: "15px",
+                                                      }}
+                                                      min="0"
+                                                      max="9999999999" 
+                                                    />
+                                                </td>
+                                                  
+                                              </tr>
                                             ))}
                                         </tbody>
                                 </table>
@@ -274,7 +446,12 @@ const [issuedProduct, setIssuedProduct] = useState([]);
                         
                         <div className='save-cancel'>
                         <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                        <Link to="/inventory"  onClick={() => handleTabClick("issuance")} className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                        <Link to="/inventory"  
+                              onClick={() => handleTabClick("issuance")} 
+                              className='btn btn-secondary btn-md' 
+                              size="md" 
+                              style={{ fontSize: '20px', margin: '0px 5px'  }}
+                        >
                             Cancel
                         </Link>
                         </div>

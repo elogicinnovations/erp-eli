@@ -35,8 +35,11 @@ const IssuedProduct = require("./issued_product.model");
 const IssuedAssembly = require("./issued_assembly.model");
 const IssuedSpare = require("./issued_spare.model");
 const IssuedSubpart = require("./issued_subpart.model");
-const IssuedReturn = require("./issued_return.model");
 
+const IssuedReturn = require("./issued_return.model"); // for product
+const IssuedReturn_asm = require("./issued_return_asm.model");
+const IssuedReturn_spare = require("./issued_return_spare.model");
+const IssuedReturn_subpart = require("./issued_return_subpart.model");
 
 
 const PR = require("./pr.model");
@@ -195,7 +198,7 @@ Inventory_Subpart.hasMany(IssuedSubpart, { foreignKey: "inventory_Subpart_id" })
 IssuedSubpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_Subpart_id"});
 
 
-
+//Issuance Return tab for product
 Inventory.hasMany(IssuedReturn, { foreignKey: "inventory_id" });
 IssuedReturn.belongsTo(Inventory, { foreignKey: "inventory_id" });
 
@@ -204,6 +207,41 @@ IssuedReturn.belongsTo(Issuance, { foreignKey: "issued_id" });
 
 MasterList.hasMany(IssuedReturn, { foreignKey: "return_by" });
 IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by" });
+
+//Issuance Return tab for Assmebly
+Inventory_Assembly.hasMany(IssuedReturn_asm, { foreignKey: "inventory_id" });
+IssuedReturn_asm.belongsTo(Inventory_Assembly, { foreignKey: "inventory_id" });
+
+Issuance.hasMany(IssuedReturn_asm, { foreignKey: "issued_id" });
+IssuedReturn_asm.belongsTo(Issuance, { foreignKey: "issued_id" });
+
+MasterList.hasMany(IssuedReturn_asm, { foreignKey: "return_by" });
+IssuedReturn_asm.belongsTo(MasterList, { foreignKey: "return_by" });
+
+
+//Issuance Return tab for SparePart
+Inventory_Spare.hasMany(IssuedReturn_spare, { foreignKey: "inventory_id" });
+IssuedReturn_spare.belongsTo(Inventory_Spare, { foreignKey: "inventory_id" });
+
+Issuance.hasMany(IssuedReturn_spare, { foreignKey: "issued_id" });
+IssuedReturn_spare.belongsTo(Issuance, { foreignKey: "issued_id" });
+
+MasterList.hasMany(IssuedReturn_spare, { foreignKey: "return_by" });
+IssuedReturn_spare.belongsTo(MasterList, { foreignKey: "return_by" });
+
+//Issuance Return tab for Subpart
+Inventory_Subpart.hasMany(IssuedReturn_subpart, { foreignKey: "inventory_id" });
+IssuedReturn_subpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_id" });
+
+Issuance.hasMany(IssuedReturn_subpart, { foreignKey: "issued_id" });
+IssuedReturn_subpart.belongsTo(Issuance, { foreignKey: "issued_id" });
+
+MasterList.hasMany(IssuedReturn_subpart, { foreignKey: "return_by" });
+IssuedReturn_subpart.belongsTo(MasterList, { foreignKey: "return_by" });
+
+
+
+
 
 // `sparepart_subparts
 SubPart.hasMany(SparePart_SubPart, { foreignKey: "subPart_id"});
@@ -399,7 +437,13 @@ module.exports = {
                     IssuedAssembly,
                     IssuedSpare,
                     IssuedSubpart,
+
+
+
                     IssuedReturn,
+                    IssuedReturn_asm,
+                    IssuedReturn_spare,
+                    IssuedReturn_subpart,
 
 
                     PR,
