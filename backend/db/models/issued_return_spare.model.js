@@ -1,7 +1,7 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const IssuedReturn = sequelize.define('return_prd', {
+const IssuedReturn_spare = sequelize.define('return_spare', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -30,4 +30,4 @@ const IssuedReturn = sequelize.define('return_prd', {
   } 
 });
 
-module.exports = IssuedReturn;
+module.exports = IssuedReturn_spare;

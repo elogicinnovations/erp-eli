@@ -777,6 +777,7 @@ function CreateProduct() {
                         <th className="tableh">Contact</th>
                         <th className="tableh">Address</th>
                         <th className="tableh">Price</th>
+                        <th className="tableh">VAT </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -804,9 +805,11 @@ function CreateProduct() {
                                 onChange={(e) =>
                                   handlePriceinput(e.target.value, supp.value)
                                 }
-                                required
+                                required 
                               />
                             </td>
+                            <td>{isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : (supp.vatable / 100) * priceInput[supp.value]}</td>
+
                           </tr>
                         ))
                       ) : (
@@ -831,6 +834,7 @@ function CreateProduct() {
                               </div>
                             ),
                             codes: supp.supplier_code,
+                            vatable: supp.supplier_vat,
                             names: supp.supplier_name,
                             email: supp.supplier_email,
                             contact: supp.supplier_number,

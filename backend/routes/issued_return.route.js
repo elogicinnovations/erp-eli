@@ -28,41 +28,41 @@ router.route('/getReturn').get(async (req, res) =>
     }
 });
 
-router.route('/issueReturn').post(async (req, res) => {
-    try {
-        const { quantity, remarks, id } = req.query;
+// router.route('/issueReturn').post(async (req, res) => {
+//     try {
+//         const { quantity, remarks, id } = req.query;
 
-        console.log('id: ' + id);
-        console.log('remarks: ' + remarks);
+//         console.log('id: ' + id);
+//         console.log('remarks: ' + remarks);
 
-        // Create a new IssuedReturn record
-        const newIssuedReturn = await IssuedReturn.create({
-            issued_id: id,
-            quantity: quantity,
-            remarks: remarks,
-            // Add other properties as needed based on your model
-        });
+//         // Create a new IssuedReturn record
+//         const newIssuedReturn = await IssuedReturn.create({
+//             issued_id: id,
+//             quantity: quantity,
+//             remarks: remarks,
+//             // Add other properties as needed based on your model
+//         });
 
-        // Update the quantity in the IssuedProduct
-        const issuedProduct = await IssuedProduct.findOne({
-            where: {
-                issuance_id: id
-            }
-        });
+//         // Update the quantity in the IssuedProduct
+//         const issuedProduct = await IssuedProduct.findOne({
+//             where: {
+//                 issuance_id: id
+//             }
+//         });
 
-        if (issuedProduct) {
-            // Subtract the quantity from IssuedProduct
-            issuedProduct.quantity -= parseFloat(quantity);
-            await issuedProduct.save();
-        }
+//         if (issuedProduct) {
+//             // Subtract the quantity from IssuedProduct
+//             issuedProduct.quantity -= parseFloat(quantity);
+//             await issuedProduct.save();
+//         }
 
-        // Send a response back to the client
-        res.status(200).json({ message: 'Data saved successfully', data: newIssuedReturn });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('An error occurred');
-    }
-});
+//         // Send a response back to the client
+//         res.status(200).json({ message: 'Data saved successfully', data: newIssuedReturn });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send('An error occurred');
+//     }
+// });
 
 router.route('/moveToInventory/:id').post(async (req, res) => {
     try {

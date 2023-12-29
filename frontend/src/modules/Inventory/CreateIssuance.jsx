@@ -63,28 +63,38 @@ const CreateIssuance = ({ setActiveTab }) => {
   };
 
   const handleQuantityChange = (
-    value,
+    inputValue,
     productValue,
     product_quantity_available
   ) => {
     // Remove non-numeric characters and limit length to 10
-    const cleanedValue = value.replace(/\D/g, "").substring(0, 10);
+    const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
+  
+    // Convert cleanedValue to a number
+    const numericValue = parseInt(cleanedValue, 10);
+  
+    // Create a variable to store the corrected value
+    let correctedValue = cleanedValue;
+  
+    // Check if the numericValue is greater than the available quantity
+    if (numericValue > product_quantity_available) {
+      // If greater, set the correctedValue to the maximum available quantity
+      correctedValue = product_quantity_available.toString();
+      
+      swal({
+        icon: "error",
+        title: "Input value exceed",
+        text: "Please enter a quantity within the available limit.",
+      });
 
-    // Convert input value to a number
-    const inputValue = parseInt(cleanedValue, 10);
-
-    // Check if the input value is greater than the available quantity
-    if (inputValue > product_quantity_available) {
-      // If greater, set the value to the maximum available quantity
-      value = product_quantity_available.toString();
     }
-
+  
     setQuantityInputs((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
-        [productValue]: cleanedValue,
+        [productValue]: correctedValue,
       };
-
+  
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = addProduct.map((product) => ({
         quantity: updatedInputs[product.value] || "",
@@ -95,16 +105,18 @@ const CreateIssuance = ({ setActiveTab }) => {
         quantity_available: product.quantity_available,
         desc: product.desc,
       }));
-
+  
       setAddProductbackend(serializedProducts);
-
+  
       console.log("Selected Products:", serializedProducts);
-
+  
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
-
+  
+  
+  
   //get supplier product
   useEffect(() => {
     axios
@@ -507,15 +519,6 @@ const CreateIssuance = ({ setActiveTab }) => {
                             <td key={product.value}>{product.code}</td>
                             <td key={product.value}>{product.name}</td>
                             <td>
-                              {/* <div className='d-flex flex-direction-row align-items-center'> 
-                                                        <Form.Control 
-                                                          type="number" 
-                                                          required
-                                                          placeholder="Input quantity" 
-                                                         
-                                                          style={{height: '40px', width: '120px', fontSize: '15px'}} />
-                                                          /{product.quantity_available}
-                                                      </div> */}
                               <div className="d-flex flex-direction-row align-items-center">
                                 <input
                                   type="text"
@@ -537,7 +540,7 @@ const CreateIssuance = ({ setActiveTab }) => {
                                   min="0"
                                   max="9999999999" // Set the maximum value to 9999999999 or any other desired limit
                                 />
-                                {/* /{product.quantity_available} */}
+                                /{product.quantity_available}
                               </div>
                             </td>
                             <td>{product.desc}</td>

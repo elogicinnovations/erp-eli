@@ -470,11 +470,15 @@ const navigate = useNavigate()
                                                             <td onClick={() => {
                                                                   setIssuedReturn(data);
                                                                   handleShow();
-                                                                }}>{data.issued_return_id}</td>
+                                                                }}>
+                                                                    {data.issued_return_id}
+                                                            </td>
                                                             <td onClick={() => {
                                                                   setIssuedReturn(data);
                                                                   handleShow();
-                                                                }}>{data.issued_id}</td>
+                                                                }}>
+                                                                    {data.issued_id}
+                                                            </td>
                                                             <td onClick={() => {
                                                                   setIssuedReturn(data);
                                                                   handleShow();
