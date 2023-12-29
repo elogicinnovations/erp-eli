@@ -272,6 +272,8 @@ function SpareParts({ authrztn }) {
                     <th className="tableh">Code</th>
                     <th className="tableh">Spare Parts Name</th>
                     <th className="tableh">Description</th>
+                    <th className="tableh">Date Created</th>
+                    <th className="tableh">Date Modified</th>
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
@@ -289,6 +291,14 @@ function SpareParts({ authrztn }) {
                       <td
                         onClick={() => navigate(`/viewSpareParts/${data.id}`)}>
                         {data.spareParts_desc}
+                      </td>
+                      <td
+                        onClick={() => navigate(`/viewSpareParts/${data.id}`)}>
+                        {formatDate(data.createdAt)}
+                      </td>
+                      <td
+                        onClick={() => navigate(`/viewSpareParts/${data.id}`)}>
+                        {formatDate(data.updatedAt)}
                       </td>
                       <td>
                         {isVertical[data.spareParts_code] ? (

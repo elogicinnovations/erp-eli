@@ -6,7 +6,6 @@ import '../../../../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
-import cls_unit from '../../../../../../assets/global/unit';
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
@@ -30,7 +29,6 @@ const [addPriceInput, setaddPriceInputbackend] = useState([]);
 
 const [tableSupp, setTableSupp] = useState([]);
 
-const [unit, setunit] = useState('');
 const [slct_binLocation, setslct_binLocation] = useState([]);
 const [binLocation, setbinLocation] = useState([]); 
 const [unitMeasurement, setunitMeasurement] = useState('');
@@ -57,7 +55,6 @@ useEffect(() => {
       setCode(res.data[0].spareParts_code);
       setName(res.data[0].spareParts_name);
       setDesc(res.data[0].spareParts_desc);
-      setunit(res.data[0].spareParts_unit);
       setslct_binLocation(res.data[0].spareParts_location);
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
@@ -183,13 +180,51 @@ useEffect(() => {
     .catch(err => console.log(err));
 }, []);
 
+//input for spare part code
+const handleSparepartCode = (event) => {
+  setCode(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//input for spare part name
+const handlesparename = (event) => {
+  setName(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//input for spare part description
+const handlesparedescription = (event) => {
+  setDesc(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//input for spare part threshold
+const handlesparethreshold = (event) => {
+  setThresholds(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
 
 const handleSelectChange_SubPart = (selectedOptions) => {
   setSubParts(selectedOptions);
+  setIsSaveButtonDisabled(false);
+};
+
+const handleFormChangeBinLocation = (event) => {
+  setslct_binLocation(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+const handleChangeMeasurement = (event) => {
+  setunitMeasurement(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+const handleFormChangeManufacturer = (event) => {
+  setslct_manufacturer(event.target.value);
+  setIsSaveButtonDisabled(false);
 };
 
 const handleEditClick = () => {
-  // for clicking the button can be editted not readonly
   setReadOnly(true);
 };
 
@@ -197,21 +232,6 @@ const handleAddSupp = () => {
   setShowDropdown(true);
 };
 
-const handleChangeUnit = (event) => {
-  setunit(event.target.value);
-};
-
-const handleFormChangeBinLocation = (event) => {
-  setslct_binLocation(event.target.value);
-};
-
-const handleChangeMeasurement = (event) => {
-  setunitMeasurement(event.target.value);
-};
-
-const handleFormChangeManufacturer = (event) => {
-  setslct_manufacturer(event.target.value);
-};
 
 const update = async (e) => {
   e.preventDefault();
@@ -235,7 +255,6 @@ const update = async (e) => {
           desc,
           SubParts,
           addPriceInput,
-          unit,
           unitMeasurement,
           slct_manufacturer,
           slct_binLocation,
@@ -243,7 +262,6 @@ const update = async (e) => {
         },
       })
       .then((res) => {
-        // console.log(res);
         if (res.status === 200) {
           swal({
             title: "The Spare Part sucessfully updated!",
@@ -301,26 +319,36 @@ console.log(addPriceInput)
                           <div className="row mt-3">
                           <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Code: </Form.Label>
-                                <Form.Control disabled={!isReadOnly} value={code} onChange={(e) => setCode(e.target.value) } required type="text" placeholder="Enter item code" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Label style={{ fontSize: '20px' }}>
+                                  Code: 
+                                </Form.Label>
+                                <Form.Control disabled={!isReadOnly} 
+                                value={code} 
+                                onChange={(e) => handleSparepartCode(e)} 
+                                type="text" 
+                                style={{height: '40px', fontSize: '15px'}}
+                                />
                               </Form.Group>
                             </div>
                             <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Name: </Form.Label>
-                                <Form.Control type="text" value={name} disabled={!isReadOnly}  onChange={(e) => setName(e.target.value) } required placeholder="Enter item name" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control type="text" 
+                                value={name} 
+                                disabled={!isReadOnly}  
+                                onChange={(e) => handlesparename(e)}
+                                style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Sub-Part: </Form.Label>
-
                                   <Select
                                     isMulti
                                     isDisabled={!isReadOnly}
                                     options={fetchSubPart.map((subPart) => ({
                                       value: subPart.id,
-                                      label: subPart.subPart_name , // Set label to subPart_name for options
+                                      label: subPart.subPart_name, 
                                     }))}
                                     onChange={handleSelectChange_SubPart}
                                     value={SubParts}
@@ -331,29 +359,7 @@ console.log(addPriceInput)
                           </div>
 
                           <div className="row">
-                              <div className="col-6">
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: '20px' }}>Unit: </Form.Label>
-                                    <Form.Select
-                                      disabled={!isReadOnly}
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      value={unit}
-                                      onChange={handleChangeUnit}>
-                                        <option disabled value=''>
-                                            Select Unit ...
-                                        </option>
-                                      {cls_unit.map((unit, index) => (
-                                        <option key={index} value={unit}>
-                                            {unit}
-                                        </option>
-                                      ))}
-                                    </Form.Select>
-                                  </Form.Group>
-                              </div>
-
-                              <div className="col-6">
+                              <div className="col-4">
                                   <Form.Group controlId="exampleForm.ControlInput2">
                                     <Form.Label style={{ fontSize: '20px' }}>Bin Location: </Form.Label>
                                     <Form.Select 
@@ -375,10 +381,7 @@ console.log(addPriceInput)
                                     </Form.Select>
                                   </Form.Group>
                               </div>
-                          </div>
-
-                          <div className="row">
-                              <div className="col-6">
+                              <div className="col-4">
                                   <Form.Group controlId="exampleForm.ControlInput2">
                                     <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
                                     <Form.Select
@@ -399,7 +402,7 @@ console.log(addPriceInput)
                                       </Form.Select>
                                   </Form.Group>
                               </div>
-                              <div className="col-6">
+                              <div className="col-4">
                                   <Form.Group controlId="exampleForm.ControlInput2">
                                     <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
                                     <Form.Select 
@@ -421,11 +424,15 @@ console.log(addPriceInput)
                                   </Form.Group>
                               </div>
                           </div>
-                       
+
                         <div className="row">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Details: </Form.Label>
-                                <Form.Control disabled={!isReadOnly} value={desc} onChange={(e) => setDesc(e.target.value) } as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control disabled={!isReadOnly} 
+                                value={desc} 
+                                onChange={(e) => handlesparedescription(e)}
+                                as="textarea"
+                                style={{height: '100px', fontSize: '15px'}}/>
                             </Form.Group>
                         </div>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
@@ -448,7 +455,11 @@ console.log(addPriceInput)
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
-                                <Form.Control  disabled={!isReadOnly} value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control  disabled={!isReadOnly} 
+                                value={thresholds} 
+                                onChange={(e) => handlesparethreshold(e)}
+                                type="number" 
+                                style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
                             {/* <div className="col-6">

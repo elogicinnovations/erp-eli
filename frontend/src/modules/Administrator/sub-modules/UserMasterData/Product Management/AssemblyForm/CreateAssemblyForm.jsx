@@ -10,7 +10,6 @@ import swal from "sweetalert";
 import Select from "react-select";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
 import { Trash, NotePencil } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -35,7 +34,6 @@ function CreateAssemblyForm() {
   const [subparting, setsubparting] = useState([]);
   const [thresholds, setThresholds] = useState("");
   const [manufacturer, setManufacturer] = useState([]);
-  const [unit, setUnit] = useState("");
   const [binLocation, setbinLocation] = useState([]);
   const [slct_binLocation, setslct_binLocation] = useState("")
   const [slct_manufacturer, setslct_manufacturer] = useState("")
@@ -128,10 +126,6 @@ function CreateAssemblyForm() {
     setShowDropdown(true);
   };
   
-  // for unit on change function
-  const handleChangeUnit = (event) => {
-    setUnit(event.target.value);
-  };
   
   // for bin location on change function
   const handleFormChangeBinLocation = (event) => {
@@ -162,7 +156,7 @@ function CreateAssemblyForm() {
 
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedPrice = supp.map((supp) => ({
-        price: updatedInputs[supp.value] || "",
+        price: updatedInputs[supp.value] || 0,
         code: supp.codes,
       }));
 
@@ -170,7 +164,6 @@ function CreateAssemblyForm() {
 
       console.log("Price Inputted:", serializedPrice);
 
-      // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
@@ -182,8 +175,6 @@ function CreateAssemblyForm() {
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-      // if required fields has NO value
-      //    console.log('requried')
       swal({
         icon: "error",
         title: "Fields are required",
@@ -198,7 +189,6 @@ function CreateAssemblyForm() {
           spareParts,
           addPriceInput,
           subparting,
-          unit,
           slct_binLocation,
           unitMeasurement,
           slct_manufacturer,
@@ -206,7 +196,6 @@ function CreateAssemblyForm() {
           slct_category,
         })
         .then((res) => {
-          // console.log(res);
           if (res.status === 200) {
             swal({
               title: "The Product Assembly Add Successful!",
@@ -231,8 +220,7 @@ function CreateAssemblyForm() {
           }
         });
     }
-
-    setValidated(true); //for validations
+    setValidated(true);
   };
 
   const handleKeyPress = (e) => {
@@ -243,9 +231,6 @@ function CreateAssemblyForm() {
   };
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={add}>
@@ -361,26 +346,7 @@ function CreateAssemblyForm() {
                 </div>
             </div>
             <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeUnit}>
-                    <option disabled value="">
-                      Select Unit ...
-                    </option>
-                    {cls_unit.map((unit, index) => (
-                      <option key={index} value={unit}>
-                        {unit}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Bin Location:{" "}
@@ -405,10 +371,7 @@ function CreateAssemblyForm() {
                   </Form.Select>
                 </Form.Group>
               </div>
-            </div>
-
-            <div className="row">
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Unit of Measurement:{" "}
@@ -429,7 +392,7 @@ function CreateAssemblyForm() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Manufacturer:{" "}
@@ -455,6 +418,7 @@ function CreateAssemblyForm() {
               </div>
             </div>
 
+            
             <div className="row">
               <Form.Group controlId="exampleForm.ControlInput1">
                 <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
@@ -643,11 +607,10 @@ function CreateAssemblyForm() {
                                 type="number"
                                 style={{ height: "50px" }}
                                 placeholder="Input Price"
-                                value={priceInput[supp.value] || ""}
+                                value={priceInput[supp.value] || 0}
                                 onChange={(e) =>
                                   handlePriceinput(e.target.value, supp.value)
                                 }
-                                required
                                 onInput={handleKeyPress}
                               />
                             </td>
@@ -655,7 +618,9 @@ function CreateAssemblyForm() {
                         ))
                       ) : (
                         <tr>
-                          <td>No Supplier selected</td>
+                          <td colSpan="6" style={{ textAlign: "center" }}>
+                            No Supplier selected
+                          </td>
                         </tr>
                       )}
                     </tbody>

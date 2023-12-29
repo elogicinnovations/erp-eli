@@ -75,8 +75,7 @@ router.route("/create").post(async (req, res) => {
       desc, 
       spareParts, 
       addPriceInput, 
-      subparting, 
-      unit, 
+      subparting,  
       slct_binLocation, 
       slct_manufacturer, 
       thresholds, 
@@ -99,7 +98,6 @@ router.route("/create").post(async (req, res) => {
         assembly_code: code.toUpperCase(),
         assembly_name: name,
         assembly_desc: desc,
-        assembly_unit: unit,
         bin_id: slct_binLocation,
         assembly_manufacturer: slct_manufacturer,
         threshhold: threshholdValue,
@@ -177,7 +175,6 @@ router.route("/update").post(
           assembly_code: req.query.code,
           assembly_name: req.query.name,
           assembly_desc: req.query.desc,
-          assembly_unit: req.query.unit,
           bin_id: req.query.slct_binLocation,
           assembly_unitMeasurement: req.query.unitMeasurement,
           assembly_manufacturer: req.query.slct_manufacturer,
@@ -191,33 +188,35 @@ router.route("/update").post(
       );
 
       if (Assembly_newData) {
-      const deletesparepart = Assembly_SparePart.destroy({
+      const deletesparepart = await Assembly_SparePart.destroy({
           where: {
             sparePart_id: req.query.id
           },
       });
 
-      if(deletesparepart) {
+      if(deletesparepart !== null || deletesparepart !== undefined) {
         const selectedSparepart = req.query.spareParts
+        if (selectedSparepart && typeof selectedSparepart[Symbol.iterator] === 'function') {
         for (const sparepartDropdown of selectedSparepart) {
           const sparepartValue = sparepartDropdown.value;
   
-          console.log(sparepartValue)
           await Assembly_SparePart.create({
             assembly_id: req.query.id,
             sparePart_id: sparepartValue
           });
         }
-      } //delete spare part end
+      }
+    } //update product spare part end
 
-        const deletesubpart = Assembly_SubPart.destroy({
+        const deletesubpart = await Assembly_SubPart.destroy({
           where: {
             subPart_id: req.query.id
           },
         });
 
-        if(deletesubpart) {
+        if(deletesubpart !== null || deletesubpart !== undefined) {
           const selectedSubpart = req.query.Subparts
+          if (selectedSubpart && typeof selectedSubpart[Symbol.iterator] === 'function') {
           for (const sparepartDropdown of selectedSubpart) {
             const subpartValue = sparepartDropdown.value;
 
@@ -228,34 +227,54 @@ router.route("/update").post(
             });
           }
         }
+      } //update product subpart end
 
-        const deletesupplier = Assembly_Supplier.destroy({
+        // const deletesupplier = Assembly_Supplier.destroy({
+        //   where: {
+        //     assembly_id: req.query.id
+        //   },
+        // });
+
+        // if(deletesupplier){
+        //   const selectedSuppliers = req.query.addPriceInput
+        //   console.log(selectedSuppliers)
+        //   for (const supplier of selectedSuppliers) {
+        //     const { value, price } = supplier;
+
+        //     await Assembly_Supplier.create({
+        //       assembly_id: req.query.id,
+        //       supplier_code: value,
+        //       supplier_price: price
+        //      });
+
+        //     //  await Inventory_Assembly.create({
+        //     //   assembly_tag_supp_id: SupplierID.id,
+        //     //   quantity: 0,
+        //     //   price: price
+        //     // });
+        //    }
+        // }
+
+        const deletesupplier = await Assembly_Supplier.destroy({
           where: {
             assembly_id: req.query.id
           },
         });
-
-        if(deletesupplier){
-          const selectedSuppliers = req.query.addPriceInput
-          console.log(selectedSuppliers)
-          for (const supplier of selectedSuppliers) {
-            const { value, price } = supplier;
-
-            await Assembly_Supplier.create({
-              assembly_id: req.query.id,
-              supplier_code: value,
-              supplier_price: price
-             });
-
-            //  await Inventory_Assembly.create({
-            //   assembly_tag_supp_id: SupplierID.id,
-            //   quantity: 0,
-            //   price: price
-            // });
-           }
-        }
-
-        
+  
+        if (deletesupplier !== null || deletesupplier !== undefined) {
+          const selectedSuppliers = req.query.addPriceInput;
+  
+          if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
+            for (const supplier of selectedSuppliers) {
+              const { value, price } = supplier;
+              await Assembly_Supplier.create({
+                assembly_id: req.query.id,
+                supplier_code: value,
+                supplier_price: price
+              });
+            }
+          }
+        } //update product supplier end
       }
 
       res.status(200).json();

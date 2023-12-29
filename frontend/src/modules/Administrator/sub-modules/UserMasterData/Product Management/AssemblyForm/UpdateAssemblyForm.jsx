@@ -9,7 +9,6 @@ import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import Select from 'react-select';
 import { Button, Form } from "react-bootstrap";
-import cls_unit from '../../../../../../assets/global/unit';
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 // import Button from "react-bootstrap/Button";
 import {NotePencil } from "@phosphor-icons/react";
@@ -48,13 +47,12 @@ function UpdateAssemblyForm() {
   const [slct_category, setslct_category] = useState([]);
   const [spareParts, setSpareParts] = useState([]);
   const [Subparts, setSubParts] = useState([]);
-  const [unit, setunit] = useState('');
   const [slct_binLocation, setslct_binLocation] = useState([]);
   const [slct_manufacturer, setslct_manufacturer] = useState([]);
   const [unitMeasurement, setunitMeasurement] = useState('');
   const [thresholds, setThresholds] = useState('');
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
-
+  const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
   
   useEffect(() => {
     axios
@@ -68,7 +66,6 @@ function UpdateAssemblyForm() {
         setName(res.data[0].assembly_name);
         setDesc(res.data[0].assembly_desc);
         setslct_category(res.data[0].category_code);
-        setunit(res.data[0].assembly_unit);
         setslct_binLocation(res.data[0].bin_id);
         setunitMeasurement(res.data[0].assembly_unitMeasurement);
         setslct_manufacturer(res.data[0].assembly_manufacturer);
@@ -243,34 +240,60 @@ function UpdateAssemblyForm() {
     setReadOnly(true);
   };
 
+  //input for assembly code
+const handleAssemblyCode = (event) => {
+  setCode(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//input for assembly name
+const handleassemblyname = (event) => {
+  setName(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//input for assembly description
+const handleassemblydescription = (event) => {
+  setDesc(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//input for assembly threshold
+const handleassemblythreshold = (event) => {
+  setThresholds(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
   //for onchange dropdown of spareparts
   const handleSparepartChange = (selectedSpareOptions) => {
     setSpareParts(selectedSpareOptions);
+    setIsSaveButtonDisabled(false);
   };
 
   const handleSubpartChange = (selectedSubOptions) => {
     setSubParts(selectedSubOptions);
-  };
-
-  const handleChangeUnit = (event) => {
-    setunit(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
   
   const handleFormChangeBinLocation = (event) => {
     setslct_binLocation(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
   
   const handleChangeMeasurement = (event) => {
     setunitMeasurement(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
   
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Catergory on change function
   const handleFormChangeCategory = (event) => {
     setslct_category(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   //Update
@@ -296,7 +319,6 @@ function UpdateAssemblyForm() {
             desc,
             spareParts,
             Subparts,
-            unit,
             unitMeasurement,
             slct_manufacturer,
             slct_binLocation,
@@ -371,13 +393,13 @@ function UpdateAssemblyForm() {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Product Code:{" "}
+                    Assembly Code:{" "}
                   </Form.Label>
                   <Form.Control
                     required
                     value={code}
                     readOnly={!isReadOnly}
-                    onChange={(e) => setCode(e.target.value)}
+                    onChange={(e) => handleAssemblyCode(e)}
                     type="text"
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
@@ -393,7 +415,7 @@ function UpdateAssemblyForm() {
                     required
                     value={name}
                     readOnly={!isReadOnly}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => handleassemblyname(e)}
                     type="text"
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
@@ -459,28 +481,7 @@ function UpdateAssemblyForm() {
             </div>
 
               <div className="row">
-                  <div className="col-6">
-                      <Form.Group controlId="exampleForm.ControlInput2">
-                        <Form.Label style={{ fontSize: '20px' }}>Unit: </Form.Label>
-                        <Form.Select
-                          disabled={!isReadOnly}
-                          aria-label=""
-                          required
-                          style={{ height: '40px', fontSize: '15px' }}
-                          value={unit}
-                          onChange={handleChangeUnit}>
-                            <option disabled value=''>
-                                Select Unit ...
-                            </option>
-                          {cls_unit.map((unit, index) => (
-                            <option key={index} value={unit}>
-                                {unit}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </Form.Group>
-                  </div>
-                  <div className="col-6">
+                  <div className="col-4">
                       <Form.Group controlId="exampleForm.ControlInput2">
                         <Form.Label style={{ fontSize: '20px' }}>Bin Location: </Form.Label>
                         <Form.Select 
@@ -502,52 +503,50 @@ function UpdateAssemblyForm() {
                         </Form.Select>
                       </Form.Group>
                   </div>
+                  <div className="col-4">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
+                      <Form.Select
+                        disabled={!isReadOnly}
+                        aria-label=""
+                        required
+                        style={{ height: '40px', fontSize: '15px' }}
+                        value={unitMeasurement}
+                        onChange={handleChangeMeasurement}>
+                          <option disabled value=''>
+                              Select Unit Measurement ...
+                          </option>
+                        {cls_unitMeasurement.map((unitM, index) => (
+                          <option key={index} value={unitM}>
+                              {unitM}
+                          </option>
+                        ))}
+                        </Form.Select>
+                    </Form.Group>
+                </div>
+                <div className="col-4">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
+                      <Form.Select 
+                        disabled={!isReadOnly}
+                        aria-label="" 
+                        onChange={handleFormChangeManufacturer} 
+                        required
+                        style={{ height: '40px', fontSize: '15px' }}
+                        value={slct_manufacturer}>
+                          <option disabled value=''>
+                              Select Manufacturer ...
+                          </option>
+                            {manufacturer.map(manufacturer => (
+                              <option key={manufacturer.manufacturer_code} value={manufacturer.manufacturer_code}>
+                                {manufacturer.manufacturer_name}
+                              </option>
+                            ))}
+                      </Form.Select>
+                    </Form.Group>
+                </div>
               </div>
 
-                        <div className="row">
-                              <div className="col-6">
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
-                                    <Form.Select
-                                      disabled={!isReadOnly}
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      value={unitMeasurement}
-                                      onChange={handleChangeMeasurement}>
-                                        <option disabled value=''>
-                                            Select Unit Measurement ...
-                                        </option>
-                                      {cls_unitMeasurement.map((unitM, index) => (
-                                        <option key={index} value={unitM}>
-                                            {unitM}
-                                        </option>
-                                      ))}
-                                      </Form.Select>
-                                  </Form.Group>
-                              </div>
-                              <div className="col-6">
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: '20px' }}>Manufacturer: </Form.Label>
-                                    <Form.Select 
-                                      disabled={!isReadOnly}
-                                      aria-label="" 
-                                      onChange={handleFormChangeManufacturer} 
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      value={slct_manufacturer}>
-                                        <option disabled value=''>
-                                            Select Manufacturer ...
-                                        </option>
-                                          {manufacturer.map(manufacturer => (
-                                            <option key={manufacturer.manufacturer_code} value={manufacturer.manufacturer_code}>
-                                              {manufacturer.manufacturer_name}
-                                            </option>
-                                          ))}
-                                    </Form.Select>
-                                  </Form.Group>
-                              </div>
-                          </div>
 
                         <div className="row">
                           <Form.Group controlId="exampleForm.ControlInput1">
@@ -555,7 +554,7 @@ function UpdateAssemblyForm() {
                             <Form.Control
                               value={desc}
                               readOnly={!isReadOnly}
-                              onChange={(e) => setDesc(e.target.value)}
+                              onChange={(e) => handleassemblydescription(e)}
                               as="textarea"
                               placeholder="Enter details name"
                               style={{ height: "100px", fontSize: "15px" }}
@@ -583,7 +582,11 @@ function UpdateAssemblyForm() {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
-                                <Form.Control  disabled={!isReadOnly} value={thresholds} onChange={(e) => setThresholds(e.target.value)} type="number" style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control  disabled={!isReadOnly} 
+                                value={thresholds} 
+                                onChange={(e) => handleassemblythreshold(e)} 
+                                type="number" 
+                                style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
                             {/* <div className="col-6">
@@ -652,28 +655,38 @@ function UpdateAssemblyForm() {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                    {tableSupp.map((data,i) =>(
-                                        <tr key={i}>
-                                          <td>{data.supplier_code}</td>
-                                          <td>{data.supplier.supplier_name}</td>
-                                          <td>{data.supplier.supplier_email}</td>
-                                          <td>{data.supplier.supplier_number}</td>
-                                          <td>{data.supplier.supplier_address}</td>
-                                          <td>{data.supplier.supplier_receiving}</td>
-                                          <td>
-                                            <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
-                                            <input
-                                              type="number"
-                                              style={{ height: '50px' }}
-                                              value={data.supplier_price || ''}
-                                              readOnly={!isReadOnly}
-                                              onChange={(e) => handlePriceChange(i, e.target.value)}
-                                            />
-                                          </td>
-                                        </tr>
-                                      ))}
+                                        {tableSupp.length > 0 ? (
+                                          tableSupp.map((data, i) => (
+                                            <tr key={i}>
+                                              <td>{data.supplier_code}</td>
+                                              <td>{data.supplier.supplier_name}</td>
+                                              <td>{data.supplier.supplier_email}</td>
+                                              <td>{data.supplier.supplier_number}</td>
+                                              <td>{data.supplier.supplier_address}</td>
+                                              <td>{data.supplier.supplier_receiving}</td>
+                                              <td>
+                                                <span style={{ fontSize: '20px', marginRight: '5px' }}>
+                                                  ₱
+                                                </span>
+                                                <input
+                                                  type="number"
+                                                  style={{ height: '50px' }}
+                                                  value={data.supplier_price || ''}
+                                                  readOnly={!isReadOnly}
+                                                  onChange={(e) => handlePriceChange(i, e.target.value)}
+                                                />
+                                              </td>
+                                            </tr>
+                                          ))
+                                        ) : (
+                                          <tr>
+                                            <td colSpan="6" style={{ textAlign: "center" }}>
+                                              No Supplier selected
+                                            </td>
+                                          </tr>
+                                        )}
+                                      </tbody>
 
-                                    </tbody>
                                     {showDropdown && (
                                         <div className="dropdown mt-3">
                                            <Select
@@ -716,6 +729,7 @@ function UpdateAssemblyForm() {
                                 className="btn btn-warning"
                                 size="md"
                                 onClick={update}
+                                disabled={isSaveButtonDisabled}
                                 style={{ fontSize: "20px", margin: "0px 5px" }}>
                                 Save
                               </Button>

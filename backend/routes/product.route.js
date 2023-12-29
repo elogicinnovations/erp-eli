@@ -273,9 +273,9 @@ router.route("/update").post(
           },
       });
 
-      if(deleteassembly) {
+      if(deleteassembly !== null || deleteassembly !== undefined) {
         const selectedAssemblies = req.query.assembly;
-        // console.log(selectedAssemblies);
+        if (selectedAssemblies && typeof selectedAssemblies[Symbol.iterator] === 'function') {
         for (const assemblyDropdown of selectedAssemblies) {
           const assemblyValue = assemblyDropdown.value;
           await Product_Assembly.create({
@@ -283,7 +283,8 @@ router.route("/update").post(
             assembly_id: assemblyValue
           });
         }
-      } //delete assembly end
+      }
+    } //delete assembly end
 
       const deletesubpart = Product_Subparts.destroy({
           where: {
@@ -291,18 +292,18 @@ router.route("/update").post(
           },
       });
 
-      if(deletesubpart) {
+      if(deletesubpart !== null || deletesubpart !== undefined) {
         const selectedSubparting = req.query.subparting
+        if (selectedSubparting && typeof selectedSubparting[Symbol.iterator] === 'function') {
         for (const subpartDropdown of selectedSubparting) {
           const subpartValue = subpartDropdown.value;
-  
-          // console.log(subpartValue)
           await Product_Subparts.create({
             product_id: req.query.id,
             subPart_id: subpartValue
           });
         }
-      } //delete subpart end
+      }
+    } //delete subpart end
 
       const deletesparepart = Product_Spareparts.destroy({
         where: {
@@ -310,18 +311,18 @@ router.route("/update").post(
         },
       })
 
-      if(deletesparepart) {
+      if(deletesparepart !== null || deletesparepart !== undefined) {
         const selectedSpare = req.query.spareParts
+        if (selectedSpare && typeof selectedSpare[Symbol.iterator] === 'function') {
         for (const spareDropdown of selectedSpare) {
           const spareValue = spareDropdown.value;
-  
-          // console.log(spareValue)
           await Product_Spareparts.create({
             product_id: req.query.id,
             sparePart_id: spareValue
           });
         }
-      } //delete sparepart end
+      }
+     } //delete sparepart end
 
       const deletesupplier = ProductTAGSupplier.destroy({
         where: {
@@ -329,9 +330,10 @@ router.route("/update").post(
         },
       });
 
-      if(deletesupplier){
+      if(deletesupplier !== null || deletesupplier !== undefined){
         const selectedSuppliers = req.query.productTAGSuppliers
         // console.log(selectedSuppliers)
+        if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
         for (const supplier of selectedSuppliers) {
           const { value, price } = supplier;
           await ProductTAGSupplier.create({
@@ -340,8 +342,9 @@ router.route("/update").post(
             product_price: price
            });
          }
+        }
       }
-      }
+     }
 
       res.status(200).json();
     }
