@@ -77,6 +77,7 @@ function AssemblyForm({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
+
   function formatDate(isoDate) {
     const date = new Date(isoDate);
     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
@@ -248,6 +249,8 @@ function AssemblyForm({ authrztn }) {
                     <th className="tableh">Product Code</th>
                     <th className="tableh">Assemble Name</th>
                     <th className="tableh">Details</th>
+                    <th className="tableh">Date Created</th>
+                    <th className="tableh">Date Modified</th>
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
@@ -271,6 +274,18 @@ function AssemblyForm({ authrztn }) {
                           navigate(`/viewAssembleForm/${data.id}`)
                         }>
                         {data.assembly_desc}
+                      </td>
+                      <td
+                        onClick={() =>
+                          navigate(`/viewAssembleForm/${data.id}`)
+                        }>
+                        {formatDate(data.createdAt)}
+                      </td>
+                      <td
+                        onClick={() =>
+                          navigate(`/viewAssembleForm/${data.id}`)
+                        }>
+                        {formatDate(data.updatedAt)}
                       </td>
                       <td>
                         {isVertical[data.assembly_code] ? (

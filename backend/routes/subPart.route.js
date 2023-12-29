@@ -213,9 +213,9 @@ router.route("/update").post(async (req, res) => {
           },
         });
 
-        if(deletesupplier){
+        if(deletesupplier !== null || deletesupplier !== undefined){
           const selectedSuppliers = req.query.subpartTAGSuppliers;
-          console.log(selectedSuppliers)
+          if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
           for (const supplier of selectedSuppliers) {
             const { value, price } = supplier;
             await Subpart_supplier.create({
@@ -224,6 +224,7 @@ router.route("/update").post(async (req, res) => {
               supplier_price: price
              });
            }
+          }
         }
       }
 

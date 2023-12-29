@@ -19,6 +19,7 @@ const Supplier_Assembly = sequelize.define('assembly_supplier', {
   supplier_price: {
     type: DataTypes.FLOAT,
     allowNull: true,
+    defaultValue: 0,
   }
 });
 

@@ -167,24 +167,25 @@ router.route("/update").post(
       );
 
       if (Spare_newData) {
-      const deletesubpart = SparePart_SubPart.destroy({
-          where: {
-            sparePart_id: req.query.id
-          },
-      });
+        const deletesubpart = SparePart_SubPart.destroy({
+            where: {
+              sparePart_id: req.query.id
+            },
+        });
 
-      if(deletesubpart) {
-        const selectedSubparting = req.query.SubParts
-        for (const subpartDropdown of selectedSubparting) {
-          const subpartValue = subpartDropdown.value;
-  
-          console.log(subpartValue)
-          await SparePart_SubPart.create({
-            sparePart_id: req.query.id,
-            subPart_id: subpartValue
-          });
+        if(deletesubpart !== null || deletesubpart !== undefined) {
+          const selectedSubparting = req.query.SubParts
+          if (selectedSubparting && typeof selectedSubparting[Symbol.iterator] === 'function') {
+          for (const subpartDropdown of selectedSubparting) {
+            const subpartValue = subpartDropdown.value;
+    
+            await SparePart_SubPart.create({
+              sparePart_id: req.query.id,
+              subPart_id: subpartValue
+            });
+          }
         }
-      } //delete subpart end
+      } //update spare part subpart end
 
       const deletesupplier = SparePart_Supplier.destroy({
         where: {
@@ -192,19 +193,21 @@ router.route("/update").post(
         },
       });
 
-      if(deletesupplier){
+      if(deletesupplier !== null || deletesupplier !== undefined){
         const selectedSuppliers = req.query.addPriceInput
-        console.log(selectedSuppliers)
+        if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
         for (const supplier of selectedSuppliers) {
           const { value, price } = supplier;
+          
           await SparePart_Supplier.create({
             sparePart_id: req.query.id,
             supplier_code: value,
             supplier_price: price
            });
          }
-      }
-      }
+       }
+      } //update spare part supplier end
+    }
 
       res.status(200).json();
     }
