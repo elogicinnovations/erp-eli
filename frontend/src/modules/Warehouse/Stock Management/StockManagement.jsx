@@ -35,7 +35,7 @@ import {
   
   import * as $ from 'jquery';
 
-function StockManagement() {
+function StockManagement({ authrztn }) {
 
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
@@ -243,11 +243,14 @@ function StockManagement() {
                                       Go
                                   </Button>
                         <div className="Buttonmodal-new">
+                          { authrztn?.includes('Stock Management - Add') && (
                                 <Link to="/createStockTransfer" className='button'>
                                 <span style={{ }}>
-                                <Plus size={25} /> Stock Transfer
+                                <Plus size={25} />Stock Transfer
                                 </span>
                                 </Link>
+                          )}
+
                             </div>
                         </div>
 

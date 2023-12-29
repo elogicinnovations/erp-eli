@@ -26,7 +26,7 @@ import {
 import * as $ from 'jquery';
 import Header from '../../partials/header';
 
-const  Inventory = ({ activeTab, onSelect }) => {
+const  Inventory = ({ activeTab, onSelect, authrztn }) => {
 const navigate = useNavigate()
     const [inventory, setInventory] = useState([]);
     const [assembly, setAssembly] = useState([]);
@@ -272,21 +272,6 @@ const navigate = useNavigate()
       return new Date(datetime).toLocaleString('en-US', options);
     }
 
-    const [authrztn, setauthrztn] = useState([]);
-    useEffect(() => {
-
-      var decoded = jwtDecode(localStorage.getItem('accessToken'));
-      axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-        .then((res) => {
-          if(res.status === 200){
-            setauthrztn(res.data.col_authorization);
-          }
-      })
-        .catch((err) => {
-          console.error(err);
-      });
-
-    }, []);
 
     return (
         <div className="main-of-containers">

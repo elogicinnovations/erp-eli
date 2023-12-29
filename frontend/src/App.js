@@ -222,7 +222,15 @@ function App() {
                   />
           <Route
             path="/subParts"
-            element={<SubParts/>}
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <SubParts authrztn={authrztn}/>
+                )
+              }
+            </Roles>
+            }
           />
                   <Route
                     path="/createsubParts"
@@ -309,7 +317,15 @@ function App() {
                   />
           <Route
             path="/inventory"
-            element={<Inventory activeTab={activeTab} onSelect={handleTabSelect} />}
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <Inventory activeTab={activeTab} onSelect={handleTabSelect} authrztn={authrztn}/>
+                )
+              }
+              </Roles>
+              }
           />
 
                   <Route
@@ -337,7 +353,15 @@ function App() {
                   />
           <Route
             path="/purchaseRequest"
-            element={<PurchaseRequest/>}
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <PurchaseRequest authrztn={authrztn}/>
+                )
+              }
+              </Roles>
+            }
           />
                   <Route
                         path="/createPurchaseRequest"
@@ -370,7 +394,15 @@ function App() {
                   />
           <Route
             path="/stockManagement"
-            element={<StockManagement/>}
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <StockManagement authrztn={authrztn}/>
+                )
+              }
+              </Roles>
+            }
           />
                   <Route
                         path="/createStockTransfer"

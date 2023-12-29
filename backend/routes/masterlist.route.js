@@ -3,7 +3,7 @@ const { where, Op, col, fn } = require("sequelize");
 const nodemailer = require("nodemailer");
 //master Model
 // const MasterList = require('../db/models/masterlist.model')
-const { MasterList, UserRole } = require("../db/models/associations"); 
+const { MasterList, UserRole } = require("../db/models/associations");
 const session = require('express-session')
 const jwt = require('jsonwebtoken');
 
@@ -388,9 +388,9 @@ router.route("/viewAuthorization/:id").get( async (req,res) => {
     });
 
     if(user !== null){
-      const authorization = user.userRole.col_authorization.split(', ');
+      // const authorization = user.userRole.col_authorization.split(', ');
 
-      return res.json({col_authorization: authorization});
+      return res.json(user);
     }
     else
     {
