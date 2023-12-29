@@ -16,10 +16,6 @@ const SubPart = sequelize.define('subPart', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  subPart_unit: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
   bin_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

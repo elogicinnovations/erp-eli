@@ -545,11 +545,10 @@ function CreateSubParts() {
                                 type="number"
                                 style={{ height: "50px" }}
                                 placeholder="Input Price"
-                                value={priceInput[supp.value] || ""}
+                                value={priceInput[supp.value] || 0}
                                 onChange={(e) =>
                                   handlePriceinput(e.target.value, supp.value)
                                 }
-                                required
                               />
                             </td>
                           </tr>

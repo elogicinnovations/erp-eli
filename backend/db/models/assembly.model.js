@@ -16,11 +16,6 @@ const Assembly = sequelize.define('assembly', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  assembly_unit: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: false,
-  },
   bin_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
