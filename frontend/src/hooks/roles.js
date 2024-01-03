@@ -7,11 +7,13 @@ export default function Roles({ children }){
     const [authrztn, setauthrztn] = useState([]);
     useEffect(() => {
 
-    var decoded = jwtDecode(localStorage.getItem('accessToken'));
-    console.log("Decoded: ", decoded);
+    const accessToken = localStorage.getItem('accessToken');
 
+    if(typeof accessToken === 'string'){
+      var decoded = jwtDecode(accessToken);
+      console.log("Decoded: ", decoded);
 
-    axios.get(BASE_URL + '/masterList/viewAuthorization/' + decoded.id)
+      axios.get(BASE_URL + '/masterList/viewAuthorization/' + decoded.id)
       .then((res) => {
         // console.log("Res: ",res);
         if(res.status === 200){
@@ -22,6 +24,8 @@ export default function Roles({ children }){
       .catch((err) => {
         console.error(err);
     });
+
+    }
 
     // console.log("A: ", authrztn)
 
