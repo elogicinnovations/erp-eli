@@ -5,11 +5,13 @@ const Category = require("./category.model");
 const BinLocation = require("./binLocation.model");
 const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
+const CostCenter = require("./costcenter.model");
+
 const ProductTAGSupplier = require("./productTAGsupplier.model");
 const Product_Subparts = require("./product_subparts.model");
 const Product_Spareparts = require("./product_spare.model");
 const Product_Assembly = require("./product_assembly.model");
-const CostCenter = require("./costcenter.model");
+const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
 
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model")
@@ -19,12 +21,13 @@ const SparePart = require("./sparePart.model");
 const SparePart_SubPart = require("./sparePart_subPart.model");
 const SparePart_Supplier = require("./sparePart_supplier..model");
 const SparePart_image = require("./sparepart_image.model");
+const SparePartPrice_history = require("./sparePart_price_history.model");
 
 const Assembly = require("./assembly.model");
 const Assembly_Supplier = require("./assembly_supplier.model");
 const Assembly_SparePart = require("./assembly_spare.model");
 const Assembly_SubPart = require("./asssembly_subparts.model");
-
+const AssemblyPrice_History = require("./assembly_price_history.model");
 
 const Inventory = require("./inventory.model");
 const Inventory_Assembly = require("./inventory_assembly.model");
@@ -61,9 +64,13 @@ const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
+<<<<<<< HEAD
 const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
 const Assembly_image = require("./assembly_image.model");
 const Product_image = require("./product_image.model");
+=======
+
+>>>>>>> origin/Joseph
 
 
 // const SparePart = require("./sparePart.model");
@@ -110,9 +117,6 @@ Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id"});
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
 
-Product.hasMany(productTAGsupplierHistory, { foreignKey: "product_id" });
-productTAGsupplierHistory.belongsTo(Product, { foreignKey: "product_id" });
-
 Supplier.hasMany(ProductTAGSupplier, { foreignKey: "supplier_code"});
 ProductTAGSupplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
@@ -123,6 +127,7 @@ Product_Assembly.belongsTo(Product, { foreignKey: "product_id"});
 Assembly.hasMany(Product_Assembly, { foreignKey: "assembly_id"});
 Product_Assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
+<<<<<<< HEAD
 Assembly.hasMany(Assembly_image, { foreignKey: "assembly_id"});
 Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
@@ -133,14 +138,14 @@ Product_image.belongsTo(Product, { foreignKey: "product_id"});
 // Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
 
 
+=======
+>>>>>>> origin/Joseph
 // product_spareparts` table
 Product.hasMany(Product_Spareparts, { foreignKey: "product_id"});
 Product_Spareparts.belongsTo(Product, { foreignKey: "product_id"});
 
 SparePart.hasMany(Product_Spareparts, { foreignKey: "sparePart_id"});
 Product_Spareparts.belongsTo(SparePart, { foreignKey: "sparePart_id"});
-
-
 
 // product_subparts` table
 Product.hasMany(Product_Subparts, { foreignKey: "product_id"});
@@ -149,10 +154,18 @@ Product_Subparts.belongsTo(Product, { foreignKey: "product_id"});
 SubPart.hasMany(Product_Subparts, { foreignKey: "subPart_id"});
 Product_Subparts.belongsTo(SubPart, { foreignKey: "subPart_id"});
 
+<<<<<<< HEAD
 //Sparepart image
 SparePart.hasMany(SparePart_image, { foreignKey: "sparepart_id"});
 SparePart_image.belongsTo(SparePart, { foreignKey: "sparepart_id"});
+=======
+//product price history table
+Product.hasMany(productTAGsupplierHistory, { foreignKey: "product_id" });
+productTAGsupplierHistory.belongsTo(Product, { foreignKey: "product_id" });
+>>>>>>> origin/Joseph
 
+Supplier.hasMany(productTAGsupplierHistory, { foreignKey: "supplier_code" });
+productTAGsupplierHistory.belongsTo(Supplier, { foreignKey: "supplier_code" });
 
 
 MasterList.hasMany(CostCenter, { foreignKey: "col_id" });
@@ -270,6 +283,14 @@ SparePart_Supplier.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 Supplier.hasMany(SparePart_Supplier, { foreignKey: "supplier_code"});
 SparePart_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+// `sparepart price history
+SparePart.hasMany(SparePartPrice_history, { foreignKey: "sparePart_id"});
+SparePartPrice_history.belongsTo(SparePart, { foreignKey: "sparePart_id"});
+
+Supplier.hasMany(SparePartPrice_history, { foreignKey: "supplier_code"});
+SparePartPrice_history.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+
 //`purchase_req_products` table
 PR.hasMany(PR_product, { foreignKey: "pr_id"});
 PR_product.belongsTo(PR, { foreignKey: "pr_id"});
@@ -359,6 +380,13 @@ Assembly_Supplier.belongsTo(Assembly, { foreignKey: "assembly_id"});
 Supplier.hasMany(Assembly_Supplier, { foreignKey: "supplier_code"});
 Assembly_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+//Assembly Price history
+Assembly.hasMany(AssemblyPrice_History, { foreignKey: "assembly_id"});
+AssemblyPrice_History.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+Supplier.hasMany(AssemblyPrice_History, { foreignKey: "supplier_code"});
+AssemblyPrice_History.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
 //assembly tag category
 Category.hasMany(Assembly, { foreignKey: "category_code"});
 Assembly.belongsTo(Category, { foreignKey: "category_code"});
@@ -419,7 +447,11 @@ module.exports = {
                     Product_Assembly,
                     Product_Spareparts,
                     Product_Subparts,
+<<<<<<< HEAD
                     Product_image,
+=======
+                    productTAGsupplierHistory,
+>>>>>>> origin/Joseph
 
                     Category, 
                     BinLocation, 
@@ -435,12 +467,17 @@ module.exports = {
                     SparePart,
                     SparePart_SubPart,
                     SparePart_Supplier, 
+<<<<<<< HEAD
                     SparePart_image,
+=======
+                    SparePartPrice_history,
+>>>>>>> origin/Joseph
 
                     Assembly,            
                     Assembly_Supplier,
                     Assembly_SparePart,
                     Assembly_SubPart,
+                    AssemblyPrice_History,
                     
                     Inventory,
                     Inventory_Assembly,
@@ -478,5 +515,5 @@ module.exports = {
                     StockTransfer_assembly,
                     StockTransfer_spare,
                     StockTransfer_subpart,
-                    productTAGsupplierHistory,
+                    
                 };

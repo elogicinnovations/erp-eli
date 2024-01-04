@@ -54,6 +54,7 @@ const productTAGsupplier = require("./routes/productTAGsupplier.route");
 const Product_Assembly = require("./routes/product_assembly.route");
 const Product_Subparts = require("./routes/product_subpart.route");
 const Product_Spareparts = require("./routes/product_sparepart");
+const productTAGsupplierHistory = require("./routes/productTAGSupplierHistory.route");
 
 const manufacturer = require("./routes/manufacturer.route");
 
@@ -64,11 +65,13 @@ const subPart_image = require("./routes/subpart_image.route");
 const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
 const subPart_SparePart = require("./routes/sparePart_subPart.route");
+const sparepartPrice_history = require("./routes/assembly_price_history.route");
 
 const assembly = require("./routes/assembly.route");
 const spare_assembly = require("./routes/assembly_spare.route");
 const supplier_assembly = require("./routes/assembly_supplier.route");
 const subpart_assembly = require("./routes/assembly_subparts.route");
+const assembly_price_history = require("./routes/assembly_price_history.route");
 
 const costCenter = require("./routes/costCenter.route");
 
@@ -121,6 +124,7 @@ app.use("/productTAGsupplier", productTAGsupplier);
 app.use("/productAssembly", Product_Assembly);
 app.use("/productSubpart", Product_Subparts);
 app.use("/productSparepart", Product_Spareparts);
+app.use("/productpricehistoy", productTAGsupplierHistory);
 
 app.use("/costCenter", costCenter);
 app.use("/manufacturer", manufacturer);
@@ -132,11 +136,13 @@ app.use("/subPart_image", subPart_image);
 app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);
 app.use("/subPart_SparePart", subPart_SparePart);
+app.use("/sparepartHistoryPrice", sparepartPrice_history);
 
 app.use("/assembly", assembly);
 app.use("/spare_assembly", spare_assembly);
 app.use("/supplier_assembly", supplier_assembly);
 app.use("/assembly_subparts", subpart_assembly);
+app.use("/assemblyPriceHistory", assembly_price_history);
 
 app.use("/inventory", inventory);
 

@@ -840,25 +840,27 @@ function CreateProduct() {
                             <td>{supp.contact}</td>
                             <td>{supp.address}</td>
                             <td>
-                              <span
-                                style={{
-                                  fontSize: "20px",
-                                  marginRight: "5px",
-                                }}>
-                                ₱
-                              </span>
-                              <input
-                                type="number"
-                                style={{ height: "50px" }}
-                                placeholder="Input Price"
-                                value={priceInput[supp.value] || ""}
-                                onChange={(e) =>
-                                  handlePriceinput(e.target.value, supp.value)
-                                }
-                                required 
-                              />
+                              <div className="d-flex align-items-center">
+                                <span
+                                  style={{
+                                    fontSize: "20px",
+                                    marginRight: "5px",
+                                  }}>
+                                  ₱
+                                </span>
+                                <Form.Control
+                                  type="number"
+                                  style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                  placeholder="Input Price"
+                                  value={priceInput[supp.value] || ""}
+                                  onChange={(e) =>
+                                    handlePriceinput(e.target.value, supp.value)
+                                  }
+                                  required 
+                                />
+                            </div>
                             </td>
-                            <td>{isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : (supp.vatable / 100) * priceInput[supp.value]}</td>
+                            <td>{isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : ((supp.vatable / 100) * priceInput[supp.value]).toFixed(2)}</td>
 
                           </tr>
                         ))

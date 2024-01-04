@@ -7,6 +7,7 @@ const {
   Assembly_SparePart,
   Assembly_SubPart,
   Inventory_Assembly,
+  AssemblyPrice_History,
 } = require("../db/models/associations");
 
 const session = require("express-session");
@@ -122,6 +123,12 @@ router.route("/create").post(async (req, res) => {
           supplier_code: supplierValue,
           supplier_price: supplierPrice,
         });
+
+        await AssemblyPrice_History.create({
+          assembly_id: createdID,
+          supplier_code: supplierValue,
+          supplier_price: supplierPrice,
+        })
 
         await Inventory_Assembly.create({
           assembly_tag_supp_id: SupplierAssembly_ID.id,
@@ -283,6 +290,12 @@ router.route("/update").post(
             for (const supplier of selectedSuppliers) {
               const { value, price } = supplier;
               await Assembly_Supplier.create({
+                assembly_id: req.query.id,
+                supplier_code: value,
+                supplier_price: price
+              });
+              
+              await AssemblyPrice_History.create({
                 assembly_id: req.query.id,
                 supplier_code: value,
                 supplier_price: price
