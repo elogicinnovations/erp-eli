@@ -471,7 +471,7 @@ const navigate = useNavigate()
                                                                   setIssuedReturn(data);
                                                                   handleShow();
                                                                 }}>
-                                                                    {data.issued_return_id}
+                                                                    {data.id}
                                                             </td>
                                                             <td onClick={() => {
                                                                   setIssuedReturn(data);

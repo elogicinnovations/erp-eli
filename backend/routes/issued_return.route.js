@@ -1,9 +1,10 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const IssuedReturn = require('../db/models/issued_return.model')
-const IssuedProduct = require('../db/models/issued_product.model');
-const Inventory = require('../db/models/inventory.model');
+// const IssuedReturn = require('../db/models/issued_return.model')
+// const IssuedProduct = require('../db/models/issued_product.model');
+// const Inventory = require('../db/models/inventory.model');
+const { Inventory, IssuedReturn, IssuedProduct  } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -28,41 +29,57 @@ router.route('/getReturn').get(async (req, res) =>
     }
 });
 
-// router.route('/issueReturn').post(async (req, res) => {
-//     try {
-//         const { quantity, remarks, id } = req.query;
+router.route('/issueReturn').post(async (req, res) => {
+    try {
+        const { issuance_id, return_remarks, status} = req.query;
 
-//         console.log('id: ' + id);
-//         console.log('remarks: ' + remarks);
+        console.log("id", issuance_id)
+        console.log("status", status)
 
-//         // Create a new IssuedReturn record
-//         const newIssuedReturn = await IssuedReturn.create({
-//             issued_id: id,
-//             quantity: quantity,
-//             remarks: remarks,
-//             // Add other properties as needed based on your model
-//         });
+        const arrayDataProdBackend = req.query.arrayDataProdBackend;
+        for (const product of arrayDataProdBackend) {
+            
 
-//         // Update the quantity in the IssuedProduct
-//         const issuedProduct = await IssuedProduct.findOne({
-//             where: {
-//                 issuance_id: id
-//             }
-//         });
+           
+            await IssuedReturn.create({
+                issued_id: issuance_id,
+                inventory_id: product.inventory_id,
+                quantity: product.quantity,
+                status: status,
+                remarks: return_remarks,
+            });
 
-//         if (issuedProduct) {
-//             // Subtract the quantity from IssuedProduct
-//             issuedProduct.quantity -= parseFloat(quantity);
-//             await issuedProduct.save();
-//         }
+                const updateRecord = await IssuedProduct.findOne({
+                    where: {
+                        inventory_id: product.inventory_id,
+                    },
+                });
 
-//         // Send a response back to the client
-//         res.status(200).json({ message: 'Data saved successfully', data: newIssuedReturn });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send('An error occurred');
-//     }
-// });
+                if (updateRecord) {
+                    console.log("check",updateRecord.quantity - product.quantity)
+                    const updatedQuantity = updateRecord.quantity - product.quantity
+                    
+
+                    await IssuedProduct.update(
+                        {
+                            quantity: updatedQuantity
+                        },
+                        {
+                            where: {
+                                inventory_id: product.inventory_id
+                            },
+                        }
+                    )
+                };
+        }
+
+        // Send a response back to the client
+        res.status(200).json({ message: 'Data saved successfully'});
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('An error occurred');
+    }
+});
 
 router.route('/moveToInventory/:id').post(async (req, res) => {
     try {

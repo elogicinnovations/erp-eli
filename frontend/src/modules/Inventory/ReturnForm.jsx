@@ -50,6 +50,10 @@ const [issuedAssembly, setIssuedAssembly] = useState([]);
 const [issuedSpare, setIssuedSpare] = useState([]);
 const [issuedSubpart, setIssuedSubpart] = useState([]);
 
+const [arrayDataProd, setArrayDataProd] = useState([]); 
+const [arrayDataProdBackend, setarrayDataProdBackend] = useState([]); 
+const [quantityInputs, setQuantityInputs] = useState({});
+
 // const [issuedConsolidatedData, setIssuedConsolidatedData] = useState([]);
 // const [quantityInputs, setQuantityInputs] = useState({});
 
@@ -67,93 +71,218 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
 
 
     useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const productData = await axios.get(BASE_URL + '/issued_product/getProducts', { params: { id: id } });
-          const assemblyData = await axios.get(BASE_URL + '/issued_product/getAssembly', { params: { id: id } });
-          const spareData = await axios.get(BASE_URL + '/issued_product/getSpare', { params: { id: id } });
-          const subpartData = await axios.get(BASE_URL + '/issued_product/getSubpart', { params: { id: id } });
-    
-          // Add a type property to each item
-          const productWithType = productData.data.map(item => ({ ...item, type: 'product' }));
-          const assemblyWithType = assemblyData.data.map(item => ({ ...item, type: 'assembly' }));
-          const spareWithType = spareData.data.map(item => ({ ...item, type: 'spare' }));
-          const subpartWithType = subpartData.data.map(item => ({ ...item, type: 'subpart' }));
-    
-          // Consolidate data into one array
-          const consolidatedData = [
-            ...productWithType,
-            ...assemblyWithType,
-            ...spareWithType,
-            ...subpartWithType,
-          ];
-    
-          // Update state with the consolidated array
-          setIssuedProduct(consolidatedData.filter(item => item.type === 'product'));
-          setIssuedAssembly(consolidatedData.filter(item => item.type === 'assembly'));
-          setIssuedSpare(consolidatedData.filter(item => item.type === 'spare'));
-          setIssuedSubpart(consolidatedData.filter(item => item.type === 'subpart'));
-
-
-        } catch (err) {
-          console.log(err);
-        }
-      };
-    
-      fetchData();
+      axios
+        .get(BASE_URL + "/issued_product/getProducts", {
+          params: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          const data = res.data;   
+          const selectedSupplierOptions = data.map((row) => ({
+            value: row.inventory_id,
+            quantity: row.quantity,
+            code: row.inventory_prd.product_tag_supplier.product.product_code,
+            name: row.inventory_prd.product_tag_supplier.product.product_name
+          }));
+          setIssuedProduct(selectedSupplierOptions);
+          setArrayDataProd(selectedSupplierOptions);
+        })
+        .catch((err) => console.log(err));
     }, [id]);
-
-    const handleQuantityChange = (value, type, index) => {
-      // Create a copy of the appropriate array based on type
-      let updatedArray;
-      switch (type) {
-        case 'product':
-          updatedArray = [...issuedProduct];
-          break;
-        case 'assembly':
-          updatedArray = [...issuedAssembly];
-          break;
-        case 'spare':
-          updatedArray = [...issuedSpare];
-          break;
-        case 'subpart':
-          updatedArray = [...issuedSubpart];
-          break;
-        default:
-          return;
-      }
+    
+const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
+    // Remove non-numeric characters and limit length to 10
+    const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
   
-      // Update the quantity in the copied array
+    // Convert cleanedValue to a number
+    const numericValue = parseInt(cleanedValue, 10);
+  
+    // Create a variable to store the corrected value
+    let correctedValue = cleanedValue;
+  
+    // Check if the numericValue is greater than the available quantity
+    if (numericValue > issued_quantity) {
+      // If greater, set the correctedValue to the maximum available quantity
+      correctedValue = issued_quantity.toString();
       
-      updatedArray[index] = {
-        ...updatedArray[index],
-        quantity: value,
-      };
+      swal({
+        icon: "error",
+        title: "Input value exceed",
+        text: "Please enter a quantity within the available limit.",
+      });
 
-        // Log the information for debugging
-        console.log(`Type: ${type}, Index: ${index}, Updated Quantity: ${value}`);
+    }
+
+      setQuantityInputs((prevInputs) => {
+        const updatedInputs = {
+          ...prevInputs,
+          [productValue]: correctedValue,
+        };
+
+          // Use the updatedInputs directly to create the serializedProducts array
+          const serializedProducts = issuedProduct.map((product) => ({
+            quantity: updatedInputs[product.value] || "",
+            inventory_id: product.value,
+            code: product.code,
+            name: product.name,
+          }));
+
+          setarrayDataProdBackend(serializedProducts);
+
+          console.log("Selected Products:", serializedProducts);
+
+          // Return the updatedInputs to be used as the new state
+          return updatedInputs;
+
+      })
+
+    }
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+    
+      const form = e.currentTarget;
+      if (form.checkValidity() === false) {
+        e.preventDefault();
+        // e.stopPropagation();
+    
+        swal({
+          icon: 'error',
+          title: 'Fields are required',
+          text: 'Please fill the red text fields',
+        });
+      } else {
+        // Your existing code for form submission
+    
+        axios.post(`${BASE_URL}/issuedReturn/issueReturn`, null, {
+          params: {
+            issuance_id: id,
+            return_remarks: remarks,
+            arrayDataProdBackend,
+            status: 'To be Return', // Set the status here
+          },
+        })
+          .then((res) => {
+            // Handle the response as needed
+            console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: 'The Return successfully Done!',
+                text: 'The Quantity has returned successfully.',
+                icon: 'success',
+                button: 'OK',
+              }).then(() => {
+                navigate('/inventory');
+              });
+            } else if (res.status === 201) {
+              swal({
+                icon: 'error',
+                title: 'Code Already Exist',
+                text: 'Please input another code',
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: 'Something went wrong',
+                text: 'Please contact our support',
+              });
+            }
+          });
+      }
+    
+      setValidated(true); // for validations
+    };
+
+    
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+    //       const productData = await axios.get(BASE_URL + '/issued_product/getProducts', { params: { id: id } });
+    //       const assemblyData = await axios.get(BASE_URL + '/issued_product/getAssembly', { params: { id: id } });
+    //       const spareData = await axios.get(BASE_URL + '/issued_product/getSpare', { params: { id: id } });
+    //       const subpartData = await axios.get(BASE_URL + '/issued_product/getSubpart', { params: { id: id } });
+    
+    //       // Add a type property to each item
+    //       const productWithType = productData.data.map(item => ({ ...item, type: 'product' }));
+    //       const assemblyWithType = assemblyData.data.map(item => ({ ...item, type: 'assembly' }));
+    //       const spareWithType = spareData.data.map(item => ({ ...item, type: 'spare' }));
+    //       const subpartWithType = subpartData.data.map(item => ({ ...item, type: 'subpart' }));
+    
+    //       // Consolidate data into one array
+    //       const consolidatedData = [
+    //         ...productWithType,
+    //         ...assemblyWithType,
+    //         ...spareWithType,
+    //         ...subpartWithType,
+    //       ];
+    
+    //       // Update state with the consolidated array
+    //       setIssuedProduct(consolidatedData.filter(item => item.type === 'product'));
+    //       setIssuedAssembly(consolidatedData.filter(item => item.type === 'assembly'));
+    //       setIssuedSpare(consolidatedData.filter(item => item.type === 'spare'));
+    //       setIssuedSubpart(consolidatedData.filter(item => item.type === 'subpart'));
+
+
+    //     } catch (err) {
+    //       console.log(err);
+    //     }
+    //   };
+    
+    //   fetchData();
+    // }, [id]);
+
+    // const handleQuantityChange = (value, type, index) => {
+    //   // Create a copy of the appropriate array based on type
+    //   let updatedArray;
+    //   switch (type) {
+    //     case 'product':
+    //       updatedArray = [...issuedProduct];
+    //       break;
+    //     case 'assembly':
+    //       updatedArray = [...issuedAssembly];
+    //       break;
+    //     case 'spare':
+    //       updatedArray = [...issuedSpare];
+    //       break;
+    //     case 'subpart':
+    //       updatedArray = [...issuedSubpart];
+    //       break;
+    //     default:
+    //       return;
+    //   }
+  
+    //   // Update the quantity in the copied array
+      
+    //   updatedArray[index] = {
+    //     ...updatedArray[index],
+    //     quantity: value,
+    //   };
+
+    //     // Log the information for debugging
+    //     console.log(`Type: ${type}, Index: ${index}, Updated Quantity: ${value}`);
 
   
-      // Update the state based on the type
-      switch (type) {
-        case 'product':
-          setIssuedProduct(updatedArray);
-          break;
-        case 'assembly':
-          setIssuedAssembly(updatedArray);
-          break;
-        case 'spare':
-          setIssuedSpare(updatedArray);
-          break;
-        case 'subpart':
-          setIssuedSubpart(updatedArray);
-          break;
-        default:
-          return;
-      }
+    //   // Update the state based on the type
+    //   switch (type) {
+    //     case 'product':
+    //       setIssuedProduct(updatedArray);
+    //       break;
+    //     case 'assembly':
+    //       setIssuedAssembly(updatedArray);
+    //       break;
+    //     case 'spare':
+    //       setIssuedSpare(updatedArray);
+    //       break;
+    //     case 'subpart':
+    //       setIssuedSubpart(updatedArray);
+    //       break;
+    //     default:
+    //       return;
+    //   }
 
-      return updatedArray;
-    };
+    //   return updatedArray;
+    // };
 
 
 
@@ -166,7 +295,7 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
         }
       })
       .then(res => {
-        setIssuanceCode(res.data[0].issuance_id);
+          setIssuanceCode(res.data[0].issuance_id);
           setSite(res.data[0].from_site);
           setCostCenter(res.data[0].cost_center.name);
           // setDateReceived(res.data[0].updateAt);
@@ -183,60 +312,7 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
       });
     }, [id]);
     
-    // const handleSubmit = async (e) => {
-    //   e.preventDefault();
-    
-    //   const form = e.currentTarget;
-    //   if (form.checkValidity() === false) {
-    //     e.preventDefault();
-    //     e.stopPropagation();
-    
-    //     swal({
-    //       icon: 'error',
-    //       title: 'Fields are required',
-    //       text: 'Please fill the red text fields',
-    //     });
-    //   } else {
-    //     // Your existing code for form submission
-    
-    //     axios.post(`${BASE_URL}/issuedReturn/issueReturn`, null, {
-    //       params: {
-    //         id: id,
-    //         remarks,
-    //         quantity,
-    //         status: 'To be Return', // Set the status here
-    //       },
-    //     })
-    //       .then((res) => {
-    //         // Handle the response as needed
-    //         console.log(res);
-    //         if (res.status === 200) {
-    //           swal({
-    //             title: 'The Return successfully Done!',
-    //             text: 'The Quantity has returned successfully.',
-    //             icon: 'success',
-    //             button: 'OK',
-    //           }).then(() => {
-    //             navigate('/inventory');
-    //           });
-    //         } else if (res.status === 201) {
-    //           swal({
-    //             icon: 'error',
-    //             title: 'Code Already Exist',
-    //             text: 'Please input another code',
-    //           });
-    //         } else {
-    //           swal({
-    //             icon: 'error',
-    //             title: 'Something went wrong',
-    //             text: 'Please contact our support',
-    //           });
-    //         }
-    //       });
-    //   }
-    
-    //   setValidated(true); // for validations
-    // };
+
 
 
 
@@ -270,7 +346,7 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
             </Row>
               <Form 
                 noValidate validated={validated} 
-                // onSubmit={handleSubmit}
+                onSubmit={handleSubmit}
               >
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Issuance Info
@@ -298,14 +374,14 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
                                 </div>
                                 <div className="col-4">
                                     <div className="created">
-                                        Date created: <p1>{formatDatetime(dateCreated)}</p1>
+                                        Issued Date: <p1>{formatDatetime(dateCreated)}</p1>
                                     </div>
-                                    <div className="created mt-3">
+                                    {/* <div className="created mt-3">
                                         Date Received: <p1>{formatDatetime(dateReceived)}</p1>
-                                    </div>
-                                    <div className="created mt-3">
+                                    </div> */}
+                                    {/* <div className="created mt-3">
                                         Created By: <p1>--</p1>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="col-2">
                                 </div>
@@ -339,19 +415,21 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
                                             <th className='tableh'>Product Code</th>
                                             <th className='tableh'>Product Name</th>
                                             <th className='tableh'>Quantity</th>
-                                            <th className='tableh'>Quantity of Return</th>
+                                            <th className='tableh'>Quantity to Return</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            {issuedProduct.map((data, i) => (
-                                              <tr key={i}>
-                                                  <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
-                                                  <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
+                                            {issuedProduct.map((data) => (
+                                              <tr key={data.value}>
+                                                  <td>{data.code}</td>
+                                                  <td>{data.name}</td>
                                                   <td>{data.quantity}</td>
                                                   <td>
                                                     <input
-                                                      type="text"
-                                                      onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
+                                                      type="number"
+                                                      value={quantityInputs[data.value] || ""}
+                                                      onChange={(e) => handleQuantityChange(e.target.value, data.value, data.quantity)}
+                                                      // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
                                                       required
                                                       placeholder="Input quantity"
                                                       style={{
@@ -359,14 +437,16 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
                                                         width: "120px",
                                                         fontSize: "15px",
                                                       }}
-                                                      min="0"
-                                                      max="9999999999" 
+                                                      onKeyDown={(e) =>
+                                                        ["e", "E", "+", "-"].includes(e.key) &&
+                                                        e.preventDefault()
+                                                      }
                                                     />
                                                 </td>
                                                   
                                               </tr>
                                             ))}
-
+                                          {/* 
                                             {issuedAssembly.map((data, i) => (
                                               <tr key={i}>
                                                   <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_code}</td>
@@ -438,7 +518,7 @@ const [issuedSubpart, setIssuedSubpart] = useState([]);
                                                 </td>
                                                   
                                               </tr>
-                                            ))}
+                                            ))} */}
                                         </tbody>
                                 </table>
                             </div>

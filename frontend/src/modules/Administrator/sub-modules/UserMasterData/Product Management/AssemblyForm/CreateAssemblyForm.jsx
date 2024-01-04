@@ -464,11 +464,15 @@ function CreateAssemblyForm() {
                       const sanitizedValue = inputValue.replace(/\D/g, "");
                       setThresholds(sanitizedValue);
                     }}
-                    type="text"
+                    type="number"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
                     maxLength={10}
                     pattern="[0-9]*"
+                    onKeyDown={(e) =>
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                      e.preventDefault()
+                    }
                   />
                 </Form.Group>
               </div>
@@ -607,11 +611,15 @@ function CreateAssemblyForm() {
                                 type="number"
                                 style={{ height: "50px" }}
                                 placeholder="Input Price"
-                                value={priceInput[supp.value] || 0}
+                                value={priceInput[supp.value] || ""}
                                 onChange={(e) =>
                                   handlePriceinput(e.target.value, supp.value)
                                 }
                                 onInput={handleKeyPress}
+                                onKeyDown={(e) =>
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                  e.preventDefault()
+                                }
                               />
                             </td>
                           </tr>
