@@ -146,7 +146,7 @@ function UpdateAssemblyForm() {
     
       setTableSupp(updatedTable);
       setaddPriceInputbackend(serializedPriceDATA);
-    
+      setIsSaveButtonDisabled(false);
       // Return the updatedInputs to be used as the new state
       return updatedTable;
     };
@@ -422,27 +422,27 @@ const handleassemblythreshold = (event) => {
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: '20px' }}>Category: </Form.Label>
-                <Form.Select 
-                  aria-label="" 
-                  onChange={handleFormChangeCategory}
-                  required
-                  style={{ height: '40px', fontSize: '15px' }}
-                  value={slct_category}
-                  disabled={!isReadOnly}>
-                    <option disabled value=''>
-                        Select Category ...
-                    </option>
-                      {fetchcategory.map(category => (
-                        <option key={category.category_code} value={category.category_code}>
-                          {category.category_name}
-                        </option>
-                      ))}
-                </Form.Select>
-              </Form.Group>
-            </div>
+                <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: '20px' }}>Category: </Form.Label>
+                  <Form.Select 
+                    aria-label="" 
+                    onChange={handleFormChangeCategory}
+                    required
+                    style={{ height: '40px', fontSize: '15px' }}
+                    value={slct_category}
+                    disabled={!isReadOnly}>
+                      <option disabled value=''>
+                          Select Category ...
+                      </option>
+                        {fetchcategory.map(category => (
+                          <option key={category.category_code} value={category.category_code}>
+                            {category.category_name}
+                          </option>
+                        ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
             </div>
 
             <div className="row">
@@ -652,6 +652,7 @@ const handleassemblythreshold = (event) => {
                                         <th className='tableh'>Address</th>
                                         <th className='tableh'>Receiving Area</th>
                                         <th className='tableh'>Price</th>
+                                        <th className='tableh'>VAT</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -665,16 +666,20 @@ const handleassemblythreshold = (event) => {
                                               <td>{data.supplier.supplier_address}</td>
                                               <td>{data.supplier.supplier_receiving}</td>
                                               <td>
-                                                <span style={{ fontSize: '20px', marginRight: '5px' }}>
-                                                  ₱
-                                                </span>
-                                                <input
-                                                  type="number"
-                                                  style={{ height: '50px' }}
-                                                  value={data.supplier_price || ''}
-                                                  readOnly={!isReadOnly}
-                                                  onChange={(e) => handlePriceChange(i, e.target.value)}
-                                                />
+                                                <div className="d-flex align-items-center">
+                                                  <span style={{ fontSize: '20px', marginRight: '5px' }}>
+                                                    ₱
+                                                  </span>
+                                                  <Form.Control
+                                                    type="number"
+                                                    style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                                    value={data.supplier_price || ''}
+                                                    readOnly={!isReadOnly}
+                                                    onChange={(e) => handlePriceChange(i, e.target.value)}/>
+                                                </div>
+                                              </td>
+                                              <td>
+                                              { (data.supplier.supplier_vat / 100 * data.supplier_price).toFixed(2) }
                                               </td>
                                             </tr>
                                           ))
@@ -699,6 +704,7 @@ const handleassemblythreshold = (event) => {
                                                   number: supplier.supplier_number, 
                                                   address: supplier.supplier_address,
                                                   receiving: supplier.supplier_receiving,
+                                                  vatable: supplier.supplier_vat
                                                 }))}
                                                 value={addPriceInput}
                                                 onChange={handleSelectChange}

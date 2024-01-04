@@ -16,6 +16,8 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
+import Modal from "react-bootstrap/Modal";
+import Table from 'react-bootstrap/Table';
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -33,6 +35,7 @@ import { jwtDecode } from "jwt-decode";
 
 function SpareParts({ authrztn }) {
   const [sparePart, setSparePart] = useState([]);
+
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -68,6 +71,8 @@ function SpareParts({ authrztn }) {
       setOpenDropdownIndex(index);
     }
   };
+
+ 
 
   const reloadTable = () => {
     axios
@@ -338,6 +343,16 @@ function SpareParts({ authrztn }) {
                                 className="btn">
                                 Delete
                               </button>
+                              { authrztn.includes('Spare Part - View') && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  closeVisibleButtons();
+                                }}
+                                className="btn">
+                                Price History
+                              </button>
+                              )}
                             </div>
                           )}
                         </div>
@@ -350,6 +365,7 @@ function SpareParts({ authrztn }) {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

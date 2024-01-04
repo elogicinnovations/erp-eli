@@ -69,11 +69,15 @@ function CostCenter({ authrztn }) {
   // };
 
   // Fetch Data
-  useEffect(() => {
+
+  const reloadTable = () => {
     axios
-      .get(BASE_URL + "/costCenter/getCostCenter")
-      .then((res) => setCostCenter(res.data))
-      .catch((err) => console.log(err));
+    .get(BASE_URL + "/costCenter/getCostCenter")
+    .then((res) => setCostCenter(res.data))
+    .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    reloadTable();
   }, []);
 
   // Artifitial data

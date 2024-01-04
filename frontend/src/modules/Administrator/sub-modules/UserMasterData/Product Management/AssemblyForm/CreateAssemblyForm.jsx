@@ -584,6 +584,7 @@ function CreateAssemblyForm() {
                         <th className="tableh">Contact</th>
                         <th className="tableh">Address</th>
                         <th className="tableh">Price</th>
+                        <th className="tableh">VAT </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -596,6 +597,7 @@ function CreateAssemblyForm() {
                             <td>{supp.contact}</td>
                             <td>{supp.address}</td>
                             <td>
+                            <div className="d-flex align-items-center">
                               <span
                                 style={{
                                   fontSize: "20px",
@@ -603,17 +605,19 @@ function CreateAssemblyForm() {
                                 }}>
                                 ₱
                               </span>
-                              <input
+                              <Form.Control
                                 type="number"
-                                style={{ height: "50px" }}
+                                style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 placeholder="Input Price"
-                                value={priceInput[supp.value] || 0}
+                                value={priceInput[supp.value] || ""}
                                 onChange={(e) =>
                                   handlePriceinput(e.target.value, supp.value)
                                 }
-                                onInput={handleKeyPress}
+                                required
                               />
+                              </div>
                             </td>
+                            <td>{isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : ((supp.vatable / 100) * priceInput[supp.value]).toFixed(2)}</td>
                           </tr>
                         ))
                       ) : (
@@ -635,9 +639,11 @@ function CreateAssemblyForm() {
                                 Supplier Code:{" "}
                                 <strong>{supp.supplier_code}</strong> / Name:{" "}
                                 <strong>{supp.supplier_name}</strong>
+                                
                               </div>
                             ),
                             codes: supp.supplier_code,
+                            vatable: supp.supplier_vat,
                             names: supp.supplier_name,
                             email: supp.supplier_email,
                             contact: supp.supplier_number,

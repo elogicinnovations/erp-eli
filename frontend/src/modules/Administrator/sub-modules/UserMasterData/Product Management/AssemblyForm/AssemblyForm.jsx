@@ -15,6 +15,9 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Table from 'react-bootstrap/Table';
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -37,6 +40,9 @@ function AssemblyForm({ authrztn }) {
     Array(assembly.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+  const [showhistorical, setshowhistorical] = useState(false);
+  const [historypricemodal, sethistorypricemodal] = useState([]);
 
   const navigate = useNavigate();
 
@@ -68,6 +74,23 @@ function AssemblyForm({ authrztn }) {
     }
   };
 
+  const handlehistoricalClose = () => setshowhistorical(false);
+  const handlehistoricalShow = () => setshowhistorical(true);
+
+  const handleassemblypricehistory = (id) => {
+    axios
+    .get(BASE_URL + "/assemblyPriceHistory/fetchAssemblyPriceHistory", {
+      params: {
+        id
+      }
+    })
+    .then((res) => {
+      sethistorypricemodal(res.data);
+      handlehistoricalShow();
+    })
+    .catch((err) => console.log(err));
+  }
+
   const reloadTable = () => {
     axios
       .get(BASE_URL + "/assembly/fetchTable")
@@ -78,6 +101,8 @@ function AssemblyForm({ authrztn }) {
     reloadTable();
   }, []);
 
+
+
   function formatDate(isoDate) {
     const date = new Date(isoDate);
     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
@@ -86,6 +111,16 @@ function AssemblyForm({ authrztn }) {
       date.getSeconds()
     )}`;
   }
+
+    //Modal table
+    function ModalformatDate(isoDate) {
+      const date = new Date(isoDate);
+      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
+        date.getDate()
+      )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
+        date.getSeconds()
+      )}`;
+    }
 
   function padZero(num) {
     return num.toString().padStart(2, "0");
@@ -331,7 +366,16 @@ function AssemblyForm({ authrztn }) {
                               </button>
                               )}
 
-
+                              { authrztn.includes('Assembly - View') && (
+                              <button
+                                onClick={() => {
+                                  handleassemblypricehistory(data.id);
+                                  closeVisibleButtons();
+                                }}
+                                className="btn">
+                                Price History
+                              </button>
+                              )}
                             </div>
                           )}
                         </div>
@@ -344,6 +388,46 @@ function AssemblyForm({ authrztn }) {
           </div>
         </div>
       </div>
+      <Modal
+        size="xl"
+        show={showhistorical}
+        onHide={handlehistoricalClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title 
+            style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}
+          >
+            Historical Price
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <Table responsive="xl">
+              <thead>
+                <tr>
+                  <th>Assembly Name</th>
+                  <th>Price</th>
+                  <th>Date Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historypricemodal.map((history, i) => (
+                  <tr key={i}>
+                    <td>{history.assembly.assembly_name}</td>
+                    <td>{history.supplier_price}</td>
+                    <td>{ModalformatDate(history.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>                       
+        </Modal.Body>
+        <Modal.Footer>
+          {/* Footer content */}
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

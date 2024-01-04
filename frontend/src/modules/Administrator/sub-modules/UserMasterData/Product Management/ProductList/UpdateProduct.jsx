@@ -47,6 +47,7 @@ function UpdateProduct() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
+  const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
 
   // const handlePriceChange = (index, value) => {
   //   const updatedTable = [...tablesupplier];
@@ -132,16 +133,19 @@ function UpdateProduct() {
   //for onchange dropdown of spareparts
   const handleSparepartChange = (selectedSpareOptions) => {
     setSparePart(selectedSpareOptions);
+    setIsSaveButtonDisabled(false);
   };
 
   //for onchange dropdown of subparts
   const handleSubpartChange = (selectedSubOption) => {
     setsubparting(selectedSubOption);
+    setIsSaveButtonDisabled(false);
   };
 
   //for onchange dropdown of assembly
   const handleAssemblyChange = (selectedAssemblyOptions) => {
     setassemblies(selectedAssemblyOptions);
+    setIsSaveButtonDisabled(false);
   };
 
   //add supplier button dropdown
@@ -211,6 +215,7 @@ function UpdateProduct() {
 
     setProductTAGSuppliers(productTAGSuppliersData);
     settablesupplier(updatedTable);
+    setIsSaveButtonDisabled(false);
   };
 
   useEffect(() => {
@@ -252,10 +257,6 @@ useEffect(() => {
       setslct_manufacturer(res.data[0].product_manufacturer);
       setDetails(res.data[0].product_details);
       setThresholds(res.data[0].product_threshold);
-      // const imageBlob = res.data[0].image_blob;
-      // const fileType = res.data[0].file_type;
-      // const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
-      // setselectedimage({ url: blobUrl, type: fileType });
   })
     .catch(err => console.log(err));
 }, []);
@@ -322,25 +323,58 @@ useEffect(() => {
     setShowDropdown(true);
   };
 
+  // for Item code input
+  const handleItemcode = (event) => {
+    setCode(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
+
+  // for Product ID input
+  const handleProductID = (event) => {
+    setProd_id(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
+
+  // for Item name input
+  const handleItemName = (event) => {
+    setName(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
+
+  // for details name input
+  const handledetails = (event) => {
+    setDetails(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
+
+  // for threshold input
+  const handlethreshold = (event) => {
+    setThresholds(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
 
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
     setunitMeasurement(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Catergory on change function
   const handleFormChangeCategory = (event) => {
     setslct_category(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Bin Location on change function
   const handleFormChangeBinLocation = (event) => {
     setslct_binLocation(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   // for Unit Measurement on change function
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
+    setIsSaveButtonDisabled(false);
   };
 
   const handleKeyPress = (e) => {
@@ -477,13 +511,13 @@ useEffect(() => {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Item Code:{" "}
+                    Product Code:{" "}
                   </Form.Label>
                   <Form.Control
                     required
                     type="text"
                     value={code}
-                    onChange={(e) => setCode(e.target.value)}
+                    onChange={(e) => handleItemcode(e)}
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>
@@ -497,7 +531,7 @@ useEffect(() => {
                       required
                       type="text"
                       value={prod_id}
-                      onChange={(e) => setProd_id(e.target.value)}
+                      onChange={(e) => handleProductID(e)}
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                   </Form.Group>
@@ -511,7 +545,7 @@ useEffect(() => {
                     required
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => handleItemName(e)}
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
                   />
@@ -721,7 +755,7 @@ useEffect(() => {
                 <Form.Control
                   as="textarea"
                   value={details}
-                  onChange={(e) => setDetails(e.target.value)}
+                  onChange={(e) => handledetails(e)}
                   style={{ height: "100px", fontSize: "15px" }}
                 />
               </Form.Group>
@@ -757,13 +791,10 @@ useEffect(() => {
                   <Form.Control
                     required
                     value={thresholds}
-                    // onChange={(e) => setThresholds(e.target.value)}
                     onChange={(e) => {
                       const inputValue = e.target.value;
-                      const sanitizedValue = inputValue
-                        .replace(/\D/g, "")
-                        .substring(0, 10);
-                      setThresholds(sanitizedValue);
+                      const sanitizedValue = inputValue.replace(/\D/g, "").substring(0, 10);
+                      handlethreshold(e);
                     }}
                     onInput={handleKeyPress}
                     type="number"
@@ -847,19 +878,24 @@ useEffect(() => {
                       <td>{prod.supplier.supplier_address}</td>
                       <td>{prod.supplier.supplier_receiving}</td>
                       <td>
-                        <span style={{ fontSize: "20px", marginRight: "5px" }}>
-                          ₱
-                        </span>
-                        <input
-                          type="number"
-                          style={{ height: "50px" }}
-                          value={prod.product_price || ""}
-                          onKeyDown={(e) =>
-                            ["e", "E", "+", "-"].includes(e.key) &&
-                            e.preventDefault()
-                          }
-                          onChange={(e) => handlePriceChange(i, e.target.value)}
-                        />
+                        <div className="d-flex align-items-center">
+                          <span style={{ fontSize: "20px", marginRight: "5px" }}>
+                            ₱
+                          </span>
+                          <Form.Control
+                            type="number"
+                            style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
+                            value={prod.product_price || ""}
+                            onKeyDown={(e) =>
+                              ["e", "E", "+", "-"].includes(e.key) &&
+                              e.preventDefault()
+                            }
+                            onChange={(e) => handlePriceChange(i, e.target.value)}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                      { (prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2) }
                       </td>
                     </tr>
                   ))}
@@ -897,7 +933,8 @@ useEffect(() => {
                 type="submit"
                 variant="warning"
                 size="md"
-                style={{ fontSize: "20px" }}>
+                style={{ fontSize: "20px" }}
+                disabled={isSaveButtonDisabled}>
                 Update
               </Button>
               <Link

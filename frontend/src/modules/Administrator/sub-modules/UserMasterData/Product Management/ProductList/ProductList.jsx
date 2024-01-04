@@ -19,6 +19,7 @@ import {
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import Table from 'react-bootstrap/Table';
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -38,13 +39,40 @@ function ProductList({ authrztn }) {
   const navigate = useNavigate();
 
   const [product, setproduct] = useState([]);
-
+  const [historypricemodal, sethistorypricemodal] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(
     Array(product.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
+  const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
+  const [show, setShow] = useState(false);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+  const [showhistorical, setshowhistorical] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const handlehistoricalClose = () => setshowhistorical(false);
+  const handlehistoricalShow = () => setshowhistorical(true);
+
+  const handlepricehistory = (product_id) => {
+    axios
+    .get(BASE_URL + "/productpricehistoy/fetchPriceHistory", {
+      params: {
+        product_id
+      }
+    })
+    .then((res) => {
+      sethistorypricemodal(res.data);
+      handlehistoricalShow();
+    })
+    .catch((err) => console.log(err));
+  }
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -84,6 +112,7 @@ function ProductList({ authrztn }) {
     reloadTable();
   }, []);
 
+  //Main table
   function formatDate(isoDate) {
     const date = new Date(isoDate);
     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
@@ -92,6 +121,17 @@ function ProductList({ authrztn }) {
       date.getSeconds()
     )}`;
   }
+
+  //Modal table
+  function ModalformatDate(isoDate) {
+    const date = new Date(isoDate);
+    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
+      date.getDate()
+    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
+      date.getSeconds()
+    )}`;
+  }
+
 
   function padZero(num) {
     return num.toString().padStart(2, "0");
@@ -148,8 +188,7 @@ function ProductList({ authrztn }) {
     });
   };
 
-  const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
-  const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
+  
 
   const toggleButtons = (userId) => {
     setVisibleButtons((prevVisibleButtons) => {
@@ -194,14 +233,7 @@ function ProductList({ authrztn }) {
   };
 
   //This section when user click the checkbox in th, should check all the checkbox in td
-  const [show, setShow] = useState(false);
-  const [selectAllChecked, setSelectAllChecked] = useState(false);
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
+  
   const handleCheckboxChange = (productId) => {
     const updatedCheckboxes = [...selectedCheckboxes];
 
@@ -258,33 +290,12 @@ function ProductList({ authrztn }) {
       $("#order-listing").DataTable();
     }
   }, [product]);
-
+  
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-            <div className="dropdown-and-iconics">
-              <div className="dropdown-side"></div>
-              <div className="iconic-side">
-                <div className="gearsides">
-                  <Gear size={35} />
-                </div>
-                <div className="bellsides">
-                  <Bell size={35} />
-                </div>
-                <div className="usersides">
-                  <UserCircle size={35} />
-                </div>
-                <div className="username">
-                  <h3>User Name</h3>
-                </div>
-              </div>
-            </div>
-          </div> */}
+
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -450,6 +461,18 @@ function ProductList({ authrztn }) {
                                 Delete
                               </button>
                               )}
+
+                              { authrztn.includes('Product List - View') && (
+                              <button
+                                className="btn"
+                                type="button"
+                                onClick={() => {
+                                  handlepricehistory(data.product_id);
+                                  closeVisibleButtons();
+                                }}>
+                                Price History
+                              </button>
+                              )}
                             </div>
                           )}
                         </div>
@@ -462,6 +485,8 @@ function ProductList({ authrztn }) {
           </div>
         </div>
       </div>
+
+      {/* Modal for updating status*/}
       <Modal
         size="md"
         show={show}
@@ -496,6 +521,45 @@ function ProductList({ authrztn }) {
             style={{ fontSize: "20px" }}>
             Close
           </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        size="xl"
+        show={showhistorical}
+        onHide={handlehistoricalClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title 
+          style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}
+          >Historical Price</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <Table responsive="xl">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Price</th>
+                  <th>Date Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historypricemodal.map((pricehistory, i) => (
+                  <tr key={i}>
+                    <td>{pricehistory.product.product_name}</td>
+                    <td>{pricehistory.product_price}</td>
+                    <td>{ModalformatDate(pricehistory.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>                        
+        </Modal.Body>
+        <Modal.Footer>
+
         </Modal.Footer>
       </Modal>
     </div>

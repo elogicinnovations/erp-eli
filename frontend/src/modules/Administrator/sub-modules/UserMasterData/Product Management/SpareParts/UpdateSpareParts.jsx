@@ -521,6 +521,7 @@ console.log(addPriceInput)
                                         <th className='tableh'>Address</th>
                                         <th className='tableh'>Receiving Area</th>
                                         <th className='tableh'>Price</th>
+                                        <th className='tableh'>VAT</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -533,14 +534,19 @@ console.log(addPriceInput)
                                           <td>{data.supplier.supplier_address}</td>
                                           <td>{data.supplier.supplier_receiving}</td>
                                           <td>
-                                            <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
-                                            <input
-                                              type="number"
-                                              style={{ height: '50px' }}
-                                              value={data.supplier_price || ''}
-                                              readOnly={!isReadOnly}
-                                              onChange={(e) => handlePriceChange(i, e.target.value)}
-                                            />
+                                            <div className="d-flex align-items-center">
+                                              <span style={{ fontSize: '20px', marginRight: '5px' }}>₱</span>
+                                              <Form.Control
+                                                type="number"
+                                                style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                                value={data.supplier_price || ''}
+                                                readOnly={!isReadOnly}
+                                                onChange={(e) => handlePriceChange(i, e.target.value)}
+                                              />
+                                            </div>
+                                          </td>
+                                          <td>
+                                          { (data.supplier.supplier_vat / 100 * data.supplier_price).toFixed(2) }
                                           </td>
                                         </tr>
                                       ))}

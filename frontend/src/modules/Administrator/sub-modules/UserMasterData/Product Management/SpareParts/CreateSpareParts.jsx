@@ -7,7 +7,6 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import cls_unit from "../../../../../../assets/global/unit";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
@@ -23,7 +22,6 @@ function CreateSpareParts() {
   const [desc, setDesc] = useState("");
   const [thresholds, setThresholds] = useState("");
   const [manufacturer, setManufacturer] = useState([]);
-  const [unit, setUnit] = useState("");
   const [binLocation, setbinLocation] = useState([]);
   const [slct_binLocation, setslct_binLocation] = useState("");
   const [slct_manufacturer, setslct_manufacturer] = useState("");
@@ -85,10 +83,6 @@ function CreateSpareParts() {
     setShowDropdown(true);
   };
 
-  const handleChangeUnit = (event) => {
-    setUnit(event.target.value);
-  };
-
   const handleFormChangeBinLocation = (event) => {
     setslct_binLocation(event.target.value);
   };
@@ -143,7 +137,6 @@ function CreateSpareParts() {
           desc,
           SubParts,
           SpareaddPriceInput,
-          unit,
           slct_binLocation,
           unitMeasurement,
           slct_manufacturer,
@@ -256,26 +249,7 @@ function CreateSpareParts() {
               </div>
             </div>
             <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Unit: </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeUnit}>
-                    <option disabled value="">
-                      Select Unit ...
-                    </option>
-                    {cls_unit.map((unit, index) => (
-                      <option key={index} value={unit}>
-                        {unit}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Bin Location:{" "}
@@ -300,10 +274,7 @@ function CreateSpareParts() {
                   </Form.Select>
                 </Form.Group>
               </div>
-            </div>
-
-            <div className="row">
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Unit of Measurement:{" "}
@@ -324,7 +295,7 @@ function CreateSpareParts() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-6">
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Manufacturer:{" "}
@@ -350,6 +321,7 @@ function CreateSpareParts() {
               </div>
             </div>
 
+            
             <div className="row">
               <Form.Group controlId="exampleForm.ControlInput1">
                 <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>

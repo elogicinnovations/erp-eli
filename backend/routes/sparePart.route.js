@@ -1,10 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { SparePart_Supplier, SparePart_SubPart, SparePart, Inventory_Spare } = require("../db/models/associations"); 
-// const SparePart = require('../db/models/sparePart.model')
-// const Supplier_SparePart = require('../db/models/sparePart_supplier..model')
-// const SubPart_SparePart = require('../db/models/sparePart_subPart.model')
+const { SparePart_Supplier, SparePart_SubPart, SparePart, Inventory_Spare, SparePartPrice_history} = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -60,7 +57,7 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
-       const {code, name, supp, desc, SubParts, SpareaddPriceInput, unit, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} = req.body;
+       const {code, name, supp, desc, SubParts, SpareaddPriceInput, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} = req.body;
 
         // Check if the supplier code is already exists in the table
         console.log(code);
@@ -78,8 +75,6 @@ router.route('/create').post(async (req, res) => {
             spareParts_code: code.toUpperCase(),
             spareParts_name: name,
             spareParts_desc: desc,
-            spareParts_unit: unit,
-            spareParts_unit: unit,
             spareParts_location: slct_binLocation,
             spareParts_manufacturer: slct_manufacturer,
             threshhold: threshholdValue,
@@ -97,6 +92,12 @@ router.route('/create').post(async (req, res) => {
                 supplier_code: supplierValue,
                 supplier_price: supplierPrices
             });
+
+            await SparePartPrice_history.create({
+              sparePart_id: createdID,
+              supplier_code: supplierValue,
+              supplier_price: supplierPrices
+            })
 
             
             await Inventory_Spare.create({
@@ -200,6 +201,12 @@ router.route("/update").post(
           const { value, price } = supplier;
           
           await SparePart_Supplier.create({
+            sparePart_id: req.query.id,
+            supplier_code: value,
+            supplier_price: price
+           });
+
+           await SparePartPrice_history.create({
             sparePart_id: req.query.id,
             supplier_code: value,
             supplier_price: price
