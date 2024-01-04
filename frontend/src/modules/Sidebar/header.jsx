@@ -15,6 +15,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BASE_URL from '../../assets/global/url';
 import '../styles/react-style.css'
+import { jwtDecode } from 'jwt-decode';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -25,6 +26,29 @@ const Header = () => {
     const [prhistory, setprhistory] = useState([]);
     const [unreadNotifications, setUnreadNotifications] = useState(0);
 
+    //code for fetching the user login info
+
+    const [Fname, setFname] = useState('');
+    const [username, setUsername] = useState('');
+    const [userRole, setUserRole] = useState('');
+
+    
+    const decodeToken = () => {
+      var token = localStorage.getItem('accessToken');
+      if(typeof token === 'string'){
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname)
+      setUserRole(decoded.userrole)
+      console.log(decoded);
+      }
+    }
+    // const navigate = useNavigate()
+    useEffect(() => {
+      decodeToken();
+    }, [])
+
+ //end code for fetching the user login info
 
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -141,13 +165,6 @@ const Header = () => {
     const formatDate = (createdAt) => {
       return formatCreatedAt(createdAt);
     };
-    
-    const profile = [
-      {
-        username: 'Jerome Nadela De Guzman',
-        userrole: 'Administrator'
-      },
-    ];
   
     const toggleNotifications = () => {
       setShowNotifications(!showNotifications);
@@ -228,22 +245,20 @@ const Header = () => {
                 <div className="profile-wrapper" ref={profileRef}>
                   <button className="profile-pic" onClick={toggleProfile}>
                   <UserCircle size={35} style={{marginRight : '2px'}}/>
-                  <h3>User Name</h3>
+                  <h3>{username.length > 10 ? `${username.substring(0, 10)}...` : username}</h3>
                   </button>
                   {showProfile && (
                     <div className="profile-drop-down">
                       <div className="profile-triangle"></div>
                       <div className="profile-header">
-                      {profile.map((item) => (
                         <>
                           <div className="profile-username">
-                            {item.username}
+                          {Fname.length > 30 ? `${Fname.substring(0, 30)}...` : Fname}
                           </div>
                           <div className="user-title">
-                            {item.userrole}
+                            {userRole}
                           </div>
                         </>
-                        ))}
                       </div>
                       <div className="profile-content">
                         <Link to='/profileSettings' className='profile-card'>
