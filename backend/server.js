@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql");
+const bodyParser = require("body-parser");
 const app = express();
 
 const port = 8083;
@@ -12,7 +13,10 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json()); // Add this line to parse incoming JSON data
+app.use(express.json({ limit:'500mb' })); // Add this line to parse incoming JSON data
+
+app.use(bodyParser.urlencoded({limit: '500mb', extended: true, parameterLimit:100000}));
+
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -27,6 +31,12 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+
+
+
+app.use(multer({
+  limits: { fieldSize: 25 * 1024 * 1024 }
+}))
 
 //Routes:
 const masterRoute = require("./routes/masterlist.route");

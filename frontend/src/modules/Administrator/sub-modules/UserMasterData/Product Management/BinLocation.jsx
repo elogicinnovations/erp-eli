@@ -231,14 +231,14 @@ function BinLocation({ authrztn }) {
       });
       return;
     }
-    if (updateFormData.bin_subname.trim() === "") {
-      swal({
-        icon: "error",
-        title: "Bin Location SubName is required",
-        text: "Please fill Bin Location SubName field",
-      });
-      return;
-    }
+    // if (updateFormData.bin_subname.trim() === "") {
+    //   swal({
+    //     icon: "error",
+    //     title: "Bin Location SubName is required",
+    //     text: "Please fill Bin Location SubName field",
+    //   });
+    //   return;
+    // }
 
     try {
       const id = updateFormData.bin_id;

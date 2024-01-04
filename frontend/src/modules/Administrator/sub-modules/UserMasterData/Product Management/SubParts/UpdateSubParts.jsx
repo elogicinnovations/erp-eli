@@ -33,8 +33,10 @@ function UpdateSubparts() {
   const [tablesupplier, settablesupplier] = useState([]); // for fetching supplier na nakatag sa subparts
   const [subpartTAGSuppliers, setsubpartTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at subpart id
 
+
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 
+  const [subpartImages, setSubpartImages] = useState([]);
   useEffect(() => {
     axios
       .get(BASE_URL + "/subpart/fetchsubpartEdit", {
@@ -51,6 +53,8 @@ function UpdateSubparts() {
         setprodthreshold(res.data[0].threshhold);
         setproddetails(res.data[0].subPart_desc);
         setprodcategory(res.data[0].category_code);
+        setSubpartImages(res.data[0].subPart_images);
+
       })
       .catch((err) => console.log(err));
   }, [id]);
@@ -304,6 +308,14 @@ function UpdateSubparts() {
                   left: "18rem",
                   transform: "translateY(-50%)",
                 }}></span>
+            </div>
+
+            <div className="row">
+                {
+                  subpartImages.length > 0 && subpartImages.map((image) => (
+                    <img src={`data:image/png;base64,${image.subpart_image}`} alt={`subpart-img-${image.id}`}/>
+                  ))
+                }
             </div>
 
             <div className="row">

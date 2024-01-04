@@ -53,6 +53,10 @@ router.route("/fetchTableEdit").get(async (req, res) => {
       where: {
         id: req.query.id,
       },
+      include: {
+        model: Assembly_image,
+        required: false
+      }
     });
 
     if (data) {
@@ -80,7 +84,9 @@ router.route("/create").post(async (req, res) => {
       slct_manufacturer, 
       thresholds, 
       unitMeasurement,
-      slct_category} =
+      slct_category,
+      img
+      } =
       req.body;
     // Check if the supplier code is already exists in the table
     console.log(code);
@@ -139,6 +145,15 @@ router.route("/create").post(async (req, res) => {
         await Assembly_SubPart.create({
           assembly_id: createdID,
           subPart_id: subparting,
+        });
+      }
+
+      if(img.length > 0){
+        img.forEach(async (i) => {
+          await Assembly_image.create({
+            assembly_id : createdID,
+            assembly_image : i.base64Data
+          })
         });
       }
       res.status(200).json();

@@ -1925,21 +1925,40 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-                              disabled
                               type="checkbox"
-                              id="Inventory Type - Add"
+                              id="Inventory - Add"
                               name="vehicle1"
-                              value="Inventory Type - Add"
+                              value="Inventory - Add"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory Type - Add"
+                                (item) => item.value === "Inventory - Add"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Inventory Type - Add")
+                                handleCheckboxChange("Inventory - Add")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory Type - Add"></label>
+                              htmlFor="Inventory - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Inventory - Edit"
+                              name="vehicle1"
+                              value="Inventory - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Inventory - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Inventory - Edit")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Inventory - Edit"></label>
                           </div>
                         </td>
 
@@ -1948,41 +1967,20 @@ function Create_role() {
                             <input
                               disabled
                               type="checkbox"
-                              id="Inventory Type - Edit"
+                              id="Inventory - Delete"
                               name="vehicle1"
-                              value="Inventory Type - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory Type - Edit"
-                              )}
-                              onChange={() =>
-                                handleCheckboxChange("Inventory Type - Edit")
-                              }
-                            />
-                            <label
-                              className="p-3"
-                              htmlFor="Inventory Type - Edit"></label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <div className="input-group">
-                            <input
-                              disabled
-                              type="checkbox"
-                              id="Inventory Type - Delete"
-                              name="vehicle1"
-                              value="Inventory Type - Delete"
+                              value="Inventory - Delete"
                               checked={selectedCheckboxes.some(
                                 (item) =>
-                                  item.value === "Inventory Type - Delete"
+                                  item.value === "Inventory - Delete"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Inventory Type - Delete")
+                                handleCheckboxChange("Inventory - Delete")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory Type - Delete"></label>
+                              htmlFor="Inventory - Delete"></label>
                           </div>
                         </td>
 
@@ -1991,20 +1989,20 @@ function Create_role() {
                             <input
 
                               type="checkbox"
-                              id="Inventory Type - Approval"
+                              id="Inventory - Approval"
                               name="vehicle1"
-                              value="Inventory Type - Approval"
+                              value="Inventory - Approval"
                               checked={selectedCheckboxes.some(
                                 (item) =>
-                                  item.value === "Inventory Type - Approval"
+                                  item.value === "Inventory - Approval"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Inventory Type - Approval")
+                                handleCheckboxChange("Inventory - Approval")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory Type - Approval"></label>
+                              htmlFor="Inventory - Approval"></label>
                           </div>
                         </td>
 
@@ -2013,20 +2011,20 @@ function Create_role() {
                             <input
 
                               type="checkbox"
-                              id="Inventory Type - Reject"
+                              id="Inventory - Reject"
                               name="vehicle1"
-                              value="Inventory Type - Reject"
+                              value="Inventory - Reject"
                               checked={selectedCheckboxes.some(
                                 (item) =>
-                                  item.value === "Inventory Type - Reject"
+                                  item.value === "Inventory - Reject"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Inventory Type - Reject")
+                                handleCheckboxChange("Inventory - Reject")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory Type - Reject"></label>
+                              htmlFor="Inventory - Reject"></label>
                           </div>
                         </td>
 

@@ -491,7 +491,7 @@ function Sidebar({ authrztn }) {
             </List>
           </Collapse>
 
-          { authrztn.includes('Inventory Type - View') && (
+          { authrztn.includes('Inventory - View') && (
           <NavLink
             to="/inventory"
             style={{ textDecoration: "none", color: "inherit" }}

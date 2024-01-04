@@ -83,6 +83,41 @@ function CreateProduct() {
     setselectedimage(newSelectedImages);
   };
 
+  const [img, setImg] = useState([]);
+  useEffect(() => {
+    // Create a function to handle the image processing
+    const processImages = () => {
+      const imageDataArray = [];
+
+      selectedimage.forEach((image, index) => {
+        const filereader = new FileReader();
+
+        filereader.onload = function (event) {
+          // Process image data
+          const processedImage = {
+            index, // or any other identifier for the image
+            blobData: event.target.result,
+            base64Data: btoa(event.target.result),
+          };
+
+          imageDataArray.push(processedImage);
+        };
+
+        if (image instanceof Blob) {
+          filereader.readAsBinaryString(image);
+        }
+      });
+
+      // Set the state once after processing all images
+      setImg(imageDataArray);
+    };
+
+    // Call the image processing function
+    processImages();
+  }, [selectedimage]);
+
+
+
   //toggle switch Active and Inactive
   const GreenSwitch = styled(Switch)(({ theme }) => ({
     "& .MuiSwitch-switchBase.Mui-checked": {
@@ -274,9 +309,24 @@ function CreateProduct() {
         "productTAGSuppliers",
         JSON.stringify(productTAGSuppliers)
       );
+      formData.append("img", JSON.stringify(img));
 
       axios
-        .post(`${BASE_URL}/product/create`, formData, {
+        .post(`${BASE_URL}/product/create`, {
+          code,
+          prod_id,
+          name,
+          slct_category,
+          slct_binLocation,
+          unitMeasurement,
+          slct_manufacturer,
+          details,
+          thresholds,
+          assembly,
+          spareParts,
+          subparting,
+          img
+        }, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

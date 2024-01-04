@@ -21,6 +21,10 @@ router.route('/fetchTableEdit').get(async (req, res) => {
       where: {
         id: req.query.id,
     },
+    include: {
+      model: SparePart_image,
+      required: false
+    }
     });
 
     if (data) {
@@ -119,6 +123,15 @@ router.route('/create').post(async (req, res) => {
           }
           }
     
+          if(img.length > 0){
+            img.forEach(async (i) => {
+              await SparePart_image.create({
+                sparepart_id : createdID,
+                
+              })
+            });
+          }
+
           return res.status(200).json();
         }
       } catch (err) {

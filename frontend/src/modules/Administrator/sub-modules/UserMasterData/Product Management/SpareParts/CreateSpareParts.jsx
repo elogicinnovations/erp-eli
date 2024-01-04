@@ -184,6 +184,133 @@ function CreateSpareParts() {
   //         $('#order-listing').DataTable();
   //     });
   //     }, []);
+  const [selectedimage, setselectedimage] = useState([]);
+  const fileInputRef = useRef(null);
+
+  const onDropImage = (acceptedFiles) => {
+    const newSelectedImages = [...selectedimage];
+
+    acceptedFiles.forEach((file) => {
+      if (
+        (file.type === "image/png" || file.type === "image/jpeg") &&
+        newSelectedImages.length < 5
+      ) {
+        newSelectedImages.push(file);
+      } else {
+        swal({
+          title: "Invalid file type or maximum limit reached",
+          text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
+          icon: "error",
+          button: "OK",
+        });
+      }
+    });
+
+    setselectedimage(newSelectedImages);
+  };
+
+  const removeImage = (index) => {
+    const newSelectedImages = [...selectedimage];
+    newSelectedImages.splice(index, 1);
+    setselectedimage(newSelectedImages);
+  };
+  const uploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const [img, setImg] = useState([]);
+  useEffect(() => {
+    // Create a function to handle the image processing
+    const processImages = () => {
+      const imageDataArray = [];
+
+      selectedimage.forEach((image, index) => {
+        const filereader = new FileReader();
+
+        filereader.onload = function (event) {
+          // Process image data
+          const processedImage = {
+            index, // or any other identifier for the image
+            blobData: event.target.result,
+            base64Data: btoa(event.target.result),
+          };
+
+          imageDataArray.push(processedImage);
+        };
+
+        if (image instanceof Blob) {
+          filereader.readAsBinaryString(image);
+        }
+      });
+
+      // Set the state once after processing all images
+      setImg(imageDataArray);
+    };
+
+    // Call the image processing function
+    processImages();
+  }, [selectedimage]);
+
+  const add = async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      // if required fields has NO value
+      //    console.log('requried')
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
+      });
+    } else {
+      axios
+        .post(`${BASE_URL}/sparePart/create`, {
+          code,
+          name,
+          desc,
+          SubParts,
+          SpareaddPriceInput,
+          unit,
+          slct_binLocation,
+          unitMeasurement,
+          slct_manufacturer,
+          thresholds,
+          img
+        })
+        .then((res) => {
+          // console.log(res);
+          if (res.status === 200) {
+            swal({
+              title: "Product Spare-Part Add Successful!",
+              text: "The Product Spare-Part has been Added Successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/spareParts");
+            });
+          } else if (res.status === 201) {
+            swal({
+              title: "Product Spare-Part is Already Exist",
+              text: "Please Input a New Product Spare-Part ",
+              icon: "error",
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        });
+    }
+
+    setValidated(true); //for validations
+  };
 
   return (
     <div className="main-of-containers">
@@ -402,7 +529,7 @@ function CreateSpareParts() {
                   />
                 </Form.Group>
               </div>
-              {/* <div className="col-6">
+              <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput1">
                               <Form.Label style={{ fontSize: "20px" }}>
                                 Image Upload:{" "}
@@ -428,13 +555,16 @@ function CreateSpareParts() {
                                         ref={fileInputRef}
                                         type="file"
                                         style={{ display: "none" }}
+                                        {...getInputProps()}
                                       />
                                       <div
                                         className="d-flex align-items-center"
                                         style={{ width: "700px", height: "2.5em" }}>
                                         <p
                                           className="fs-5 w-100 p-3 btn btn-secondary"
-                                          style={{ color: "white", fontWeight: "bold" }}>
+                                          style={{ color: "white", fontWeight: "bold" }}
+                                          onClick={uploadClick}
+                                          >
                                           Drag and drop a file here, or click to select a
                                           file
                                         </p>
@@ -480,7 +610,7 @@ function CreateSpareParts() {
                                 </Dropzone>
                               </div>
                             </Form.Group>
-                          </div> */}
+                          </div>
             </div>
 
             <div
