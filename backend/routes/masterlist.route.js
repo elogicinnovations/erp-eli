@@ -23,11 +23,14 @@ router.route("/login").post(async (req, res) => {
       where: {
         col_email: username,
       },
+      include: {
+        model: UserRole
+      }
     });
 
     // console.log(user);
     if (user && user.col_Pass === password) {
-      const userData = { username: user.col_username, id: user.col_id }
+      const userData = { username: user.col_username, id: user.col_id, Fname: user.col_Fname, userrole: user.userRole.col_rolename}
       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
       // localStorage.setItem('access-token', accessToken);
 

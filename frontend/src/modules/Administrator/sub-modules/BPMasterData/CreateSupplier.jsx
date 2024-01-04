@@ -323,8 +323,8 @@ function CreateSupplier() {
                     defaultValue=""
                   >
                     <option disabled value="">Select currency...</option>
-                    <option value="₱">Peso (₱)</option>
-                    <option value="$">Dollar ($)</option>
+                    <option value="₱">PHP (₱)</option>
+                    <option value="$">USD ($)</option>
                   </Form.Select>
                 </Col>
                 <Col></Col>
@@ -545,21 +545,9 @@ function CreateSupplier() {
                       style={{ fontSize: 20 }}>
                       Vatable
                     </label>
-                    <div class="cl-toggle-switch mt-2">
-                      <label class="cl-switch">
-                        <input
-                          type="checkbox"
-                          required
-                          checked={isChecked} // Set the initial and current state
-                          onChange={handleCheckboxChange} // Handle change event
-                        />
-                        <span></span>
-                      </label>
-                    </div>
                     <Form.Control
                       className="p-3  fs-3"
                       style={{ width: "20%", marginLeft: 50 }}
-                      disabled={!isChecked}
                       required
                       type="text"
 

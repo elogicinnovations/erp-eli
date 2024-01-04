@@ -492,21 +492,10 @@ function EditSupplier() {
                         style={{ fontSize: 20 }}>
                         Vatable
                       </label>
-                      <div class="cl-toggle-switch mt-2">
-                        <label class="cl-switch">
-                          <input
-                            type="checkbox"
-                            checked={isChecked} // Set the initial and current state
-                            onChange={handleCheckboxChange} // Handle change event
-                          />
-                          <span></span>
-                        </label>
-                      </div>
                       <Form.Control
                         className="p-3  fs-3"
                         value={suppVat}
                         style={{ width: "20%", marginLeft: 50 }}
-                        disabled={!isChecked}
                         type="text"
                         maxLength={3}
                         onInput={(e) =>

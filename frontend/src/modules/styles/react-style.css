@@ -1592,6 +1592,7 @@ li.nav-item {
   padding: 10px 20px;
   border: none;
   background-color: white;
+  min-width: 150px;
 }
 
 .notification{
