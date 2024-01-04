@@ -53,6 +53,7 @@ function UpdateAssemblyForm() {
   const [thresholds, setThresholds] = useState('');
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
+  const [images, setImages] = useState([]);
   
   useEffect(() => {
     axios
@@ -70,6 +71,7 @@ function UpdateAssemblyForm() {
         setunitMeasurement(res.data[0].assembly_unitMeasurement);
         setslct_manufacturer(res.data[0].assembly_manufacturer);
         setThresholds(res.data[0].threshhold);
+        setImages(res.data[0].assembly_images);
       })
       .catch((err) => console.log(err));
   }, [id]);
@@ -387,6 +389,14 @@ const handleassemblythreshold = (event) => {
                   left: "18rem",
                   transform: "translateY(-50%)",
                 }}></span>
+            </div>
+
+            <div className="row">
+                {
+                  images.length > 0 && images.map((image) => (
+                    <img src={`data:image/png;base64,${image.assembly_image}`} alt={`assembly-img-${image.id}`}/>
+                  ))
+                }
             </div>
 
             <div className="row">
@@ -729,7 +739,7 @@ const handleassemblythreshold = (event) => {
                                 className="btn btn-warning"
                                 size="md"
                                 onClick={update}
-                                disabled={isSaveButtonDisabled}
+
                                 style={{ fontSize: "20px", margin: "0px 5px" }}>
                                 Save
                               </Button>

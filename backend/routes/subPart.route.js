@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {SubPart, Subpart_supplier, Inventory_Subpart, BinLocation, Category, Manufacturer} = require('../db/models/associations')
+const {SubPart, Subpart_supplier, Inventory_Subpart, BinLocation, Category, Manufacturer, Subpart_image} = require('../db/models/associations')
 const session = require('express-session')
 const multer = require('multer');
 const upload = multer();
@@ -20,7 +20,12 @@ router.route('/fetchTable').get(async (req, res) => {
     //       required: false,
     //     },
     //   });
-      const data = await SubPart.findAll();
+      const data = await SubPart.findAll({
+        include: {
+          model: Subpart_image,
+          required: false
+        }
+      });
   
       if (data) {
         // console.log(data);
@@ -40,6 +45,10 @@ router.route('/fetchTable').get(async (req, res) => {
         where: {
           id: req.query.id,
         },
+        include : {
+          model: Subpart_image,
+          required: false
+        }
       });
   
       if (data) {
@@ -63,7 +72,9 @@ router.route('/fetchTable').get(async (req, res) => {
               unitMeasurement,
               slct_manufacturer,
               thresholds,
-              slct_category} = req.body;
+              slct_category,
+              img
+            } = req.body;
         // Check if the supplier code is already exists in the table
         console.log(slct_binLocation);
         const existingSubCode = await SubPart.findOne({
@@ -96,7 +107,6 @@ router.route('/fetchTable').get(async (req, res) => {
                 subpart_id: createdID,
                 supplier_code: supplierValue,
                 supplier_price: supplierPrices
-
             });
             await Inventory_Subpart.create({
               subpart_tag_supp_id: SupplierSubpart_ID.id,
@@ -104,6 +114,16 @@ router.route('/fetchTable').get(async (req, res) => {
               price: supplierPrices
             });
           }
+
+          if(img.length > 0){
+            img.forEach(async (i) => {
+              await Subpart_image.create({
+                subpart_id: createdID,
+                subpart_image: i.base64Data
+              })
+            });
+          }
+
           res.status(200).json();
         }
       } catch (err) {

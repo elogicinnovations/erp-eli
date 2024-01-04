@@ -395,7 +395,7 @@ const navigate = useNavigate()
                                         <h1>Issuance</h1>
 
                                         <div>
-                                          { authrztn.includes('Inventory Type - Add') && (
+                                          { authrztn.includes('Inventory - Add') && (
                                               <Link to={'/createIssuance'} className="issuance-btn">
                                               <span style={{marginRight: '4px'}}>
                                                   <Plus size={20} />

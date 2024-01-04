@@ -1,28 +1,28 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const SubPart_image = sequelize.define('subPart_image', {
+const Product_image = sequelize.define('product_image', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
-    subpart_id: {
+    product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    subpart_image: {
+    product_image: {
         type: DataTypes.BLOB('long'),
         allowNull: false,
         get() {
-          const value = this.getDataValue('subpart_image')
+          const value = this.getDataValue('product_image')
           return value ? value.toString('base64') : null
         },
         set(value){
-          this.setDataValue('subpart_image', Buffer.from(value, 'base64'));
+          this.setDataValue('product_image', Buffer.from(value, 'base64'));
         }
     }
   });
-  
-  module.exports = SubPart_image;
+
+  module.exports = Product_image;

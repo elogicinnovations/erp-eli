@@ -67,7 +67,7 @@ function CreateSubParts() {
     setslct_category(event.target.value);
   };
 
-  console.log(slct_binLocation);
+  // console.log(slct_binLocation);
 
   useEffect(() => {
     axios
@@ -164,6 +164,62 @@ function CreateSubParts() {
     }
   };
 
+
+  // console.log(selectedimage);
+  const [img, setImg] = useState([]);
+  // console.log("Image: ",img);
+  // selectedimage.forEach(image => {
+  //   var filereader = new FileReader();
+  //   let imageData = []
+  //   filereader.onload = function (event){
+  //     image.blobData = event.target.result
+  //     imageData = [...imageData , image]
+  //     // setImg([...img, image])
+  //     console.log("base 64 data: ",btoa(image.blobData))
+  //   }
+
+  //   setImg(imageData)
+
+  //   // console.log(image.file)
+  //   if(image instanceof Blob){
+  //     // filereader.readAsArrayBuffer(image);
+  //     filereader.readAsBinaryString(image);
+  //   }
+  // });
+
+
+useEffect(() => {
+  // Create a function to handle the image processing
+  const processImages = () => {
+    const imageDataArray = [];
+
+    selectedimage.forEach((image, index) => {
+      const filereader = new FileReader();
+
+      filereader.onload = function (event) {
+        // Process image data
+        const processedImage = {
+          index, // or any other identifier for the image
+          blobData: event.target.result,
+          base64Data: btoa(event.target.result),
+        };
+
+        imageDataArray.push(processedImage);
+      };
+
+      if (image instanceof Blob) {
+        filereader.readAsBinaryString(image);
+      }
+    });
+
+    // Set the state once after processing all images
+    setImg(imageDataArray);
+  };
+
+  // Call the image processing function
+  processImages();
+}, [selectedimage]);
+
   const add = async (e) => {
     e.preventDefault();
 
@@ -177,6 +233,7 @@ function CreateSubParts() {
         text: "Please fill the red text fields",
       });
     } else {
+
       axios
         .post(`${BASE_URL}/subpart/createsubpart`, {
           code,
@@ -188,6 +245,7 @@ function CreateSubParts() {
           slct_manufacturer,
           thresholds,
           slct_category,
+          img
         })
         .then((res) => {
           // console.log(res);

@@ -500,21 +500,21 @@ function Sidebar({ authrztn }) {
             </List>
           </Collapse>
 
-          {authrztn.includes("Inventory Type - View") && (
-            <NavLink
-              to="/inventory"
-              style={{ textDecoration: "none", color: "inherit" }}
-              activeClassName="active">
-              <ListItem
-                button
-                className={`menu-item ${
-                  location.pathname === "/inventory" ? "active" : ""
-                }`}
-                onClick={toggleOff}>
-                <Archive size={20} />
-                <ListItemText primary="INVENTORY" />
-              </ListItem>
-            </NavLink>
+          { authrztn.includes('Inventory - View') && (
+          <NavLink
+            to="/inventory"
+            style={{ textDecoration: "none", color: "inherit" }}
+            activeClassName="active">
+            <ListItem
+              button
+              className={`menu-item ${
+                location.pathname === "/inventory" ? "active" : ""
+              }`}
+              onClick={toggleOff}>
+              <Archive size={20} />
+              <ListItemText primary="INVENTORY" />
+            </ListItem>
+          </NavLink>
           )}
 
           <ListItem

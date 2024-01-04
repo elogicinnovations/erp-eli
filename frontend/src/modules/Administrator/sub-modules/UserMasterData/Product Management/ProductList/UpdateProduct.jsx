@@ -252,6 +252,7 @@ useEffect(() => {
       setslct_manufacturer(res.data[0].product_manufacturer);
       setDetails(res.data[0].product_details);
       setThresholds(res.data[0].product_threshold);
+      setImages(res.data[0].product_images);
       // const imageBlob = res.data[0].image_blob;
       // const fileType = res.data[0].file_type;
       // const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
@@ -472,6 +473,15 @@ useEffect(() => {
                 transform: "translateY(-50%)",
               }}></span>
           </div>
+
+          <div className="row">
+                {
+                  images.length > 0 && images.map((image) => (
+                    <img src={`data:image/png;base64,${image.product_image}`} alt={`subpart-img-${image.id}`}/>
+                  ))
+                }
+          </div>
+
           <Form noValidate validated={validated} onSubmit={update}>
             <div className="row mt-3">
               <div className="col-4">

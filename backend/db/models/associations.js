@@ -18,6 +18,7 @@ const Subpart_image = require("./subpart_image.model")
 const SparePart = require("./sparePart.model");
 const SparePart_SubPart = require("./sparePart_subPart.model");
 const SparePart_Supplier = require("./sparePart_supplier..model");
+const SparePart_image = require("./sparepart_image.model");
 
 const Assembly = require("./assembly.model");
 const Assembly_Supplier = require("./assembly_supplier.model");
@@ -61,6 +62,8 @@ const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
 const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
+const Assembly_image = require("./assembly_image.model");
+const Product_image = require("./product_image.model");
 
 
 // const SparePart = require("./sparePart.model");
@@ -120,6 +123,12 @@ Product_Assembly.belongsTo(Product, { foreignKey: "product_id"});
 Assembly.hasMany(Product_Assembly, { foreignKey: "assembly_id"});
 Product_Assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
+Assembly.hasMany(Assembly_image, { foreignKey: "assembly_id"});
+Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+Product.hasMany(Product_image, { foreignKey: "product_id"});
+Product_image.belongsTo(Product, { foreignKey: "product_id"});
+
 // Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
 // Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
 
@@ -140,6 +149,9 @@ Product_Subparts.belongsTo(Product, { foreignKey: "product_id"});
 SubPart.hasMany(Product_Subparts, { foreignKey: "subPart_id"});
 Product_Subparts.belongsTo(SubPart, { foreignKey: "subPart_id"});
 
+//Sparepart image
+SparePart.hasMany(SparePart_image, { foreignKey: "sparepart_id"});
+SparePart_image.belongsTo(SparePart, { foreignKey: "sparepart_id"});
 
 
 
@@ -407,6 +419,7 @@ module.exports = {
                     Product_Assembly,
                     Product_Spareparts,
                     Product_Subparts,
+                    Product_image,
 
                     Category, 
                     BinLocation, 
@@ -422,6 +435,7 @@ module.exports = {
                     SparePart,
                     SparePart_SubPart,
                     SparePart_Supplier, 
+                    SparePart_image,
 
                     Assembly,            
                     Assembly_Supplier,

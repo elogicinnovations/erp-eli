@@ -9,6 +9,7 @@ const {
   Product_Assembly,
   Product_Spareparts,
   Product_Subparts,
+  Product_image,
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer"); // Import multer
@@ -94,6 +95,10 @@ router.route('/fetchTableEdit').get(async (req, res) => {
       where: {
         product_id: req.query.id,
       },
+      include: {
+        model : Product_image,
+        required: false
+      }
     });
 
     if (!data) {
@@ -152,15 +157,16 @@ router.route("/create").post(
             product_manufacturer: req.body.slct_manufacturer,
             product_details: req.body.details,
             product_threshold: finalThreshold,
-            product_image: image_blob,
+            // product_image: image_blob,
             product_imageType: image_blobFiletype,
             product_status: 'Active'
           });
 
           //Assembly
           const IdData = newData.product_id;
-          const selectedAssemblies = JSON.parse(req.body.assemblies);
+          const selectedAssemblies = req.body.assemblies;
 
+          if(typeof selectedAssemblies === 'object'){
           for (const assemblyDropdown of selectedAssemblies) {
             const assemblyValue = assemblyDropdown.value;
     
@@ -170,10 +176,14 @@ router.route("/create").post(
               product_id: IdData,
               assembly_id: assemblyValue
             });
+            }
           }
   
+
           //Spareparts
-          const selectedSpare = JSON.parse(req.body.sparepart);
+
+          const selectedSpare = req.body.sparepart;
+          if(typeof selectedSpare === 'object'){
           for (const spareDropdown of selectedSpare) {
             const spareValue = spareDropdown.value;
     
@@ -183,9 +193,11 @@ router.route("/create").post(
               sparePart_id: spareValue
             });
           }
+          }
 
           //Subparts
-          const selectedSubparting = JSON.parse(req.body.subpart);
+          const selectedSubparting = req.body.subpart;
+          if(typeof selectedSubparting === 'object'){
           for (const subpartDropdown of selectedSubparting) {
             const subpartValue = subpartDropdown.value;
     
@@ -194,11 +206,13 @@ router.route("/create").post(
               product_id: IdData,
               subPart_id: subpartValue
             });
+            }
           }
 
           //Supplier
-          const selectedSuppliers = JSON.parse(req.body.productTAGSuppliers);
+          const selectedSuppliers = req.body.productTAGSuppliers;
 
+          if(typeof selectedSuppliers === 'object'){
           for (const supplier of selectedSuppliers) {
             const { supplier_code, price } = supplier;
           
@@ -213,7 +227,19 @@ router.route("/create").post(
               quantity: 0,
               price: price
             });
+            }
+          }
 
+          //Image
+          console.log(req.body.img)
+          const imageData = req.body.img;
+          if(imageData.length > 0){
+            imageData.forEach(async (i) => {
+              await Product_image.create({
+                product_id : IdData,
+                product_image: i.base64Data
+              });
+            });
           }
 
 

@@ -40,6 +40,8 @@ const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
 const [isReadOnly, setReadOnly] = useState(false);
 
+const [images, setImages] = useState([]);
+
 const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 const navigate = useNavigate();
 const { id } = useParams();
@@ -59,6 +61,7 @@ useEffect(() => {
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
       setThresholds(res.data[0].threshhold);
+      setImages(res.data[0].sparePart_images);
     })
     .catch(err => console.log(err));
 }, [id]);
@@ -316,6 +319,14 @@ console.log(addPriceInput)
                           ></span>
                         </div>
                  
+                        <div className="row">
+                            {
+                              images.length > 0 && images?.map((image) => (
+                                <img src={`data:image/png;base64,${image.sparepart_image}`} alt={`subpart-img-${image?.id}`}/>
+                              ))
+                            }
+                        </div>
+
                           <div className="row mt-3">
                           <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
