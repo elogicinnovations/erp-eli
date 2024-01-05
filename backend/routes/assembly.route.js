@@ -8,6 +8,7 @@ const {
   Assembly_SubPart,
   Inventory_Assembly,
   AssemblyPrice_History,
+  Assembly_image
 } = require("../db/models/associations");
 
 const session = require("express-session");
@@ -54,10 +55,12 @@ router.route("/fetchTableEdit").get(async (req, res) => {
       where: {
         id: req.query.id,
       },
-      include: {
-        model: Assembly_image,
-        required: false
-      }
+      include: [
+        {
+          model: Assembly_image,
+          required: false
+        }
+      ],
     });
 
     if (data) {

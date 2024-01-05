@@ -48,6 +48,7 @@ function UpdateProduct() {
 
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
+  const [images, setImages] = useState([]);
 
   // const handlePriceChange = (index, value) => {
   //   const updatedTable = [...tablesupplier];

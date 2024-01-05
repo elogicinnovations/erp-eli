@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,7 +10,8 @@ import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
-import { Plus, Trash, NotePencil } from "@phosphor-icons/react";
+import { Plus, Trash, NotePencil, X} from "@phosphor-icons/react";
+import Dropzone from 'react-dropzone';
 
 function CreateSpareParts() {
   const [validated, setValidated] = useState(false);
@@ -245,65 +246,6 @@ function CreateSpareParts() {
     // Call the image processing function
     processImages();
   }, [selectedimage]);
-
-  const add = async (e) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-      // if required fields has NO value
-      //    console.log('requried')
-      swal({
-        icon: "error",
-        title: "Fields are required",
-        text: "Please fill the red text fields",
-      });
-    } else {
-      axios
-        .post(`${BASE_URL}/sparePart/create`, {
-          code,
-          name,
-          desc,
-          SubParts,
-          SpareaddPriceInput,
-          unit,
-          slct_binLocation,
-          unitMeasurement,
-          slct_manufacturer,
-          thresholds,
-          img
-        })
-        .then((res) => {
-          // console.log(res);
-          if (res.status === 200) {
-            swal({
-              title: "Product Spare-Part Add Successful!",
-              text: "The Product Spare-Part has been Added Successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate("/spareParts");
-            });
-          } else if (res.status === 201) {
-            swal({
-              title: "Product Spare-Part is Already Exist",
-              text: "Please Input a New Product Spare-Part ",
-              icon: "error",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        });
-    }
-
-    setValidated(true); //for validations
-  };
 
   return (
     <div className="main-of-containers">

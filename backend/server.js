@@ -34,9 +34,9 @@ app.use((req, res, next) => {
 
 
 
-app.use(multer({
-  limits: { fieldSize: 25 * 1024 * 1024 }
-}))
+// app.use(multer({
+//   limits: { fieldSize: 25 * 1024 * 1024 }
+// }))
 
 //Routes:
 const masterRoute = require("./routes/masterlist.route");
@@ -65,7 +65,7 @@ const subPart_image = require("./routes/subpart_image.route");
 const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
 const subPart_SparePart = require("./routes/sparePart_subPart.route");
-const sparepartPrice_history = require("./routes/assembly_price_history.route");
+const sparepartPrice_history = require("./routes/sparepart_price_history.route");
 
 const assembly = require("./routes/assembly.route");
 const spare_assembly = require("./routes/assembly_spare.route");

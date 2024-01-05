@@ -8,7 +8,7 @@ const session = require('express-session')
 router.route('/fetchSparehistory').get(async (req, res) => {
     try {
       
-      console.log(req.query.spare_ID)
+      console.log(req.query.id)
       const data = await SparePartPrice_history.findAll({
         include: [{
           model: SparePart,
@@ -19,7 +19,7 @@ router.route('/fetchSparehistory').get(async (req, res) => {
           required: true
         }
       ],
-        where: {sparePart_id: req.query.spare_ID}
+        where: {sparePart_id: req.query.id}
       });
 
       if (data) {

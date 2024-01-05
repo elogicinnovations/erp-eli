@@ -36,6 +36,11 @@ import { jwtDecode } from "jwt-decode";
 function SpareParts({ authrztn }) {
   const [sparePart, setSparePart] = useState([]);
 
+  const [historypricemodal, sethistorypricemodal] = useState([]);
+  const [showhistorical, setshowhistorical] = useState(false);
+
+  const handlehistoricalClose = () => setshowhistorical(false);
+  const handlehistoricalShow = () => setshowhistorical(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -72,7 +77,20 @@ function SpareParts({ authrztn }) {
     }
   };
 
- 
+  const handlepriceHistory = (id) => {
+    axios
+    .get(BASE_URL + "/sparepartHistoryPrice/fetchSparehistory", {
+      params: {
+        id
+      }
+    })
+    .then((res) => {
+      sethistorypricemodal(res.data);
+      handlehistoricalShow();
+    })
+    .catch((err) => console.log(err));
+  }
+
 
   const reloadTable = () => {
     axios
@@ -84,6 +102,7 @@ function SpareParts({ authrztn }) {
     reloadTable();
   }, []);
 
+  //Date format sa main table
   function formatDate(isoDate) {
     const date = new Date(isoDate);
     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
@@ -92,6 +111,16 @@ function SpareParts({ authrztn }) {
       date.getSeconds()
     )}`;
   }
+
+  //Modal table data format
+    function ModalformatDate(isoDate) {
+      const date = new Date(isoDate);
+      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
+        date.getDate()
+      )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
+        date.getSeconds()
+      )}`;
+    }
 
   function padZero(num) {
     return num.toString().padStart(2, "0");
@@ -219,34 +248,8 @@ function SpareParts({ authrztn }) {
   
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
-
-                </div> */}
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -347,6 +350,7 @@ function SpareParts({ authrztn }) {
                               <button
                                 type="button"
                                 onClick={() => {
+                                  handlepriceHistory(data.id)
                                   closeVisibleButtons();
                                 }}
                                 className="btn">
@@ -365,7 +369,42 @@ function SpareParts({ authrztn }) {
           </div>
         </div>
       </div>
+      <Modal
+        size="xl"
+        show={showhistorical}
+        onHide={handlehistoricalClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Historical Price</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <Table responsive="xl">
+              <thead>
+                <tr>
+                  <th>Spare Parts Name</th>
+                  <th>Price</th>
+                  <th>Date Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historypricemodal.map((pricehistory, i) => (
+                  <tr>
+                    <td>{pricehistory.sparePart.spareParts_name}</td>
+                    <td>{pricehistory.supplier_price}</td>
+                    <td>{ModalformatDate(pricehistory.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div> 
+        </Modal.Body>
+        <Modal.Footer>
 
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

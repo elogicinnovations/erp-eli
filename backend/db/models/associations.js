@@ -7,11 +7,11 @@ const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const CostCenter = require("./costcenter.model");
 
+const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
 const Product_Subparts = require("./product_subparts.model");
 const Product_Spareparts = require("./product_spare.model");
 const Product_Assembly = require("./product_assembly.model");
-const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
 
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model")
@@ -28,6 +28,7 @@ const Assembly_Supplier = require("./assembly_supplier.model");
 const Assembly_SparePart = require("./assembly_spare.model");
 const Assembly_SubPart = require("./asssembly_subparts.model");
 const AssemblyPrice_History = require("./assembly_price_history.model");
+const Assembly_image = require("./assembly_image.model");
 
 const Inventory = require("./inventory.model");
 const Inventory_Assembly = require("./inventory_assembly.model");
@@ -64,8 +65,7 @@ const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
-const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
-const Assembly_image = require("./assembly_image.model");
+
 const Product_image = require("./product_image.model");
 
 
@@ -463,6 +463,7 @@ module.exports = {
                     Assembly_SparePart,
                     Assembly_SubPart,
                     AssemblyPrice_History,
+                    Assembly_image,
                     
                     Inventory,
                     Inventory_Assembly,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import Select from "react-select";
 import Button from "react-bootstrap/Button";
 import Dropzone from "react-dropzone";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import { Trash, NotePencil } from "@phosphor-icons/react";
+import { Trash, NotePencil, X } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";

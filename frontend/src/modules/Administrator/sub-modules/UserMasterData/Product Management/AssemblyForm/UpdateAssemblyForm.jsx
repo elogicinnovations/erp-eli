@@ -55,26 +55,27 @@ function UpdateAssemblyForm() {
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
   const [images, setImages] = useState([]);
   
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/assembly/fetchTableEdit", {
+
+  useEffect(() => {   
+    axios.get(BASE_URL + '/assembly/fetchTableEdit', {
         params: {
-          id: id,
-        },
+          id: id
+        }
       })
-      .then((res) => {
-        setCode(res.data[0].assembly_code);
-        setName(res.data[0].assembly_name);
-        setDesc(res.data[0].assembly_desc);
-        setslct_category(res.data[0].category_code);
-        setslct_binLocation(res.data[0].bin_id);
-        setunitMeasurement(res.data[0].assembly_unitMeasurement);
-        setslct_manufacturer(res.data[0].assembly_manufacturer);
-        setThresholds(res.data[0].threshhold);
-        setImages(res.data[0].assembly_images);
-      })
-      .catch((err) => console.log(err));
-  }, [id]);
+    .then(res => {
+      console.log("DATA ASSEMBLY" + res.data)
+      setCode(res.data[0].assembly_code);
+      setName(res.data[0].assembly_name);
+      setDesc(res.data[0].assembly_desc);
+      setslct_category(res.data[0].category_code);
+      setslct_binLocation(res.data[0].bin_id);
+      setunitMeasurement(res.data[0].assembly_unitMeasurement);
+      setslct_manufacturer(res.data[0].assembly_manufacturer);
+      setThresholds(res.data[0].threshhold);
+      setImages(res.data[0].assembly_images);
+    })
+      .catch(err => console.log(err));
+  }, []);
 
   //Fetching to View all Supplier
   useEffect(() => {
@@ -745,7 +746,7 @@ const handleassemblythreshold = (event) => {
                                 className="btn btn-warning"
                                 size="md"
                                 onClick={update}
-
+                                disabled={isSaveButtonDisabled}
                                 style={{ fontSize: "20px", margin: "0px 5px" }}>
                                 Save
                               </Button>
