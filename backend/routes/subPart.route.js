@@ -73,7 +73,7 @@ router.route('/fetchTable').get(async (req, res) => {
               slct_manufacturer,
               thresholds,
               slct_category,
-              img
+              images
             } = req.body;
         // Check if the supplier code is already exists in the table
         console.log(slct_binLocation);
@@ -115,8 +115,8 @@ router.route('/fetchTable').get(async (req, res) => {
             });
           }
 
-          if(img.length > 0){
-            img.forEach(async (i) => {
+          if(images.length > 0){
+            images.forEach(async (i) => {
               await Subpart_image.create({
                 subpart_id: createdID,
                 subpart_image: i.base64Data

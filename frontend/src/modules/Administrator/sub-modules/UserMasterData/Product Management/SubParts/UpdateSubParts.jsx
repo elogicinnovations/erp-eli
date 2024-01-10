@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import Form from "react-bootstrap/Form";
 import Select from "react-select";
 // import * as $ from "jquery";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-
+import Carousel from 'react-bootstrap/Carousel';
 
 function UpdateSubparts() {
   const { id } = useParams();
@@ -227,6 +227,139 @@ function UpdateSubparts() {
     setShowDropdown(true);
   };
 
+const [images, setImages] = useState([]);
+const [isDragging, setIsDragging] = useState([]);
+const fileInputRef = useRef(null);
+
+function selectFiles() {
+  fileInputRef.current.click();
+}
+
+function onFileSelect(event) {
+  const files = event.target.files;
+
+  if (files.length === 0) return;
+
+  if (subpartImages.length + files.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    const fileType = files[i].type.split('/')[1].toLowerCase();
+    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+
+    if (fileSize > 5) {
+      swal({
+        icon: "error",
+        title: "File Size Limit Exceeded",
+        text: "Each image must be up to 5MB in size.",
+      });
+      continue;
+    }
+
+    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
+      swal({
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Only JPEG and PNG files are allowed.",
+      });
+      continue;
+    }
+
+    if (!subpartImages.some((e) => e.name === files[i].name)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSubpartImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            url: URL.createObjectURL(files[i]),
+            base64Data: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+function deleteImage(index){
+  setSubpartImages((prevImages) => 
+    prevImages.filter((_, i) => i !== index)
+  )
+}
+
+function onDragOver(event){
+  event.preventDefault();
+  setIsDragging(true);
+  event.dataTransfer.dropEffect = "copy";
+}
+
+function onDragLeave(event) {
+  event.preventDefault();
+  setIsDragging(false);
+}
+
+function onDropImages(event) {
+  event.preventDefault();
+  setIsDragging(false);
+  const files = event.dataTransfer.files;
+
+  if (subpartImages.length + files.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    const fileType = files[i].type.split('/')[1].toLowerCase();
+    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+
+    if (fileSize > 5) {
+      swal({
+        icon: "error",
+        title: "File Size Limit Exceeded",
+        text: "Each image must be up to 5MB in size.",
+      });
+      continue;
+    }
+
+    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
+      swal({
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Only JPEG and PNG files are allowed.",
+      });
+      continue;
+    }
+
+    if (!subpartImages.some((e) => e.name === files[i].name)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSubpartImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            url: URL.createObjectURL(files[i]),
+            base64Data: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+console.log(subpartImages);
+
   const update = async (e) => {
     e.preventDefault();
 
@@ -290,6 +423,37 @@ function UpdateSubparts() {
         <div className="right-body-contentss">
           <Form noValidate validated={validated} onSubmit={update}>
             <h1>Update Sub Parts</h1>
+            
+
+              {/* <div className="row">
+                  {subpartImages.length > 0 &&
+                    subpartImages.map((image) => (
+                      <img
+                        key={image.id}  // Add a unique key for each image, it helps React to efficiently update the DOM
+                        src={`data:image/png;base64,${image.subpart_image}`}
+                        alt={`subpart-img-${image.id}`}
+                        style={{ width: '100%', height: 'auto' }}  // Adjust width and height here
+                      />
+                    ))}
+                </div> */}
+
+          <div className="row">
+              {subpartImages.length > 0 && (
+                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                  {subpartImages.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className="carousel-image"
+                        src={`data:image/png;base64,${image.subpart_image}`}
+                        alt={`subpart-img-${image.id}`}
+                      />
+                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
+            </div>
+
             <div
               className="gen-info"
               style={{
@@ -308,14 +472,6 @@ function UpdateSubparts() {
                   left: "18rem",
                   transform: "translateY(-50%)",
                 }}></span>
-            </div>
-
-            <div className="row">
-                {
-                  subpartImages.length > 0 && subpartImages.map((image) => (
-                    <img src={`data:image/png;base64,${image.subpart_image}`} alt={`subpart-img-${image.id}`}/>
-                  ))
-                }
             </div>
 
             <div className="row">
@@ -438,10 +594,6 @@ function UpdateSubparts() {
               </div>
             </div>
 
-            
-
-            
-
             <div className="row">
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
@@ -463,6 +615,40 @@ function UpdateSubparts() {
                 </Form.Group>
               </div>
               <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Image Upload:{" "}
+                  </Form.Label>
+                <div className="card">
+                    <div className="top">
+                      <p>Drag & Drop Image Upload</p>
+                    </div>
+                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                      {isDragging ? (
+                        <span className="select">Drop images here</span>
+                      ) : (
+                        <>
+                         Drag & Drop image here or {" "}
+                        <span className="select" role="button" onClick={selectFiles}>
+                          Browse
+                        </span>
+                        </>
+                      )}
+                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
+                    </div>
+                    <div className="ccontainerss">
+                      {subpartImages.map((images,index)=>(
+                      <div className="imagess" key={index}>
+                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                        <img
+                            src={`data:image/png;base64,${images.subpart_image}`}
+                            alt={`subpart-img-${images.id}`}
+                          />
+                      </div>
+                      ))}
+                    </div>
+                  </div>
+                  </Form.Group>
               </div>
             </div>
 
