@@ -787,7 +787,7 @@ function onDropImages(event) {
                       {images.map((images,index)=>(
                       <div className="imagess" key={index}>
                         <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                        <img src={images.url} alt={images.name} />
+                        <img src={images.url} alt={images.name} /> 
                       </div>
                       ))}
                     </div>
