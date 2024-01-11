@@ -10,7 +10,7 @@ import swal from "sweetalert";
 import Select from 'react-select';
 import { Button, Form } from "react-bootstrap";
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
-// import Button from "react-bootstrap/Button";
+import Carousel from 'react-bootstrap/Carousel';
 import {NotePencil } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -53,7 +53,7 @@ function UpdateAssemblyForm() {
   const [thresholds, setThresholds] = useState('');
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
-  const [images, setImages] = useState([]);
+  const [assemblyimage, setassemblyImages] = useState([]);
   
 
   useEffect(() => {   
@@ -72,7 +72,7 @@ function UpdateAssemblyForm() {
       setunitMeasurement(res.data[0].assembly_unitMeasurement);
       setslct_manufacturer(res.data[0].assembly_manufacturer);
       setThresholds(res.data[0].threshhold);
-      setImages(res.data[0].assembly_images);
+      setassemblyImages(res.data[0].assembly_images);
     })
       .catch(err => console.log(err));
   }, []);
@@ -393,11 +393,26 @@ const handleassemblythreshold = (event) => {
             </div>
 
             <div className="row">
-                {
-                  images.length > 0 && images.map((image) => (
+                {/* {
+                  assemblyimage.length > 0 && assemblyimage.map((image) => (
                     <img src={`data:image/png;base64,${image.assembly_image}`} alt={`assembly-img-${image.id}`}/>
                   ))
-                }
+                } */}
+
+              {assemblyimage.length > 0 && (
+                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                  {assemblyimage.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className="carousel-image"
+                        src={`data:image/png;base64,${image.assembly_image}`}
+                        alt={`assembly-img-${image.id}`}
+                      />
+                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
             </div>
 
             <div className="row">
@@ -601,33 +616,7 @@ const handleassemblythreshold = (event) => {
                                 </Form.Group>
                             </div>
                             {/* <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-                                  <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
-                                      <Dropzone onDrop={onDropImage}>
-                                          {({ getRootProps, getInputProps }) => (
-                                          <div className='w-100 h-100' {...getRootProps()}>
-                                              <input
-                                                  ref={fileInputRef}
-                                                  type="file"
-                                                  style={{display: 'none'}}
-                                              />
-                                              <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
-                                                <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
-                                              </div>
-                                              {selectedimage && 
-                                                  <div className='d-flex align-items-center justify-content-center' style={{border: "1px green solid", width: '100%', height: '5em'}}>
-                                                    <p 
-                                                      style={{color: 'green', fontSize: '15px',}}>
-                                                        Uploaded Image: {selectedimage.name}
-                                                    </p>
-                                                  </div>}
-                                          </div>
-                                          )}
-                                      </Dropzone>
-                                      
-                                  </div>              
-                              </Form.Group>   
+
                             </div> */}
                           </div>
 

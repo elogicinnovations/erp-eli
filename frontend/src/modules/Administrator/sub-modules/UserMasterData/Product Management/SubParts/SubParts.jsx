@@ -131,11 +131,6 @@ function SubParts({ authrztn }) {
           const response = await axios.delete(
             BASE_URL + `/subPart/delete/${table_id}`
           );
-
-          // swal("The User has been deleted!", {
-          //   icon: "success",
-          // });
-
           if (response.status === 200) {
             swal({
               title: "Product Sub-Parts Delete Successful!",
@@ -161,12 +156,6 @@ function SubParts({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Sub Part not Deleted!",
-          icon: "warning",
-        });
       }
     });
   };

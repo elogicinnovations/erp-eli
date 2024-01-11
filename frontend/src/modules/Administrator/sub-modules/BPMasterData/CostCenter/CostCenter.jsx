@@ -260,6 +260,7 @@ function CostCenter({ authrztn }) {
           console.log(res);
           if (res.status === 200) {
             SuccessInserted(res);
+            reloadTable();
           } else if (res.status === 201) {
             Duplicate_Message();
           } else {

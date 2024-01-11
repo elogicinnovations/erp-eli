@@ -11,6 +11,7 @@ import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
+import Carousel from 'react-bootstrap/Carousel';
 
 function UpdateProduct() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ function UpdateProduct() {
 
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
-  const [images, setImages] = useState([]);
+  const [productImages, setproductImages] = useState([]);
 
   // const handlePriceChange = (index, value) => {
   //   const updatedTable = [...tablesupplier];
@@ -258,39 +259,11 @@ useEffect(() => {
       setslct_manufacturer(res.data[0].product_manufacturer);
       setDetails(res.data[0].product_details);
       setThresholds(res.data[0].product_threshold);
-      setImages(res.data[0].product_images);
-      // const imageBlob = res.data[0].image_blob;
-      // const fileType = res.data[0].file_type;
-      // const blobUrl = URL.createObjectURL(new Blob([imageBlob], { type: fileType }));
-      // setselectedimage({ url: blobUrl, type: fileType });
+      setproductImages(res.data[0].product_images);
   })
     .catch(err => console.log(err));
 }, []);
 
-
-// console.log(productTAGSuppliers);
-
-  // ----------------------------------- for image upload --------------------------//
-  // const fileInputRef = useRef(null);
-  // const [selectedimage, setselectedimage] = useState(null);
-
-  // const onDropImage = (acceptedFiles) => {
-  //   const selectedFile = acceptedFiles[0];
-
-  //   if (
-  //       selectedFile &&  // Check if selectedFile is not undefined
-  //       (selectedFile.type === 'image/png' || selectedFile.type === 'image/jpeg')
-  //   ) {
-  //       setselectedimage(selectedFile);
-  //   } else {
-  //       swal({
-  //           title: 'Invalid file type',
-  //           text: 'Please select a  PNG, or JPG file.',
-  //           icon: 'error',
-  //           button: 'OK'
-  //       })
-  //     }
-  // };
 
   //Supplier Fetch
   useEffect(() => {
@@ -449,7 +422,6 @@ useEffect(() => {
             slct_manufacturer,
             details,
             thresholds,
-            // selectedimage,
             assembly,
             spareParts,
             subparting,
@@ -514,11 +486,20 @@ useEffect(() => {
           </div>
 
           <div className="row">
-                {
-                  images.length > 0 && images.map((image) => (
-                    <img src={`data:image/png;base64,${image.product_image}`} alt={`subpart-img-${image.id}`}/>
-                  ))
-                }
+              {productImages.length > 0 && (
+                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                  {productImages.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className="carousel-image"
+                        src={`data:image/png;base64,${image.product_image}`}
+                        alt={`subpart-img-${image.id}`}
+                      />
+                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
           </div>
 
           <Form noValidate validated={validated} onSubmit={update}>

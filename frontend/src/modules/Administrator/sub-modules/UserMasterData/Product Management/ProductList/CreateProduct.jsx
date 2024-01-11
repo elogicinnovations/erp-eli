@@ -48,74 +48,10 @@ function CreateProduct() {
   const [supp, setSupp] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchSupp, setFetchSupp] = useState([]);
-  // ----------------------------------- for image upload --------------------------//
-  const fileInputRef = useRef(null);
   const [selectedimage, setselectedimage] = useState([]);
   const [productImage, setProductImage] = useState([]);
   const [productImageType, setProductImageType] = useState([]);
   const [status, setStatus] = useState("Active");
-
-  const onDropImage = (acceptedFiles) => {
-    const newSelectedImages = [...selectedimage];
-
-    acceptedFiles.forEach((file) => {
-      if (
-        (file.type === "image/png" || file.type === "image/jpeg") &&
-        newSelectedImages.length < 5
-      ) {
-        newSelectedImages.push(file);
-      } else {
-        swal({
-          title: "Invalid file type or maximum limit reached",
-          text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
-          icon: "error",
-          button: "OK",
-        });
-      }
-    });
-
-    setselectedimage(newSelectedImages);
-  };
-
-  const removeImage = (index) => {
-    const newSelectedImages = [...selectedimage];
-    newSelectedImages.splice(index, 1);
-    setselectedimage(newSelectedImages);
-  };
-
-  const [img, setImg] = useState([]);
-  useEffect(() => {
-    // Create a function to handle the image processing
-    const processImages = () => {
-      const imageDataArray = [];
-
-      selectedimage.forEach((image, index) => {
-        const filereader = new FileReader();
-
-        filereader.onload = function (event) {
-          // Process image data
-          const processedImage = {
-            index, // or any other identifier for the image
-            blobData: event.target.result,
-            base64Data: btoa(event.target.result),
-          };
-
-          imageDataArray.push(processedImage);
-        };
-
-        if (image instanceof Blob) {
-          filereader.readAsBinaryString(image);
-        }
-      });
-
-      // Set the state once after processing all images
-      setImg(imageDataArray);
-    };
-
-    // Call the image processing function
-    processImages();
-  }, [selectedimage]);
-
 
 
   //toggle switch Active and Inactive
@@ -274,9 +210,138 @@ function CreateProduct() {
       });
   }, []);
 
+const [images, setImages] = useState([]);
+const [isDragging, setIsDragging] = useState([]);
+const fileInputRef = useRef(null);
+
+function selectFiles() {
+  fileInputRef.current.click();
+}
+function onFileSelect(event) {
+  const files = event.target.files;
+
+  if (files.length === 0) return;
+
+  if (images.length + files.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    const fileType = files[i].type.split('/')[1].toLowerCase();
+    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+
+    if (fileSize > 5) {
+      swal({
+        icon: "error",
+        title: "File Size Limit Exceeded",
+        text: "Each image must be up to 5MB in size.",
+      });
+      continue;
+    }
+
+    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
+      swal({
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Only JPEG and PNG files are allowed.",
+      });
+      continue;
+    }
+
+    if (!images.some((e) => e.name === files[i].name)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            url: URL.createObjectURL(files[i]),
+            base64Data: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+function deleteImage(index){
+  setImages((prevImages) => 
+    prevImages.filter((_, i) => i !== index)
+  )
+}
+
+function onDragOver(event){
+  event.preventDefault();
+  setIsDragging(true);
+  event.dataTransfer.dropEffect = "copy";
+}
+
+function onDragLeave(event) {
+  event.preventDefault();
+  setIsDragging(false);
+}
+
+function onDropImages(event) {
+  event.preventDefault();
+  setIsDragging(false);
+  const files = event.dataTransfer.files;
+
+  if (images.length + files.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    const fileType = files[i].type.split('/')[1].toLowerCase();
+    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+
+    if (fileSize > 5) {
+      swal({
+        icon: "error",
+        title: "File Size Limit Exceeded",
+        text: "Each image must be up to 5MB in size.",
+      });
+      continue;
+    }
+
+    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
+      swal({
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Only JPEG and PNG files are allowed.",
+      });
+      continue;
+    }
+
+    if (!images.some((e) => e.name === files[i].name)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            url: URL.createObjectURL(files[i]),
+            base64Data: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
   const add = async (e) => {
     e.preventDefault();
-
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault();
@@ -287,30 +352,6 @@ function CreateProduct() {
         text: "Please fill the Required text fields",
       });
     } else {
-      const formData = new FormData();
-      formData.append("code", code);
-      formData.append("prod_id", prod_id);
-      formData.append("name", name);
-      formData.append("slct_category", slct_category);
-      formData.append("slct_binLocation", slct_binLocation);
-      formData.append("unitMeasurement", unitMeasurement);
-      formData.append("slct_manufacturer", slct_manufacturer);
-      formData.append("details", details);
-      formData.append("thresholds", thresholds);
-      // formData.append("selectedimage", selectedimage);
-      if (selectedimage.length > 0) {
-        const image = selectedimage[0];
-        formData.append("selectedimage", image);
-      }
-      formData.append("assemblies", JSON.stringify(assembly));
-      formData.append("sparepart", JSON.stringify(spareParts));
-      formData.append("subpart", JSON.stringify(subparting));
-      formData.append(
-        "productTAGSuppliers",
-        JSON.stringify(productTAGSuppliers)
-      );
-      formData.append("img", JSON.stringify(img));
-
       axios
         .post(`${BASE_URL}/product/create`, {
           code,
@@ -325,11 +366,8 @@ function CreateProduct() {
           assembly,
           spareParts,
           subparting,
-          img
-        }, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          productTAGSuppliers,
+          images
         })
         .then((res) => {
           console.log(res);
@@ -342,7 +380,7 @@ function CreateProduct() {
           }
         });
     }
-    setValidated(true); //for validations
+    setValidated(true);
   };
 
   const SuccessInserted = (res) => {
@@ -720,77 +758,31 @@ function CreateProduct() {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Image Upload:{" "}
                   </Form.Label>
-                  <div
-                    style={{
-                      border: "1px #DFE3E7 solid",
-                      height: "auto",
-                      maxHeight: "140px",
-                      fontSize: "15px",
-                      width: "720px",
-                      padding: 10,
-                    }}>
-                    <Dropzone onDrop={onDropImage}>
-                      {({ getRootProps, getInputProps }) => (
-                        <div
-                          className="w-100 h-100"
-                          style={{ width: "700px" }}
-                          {...getRootProps()}>
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            style={{ display: "none" }}
-                            {...getInputProps()}
-                          />
-                          <div
-                            className="d-flex align-items-center"
-                            style={{ width: "700px", height: "2.5em" }}>
-                            <p
-                              className="fs-5 w-100 p-3 btn btn-secondary"
-                              onClick={uploadClick}
-                              style={{ color: "white", fontWeight: "bold" }}>
-                              Drag and drop a file here, or click to select a
-                              file
-                            </p>
-                          </div>
-                          {selectedimage.length > 0 && (
-                            <div
-                              className="d-flex align-items-center justify-content-center"
-                              style={{
-                                border: "1px green solid",
-                                width: "700px",
-                                height: "5em",
-                                padding: "1rem",
-                                overflowY: "auto",
-                              }}>
-                              Uploaded Images:
-                              <p
-                                style={{
-                                  color: "green",
-                                  fontSize: "15px",
-                                  display: "flex",
-                                  height: "4em",
-                                  flexDirection: "column",
-                                }}>
-                                {selectedimage.map((image, index) => (
-                                  <div key={index}>
-                                    <div className="imgContainer">
-                                      <span className="imgUpload">
-                                        {image.name}
-                                      </span>
-                                      <X
-                                        size={20}
-                                        onClick={() => removeImage(index)}
-                                        className="removeButton"
-                                      />
-                                    </div>
-                                  </div>
-                                ))}
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                  <div className="card">
+                    <div className="top">
+                      <p>Drag & Drop Image Upload</p>
+                    </div>
+                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                      {isDragging ? (
+                        <span className="select">Drop images here</span>
+                      ) : (
+                        <>
+                         Drag & Drop image here or {" "}
+                        <span className="select" role="button" onClick={selectFiles}>
+                          Browse
+                        </span>
+                        </>
                       )}
-                    </Dropzone>
+                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
+                    </div>
+                    <div className="ccontainerss">
+                      {images.map((images,index)=>(
+                      <div className="imagess" key={index}>
+                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                        <img src={images.url} alt={images.name} /> 
+                      </div>
+                      ))}
+                    </div>
                   </div>
                 </Form.Group>
               </div>
