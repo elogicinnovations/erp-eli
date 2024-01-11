@@ -104,10 +104,9 @@ const navigate = useNavigate()
   }, [id]);
 
 
-  const [issuedReturn, setIssuedReturn] = useState()
+  // const [issuedReturn, setIssuedReturn] = useState()
 
-    const handleMoveToInventory = (returnId) => {
-      // Show confirmation SweetAlert
+    const handleMoveToInventory = (inventoryID, quantity) => {
       swal({
         title: 'Are you sure?',
         text: 'This will move the item to inventory!',
@@ -116,10 +115,15 @@ const navigate = useNavigate()
         dangerMode: true,
       }).then((confirmed) => {
         if (confirmed) {
+
+          console.log("2222222222222222222222", inventoryID)
           // If confirmed, make the API call to move to inventory
-          axios.post(BASE_URL + `/issuedReturn/moveToInventory/${returnId}`)
+          axios.post(BASE_URL + '/issuedReturn/moveToInventory',{
+            params:{
+              inventoryID, quantity
+            }
+          })
             .then(() => {
-              // Show success SweetAlert
               swal('Success!', 'Item moved to inventory successfully!', 'success')
                 .then(() => {
                   // Reload the page
@@ -349,7 +353,7 @@ const navigate = useNavigate()
                                                               <td>{data.assembly_supplier.assembly.assembly_code}</td>
                                                               <td>{data.assembly_supplier.assembly.assembly_name}</td>
                                                               <td>{data.assembly_supplier.supplier.supplier_name}</td>
-                                                              <td>--</td>
+                                                              <td>{data.assembly_supplier.assembly.manufacturer.manufacturer_name}</td>
                                                               <td>{data.quantity}</td>
                                                               <td>{data.assembly_supplier.supplier_price}</td>
                                                               <td>{data.assembly_supplier.supplier_price * data.quantity}</td>
@@ -362,7 +366,7 @@ const navigate = useNavigate()
                                                               <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
                                                               <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
                                                               <td>{data.sparepart_supplier.supplier.supplier_name}</td>
-                                                              <td>--</td>
+                                                              <td>{data.sparepart_supplier.sparePart.manufacturer.manufacturer_name}</td>
                                                               <td>{data.quantity}</td>
                                                               <td>{data.sparepart_supplier.supplier_price}</td>
                                                               <td>{data.sparepart_supplier.supplier_price * data.quantity}</td>
@@ -375,7 +379,7 @@ const navigate = useNavigate()
                                                               <td>{data.subpart_supplier.subPart.subPart_code}</td>
                                                               <td>{data.subpart_supplier.subPart.subPart_name}</td>
                                                               <td>{data.subpart_supplier.supplier.supplier_name}</td>
-                                                              <td>--</td>
+                                                              <td>{data.subpart_supplier.subPart.manufacturer.manufacturer_name}</td>
                                                               <td>{data.quantity}</td>
                                                               <td>{data.subpart_supplier.supplier_price}</td>
                                                               <td>{data.subpart_supplier.supplier_price * data.quantity}</td>
@@ -454,12 +458,15 @@ const navigate = useNavigate()
                                         <div className="main-of-all-tables">
                                             <table id='order2-listing'>
                                                     <thead>
+                                                    
                                                     <tr>
                                                         <th className='tableh'>Id</th>
-                                                        <th className='tableh'>Issuance Id</th>
+                                                        <th className='tableh'>Product Code</th>
+                                                        <th className='tableh'>Product Name</th>
                                                         <th className='tableh'>Return By</th>
                                                         <th className='tableh'>Return Quantity</th>
                                                         <th className='tableh'>Date Return</th>
+                                                        <th className='tableh'>Date Issued</th>
                                                         <th className='tableh'>Status</th>
                                                         <th className='tableh'>Action</th>
                                                     </tr>
@@ -467,47 +474,26 @@ const navigate = useNavigate()
                                                     <tbody>
                                                         {returned.map((data, i) => (
                                                         <tr key={i}>
-                                                            <td onClick={() => {
-                                                                  setIssuedReturn(data);
-                                                                  handleShow();
-                                                                }}>
-                                                                    {data.id}
-                                                            </td>
-                                                            <td onClick={() => {
-                                                                  setIssuedReturn(data);
-                                                                  handleShow();
-                                                                }}>
-                                                                    {data.issued_id}
-                                                            </td>
-                                                            <td onClick={() => {
-                                                                  setIssuedReturn(data);
-                                                                  handleShow();
-                                                                }}>{data.return_by}</td>
-                                                            <td onClick={() => {
-                                                                  setIssuedReturn(data);
-                                                                  handleShow();
-                                                                }}>{data.quantity}</td>
-                                                            <td onClick={() => {
-                                                                  setIssuedReturn(data);
-                                                                  handleShow();
-                                                                }}>{formatDatetime(data.createdAt)}</td>
-                                                            <td onClick={() => {
-                                                                  setIssuedReturn(data);
-                                                                  handleShow();
-                                                                }}>{data.status}
-                                                              </td>
+                                                            <td>{data.id}</td>
+                                                            <td>{data.inventory_prd.product_tag_supplier.product.product_code }</td>
+                                                            <td>{data.inventory_prd.product_tag_supplier.product.product_name }</td>
+                                                            <td>{data.return_by}</td>
+                                                            <td>{data.quantity}</td>
+                                                            <td>{formatDatetime(data.createdAt)}</td>
+                                                            <td>{formatDatetime(data.issuance.updatedAt)}</td>
+                                                            <td>{data.status}</td>
                                                             <td>
                                                               <button
                                                                   style={{ fontSize: '12px' }}
                                                                   className='btn'
-                                                                  onClick={() => handleMoveToInventory(data.issued_return_id)}
+                                                                  onClick={() => handleMoveToInventory(data.inventory_prd.inventory_id, data.quantity)}
                                                               >
                                                                   move to inventory
                                                               </button>
                                                               <button
                                                                   style={{ fontSize: '12px' }}
                                                                   className='btn'
-                                                                  onClick={() => handleRetain(data.issued_return_id)}
+                                                                  onClick={() => handleRetain(data.id)}
                                                               >
                                                                   Retain
                                                               </button>
@@ -519,7 +505,7 @@ const navigate = useNavigate()
                                         </div>
                                     </div>
 
-                                    <Modal show={showModal} onHide={handleClose}>
+                                    {/* <Modal show={showModal} onHide={handleClose}>
                                       <Form noValidate validated={validated}>
                                         <Modal.Header closeButton>
                                           <Modal.Title style={{ fontSize: '24px' }}>Return Information</Modal.Title>
@@ -570,7 +556,7 @@ const navigate = useNavigate()
                                             <Modal.Footer>
                                             </Modal.Footer>
                                         </Form>
-                                      </Modal>
+                                      </Modal> */}
                                 </Tab>
                             </Tabs>
                         </div>

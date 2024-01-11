@@ -4,7 +4,11 @@ const sequelize = require('../db/config/sequelize.config');
 // const IssuedReturn = require('../db/models/issued_return.model')
 // const IssuedProduct = require('../db/models/issued_product.model');
 // const Inventory = require('../db/models/inventory.model');
-const { Inventory, IssuedReturn, IssuedProduct  } = require("../db/models/associations"); 
+const { Inventory, ProductTAGSupplier, Product, IssuedReturn, IssuedProduct, 
+        IssuedAssembly, IssuedReturn_asm, 
+        IssuedReturn_spare, IssuedReturn_subpart,
+        IssuedSpare, IssuedSubpart, Issuance
+        } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -16,7 +20,26 @@ router.use(session({
 router.route('/getReturn').get(async (req, res) => 
 {
     try {
-        const data = await IssuedReturn.findAll();
+        const data = await IssuedReturn.findAll({
+            include: [{
+                model: Inventory,
+                required: true,
+
+                    include: [{
+                        model: ProductTAGSupplier,
+                        required: true,
+
+                            include: [{
+                                model: Product,
+                                required: true
+                            }]
+                    }]
+            },
+            {
+                model: Issuance,
+                required: true
+            }]
+        });
 
         if (data) {
         return res.json(data);
@@ -31,16 +54,15 @@ router.route('/getReturn').get(async (req, res) =>
 
 router.route('/issueReturn').post(async (req, res) => {
     try {
-        const { issuance_id, return_remarks, status} = req.query;
+        const { issuance_id, return_remarks, status, arrayDataProdBackend, arrayDataAsmBackend, arrayDataSpareBackend,
+            arrayDataSubpartBackend} = req.query;
 
-        console.log("id", issuance_id)
-        console.log("status", status)
+        // console.log("id", issuance_id)
+        // console.log("status", status)
 
-        const arrayDataProdBackend = req.query.arrayDataProdBackend;
-        for (const product of arrayDataProdBackend) {
-            
+        // const arrayDataProdBackend = req.query.arrayDataProdBackend;
 
-           
+        for (const product of arrayDataProdBackend) {        
             await IssuedReturn.create({
                 issued_id: issuance_id,
                 inventory_id: product.inventory_id,
@@ -56,7 +78,7 @@ router.route('/issueReturn').post(async (req, res) => {
                 });
 
                 if (updateRecord) {
-                    console.log("check",updateRecord.quantity - product.quantity)
+                    // console.log("check",updateRecord.quantity - product.quantity)
                     const updatedQuantity = updateRecord.quantity - product.quantity
                     
 
@@ -73,6 +95,118 @@ router.route('/issueReturn').post(async (req, res) => {
                 };
         }
 
+
+// ----------------------------------   assembly --------------------------------
+
+
+        for (const product of arrayDataAsmBackend) {        
+            await IssuedReturn_asm.create({
+                issued_id: issuance_id,
+                inventory_id: product.inventory_id,
+                quantity: product.quantity,
+                status: status,
+                remarks: return_remarks,
+            });
+
+                const updateRecord = await IssuedAssembly.findOne({
+                    where: {
+                        inventory_Assembly_id: product.inventory_id,
+                    },
+                });
+
+                if (updateRecord) {
+                    // console.log("check",updateRecord.quantity - product.quantity)
+                    const updatedQuantity = updateRecord.quantity - product.quantity
+                    
+
+                    await IssuedAssembly.update(
+                        {
+                            quantity: updatedQuantity
+                        },
+                        {
+                            where: {
+                                inventory_Assembly_id: product.inventory_id
+                            },
+                        }
+                    )
+                };
+        };
+
+        // ----------------------------------   Spare part --------------------------------
+
+
+        for (const product of arrayDataSpareBackend) {        
+            await IssuedReturn_spare.create({
+                issued_id: issuance_id,
+                inventory_id: product.inventory_id,
+                quantity: product.quantity,
+                status: status,
+                remarks: return_remarks,
+            });
+
+                const updateRecord = await IssuedSpare.findOne({
+                    where: {
+                        inventory_Spare_id: product.inventory_id,
+                    },
+                });
+
+                if (updateRecord) {
+                    // console.log("check",updateRecord.quantity - product.quantity)
+                    const updatedQuantity = updateRecord.quantity - product.quantity
+                    
+
+                    await IssuedSpare.update(
+                        {
+                            quantity: updatedQuantity
+                        },
+                        {
+                            where: {
+                                inventory_Spare_id: product.inventory_id
+                            },
+                        }
+                    )
+                };
+        };
+
+
+           // ----------------------------------   Subpart part --------------------------------
+
+
+           for (const product of arrayDataSubpartBackend) {        
+            await IssuedReturn_subpart.create({
+                issued_id: issuance_id,
+                inventory_id: product.inventory_id,
+                quantity: product.quantity,
+                status: status,
+                remarks: return_remarks,
+            });
+
+                const updateRecord = await IssuedSubpart.findOne({
+                    where: {
+                        inventory_Subpart_id: product.inventory_id,
+                    },
+                });
+
+                if (updateRecord) {
+                    // console.log("check",updateRecord.quantity - product.quantity)
+                    const updatedQuantity = updateRecord.quantity - product.quantity
+                    
+
+                    await IssuedSubpart.update(
+                        {
+                            quantity: updatedQuantity
+                        },
+                        {
+                            where: {
+                                inventory_Subpart_id: product.inventory_id
+                            },
+                        }
+                    )
+                };
+        };
+
+
+
         // Send a response back to the client
         res.status(200).json({ message: 'Data saved successfully'});
     } catch (err) {
@@ -81,40 +215,37 @@ router.route('/issueReturn').post(async (req, res) => {
     }
 });
 
-router.route('/moveToInventory/:id').post(async (req, res) => {
+router.route('/moveToInventory').post(async (req, res) => {
+
+    console.log("pumasok")
     try {
-        const returnId = req.params.id;
+        const {inventoryID, quantity} = req.query;
 
-        // Find the returned record
-        const returnedRecord = await IssuedReturn.findByPk(returnId);
-
-        if (!returnedRecord) {
-            return res.status(404).json({ message: 'Returned record not found' });
-        }
-
-        // Add returned quantity to the inventory
-        const inventoryRecord = await Inventory.findOne({
+        const updateRecord = await Inventory.findOne({
             where: {
-                product_tag_supp_id: returnedRecord.issued_id, // Adjust the condition based on your data model
-            },
+                inventory_id: inventoryID,
+            }
         });
 
-        if (inventoryRecord) {
-            inventoryRecord.quantity += returnedRecord.quantity;
-            await inventoryRecord.save();
-        } else {
-            // If inventory record does not exist, create a new one
-            await Inventory.create({
-                product_tag_supp_id: returnedRecord.issued_id,
-                quantity: returnedRecord.quantity,
-            });
-        }
+        if (updateRecord) {
+            const addToInventory = updateRecord.quantity + quantity
 
-        // Delete the returned record
-        await returnedRecord.destroy();
 
-        // Send a response back to the client
-        res.status(200).json({ message: 'Moved to inventory successfully' });
+            await Inventory.update(
+                {
+                    quantity: addToInventory
+                },
+                {
+                    where: {
+                        inventory_id: inventoryID,
+                    },
+                }
+            )
+            // Send a response back to the client
+            res.status(200).json({ message: 'Data saved successfully'});
+        };
+          
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'An error occurred' });

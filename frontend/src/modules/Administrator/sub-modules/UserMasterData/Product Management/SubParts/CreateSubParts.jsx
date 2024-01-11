@@ -592,6 +592,7 @@ function onDropImages(event) {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
+                    required
                     onChange={(e) => {
                       const inputValue = e.target.value;
                       const sanitizedValue = inputValue

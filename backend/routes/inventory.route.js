@@ -69,6 +69,11 @@ router.route('/fetchInvetory_assembly').get(async (req, res) => {
               model: Assembly,
               required: true,
 
+              include: [{
+                model: Manufacturer,
+                required: true,
+              }]
+
             },
             {
               model: Supplier,
@@ -106,6 +111,11 @@ router.route('/fetchInvetory_spare').get(async (req, res) => {
               model: SparePart,
               required: true,
 
+              include: [{
+                model: Manufacturer,
+                required: true,
+              }]
+
             },
             {
               model: Supplier,
@@ -142,6 +152,11 @@ router.route('/fetchInvetory_subpart').get(async (req, res) => {
             include: [{
               model: SubPart,
               required: true,
+
+              include: [{
+                model: Manufacturer,
+                required: true,
+              }]
 
             },
             {

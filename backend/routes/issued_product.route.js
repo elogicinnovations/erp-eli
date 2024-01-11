@@ -5,7 +5,9 @@ const sequelize = require('../db/config/sequelize.config');
 const { Inventory, Product, ProductTAGSupplier, 
         IssuedProduct, Issuance, IssuedAssembly, 
         Inventory_Assembly, Assembly_Supplier, 
-        Assembly, IssuedSpare, Inventory_Spare, SparePart_Supplier, SparePart, IssuedSubpart, Inventory_Subpart, Subpart_supplier, SubPart
+        Assembly, IssuedSpare, Inventory_Spare, 
+        SparePart_Supplier, SparePart, IssuedSubpart, 
+        Inventory_Subpart, Subpart_supplier, SubPart
     } = require('../db/models/associations')
 
 const session = require('express-session');
@@ -19,6 +21,7 @@ router.use(session({
 router.route('/getProducts').get(async (req, res) => 
 {
     try {
+        console.log('url_ID prod', req.query.id)
         const data = await IssuedProduct.findAll({
             where: {
                 issuance_id: req.query.id
@@ -57,6 +60,7 @@ router.route('/getProducts').get(async (req, res) =>
 router.route('/getAssembly').get(async (req, res) => 
 {
     try {
+        console.log('url_ID asm', req.query.id)
         const data = await IssuedAssembly.findAll({
             where: {
                 issuance_id: req.query.id
