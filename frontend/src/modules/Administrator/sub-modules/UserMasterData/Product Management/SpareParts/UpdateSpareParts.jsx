@@ -10,6 +10,7 @@ import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement
 import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
 import Select from 'react-select';
+import Carousel from 'react-bootstrap/Carousel';
 import {
   NotePencil,
 } from "@phosphor-icons/react";
@@ -40,7 +41,7 @@ const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
 const [isReadOnly, setReadOnly] = useState(false);
 
-const [images, setImages] = useState([]);
+const [sparepartimage, setSparetpartImages] = useState([]);
 
 const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 const navigate = useNavigate();
@@ -61,7 +62,7 @@ useEffect(() => {
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
       setThresholds(res.data[0].threshhold);
-      setImages(res.data[0].sparePart_images);
+      setSparetpartImages(res.data[0].sparePart_images);
     })
     .catch(err => console.log(err));
 }, [id]);
@@ -320,11 +321,26 @@ console.log(addPriceInput)
                         </div>
                  
                         <div className="row">
-                            {
-                              images.length > 0 && images?.map((image) => (
+                            {/* {
+                              sparepartimage.length > 0 && sparepartimage?.map((image) => (
                                 <img src={`data:image/png;base64,${image.sparepart_image}`} alt={`subpart-img-${image?.id}`}/>
                               ))
-                            }
+                            } */}
+
+                            {sparepartimage.length > 0 && (
+                              <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                                {sparepartimage.map((image, index) => (
+                                  <Carousel.Item key={index}>
+                                    <img
+                                      className="carousel-image"
+                                      src={`data:image/png;base64,${image.sparepart_image}`}
+                                      alt={`sparepart-img-${image?.id}`}
+                                    />
+                                    <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
+                                  </Carousel.Item>
+                                ))}
+                              </Carousel>
+                            )}
                         </div>
 
                           <div className="row mt-3">

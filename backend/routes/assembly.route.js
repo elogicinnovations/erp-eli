@@ -89,7 +89,7 @@ router.route("/create").post(async (req, res) => {
       thresholds, 
       unitMeasurement,
       slct_category,
-      img
+      images
       } =
       req.body;
     // Check if the supplier code is already exists in the table
@@ -158,8 +158,8 @@ router.route("/create").post(async (req, res) => {
         });
       }
 
-      if(img.length > 0){
-        img.forEach(async (i) => {
+      if(images.length > 0){
+        images.forEach(async (i) => {
           await Assembly_image.create({
             assembly_id : createdID,
             assembly_image : i.base64Data

@@ -1,7 +1,12 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { SparePart_Supplier, SparePart_SubPart, SparePart, Inventory_Spare, SparePartPrice_history} = require("../db/models/associations"); 
+const { SparePart_Supplier, 
+        SparePart_SubPart, 
+        SparePart, 
+        Inventory_Spare, 
+        SparePartPrice_history, 
+        SparePart_image} = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -61,7 +66,17 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
-       const {code, name, supp, desc, SubParts, SpareaddPriceInput, slct_binLocation, slct_manufacturer, thresholds, unitMeasurement} = req.body;
+       const {code, 
+              name, 
+              supp, 
+              desc, 
+              SubParts, 
+              SpareaddPriceInput, 
+              slct_binLocation, 
+              slct_manufacturer, 
+              thresholds, 
+              unitMeasurement,
+              images} = req.body;
 
         // Check if the supplier code is already exists in the table
         console.log(code);
@@ -124,11 +139,11 @@ router.route('/create').post(async (req, res) => {
           }
           }
     
-          if(img.length > 0){
-            img.forEach(async (i) => {
+          if(images.length > 0){
+            images.forEach(async (i) => {
               await SparePart_image.create({
-                sparepart_id : createdID,
-                
+                sparepart_id: createdID,
+                sparepart_image: i.base64Data
               })
             });
           }
@@ -244,72 +259,44 @@ router.route('/delete/:table_id').delete(async (req, res) => {
             await SparePart.destroy({
             where : {
               id: id
-            }
+            },
           })
-          .then(
-              (del) => {
-                  if(del){
-
-
-                    SparePart_Supplier.destroy({
-                      where : {
-                        sparePart_id: id
-                      }
-                    })
-                    .then(
-                        (del) => {
-                            if(del){
-                                
-                              
-                              SparePart_SubPart.destroy({
-                                where : {
-                                  sparePart_id: id
-                                }
-                              })
-                              .then(
-                                  (del) => {
-                                      if(del){
-                                          return res.status(200).json({success : true})
-                                      }
-                                      else{
-                                          res.status(400).json({success : false})
-                                      }
-                                  }
-                              )
-                              .catch(
-                                  (err) => {
-                                      console.error(err)
-                                      res.status(409)
-                                  }
-                              );
-
-
-
-                            }
-                            else{
-                                res.status(400).json({success : false})
-                            }
-                        }
-                    )
-                    .catch(
-                        (err) => {
-                            console.error(err)
-                            res.status(409)
-                        }
-                    );
+        .then(() => {
+            SparePart_Supplier.destroy({
+              where : {
+                sparePart_id: id
+              }
+            })
+            .then(() => {
               
-                  }
-                  else{
-                      res.status(400).json({success : false})
-                  }
+                  SparePart_SubPart.destroy({
+                    where : {
+                      sparePart_id: id
+                    }
+                  })
+                  .then(() => {
+                    return res.status(200).json({success : true})
+                  })
+                  .catch((err) => {
+                    console.error(err)
+                    res.status(409)
+                  });
+             
               }
-          )
-          .catch(
-              (err) => {
-                  console.error(err)
-                  res.status(409)
-              }
-          );
+            )
+            .catch(
+                (err) => {
+                    console.error(err)
+                    res.status(409)
+                }
+            );
+        })
+        .catch(
+            (err) => {
+                console.error(err)
+                res.status(409)
+            }
+        );
     //     }
     //   })
   });
