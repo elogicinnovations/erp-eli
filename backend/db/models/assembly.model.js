@@ -50,6 +50,10 @@ const Assembly = sequelize.define('assembly', {
   category_code: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  assembly_status: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

@@ -257,7 +257,7 @@ const [pr_req, setPr_req] = useState([]);
                               <Form.Select aria-label="item status"
                                 value={selectedStatus}
                                 onChange={handleStatusChange}
-                                style={{width: '450px', height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 required
                                 title="Status is required">
                                   <option value="" disabled selected>

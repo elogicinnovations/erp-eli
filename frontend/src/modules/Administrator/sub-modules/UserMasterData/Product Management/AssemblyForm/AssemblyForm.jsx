@@ -14,9 +14,11 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
+  ArrowsClockwise,
 } from "@phosphor-icons/react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 import Table from 'react-bootstrap/Table';
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -218,6 +220,71 @@ function AssemblyForm({ authrztn }) {
     }
   }, [assembly]);
 
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($("#order-listing1").length > 0 && historypricemodal.length > 0) {
+      $("#order-listing1").DataTable();
+    }
+  }, [historypricemodal]);
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+
+  const handleSave = () => {
+    axios
+      .put(BASE_URL + "/assembly/statusupdate", {
+        assemblyIds: selectedCheckboxes,
+        status: selectedStatus,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: "Status Updating!",
+            text: "The status has been updated successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleClose();
+            reloadTable();
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const handleCheckboxChange = (productId) => {
+    const updatedCheckboxes = [...selectedCheckboxes];
+
+    if (updatedCheckboxes.includes(productId)) {
+      updatedCheckboxes.splice(updatedCheckboxes.indexOf(productId), 1);
+    } else {
+      updatedCheckboxes.push(productId);
+    }
+
+    setSelectedCheckboxes(updatedCheckboxes);
+    setShowChangeStatusButton(updatedCheckboxes.length > 0);
+  };
+
+  const handleSelectAllChange = () => {
+    const allAssemblyIds = assembly.map((data) => data.id);
+    setSelectedCheckboxes(selectAllChecked ? [] : allAssemblyIds);
+    setShowChangeStatusButton(!selectAllChecked);
+    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  };
+
+  const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -255,18 +322,29 @@ function AssemblyForm({ authrztn }) {
               </div>
 
               <div className="button-create-side">
-                <div className="Buttonmodal-new">
 
                   { authrztn.includes('Assembly - Add') && (
+                  showChangeStatusButton ? (
+                  <div className="Buttonmodal-change">
+                    <button className="buttonchanges" onClick={handleShow}>
+                      <span style={{}}>
+                      <ArrowsClockwise size={25} />
+                      </span>
+                      Change Status
+                    </button>
+                  </div>
+                ) : (
+                <div className="Buttonmodal-new">
                   <Link to="/createAssemblyForm" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Product
                   </Link>
+                </div>
+                )
                   )}
                   
-                </div>
               </div>
             </div>
           </div>
@@ -275,9 +353,18 @@ function AssemblyForm({ authrztn }) {
               <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
+                    <th className="tableh">
+                      <input
+                        type="checkbox"
+                        checked={selectAllChecked}
+                        onChange={handleSelectAllChange}
+                        // when check check all
+                      />
+                    </th>
                     <th className="tableh">Product Code</th>
                     <th className="tableh">Assemble Name</th>
                     <th className="tableh">Details</th>
+                    <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
                     <th className="tableh">Date Modified</th>
                     <th className="tableh">Action</th>
@@ -286,6 +373,13 @@ function AssemblyForm({ authrztn }) {
                 <tbody>
                   {assembly.map((data, i) => (
                     <tr key={i}>
+                      <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedCheckboxes.includes(data.id)}
+                        onChange={() => handleCheckboxChange(data.id)}
+                      />
+                      </td>
                       <td
                         onClick={() =>
                           navigate(`/viewAssembleForm/${data.id}`)
@@ -303,6 +397,26 @@ function AssemblyForm({ authrztn }) {
                           navigate(`/viewAssembleForm/${data.id}`)
                         }>
                         {data.assembly_desc}
+                      </td>
+                      <td
+                        onClick={() =>
+                          navigate(`/viewAssembleForm/${data.id}`)
+                        }>
+                        <div
+                          className="colorstatus"
+                          style={{
+                            backgroundColor:
+                              data.assembly_status === "Active"
+                                ? "green"
+                                : "red",
+                            color: "white",
+                            padding: "5px",
+                            borderRadius: "5px",
+                            textAlign: "center",
+                            width: "80px",
+                          }}>
+                        {data.assembly_status}
+                        </div>
                       </td>
                       <td
                         onClick={() =>
@@ -382,6 +496,43 @@ function AssemblyForm({ authrztn }) {
           </div>
         </div>
       </div>
+      
+      <Modal
+        size="md"
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="exampleForm.ControlInput2">
+            <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
+            <Form.Select
+              style={{ height: "40px", fontSize: "15px" }}
+              onChange={handleStatusChange}
+              value={selectedStatus}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-warning"
+            onClick={handleSave}
+            style={{ fontSize: "20px" }}>
+            Save
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={handleClose}
+            style={{ fontSize: "20px" }}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal
         size="xl"
         show={showhistorical}
@@ -398,24 +549,24 @@ function AssemblyForm({ authrztn }) {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <Table responsive="xl">
-              <thead>
+            <table responsive="xl" id="order-listing1">
+              <thead className="priceHH">
                 <tr>
-                  <th>Assembly Name</th>
-                  <th>Price</th>
-                  <th>Date Created</th>
+                  <th className="priceHH">Assembly Name</th>
+                  <th className="priceHH">Price</th>
+                  <th className="priceHH">Date Created</th>
                 </tr>
               </thead>
               <tbody>
                 {historypricemodal.map((history, i) => (
                   <tr key={i}>
-                    <td>{history.assembly.assembly_name}</td>
-                    <td>{history.supplier_price}</td>
-                    <td>{ModalformatDate(history.createdAt)}</td>
+                    <td className="priceHB">{history.assembly.assembly_name}</td>
+                    <td className="priceHB">{history.supplier_price}</td>
+                    <td className="priceHB">{ModalformatDate(history.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </table>
           </div>                       
         </Modal.Body>
         <Modal.Footer>

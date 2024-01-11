@@ -138,8 +138,8 @@ useEffect(() => { //fetch product for inventory
   
 useEffect(() => {
   // Initialize DataTable when role data is available
-  if ($('#order2-listing').length > 0 && invetory_prd.length > 0) {
-    $('#order2-listing').DataTable();
+  if ($('#order-listing').length > 0 && invetory_prd.length > 0) {
+    $('#order-listing').DataTable();
   }
 }, [invetory_prd]);
 
@@ -212,7 +212,7 @@ const convertTableToCSV = () => {
                           </div>
                         </div>
                         <div className="date-filter">
-                          <div style={{zIndex: '3'}}>
+                          <div style={{zIndex: '3', margin:'0 0 10px 10px'}}>
                               <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={startDate}
@@ -236,8 +236,10 @@ const convertTableToCSV = () => {
                                 <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
                           </div>
-                          <button className='genbutton'>Generate</button>
                         </div>
+                        </div>
+                        <div className="genbutton">
+                          <button className='genbutton'>Generate</button>
                         </div>
                         <div className='export-refresh'>
                             <button className='export' onClick={handleShow}>

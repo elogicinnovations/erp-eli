@@ -112,7 +112,8 @@ router.route("/create").post(async (req, res) => {
         assembly_manufacturer: slct_manufacturer,
         threshhold: threshholdValue,
         assembly_unitMeasurement: unitMeasurement,
-        category_code: slct_category
+        category_code: slct_category,
+        assembly_status: 'Active'
       });
 
       const createdID = spare_newData.id;
@@ -379,6 +380,25 @@ router.route("/delete/:table_id").delete(async (req, res) => {
     });
   //     }
   //   })
+});
+
+
+router.route('/statusupdate').put(async (req, res) => {
+  try {
+    const { assemblyIds, status } = req.body;
+
+    for (const assemblyId of assemblyIds) {
+      await Assembly.update(
+        { assembly_status: status },
+        { where: { id: assemblyId } }
+      );
+    }
+
+    res.status(200).json({ message: 'Products updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 module.exports = router;
