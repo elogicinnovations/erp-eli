@@ -288,6 +288,52 @@ function Supplier({ authrztn }) {
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.createdAt)}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.updatedAt)}</td>
                                                 <td>
+                                                    {isVertical[data.supplier_code] ? (
+                                                      <DotsThreeCircleVertical
+                                                        size={32}
+                                                        className="dots-icon"
+                                                        onClick={() => {
+                                                          toggleButtons(data.supplier_code);
+                                                        }}
+                                                      />
+                                                    ) : (
+                                                      <DotsThreeCircle
+                                                        size={32}
+                                                        className="dots-icon"
+                                                        onClick={() => {
+                                                          toggleButtons(data.supplier_code);
+                                                        }}
+                                                      />
+                                                    )}
+                                                    <div>
+                                                      {setButtonVisibles(data.supplier_code) && (
+                                                        <div
+                                                          className="choices"
+                                                          style={{ position: "absolute" }}>
+
+                                                          { authrztn.includes('Supplier - Edit') && (
+                                                            <button className='btn'  type='button' >
+                                                                <Link to={`/editSupp/${data.supplier_code}`} 
+                                                                style={{textDecoration:'none', color:'#252129'}}>Update</Link>
+                                                            </button>
+                                                          )}
+
+                                                        { authrztn.includes('Supplier - Delete') && (
+                                                          <button className='btn' 
+                                                                  type='button' 
+                                                                  onClick={() => {
+                                                                    handleDelete(data.supplier_code)
+                                                                    closeVisibleButtons();
+                                                                  }}>
+                                                              Delete
+                                                          </button>
+                                                        )}
+
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  </td>
+                                                {/* <td>
                                                 <DotsThreeCircle
                                                     size={32}
                                                     className="dots-icon"
@@ -313,32 +359,31 @@ function Supplier({ authrztn }) {
                                                     boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
                                                     }}>
 
-                                                    {/* Your dropdown content here */}
+                
 
                                                     { authrztn.includes('Supplier - Edit') && (
-                                                    <button className='btn'  type='button' >
-                                                        <Link to={`/editSupp/${data.supplier_code}`} style={{textDecoration:'none', color:'#252129'}}>Update</Link>
-                                                    </button>
+                                                      <button className='btn'  type='button' >
+                                                          <Link to={`/editSupp/${data.supplier_code}`} 
+                                                          style={{textDecoration:'none', color:'#252129'}}>Update</Link>
+                                                      </button>
                                                     )}
 
                                                     { authrztn.includes('Supplier - Delete') && (
-                                                    <button className='btn' type='button' onClick={() => handleDelete(data.supplier_code)}>
-                                                        Delete
-                                                    </button>
+                                                      <button className='btn' 
+                                                              type='button' 
+                                                              onClick={() => {
+                                                                handleDelete(data.supplier_code)
+                                                                closeVisibleButtons();
+                                                              }}>
+                                                          Delete
+                                                      </button>
                                                     )}
 
                                                 </div>
 
 
-                                                </td>
-                                                {/* <td>
-                                                    <button className='btn'  type='button' >
-                                                        <Link to={`/editSupp/${data.supplier_code}`} ><NotePencil size={32} /></Link>
-                                                    </button>
-                                                    <button className='btn' type='button' onClick={() => handleDelete(data.supplier_code)}>
-                                                        <Trash size={32} color="#e60000" />
-                                                    </button>
                                                 </td> */}
+                                               
                                             </tr>
                                         ))}
                                     </tbody>

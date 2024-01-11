@@ -217,6 +217,8 @@ function EditRole() {
       "Supplier - Delete",
       "Supplier - View",
       "Inventory - View",
+      "Inventory - Add",
+      "Inventory - Edit",
       "Inventory - Approval",
       "Inventory - Reject",
       "PR - Add",
@@ -2008,6 +2010,7 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled
                               type="checkbox"
                               id="Inventory - Delete"
                               name="vehicle1"

@@ -88,11 +88,15 @@ useEffect(() => {
         });
 }, []);
 
+
+const reloadTable = () => {
+  axios
+  .get(BASE_URL + "/category/fetchTable")
+  .then((res) => setcategory(res.data))
+  .catch((err) => console.log(err));
+}
   useEffect(() => {
-    axios
-      .get(BASE_URL + "/category/fetchTable")
-      .then((res) => setcategory(res.data))
-      .catch((err) => console.log(err));
+      reloadTable()
   }, []);
 
   function formatDate(isoDate) {
@@ -141,7 +145,7 @@ useEffect(() => {
               button: "OK",
               
             }).then(() => {
-              window.location.reload();
+              reloadTable()
               const newId = response.data.category_code;
               // console.log(newId)
               setcategory((prev) => [
@@ -194,9 +198,10 @@ useEffect(() => {
               icon: "success",
               button: "OK",
             }).then(() => {
-              setcategory((prev) =>
-                prev.filter((data) => data.category_code !== table_id)
-              );
+              // setcategory((prev) =>
+              //   prev.filter((data) => data.category_code !== table_id)
+              // );
+              reloadTable()
             });
           } else if (response.status === 202) {
             swal({
@@ -382,22 +387,7 @@ useEffect(() => {
           button: "OK",
         }).then(() => {
           handleModalToggle();
-          setcategory((prev) =>
-            prev.map((data) =>
-              data.category_code === updateFormData.category_code
-                ? {
-                    ...data,
-                    category_name: updateFormData.category_name,
-                    category_remarks: updateFormData.category_remarks,
-                  }
-                : data
-            )
-          );
-          setUpdateFormData({
-            category_name: "",
-            category_remarks: "",
-            category_code: null,
-          });
+          reloadTable()
         });
       } else if (response.status === 202) {
         swal({
@@ -594,7 +584,7 @@ useEffect(() => {
                               </button>
                               )}
 
-                              {/* { authrztn?.includes('Product Categories - Delete') && ( */}
+                              { authrztn?.includes('Product Categories - Delete') && (
                               <button
                                 className="btn"
                                 type="button"
@@ -604,18 +594,12 @@ useEffect(() => {
                                 }}>
                                 Delete
                               </button>
-                              {/* )} */}
+                            )}
 
                             </div>
                           )}
                         </div>
                       </td>
-                      {
-                      /*  <td>
-                                            <button className='btn'  type='button' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
-                                            <button className='btn' type='button' onClick={() => handleDelete(data.category_code)}><Trash size={32} color="#e60000" /></button>
-                          </td> */
-                      }
                     </tr>
                   ))}
                 </tbody>

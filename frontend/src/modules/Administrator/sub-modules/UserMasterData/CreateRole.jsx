@@ -173,8 +173,10 @@ function Create_role() {
       "Supplier - Delete",
       "Supplier - View",
       "Inventory Type - View",
-      "Inventory Type - Approval",
-      "Inventory Type - Reject",
+      "Inventory - Add",
+      "Inventory - Edit",
+      "Inventory - Approval",
+      "Inventory - Reject",
       "PR - Add",
       "PR - Edit",
       "PR - Approval",
@@ -1958,7 +1960,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Edit"></label>
+                              htmlFor="Inventory - Edit">
+                            </label>
                           </div>
                         </td>
 

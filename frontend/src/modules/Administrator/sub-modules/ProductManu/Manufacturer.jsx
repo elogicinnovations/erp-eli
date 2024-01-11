@@ -52,39 +52,42 @@ function Productvariants({ authrztn }) {
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
-  const toggleDropdown = (event, index) => {
-    // Check if the clicked icon is already open, close it
-    if (index === openDropdownIndex) {
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = !newRotatedIcons[index];
-        return newRotatedIcons;
-      });
-      setShowDropdown(false);
-      setOpenDropdownIndex(null);
-    } else {
-      // If a different icon is clicked, close the currently open dropdown and open the new one
-      setRotatedIcons(Array(Manufacturer.length).fill(false));
-      const iconPosition = event.currentTarget.getBoundingClientRect();
-      setDropdownPosition({
-        top: iconPosition.bottom + window.scrollY,
-        left: iconPosition.left + window.scrollX,
-      });
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = true;
-        return newRotatedIcons;
-      });
-      setShowDropdown(true);
-      setOpenDropdownIndex(index);
-    }
-  };
-
-  useEffect(() => {
+  // const toggleDropdown = (event, index) => {
+  //   // Check if the clicked icon is already open, close it
+  //   if (index === openDropdownIndex) {
+  //     setRotatedIcons((prevRotatedIcons) => {
+  //       const newRotatedIcons = [...prevRotatedIcons];
+  //       newRotatedIcons[index] = !newRotatedIcons[index];
+  //       return newRotatedIcons;
+  //     });
+  //     setShowDropdown(false);
+  //     setOpenDropdownIndex(null);
+  //   } else {
+  //     // If a different icon is clicked, close the currently open dropdown and open the new one
+  //     setRotatedIcons(Array(Manufacturer.length).fill(false));
+  //     const iconPosition = event.currentTarget.getBoundingClientRect();
+  //     setDropdownPosition({
+  //       top: iconPosition.bottom + window.scrollY,
+  //       left: iconPosition.left + window.scrollX,
+  //     });
+  //     setRotatedIcons((prevRotatedIcons) => {
+  //       const newRotatedIcons = [...prevRotatedIcons];
+  //       newRotatedIcons[index] = true;
+  //       return newRotatedIcons;
+  //     });
+  //     setShowDropdown(true);
+  //     setOpenDropdownIndex(index);
+  //   }
+  // };
+  const reloadTable = () => {
     axios
       .get(BASE_URL + "/manufacturer/retrieve")
       .then((res) => setManufacturer(res.data))
       .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    reloadTable()
   }, []);
 
   function formatDate(isoDate) {
@@ -153,6 +156,8 @@ function Productvariants({ authrztn }) {
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
+            handleClose()
+            reloadTable()
             SuccessInserted(res);
           } else if (res.status === 201) {
             Duplicate_Message();
@@ -190,9 +195,7 @@ function Productvariants({ authrztn }) {
               icon: "success",
               button: "OK",
             }).then(() => {
-              setManufacturer((prev) =>
-                prev.filter((data) => data.manufacturer_code !== table_id)
-              );
+             reloadTable()
             });
           } else if (response.status === 202) {
             swal({
@@ -228,22 +231,10 @@ function Productvariants({ authrztn }) {
       button: "OK",
     }).then(() => {
       const newId = res.data.manufacturer_code;
-      // console.log(newId)
-      setManufacturer((prev) => [
-        ...prev,
-        {
-          manufacturer_code: newId,
-          manufacturer_name: res.data.manufacturer_name,
-          manufacturer_remarks: res.data.manufacturer_remarks,
-          createdAt: res.data.createdAt,
-          updatedAt: res.data.updatedAt,
-        },
-      ]);
-
-      setCode(""); // Clear the code input field
+      
       setName(""); // Clear the nameManu input field
       setDescription(""); // Clear the descManu input field
-      window.location.reload();
+      
     });
   };
   const Duplicate_Message = () => {
@@ -325,24 +316,7 @@ function Productvariants({ authrztn }) {
           button: "OK",
         }).then(() => {
           handleModalToggle();
-          setManufacturer((prev) =>
-            prev.map((data) =>
-              data.manufacturer_code === updateFormData.manufacturer_code
-                ? {
-                    ...data,
-                    manufacturer_name: updateFormData.manufacturer_name,
-                    manufacturer_remarks: updateFormData.manufacturer_remarks,
-                  }
-                : data
-            )
-          );
-
-          // Reset the form fields
-          setUpdateFormData({
-            manufacturer_name: "",
-            manufacturer_remarks: "",
-            manufacturer_code: null,
-          });
+          reloadTable()
         });
       } else if (response.status === 202) {
         swal({
