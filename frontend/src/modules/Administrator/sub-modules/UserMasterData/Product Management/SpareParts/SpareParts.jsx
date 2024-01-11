@@ -125,54 +125,48 @@ function SpareParts({ authrztn }) {
   function padZero(num) {
     return num.toString().padStart(2, "0");
   }
+
+
   const handleDelete = async (table_id) => {
-    try {
-      const willDelete = await swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this product data!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      });
-
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this user file!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (willDelete) => {
       if (willDelete) {
-        const response = await axios.delete(
-          BASE_URL + `/sparePart/delete/${table_id}`
-        );
-
-        if (response.status === 200) {
-          swal({
-            title: "The Product Spare-Part Delete Succesful!",
-            text: "The Product Spare-Part has been Deleted successfully.",
-            icon: "success",
-            button: "OK",
-          }).then(() => {
-            reloadTable();
-          });
-        } else if (response.status === 202) {
-          swal({
-            icon: "error",
-            title: "Delete Prohibited",
-            text: "You cannot delete a product that is in use",
-          });
-        } else {
-          swal({
-            icon: "error",
-            title: "Something went wrong",
-            text: "Please contact our support",
-          });
+        try {
+          const response = await axios.delete(
+            BASE_URL + `/sparePart/delete/${table_id}`
+          );
+          if (response.status === 200) {
+            swal({
+              title: "The Product Spare-Part Delete Succesful!",
+              text: "The Product Spare-Part has been Deleted successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              reloadTable();
+            });
+          } else if (response.status === 202) {
+            swal({
+              icon: "error",
+              title: "Delete Prohibited",
+              text: "You cannot delete a product that is in use",
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        } catch (err) {
+          console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Product Part not Deleted!",
-          icon: "warning",
-        });
       }
-    } catch (error) {
-      // Handle errors here
-      console.error(error);
-    }
+    });
   };
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object

@@ -116,6 +116,136 @@ function CreateSpareParts() {
     });
   };
 
+  const [images, setImages] = useState([]);
+  const [isDragging, setIsDragging] = useState([]);
+  const fileInputRef = useRef(null);
+  
+  function selectFiles() {
+    fileInputRef.current.click();
+  }
+  function onFileSelect(event) {
+    const files = event.target.files;
+  
+    if (files.length === 0) return;
+  
+    if (images.length + files.length > 5) {
+      swal({
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
+      });
+      return;
+    }
+  
+    for (let i = 0; i < files.length; i++) {
+      const fileType = files[i].type.split('/')[1].toLowerCase();
+      const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+  
+      if (fileSize > 5) {
+        swal({
+          icon: "error",
+          title: "File Size Limit Exceeded",
+          text: "Each image must be up to 5MB in size.",
+        });
+        continue;
+      }
+  
+      if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG and PNG files are allowed.",
+        });
+        continue;
+      }
+  
+      if (!images.some((e) => e.name === files[i].name)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              url: URL.createObjectURL(files[i]),
+              base64Data: e.target.result.split(',')[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+  }
+  
+  function deleteImage(index){
+    setImages((prevImages) => 
+      prevImages.filter((_, i) => i !== index)
+    )
+  }
+  
+  function onDragOver(event){
+    event.preventDefault();
+    setIsDragging(true);
+    event.dataTransfer.dropEffect = "copy";
+  }
+  
+  function onDragLeave(event) {
+    event.preventDefault();
+    setIsDragging(false);
+  }
+  
+  function onDropImages(event) {
+    event.preventDefault();
+    setIsDragging(false);
+    const files = event.dataTransfer.files;
+  
+    if (images.length + files.length > 5) {
+      swal({
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
+      });
+      return;
+    }
+  
+    for (let i = 0; i < files.length; i++) {
+      const fileType = files[i].type.split('/')[1].toLowerCase();
+      const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+  
+      if (fileSize > 5) {
+        swal({
+          icon: "error",
+          title: "File Size Limit Exceeded",
+          text: "Each image must be up to 5MB in size.",
+        });
+        continue;
+      }
+  
+      if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG and PNG files are allowed.",
+        });
+        continue;
+      }
+  
+      if (!images.some((e) => e.name === files[i].name)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              url: URL.createObjectURL(files[i]),
+              base64Data: e.target.result.split(',')[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+  }
+
   const add = async (e) => {
     e.preventDefault();
 
@@ -142,6 +272,7 @@ function CreateSpareParts() {
           unitMeasurement,
           slct_manufacturer,
           thresholds,
+          images
         })
         .then((res) => {
           // console.log(res);
@@ -173,79 +304,76 @@ function CreateSpareParts() {
     setValidated(true); //for validations
   };
 
-  // React.useEffect(() => {
-  //     $(document).ready(function () {
-  //         $('#order-listing').DataTable();
+  // const [selectedimage, setselectedimage] = useState([]);
+  // const fileInputRef = useRef(null);
+
+  // const onDropImage = (acceptedFiles) => {
+  //   const newSelectedImages = [...selectedimage];
+
+  //   acceptedFiles.forEach((file) => {
+  //     if (
+  //       (file.type === "image/png" || file.type === "image/jpeg") &&
+  //       newSelectedImages.length < 5
+  //     ) {
+  //       newSelectedImages.push(file);
+  //     } else {
+  //       swal({
+  //         title: "Invalid file type or maximum limit reached",
+  //         text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //   });
+
+  //   setselectedimage(newSelectedImages);
+  // };
+
+  // const removeImage = (index) => {
+  //   const newSelectedImages = [...selectedimage];
+  //   newSelectedImages.splice(index, 1);
+  //   setselectedimage(newSelectedImages);
+  // };
+  // const uploadClick = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
+
+  // const [img, setImg] = useState([]);
+  // useEffect(() => {
+  //   // Create a function to handle the image processing
+  //   const processImages = () => {
+  //     const imageDataArray = [];
+
+  //     selectedimage.forEach((image, index) => {
+  //       const filereader = new FileReader();
+
+  //       filereader.onload = function (event) {
+  //         // Process image data
+  //         const processedImage = {
+  //           index, // or any other identifier for the image
+  //           blobData: event.target.result,
+  //           base64Data: btoa(event.target.result),
+  //         };
+
+  //         imageDataArray.push(processedImage);
+  //       };
+
+  //       if (image instanceof Blob) {
+  //         filereader.readAsBinaryString(image);
+  //       }
   //     });
-  //     }, []);
-  const [selectedimage, setselectedimage] = useState([]);
-  const fileInputRef = useRef(null);
 
-  const onDropImage = (acceptedFiles) => {
-    const newSelectedImages = [...selectedimage];
+  //     // Set the state once after processing all images
+  //     setImg(imageDataArray);
+  //   };
 
-    acceptedFiles.forEach((file) => {
-      if (
-        (file.type === "image/png" || file.type === "image/jpeg") &&
-        newSelectedImages.length < 5
-      ) {
-        newSelectedImages.push(file);
-      } else {
-        swal({
-          title: "Invalid file type or maximum limit reached",
-          text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
-          icon: "error",
-          button: "OK",
-        });
-      }
-    });
+  //   // Call the image processing function
+  //   processImages();
+  // }, [selectedimage]);
 
-    setselectedimage(newSelectedImages);
-  };
-
-  const removeImage = (index) => {
-    const newSelectedImages = [...selectedimage];
-    newSelectedImages.splice(index, 1);
-    setselectedimage(newSelectedImages);
-  };
-  const uploadClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const [img, setImg] = useState([]);
-  useEffect(() => {
-    // Create a function to handle the image processing
-    const processImages = () => {
-      const imageDataArray = [];
-
-      selectedimage.forEach((image, index) => {
-        const filereader = new FileReader();
-
-        filereader.onload = function (event) {
-          // Process image data
-          const processedImage = {
-            index, // or any other identifier for the image
-            blobData: event.target.result,
-            base64Data: btoa(event.target.result),
-          };
-
-          imageDataArray.push(processedImage);
-        };
-
-        if (image instanceof Blob) {
-          filereader.readAsBinaryString(image);
-        }
-      });
-
-      // Set the state once after processing all images
-      setImg(imageDataArray);
-    };
-
-    // Call the image processing function
-    processImages();
-  }, [selectedimage]);
+ 
 
   return (
     <div className="main-of-containers">
@@ -444,87 +572,113 @@ function CreateSpareParts() {
                 </Form.Group>
               </div>
               <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                              <Form.Label style={{ fontSize: "20px" }}>
-                                Image Upload:{" "}
-                              </Form.Label>
+                  {/* <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Image Upload:{" "}
+                    </Form.Label>
+                    <div
+                      style={{
+                        border: "1px #DFE3E7 solid",
+                        height: "auto",
+                        maxHeight: "140px",
+                        fontSize: "15px",
+                        width: "720px",
+                        padding: 10,
+                      }}>
+                      <Dropzone
+                        onDrop={onDropImage}
+                        onChange={(e) => setselectedimage(e.target.value)}>
+                        {({ getRootProps, getInputProps }) => (
+                          <div
+                            className="w-100 h-100"
+                            style={{ width: "700px" }}
+                            {...getRootProps()}>
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              style={{ display: "none" }}
+                              {...getInputProps()}
+                            />
+                            <div
+                              className="d-flex align-items-center"
+                              style={{ width: "700px", height: "2.5em" }}>
+                              <p
+                                className="fs-5 w-100 p-3 btn btn-secondary"
+                                style={{ color: "white", fontWeight: "bold" }}
+                                onClick={uploadClick}
+                                >
+                                Drag and drop a file here, or click to select a
+                                file
+                              </p>
+                            </div>
+                            {selectedimage.length > 0 && (
                               <div
+                                className="d-flex align-items-center justify-content-center"
                                 style={{
-                                  border: "1px #DFE3E7 solid",
-                                  height: "auto",
-                                  maxHeight: "140px",
-                                  fontSize: "15px",
-                                  width: "720px",
-                                  padding: 10,
+                                  border: "1px green solid",
+                                  width: "700px",
+                                  height: "5em",
+                                  padding: "1rem",
+                                  overflowY: "auto",
                                 }}>
-                                <Dropzone
-                                  onDrop={onDropImage}
-                                  onChange={(e) => setselectedimage(e.target.value)}>
-                                  {({ getRootProps, getInputProps }) => (
-                                    <div
-                                      className="w-100 h-100"
-                                      style={{ width: "700px" }}
-                                      {...getRootProps()}>
-                                      <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        style={{ display: "none" }}
-                                        {...getInputProps()}
-                                      />
-                                      <div
-                                        className="d-flex align-items-center"
-                                        style={{ width: "700px", height: "2.5em" }}>
-                                        <p
-                                          className="fs-5 w-100 p-3 btn btn-secondary"
-                                          style={{ color: "white", fontWeight: "bold" }}
-                                          onClick={uploadClick}
-                                          >
-                                          Drag and drop a file here, or click to select a
-                                          file
-                                        </p>
+                                Uploaded Images:
+                                <p
+                                  style={{
+                                    color: "green",
+                                    fontSize: "15px",
+                                    display: "flex",
+                                    height: "4em",
+                                    flexDirection: "column",
+                                  }}>
+                                  {selectedimage.map((image, index) => (
+                                    <div key={index}>
+                                      <div className="imgContainer">
+                                        <span className="imgUpload">
+                                          {image.name}
+                                        </span>
+                                        <X
+                                          size={20}
+                                          onClick={removeImage}
+                                          className="removeButton"
+                                        />
                                       </div>
-                                      {selectedimage.length > 0 && (
-                                        <div
-                                          className="d-flex align-items-center justify-content-center"
-                                          style={{
-                                            border: "1px green solid",
-                                            width: "700px",
-                                            height: "5em",
-                                            padding: "1rem",
-                                            overflowY: "auto",
-                                          }}>
-                                          Uploaded Images:
-                                          <p
-                                            style={{
-                                              color: "green",
-                                              fontSize: "15px",
-                                              display: "flex",
-                                              height: "4em",
-                                              flexDirection: "column",
-                                            }}>
-                                            {selectedimage.map((image, index) => (
-                                              <div key={index}>
-                                                <div className="imgContainer">
-                                                  <span className="imgUpload">
-                                                    {image.name}
-                                                  </span>
-                                                  <X
-                                                    size={20}
-                                                    onClick={removeImage}
-                                                    className="removeButton"
-                                                  />
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </p>
-                                        </div>
-                                      )}
                                     </div>
-                                  )}
-                                </Dropzone>
+                                  ))}
+                                </p>
                               </div>
-                            </Form.Group>
+                            )}
                           </div>
+                        )}
+                      </Dropzone>
+                    </div>
+                  </Form.Group> */}
+                  <div className="card">
+                    <div className="top">
+                      <p>Drag & Drop Image Upload</p>
+                    </div>
+                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                      {isDragging ? (
+                        <span className="select">Drop images here</span>
+                      ) : (
+                        <>
+                         Drag & Drop image here or {" "}
+                        <span className="select" role="button" onClick={selectFiles}>
+                          Browse
+                        </span>
+                        </>
+                      )}
+                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
+                    </div>
+                    <div className="ccontainerss">
+                      {images.map((images,index)=>(
+                      <div className="imagess" key={index}>
+                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                        <img src={images.url} alt={images.name} /> 
+                      </div>
+                      ))}
+                    </div>
+                  </div>
+              </div>
             </div>
 
             <div

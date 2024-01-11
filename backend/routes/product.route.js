@@ -114,106 +114,82 @@ router.route('/fetchTableEdit').get(async (req, res) => {
   }
 });
 
-router.route("/create").post(
-  upload.fields([{ name: "selectedimage", maxCount: 1 }]),
-
-  async (req, res) => {
+router.route("/create").post(async (req, res) => {
     try {
-      let finalThreshold;
-      if (req.body.thresholds === "") {
-        finalThreshold = 0;
-      } else {
-        finalThreshold = req.body.thresholds;
-      }
+      const {
+        code,
+        prod_id,
+        name,
+        slct_category,
+        slct_binLocation,
+        unitMeasurement,
+        slct_manufacturer,
+        details,
+        thresholds,
+        assembly,
+        spareParts,
+        subparting,
+        images
+      } = req.body;
+      console.log(name)
         const existingDataCode = await Product.findOne({
           where: {
-            product_code: req.body.code, 
+            product_code: code, 
           },
         });
     
         if (existingDataCode) {
           res.status(201).send('Exist');
         } else {
-            let image_blob, image_blobFiletype;
-            if (req.files.selectedimage) {
-                image_blob = req.files.selectedimage[0].buffer;
-
-                image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
-
-            }
-            else{
-                image_blob = null;
-
-                image_blobFiletype = null;
-            }
-
             const newData = await Product.create({
-            product_code: req.body.code,
-            product_name: req.body.name,
-            productsID: req.body.prod_id,
-            product_category: req.body.slct_category,
-            product_unit: req.body.unit,
-            product_location: req.body.slct_binLocation,
-            product_unitMeasurement: req.body.unitMeasurement,
-            product_manufacturer: req.body.slct_manufacturer,
-            product_details: req.body.details,
-            product_threshold: finalThreshold,
-            // product_image: image_blob,
-            product_imageType: image_blobFiletype,
+            product_code: code.toUpperCase(),
+            product_name: name,
+            productsID: prod_id,
+            product_category: slct_category,
+            product_location: slct_binLocation,
+            product_unitMeasurement: unitMeasurement,
+            product_manufacturer: slct_manufacturer,
+            product_details: details,
+            product_threshold: thresholds,
             product_status: 'Active'
           });
 
           //Assembly
           const IdData = newData.product_id;
-          const selectedAssemblies = req.body.assemblies;
 
-          if(typeof selectedAssemblies === 'object'){
+          const selectedAssemblies = req.body.assembly;
           for (const assemblyDropdown of selectedAssemblies) {
             const assemblyValue = assemblyDropdown.value;
-    
-            console.log(assemblyValue);
-    
+
             await Product_Assembly.create({
               product_id: IdData,
               assembly_id: assemblyValue
             });
-            }
           }
-  
-
           //Spareparts
-
-          const selectedSpare = req.body.sparepart;
-          if(typeof selectedSpare === 'object'){
+          const selectedSpare = req.body.spareParts;
           for (const spareDropdown of selectedSpare) {
             const spareValue = spareDropdown.value;
-    
-            console.log(spareValue)
+
             await Product_Spareparts.create({
               product_id: IdData,
               sparePart_id: spareValue
             });
           }
-          }
 
           //Subparts
-          const selectedSubparting = req.body.subpart;
-          if(typeof selectedSubparting === 'object'){
+          const selectedSubparting = req.body.subparting;
           for (const subpartDropdown of selectedSubparting) {
             const subpartValue = subpartDropdown.value;
-    
-            console.log(subpartValue)
+  
             await Product_Subparts.create({
               product_id: IdData,
               subPart_id: subpartValue
             });
             }
-          }
 
           //Supplier
           const selectedSuppliers = req.body.productTAGSuppliers;
-
-          if(typeof selectedSuppliers === 'object'){
           for (const supplier of selectedSuppliers) {
             const { supplier_code, price } = supplier;
           
@@ -236,11 +212,9 @@ router.route("/create").post(
               price: price
             });
             }
-          }
 
           //Image
-          console.log(req.body.img)
-          const imageData = req.body.img;
+          const imageData = req.body.images;
           if(imageData.length > 0){
             imageData.forEach(async (i) => {
               await Product_image.create({
@@ -249,8 +223,6 @@ router.route("/create").post(
               });
             });
           }
-
-
           res.status(200).json(newData);
         }
       } catch (err) {

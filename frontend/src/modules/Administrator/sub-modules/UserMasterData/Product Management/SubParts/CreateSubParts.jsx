@@ -246,47 +246,6 @@ function selectFiles() {
   fileInputRef.current.click();
 }
 
-// function onFileSelect(event) {
-//   const files = event.target.files;
-
-//   if (files.length === 0) return;
-
-//    if (images.length + files.length > 5) {
-//     swal({
-//       icon: "error",
-//       title: "File Limit Exceeded",
-//       text: "You can upload up to 5 images only.",
-//     });
-//     return;
-//   }
-
-//   for (let i = 0; i < files.length; i++) {
-//     const fileType = files[i].type.split('/')[1].toLowerCase();
-//     if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
-//       swal({
-//         icon: "error",
-//         title: "Invalid File Type",
-//         text: "Only JPEG and PNG files are allowed.",
-//       });
-//       continue;
-//     }
-//     if (!images.some((e) => e.name === files[i].name)) {
-//       const reader = new FileReader();
-//       reader.onload = (e) => {
-//         setImages((prevImages) => [
-//           ...prevImages,
-//           {
-//             name: files[i].name,
-//             url: URL.createObjectURL(files[i]),
-//             base64Data: e.target.result.split(',')[1],
-//           },
-//         ]);
-//       };
-//       reader.readAsDataURL(files[i]);
-//     }
-//   }
-// }
-
 function onFileSelect(event) {
   const files = event.target.files;
 
@@ -409,46 +368,7 @@ function onDropImages(event) {
     }
   }
 }
-// function onDropImages(event) {
-//   event.preventDefault();
-//   setIsDragging(false);
-//   const files = event.dataTransfer.files;
 
-//   if (images.length + files.length > 5) {
-//     swal({
-//       icon: "error",
-//       title: "File Limit Exceeded",
-//       text: "You can upload up to 5 images only.",
-//     });
-//     return;
-//   }
-
-//   for (let i = 0; i < files.length; i++) {
-//     const fileType = files[i].type.split('/')[1].toLowerCase();
-//     if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
-//       swal({
-//         icon: "error",
-//         title: "Invalid File Type",
-//         text: "Only JPEG and PNG files are allowed.",
-//       });
-//       continue;
-//     }
-//     if (!images.some((e) => e.name === files[i].name)) {
-//       const reader = new FileReader();
-//       reader.onload = (e) => {
-//         setImages((prevImages) => [
-//           ...prevImages,
-//           {
-//             name: files[i].name,
-//             url: URL.createObjectURL(files[i]),
-//             base64Data: e.target.result.split(',')[1],
-//           },
-//         ]);
-//       };
-//       reader.readAsDataURL(files[i]);
-//     }
-//   }
-// }
 
   const add = async (e) => {
     e.preventDefault();
@@ -476,7 +396,6 @@ function onDropImages(event) {
           thresholds,
           slct_category,
           images
-          // img
         })
         .then((res) => {
           // console.log(res);
@@ -694,78 +613,6 @@ function onDropImages(event) {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Image Upload:{" "}
                   </Form.Label>
-                  {/* <div
-                    style={{
-                      border: "1px #DFE3E7 solid",
-                      height: "auto",
-                      maxHeight: "140px",
-                      fontSize: "15px",
-                      width: "720px",
-                      padding: 10,
-                    }}>
-                    <Dropzone onDrop={onDropImage}>
-                      {({ getRootProps, getInputProps }) => (
-                        <div
-                          className="w-100 h-100"
-                          style={{ width: "700px" }}
-                          {...getRootProps()}>
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            style={{ display: "none" }}
-                            {...getInputProps()}
-                          />
-                          <div
-                            className="d-flex align-items-center"
-                            style={{ width: "700px", height: "2.5em" }}>
-                            <p
-                              className="fs-5 w-100 p-3 btn btn-secondary"
-                              onClick={uploadClick}
-                              style={{ color: "white", fontWeight: "bold" }}>
-                              Drag and drop a file here, or click to select a
-                              file
-                            </p>
-                          </div>
-                          {selectedimage.length > 0 && (
-                            <div
-                              className="d-flex align-items-center justify-content-center"
-                              style={{
-                                border: "1px green solid",
-                                width: "700px",
-                                height: "5em",
-                                padding: "1rem",
-                                overflowY: "auto",
-                              }}>
-                              Uploaded Images:
-                              <p
-                                style={{
-                                  color: "green",
-                                  fontSize: "15px",
-                                  display: "flex",
-                                  height: "4em",
-                                  flexDirection: "column",
-                                }}>
-                                {selectedimage.map((image, index) => (
-                                  <div key={index}>
-                                    <div className="imgContainer">
-                                      <span className="imgUpload">
-                                        {image.name}
-                                      </span>
-                                      <X
-                                        size={20}
-                                        onClick={removeImage}
-                                        className="removeButton"
-                                      />
-                                    </div>
-                                  </div>
-                                ))}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </Dropzone>
-                  </div> */}
                   <div className="card">
                     <div className="top">
                       <p>Drag & Drop Image Upload</p>

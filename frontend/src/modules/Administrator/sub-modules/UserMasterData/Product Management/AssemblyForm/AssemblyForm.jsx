@@ -164,12 +164,6 @@ function AssemblyForm({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Assembly not Deleted!",
-          icon: "warning",
-        });
       }
     });
   };

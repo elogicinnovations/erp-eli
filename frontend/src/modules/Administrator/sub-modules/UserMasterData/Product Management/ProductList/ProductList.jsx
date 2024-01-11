@@ -178,12 +178,6 @@ function ProductList({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Product not Deleted!",
-          icon: "warning",
-        });
       }
     });
   };
