@@ -21,7 +21,7 @@ router.use(session({
 router.route('/getProducts').get(async (req, res) => 
 {
     try {
-        console.log('url_ID prod', req.query.id)
+        // console.log('url_ID prod', req.query.id)
         const data = await IssuedProduct.findAll({
             where: {
                 issuance_id: req.query.id

@@ -532,7 +532,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
 
     
     useEffect(() => {
-      axios.get(BASE_URL + '/issuance/getIssuance', {
+      axios.get(BASE_URL + '/issuance/returnForm', {
         params: {
           id: id
         }
@@ -609,7 +609,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                             <div className="row" style={{padding: '20px'}}>
                                 <div className="col-6">
                                     <div className="ware">
-                                        Destination Warehouse
+                                        Cost Center Warehouse
                                     </div>
                                     <div className="cost-c">
                                     {site} - {costCenter}
@@ -670,7 +670,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                   <td>
                                                     <input
                                                       type="number"
-                                                      value={quantityInputs[data.value] || ""}
+                                                      value={quantityInputs[data.value] || "0"}
                                                       onChange={(e) => handleQuantityChange(e.target.value, data.value, data.quantity)}
                                                       // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
                                                       required
@@ -698,7 +698,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                 <td>
                                                   <input
                                                     type="number"
-                                                    value={quantityInputs_asm[data.value] || ""}
+                                                    value={quantityInputs_asm[data.value] || "0"}
                                                     onChange={(e) => handleQuantityChange_asm(e.target.value, data.value, data.quantity)}
                                                     // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
                                                     required
@@ -727,10 +727,10 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                 <td>
                                                   <input
                                                     type="number"
-                                                    value={quantityInputs_spare[data.value] || ""}
+                                                    value={quantityInputs_spare[data.value] || "0"}
                                                     onChange={(e) => handleQuantityChange_spare(e.target.value, data.value, data.quantity)}
                                                     // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
-                                                    required
+                                                    
                                                     placeholder="Input quantity"
                                                     style={{
                                                       height: "40px",
@@ -755,10 +755,10 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                 <td>
                                                   <input
                                                     type="number"
-                                                    value={quantityInputs_subpart[data.value] || ""}
+                                                    value={quantityInputs_subpart[data.value] || "0"}
                                                     onChange={(e) => handleQuantityChange_subpart(e.target.value, data.value, data.quantity)}
                                                     // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
-                                                    
+                                                    required
                                                     placeholder="Input quantity"
                                                     style={{
                                                       height: "40px",

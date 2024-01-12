@@ -17,50 +17,30 @@ router.use(session({
 }));
 
 
-
-router.route('/fetchInvetory_product').get(async (req, res) => {
-    try {
-      const data = await Inventory.findAll({
-        include:[ {
-          model: ProductTAGSupplier,
-          required: true,
-
-              include: [{
-                model: Product,
-                required: true,
-
-                    include: [{
-                      model: Manufacturer,
-                      required: true,
-                    }]
-              },
-              {
-                model: Supplier,
-                required: true
-              }],            
-        }
-        
-      ]
-      });
-  
-      if (data) {
-        
-
-        // console.log(data);
-        return res.json(data);
-      } else {
-        res.status(400);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
-    }
-  });
-
-  
-router.route('/fetchInvetory_assembly').get(async (req, res) => {
+router.route('/fetchInventory').get(async (req, res) => {
   try {
-    const data = await Inventory_Assembly.findAll({
+    const productData = await Inventory.findAll({
+      include:[{
+        model: ProductTAGSupplier,
+        required: true,
+
+            include: [{
+              model: Product,
+              required: true,
+
+                  include: [{
+                    model: Manufacturer,
+                    required: true,
+                  }]
+            },
+            {
+              model: Supplier,
+              required: true
+            }],            
+      }]
+    });
+
+    const assemblyData = await Inventory_Assembly.findAll({
       include:[ {
         model: Assembly_Supplier,
         required: true,
@@ -79,30 +59,10 @@ router.route('/fetchInvetory_assembly').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
-      }
-      
-    ]
+      }]
     });
 
-    if (data) {
-      
-
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
-
-
-
-router.route('/fetchInvetory_spare').get(async (req, res) => {
-  try {
-    const data = await Inventory_Spare.findAll({
+    const spareData = await Inventory_Spare.findAll({
       include:[ {
         model: SparePart_Supplier,
         required: true,
@@ -121,30 +81,10 @@ router.route('/fetchInvetory_spare').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
-      }
-      
-    ]
+      }]
     });
 
-    if (data) {
-      
-
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
-
-
-
-router.route('/fetchInvetory_subpart').get(async (req, res) => {
-  try {
-    const data = await Inventory_Subpart.findAll({
+    const subpartData = await Inventory_Subpart.findAll({
       include:[ {
         model: Subpart_supplier,
         required: true,
@@ -163,24 +103,177 @@ router.route('/fetchInvetory_subpart').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
-      }
-      
-    ]
+      }]
     });
 
-    if (data) {
-      
-
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
+    return res.json({
+      product: productData,
+      assembly: assemblyData,
+      spare: spareData,
+      subpart: subpartData,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
   }
 });
+
+
+
+// router.route('/fetchInvetory_product').get(async (req, res) => {
+//     try {
+//       const data = await Inventory.findAll({
+//         include:[ {
+//           model: ProductTAGSupplier,
+//           required: true,
+
+//               include: [{
+//                 model: Product,
+//                 required: true,
+
+//                     include: [{
+//                       model: Manufacturer,
+//                       required: true,
+//                     }]
+//               },
+//               {
+//                 model: Supplier,
+//                 required: true
+//               }],            
+//         }
+        
+//       ]
+//       });
+  
+//       if (data) {
+//         return res.json(data);
+//       } else {
+//         res.status(400);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).json("Error");
+//     }
+//   });
+
+  
+// router.route('/fetchInvetory_assembly').get(async (req, res) => {
+//   try {
+//     const data = await Inventory_Assembly.findAll({
+//       include:[ {
+//         model: Assembly_Supplier,
+//         required: true,
+
+//             include: [{
+//               model: Assembly,
+//               required: true,
+
+//               include: [{
+//                 model: Manufacturer,
+//                 required: true,
+//               }]
+
+//             },
+//             {
+//               model: Supplier,
+//               required: true
+//             }],            
+//       }]
+//     });
+
+//     if (data) {
+      
+
+//       // console.log(data);
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
+
+
+
+// router.route('/fetchInvetory_spare').get(async (req, res) => {
+//   try {
+//     const data = await Inventory_Spare.findAll({
+//       include:[ {
+//         model: SparePart_Supplier,
+//         required: true,
+
+//             include: [{
+//               model: SparePart,
+//               required: true,
+
+//               include: [{
+//                 model: Manufacturer,
+//                 required: true,
+//               }]
+
+//             },
+//             {
+//               model: Supplier,
+//               required: true
+//             }],            
+//       }]
+//     });
+
+//     if (data) {
+      
+
+//       // console.log(data);
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
+
+
+
+// router.route('/fetchInvetory_subpart').get(async (req, res) => {
+//   try {
+//     const data = await Inventory_Subpart.findAll({
+//       include:[ {
+//         model: Subpart_supplier,
+//         required: true,
+
+//             include: [{
+//               model: SubPart,
+//               required: true,
+
+//               include: [{
+//                 model: Manufacturer,
+//                 required: true,
+//               }]
+
+//             },
+//             {
+//               model: Supplier,
+//               required: true
+//             }],            
+//       }]
+//     });
+
+//     if (data) {
+      
+
+//       // console.log(data);
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
 
   

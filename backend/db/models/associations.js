@@ -151,6 +151,8 @@ Product_Subparts.belongsTo(SubPart, { foreignKey: "subPart_id"});
 //Sparepart image
 SparePart.hasMany(SparePart_image, { foreignKey: "sparepart_id"});
 SparePart_image.belongsTo(SparePart, { foreignKey: "sparepart_id"});
+
+
 //product price history table
 Product.hasMany(productTAGsupplierHistory, { foreignKey: "product_id" });
 productTAGsupplierHistory.belongsTo(Product, { foreignKey: "product_id" });
@@ -271,6 +273,12 @@ SparePart_SubPart.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 SparePart.hasMany(SparePart_Supplier, { foreignKey: "sparePart_id"});
 SparePart_Supplier.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 
+Manufacturer.hasMany(SparePart, { foreignKey: "spareParts_manufacturer"});
+SparePart.belongsTo(Manufacturer, { foreignKey: "spareParts_manufacturer"});
+
+BinLocation.hasMany(SparePart, { foreignKey: "spareParts_location"});
+SparePart.belongsTo(BinLocation, { foreignKey: "spareParts_location"});
+
 Supplier.hasMany(SparePart_Supplier, { foreignKey: "supplier_code"});
 SparePart_Supplier.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
@@ -282,63 +290,6 @@ Supplier.hasMany(SparePartPrice_history, { foreignKey: "supplier_code"});
 SparePartPrice_history.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 
-//`purchase_req_products` table
-PR.hasMany(PR_product, { foreignKey: "pr_id"});
-PR_product.belongsTo(PR, { foreignKey: "pr_id"});
-
-Product.hasMany(PR_product, { foreignKey: "product_id"});
-PR_product.belongsTo(Product, { foreignKey: "product_id"});
-
-
-//`purchase_req_assemblies` table
-PR.hasMany(PR_assembly, { foreignKey: "pr_id"});
-PR_assembly.belongsTo(PR, { foreignKey: "pr_id"});
-
-Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id"});
-PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
-
-//`purchase_req_spares` table
-PR.hasMany(PR_sparePart, { foreignKey: "pr_id"});
-PR_sparePart.belongsTo(PR, { foreignKey: "pr_id"});
-
-SparePart.hasMany(PR_sparePart, { foreignKey: "spare_id"});
-PR_sparePart.belongsTo(SparePart, { foreignKey: "spare_id"});
-
-//`purchase_req_subParts` table
-PR.hasMany(PR_subPart, { foreignKey: "pr_id"});
-PR_subPart.belongsTo(PR, { foreignKey: "pr_id"});
-
-SubPart.hasMany(PR_subPart, { foreignKey: "subPart_id"});
-PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id"});
-
-
-PR.hasMany(PR_history, { foreignKey: "pr_id"});
-PR_history.belongsTo(PR, { foreignKey: "pr_id"});
-
-PR.hasMany(PR_Rejustify, { foreignKey: "pr_id"});
-PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id"});
-
-//purchase_req_canvassed_prds TAble (Product)
-PR.hasMany(PR_PO, { foreignKey: "pr_id"});
-PR_PO.belongsTo(PR, { foreignKey: "pr_id"});
-
-ProductTAGSupplier.hasMany(PR_PO, { foreignKey: "product_tag_supplier_ID"});
-PR_PO.belongsTo(ProductTAGSupplier, { foreignKey: "product_tag_supplier_ID"});
-
-
-//purchase_req_canvassed_asmbly TAble (Assembly)
-PR.hasMany(PR_PO_asmbly, { foreignKey: "pr_id"});
-PR_PO_asmbly.belongsTo(PR, { foreignKey: "pr_id"});
-
-Assembly_Supplier.hasMany(PR_PO_asmbly, { foreignKey: "assembly_suppliers_ID"});
-PR_PO_asmbly.belongsTo(Assembly_Supplier, { foreignKey: "assembly_suppliers_ID"});
-
-//purchase_req_canvassed_spares TAble (spareparts)
-PR.hasMany(PR_PO_spare, { foreignKey: "pr_id"});
-PR_PO_spare.belongsTo(PR, { foreignKey: "pr_id"});
-
-SparePart_Supplier.hasMany(PR_PO_spare, { foreignKey: "spare_suppliers_ID"});
-PR_PO_spare.belongsTo(SparePart_Supplier, { foreignKey: "spare_suppliers_ID"});
 
 //purchase_req_canvassed_subpart TAble (subparts)
 PR.hasMany(PR_PO_subpart, { foreignKey: "pr_id"});

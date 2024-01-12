@@ -34,6 +34,9 @@ const navigate = useNavigate()
     const [subpart, setSubpart] = useState([]);
     const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
 
+
+    
+
     useEffect(() => {
       // Fetch issuances and calculate expiration status
       axios.get(BASE_URL + '/issuance/getIssuance')
@@ -52,28 +55,42 @@ const navigate = useNavigate()
         .catch((err) => console.log(err));
     }, []);
 
-    useEffect(() => { //fetch product for inventory
-        axios.get(BASE_URL + '/inventory/fetchInvetory_product')
-          .then(res => setInventory(res.data))
-          .catch(err => console.log(err));
-      }, []);
 
-      useEffect(() => { //fetch assembly for inventory
-        axios.get(BASE_URL + '/inventory/fetchInvetory_assembly')
-          .then(res => setAssembly(res.data))
-          .catch(err => console.log(err));
-      }, []);
 
-      useEffect(() => { //fetch spare for inventory
-        axios.get(BASE_URL + '/inventory/fetchInvetory_spare')
-          .then(res => setSpare(res.data))
-          .catch(err => console.log(err));
-      }, []);
+    const reloadTable_inventory = () => {
+      // //axios for product
+      //   axios.get(BASE_URL + '/inventory/fetchInvetory_product')
+      //   .then(res => setInventory(res.data))
+      //   .catch(err => console.log(err));
 
-      useEffect(() => { //fetch subpart for inventory
-        axios.get(BASE_URL + '/inventory/fetchInvetory_subpart')
-          .then(res => setSubpart(res.data))
-          .catch(err => console.log(err));
+
+      // //axios for assembly
+      //   axios.get(BASE_URL + '/inventory/fetchInvetory_assembly')
+      //   .then(res => setAssembly(res.data))
+      //   .catch(err => console.log(err));
+
+      // //axios for sparepart
+      //   axios.get(BASE_URL + '/inventory/fetchInvetory_spare')
+      //   .then(res => setSpare(res.data))
+      //   .catch(err => console.log(err));
+
+      // //axios for subpart
+      //   axios.get(BASE_URL + '/inventory/fetchInvetory_subpart')
+      //   .then(res => setSubpart(res.data))
+      //   .catch(err => console.log(err));
+
+      axios.get(BASE_URL + '/inventory/fetchInventory')
+        .then(res => {
+          setInventory(res.data.product);
+          setAssembly(res.data.assembly);
+          setSpare(res.data.spare);
+          setSubpart(res.data.subpart);
+        })
+        .catch(err => console.log(err));
+    }
+
+      useEffect(() => { 
+        reloadTable_inventory()
       }, []);
 
 
@@ -86,27 +103,43 @@ const navigate = useNavigate()
     }, []);
 
     const { id } = useParams();
-    const [returned, setReturned] = useState([]);
+    const [returned_prd, setReturned_prd] = useState([]);
+    const [returned_asm, setReturned_asm] = useState([]);
+    const [returned_spare, setReturned_spare] = useState([]);
+    const [returned_subpart, setReturned_subpart] = useState([]);
+
+    const reloadTable_return = () => {
+      // axios.get(BASE_URL + '/issuedReturn/getReturn',{
+      //   params: {
+      //     id: id
+      //   }
+      // })
+      // .then(res => {
+      //   setReturned_prd(res.data);
+      // })
+      // .catch(err => {
+      //   console.error(err);
+      //   // Handle error state or show an error message to the user
+      // });
+
+      axios.get(BASE_URL + '/issuedReturn/fetchReturn')
+      .then(res => {
+        setReturned_prd(res.data.product);
+        setReturned_asm(res.data.assembly);
+        setReturned_spare(res.data.spare);
+        setReturned_subpart(res.data.subpart);
+      })
+      .catch(err => console.log(err));
+    }
 
   useEffect(() => {
-    axios.get(BASE_URL + '/issuedReturn/getReturn',{
-      params: {
-        id: id
-      }
-    })
-    .then(res => {
-        setReturned(res.data);
-    })
-    .catch(err => {
-      console.error(err);
-      // Handle error state or show an error message to the user
-    });
+    reloadTable_return()
   }, [id]);
 
 
   // const [issuedReturn, setIssuedReturn] = useState()
 
-    const handleMoveToInventory = (inventoryID, quantity) => {
+    const handleMoveToInventory = (prmy_id, inventoryID, quantity, type) => {
       swal({
         title: 'Are you sure?',
         text: 'This will move the item to inventory!',
@@ -115,19 +148,19 @@ const navigate = useNavigate()
         dangerMode: true,
       }).then((confirmed) => {
         if (confirmed) {
-
-          console.log("2222222222222222222222", inventoryID)
+          const types = type   
+          const invetory_id = inventoryID         
+          const table_quantity = quantity
+          const primary_id = prmy_id
           // If confirmed, make the API call to move to inventory
           axios.post(BASE_URL + '/issuedReturn/moveToInventory',{
-            params:{
-              inventoryID, quantity
-            }
+            invetory_id, table_quantity, primary_id, types
           })
             .then(() => {
               swal('Success!', 'Item moved to inventory successfully!', 'success')
                 .then(() => {
-                  // Reload the page
-                  window.location.reload();
+                  reloadTable_return()
+                  reloadTable_inventory()
                 });
             })
             .catch(err => {
@@ -139,7 +172,7 @@ const navigate = useNavigate()
       });
     };
 
-    const handleRetain = (returnId) => {
+    const handleRetain = (returnId, type) => {
       // Show confirmation SweetAlert
       swal({
           title: 'Are you sure?',
@@ -149,14 +182,17 @@ const navigate = useNavigate()
           dangerMode: true,
       }).then((confirmed) => {
           if (confirmed) {
-              // If confirmed, make the API call to update the status to Retained
-              axios.put(BASE_URL + `/issuedReturn/updateStatus/${returnId}`, { status: 'Retained' })
+              const primaryID = returnId
+              const types = type
+              axios.post(BASE_URL + `/issuedReturn/retain`, { 
+                primaryID, types
+              })
                   .then(() => {
                       // Show success SweetAlert
                       swal('Success!', 'Status set to Retained successfully!', 'success')
                           .then(() => {
-                              // Reload the page or perform additional actions if needed
-                              window.location.reload();
+                            reloadTable_return()
+                            reloadTable_inventory()
                           });
                   })
                   .catch(err => {
@@ -172,69 +208,69 @@ const navigate = useNavigate()
 
     // Artificial Data
 
-    const [showDropdown, setShowDropdown] = useState(false);
-    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    // const [showDropdown, setShowDropdown] = useState(false);
+    // const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
-    const [showModal, setShowModal] = useState(false);
-    const handleShow = () => setShowModal(true);
-    const [validated, setValidated] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+    // const handleShow = () => setShowModal(true);
+    // const [validated, setValidated] = useState(false);
 
-    const handleClose = () => {
-      setShowModal(false);
-    };
+    // const handleClose = () => {
+    //   setShowModal(false);
+    // };
 
-  useEffect(() => {
-    // Close dropdown when the component unmounts or when another tab is selected
-    return () => setShowDropdown(false);
-  }, []);
+  // useEffect(() => {
+  //   // Close dropdown when the component unmounts or when another tab is selected
+  //   return () => setShowDropdown(false);
+  // }, []);
 
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [rotatedIcons, setRotatedIcons] = useState(Array(inventory.length).fill(false));
+  // const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  // const [rotatedIcons, setRotatedIcons] = useState(Array(inventory.length).fill(false));
 
-  const toggleDropdown = (event, index) => {
-    // Check if the clicked icon is already open, close it
-    if (index === openDropdownIndex) {
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = !newRotatedIcons[index];
-        return newRotatedIcons;
-      });
-      setShowDropdown(false);
-      setOpenDropdownIndex(null);
-    } else {
-      // If a different icon is clicked, close the currently open dropdown and open the new one
-      setRotatedIcons(Array(inventory.length).fill(false));
-      const iconPosition = event.currentTarget.getBoundingClientRect();
-      setDropdownPosition({
-        top: iconPosition.bottom + window.scrollY,
-        left: iconPosition.left + window.scrollX,
-      });
-      setRotatedIcons((prevRotatedIcons) => {
-        const newRotatedIcons = [...prevRotatedIcons];
-        newRotatedIcons[index] = true;
-        return newRotatedIcons;
-      });
-      setShowDropdown(true);
-      setOpenDropdownIndex(index);
-    }
-  };
+  // const toggleDropdown = (event, index) => {
+  //   // Check if the clicked icon is already open, close it
+  //   if (index === openDropdownIndex) {
+  //     setRotatedIcons((prevRotatedIcons) => {
+  //       const newRotatedIcons = [...prevRotatedIcons];
+  //       newRotatedIcons[index] = !newRotatedIcons[index];
+  //       return newRotatedIcons;
+  //     });
+  //     setShowDropdown(false);
+  //     setOpenDropdownIndex(null);
+  //   } else {
+  //     // If a different icon is clicked, close the currently open dropdown and open the new one
+  //     setRotatedIcons(Array(inventory.length).fill(false));
+  //     const iconPosition = event.currentTarget.getBoundingClientRect();
+  //     setDropdownPosition({
+  //       top: iconPosition.bottom + window.scrollY,
+  //       left: iconPosition.left + window.scrollX,
+  //     });
+  //     setRotatedIcons((prevRotatedIcons) => {
+  //       const newRotatedIcons = [...prevRotatedIcons];
+  //       newRotatedIcons[index] = true;
+  //       return newRotatedIcons;
+  //     });
+  //     setShowDropdown(true);
+  //     setOpenDropdownIndex(index);
+  //   }
+  // };
 
-  useEffect(() => {
-    // Close dropdown when clicking outside
-    const handleClickOutside = (event) => {
-      if (showDropdown && !event.target.closest('.dots-icon')) {
-        setRotatedIcons(Array(inventory.length).fill(false));
-        setShowDropdown(false);
-        setOpenDropdownIndex(null);
-      }
-    };
+  // useEffect(() => {
+  //   // Close dropdown when clicking outside
+  //   const handleClickOutside = (event) => {
+  //     if (showDropdown && !event.target.closest('.dots-icon')) {
+  //       setRotatedIcons(Array(inventory.length).fill(false));
+  //       setShowDropdown(false);
+  //       setOpenDropdownIndex(null);
+  //     }
+  //   };
 
-    document.addEventListener('click', handleClickOutside);
+  //   document.addEventListener('click', handleClickOutside);
 
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [showDropdown]);
+  //   return () => {
+  //     document.removeEventListener('click', handleClickOutside);
+  //   };
+  // }, [showDropdown]);
 
   useEffect(() => {
     // Initialize DataTable when role data is available
@@ -252,10 +288,10 @@ const navigate = useNavigate()
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if ($('#order2-listing').length > 0 && returned.length > 0) {
+    if ($('#order2-listing').length > 0 && returned_prd.length > 0) {
       $('#order2-listing').DataTable();
     }
-  }, [returned]);
+  }, [returned_prd]);
 
     const tabStyle = {
         padding: '10px 15px',
@@ -460,7 +496,6 @@ const navigate = useNavigate()
                                                     <thead>
                                                     
                                                     <tr>
-                                                        <th className='tableh'>Id</th>
                                                         <th className='tableh'>Product Code</th>
                                                         <th className='tableh'>Product Name</th>
                                                         <th className='tableh'>Return By</th>
@@ -472,9 +507,8 @@ const navigate = useNavigate()
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {returned.map((data, i) => (
+                                                        {returned_prd.map((data, i) => (
                                                         <tr key={i}>
-                                                            <td>{data.id}</td>
                                                             <td>{data.inventory_prd.product_tag_supplier.product.product_code }</td>
                                                             <td>{data.inventory_prd.product_tag_supplier.product.product_name }</td>
                                                             <td>{data.return_by}</td>
@@ -486,14 +520,99 @@ const navigate = useNavigate()
                                                               <button
                                                                   style={{ fontSize: '12px' }}
                                                                   className='btn'
-                                                                  onClick={() => handleMoveToInventory(data.inventory_prd.inventory_id, data.quantity)}
+                                                                  onClick={() => handleMoveToInventory(data.id, data.inventory_prd.inventory_id, data.quantity, "product")}
                                                               >
                                                                   move to inventory
                                                               </button>
                                                               <button
                                                                   style={{ fontSize: '12px' }}
                                                                   className='btn'
-                                                                  onClick={() => handleRetain(data.id)}
+                                                                  onClick={() => handleRetain(data.id, "product")}
+                                                              >
+                                                                  Retain
+                                                              </button>
+                                                            </td>
+                                                        </tr>
+                                                        ))}
+
+                                                      {returned_asm.map((data, i) => (
+                                                        <tr key={i}>
+                                                            <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_code}</td>
+                                                            <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_name}</td>
+                                                            <td>{data.return_by}</td>
+                                                            <td>{data.quantity}</td>
+                                                            <td>{formatDatetime(data.createdAt)}</td>
+                                                            <td>{formatDatetime(data.issuance.updatedAt)}</td>
+                                                            <td>{data.status}</td>
+                                                            <td>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleMoveToInventory(data.id, data.inventory_assembly.inventory_id, data.quantity, "assembly")}
+                                                              >
+                                                                  move to inventory
+                                                              </button>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleRetain(data.id, "assembly")}
+                                                              >
+                                                                  Retain
+                                                              </button>
+                                                            </td>
+                                                        </tr>
+                                                        ))}
+
+
+                                                      {returned_spare.map((data, i) => (
+                                                        <tr key={i}>
+                                                            <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}</td>
+                                                            <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}</td>
+                                                            <td>{data.return_by}</td>
+                                                            <td>{data.quantity}</td>
+                                                            <td>{formatDatetime(data.createdAt)}</td>
+                                                            <td>{formatDatetime(data.issuance.updatedAt)}</td>
+                                                            <td>{data.status}</td>
+                                                            <td>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleMoveToInventory(data.id, data.inventory_spare.inventory_id, data.quantity, "spare")}
+                                                              >
+                                                                  move to inventory
+                                                              </button>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleRetain(data.id, "spare")}
+                                                              >
+                                                                  Retain
+                                                              </button>
+                                                            </td>
+                                                        </tr>
+                                                        ))}
+
+                                                      {returned_subpart.map((data, i) => (
+                                                        <tr key={i}>
+                                                            <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_code}</td>
+                                                            <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_name}</td>
+                                                            <td>{data.return_by}</td>
+                                                            <td>{data.quantity}</td>
+                                                            <td>{formatDatetime(data.createdAt)}</td>
+                                                            <td>{formatDatetime(data.issuance.updatedAt)}</td>
+                                                            <td>{data.status}</td>
+                                                            <td>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleMoveToInventory(data.id, data.inventory_subpart.inventory_id, data.quantity, "subpart")}
+                                                              >
+                                                                  move to inventory
+                                                              </button>
+                                                              <button
+                                                                  style={{ fontSize: '12px' }}
+                                                                  className='btn'
+                                                                  onClick={() => handleRetain(data.id, "subpart")}
                                                               >
                                                                   Retain
                                                               </button>
