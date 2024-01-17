@@ -328,7 +328,6 @@ function SpareParts({ authrztn }) {
                               <Link
                                 to={`/updateSpareParts/${data.id}`}
                                 style={{ fontSize: "12px" }}
-                                // onClick={() => handleModalToggle(data)}
                                 className="btn">
                                 Update
                               </Link>

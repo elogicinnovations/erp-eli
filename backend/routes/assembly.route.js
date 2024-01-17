@@ -174,161 +174,146 @@ router.route("/create").post(async (req, res) => {
   }
 });
 
+
 router.route("/update").post(
   async (req, res) => {
-  
-  try {
-    console.log(req.query.id)
-    const existingDataCode = await Assembly.findOne({
-      where: {
-        assembly_code: req.query.code,
-        id: { [Op.ne]: req.query.id },
-      },
-    });
+    const { id,
+            code,
+            name,
+            desc,
+            spareParts,
+            Subparts,
+            unitMeasurement,
+            slct_manufacturer,
+            slct_binLocation,
+            thresholds,
+            addPriceInput,
+            assemblyimage, } = req.body;
 
-    if (existingDataCode) {
-      res.status(201).send('Exist');
-    } else {
-      let finalThreshold;
-      if (req.query.thresholds === "") {
-      finalThreshold = 0;
-      } else {
-      finalThreshold = req.query.thresholds;
-      }
-      const Assembly_newData = await Assembly.update(
-        {
-          assembly_code: req.query.code,
-          assembly_name: req.query.name,
-          assembly_desc: req.query.desc,
-          bin_id: req.query.slct_binLocation,
-          assembly_unitMeasurement: req.query.unitMeasurement,
-          assembly_manufacturer: req.query.slct_manufacturer,
-          threshhold: finalThreshold,
+    try {
+      const existingDataCode = await Assembly.findOne({
+        where: {
+          assembly_code: code,
+          id: { [Op.ne]: id },
         },
-        {
-          where: {
-            id: req.query.id,
-          },
-        }
-      );
-
-      if (Assembly_newData) {
-      const deletesparepart = await Assembly_SparePart.destroy({
-          where: {
-            sparePart_id: req.query.id
-          },
       });
 
-      if(deletesparepart !== null || deletesparepart !== undefined) {
-        const selectedSparepart = req.query.spareParts
-        if (selectedSparepart && typeof selectedSparepart[Symbol.iterator] === 'function') {
-        for (const sparepartDropdown of selectedSparepart) {
-          const sparepartValue = sparepartDropdown.value;
-  
-          await Assembly_SparePart.create({
-            assembly_id: req.query.id,
-            sparePart_id: sparepartValue
-          });
+      if (existingDataCode) {
+        res.status(201).send('Exist');
+      } else {
+        let finalThreshold;
+        if (thresholds === "") {
+          finalThreshold = 0;
+        } else {
+          finalThreshold = thresholds;
         }
-      }
-    } //update product spare part end
 
-        const deletesubpart = await Assembly_SubPart.destroy({
+        const AssemblyNew_Data = await Assembly.update(
+          {
+            assembly_code: code,
+            assembly_name: name,
+            assembly_desc: desc,
+            bin_id: slct_binLocation,
+            assembly_unitMeasurement: unitMeasurement,
+            assembly_manufacturer: slct_manufacturer,
+            threshhold: finalThreshold,
+          },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
+
+        const deleteAssemblyImage = Assembly_image.destroy({
           where: {
-            subPart_id: req.query.id
+            assembly_id: id
           },
         });
 
-        if(deletesubpart !== null || deletesubpart !== undefined) {
-          const selectedSubpart = req.query.Subparts
-          if (selectedSubpart && typeof selectedSubpart[Symbol.iterator] === 'function') {
-          for (const sparepartDropdown of selectedSubpart) {
-            const subpartValue = sparepartDropdown.value;
+        if(deleteAssemblyImage){
+          if (assemblyimage && assemblyimage.length > 0) {
+            assemblyimage.forEach(async (i) => {
+              await Assembly_image.create({
+                assembly_id: id,
+                assembly_image: i.assembly_image
+              });
+            });
+          }
+        }
 
-            console.log(subpartValue)
+        const deletesparepart = Assembly_SparePart.destroy({
+            where: {
+              assembly_id: id
+            },
+        });
+
+        if(deletesparepart) {
+          const selectedSparepart = spareParts;
+          for(const spareDropdown of selectedSparepart) {
+            const spareValue = spareDropdown.value;
+            await Assembly_SparePart.create({
+              assembly_id: id,
+              sparePart_id: spareValue
+            });
+          }
+        }
+
+        const deletesubpart = Assembly_SubPart.destroy({
+          where: {
+            assembly_id: id
+          },
+        });
+
+        if(deletesubpart) {
+          const selectedSubpart = Subparts;
+          for(const subpartDropdown of selectedSubpart) {
+            const subpartValue = subpartDropdown.value;
             await Assembly_SubPart.create({
-              assembly_id: req.query.id,
+              assembly_id: id,
               subPart_id: subpartValue
             });
           }
         }
-      } //update product subpart end
 
-        // const deletesupplier = Assembly_Supplier.destroy({
-        //   where: {
-        //     assembly_id: req.query.id
-        //   },
-        // });
-
-        // if(deletesupplier){
-        //   const selectedSuppliers = req.query.addPriceInput
-        //   console.log(selectedSuppliers)
-        //   for (const supplier of selectedSuppliers) {
-        //     const { value, price } = supplier;
-
-        //     await Assembly_Supplier.create({
-        //       assembly_id: req.query.id,
-        //       supplier_code: value,
-        //       supplier_price: price
-        //      });
-
-        //     //  await Inventory_Assembly.create({
-        //     //   assembly_tag_supp_id: SupplierID.id,
-        //     //   quantity: 0,
-        //     //   price: price
-        //     // });
-        //    }
-        // }
-
-        const deletesupplier = await Assembly_Supplier.destroy({
+        const deletesupplier = Assembly_Supplier.destroy({
           where: {
-            assembly_id: req.query.id
-          },
-        });
-  
-        if (deletesupplier !== null || deletesupplier !== undefined) {
-          const selectedSuppliers = req.query.addPriceInput;
-  
-          if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
-            for (const supplier of selectedSuppliers) {
-              const { value, price } = supplier;
-              await Assembly_Supplier.create({
-                assembly_id: req.query.id,
-                supplier_code: value,
-                supplier_price: price
-              });
-              
-              await AssemblyPrice_History.create({
-                assembly_id: req.query.id,
-                supplier_code: value,
-                supplier_price: price
-              });
-            }
+            assembly_id: id
           }
-        } //update product supplier end
-      }
+        });
 
-      res.status(200).json();
+        if(deletesupplier) {
+          const selectedSupplier = addPriceInput;
+          for(const supplier of selectedSupplier) {
+            const { value, price } = supplier;
+
+            await Assembly_Supplier.create({
+              assembly_id: id,
+              supplier_code: value,
+              supplier_price: price
+             });
+
+             await AssemblyPrice_History.create({
+              assembly_id: id,
+              supplier_code: value,
+              supplier_price: price
+             });
+          }
+        }
+
+        res.status(200).json();
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("An error occurred");
     }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("An error occurred");
   }
-});  
+);
+
 
 router.route("/delete/:table_id").delete(async (req, res) => {
   const id = req.params.table_id;
 
-  // await Product.findAll({
-  //   where: {
-  //     product_manufacturer: id,
-  //   },
-  // })
-  //   .then((check) => {
-  //     if (check && check.length > 0) {
-  //       res.status(202).json({ success: true });
-  //     }
-  //     else{
   await Assembly.destroy({
     where: {
       id: id,

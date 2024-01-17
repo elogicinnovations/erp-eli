@@ -1,18 +1,18 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {SubPart, Subpart_image} = require('../db/models/associations')
+const {SparePart, SparePart_image} = require('../db/models/associations')
 const session = require('express-session')
 
-router.route('/fetchsubpartImage').get(async (req, res) => {
+router.route('/fetchsparepartImage').get(async (req, res) => {
     try {
-      const data = await Subpart_image.findAll({
+      const data = await SparePart_image.findAll({
         include:[{
-          model: SubPart,
+          model: SparePart,
           required: true
         }],
         where: {
-          subpart_id: req.query.id,
+            sparepart_id: req.query.id,
         },
       });
   

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -72,10 +72,23 @@ function UpdateAssemblyForm() {
       setunitMeasurement(res.data[0].assembly_unitMeasurement);
       setslct_manufacturer(res.data[0].assembly_manufacturer);
       setThresholds(res.data[0].threshhold);
-      setassemblyImages(res.data[0].assembly_images);
     })
       .catch(err => console.log(err));
   }, []);
+
+  //fetch image
+  useEffect(() => {
+    axios.get(BASE_URL + '/assemblyImage/fetchAssemblyImage', {
+      params: {
+        id: id
+      }
+    })
+      .then(res => {
+        const data = res.data;
+        setassemblyImages(data);
+      })
+      .catch(err => console.log(err));
+  }, [id]);
 
   //Fetching to View all Supplier
   useEffect(() => {
@@ -299,65 +312,248 @@ const handleassemblythreshold = (event) => {
     setIsSaveButtonDisabled(false);
   };
 
-  //Update
-  const update = async (e) => {
-    e.preventDefault();
 
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-      swal({
-        icon: "error",
-        title: "Fields are required",
-        text: "Please fill the red text fields",
-      });
-    } else {
-      axios
-        .post(`${BASE_URL}/assembly/update`, null, {
-          params: {
-            id,
-            code,
-            name,
-            desc,
-            spareParts,
-            Subparts,
-            unitMeasurement,
-            slct_manufacturer,
-            slct_binLocation,
-            thresholds,
-            addPriceInput
-          },
-        })
-        .then((res) => {
-          // console.log(res);
-          if (res.status === 200) {
-            swal({
-              title: "The Assembly Update Succesful!",
-              text: "The Assembly has been Updated Successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate("/assemblyForm");
-            });
-          } else if (res.status === 201) {
-            swal({
-              title: "Assembly is Already Exist",
-              text: "Please Input a New Product Assembly ",
-              icon: "error",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
+const fileInputRef = useRef(null);
+
+function selectFiles() {
+  fileInputRef.current.click();
+  setIsSaveButtonDisabled(false);
+}
+
+function deleteImage(index){
+  const updatedImages = [...assemblyimage];
+  updatedImages.splice(index, 1);
+  setassemblyImages(updatedImages);
+  setIsSaveButtonDisabled(false);
+}
+
+function onDragOver(event){
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "copy";
+  setIsSaveButtonDisabled(false);
+}
+function onDragLeave(event) {
+  event.preventDefault();
+  setIsSaveButtonDisabled(false);
+}
+
+function onDropImages(event){
+  event.preventDefault();
+  setIsSaveButtonDisabled(false);
+  const files = event.dataTransfer.files;
+
+  if (files.length + assemblyimage.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    if (!assemblyimage.some((e) => e.name === files[i].name)) {
+
+      const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+      
+      if (!allowedFileTypes.includes(files[i].type)) {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG, PNG, and WebP file types are allowed.",
         });
-    }
+        return;
+      }
 
-    setValidated(true); //for validations
-  };
+      if (files[i].size > 5 * 1024 * 1024) {
+        swal({
+          icon: "error",
+          title: "File Size Exceeded",
+          text: "Maximum file size is 5MB.",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setassemblyImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            assembly_image: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+
+function onFileSelect(event) {
+  const files = event.target.files;
+  setIsSaveButtonDisabled(false);
+  if (files.length + assemblyimage.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    if (!assemblyimage.some((e) => e.name === files[i].name)) {
+      const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+      
+      if (!allowedFileTypes.includes(files[i].type)) {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG, PNG, and WebP file types are allowed.",
+        });
+        return;
+      }
+
+      if (files[i].size > 5 * 1024 * 1024) {
+        swal({
+          icon: "error",
+          title: "File Size Exceeded",
+          text: "Maximum file size is 5MB.",
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setassemblyImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            assembly_image: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+const update = async (e) => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  if (form.checkValidity() === false) {
+    e.preventDefault();
+    e.stopPropagation();
+    swal({
+      icon: "error",
+      title: "Fields are required",
+      text: "Please fill the Required text fields",
+    });
+  } else {
+    axios
+      .post(`${BASE_URL}/assembly/update`,  {
+          id,
+          code,
+          name,
+          desc,
+          spareParts,
+          Subparts,
+          unitMeasurement,
+          slct_manufacturer,
+          slct_binLocation,
+          thresholds,
+          addPriceInput,
+          assemblyimage,
+      })
+      .then((res) => {
+        // console.log(res);
+        if (res.status === 200) {
+          swal({
+            title: "The Assembly Update Succesful!",
+            text: "The Assembly has been Updated Successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            navigate("/assemblyForm");
+            setIsSaveButtonDisabled(true);
+          });
+        } else if (res.status === 201) {
+          swal({
+            title: "Assembly is Already Exist",
+            text: "Please Input a New Product Assembly ",
+            icon: "error",
+          });
+        } else {
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
+        }
+      });
+  }
+  setValidated(true);
+};
+
+// const update = async (e) => {
+//   e.preventDefault();
+
+//   const form = e.currentTarget;
+//   if (form.checkValidity() === false) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     swal({
+//       icon: "error",
+//       title: "Fields are required",
+//       text: "Please fill the red text fields",
+//     });
+//   } else {
+//     axios
+//       .post(`${BASE_URL}/assembly/update`, null, {
+//         params: {
+//           id,
+//           code,
+//           name,
+//           desc,
+//           spareParts,
+//           Subparts,
+//           unitMeasurement,
+//           slct_manufacturer,
+//           slct_binLocation,
+//           thresholds,
+//           addPriceInput
+//         },
+//       })
+//       .then((res) => {
+//         if (res.status === 200) {
+//           swal({
+//             title: "The Assembly Update Succesful!",
+//             text: "The Assembly has been Updated Successfully.",
+//             icon: "success",
+//             button: "OK",
+//           }).then(() => {
+//             navigate("/assemblyForm");
+//           });
+//         } else if (res.status === 201) {
+//           swal({
+//             title: "Assembly is Already Exist",
+//             text: "Please Input a New Product Assembly ",
+//             icon: "error",
+//           });
+//         } else {
+//           swal({
+//             icon: "error",
+//             title: "Something went wrong",
+//             text: "Please contact our support",
+//           });
+//         }
+//       });
+//   }
+
+//   setValidated(true);
+// };
+
 
   const handleKeyPress = (e) => {
     if (e.key === "e" || isNaN(e.key)) {
@@ -372,6 +568,22 @@ const handleassemblythreshold = (event) => {
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={update}>
             <h1>Update Assembly Parts</h1>
+
+            <div className="row">
+                  {assemblyimage.length > 0 && (
+                    <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                      {assemblyimage.map((image, index) => (
+                        <Carousel.Item>
+                          <img
+                          className="carousel-image" 
+                          src={`data:image/png;base64,${image.assembly_image}`} 
+                          alt={`assembly-img-${image.id}`} />
+                        </Carousel.Item>
+                      )
+                      )}
+                    </Carousel>
+                  )}
+                </div>
             <div
               className="gen-info"
               style={{
@@ -390,29 +602,6 @@ const handleassemblythreshold = (event) => {
                   left: "18rem",
                   transform: "translateY(-50%)",
                 }}></span>
-            </div>
-
-            <div className="row">
-                {/* {
-                  assemblyimage.length > 0 && assemblyimage.map((image) => (
-                    <img src={`data:image/png;base64,${image.assembly_image}`} alt={`assembly-img-${image.id}`}/>
-                  ))
-                } */}
-
-              {assemblyimage.length > 0 && (
-                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
-                  {assemblyimage.map((image, index) => (
-                    <Carousel.Item key={index}>
-                      <img
-                        className="carousel-image"
-                        src={`data:image/png;base64,${image.assembly_image}`}
-                        alt={`assembly-img-${image.id}`}
-                      />
-                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              )}
             </div>
 
             <div className="row">
@@ -615,9 +804,44 @@ const handleassemblythreshold = (event) => {
                                 style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
-                            {/* <div className="col-6">
-
-                            </div> */}
+                            
+                            <div className="col-6">
+                              <Form.Group>
+                                <Form.Label style={{ fontSize: '20px' }}>
+                                  Image Upload:
+                                </Form.Label>
+                                <div className="card">
+                                  <div className="top">
+                                    <p>Drag & Drop Image Upload</p>
+                                  </div>
+                                  <div className="drag-area" 
+                                  onDragOver={onDragOver} 
+                                  onDragLeave={onDragLeave} 
+                                  onDrop={onDropImages}>
+                                      <>
+                                      Drag & Drop image here or {" "}
+                                      <span  
+                                      className="select" role="button" onClick={selectFiles}>
+                                        Browse
+                                      </span>
+                                      </>
+                                    <input
+                                    disabled={!isReadOnly} 
+                                    name="file" type="file" className="file" multiple ref={fileInputRef}
+                                    onChange={(e) => onFileSelect(e)}/>
+                                  </div>
+                                  <div className="ccontainerss">
+                                    {assemblyimage.map((image,index)=>(
+                                    <div className="imagess" key={index}>
+                                      <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                                      <img src={`data:image/png;base64,${image.assembly_image}`} 
+                                      alt={`Spare Part ${image.assembly_id}`} />
+                                    </div>
+                                    ))}
+                                  </div>
+                                </div>   
+                              </Form.Group>
+                            </div>
                           </div>
 
                           <div
@@ -679,8 +903,12 @@ const handleassemblythreshold = (event) => {
                                                 </div>
                                               </td>
                                               <td>
-                                              { (data.supplier.supplier_vat / 100 * data.supplier_price).toFixed(2) }
+                                                {data.supplier.supplier_vat
+                                                  ? (data.supplier.supplier_vat / 100 * data.supplier_price).toFixed(2)
+                                                  : (addPriceInput.find((option) => option.value === data.supplier.supplier_code)?.vatable / 100 * data.supplier_price).toFixed(2)
+                                                }
                                               </td>
+
                                             </tr>
                                           ))
                                         ) : (

@@ -37,6 +37,7 @@ function UpdateSubparts() {
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 
   const [subpartImages, setSubpartImages] = useState([]);
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/subpart/fetchsubpartEdit", {
@@ -53,8 +54,6 @@ function UpdateSubparts() {
         setprodthreshold(res.data[0].threshhold);
         setproddetails(res.data[0].subPart_desc);
         setprodcategory(res.data[0].category_code);
-        setSubpartImages(res.data[0].subPart_images);
-
       })
       .catch((err) => console.log(err));
   }, [id]);
@@ -109,6 +108,7 @@ function UpdateSubparts() {
     setIsSaveButtonDisabled(false);
   };
 
+  //fetching of Supplier
   useEffect(() => {
     axios
       .get(BASE_URL + "/subpartSupplier/fetchSubSupplier", {
@@ -125,6 +125,21 @@ function UpdateSubparts() {
           price: row.supplier_price,
         }));
         setsubpartTAGSuppliers(selectedSupplierOptions);
+      })
+      .catch((err) => console.log(err));
+  }, [id]);
+
+  //fetching of Image
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/subPart_image/fetchsubpartImage", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const data = res.data;
+        setSubpartImages(data);
       })
       .catch((err) => console.log(err));
   }, [id]);
@@ -227,138 +242,133 @@ function UpdateSubparts() {
     setShowDropdown(true);
   };
 
-const [images, setImages] = useState([]);
-const [isDragging, setIsDragging] = useState([]);
+
 const fileInputRef = useRef(null);
 
 function selectFiles() {
   fileInputRef.current.click();
+  setIsSaveButtonDisabled(false);
 }
-
-function onFileSelect(event) {
-  const files = event.target.files;
-
-  if (files.length === 0) return;
-
-  if (subpartImages.length + files.length > 5) {
-    swal({
-      icon: "error",
-      title: "File Limit Exceeded",
-      text: "You can upload up to 5 images only.",
-    });
-    return;
-  }
-
-  for (let i = 0; i < files.length; i++) {
-    const fileType = files[i].type.split('/')[1].toLowerCase();
-    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
-
-    if (fileSize > 5) {
+  
+  function onFileSelect(event) {
+    const files = event.target.files;
+    setIsSaveButtonDisabled(false);
+    if (files.length + subpartImages.length > 5) {
       swal({
         icon: "error",
-        title: "File Size Limit Exceeded",
-        text: "Each image must be up to 5MB in size.",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
       });
-      continue;
+      return;
     }
-
-    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
-      swal({
-        icon: "error",
-        title: "Invalid File Type",
-        text: "Only JPEG and PNG files are allowed.",
-      });
-      continue;
-    }
-
-    if (!subpartImages.some((e) => e.name === files[i].name)) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSubpartImages((prevImages) => [
-          ...prevImages,
-          {
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-            base64Data: e.target.result.split(',')[1],
-          },
-        ]);
-      };
-      reader.readAsDataURL(files[i]);
+  
+    for (let i = 0; i < files.length; i++) {
+      if (!subpartImages.some((e) => e.name === files[i].name)) {
+        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+        
+        if (!allowedFileTypes.includes(files[i].type)) {
+          swal({
+            icon: "error",
+            title: "Invalid File Type",
+            text: "Only JPEG, PNG, and WebP file types are allowed.",
+          });
+          return;
+        }
+  
+        if (files[i].size > 5 * 1024 * 1024) {
+          swal({
+            icon: "error",
+            title: "File Size Exceeded",
+            text: "Maximum file size is 5MB.",
+          });
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setSubpartImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              subpart_image: e.target.result.split(',')[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
     }
   }
-}
-
-function deleteImage(index){
-  setSubpartImages((prevImages) => 
-    prevImages.filter((_, i) => i !== index)
-  )
-}
-
-function onDragOver(event){
-  event.preventDefault();
-  setIsDragging(true);
-  event.dataTransfer.dropEffect = "copy";
-}
-
-function onDragLeave(event) {
-  event.preventDefault();
-  setIsDragging(false);
-}
-
-function onDropImages(event) {
-  event.preventDefault();
-  setIsDragging(false);
-  const files = event.dataTransfer.files;
-
-  if (subpartImages.length + files.length > 5) {
-    swal({
-      icon: "error",
-      title: "File Limit Exceeded",
-      text: "You can upload up to 5 images only.",
-    });
-    return;
+  
+  
+  
+  function deleteImage(index){
+    const updatedImages = [...subpartImages];
+    updatedImages.splice(index, 1);
+    setSubpartImages(updatedImages);
+    setIsSaveButtonDisabled(false);
   }
-
-  for (let i = 0; i < files.length; i++) {
-    const fileType = files[i].type.split('/')[1].toLowerCase();
-    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
-
-    if (fileSize > 5) {
+  
+  function onDragOver(event){
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    setIsSaveButtonDisabled(false);
+  }
+  function onDragLeave(event) {
+    event.preventDefault();
+    setIsSaveButtonDisabled(false);
+  }
+  
+  function onDropImages(event){
+    event.preventDefault();
+    setIsSaveButtonDisabled(false);
+    const files = event.dataTransfer.files;
+  
+    if (files.length + subpartImages.length > 5) {
       swal({
         icon: "error",
-        title: "File Size Limit Exceeded",
-        text: "Each image must be up to 5MB in size.",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
       });
-      continue;
+      return;
     }
-
-    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
-      swal({
-        icon: "error",
-        title: "Invalid File Type",
-        text: "Only JPEG and PNG files are allowed.",
-      });
-      continue;
-    }
-
-    if (!subpartImages.some((e) => e.name === files[i].name)) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSubpartImages((prevImages) => [
-          ...prevImages,
-          {
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-            base64Data: e.target.result.split(',')[1],
-          },
-        ]);
-      };
-      reader.readAsDataURL(files[i]);
+  
+    for (let i = 0; i < files.length; i++) {
+      if (!subpartImages.some((e) => e.name === files[i].name)) {
+  
+        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+        
+        if (!allowedFileTypes.includes(files[i].type)) {
+          swal({
+            icon: "error",
+            title: "Invalid File Type",
+            text: "Only JPEG, PNG, and WebP file types are allowed.",
+          });
+          return;
+        }
+  
+        if (files[i].size > 5 * 1024 * 1024) {
+          swal({
+            icon: "error",
+            title: "File Size Exceeded",
+            text: "Maximum file size is 5MB.",
+          });
+          return;
+        }
+  
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setSubpartImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              subpart_image: e.target.result.split(',')[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
     }
   }
-}
 
-console.log(subpartImages);
 
   const update = async (e) => {
     e.preventDefault();
@@ -374,8 +384,7 @@ console.log(subpartImages);
       });
     } else {
       axios
-        .post(`${BASE_URL}/subpart/update`, null, {
-          params: {
+        .post(`${BASE_URL}/subpart/update`,  {
             id,
             prodcode,
             prodname,
@@ -386,7 +395,7 @@ console.log(subpartImages);
             prodthreshold,
             prodcategory,
             subpartTAGSuppliers,
-          },
+            subpartImages
         })
         .then((res) => {
           // console.log(res);
@@ -423,36 +432,23 @@ console.log(subpartImages);
         <div className="right-body-contentss">
           <Form noValidate validated={validated} onSubmit={update}>
             <h1>Update Sub Parts</h1>
-            
 
-              {/* <div className="row">
-                  {subpartImages.length > 0 &&
-                    subpartImages.map((image) => (
-                      <img
-                        key={image.id}  // Add a unique key for each image, it helps React to efficiently update the DOM
-                        src={`data:image/png;base64,${image.subpart_image}`}
-                        alt={`subpart-img-${image.id}`}
-                        style={{ width: '100%', height: 'auto' }}  // Adjust width and height here
-                      />
+            <div className="row">
+                {subpartImages.length > 0 && (
+                  <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                    {subpartImages.map((image, index) => (
+                      <Carousel.Item key={index}>
+                        <img
+                          className="carousel-image"
+                          src={`data:image/png;base64,${image.subpart_image || image.base64Data}`}
+                          alt={`subpart-img-${image.subpart_id || image.subpart_id}`}
+                        />
+                        <Carousel.Caption></Carousel.Caption>
+                      </Carousel.Item>
                     ))}
-                </div> */}
-
-          <div className="row">
-              {subpartImages.length > 0 && (
-                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
-                  {subpartImages.map((image, index) => (
-                    <Carousel.Item key={index}>
-                      <img
-                        className="carousel-image"
-                        src={`data:image/png;base64,${image.subpart_image}`}
-                        alt={`subpart-img-${image.id}`}
-                      />
-                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              )}
-            </div>
+                  </Carousel>
+                )}
+              </div>
 
             <div
               className="gen-info"
@@ -611,6 +607,7 @@ console.log(subpartImages);
                     maxLength={10}
                     pattern="[0-9]*"
                     value={prodthreshold}
+                    required
                   />
                 </Form.Group>
               </div>
@@ -619,35 +616,35 @@ console.log(subpartImages);
                   <Form.Label style={{ fontSize: "20px" }}>
                     Image Upload:{" "}
                   </Form.Label>
-                <div className="card">
-                    <div className="top">
-                      <p>Drag & Drop Image Upload</p>
-                    </div>
-                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
-                      {isDragging ? (
-                        <span className="select">Drop images here</span>
-                      ) : (
-                        <>
-                         Drag & Drop image here or {" "}
-                        <span className="select" role="button" onClick={selectFiles}>
-                          Browse
-                        </span>
-                        </>
-                      )}
-                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
-                    </div>
-                    <div className="ccontainerss">
-                      {subpartImages.map((images,index)=>(
-                      <div className="imagess" key={index}>
-                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                        <img
-                            src={`data:image/png;base64,${images.subpart_image}`}
-                            alt={`subpart-img-${images.id}`}
-                          />
+                  <div className="card">
+                      <div className="top">
+                        <p>Drag & Drop Image Upload</p>
                       </div>
-                      ))}
-                    </div>
-                  </div>
+                      <div className="drag-area" 
+                      onDragOver={onDragOver} 
+                      onDragLeave={onDragLeave} 
+                      onDrop={onDropImages}>
+                          <>
+                          Drag & Drop image here or {" "}
+                          <span  
+                          className="select" role="button" onClick={selectFiles}>
+                            Browse
+                          </span>
+                          </>
+                        <input
+                        name="file" type="file" className="file" multiple ref={fileInputRef}
+                        onChange={(e) => onFileSelect(e)}/>
+                      </div>
+                      <div className="ccontainerss">
+                        {subpartImages.map((image,index)=>(
+                        <div className="imagess" key={index}>
+                          <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                          <img src={`data:image/png;base64,${image.subpart_image}`} 
+                          alt={`Sub Part ${image.subpart_id}`} />
+                        </div>
+                        ))}
+                      </div>
+                    </div> 
                   </Form.Group>
               </div>
             </div>
@@ -694,6 +691,7 @@ console.log(subpartImages);
                         <th className="tableh">Contact</th>
                         <th className="tableh">Address</th>
                         <th className="tableh">Price</th>
+                        <th className="tableh">VAT</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -706,6 +704,7 @@ console.log(subpartImages);
                             <td>{supp.supplier.supplier_number}</td>
                             <td>{supp.supplier.supplier_address}</td>
                             <td>
+                              <div className="d-flex align-items-center">
                               <span
                                 style={{
                                   fontSize: "20px",
@@ -713,9 +712,9 @@ console.log(subpartImages);
                                 }}>
                                 ₱
                               </span>
-                              <input
+                              <Form.Control
                                 type="number"
-                                style={{ height: "50px" }}
+                                style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 value={supp.supplier_price || ""}
                                 onKeyDown={(e) =>
                                   ["e", "E", "+", "-"].includes(e.key) &&
@@ -725,6 +724,10 @@ console.log(subpartImages);
                                   handlePriceChange(i, e.target.value)
                                 }
                               />
+                              </div>
+                            </td>
+                            <td>
+                              {(supp.supplier.supplier_vat / 100 * supp.supplier_price).toFixed(2)}
                             </td>
                           </tr>
                         ))

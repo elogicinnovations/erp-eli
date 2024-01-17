@@ -799,33 +799,6 @@ useEffect(() => {
                 </Form.Group>
               </div>
               <div className="col-6">
-                {/* <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-                                  <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
-                                      <Dropzone onDrop={onDropImage}>
-                                          {({ getRootProps, getInputProps }) => (
-                                          <div className='w-100 h-100' {...getRootProps()}>
-                                              <input
-                                                  ref={fileInputRef}
-                                                  type="file"
-                                                  style={{display: 'none'}}
-                                              />
-                                              <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
-                                                <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
-                                              </div>
-                                              {selectedimage && 
-                                                  <div className='d-flex align-items-center justify-content-center' style={{border: "1px green solid", width: '100%', height: '5em'}}>
-                                                    <p 
-                                                      style={{color: 'green', fontSize: '15px',}}>
-                                                        Uploaded Image: {selectedimage.name}
-                                                    </p>
-                                                  </div>}
-                                          </div>
-                                          )}
-                                      </Dropzone>
-                                      
-                                  </div>              
-                              </Form.Group>    */}
               </div>
             </div>
 
@@ -891,7 +864,7 @@ useEffect(() => {
                         </div>
                       </td>
                       <td>
-                      { (prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2) }
+                        {(prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2) }
                       </td>
                     </tr>
                   ))}

@@ -618,16 +618,12 @@ function onDropImages(event) {
                       <p>Drag & Drop Image Upload</p>
                     </div>
                     <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
-                      {isDragging ? (
-                        <span className="select">Drop images here</span>
-                      ) : (
                         <>
                          Drag & Drop image here or {" "}
                         <span className="select" role="button" onClick={selectFiles}>
                           Browse
                         </span>
                         </>
-                      )}
                       <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
                     </div>
                     <div className="ccontainerss">
@@ -685,6 +681,7 @@ function onDropImages(event) {
                         <th className="tableh">Contact</th>
                         <th className="tableh">Address</th>
                         <th className="tableh">Price</th>
+                        <th className="tableh">VAT</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -697,6 +694,7 @@ function onDropImages(event) {
                             <td>{supp.contact}</td>
                             <td>{supp.address}</td>
                             <td>
+                            <div className="d-flex align-items-center">
                               <span
                                 style={{
                                   fontSize: "20px",
@@ -704,9 +702,9 @@ function onDropImages(event) {
                                 }}>
                                 ₱
                               </span>
-                              <input
+                              <Form.Control
                                 type="number"
-                                style={{ height: "50px" }}
+                                style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 placeholder="Input Price"
                                 value={priceInput[supp.value] || ""}
                                 onChange={(e) =>
@@ -716,7 +714,12 @@ function onDropImages(event) {
                                   ["e", "E", "+", "-"].includes(e.key) &&
                                   e.preventDefault()
                                 }
+                                required
                               />
+                              </div>
+                            </td>
+                            <td>
+                            {isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : ((supp.vatable / 100) * priceInput[supp.value]).toFixed(2)}
                             </td>
                           </tr>
                         ))
@@ -744,6 +747,7 @@ function onDropImages(event) {
                               </div>
                             ),
                             codes: supp.supplier_code,
+                            vatable: supp.supplier_vat,
                             names: supp.supplier_name,
                             email: supp.supplier_email,
                             contact: supp.supplier_number,
