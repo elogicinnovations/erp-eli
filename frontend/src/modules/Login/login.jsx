@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import BASE_URL from '../../assets/global/url';
 import swal from 'sweetalert';
 import { Link } from 'react-router-dom';
-// import { useAuth } from '../authorize/AuthContext';
+// import { useAuth } from '../authorize/AuthContext';   
 import { FaEye, FaEyeSlash, FaEnvelope } from 'react-icons/fa'; // Import icons
 
 const Login = () => {
