@@ -247,7 +247,7 @@ function ForgotPass() {
                       Email
                     </div>
                      <div class="email-input">
-                        <CustomInput class="" aria-label="Demo input" placeholder="Please fill in your email address"  value={email}
+                        <CustomInput class="" aria-label="Demo input" placeholder="Enter your email address"  value={email}
                           onChange={(e) => setEmail(e.target.value)} ></CustomInput>
                       </div>
                      <div className="fg-submitbutton">

@@ -80,6 +80,8 @@ import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
 import Roles from "./hooks/roles";
+import { List } from "@phosphor-icons/react";
+import { CaretCircleLeft } from "@phosphor-icons/react/dist/ssr";
 
 function App() {
   const [activeTab, setActiveTab] = useState("inventory");
@@ -87,6 +89,13 @@ function App() {
   const handleTabSelect = (key) => {
     setActiveTab(key);
   };
+
+  const [showSidebar, setShowSidebar] = useState(false);
+
+const handleToggleSidebar = () => {
+  setShowSidebar(!showSidebar);
+};
+
   return (
     <Router>
     <div className="app">
@@ -105,7 +114,17 @@ function App() {
           <ProtectedRoutes>
     <div className="main-of-containers">
       
-        <div className="left-of-main-containers">
+        <div className={`left-of-main-containers ${showSidebar ? 'show-sidebar' : ''}`}>
+          {window.innerWidth <= 750 && (
+            <div className="sidebar-button">
+              <button className="sidebar-back-button" onClick={handleToggleSidebar}>
+                <CaretCircleLeft size={50} weight="bold" />
+              </button>
+            </div>
+          )}
+        {/* <div className="sidebar-button">
+            <button onClick={handleToggleSidebar}><CaretCircleLeft size={32} weight="bold" /></button>
+          </div> */}
           <Roles>
             {
               (authrztn) => (
@@ -114,11 +133,19 @@ function App() {
             }
           </Roles>
         </div>
+          {window.innerWidth <= 750 && (
+            <div className="sidebar-button">
+              <button className="sidebar-menu-button" onClick={handleToggleSidebar}>
+                <List size={50} weight="bold" />
+              </button>
+            </div>
+          )}
 
         <div className="mid-of-main-containers">
         </div>
 
-        <div className="right-of-main-container"><Header/>
+        <div className="right-of-main-container">
+          <Header/>
 
         <Routes>
         <Route path="/dashboard" element={<Dashboard setActiveTab={setActiveTab} />} />
