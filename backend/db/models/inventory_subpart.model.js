@@ -22,7 +22,10 @@ const Inventory_Subpart = sequelize.define('inventory_subpart', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
-  }
+  },
+  warehouse: {
+    type: DataTypes.STRING
+  },
 });
 
 module.exports = Inventory_Subpart;

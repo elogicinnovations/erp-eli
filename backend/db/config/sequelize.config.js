@@ -7,7 +7,7 @@ const sequelize = new Sequelize({
   username: "root",
   password: "",
   timezone: "+08:00", // Asia/Manila timezone
-  alter: false,
+  alter: true,
 });
 
 sequelize

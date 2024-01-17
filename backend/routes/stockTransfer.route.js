@@ -51,10 +51,10 @@ router.route('/fetchTable').get(async (req, res) => {
 
   router.route('/create').post(async (req, res) => {
     try {
-       const {source, destination, reference_code, col_id, remarks, addProductbackend} = req.body;
+       const {selectedWarehouse, destination, reference_code, col_id, remarks, addProductbackend} = req.body;
         
           const StockTransfer_newData = await StockTransfer.create({
-            source: source,
+            source: selectedWarehouse,
             destination: destination,
             reference_code: reference_code,
             col_id: col_id,

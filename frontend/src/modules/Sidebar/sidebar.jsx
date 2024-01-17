@@ -169,6 +169,7 @@ function Sidebar({ authrztn }) {
       setOpenPurchaseOrder(true);
     } else if (
       path.startsWith("/receivingManagement") ||
+      path.startsWith("/receivingStockTransfer") ||
       path.startsWith("/receivingManagementPreview") ||
       path.startsWith("/stockManagement") ||
       path.startsWith("/createStockTransfer") ||
@@ -622,6 +623,25 @@ function Sidebar({ authrztn }) {
                 </ListItem>
               </NavLink>
             )}
+
+            {/* {authrztn.includes("Stock Management - View") && ( */}
+              <NavLink
+                to="/receivingStockTransfer"
+                style={{ textDecoration: "none", color: "inherit" }}
+                activeClassName="active">
+                <ListItem
+                  button
+                  className={`adminsub-menu ${
+                    location.pathname.startsWith("/receivingStockTransfer") ||
+                    location.pathname.startsWith("/receivingCreateStockTransfer") ||
+                    location.pathname.startsWith("/receivingStockManagementPreview")
+                      ? "active"
+                      : ""
+                  }`}>
+                  <ListItemText primary="Receiving Stock Transfer" />
+                </ListItem>
+              </NavLink>
+            {/* )} */}
           </Collapse>
 
           {authrztn.includes("Report - View") && (

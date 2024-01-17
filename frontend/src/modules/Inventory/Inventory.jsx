@@ -326,6 +326,7 @@ const navigate = useNavigate()
                                                         <th className='tableh'>Supplier</th>
                                                         <th className='tableh'>Manufacturer</th>
                                                         <th className='tableh'>Quantity</th>
+                                                        <th className='tableh'>Warehouse</th>
                                                         <th className='tableh'>Cost per Item</th>
                                                         <th className='tableh'>Total Cost</th>
                                                     </tr>
@@ -338,6 +339,7 @@ const navigate = useNavigate()
                                                             <td>{data.product_tag_supplier.supplier.supplier_name}</td>
                                                             <td>{data.product_tag_supplier.product.manufacturer.manufacturer_name}</td>
                                                             <td>{data.quantity}</td>
+                                                            <td>{data.warehouse}</td>
                                                             <td>{data.product_tag_supplier.product_price}</td>
                                                             <td>{data.product_tag_supplier.product_price * data.quantity}</td>
 
@@ -351,6 +353,7 @@ const navigate = useNavigate()
                                                               <td>{data.assembly_supplier.supplier.supplier_name}</td>
                                                               <td>--</td>
                                                               <td>{data.quantity}</td>
+                                                              <td>{data.warehouse}</td>
                                                               <td>{data.assembly_supplier.supplier_price}</td>
                                                               <td>{data.assembly_supplier.supplier_price * data.quantity}</td>
 
@@ -364,6 +367,7 @@ const navigate = useNavigate()
                                                               <td>{data.sparepart_supplier.supplier.supplier_name}</td>
                                                               <td>--</td>
                                                               <td>{data.quantity}</td>
+                                                              <td>{data.warehouse}</td>
                                                               <td>{data.sparepart_supplier.supplier_price}</td>
                                                               <td>{data.sparepart_supplier.supplier_price * data.quantity}</td>
 
@@ -377,6 +381,7 @@ const navigate = useNavigate()
                                                               <td>{data.subpart_supplier.supplier.supplier_name}</td>
                                                               <td>--</td>
                                                               <td>{data.quantity}</td>
+                                                              <td>{data.warehouse}</td>
                                                               <td>{data.subpart_supplier.supplier_price}</td>
                                                               <td>{data.subpart_supplier.supplier_price * data.quantity}</td>
 
