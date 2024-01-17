@@ -23,10 +23,6 @@ router.route('/fetchTableEdit').get(async (req, res) => {
       where: {
         id: req.query.id,
     },
-    include: {
-      model: SparePart_image,
-      required: false
-    }
     });
 
     if (data) {
@@ -159,99 +155,123 @@ router.route('/create').post(async (req, res) => {
 
 router.route("/update").post(
   async (req, res) => {
-  
-  try {
-    console.log(req.query.id)
-    const existingDataCode = await SparePart.findOne({
-      where: {
-        spareParts_code: req.query.code,
-        id: { [Op.ne]: req.query.id },
-      },
-    });
+    const { sparepartimage, 
+            id, 
+            code, 
+            name, 
+            desc, 
+            unit, 
+            slct_binLocation, 
+            unitMeasurement, 
+            slct_manufacturer, 
+            thresholds,
+            SubParts,
+            addPriceInput, } = req.body;
 
-    if (existingDataCode) {
-      res.status(201).send('Exist');
-    } else {
-      let finalThreshold;
-      if (req.query.thresholds === "") {
-      finalThreshold = 0;
-      } else {
-      finalThreshold = req.query.thresholds;
-      }
-      const Spare_newData = await SparePart.update(
-        {
-          spareParts_code: req.query.code,
-          spareParts_name: req.query.name,
-          spareParts_desc: req.query.desc,
-          spareParts_unit: req.query.unit,
-          spareParts_location: req.query.slct_binLocation,
-          spareParts_unitMeasurement: req.query.unitMeasurement,
-          spareParts_manufacturer: req.query.slct_manufacturer,
-          threshhold: finalThreshold,
+    try {
+      const existingDataCode = await SparePart.findOne({
+        where: {
+          spareParts_code: code,
+          id: { [Op.ne]: id },
         },
-        {
-          where: {
-            id: req.query.id,
-          },
-        }
-      );
+      });
 
-      if (Spare_newData) {
+      if (existingDataCode) {
+        res.status(201).send('Exist');
+      } else {
+        let finalThreshold;
+        if (thresholds === "") {
+          finalThreshold = 0;
+        } else {
+          finalThreshold = thresholds;
+        }
+
+        const Spare_newData = await SparePart.update(
+          {
+            spareParts_code: code,
+            spareParts_name: name,
+            spareParts_desc: desc,
+            spareParts_unit: unit,
+            spareParts_location: slct_binLocation,
+            spareParts_unitMeasurement: unitMeasurement,
+            spareParts_manufacturer: slct_manufacturer,
+            threshhold: finalThreshold,
+          },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
+
+        const deletespareImage = SparePart_image.destroy({
+          where: {
+            sparepart_id: id
+          },
+        });
+
+        if(deletespareImage){
+          if (sparepartimage && sparepartimage.length > 0) {
+            sparepartimage.forEach(async (i) => {
+              await SparePart_image.create({
+                sparepart_id: id,
+                sparepart_image: i.sparepart_image
+              });
+            });
+          }
+        }
+
         const deletesubpart = SparePart_SubPart.destroy({
             where: {
-              sparePart_id: req.query.id
+              sparePart_id: id
             },
         });
 
-        if(deletesubpart !== null || deletesubpart !== undefined) {
-          const selectedSubparting = req.query.SubParts
-          if (selectedSubparting && typeof selectedSubparting[Symbol.iterator] === 'function') {
-          for (const subpartDropdown of selectedSubparting) {
+        if(deletesubpart) {
+          const selectedSubpart = SubParts;
+          for(const subpartDropdown of selectedSubpart) {
             const subpartValue = subpartDropdown.value;
-    
             await SparePart_SubPart.create({
-              sparePart_id: req.query.id,
+              sparePart_id: id,
               subPart_id: subpartValue
             });
           }
         }
-      } //update spare part subpart end
 
-      const deletesupplier = SparePart_Supplier.destroy({
-        where: {
-          sparePart_id: req.query.id
-        },
-      });
+        const deletesupplier = SparePart_Supplier.destroy({
+          where: {
+            sparePart_id: id
+          }
+        });
 
-      if(deletesupplier !== null || deletesupplier !== undefined){
-        const selectedSuppliers = req.query.addPriceInput
-        if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
-        for (const supplier of selectedSuppliers) {
-          const { value, price } = supplier;
-          
-          await SparePart_Supplier.create({
-            sparePart_id: req.query.id,
-            supplier_code: value,
-            supplier_price: price
-           });
+        if(deletesupplier) {
+          const selectedSupplier = addPriceInput;
+          for(const supplier of selectedSupplier) {
+            const { value, price } = supplier;
 
-           await SparePartPrice_history.create({
-            sparePart_id: req.query.id,
-            supplier_code: value,
-            supplier_price: price
-           });
-         }
-       }
-      } //update spare part supplier end
+            await SparePart_Supplier.create({
+              sparePart_id: id,
+              supplier_code: value,
+              supplier_price: price
+             });
+
+             await SparePartPrice_history.create({
+              sparePart_id: id,
+              supplier_code: value,
+              supplier_price: price
+             });
+
+          }
+        }
+
+        res.status(200).json();
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("An error occurred");
     }
-
-      res.status(200).json();
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("An error occurred");
   }
-});  
+);
 
 
 

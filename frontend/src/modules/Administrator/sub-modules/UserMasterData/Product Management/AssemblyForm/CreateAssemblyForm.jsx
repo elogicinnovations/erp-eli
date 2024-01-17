@@ -169,78 +169,9 @@ function CreateAssemblyForm() {
     });
   };
 
-  // const [selectedimage, setselectedimage] = useState([]);
-  // const fileInputRef = useRef(null);
-
-  // const onDropImage = (acceptedFiles) => {
-  //   const newSelectedImages = [...selectedimage];
-
-  //   acceptedFiles.forEach((file) => {
-  //     if (
-  //       (file.type === "image/png" || file.type === "image/jpeg") &&
-  //       newSelectedImages.length < 5
-  //     ) {
-  //       newSelectedImages.push(file);
-  //     } else {
-  //       swal({
-  //         title: "Invalid file type or maximum limit reached",
-  //         text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //   });
-
-  //   setselectedimage(newSelectedImages);
-  // };
-
-  // const removeImage = (index) => {
-  //   const newSelectedImages = [...selectedimage];
-  //   newSelectedImages.splice(index, 1);
-  //   setselectedimage(newSelectedImages);
-  // };
-  // const uploadClick = () => {
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.click();
-  //   }
-  // };
-
-  // const [img, setImg] = useState([]);
-  // useEffect(() => {
-  //   // Create a function to handle the image processing
-  //   const processImages = () => {
-  //     const imageDataArray = [];
-
-  //     selectedimage.forEach((image, index) => {
-  //       const filereader = new FileReader();
-
-  //       filereader.onload = function (event) {
-  //         // Process image data
-  //         const processedImage = {
-  //           index, // or any other identifier for the image
-  //           blobData: event.target.result,
-  //           base64Data: btoa(event.target.result),
-  //         };
-
-  //         imageDataArray.push(processedImage);
-  //       };
-
-  //       if (image instanceof Blob) {
-  //         filereader.readAsBinaryString(image);
-  //       }
-  //     });
-
-  //     // Set the state once after processing all images
-  //     setImg(imageDataArray);
-  //   };
-
-  //   // Call the image processing function
-  //   processImages();
-  // }, [selectedimage]);
 
 
-  const [images, setImages] = useState([]);
-const [isDragging, setIsDragging] = useState([]);
+const [images, setImages] = useState([]);
 const fileInputRef = useRef(null);
 
 function selectFiles() {
@@ -307,18 +238,15 @@ function deleteImage(index){
 
 function onDragOver(event){
   event.preventDefault();
-  setIsDragging(true);
   event.dataTransfer.dropEffect = "copy";
 }
 
 function onDragLeave(event) {
   event.preventDefault();
-  setIsDragging(false);
 }
 
 function onDropImages(event) {
   event.preventDefault();
-  setIsDragging(false);
   const files = event.dataTransfer.files;
 
   if (images.length + files.length > 5) {
@@ -681,101 +609,17 @@ function onDropImages(event) {
                 </Form.Group>
               </div>
               <div className="col-6">
-                {/* <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Image Upload:{" "}
-                  </Form.Label>
-                  <div
-                    style={{
-                      border: "1px #DFE3E7 solid",
-                      height: "auto",
-                      maxHeight: "140px",
-                      fontSize: "15px",
-                      width: "720px",
-                      padding: 10,
-                    }}>
-                    <Dropzone
-                      onDrop={onDropImage}
-                      onChange={(e) => setselectedimage(e.target.value)}>
-                      {({ getRootProps, getInputProps }) => (
-                        <div
-                          className="w-100 h-100"
-                          style={{ width: "700px" }}
-                          {...getRootProps()}>
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            style={{ display: "none" }}
-                            {...getInputProps()}
-                          />
-                          <div
-                            className="d-flex align-items-center"
-                            style={{ width: "700px", height: "2.5em" }}
-                            onClick={uploadClick}
-                            >
-                            <p
-                              className="fs-5 w-100 p-3 btn btn-secondary"
-                              style={{ color: "white", fontWeight: "bold" }}>
-                              Drag and drop a file here, or click to select a
-                              file
-                            </p>
-                          </div>
-                          {selectedimage.length > 0 && (
-                            <div
-                              className="d-flex align-items-center justify-content-center"
-                              style={{
-                                border: "1px green solid",
-                                width: "700px",
-                                height: "5em",
-                                padding: "1rem",
-                                overflowY: "auto",
-                              }}>
-                              Uploaded Images:
-                              <p
-                                style={{
-                                  color: "green",
-                                  fontSize: "15px",
-                                  display: "flex",
-                                  height: "4em",
-                                  flexDirection: "column",
-                                }}>
-                                {selectedimage.map((image, index) => (
-                                  <div key={index}>
-                                    <div className="imgContainer">
-                                      <span className="imgUpload">
-                                        {image.name}
-                                      </span>
-                                      <X
-                                        size={20}
-                                        onClick={removeImage}
-                                        className="removeButton"
-                                      />
-                                    </div>
-                                  </div>
-                                ))}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </Dropzone>
-                  </div>
-                </Form.Group> */}
                   <div className="card">
                     <div className="top">
                       <p>Drag & Drop Image Upload</p>
                     </div>
                     <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
-                      {isDragging ? (
-                        <span className="select">Drop images here</span>
-                      ) : (
                         <>
                          Drag & Drop image here or {" "}
                         <span className="select" role="button" onClick={selectFiles}>
                           Browse
                         </span>
                         </>
-                      )}
                       <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
                     </div>
                     <div className="ccontainerss">

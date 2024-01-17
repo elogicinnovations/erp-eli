@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -23,9 +23,7 @@ const [fetchSupp, setFetchSupp] = useState([]);
 const [fetchSubPart, setFetchSubPart] = useState([]);
 const [code, setCode] = useState('');
 const [name, setName] = useState('');
-const [supp, setSupp] = useState([]);
 const [desc, setDesc] = useState('');
-const [priceInput, setPriceInput] = useState({});
 const [addPriceInput, setaddPriceInputbackend] = useState([]);
 
 const [tableSupp, setTableSupp] = useState([]);
@@ -62,7 +60,6 @@ useEffect(() => {
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
       setThresholds(res.data[0].threshhold);
-      setSparetpartImages(res.data[0].sparePart_images);
     })
     .catch(err => console.log(err));
 }, [id]);
@@ -146,6 +143,20 @@ useEffect(() => {
         label: row.subPart.subPart_name,
       }));
       setSubParts(selectedSubparts);
+    })
+    .catch(err => console.log(err));
+}, [id]);
+
+
+useEffect(() => {
+  axios.get(BASE_URL + '/sparePartimages/fetchsparepartImage', {
+    params: {
+      id: id
+    }
+  })
+    .then(res => {
+      const data = res.data;
+      setSparetpartImages(data);
     })
     .catch(err => console.log(err));
 }, [id]);
@@ -237,9 +248,134 @@ const handleAddSupp = () => {
 };
 
 
-const update = async (e) => {
-  e.preventDefault();
+const fileInputRef = useRef(null);
 
+function selectFiles() {
+  fileInputRef.current.click();
+  setIsSaveButtonDisabled(false);
+}
+
+function onFileSelect(event) {
+  const files = event.target.files;
+  setIsSaveButtonDisabled(false);
+  if (files.length + sparepartimage.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    if (!sparepartimage.some((e) => e.name === files[i].name)) {
+      const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+      
+      if (!allowedFileTypes.includes(files[i].type)) {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG, PNG, and WebP file types are allowed.",
+        });
+        return;
+      }
+
+      if (files[i].size > 5 * 1024 * 1024) {
+        swal({
+          icon: "error",
+          title: "File Size Exceeded",
+          text: "Maximum file size is 5MB.",
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSparetpartImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            sparepart_image: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+
+
+function deleteImage(index){
+  const updatedImages = [...sparepartimage];
+  updatedImages.splice(index, 1);
+  setSparetpartImages(updatedImages);
+  setIsSaveButtonDisabled(false);
+}
+
+function onDragOver(event){
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "copy";
+  setIsSaveButtonDisabled(false);
+}
+function onDragLeave(event) {
+  event.preventDefault();
+  setIsSaveButtonDisabled(false);
+}
+
+function onDropImages(event){
+  event.preventDefault();
+  setIsSaveButtonDisabled(false);
+  const files = event.dataTransfer.files;
+
+  if (files.length + sparepartimage.length > 5) {
+    swal({
+      icon: "error",
+      title: "File Limit Exceeded",
+      text: "You can upload up to 5 images only.",
+    });
+    return;
+  }
+
+  for (let i = 0; i < files.length; i++) {
+    if (!sparepartimage.some((e) => e.name === files[i].name)) {
+
+      const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+      
+      if (!allowedFileTypes.includes(files[i].type)) {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG, PNG, and WebP file types are allowed.",
+        });
+        return;
+      }
+
+      if (files[i].size > 5 * 1024 * 1024) {
+        swal({
+          icon: "error",
+          title: "File Size Exceeded",
+          text: "Maximum file size is 5MB.",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSparetpartImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            sparepart_image: e.target.result.split(',')[1],
+          },
+        ]);
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  }
+}
+
+const update = async (e) => {
+  e.preventDefault()
   const form = e.currentTarget;
   if (form.checkValidity() === false) {
     e.preventDefault();
@@ -250,21 +386,19 @@ const update = async (e) => {
       text: "Please fill the red text fields",
     });
   } else {
-    axios
-      .post(`${BASE_URL}/sparePart/update`, null, {
-        params: {
-          id,
-          code,
-          name,
-          desc,
-          SubParts,
-          addPriceInput,
-          unitMeasurement,
-          slct_manufacturer,
-          slct_binLocation,
-          thresholds,    
-        },
-      })
+    axios.post(`${BASE_URL}/sparePart/update`, {
+      id,
+      code,
+      name,
+      desc,
+      SubParts,
+      addPriceInput,
+      unitMeasurement,
+      slct_manufacturer,
+      slct_binLocation,
+      thresholds,
+      sparepartimage 
+    })
       .then((res) => {
         if (res.status === 200) {
           swal({
@@ -291,9 +425,69 @@ const update = async (e) => {
         }
       });
   }
-  setValidated(true); //for validations
+  setValidated(true);
 };
-console.log(addPriceInput)
+// const update = async (e) => {
+//   e.preventDefault();
+
+//   const form = e.currentTarget;
+//   if (form.checkValidity() === false) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     swal({
+//       icon: "error",
+//       title: "Fields are required",
+//       text: "Please fill the red text fields",
+//     });
+//   } else {
+//     axios
+//       .post(`${BASE_URL}/sparePart/update`, null, {
+//         params: {
+//           id,
+//           code,
+//           name,
+//           desc,
+//           SubParts,
+//           addPriceInput,
+//           unitMeasurement,
+//           slct_manufacturer,
+//           slct_binLocation,
+//           thresholds,    
+//           sparepartimage,
+//         },
+//       })
+//       .then((res) => {
+//         if (res.status === 200) {
+//           swal({
+//             title: "The Spare Part sucessfully updated!",
+//             text: "The Spare Part has been updated successfully.",
+//             icon: "success",
+//             button: "OK",
+//           }).then(() => {
+//             navigate("/spareParts");
+//             setIsSaveButtonDisabled(true);
+//           });
+//         } else if (res.status === 201) {
+//           swal({
+//             icon: "error",
+//             title: "Spare Part Already Exist",
+//             text: "Please input another code",
+//           });
+//         } else {
+//           swal({
+//             icon: "error",
+//             title: "Something went wrong",
+//             text: "Please contact our support",
+//           });
+//         }
+//       });
+//   }
+//   setValidated(true); //for validations
+// };
+
+
+
+
 
   return (
     <div className="main-of-containers">
@@ -305,28 +499,7 @@ console.log(addPriceInput)
                 </div>
                
                 <Form noValidate validated={validated} onSubmit={update}>
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          General Information
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '81%',
-                              left: '18rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-                 
-                        <div className="row">
-                            {/* {
-                              sparepartimage.length > 0 && sparepartimage?.map((image) => (
-                                <img src={`data:image/png;base64,${image.sparepart_image}`} alt={`subpart-img-${image?.id}`}/>
-                              ))
-                            } */}
-
+                <div className="row">
                             {sparepartimage.length > 0 && (
                               <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
                                 {sparepartimage.map((image, index) => (
@@ -342,6 +515,22 @@ console.log(addPriceInput)
                               </Carousel>
                             )}
                         </div>
+                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                          General Information
+                          <span
+                            style={{
+                              position: 'absolute',
+                              height: '0.5px',
+                              width: '-webkit-fill-available',
+                              background: '#FFA500',
+                              top: '81%',
+                              left: '18rem',
+                              transform: 'translateY(-50%)',
+                            }}
+                          ></span>
+                        </div>
+                 
+
 
                           <div className="row mt-3">
                           <div className="col-4">
@@ -489,39 +678,45 @@ console.log(addPriceInput)
                                 style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
-                            {/* <div className="col-6">
+                            <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-                                  <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
-                                      <Dropzone onDrop={onDropImage}>
-                                          {({ getRootProps, getInputProps }) => (
-                                          <div className='w-100 h-100' {...getRootProps()}>
-                                              <input
-                                                  ref={fileInputRef}
-                                                  type="file"
-                                                  style={{display: 'none'}}
-                                              />
-                                              <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
-                                                <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
-                                              </div>
-                                              {selectedimage && 
-                                                  <div className='d-flex align-items-center justify-content-center' style={{border: "1px green solid", width: '100%', height: '5em'}}>
-                                                    <p 
-                                                      style={{color: 'green', fontSize: '15px',}}>
-                                                        Uploaded Image: {selectedimage.name}
-                                                    </p>
-                                                  </div>}
-                                          </div>
-                                          )}
-                                      </Dropzone>
-                                      
-                                  </div>              
+                                <div className="card">
+                                  <div className="top">
+                                    <p>Drag & Drop Image Upload</p>
+                                  </div>
+                                  <div className="drag-area" 
+                                  onDragOver={onDragOver} 
+                                  onDragLeave={onDragLeave} 
+                                  onDrop={onDropImages}>
+                                      <>
+                                      Drag & Drop image here or {" "}
+                                      <span  
+                                      className="select" role="button" onClick={selectFiles}>
+                                        Browse
+                                      </span>
+                                      </>
+                                    <input
+                                    disabled={!isReadOnly} 
+                                    name="file" type="file" className="file" multiple ref={fileInputRef}
+                                    onChange={(e) => onFileSelect(e)}/>
+                                  </div>
+                                  <div className="ccontainerss">
+                                    {sparepartimage.map((image,index)=>(
+                                    <div className="imagess" key={index}>
+                                      <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                                      <img src={`data:image/png;base64,${image.sparepart_image}`} 
+                                      alt={`Spare Part ${image.sparePart_id}`} />
+                                    </div>
+                                    ))}
+                                  </div>
+                                </div>            
                               </Form.Group>   
-                            </div> */}
+                            </div>
                           </div>
                         
 
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
+                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative'}}>
                           Supplier List
                           <span
                             style={{

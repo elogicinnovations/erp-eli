@@ -14,12 +14,6 @@ router.use(session({
 
 router.route('/fetchTable').get(async (req, res) => {
     try {
-    //   const data = await MasterList.findAll({
-    //     include: {
-    //       model: UserRole,
-    //       required: false,
-    //     },
-    //   });
       const data = await SubPart.findAll({
         include: {
           model: Subpart_image,
@@ -45,10 +39,6 @@ router.route('/fetchTable').get(async (req, res) => {
         where: {
           id: req.query.id,
         },
-        include : {
-          model: Subpart_image,
-          required: false
-        }
       });
   
       if (data) {
@@ -133,75 +123,25 @@ router.route('/fetchTable').get(async (req, res) => {
 });
   
 
-
-// router.route('/update').put(  
-//   async (req, res) => {
-//   try {
-//       const existingDataCode = await SubPart.findOne({
-//         where: {
-//           id: { [Op.ne]: req.body.id},
-//         },
-//       });
-//       console.log(req.body)
-//       if (!existingDataCode) {
-//         res.status(201).send("Not Exist");
-//       } else {
-//           const newData = await SubPart.update(
-//         {
-//           subPart_code: req.body.prodcode,
-//           subPart_name: req.body.prodname,
-//           subPart_desc: req.body.proddetails,
-//           threshhold: req.body.prodthreshold,
-//           subPart_unit: req.body.produnit,
-//           bin_id: req.body.prodlocation,
-//           subPart_unitMeasurement: req.body.prodmeasurement,
-//           subPart_Manufacturer: req.body.prodmanufacture,
-//           category_code: req.body.prodcategory
-//         },
-//           {
-//             where: { id: req.body.id },
-//           }
-//         );
-
-//         if(newData){
-//           const deletesupplier = Subpart_supplier.destroy({
-//             where: {
-//               subpart_id: req.body.id
-//             },
-//           });
-
-//           if(deletesupplier){
-//             const selectedSuppliers = JSON.parse(req.body.subTAGSuppliers);
-//             console.log(selectedSuppliers)
-//             for (const supplier of selectedSuppliers) {
-//               const { value, price } = supplier;
-//               await Subpart_supplier.create({
-//                 subpart_id: req.body.id,
-//                 supplier_code: value,
-//                 supplier_price: price
-//                });
-//              }
-//           }
-//         }
-  
-//         res.status(200).json(newData);
-//         // console.log(newDa)
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).send("An error occurred");
-//     }
-//   }
-// );
-
-
-router.route("/update").post(async (req, res) => {
+router.route("/update").post(
+  async (req, res) => {
+    const {id,
+      prodcode,
+      prodname,
+      prodlocation,
+      prodmeasurement,
+      prodmanufacture,
+      proddetails,
+      prodthreshold,
+      prodcategory,
+      subpartTAGSuppliers,
+      subpartImages
+    } = req.body;
   try {
-    console.log(req.query.id);
     const existingDataCode = await SubPart.findOne({
       where: {
-        subPart_code: req.query.prodcode,
-        id: { [Op.ne]: req.query.id },
+        subPart_code: prodcode,
+        id: { [Op.ne]: id },
       },
     });
 
@@ -210,43 +150,58 @@ router.route("/update").post(async (req, res) => {
     } else {
       const subpart_newData = await SubPart.update(
         {
-          subPart_code: req.query.prodcode,
-          subPart_name: req.query.prodname,
-          subPart_desc: req.query.proddetails,
-          threshhold: req.query.prodthreshold,
-          bin_id: req.query.prodlocation,
-          subPart_unitMeasurement: req.query.prodmeasurement,
-          subPart_Manufacturer: req.query.prodmanufacture,
-          category_code: req.query.prodcategory
+          subPart_code: prodcode,
+          subPart_name: prodname,
+          subPart_desc: proddetails,
+          threshhold: prodthreshold,
+          bin_id: prodlocation,
+          subPart_unitMeasurement: prodmeasurement,
+          subPart_Manufacturer: prodmanufacture,
+          category_code: prodcategory,
         },
         {
           where: {
-            id: req.query.id,
+            id: id,
           },
         }
       );
 
-      if (subpart_newData) {
+
+
         const deletesupplier = Subpart_supplier.destroy({
           where: {
-            subpart_id: req.query.id
+            subpart_id: id
           },
         });
 
-        if(deletesupplier !== null || deletesupplier !== undefined){
-          const selectedSuppliers = req.query.subpartTAGSuppliers;
-          if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
+        if(deletesupplier){
+          const selectedSuppliers = subpartTAGSuppliers;
           for (const supplier of selectedSuppliers) {
             const { value, price } = supplier;
             await Subpart_supplier.create({
-              subpart_id: req.query.id,
+              subpart_id: id,
               supplier_code: value,
               supplier_price: price
-             });
-           }
+              });
+            }
           }
-        }
-      }
+
+          const deletesubImage = Subpart_image.destroy({
+            where: {
+              subpart_id: id
+            }
+          });
+
+          if(deletesubImage){
+            if (subpartImages && subpartImages.length > 0) {
+              subpartImages.forEach(async (i) => {
+                await Subpart_image.create({
+                  subpart_id: id,
+                  subpart_image: i.subpart_image
+                });
+              });
+            }
+          }
 
       res.status(200).json();
     }
@@ -255,6 +210,70 @@ router.route("/update").post(async (req, res) => {
     res.status(500).send("An error occurred");
   }
 });  
+
+// router.route("/update").post(async (req, res) => {
+//   try {
+//     const existingDataCode = await SubPart.findOne({
+//       where: {
+//         subPart_code: req.query.prodcode,
+//         id: { [Op.ne]: req.query.id },
+//       },
+//     });
+
+//     if (existingDataCode) {
+//       return res.status(201).send("Exist");
+//     } else {
+//       const subpart_newData = await SubPart.update(
+//         {
+//           subPart_code: req.query.prodcode,
+//           subPart_name: req.query.prodname,
+//           subPart_desc: req.query.proddetails,
+//           threshhold: req.query.prodthreshold,
+//           bin_id: req.query.prodlocation,
+//           subPart_unitMeasurement: req.query.prodmeasurement,
+//           subPart_Manufacturer: req.query.prodmanufacture,
+//           category_code: req.query.prodcategory
+//         },
+//         {
+//           where: {
+//             id: req.query.id,
+//           },
+//         }
+//       );
+
+
+//       if (subpart_newData) {
+//         const deletesupplier = Subpart_supplier.destroy({
+//           where: {
+//             subpart_id: req.query.id
+//           },
+//         });
+
+//         if(deletesupplier !== null || deletesupplier !== undefined){
+//           const selectedSuppliers = req.query.subpartTAGSuppliers;
+//           if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
+//           for (const supplier of selectedSuppliers) {
+//             const { value, price } = supplier;
+//             await Subpart_supplier.create({
+//               subpart_id: req.query.id,
+//               supplier_code: value,
+//               supplier_price: price
+//              });
+//            }
+//           }
+//         }
+
+//       }
+
+//       res.status(200).json();
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("An error occurred");
+//   }
+// });  
+
+
   
   router.route('/delete/:subPartId').delete(async (req, res) => {
     const subPartId = req.params.subPartId;

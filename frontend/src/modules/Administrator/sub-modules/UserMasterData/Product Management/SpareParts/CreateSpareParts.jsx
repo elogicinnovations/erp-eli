@@ -572,101 +572,17 @@ function CreateSpareParts() {
                 </Form.Group>
               </div>
               <div className="col-6">
-                  {/* <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Image Upload:{" "}
-                    </Form.Label>
-                    <div
-                      style={{
-                        border: "1px #DFE3E7 solid",
-                        height: "auto",
-                        maxHeight: "140px",
-                        fontSize: "15px",
-                        width: "720px",
-                        padding: 10,
-                      }}>
-                      <Dropzone
-                        onDrop={onDropImage}
-                        onChange={(e) => setselectedimage(e.target.value)}>
-                        {({ getRootProps, getInputProps }) => (
-                          <div
-                            className="w-100 h-100"
-                            style={{ width: "700px" }}
-                            {...getRootProps()}>
-                            <input
-                              ref={fileInputRef}
-                              type="file"
-                              style={{ display: "none" }}
-                              {...getInputProps()}
-                            />
-                            <div
-                              className="d-flex align-items-center"
-                              style={{ width: "700px", height: "2.5em" }}>
-                              <p
-                                className="fs-5 w-100 p-3 btn btn-secondary"
-                                style={{ color: "white", fontWeight: "bold" }}
-                                onClick={uploadClick}
-                                >
-                                Drag and drop a file here, or click to select a
-                                file
-                              </p>
-                            </div>
-                            {selectedimage.length > 0 && (
-                              <div
-                                className="d-flex align-items-center justify-content-center"
-                                style={{
-                                  border: "1px green solid",
-                                  width: "700px",
-                                  height: "5em",
-                                  padding: "1rem",
-                                  overflowY: "auto",
-                                }}>
-                                Uploaded Images:
-                                <p
-                                  style={{
-                                    color: "green",
-                                    fontSize: "15px",
-                                    display: "flex",
-                                    height: "4em",
-                                    flexDirection: "column",
-                                  }}>
-                                  {selectedimage.map((image, index) => (
-                                    <div key={index}>
-                                      <div className="imgContainer">
-                                        <span className="imgUpload">
-                                          {image.name}
-                                        </span>
-                                        <X
-                                          size={20}
-                                          onClick={removeImage}
-                                          className="removeButton"
-                                        />
-                                      </div>
-                                    </div>
-                                  ))}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </Dropzone>
-                    </div>
-                  </Form.Group> */}
                   <div className="card">
                     <div className="top">
                       <p>Drag & Drop Image Upload</p>
                     </div>
                     <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
-                      {isDragging ? (
-                        <span className="select">Drop images here</span>
-                      ) : (
                         <>
                          Drag & Drop image here or {" "}
                         <span className="select" role="button" onClick={selectFiles}>
                           Browse
                         </span>
                         </>
-                      )}
                       <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
                     </div>
                     <div className="ccontainerss">
@@ -713,6 +629,7 @@ function CreateSpareParts() {
                         <th className="tableh">Address</th>
                         <th className="tableh">Receiving Area</th>
                         <th className="tableh">Price</th>
+                        <th className="tableh">VAT</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -726,6 +643,7 @@ function CreateSpareParts() {
                             <td>{supp.address}</td>
                             <td>{supp.sparereceving}</td>
                             <td>
+                              <div className="d-flex align-items-center">
                               <span
                                 style={{
                                   fontSize: "20px",
@@ -733,9 +651,9 @@ function CreateSpareParts() {
                                 }}>
                                 ₱
                               </span>
-                              <input
+                              <Form.Control
                                 type="number"
-                                style={{ height: "50px" }}
+                                style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 placeholder="Input Price"
                                 value={sparepriceInput[supp.value] || ""}
                                 onChange={(e) =>
@@ -744,14 +662,20 @@ function CreateSpareParts() {
                                     supp.value
                                   )
                                 }
-                                required
+                                
                               />
+                              </div>
+                            </td>
+                            <td>
+                            {isNaN((supp.vatable / 100) * sparepriceInput[supp.value]) ? 0 : ((supp.vatable / 100) * sparepriceInput[supp.value]).toFixed(2)}
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td>No Supplier selected</td>
+                          <td colSpan="6" style={{ textAlign: "center" }}>
+                            No Supplier selected
+                          </td>
                         </tr>
                       )}
                     </tbody>
@@ -769,6 +693,7 @@ function CreateSpareParts() {
                               </div>
                             ),
                             codes: supp.supplier_code,
+                            vatable: supp.supplier_vat,
                             names: supp.supplier_name,
                             email: supp.supplier_email,
                             contact: supp.supplier_number,

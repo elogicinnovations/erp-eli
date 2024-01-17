@@ -66,12 +66,14 @@ const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
 const subPart_SparePart = require("./routes/sparePart_subPart.route");
 const sparepartPrice_history = require("./routes/sparepart_price_history.route");
+const sparepartImage = require("./routes/sparePart_image.route");
 
 const assembly = require("./routes/assembly.route");
 const spare_assembly = require("./routes/assembly_spare.route");
 const supplier_assembly = require("./routes/assembly_supplier.route");
 const subpart_assembly = require("./routes/assembly_subparts.route");
 const assembly_price_history = require("./routes/assembly_price_history.route");
+const assembly_image = require("./routes/assembly_image.route");
 
 const costCenter = require("./routes/costCenter.route");
 
@@ -137,12 +139,14 @@ app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);
 app.use("/subPart_SparePart", subPart_SparePart);
 app.use("/sparepartHistoryPrice", sparepartPrice_history);
+app.use("/sparePartimages", sparepartImage);
 
 app.use("/assembly", assembly);
 app.use("/spare_assembly", spare_assembly);
 app.use("/supplier_assembly", supplier_assembly);
 app.use("/assembly_subparts", subpart_assembly);
 app.use("/assemblyPriceHistory", assembly_price_history);
+app.use("/assemblyImage", assembly_image);
 
 app.use("/inventory", inventory);
 
