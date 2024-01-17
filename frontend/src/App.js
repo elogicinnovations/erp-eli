@@ -50,6 +50,7 @@ import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/C
 import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
 import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
+import ApprovalIssuance from "./modules/Inventory/Approvalssuance"
 import ViewInventory  from "./modules/Inventory/ViewInventory"
 import ViewAssembly  from "./modules/Inventory/ViewAssembly"
 import ViewSpare  from "./modules/Inventory/ViewSpare"
@@ -331,6 +332,10 @@ function App() {
 
                   <Route
                     path="/createIssuance" element={<CreateIssuance setActiveTab={setActiveTab} />}
+                  />
+                   <Route
+                    path="/approvalIssuance/:id" 
+                    element={<ApprovalIssuance/>}
                   />
                   <Route
                     path="/viewInventory/:id"

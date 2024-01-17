@@ -18,7 +18,10 @@ router.route('/getIssuance').get(async (req, res) =>
             {
                 model: CostCenter,
                 required: true
-            }]
+            }],
+            // where: {
+            //     issuance_id: req.query.id
+            // }
             });
 
         if (data) {
@@ -31,6 +34,38 @@ router.route('/getIssuance').get(async (req, res) =>
         res.status(500).json("Error");
     }
 });
+
+
+router.route('/approvalIssuance').get(async (req, res) => 
+{
+    try {
+        const data = await Issuance.findAll({
+            include: [{
+                model: MasterList,
+                 required: true
+                },
+            {
+                model: CostCenter,
+                required: true
+            }],
+            where: {
+                issuance_id: req.query.id
+            }
+            });
+
+        if (data) {
+        return res.json(data);
+        } else {
+        res.status(400);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json("Error");
+    }
+});
+
+
+
 
 
 
