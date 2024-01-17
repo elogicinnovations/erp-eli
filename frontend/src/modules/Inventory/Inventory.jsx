@@ -462,13 +462,13 @@ const navigate = useNavigate()
                                                     </thead>
                                                     <tbody>
                                                         {issuance.map((data, i) => (
-                                                        <tr key={i}>
-                                                            <td>{data.issuance_id}</td>
-                                                            <td>{data.cost_center.name}</td>
-                                                            <td>{data.from_site}</td>
-                                                            <td>{data.mrs}</td>
-                                                            <td>{data.masterlist.col_Fname}</td>
-                                                            <td>{formatDatetime(data.createdAt)}</td>
+                                                        <tr key={i} >
+                                                            <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.issuance_id}</td>
+                                                            <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.cost_center.name}</td>
+                                                            <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.from_site}</td>
+                                                            <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.mrs}</td>
+                                                            <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.masterlist.col_Fname}</td>
+                                                            <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{formatDatetime(data.createdAt)}</td>
                                                             <td>
                                                               <button
                                                                 onClick={() => navigate(`/returnForm/${data.issuance_id}`)}

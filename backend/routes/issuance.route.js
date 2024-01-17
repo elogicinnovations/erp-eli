@@ -36,7 +36,7 @@ router.route('/getIssuance').get(async (req, res) =>
 });
 
 
-router.route('/returnForm').get(async (req, res) => 
+router.route('/approvalIssuance').get(async (req, res) => 
 {
     try {
         const data = await Issuance.findAll({
@@ -63,6 +63,9 @@ router.route('/returnForm').get(async (req, res) =>
         res.status(500).json("Error");
     }
 });
+
+
+
 
 
 
