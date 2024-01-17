@@ -22,7 +22,10 @@ const Inventory_Spare = sequelize.define('inventory_spare', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
-  }
+  },
+  warehouse: {
+    type: DataTypes.STRING
+  },
 });
 
 module.exports = Inventory_Spare;

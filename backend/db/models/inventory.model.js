@@ -23,6 +23,9 @@ const Inventory = sequelize.define('inventory_prd', {
     allowNull: true,
     unique: false
   },
+  warehouse: {
+    type: DataTypes.STRING
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,

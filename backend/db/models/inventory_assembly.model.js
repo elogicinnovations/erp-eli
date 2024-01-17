@@ -22,7 +22,10 @@ const Inventory_Assembly = sequelize.define('inventory_assembly', {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false
-  }
+  },
+  warehouse: {
+    type: DataTypes.STRING
+  },
 });
 
 module.exports = Inventory_Assembly;

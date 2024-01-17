@@ -462,4 +462,162 @@ router.route('/fetchToIssueSubpart').get(async (req, res) => { // para sa pag fe
 });
 
 
+// ------------------ fetch inventory per warehouse  ---------------------//
+router.route('/fetchInvetory_assembly_warehouse').get(async (req, res) => {
+  try {
+    const { warehouse } = req.query;
+    const data = await Inventory_Assembly.findAll({
+      where: {
+        warehouse : warehouse,
+      },
+      include:[ {
+        model: Assembly_Supplier,
+        required: true,
+
+            include: [{
+              model: Assembly,
+              required: true,
+
+            },
+            {
+              model: Supplier,
+              required: true
+            }],            
+      }     
+    ]
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route('/fetchInvetory_product_warehouse').get(async (req, res) => {
+  try {
+    const { warehouse } = req.query;
+    const data = await Inventory.findAll({
+      where: {
+        warehouse : warehouse,
+      },
+      include:[ {
+        model: ProductTAGSupplier,
+        required: true,
+
+            include: [{
+              model: Product,
+              required: true,
+
+                  include: [{
+                    model: Manufacturer,
+                    required: true,
+                  }]
+            },
+            {
+              model: Supplier,
+              required: true
+            }],            
+      }
+      
+    ]
+    });
+
+    if (data) {
+      
+
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route('/fetchInvetory_spare_warehouse').get(async (req, res) => {
+  try {
+    const { warehouse } = req.query;
+    const data = await Inventory_Spare.findAll({
+      where: {
+        warehouse : warehouse,
+      },
+      include:[ {
+        model: SparePart_Supplier,
+        required: true,
+
+            include: [{
+              model: SparePart,
+              required: true,
+
+            },
+            {
+              model: Supplier,
+              required: true
+            }],            
+      }
+      
+    ]
+    });
+
+    if (data) {
+      
+
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route('/fetchInvetory_subpart_warehouse').get(async (req, res) => {
+  try {
+    const { warehouse } = req.query;
+    const data = await Inventory_Subpart.findAll({
+      where: {
+        warehouse : warehouse,
+      },
+      include:[ {
+        model: Subpart_supplier,
+        required: true,
+
+            include: [{
+              model: SubPart,
+              required: true,
+
+            },
+            {
+              model: Supplier,
+              required: true
+            }],            
+      }
+      
+    ]
+    });
+
+    if (data) {
+      
+
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+
 module.exports = router;

@@ -410,7 +410,7 @@ router.route('/approve_PO').post(async (req, res) => {
 router.route('/receivedPRD').post(async (req, res) => {
   try {
     const {totalValue, id, prd_supplierID} = req.body;
-     
+    const destination = 'Agusan Del Sur'; 
        const received_newData = await PR_PO.update({
         quantity_received: totalValue,
        },
@@ -420,6 +420,7 @@ router.route('/receivedPRD').post(async (req, res) => {
 
         await Inventory.update({
           quantity: totalValue,
+          warehouse: destination,
        },
        {
          where: { product_tag_supp_id: prd_supplierID }
@@ -511,6 +512,7 @@ router.route('/transactionDelivered').post(async (req, res) => {
 router.route('/receivedAssembly').post(async (req, res) => {
   try {
     const {totalValue, id, qualityAssuranceASM, asm_suppID} = req.body;
+    const destination = 'Agusan Del Sur';
      
        const received_newData = await PR_PO_asmbly.update({
         quantity_received: totalValue,
@@ -521,6 +523,7 @@ router.route('/receivedAssembly').post(async (req, res) => {
        }); 
        await Inventory_Assembly.update({
         quantity: totalValue,
+        warehouse: destination,
      },
      {
        where: { assembly_tag_supp_id: asm_suppID }
@@ -538,7 +541,8 @@ router.route('/receivedAssembly').post(async (req, res) => {
 router.route('/receivedSparePart').post(async (req, res) => {
   try {
     const {totalValue, id, qualityAssuranceSpare, spare_suppID} = req.body;
-     
+    const destination = 'Agusan Del Sur';
+
        const received_newData = await PR_PO_spare.update({
         quantity_received: totalValue,
         quality_assurance: qualityAssuranceSpare,
@@ -550,6 +554,7 @@ router.route('/receivedSparePart').post(async (req, res) => {
 
        await Inventory_Spare.update({
         quantity: totalValue,
+        warehouse: destination,
         },
         {
           where: { spare_tag_supp_id: spare_suppID }
@@ -567,7 +572,7 @@ router.route('/receivedSparePart').post(async (req, res) => {
 router.route('/receivedSubPart').post(async (req, res) => {
   try {
     const {totalValue, id, subpart_suppID, qualityAssuranceSub} = req.body;
-     
+    const destination = 'Agusan Del Sur';
        const received_newData = await PR_PO_subpart.update({
         quantity_received: totalValue,
         quality_assurance: qualityAssuranceSub,
@@ -577,6 +582,7 @@ router.route('/receivedSubPart').post(async (req, res) => {
        }); 
        await Inventory_Subpart.update({
         quantity: totalValue,
+        warehouse: destination,
      },
      {
        where: { subpart_tag_supp_id: subpart_suppID }

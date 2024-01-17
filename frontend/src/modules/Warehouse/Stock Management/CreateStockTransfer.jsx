@@ -42,9 +42,12 @@ function CreateStockTransfer() {
   const [fetchSpare, setFetchSpare] = useState([]);
   const [fetchSubPart, setFetchSubPart] = useState([]);
 
+  const [selectedWarehouse, setSelectedWarehouse] = useState('');
+
+
   const [col_id, setSelect_Masterlist] = useState([]);
   const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.target.value);};
-  const handleFormSourceWarehouse = (event) => { setSource(event.target.value)};
+  const handleFormSourceWarehouse = (event) => { setSelectedWarehouse(event.target.value)};
   const handleFormDestinationWarehouse = (event) => { setDestination(event.target.value)};
 
   const [masterList, setMasteList] = useState([]); 
@@ -60,28 +63,44 @@ function CreateStockTransfer() {
 
 
   useEffect(() => {
-    axios.get(BASE_URL + '/product/fetchTable')
+    axios.get(BASE_URL + '/inventory/fetchInvetory_product_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
       .then(res => setFetchProduct(res.data))
       .catch(err => console.log(err));
-  }, []);
+  }, [selectedWarehouse]);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/assembly/fetchTable')
+    axios.get(BASE_URL + '/inventory/fetchInvetory_assembly_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
       .then(res => setFetchAssembly(res.data))
       .catch(err => console.log(err));
-  }, []);
+  }, [selectedWarehouse]);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/sparePart/fetchTable')
+    axios.get(BASE_URL + '/inventory/fetchInvetory_spare_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
       .then(res => setFetchSpare(res.data))
       .catch(err => console.log(err));
-  }, []);
+  }, [selectedWarehouse]);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/subpart/fetchTable')
+    axios.get(BASE_URL + '/inventory/fetchInvetory_subpart_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
       .then(res => setFetchSubPart(res.data))
       .catch(err => console.log(err));
-  }, []);
+  }, [selectedWarehouse]);
   
 
 const add = async (e) => {
@@ -99,7 +118,7 @@ const add = async (e) => {
   } else {
     try {
       const response = await axios.post(`${BASE_URL}/StockTransfer/create`, {
-        source,
+        selectedWarehouse,
         destination,
         reference_code,
         col_id,
@@ -327,6 +346,7 @@ function formatDatetime(datetime) {
                                                   <th className='tableh'>Code</th>
                                                   <th className='tableh'>Product Name</th>
                                                   <th className='tableh'>UOM</th>
+                                                  <th className='tableh'>Available</th>
                                                   <th className='tableh'>Quantity</th>                                           
                                                   <th className='tableh'>Date Created</th>
                                                   {/* <th className='tableh'>Description</th> */}
@@ -339,7 +359,8 @@ function formatDatetime(datetime) {
                                               <tr key={product.value}>
                                                 <td >{product.code}</td>
                                                 <td >{product.name}</td>  
-                                                <td >{product.unit}</td>                                         
+                                                <td >{product.unit}</td>    
+                                                <td >{product.available}</td>                                      
                                                 <td > 
                                                   <div className='d-flex flex-direction-row align-items-center'>
                                                     <input
@@ -379,52 +400,64 @@ function formatDatetime(datetime) {
                                                 <Select
                                                   isMulti
                                                   options={fetchProduct.map(prod => ({
-                                                    value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
+                                                    value: `${prod.product_tag_supplier.product.product_id}_${prod.product_tag_supplier.product.product_code}_Product`, // Indicate that it's a product
                                                     label: <div>
-                                                      Product Code: <strong>{prod.product_code}</strong> / 
-                                                      Product Name: <strong>{prod.product_name}</strong> / 
+                                                      Product Code: <strong>{prod.product_tag_supplier.product.product_code}</strong> / 
+                                                      Product Name: <strong>{prod.product_tag_supplier.product.product_name}</strong> / 
+                                                      Quantity: <strong>{prod.quantity}</strong> 
                                                     </div>,
                                                     type: 'Product',
-                                                    values: prod.product_id,
-                                                    code: prod.product_code,
-                                                    name: prod.product_name,
-                                                    created: prod.createdAt
+                                                    values: prod.product_tag_supplier.product.product_id,
+                                                    code: prod.product_tag_supplier.product.product_code,
+                                                    name: prod.product_tag_supplier.product.product_name,
+                                                    unit: prod.product_tag_supplier.product.product_unitMeasurement,
+                                                    avaliable: prod.quantity,
+                                                    created: prod.product_tag_supplier.product.createdAt
                                                   }))
                                                   .concat(fetchAssembly.map(assembly => ({
-                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
+                                                    value: `${assembly.assembly_supplier.assembly.id}_${assembly.assembly_supplier.assembly.assembly_code}_Assembly`, // Indicate that it's an assembly
                                                     label: <div>
-                                                      Assembly Code: <strong>{assembly.assembly_code}</strong> / 
-                                                      Assembly Name: <strong>{assembly.assembly_name}</strong> / 
+                                                      Assembly Code: <strong>{assembly.assembly_supplier.assembly.assembly_code}</strong> / 
+                                                      Assembly Name: <strong>{assembly.assembly_supplier.assembly.assembly_name}</strong> /
+                                                      Quantity: <strong>{assembly.quantity}</strong>  
                                                     </div>,
                                                     type: 'Assembly',
-                                                    values: assembly.id,
-                                                    code: assembly.assembly_code,
-                                                    name: assembly.assembly_name,
-                                                    created: assembly.createdAt
+                                                    values: assembly.assembly_supplier.assembly.id,
+                                                    code: assembly.assembly_supplier.assembly.assembly_code,
+                                                    name: assembly.assembly_supplier.assembly.assembly_name,
+                                                    unit: assembly.assembly_supplier.assembly.assembly_unitMeasurement,
+                                                    available: assembly.quantity,
+                                                    created: assembly.assembly_supplier.assembly.createdAt
                                                   })))
                                                   .concat(fetchSpare.map(spare => ({
-                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`, // Indicate that it's an assembly
+                                                    value: `${spare.sparepart_supplier.sparePart.id}_${spare.sparepart_supplier.sparePart.spareParts_code}_Spare`, // Indicate that it's an assembly
                                                     label: <div>
-                                                      Product Part Code: <strong>{spare.spareParts_code}</strong> / 
-                                                      Product Part Name: <strong>{spare.spareParts_name}</strong> / 
+                                                      Product Part Code: <strong>{spare.sparepart_supplier.sparePart.spareParts_code}</strong> / 
+                                                      Product Part Name: <strong>{spare.sparepart_supplier.sparePart.spareParts_name}</strong> / 
+                                                      Quantity: <strong>{spare.quantity}</strong>
                                                     </div>,
                                                     type: 'Spare',
-                                                    values: spare.id,
-                                                    code: spare.spareParts_code,
-                                                    name: spare.spareParts_name,
-                                                    created: spare.createdAt
+                                                    values: spare.sparepart_supplier.sparePart.id,
+                                                    code: spare.sparepart_supplier.sparePart.spareParts_code,
+                                                    name: spare.sparepart_supplier.sparePart.spareParts_name,
+                                                    unit: spare.sparepart_supplier.sparePart.spareParts_unitMeasurement,
+                                                    available: spare.quantity,
+                                                    created: spare.sparepart_supplier.sparePart.createdAt
                                                   })))
                                                   .concat(fetchSubPart.map(subPart => ({
-                                                    value: `${subPart.id}_${subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
+                                                    value: `${subPart.subpart_supplier.subPart.id}_${subPart.subpart_supplier.subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
                                                     label: <div>
-                                                      Product Sub-Part Code: <strong>{subPart.subPart_code}</strong> / 
-                                                      Product Sub-Part Name: <strong>{subPart.subPart_name}</strong> / 
+                                                      Product Sub-Part Code: <strong>{subPart.subpart_supplier.subPart.subPart_code}</strong> / 
+                                                      Product Sub-Part Name: <strong>{subPart.subpart_supplier.subPart.subPart_name}</strong> / 
+                                                      Quantity: <strong>{subPart.quantity}</strong>
                                                     </div>,
                                                     type: 'SubPart',
-                                                    values: subPart.id,
-                                                    code: subPart.subPart_code,
-                                                    name: subPart.subPart_name,
-                                                    created: subPart.createdAt
+                                                    values: subPart.subpart_supplier.subPart.id,
+                                                    code: subPart.subpart_supplier.subPart.subPart_code,
+                                                    name: subPart.subpart_supplier.subPart.subPart_name,
+                                                    unit: subPart.subpart_supplier.subPart.subPart_unitMeasurement,
+                                                    available: subPart.quantity,
+                                                    created: subPart.subpart_supplier.subPart.createdAt
                                                   })))
                                                 }
                                                   onChange={selectProduct}

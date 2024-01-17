@@ -63,6 +63,7 @@ import PurchaseOrderListPreview from "./modules/Purchase Order/PurchaseOrderList
 import PO_approvalRejustify from "./modules/Purchase Order/PurchaseOrderList/PO_approval_rejustify";
 import PO_receive from "./modules/Purchase Order/PurchaseOrderList/PO_Receive";
 import StockManagement from "./modules/Warehouse/Stock Management/StockManagement";
+import ReceivingStockTransfer from "./modules/Warehouse/Receiving Stock Transfer/ReceivingStockTransfer";
 import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStockTransfer";
 import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview"
 import ReceivingManagement from "./modules/Warehouse/Receiving Management/ReceivingManagement";
@@ -429,6 +430,11 @@ function App() {
                         path="/receivingManagementPreviewId/:id"
                         element={<ReceivingManagementPreview/>}
                       />
+
+          <Route
+            path="/receivingStockTransfer"
+            element={<ReceivingStockTransfer/>}
+          />
               <Route
                     path="/inventoryReports"
                     element={<InventoryReports/>}

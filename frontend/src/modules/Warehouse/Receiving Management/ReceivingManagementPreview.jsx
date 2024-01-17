@@ -473,7 +473,6 @@ const handleQuantityChangeSparePart = (value, id, quantityReceived, quantityDeli
 const handleQuantityChangeSubPart = (value, id, quantityReceived, quantityDelivered, subpart_suppID) => {
 
   const totalReceived = (quantityDelivered + value);
-
   if (parseInt(totalReceived) > parseInt(quantityReceived)) 
   {
     swal({
