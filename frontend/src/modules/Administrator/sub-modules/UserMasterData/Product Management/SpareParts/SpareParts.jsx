@@ -15,8 +15,11 @@ import {
   NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
+  ArrowsClockwise,
 } from "@phosphor-icons/react";
+import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
 import Table from 'react-bootstrap/Table';
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -216,6 +219,13 @@ function SpareParts({ authrztn }) {
 
   useEffect(() => {
     // Initialize DataTable when role data is available
+    if ($("#order-listing1").length > 0 && historypricemodal.length > 0) {
+      $("#order-listing1").DataTable();
+    }
+  }, [historypricemodal]);
+
+  useEffect(() => {
+    // Initialize DataTable when role data is available
     if ($("#order-listing").length > 0 && sparePart.length > 0) {
       $("#order-listing").DataTable();
     }
@@ -239,6 +249,65 @@ function SpareParts({ authrztn }) {
   //   });
 
   // }, []);
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+
+  const handleSave = () => {
+    axios
+      .put(BASE_URL + "/sparePart/statusupdate", {
+        sparePartIds: selectedCheckboxes,
+        status: selectedStatus,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: "Status Updating!",
+            text: "The status has been updated successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleClose();
+            reloadTable();
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const handleCheckboxChange = (productId) => {
+    const updatedCheckboxes = [...selectedCheckboxes];
+
+    if (updatedCheckboxes.includes(productId)) {
+      updatedCheckboxes.splice(updatedCheckboxes.indexOf(productId), 1);
+    } else {
+      updatedCheckboxes.push(productId);
+    }
+
+    setSelectedCheckboxes(updatedCheckboxes);
+    setShowChangeStatusButton(updatedCheckboxes.length > 0);
+  };
+
+  const handleSelectAllChange = () => {
+    const allsparePartIds = sparePart.map((data) => data.id);
+    setSelectedCheckboxes(selectAllChecked ? [] : allsparePartIds);
+    setShowChangeStatusButton(!selectAllChecked);
+    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  };
+
+  const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+
   
   return (
     <div className="main-of-containers">
@@ -251,18 +320,29 @@ function SpareParts({ authrztn }) {
               </div>
 
               <div className="button-create-side">
-                <div className="Buttonmodal-new">
 
                   { authrztn.includes('Spare Part - Add') && (
+                  showChangeStatusButton ? (
+                  <div className="Buttonmodal-change">
+                    <button className="buttonchanges" onClick={handleShow}>
+                      <span style={{}}>
+                      <ArrowsClockwise size={25} />
+                      </span>
+                      Change Status
+                    </button>
+                  </div>
+                ) : (
+                <div className="Buttonmodal-new">
                   <Link to="/createSpareParts" className="button">
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
                     New Product
                   </Link>
+                </div>
+                )
                   )}
 
-                </div>
               </div>
             </div>
           </div>
@@ -271,9 +351,18 @@ function SpareParts({ authrztn }) {
               <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
+                    <th className="tableh">
+                      <input
+                        type="checkbox"
+                        checked={selectAllChecked}
+                        onChange={handleSelectAllChange}
+                        // when check check all
+                      />
+                    </th>
                     <th className="tableh">Code</th>
                     <th className="tableh">Spare Parts Name</th>
                     <th className="tableh">Description</th>
+                    <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
                     <th className="tableh">Date Modified</th>
                     <th className="tableh">Action</th>
@@ -282,6 +371,13 @@ function SpareParts({ authrztn }) {
                 <tbody>
                   {sparePart.map((data, i) => (
                     <tr key={i}>
+                      <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedCheckboxes.includes(data.id)}
+                        onChange={() => handleCheckboxChange(data.id)}
+                      />
+                      </td>
                       <td
                         onClick={() => navigate(`/viewSpareParts/${data.id}`)}>
                         {data.spareParts_code}
@@ -293,6 +389,25 @@ function SpareParts({ authrztn }) {
                       <td
                         onClick={() => navigate(`/viewSpareParts/${data.id}`)}>
                         {data.spareParts_desc}
+                      </td>
+                      <td
+                        onClick={() => navigate(`/viewSpareParts/${data.id}`)
+                        }>
+                        <div
+                          className="colorstatus"
+                          style={{
+                            backgroundColor:
+                              data.spareParts_status === "Active"
+                                ? "green"
+                                : "red",
+                            color: "white",
+                            padding: "5px",
+                            borderRadius: "5px",
+                            textAlign: "center",
+                            width: "80px",
+                          }}>
+                        {data.spareParts_status}
+                        </div>
                       </td>
                       <td
                         onClick={() => navigate(`/viewSpareParts/${data.id}`)}>
@@ -364,6 +479,42 @@ function SpareParts({ authrztn }) {
         </div>
       </div>
       <Modal
+        size="md"
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="exampleForm.ControlInput2">
+            <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
+            <Form.Select
+              style={{ height: "40px", fontSize: "15px" }}
+              onChange={handleStatusChange}
+              value={selectedStatus}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-warning"
+            onClick={handleSave}
+            style={{ fontSize: "20px" }}>
+            Save
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={handleClose}
+            style={{ fontSize: "20px" }}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
         size="xl"
         show={showhistorical}
         onHide={handlehistoricalClose}
@@ -375,24 +526,24 @@ function SpareParts({ authrztn }) {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <Table responsive="xl">
-              <thead>
+            <table responsive="xl" id="order-listing1">
+              <thead className="priceHH">
                 <tr>
-                  <th>Spare Parts Name</th>
-                  <th>Price</th>
-                  <th>Date Created</th>
+                  <th className="priceHH">Spare Parts Name</th>
+                  <th className="priceHH">Price</th>
+                  <th className="priceHH">Date Created</th>
                 </tr>
               </thead>
               <tbody>
                 {historypricemodal.map((pricehistory, i) => (
                   <tr>
-                    <td>{pricehistory.sparePart.spareParts_name}</td>
-                    <td>{pricehistory.supplier_price}</td>
-                    <td>{ModalformatDate(pricehistory.createdAt)}</td>
+                    <td className="priceHB">{pricehistory.sparePart.spareParts_name}</td>
+                    <td className="priceHB">{pricehistory.supplier_price}</td>
+                    <td className="priceHB">{ModalformatDate(pricehistory.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </table>
           </div> 
         </Modal.Body>
         <Modal.Footer>

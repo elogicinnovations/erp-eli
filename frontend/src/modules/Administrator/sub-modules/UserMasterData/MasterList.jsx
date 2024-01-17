@@ -820,7 +820,7 @@ function MasterList({ authrztn }) {
               className="gen-info"
               style={{ fontSize: "20px", position: "relative" }}>
               General Information
-              <span
+              <span className="gene-info"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -910,7 +910,7 @@ function MasterList({ authrztn }) {
               className="gen-info"
               style={{ fontSize: "20px", position: "relative" }}>
               Account Access
-              <span
+              <span className="acc-acc"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -1075,7 +1075,7 @@ function MasterList({ authrztn }) {
               className="gen-info"
               style={{ fontSize: "20px", position: "relative" }}>
               General Information
-              <span
+              <span className="gene-info"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -1160,7 +1160,7 @@ function MasterList({ authrztn }) {
               className="gen-info"
               style={{ fontSize: "20px", position: "relative" }}>
               Account Access
-              <span
+              <span className="acc-acc"
                 style={{
                   position: "absolute",
                   height: "0.5px",

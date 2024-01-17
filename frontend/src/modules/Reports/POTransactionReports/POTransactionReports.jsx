@@ -261,7 +261,7 @@ function POTransactionReports() {
                     </div>
                   </div>
                   <div className="date-filter">
-                    <div style={{ zIndex: "3" }}>
+                    <div style={{ zIndex: "3", margin:'0 0 10px 10px' }}>
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
                         className="date">
@@ -303,8 +303,10 @@ function POTransactionReports() {
                         />
                       </Form.Group>
                     </div>
-                    <button className="genbutton">Generate</button>
                   </div>
+                </div>
+                <div className="genbutton">
+                  <button className='genbutton'>Generate</button>
                 </div>
                 <div className="export-refresh">
                   {/* <button className='export'>

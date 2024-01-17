@@ -15,6 +15,7 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
   CircleNotch,
+  ArrowsClockwise,
 } from "@phosphor-icons/react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -284,6 +285,13 @@ function ProductList({ authrztn }) {
       $("#order-listing").DataTable();
     }
   }, [product]);
+
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($("#order-listing1").length > 0 && historypricemodal.length > 0) {
+      $("#order-listing1").DataTable();
+    }
+  }, [historypricemodal]);
   
   return (
     <div className="main-of-containers">
@@ -303,7 +311,7 @@ function ProductList({ authrztn }) {
                   <div className="Buttonmodal-change">
                     <button className="buttonchanges" onClick={handleShow}>
                       <span style={{}}>
-                        <CircleNotch size={25} />
+                      <ArrowsClockwise size={25} />
                       </span>
                       Change Status
                     </button>
@@ -532,24 +540,24 @@ function ProductList({ authrztn }) {
         </Modal.Header>
         <Modal.Body>
           <div>
-            <Table responsive="xl">
-              <thead>
+            <table responsive="xl" id="order-listing1">
+              <thead className="priceHH">
                 <tr>
-                  <th>Product Name</th>
-                  <th>Price</th>
-                  <th>Date Created</th>
+                  <th className="priceHH">Product Name</th>
+                  <th className="priceHH">Price</th>
+                  <th className="priceHH">Date Created</th>
                 </tr>
               </thead>
               <tbody>
                 {historypricemodal.map((pricehistory, i) => (
                   <tr key={i}>
-                    <td>{pricehistory.product.product_name}</td>
-                    <td>{pricehistory.product_price}</td>
-                    <td>{ModalformatDate(pricehistory.createdAt)}</td>
+                    <td className="priceHB">{pricehistory.product.product_name}</td>
+                    <td className="priceHB">{pricehistory.product_price}</td>
+                    <td className="priceHB">{ModalformatDate(pricehistory.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </table>
           </div>                        
         </Modal.Body>
         <Modal.Footer>

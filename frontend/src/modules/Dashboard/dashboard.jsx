@@ -353,7 +353,7 @@ const Dashboard = ({ setActiveTab }) => {
                       </div>
                     </Link>
 
-                    <div className="tabs">
+                    <Link className="tabs">
                       <div className="tab-title">
                         <div className="stock-icon">
                           <Stack size={20} weight='fill' style={{color: 'green'}}/>
@@ -370,7 +370,7 @@ const Dashboard = ({ setActiveTab }) => {
                         <TrendDown size={25} weight='bold' style={{color: 'red'}}/><p1>25%</p1> vs last month
                         </div>
                       </div>
-                    </div>
+                    </Link>
 
                     <Link to='/supplier' className="tabs">
                       <div className="tab-title">
@@ -580,7 +580,7 @@ const Dashboard = ({ setActiveTab }) => {
                       <div className="dash-label">
                         Purchase Order
                       </div>
-                      <div className="preview-tabs">
+                      <div className="preview-tab">
                         
                       <Link to='/purchaseOrderList' className="tab">
                         <div className="tab-data">

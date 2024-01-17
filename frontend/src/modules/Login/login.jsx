@@ -82,7 +82,7 @@ const Login = () => {
                     <div className='logintextaccount'>Login to your account</div>
                   </div>
 
-                  <form style={{marginTop: 100}} onSubmit={handleLogin}>
+                  <form className='loginform' onSubmit={handleLogin}>
                   <div className="email-pass-input">
                       <div className="email-content">
                         <label>EMAIL ADDRESS</label>
