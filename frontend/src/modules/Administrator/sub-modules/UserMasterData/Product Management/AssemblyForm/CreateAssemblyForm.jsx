@@ -719,13 +719,11 @@ function onDropImages(event) {
                         <Select
                           isMulti
                           options={fetchSupp.map((supp) => ({
-                            value: supp.supplier_code,
+                            value: `${supp.supplier_code} - ${supp.supplier_name}`,
                             label: (
                               <div>
-                                Supplier Code:{" "}
-                                <strong>{supp.supplier_code}</strong> / Name:{" "}
+                                Supplier Code: <strong>{supp.supplier_code}</strong> / Name:{" "}
                                 <strong>{supp.supplier_name}</strong>
-                                
                               </div>
                             ),
                             codes: supp.supplier_code,

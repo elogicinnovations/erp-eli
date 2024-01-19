@@ -9,7 +9,7 @@
 
 .input[type="radio"], input[type="checkbox"]{
   position: relative;
-  z-index: 0;
+  z-index: 1;
 }
 
 .carousel-image{
@@ -1085,12 +1085,15 @@ input[type="number"]::-webkit-clear-button {
 }
 
 .logo-head-sidebars {
-  height: 100px;
+  height: 120px;
   background-color: #161a23;
   box-shadow: 0px -5px 5px -5px rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .spacefor-sidebar {
@@ -1218,7 +1221,98 @@ input[type="number"]::-webkit-clear-button {
 
 /* Jerome's Mobile CSS */
 
-@media only screen and (max-width: 750px) {
+@media only screen and (max-height: 720px) {
+  .right-of-main-container {
+    overflow-y: auto;
+  }
+
+  .right-body-contents {
+    background: #fff;
+    border-radius: 15px;
+  }
+}
+
+@media only screen and (max-width: 1300px) {
+  .right-of-main-container {  
+    width: 100%;
+  }
+
+  .right-of-main-container {
+    flex: 0 0 100%
+  }
+
+  .left-of-main-containers {
+    width: 450px;
+  }
+
+  .sidebar-button {
+    background: #161a23;
+  }
+  .sidebar-main-content .menu-item .MuiListItemText-primary {
+    font-size: 3rem;
+  }
+
+  .sidebar-main-content .adminsub-menu .MuiListItemText-primary {
+    font-size: 2.5rem;
+  }
+
+  .sidebar-main-content .Employeesub-menu .MuiListItemText-primary {
+    font-size: 2.1rem;
+  }
+
+  @media screen and (max-width: 1300px) {
+    .left-of-main-containers {
+      transform: translateX(-100%);
+      position: absolute;
+      z-index: 1;
+      height: 100%;
+      overflow-y: auto;
+      background-color: #fff; /* Set your preferred background color */
+    }
+  
+    .left-of-main-containers.show-sidebar {
+      transform: translateX(0);
+    }
+  
+    .main-of-containers {
+      position: relative;
+      width: -webkit-fill-available;
+    }
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .right-of-main-container {
+    flex: 0;
+    width: 100%;
+  }
+
+  .right-of-main-container {
+    flex: 0 0 100%
+  }
+
+  @media screen and (max-width: 1000px) {
+    .left-of-main-containers {
+      transform: translateX(-100%);
+      position: absolute;
+      z-index: 1;
+      height: 100%;
+      overflow-y: auto;
+      background-color: #fff; /* Set your preferred background color */
+    }
+  
+    .left-of-main-containers.show-sidebar {
+      transform: translateX(0);
+    }
+  
+    .main-of-containers {
+      position: relative;
+      width: -webkit-fill-available;
+    }
+  }
+}
+
+@media only screen and (max-width: 720px) {
 
   /* login */
   .login-main-containers {
@@ -1299,7 +1393,7 @@ input[type="number"]::-webkit-clear-button {
   /* Forgot Password */
 
   /* Sidebar */
-  @media screen and (max-width: 750px) {
+  @media screen and (max-width: 720px) {
     .left-of-main-containers {
       transform: translateX(-100%);
       position: absolute;
@@ -1322,13 +1416,10 @@ input[type="number"]::-webkit-clear-button {
   .left-of-main-containers {
     width: 450px;
   }
-  
-  .logo-head-sidebars {
-    margin-top: 85px;
+
+  .sidebar-button {
+    background: #161a23;
   }
-  /* Sidebar */
-  
-  /* Dashboard */
   .sidebar-main-content .menu-item .MuiListItemText-primary {
     font-size: 3rem;
   }
@@ -1340,6 +1431,9 @@ input[type="number"]::-webkit-clear-button {
   .sidebar-main-content .Employeesub-menu .MuiListItemText-primary {
     font-size: 2.1rem;
   }
+  /* Sidebar */
+  
+  /* Dashboard */
 
   .preview-tabs {
     display: grid !important;
@@ -1414,10 +1508,39 @@ input[type="number"]::-webkit-clear-button {
   .main-of-all-tables td {
     padding: 10px 0px 10px 15px;
   }
+
+  .input[type="radio"], input[type="checkbox"] {
+    z-index: 0;
+  }
+
+  .button-create-side {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  button.Filterclear {
+    width: 50%;
+  }
+
+  .react-datepicker-wrapper {
+    width: 100% !important;
+  }
+
+  .Buttonmodal-new {
+    grid-column-start: 2;
+    grid-column-end: 2;
+    grid-row-start: 3;
+}
+
+.logout-container {
+  background-color: transparent;
+  box-shadow: none;
+}
   /* Table */
   /* Master List */
   .row.mt-3 {
     flex-direction: column;
+    align-items: center;
   }
   
   .row {
@@ -1433,6 +1556,10 @@ input[type="number"]::-webkit-clear-button {
   }
 
   .col-4 {
+    width: 100% !important;
+  }
+
+  .col-9 {
     width: 100% !important;
   }
 
@@ -1461,6 +1588,10 @@ input[type="number"]::-webkit-clear-button {
 
 /* Jerome's CSS */
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
 .left-of-main-containers.show-sidebar {
   z-index: 20;
 }
@@ -1478,7 +1609,7 @@ button.sidebar-back-button {
   background: none;
   border: none;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   top: 17px;
   left: 20px;
 }
@@ -1836,6 +1967,7 @@ button.genbutton {
   display: flex;  
   justify-content: right;
   width: 100%;
+  grid-column-end: 3;
   z-index: 1;
 }
 

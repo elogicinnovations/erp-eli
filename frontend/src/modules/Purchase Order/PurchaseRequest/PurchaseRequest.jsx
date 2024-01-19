@@ -235,7 +235,7 @@ function PurchaseRequest({ authrztn }) {
               </div>
               <div className="resp">
                 <div className="button-create-side">
-                  <div style={{ position: "relative", marginBottom: "15px" }}>
+                  <div className="date-beg" style={{ position: "relative", marginBottom: "15px" }}>
                     <DatePicker
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
@@ -271,7 +271,7 @@ function PurchaseRequest({ authrztn }) {
                     )}
                   </div>
 
-                  <div style={{ position: "relative", marginBottom: "15px" }}>
+                  <div className="date-end" style={{ position: "relative", marginBottom: "15px" }}>
                     <DatePicker
                       selected={endDate}
                       onChange={(date) => setEndDate(date)}
@@ -308,7 +308,7 @@ function PurchaseRequest({ authrztn }) {
                       />
                     )}
                   </div>
-                  <Form.Select
+                  <Form.Select className="fil-stat"
                     aria-label="item status"
                     value={selectedStatus}
                     onChange={handleStatusChange}

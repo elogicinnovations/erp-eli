@@ -117,7 +117,7 @@ const handleToggleSidebar = () => {
     <div className="main-of-containers">
       
         <div className={`left-of-main-containers ${showSidebar ? 'show-sidebar' : ''}`}>
-          {window.innerWidth <= 750 && (
+          {window.innerWidth <= 1300 && (
             <div className="sidebar-button">
               <button className="sidebar-back-button" onClick={handleToggleSidebar}>
                 <CaretCircleLeft size={50} weight="bold" />
@@ -135,7 +135,7 @@ const handleToggleSidebar = () => {
             }
           </Roles>
         </div>
-          {window.innerWidth <= 750 && (
+          {window.innerWidth <= 1300 && (
             <div className="sidebar-button">
               <button className="sidebar-menu-button" onClick={handleToggleSidebar}>
                 <List size={50} weight="bold" />
