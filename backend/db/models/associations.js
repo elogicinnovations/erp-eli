@@ -360,6 +360,9 @@ StockTransfer_assembly.belongsTo(StockTransfer, { foreignKey: "pr_id"});
 Assembly.hasMany(StockTransfer_assembly, { foreignKey: "assembly_id"});
 StockTransfer_assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
 
+Assembly_Supplier.hasMany(StockTransfer_assembly, { foreignKey: "pr_id"});
+StockTransfer_assembly.belongsTo(Assembly_Supplier, { foreignKey: "pr_id"});
+
 //-------------Stock Transfer Spare table
 StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "pr_id"});
 StockTransfer_spare.belongsTo(StockTransfer, { foreignKey: "pr_id"});

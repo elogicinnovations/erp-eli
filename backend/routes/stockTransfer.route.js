@@ -1,9 +1,18 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { StockTransfer, StockTransfer_prod, StockTransfer_spare} = require("../db/models/associations"); 
+const 
+{
+  StockTransfer,
+  StockTransfer_prod,
+  StockTransfer_spare,
+  MasterList,
+  StockTransfer_assembly,
+  Assembly,
+  Assembly_Supplier,
+  Supplier
+} = require("../db/models/associations"); 
 const session = require('express-session');
-const StockTransfer_assembly = require('../db/models/stockTransfer_assembly.model');
 const StockTransfer_subpart = require('../db/models/stockTransfer_subpart.model');
 
 router.use(session({
@@ -171,5 +180,86 @@ router.route('/delete/:param_id').delete(async (req, res) =>
         );
       });
 
+
+  router.route('/viewToReceiveStockTransfer').get(async (req, res) => {
+    try {
+        const data = await StockTransfer.findAll({
+        where: {
+          stock_id: req.query.id,
+        },
+        include: {
+          model: MasterList, required: true
+        }
+        });
+  
+        if (!data) {
+        // No record found
+        return res.status(404).json({ message: 'stock transfer not found' });
+        
+        }
+        // console.log(data)
+        return res.json(data);
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+  });
+
+  router.route('/fetchView_asmbly').get(async (req, res) => {
+  try {
+    const data = await StockTransfer_assembly.findAll({
+      include: [{
+        model: Assembly_Supplier,
+        required: true,
+        include: [{
+          model: Assembly,
+          required: true
+        },
+        {
+          model: Supplier,
+          required: true
+        }]
+      }],
+      where: {
+        pr_id: req.query.id
+      }
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400).json({ error: 'Data not found' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+router.route('/receivedAssembly').post(async (req, res) => {
+  try {
+    const {totalValue, id, qualityAssuranceASM} = req.body;
+     
+       const received_newData = await StockTransfer_assembly.update({
+        received: totalValue,
+       },
+       {
+         where: { id: id }
+       }); 
+    //    await Inventory_Assembly.update({
+    //     quantity: totalValue,
+    //     warehouse: destination,
+    //  }); 
+       
+     res.status(200).json();
+     
+     
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('An error occurred');
+   }
+});
 
   module.exports = router;

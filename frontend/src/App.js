@@ -69,6 +69,7 @@ import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStoc
 import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview"
 import ReceivingManagement from "./modules/Warehouse/Receiving Management/ReceivingManagement";
 import ReceivingManagementPreview from "./modules/Warehouse/Receiving Management/ReceivingManagementPreview";
+import ReceivingStockTransferPreview from "./modules/Warehouse/Receiving Stock Transfer/ReceivingStockTransferPreview";
 import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
 import HistoricalData from "./modules/Reports/HistoricalData/HistoricalData";
@@ -467,6 +468,11 @@ const handleToggleSidebar = () => {
             path="/receivingStockTransfer"
             element={<ReceivingStockTransfer/>}
           />
+              <Route
+                    path="/viewToReceivingStockTransfer/:id"
+                    element={<ReceivingStockTransferPreview/>}
+              />
+
               <Route
                     path="/inventoryReports"
                     element={<InventoryReports/>}

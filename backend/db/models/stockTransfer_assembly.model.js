@@ -19,6 +19,9 @@ const StockTransfer_assembly = sequelize.define('stockTransfer_assembly', {
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  received: {
+    type: DataTypes.INTEGER,
   }
 });
 

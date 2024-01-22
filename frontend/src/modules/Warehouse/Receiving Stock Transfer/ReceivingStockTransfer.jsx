@@ -32,7 +32,7 @@ import Header from '../../../partials/header';
 
 function ReceivingStockTransfer() {
   const navigate = useNavigate();
-  const [PurchaseRequest, setPurchaseRequest] = useState([]); 
+  const [stockTransfer, setStockTransfer] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -42,9 +42,9 @@ function ReceivingStockTransfer() {
 
 const reloadTable = () => {
   axios
-    .get(BASE_URL + '/PR/fetchTableToReceive')
+    .get(BASE_URL + '/StockTransfer/fetchTable')
     .then((res) => {
-      setPurchaseRequest(res.data)
+      setStockTransfer(res.data)
       setFilteredPR(res.data); 
     })
     .catch((err) => console.log(err));
@@ -76,7 +76,7 @@ const handleGoButtonClick = () => {
     return;
   }
 
-  const filteredData = PurchaseRequest.filter((data) => {
+  const filteredData = stockTransfer.filter((data) => {
     const createdAt = new Date(data.createdAt);
     console.log('startDate:', startDate);
     console.log('endDate:', endDate);
@@ -130,10 +130,10 @@ const handleGoButtonClick = () => {
 
     useEffect(() => {
       // Initialize DataTable when role data is available
-      if ($('#order-listing').length > 0 && PurchaseRequest.length > 0) {
+      if ($('#order-listing').length > 0 && stockTransfer.length > 0) {
         $('#order-listing').DataTable();
       }
-    }, [PurchaseRequest]);
+    }, [stockTransfer]);
 
   return (
     <div className="main-of-containers">
@@ -278,22 +278,20 @@ const handleGoButtonClick = () => {
                         <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>PR NO.</th>
-                                    <th className='tableh'>Requestor</th>
-                                    <th className='tableh'>Status</th>
-                                    <th className='tableh'>Date Created</th>
-                                    <th className='tableh'>Remarks</th>
+                                    <th className='tableh'>Stock ID</th>
+                                    <th className='tableh'>Source</th>
+                                    <th className='tableh'>Destination</th>
+                                    <th className='tableh'>Reference #</th>
                                 </tr>
                                 </thead>
                                 {filteredPR.length > 0 ? (
                                 <tbody>
                                 {filteredPR.map((data, i) => (
                                         <tr key={i}>
-                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{data.id}</td>
-                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}></td>
-                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{data.status}</td>
-                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{formatDatetime(data.createdAt)}</td>
-                                        <td onClick={() => navigate(`/viewToReceive/${data.id}`)}>{data.remarks}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.stock_id}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.source}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.destination}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.reference_code}</td>
                                         </tr>
                                       ))}
                               </tbody>

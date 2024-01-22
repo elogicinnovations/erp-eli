@@ -68,7 +68,7 @@ router.route('/viewToReceive').get(async (req, res) => {
 
       if (!data) {
       // No record found
-      return res.status(404).json({ message: 'Cost center not found' });
+      return res.status(404).json({ message: 'PR not found' });
       
       }
       // console.log(data)
