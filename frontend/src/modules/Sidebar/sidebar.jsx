@@ -198,9 +198,6 @@ function Sidebar({ authrztn }) {
             />
           </div>
         </div>
-
-        <div className="spacefor-sidebar"></div>
-
         <List>
           <NavLink
             to="/dashboard"
@@ -706,8 +703,6 @@ function Sidebar({ authrztn }) {
           </Collapse>
         </List>
       </div>
-
-      <div className="logout-container"></div>
     </div>
   );
 }

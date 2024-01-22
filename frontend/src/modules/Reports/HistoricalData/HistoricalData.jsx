@@ -205,7 +205,7 @@ function HistoricalData() {
                     </div>
                   </div>
                   <div className="date-filter">
-                    <div style={{ zIndex: "3", margin:'0 0 10px 10px' }}>
+                    <div style={{width: '50%', zIndex: "3", margin:'0 0 10px 10px' }}>
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
                         className="date">
@@ -226,7 +226,7 @@ function HistoricalData() {
                         />
                       </Form.Group>
                     </div>
-                    <div style={{ zIndex: "3" }}>
+                    <div style={{ width: '50%', zIndex: "3" }}>
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
                         className="date">
