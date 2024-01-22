@@ -3,19 +3,10 @@ import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import '../../../../../styles/react-style.css';
-import Form from 'react-bootstrap/Form';
-import swal from 'sweetalert';
 import BASE_URL from '../../../../../../assets/global/url';
 import axios from 'axios';
-import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
-import cls_unit from '../../../../../../assets/global/unit';
-import Dropzone from 'react-dropzone';
-import Modal from "react-bootstrap/Modal";
-import Multiselect from 'multiselect-react-dropdown';
-import Select from 'react-select';
 import {
-  DotsThreeCircle,
-  NotePencil,
+  ArrowCircleLeft
 } from "@phosphor-icons/react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -47,27 +38,7 @@ function ProductSupplier() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [product, setproduct] = useState([]); // for fetching product data that tag to supplier
-  const [validated, setValidated] = useState(false); // for form validation
 
-  const [category, setcategory] = useState([]); // for fetching category data
-  const [supplier, setsupplier] = useState([]); // for fetching supplier data
-  const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
-  const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
-
-  const [code, setCode] = useState("");
-  const [prod_id, setProd_id] = useState("");
-  const [name, setName] = useState("");
-  const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
-  const [unit, setunit] = useState("");
-  const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
-  const [unitMeasurement, setunitMeasurement] = useState("");
-  const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer
-  const [details, setDetails] = useState("");
-  const [thresholds, setThresholds] = useState("");
-  const [productImage, setProductImage] = useState([]);
-  const [productImageType, setProductImageType] = useState([]);
-
-  const [productTAGSuppliers, setProductTAGSuppliers] = useState([]);
 
   const [activeTab, setActiveTab] = useState("Assembly");
   const [Assembly, setAssembly] = useState([]); //for fetching ng assembly na may where clause id
@@ -90,76 +61,6 @@ function ProductSupplier() {
       .catch((err) => console.log(err));
   }, [id]);
 
-  //-----------------------------fetching data for edit
-  useEffect(() => {
-    // console.log('code' + id)
-    axios
-      .get(BASE_URL + "/product/fetchTableEdit", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        setCode(res.data[0].product_code);
-        setProd_id(res.data[0].productsID)
-        setName(res.data[0].product_name);
-        setslct_category(res.data[0].product_category);
-        setunit(res.data[0].product_unit);
-        setslct_binLocation(res.data[0].product_location);
-        setunitMeasurement(res.data[0].product_unitMeasurement);
-        setslct_manufacturer(res.data[0].product_manufacturer);
-        setDetails(res.data[0].product_details);
-        setThresholds(res.data[0].product_threshold);
-        setProductImage(res.data.product_image);
-        setProductImageType(res.data.product_type);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/binLocation/fetchTable")
-      .then((response) => {
-        setbinLocation(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching roles:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/category/fetchTable")
-      .then((response) => {
-        setcategory(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching roles:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/manufacturer/retrieve")
-      .then((response) => {
-        setManufacturer(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching roles:", error);
-      });
-  }, []);
-
-  //fetching of supplier
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/supplier/fetchTable")
-      .then((response) => {
-        setsupplier(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching roles:", error);
-      });
-  }, []);
 
   //fetching of assembly
   useEffect(() => {
@@ -197,41 +98,7 @@ function ProductSupplier() {
       .catch((err) => console.log(err));
   }, []);
 
-  const [productData, setProductData] = useState({
-    productImage: null,
-    productImageType: null,
-  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(BASE_URL + "/product/fetchTable"); // Assuming your API endpoint is '/fetchTable'
-
-        if (response.data && response.data.length > 0) {
-          // Assuming the API returns an array, and you want the first item
-          const firstProduct = response.data[0];
-          console.log(firstProduct);
-          const productImage = firstProduct.product_image;
-          const productImageType = firstProduct.product_imageType;
-
-          // Convert BLOB to data URL
-          const arrayBufferView = new Uint8Array(productImage);
-          const blob = new Blob([arrayBufferView], { type: productImageType });
-          const dataUrl = URL.createObjectURL(blob);
-          console.log(dataUrl);
-
-          setProductData({
-            productImage: dataUrl,
-            productImageType: productImageType,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []); // The empty dependency array ensures the useEffect runs only once, similar to componentDidMount
 
   return (
     <div className="main-of-containers">
@@ -239,273 +106,17 @@ function ProductSupplier() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
-        <div className="right-body-contents-a">
-          <h1>Product Supplier</h1>
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "20px",
-            }}>
-            General Information
-            <span
-              style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "81%",
-                left: "18rem",
-                transform: "translateY(-50%)",
-              }}></span>
-          </div>
-
-          <div className="row mt-3">
-            <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Item Code:{" "}
-                </Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  value={code}
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-
-            <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Product ID:{" "}
-                </Form.Label>
-                <Form.Control
-                  required
-                  readOnly
-                  type="text"
-                  value={prod_id}
-                  onChange={(e) => setProd_id(e.target.value)}
-                  style={{ height: "40px", fontSize: "15px" }}
-                />
-              </Form.Group>
-            </div>
-
-              
-            <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Item Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  value={name}
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-          
-          </div>
-
-          <div className="row">
-            <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>Category: </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={slct_category}
-                    disabled>
-                    {category.map((category) => (
-                      <option
-                        key={category.category_code}
-                        value={category.category_code}>
-                        {category.category_name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-                    
-            </div>
-            <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Bin Location:{" "}
-                </Form.Label>
-                <Form.Select
-                  aria-label=""
-                  required
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={slct_binLocation}
-                  disabled>
-                  {binLocation.map((binLocation) => (
-                    <option key={binLocation.bin_id} value={binLocation.bin_id}>
-                      {binLocation.bin_name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+        <div className="right-body-contentss">
+        <div className="headers-text">
+            <div className="arrowandtitle">
+              <Link to="/productList">
+                <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+              <div className="titletext">
+                <h1>Product Summary</h1>
+              </div>
             </div>
           </div>
-
-          <div className="row">
-            <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Unit of Measurment:{" "}
-                </Form.Label>
-                <Form.Select
-                  aria-label=""
-                  required
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={unitMeasurement}
-                  disabled>
-                  {cls_unitMeasurement.map((unitM, index) => (
-                    <option key={index} value={unitM}>
-                      {unitM}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </div>
-            <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Manufacturer:{" "}
-                </Form.Label>
-                <Form.Select
-                  aria-label=""
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={slct_manufacturer}
-                  disabled>
-                  <option value="">Select Manufacturer ...</option>
-                  {manufacturer.map((manufacturer) => (
-                    <option
-                      key={manufacturer.manufacturer_code}
-                      value={manufacturer.manufacturer_code}>
-                      {manufacturer.manufacturer_name}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </div>
-          </div>
-
-          <div className="row">
-            <Form.Group controlId="exampleForm.ControlInput1">
-              <Form.Label style={{ fontSize: "20px" }}>
-                Details Here:{" "}
-              </Form.Label>
-              <Form.Control
-                as="textarea"
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
-                style={{ height: "100px", fontSize: "15px" }}
-                readOnly
-              />
-            </Form.Group>
-          </div>
-
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "30px",
-            }}>
-            Notification Thresholds
-            <p className="fs-15">Sets your preferred thresholds.</p>
-            <span
-              style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "65%",
-                left: "21rem",
-                transform: "translateY(-50%)",
-              }}></span>
-          </div>
-
-          <div className="row mt-3">
-            <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Critical Inventory Thresholds:{" "}
-                </Form.Label>
-                <Form.Control
-                  value={thresholds}
-                  type="number"
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly
-                />
-              </Form.Group>
-            </div>
-            <div className="col-6">
-              {/* Your component JSX */}
-              {productData.productImage && productData.productImageType ? (
-                <img
-                  src={`${productData.productImage}.${productData.productImageType}`}
-                  alt="Product"
-                />
-              ) : (
-                <p>No image available</p>
-              )}
-
-              {productImage && (
-                <img
-                  src={`${productImageType}.${productImage}`}
-                  alt="Product"
-                />
-              )}
-              {/* <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-            
-                                  <div style={{border: "1px #DFE3E7 solid", height: 'auto', maxHeight: '140px', fontSize: '15px', width: '50%', padding: 10}}>
-                                      <Dropzone onDrop={onDropImage}>
-                                          {({ getRootProps, getInputProps }) => (
-                                          <div className='w-100 h-100' {...getRootProps()}>
-                                              <input
-                                                  ref={fileInputRef}
-                                                  type="file"
-                                                  style={{display: 'none'}}
-                                                  disabled
-                                              />
-                                              <div className='d-flex align-items-center' style={{width: '100%', height: '2.5em'}}>
-                                                <p className='fs-5 w-100 p-3 btn btn-secondary' style={{color: 'white', fontWeight: 'bold'}}>Drag and drop a file here, or click to select a file</p>
-                                              </div>
-                                          </div>
-                                          )}
-                                      </Dropzone>
-                                  </div>              
-                              </Form.Group>    */}
-            </div>
-          </div>
-
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "30px",
-            }}>
-            Item List
-            <span
-              style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "86%",
-                left: "8rem",
-                transform: "translateY(-50%)",
-              }}></span>
-          </div>
-
           <div className="supplier-table">
             <div className="table-containss">
               <div className="main-of-all-tables">
@@ -554,8 +165,8 @@ function ProductSupplier() {
                       <table id="ordered-listing">
                         <thead>
                           <tr>
-                            <th>Supplier Code</th>
-                            <th>Spare-Part Name</th>
+                            <th>Spare-Parts Code</th>
+                            <th>Spare-Parts Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
@@ -581,14 +192,14 @@ function ProductSupplier() {
                       <table id="order-listing">
                         <thead>
                           <tr>
-                            <th>Supplier Code</th>
+                            <th>Sub-Part Code</th>
                             <th>Sub-Part Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
                         <tbody>
                           {Subparts.map((subpart, i) => (
-                            <tr>
+                            <tr key={i}>
                               <td>{subpart.subPart.subPart_code}</td>
                               <td>{subpart.subPart.subPart_name}</td>
                               <td>{subpart.subPart.subPart_desc}</td>
@@ -610,14 +221,16 @@ function ProductSupplier() {
                           <tr>
                             <th>Supplier Code</th>
                             <th>Supplier Name</th>
+                            <th>Price</th>
                             <th>Contact</th>
                           </tr>
                         </thead>
                         <tbody>
                           {product.map((data, i) => (
-                            <tr>
+                            <tr key={i}>
                               <td>{data.supplier.supplier_code}</td>
                               <td>{data.supplier.supplier_name}</td>
+                              <td>{data.product_price}</td>
                               <td>{data.supplier.supplier_number}</td>
                             </tr>
                           ))}

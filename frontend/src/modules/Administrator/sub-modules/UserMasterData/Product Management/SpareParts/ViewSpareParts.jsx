@@ -8,10 +8,9 @@ import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
 import {
     ArrowCircleLeft,
-    Gear, 
-    Bell,
-    UserCircle,
 } from "@phosphor-icons/react";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
 import '../../../../../../assets/skydash/vendors/feather/feather.css';
 import '../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
 import '../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -27,80 +26,123 @@ import * as $ from 'jquery';
 
 function ViewSpareParts() {
     const { id } = useParams();
-    const [Subparts, setSubParts] = useState([]);
-
+    const [viewsubparts, setviewsubparts] = useState([]);
+    const [viewSupplier, setviewSupplier] = useState([]);
+    const [activeTab, setActiveTab] = useState("Subparts");
+    const tabStyle = {
+        padding: "10px 15px",
+        margin: "0 10px",
+        color: "#333",
+        transition: "color 0.3s",
+      };
+    
     useEffect(() => {
         axios.get(BASE_URL + '/subPart_SparePart/fetchsubpartTable',{
           params: {
             id: id
           }
         })
-          .then(res => setSubParts(res.data))
+          .then(res => setviewsubparts(res.data))
           .catch(err => console.log(err));
       }, []);
 
+      useEffect(() => {
+        axios.get(BASE_URL + '/supp_SparePart/fetchSupplierSpare',{
+          params: {
+            id: id
+          }
+        })
+          .then(res => setviewSupplier(res.data))
+          .catch(err => console.log(err));
+      }, []);
     return(
         <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
+    
         <div className="right-of-main-containers">
-            <div className="right-body-contents">
-                {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                        </div>
-                    </div>
-                </div>
-
-                </div> */}
-                <div className="Employeetext-button">
-                    <div className="employee-and-button">
+            <div className="right-body-contentss">
+                <div className="headers-text">
                     <div className="arrowandtitle">
-                        <Link to='/spareParts'><ArrowCircleLeft size={50} color="#60646c" weight="fill" /></Link>
+                    <Link to="/spareParts">
+                        <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                    </Link>
                         <div className="titletext">
-                            <h1>Sub Parts</h1>
+                            <h1>Spare Parts Summary</h1>
                         </div>
                     </div>
-                    </div>
                 </div>
-                <div className="table-containss">
-                    <div className="main-of-all-tables">
-                        <table id='order-listing'>
-                                <thead>
-                                    <tr>
-                                        <th className='tableh'>Sub-Part Code</th>
-                                        <th className='tableh'>Sub-Part Name</th>
-                                        <th className='tableh'>Supplier Name</th>
-                                        <th className='tableh'>Description</th>
-                                    </tr>
-                                    </thead>
-                                <tbody>
-                                    {Subparts.map((subpart, i) =>(
-                                    <tr key={i}>
-                                          <td>{subpart.subPart.subPart_code}</td>
-                                          <td>{subpart.subPart.subPart_name}</td>
-                                          <td>{subpart.subPart.supplier}</td>
-                                          <td>{subpart.subPart.subPart_desc}</td>
-                                        </tr>
-                                    ))}
+                <div className="searches-sidebars"></div>
+
+                <div className="tabbutton-sides">
+                    <Tabs
+                    activeKey={activeTab}
+                    onSelect={(key) => setActiveTab(key)}
+                    transition={false}
+                    id="noanim-tab-example">
+                    <Tab
+                        eventKey="Subparts"
+                        title={
+                        <span style={{ ...tabStyle, fontSize: "20px" }}>
+                            Sub Parts
+                        </span>
+                        }>
+                        <div className="productandprint">
+                        <div className="printbtns"></div>
+                        </div>
+                        <div className="main-of-all-tables">
+                        <table id="order-listing">
+                            <thead>
+                            <tr>
+                                <th className='tableh'>Sub-Part Code</th>
+                                <th className='tableh'>Sub-Part Name</th>
+                                <th className='tableh'>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {viewsubparts.map((sub, i) => (
+                                <tr key={i}>
+                                <td>{sub.subPart.subPart_code}</td>
+                                <td>{sub.subPart.subPart_name}</td>
+                                <td>{sub.subPart.subPart_desc}</td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
-                    </div>
+                        </div>
+                    </Tab>
+                    <Tab
+                        eventKey="ordered list"
+                        title={
+                        <span style={{ ...tabStyle, fontSize: "20px" }}>
+                            Supplier
+                        </span>
+                        }>
+                        <div className="orderhistory-side">
+                        <div className="printersbtn"></div>
+                        </div>
+                        <div className="main-of-all-tables">
+                        <table id="ordered-listing">
+                            <thead>
+                            <tr>
+                                <th className='tableh'>Supplier Code</th>
+                                <th className='tableh'>Supplier Name</th>
+                                <th className='tableh'>Price</th>
+                                <th className='tableh'>Contact</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {viewSupplier.map((supp, i) => (
+                                <tr key={i}>
+                                <td>{supp.supplier.supplier_code}</td>
+                                <td>{supp.supplier.supplier_name}</td>
+                                <td>{supp.supplier_price}</td>
+                                <td>{supp.supplier.supplier_number}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                        </div>
+                    </Tab>
+                    </Tabs>
                 </div>
             </div>
         </div>

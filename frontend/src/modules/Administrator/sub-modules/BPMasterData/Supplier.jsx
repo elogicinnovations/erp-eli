@@ -217,30 +217,6 @@ function Supplier({ authrztn }) {
             </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                        <div className="dropdown-and-iconics">
-                            <div className="dropdown-side">
-
-                            </div>
-                            <div className="iconic-side">
-                                <div className="gearsides">
-                                    <Gear size={35}/>
-                                </div>
-                                <div className="bellsides">
-                                    <Bell size={35}/>
-                                </div>
-                                <div className="usersides">
-                                    <UserCircle size={35}/>
-                                </div>
-                                <div className="username">
-                                <h3>User Name</h3>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div> */}
-
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -284,7 +260,22 @@ function Supplier({ authrztn }) {
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_code}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_name}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_contactPerson}</td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_status}</td>
+                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>
+                                                  <div className="colorstatus"
+                                                  style={{
+                                                    backgroundColor:
+                                                      data.supplier_status === "Active"
+                                                        ? "green"
+                                                        : "red",
+                                                    color: "white",
+                                                    padding: "5px",
+                                                    borderRadius: "5px",
+                                                    textAlign: "center",
+                                                    width: "80px",
+                                                  }}>
+                                                    {data.supplier_status}
+                                                  </div>
+                                                </td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.createdAt)}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.updatedAt)}</td>
                                                 <td>

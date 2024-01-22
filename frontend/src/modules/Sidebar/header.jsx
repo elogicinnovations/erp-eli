@@ -196,7 +196,7 @@ const Header = () => {
                 <button onClick={() => navigate(`/SettingView/1`)} className="settings">
                   <Gear size={35} />
                 </button>
-                <div className="notification-wrapper" ref={notificationRef}>
+                {/* <div className="notification-wrapper" ref={notificationRef}>
                       <button className="notification" onClick={toggleNotifications}>
                         <Bell size={35} />
                         {unreadNotifications > 0 && <div className="notification-indicator"></div>}
@@ -206,6 +206,7 @@ const Header = () => {
                           <div className="notification-triangle"></div>
                           <div className="notification-header">Notifications</div>
                           <div className="notification-content">
+
                             {prhistory.map((item, index) => {
                               const statusNotification = getStatusNotification(item.status);
                               if (statusNotification) {
@@ -228,7 +229,6 @@ const Header = () => {
                                       <div className="notif-date">{formatDate(item.createdAt)}</div>
                                     </div>
                                     <div className="notif-close">
-                                      {/* <XCircle size={20} /> */}
                                     </div>
                                   </div>
                                 );
@@ -237,10 +237,66 @@ const Header = () => {
                               }
                             })}
                           </div>
-                          {/* <button className="clear-all">clear all</button> */}
                         </div>
                       )}
-                    </div>
+                    </div> */}
+                    <div className="notification-wrapper" ref={notificationRef}>
+                        <button className="notification" onClick={toggleNotifications}>
+                          <Bell size={35} />
+                          {unreadNotifications > 0 && <div className="notification-indicator"></div>}
+                        </button>
+                        {showNotifications && (
+                          <div className="notification-drop-down">
+                            <div className="notification-triangle"></div>
+                            <div className="notification-header">Notifications</div>
+                            <div className="notification-content">
+                              {prhistory.length === 0 ? (
+                                <div className="empty-notification"
+                                style={{fontSize: '16px'}}>No Notifications Yet</div>
+                              ) : (
+                                prhistory.map((item, index) => {
+                                  const statusNotification = getStatusNotification(item.status);
+                                  if (statusNotification) {
+                                    return (
+                                      <div
+                                        key={index}
+                                        className="notification-item"
+                                        onClick={() => {
+                                          navigate(`/PRredirect/${item.pr_id}`);
+                                          handleNotificationClick(item.pr_id);
+                                        }}
+                                        style={{ cursor: 'pointer' }}
+                                      >
+                                        <div className="notif-icon">{statusNotification.icon}</div>
+                                        <div className="notif-container">
+                                          <div
+                                            className="notif"
+                                            style={{
+                                              color:
+                                                statusNotification.notification === 'Request Rejustification' ||
+                                                statusNotification.notification === 'Request Rejected'
+                                                  ? 'red'
+                                                  : 'inherit',
+                                            }}
+                                          >
+                                            {statusNotification.notification}
+                                          </div>
+                                          <div className="notif-content">{statusNotification.content}</div>
+                                          <div className="notif-date">{formatDate(item.createdAt)}</div>
+                                        </div>
+                                        <div className="notif-close"></div>
+                                      </div>
+                                    );
+                                  } else {
+                                    return null;
+                                  }
+                                })
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
                 
                 <div className="profile-wrapper" ref={profileRef}>
                   <button className="profile-pic" onClick={toggleProfile}>

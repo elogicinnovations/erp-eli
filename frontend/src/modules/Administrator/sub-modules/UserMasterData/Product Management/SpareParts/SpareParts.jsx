@@ -7,12 +7,7 @@ import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import {
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
-  Trash,
-  NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
   ArrowsClockwise,
@@ -20,7 +15,6 @@ import {
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Table from 'react-bootstrap/Table';
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -232,24 +226,6 @@ function SpareParts({ authrztn }) {
   }, [sparePart]);
   const navigate = useNavigate();
 
-  // const [authrztn, setauthrztn] = useState([]);
-  // useEffect(() => {
-
-  //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
-  //   console.log("Decoded: ", decoded);
-  //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-  //     .then((res) => {
-  //       if(res.status === 200){
-  //         console.log(res);
-  //         setauthrztn(res.data.col_authorization);
-  //       }
-  //   })
-  //     .catch((err) => {
-  //       console.error(err);
-  //   });
-
-  // }, []);
-
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -348,7 +324,7 @@ function SpareParts({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+              <table className="table-hover" title="View Information" id="order-listing">
                 <thead>
                   <tr>
                     <th className="tableh">

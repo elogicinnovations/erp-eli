@@ -727,7 +727,11 @@ function selectFiles() {
                               </div>
                             </td>
                             <td>
-                              {(supp.supplier.supplier_vat / 100 * supp.supplier_price).toFixed(2)}
+                              {/* {(supp.supplier.supplier_vat / 100 * supp.supplier_price).toFixed(2)} */}
+                              {supp.supplier.supplier_vat
+                                ? (supp.supplier.supplier_vat / 100 * (supp.supplier_price || 0)).toFixed(2)
+                                : (subpartTAGSuppliers.find((option) => option.value === supp.supplier.supplier_code)?.vatable / 100 * (supp.supplier_price || 0)).toFixed(2)
+                              }
                             </td>
                           </tr>
                         ))
@@ -753,6 +757,7 @@ function selectFiles() {
                             number: supplier.supplier_number,
                             address: supplier.supplier_address,
                             receiving: supplier.supplier_receiving,
+                            vatable: supplier.supplier_vat,
                           }))}
                           value={subpartTAGSuppliers}
                           onChange={handleSelectChange}

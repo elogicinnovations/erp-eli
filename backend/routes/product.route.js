@@ -231,136 +231,159 @@ router.route("/create").post(async (req, res) => {
       }
 });
 
-
 router.route("/update").post(
   async (req, res) => {
-  
+    const {id,
+      prod_id,
+      code,
+      name,
+      slct_category,
+      slct_binLocation,
+      unitMeasurement,
+      slct_manufacturer,
+      details,
+      thresholds,
+      assembly,
+      spareParts,
+      subparting,
+      productTAGSuppliers,
+      productImages,
+    } = req.body;
   try {
     const existingDataCode = await Product.findOne({
       where: {
-        product_code: req.query.code,
-        product_id: { [Op.ne]: req.query.id },
+        product_code: code,
+        product_id: { [Op.ne]: id },
       },
     });
 
     if (existingDataCode) {
       return res.status(201).send("Exist");
     } else {
-      let finalThreshold;
-      if (req.query.thresholds === "") {
-      finalThreshold = 0;
-      } else {
-      finalThreshold = req.query.thresholds;
-      }
-      const Product_newData = await Product.update(
+      const product_newdata = await Product.update(
         {
-          product_code: req.query.code,
-          productsID: req.query.prod_id,
-          product_name: req.query.name,
-          product_category: req.query.slct_category,
-          product_unit: req.query.unit,
-          product_location: req.query.slct_binLocation,
-          product_unitMeasurement: req.query.unitMeasurement,
-          product_manufacturer: req.query.slct_manufacturer,
-          product_details: req.query.details,
-          product_threshold: finalThreshold,
+          product_code: code,
+          productsID: prod_id,
+          product_name: name,
+          product_category: slct_category,
+          product_location: slct_binLocation,
+          product_unitMeasurement: unitMeasurement,
+          product_manufacturer: slct_manufacturer,
+          product_details: details,
+          product_threshold: thresholds,
         },
         {
           where: {
-            product_id: req.query.id,
+            product_id: id,
           },
         }
       );
 
-      if (Product_newData) {
         const deleteassembly = Product_Assembly.destroy({
           where: {
-            product_id: req.query.id
+            product_id: id
           },
-      });
-
-      if(deleteassembly !== null || deleteassembly !== undefined) {
-        const selectedAssemblies = req.query.assembly;
-        if (selectedAssemblies && typeof selectedAssemblies[Symbol.iterator] === 'function') {
-        for (const assemblyDropdown of selectedAssemblies) {
-          const assemblyValue = assemblyDropdown.value;
-          await Product_Assembly.create({
-            product_id: req.query.id,
-            assembly_id: assemblyValue
-          });
-        }
-      }
-    } //delete assembly end
-
-      const deletesubpart = Product_Subparts.destroy({
-          where: {
-            product_id: req.query.id
-          },
-      });
-
-      if(deletesubpart !== null || deletesubpart !== undefined) {
-        const selectedSubparting = req.query.subparting
-        if (selectedSubparting && typeof selectedSubparting[Symbol.iterator] === 'function') {
-        for (const subpartDropdown of selectedSubparting) {
-          const subpartValue = subpartDropdown.value;
-          await Product_Subparts.create({
-            product_id: req.query.id,
-            subPart_id: subpartValue
-          });
-        }
-      }
-    } //delete subpart end
-
-      const deletesparepart = Product_Spareparts.destroy({
-        where: {
-          product_id: req.query.id
-        },
-      })
-
-      if(deletesparepart !== null || deletesparepart !== undefined) {
-        const selectedSpare = req.query.spareParts
-        if (selectedSpare && typeof selectedSpare[Symbol.iterator] === 'function') {
-        for (const spareDropdown of selectedSpare) {
-          const spareValue = spareDropdown.value;
-          await Product_Spareparts.create({
-            product_id: req.query.id,
-            sparePart_id: spareValue
-          });
-        }
-      }
-     } //delete sparepart end
-
-      const deletesupplier = ProductTAGSupplier.destroy({
-        where: {
-          product_id: req.query.id
-        },
-      });
-
-      if(deletesupplier !== null || deletesupplier !== undefined){
-        const selectedSuppliers = req.query.productTAGSuppliers
-        // console.log(selectedSuppliers)
-        if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
-        for (const supplier of selectedSuppliers) {
-          const { value, price } = supplier;
-          await ProductTAGSupplier.create({
-            product_id: req.query.id,
-            supplier_code: value,
-            product_price: price
-           });
-         }
-        }
-      }
-
-      const selectedSuppliers = req.query.productTAGSuppliers
-        for (const supplier of selectedSuppliers) {
-          const { value, price } = supplier;
-          await productTAGsupplierHistory.create({
-          product_id: req.query.id,
-          supplier_code: value,
-          product_price: price
         });
-      }
-  }
+
+        if(deleteassembly) {
+          const selectedAssemblies = assembly;
+          for(const assemblyDropdown of selectedAssemblies) {
+            const assemblyValue = assemblyDropdown.value;
+            await Product_Assembly.create({
+              product_id: id,
+              assembly_id: assemblyValue
+            }); 
+          }
+        };
+
+        const deletespare = Product_Spareparts.destroy({
+          where: {
+            product_id: id
+          },
+        });
+
+        if(deletespare) {
+          const selectedSpare = spareParts;
+          for(const spareDropdown of selectedSpare) {
+            const spareValue = spareDropdown.value;
+            await Product_Spareparts.create({
+              product_id: id,
+              sparePart_id: spareValue
+            })
+          }
+        };
+        
+
+        const deletesubpart = Product_Subparts.destroy({
+          where: {
+            product_id: id
+          },
+        })
+
+        if(deletesubpart) {
+          const selectedSubpart = subparting;
+          for(const subpartDropdown of selectedSubpart){
+            const subpartValue = subpartDropdown.value;
+            await Product_Subparts.create({
+              product_id: id,
+              subPart_id: subpartValue
+            });
+          }
+        };
+
+        const deleteproductImage = Product_image.destroy({
+          where: {
+            product_id: id
+          },
+        });
+
+        if(deleteproductImage){
+          if (productImages && productImages.length > 0) {
+            productImages.forEach(async (i) => {
+              await Product_image.create({
+                product_id: id,
+                product_image: i.product_image
+              });
+            });
+          }
+        };
+
+
+        const deletesupplier = ProductTAGSupplier.destroy({
+          where: {
+            product_id: id
+          },
+        });
+
+        if(deletesupplier) {
+          const selectedsupplier = productTAGSuppliers;
+          for(const supplier of selectedsupplier){
+            const { value, price} = supplier;
+
+            const existingPrice = await ProductTAGSupplier.findOne({
+              product_id: id,
+              supplier_code: value,
+            })
+
+            await ProductTAGSupplier.create({
+              product_id: id,
+              supplier_code: value,
+              product_price: price
+            });
+
+            if(existingPrice && existingPrice.product_price === price){
+              continue;
+            }
+
+            if(existingPrice && existingPrice.product_price !== price){
+              await productTAGsupplierHistory.create({
+                product_id: id,
+                supplier_code: value,
+                product_price: price
+              });
+            }
+          }
+        };
 
       res.status(200).json();
     }
@@ -369,68 +392,8 @@ router.route("/update").post(
     res.status(500).send("An error occurred");
   }
 });  
-// router.route("/update").put(
-//   upload.fields([{ name: "selectedimage", maxCount: 1 }]),
 
-//   async (req, res) => {
-//     try {
-//       // Check if the supplier code is already exists in the table
-//       const existingDataCode = await Product.findOne({
-//         where: {
-//           // product_code: req.body.binLocationName, //dapat ma generate pag meron na assembly at parts
-//           product_code: req.body.code,
-//           product_id: { [Op.ne]: req.body.id },
-//         },
-//       });
 
-//       if (existingDataCode) {
-//         res.status(201).send("Exist");
-//       } else {
-//         let image_blob, image_blobFiletype;
-
-//         // image_blob = req.files.selectedimage[0].buffer;
-
-//         // image_blobFiletype = mime.lookup(req.files.selectedimage[0].originalname);
-
-//         if (req.files.selectedimage) {
-//           image_blob = req.files.selectedimage[0].buffer;
-
-//           image_blobFiletype = mime.lookup(
-//             req.files.selectedimage[0].originalname
-//           );
-//         } else {
-//           image_blob = null;
-
-//           image_blobFiletype = null;
-//         }
-
-//         const newData = await Product.update(
-//           {
-//             product_code: req.body.code,
-//             product_name: req.body.name,
-//             product_category: req.body.slct_category,
-//             product_unit: req.body.unit,
-//             product_location: req.body.slct_binLocation,
-//             product_unitMeasurement: req.body.unitMeasurement,
-//             product_manufacturer: req.body.slct_manufacturer,
-//             product_details: req.body.details,
-//             product_threshold: req.body.thresholds,
-//             product_image: image_blob,
-//             product_imageType: image_blobFiletype,
-//           },
-//           {
-//             where: { product_id: req.body.id },
-//           }
-//         );
-//         res.status(200).json(newData);
-//         // console.log(newDa)
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).send("An error occurred");
-//     }
-//   }
-// );
 
 router.route("/delete/:table_id").delete(async (req, res) => {
   const id = req.params.table_id;

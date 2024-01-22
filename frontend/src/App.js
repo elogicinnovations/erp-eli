@@ -32,6 +32,7 @@ import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Prod
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
 import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/SubParts"
 import UpdateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/UpdateSubParts"
+import ViewSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/ViewSubParts"
 import CreateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/CreateSubParts"
 import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
 import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
@@ -269,8 +270,10 @@ const handleToggleSidebar = () => {
                     path="/updatesubParts/:id"
                     element={<UpdateSubParts/>}
                   />
-                  
-
+                  <Route
+                    path="/viewsubParts/:id"
+                    element={<ViewSubParts/>}
+                  />
 
           <Route
             path="/spareParts"

@@ -16,6 +16,7 @@ const Product_Assembly = require("./product_assembly.model");
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model")
 const Subpart_image = require("./subpart_image.model")
+const Subpart_Price_History = require("./subpart_price_history.model")
 
 const SparePart = require("./sparePart.model");
 const SparePart_SubPart = require("./sparePart_subPart.model");
@@ -108,6 +109,14 @@ SubPart.belongsTo(Category, { foreignKey: "category_code"});
 //subpart tag image
 SubPart.hasMany(Subpart_image, { foreignKey: "subpart_id"});
 Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id"});
+
+
+//subpart price history table
+SubPart.hasMany(Subpart_Price_History, { foreignKey: "subpart_id"});
+Subpart_Price_History.belongsTo(SubPart, { foreignKey: "subpart_id"});
+
+Supplier.hasMany(Subpart_Price_History, { foreignKey: "supplier_code"});
+Subpart_Price_History.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
 
 //product tag supplier table
@@ -413,6 +422,7 @@ module.exports = {
                     SubPart,
                     Subpart_supplier,
                     Subpart_image,
+                    Subpart_Price_History,
                     
                     SparePart,
                     SparePart_SubPart,
