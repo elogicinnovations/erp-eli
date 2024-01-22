@@ -43,20 +43,9 @@ function PurchaseRequestPreview() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create patungong table
-  const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch nang lahat na product sa select dropdown
-  const [valuePRproduct, setvaluePRproduct] = useState([]); //para mafetch yung specific product data sa dropdown
-
   const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa assembly na selected sa pag create patungong table
-  const [fetchAssembly, setFetchAssembly] = useState([]); // para sa pag fetch nang lahat assembly sa select dropdown
-  const [valuePRassembly, setvaluePRassembly] = useState([]); //para mafetch yung specific assembly data sa dropdown
-
   const [spareSelectedFetch, setSpareSelectedFetch] = useState([]); //para pag display sa spare na selected sa pag create
-  const [fetchSpare, setFetchSpare] = useState([]); // para sa pag fetch nang lahat na spare sa select dropdown
-  const [valuePRspare, setvalueSpare] = useState([]); //para mafetch yung specific spare data sa dropdown
-
   const [subPartSelectedFetch, setSubPartSelectedFetch] = useState([]); //para pag display sa subpart na selected sa pag create patungong table
-  const [fetchSubPart, setFetchSubPart] = useState([]); // para sa pag fetch nang lahat na subpart sa select dropdown
-  const [valuePRsub, setvaluePRsub] = useState([]); //para mafetch yung specific subpart data sa dropdown
 
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
@@ -179,77 +168,6 @@ function PurchaseRequestPreview() {
   };
   
 
-  {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
-  useEffect(() => {
-    axios.get(BASE_URL + '/product/fetchTable')
-      .then(res => setFetchProduct(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/assembly/fetchTable')
-      .then(res => setFetchAssembly(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/sparePart/fetchTable')
-      .then(res => setFetchSpare(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/subpart/fetchTable')
-      .then(res => setFetchSubPart(res.data))
-      .catch(err => console.log(err));
-  }, []);
-  {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
-
-
-  const selectProduct = (selectedProductOptions) => {
-    setvaluePRproduct(selectedProductOptions);
-  
-    const existingProductCodes = productSelectedFetch.map((row) => row.product.product_code);
-  
-    const updateProducttable = [
-      ...productSelectedFetch,
-      ...selectedProductOptions
-        .filter(
-          (option) => !existingProductCodes.includes(option.value)
-        )
-        .map((option) => ({
-          product_code: option.value,
-          product: {
-            product_name: option.label.split('/ Name: ')[1].trim(),
-            product_unitMeasurement: option.prodUM,
-            product_code: option.prodcode,
-          },
-          quantity: 0, // Set a default quantity value
-        })),
-    ];
-  
-    setProductSelectedFetch(updateProducttable);
-    // console.log(updateProducttable)
-  };
-  
-
-    const InputQuantandDescription = (index, value) => {
-        const updateProducttable = [...productSelectedFetch];
-        updateProducttable[index].quantity = value;
-
-        const valuePRproductData = valuePRproduct.map((row) =>{
-          if(row.value === updateProducttable[index].product_code){
-            return {
-              ...row,
-              quants: value, //ito yung ibabato papuntang useeffect
-            }
-          }
-          return row;
-        });
-        setvaluePRproduct(valuePRproductData);
-        setProductSelectedFetch(updateProducttable);
-    };
-
 
   //Where clause sa product PR
   useEffect(() => {
@@ -261,12 +179,12 @@ function PurchaseRequestPreview() {
       .then(res => {
         const data = res.data;
         setProductSelectedFetch(data);
-        const selectedPRproduct = data.map((row) => ({
-          value: row.product_id,
-          label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
-          quants: row.quantity,
-        }));
-        setvaluePRproduct(selectedPRproduct);
+        // const selectedPRproduct = data.map((row) => ({
+        //   value: row.product_id,
+        //   label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
+        //   quants: row.quantity,
+        // }));
+        // setvaluePRproduct(selectedPRproduct);
       })
       .catch(err => console.log(err));
   }, [id]);
@@ -281,11 +199,11 @@ function PurchaseRequestPreview() {
       .then(res => {
         const data = res.data;
         setAssemblySelectedFetch(data);
-        const selectedPRAssembly = data.map((row) => ({
-          value: row.id,
-          label: `Assembly Code: ${row.assembly.assembly_code} / Name: ${row.assembly.assembly_name}`,
-        }));
-        setvaluePRassembly(selectedPRAssembly);
+        // const selectedPRAssembly = data.map((row) => ({
+        //   value: row.id,
+        //   label: `Assembly Code: ${row.assembly.assembly_code} / Name: ${row.assembly.assembly_name}`,
+        // }));
+        // setvaluePRassembly(selectedPRAssembly);
       })
       .catch(err => console.log(err));
   }, [id]);
@@ -301,11 +219,11 @@ function PurchaseRequestPreview() {
       .then(res => {
         const data = res.data;
         setSpareSelectedFetch(data);
-        const selectedPRspare = data.map((row) => ({
-          value: row.id,
-          label: `Spare Code: ${row.sparePart.spareParts_code} / Name: ${row.sparePart.spareParts_name}`,
-        }));
-        setvalueSpare(selectedPRspare);
+      //   const selectedPRspare = data.map((row) => ({
+      //     value: row.id,
+      //     label: `Spare Code: ${row.sparePart.spareParts_code} / Name: ${row.sparePart.spareParts_name}`,
+      //   }));
+      //   setvalueSpare(selectedPRspare);
       })
       .catch(err => console.log(err));
   }, [id]);
@@ -322,11 +240,11 @@ function PurchaseRequestPreview() {
       .then(res => {
         const data = res.data;
         setSubPartSelectedFetch(data);
-        const selectedPRsub = data.map((row) => ({
-          value: row.id,
-          label: `SubPart Code: ${row.subPart.subPart_code} / Name: ${row.subPart.subPart_name}`,
-        }));
-        setvaluePRsub(selectedPRsub);
+        // const selectedPRsub = data.map((row) => ({
+        //   value: row.id,
+        //   label: `SubPart Code: ${row.subPart.subPart_code} / Name: ${row.subPart.subPart_name}`,
+        // }));
+        // setvaluePRsub(selectedPRsub);
       })
       .catch(err => console.log(err));
   }, [id]);
@@ -354,10 +272,6 @@ function PurchaseRequestPreview() {
     });
   }, [id]);
   
-  const displayDropdown = () => {
-    setShowDropdown(true);
-  };  
-
 
 
 
@@ -395,58 +309,6 @@ function PurchaseRequestPreview() {
 
 
     
-  
-const update = async e => {
-  e.preventDefault();
-
-  const form = e.currentTarget;
-  if (form.checkValidity() === false) {
-    e.preventDefault();
-    e.stopPropagation();
-  // if required fields has NO value
-  //    console.log('requried')
-      swal({
-          icon: 'error',
-          title: 'Fields are required',
-          text: 'Please fill the red text fields'
-        });
-  }
-  else{
-
-    axios.post(`${BASE_URL}/PR/update`, null, {
-      params:{
-        id: id,
-        prNum, 
-        dateNeed, 
-        useFor, 
-        remarks, 
-      }
-       
-    })
-    .then((res) => {
-      console.log(res);
-      if (res.status === 200) {
-        swal({
-          title: 'The Request sucessfully submitted!',
-          text: 'The Purchase Request has been added successfully.',
-          icon: 'success',
-          button: 'OK'
-        }).then(() => {
-          navigate('/purchaseRequest')
-          
-        });
-      } else {
-        swal({
-          icon: 'error',
-          title: 'Something went wrong',
-          text: 'Please contact our support'
-        });
-      }
-    })
-  }
-  setValidated(true); //for validations
-};
-
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">
@@ -483,7 +345,7 @@ const update = async e => {
                 </div>
                 </Col>
             </Row>
-            <Form noValidate validated={validated} onSubmit={update}>
+            <Form noValidate validated={validated}>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
                           Purchase Information
                           <span
@@ -562,150 +424,47 @@ const update = async e => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                              {productSelectedFetch.map((prodPR,i) =>(
-                                                <tr key={i}>
-                                                  <td>{prodPR.product.product_code}</td>
-                                                  <td>
-                                                  <Form.Control 
-                                                      type="number" 
-                                                      placeholder='input quality'
-                                                      value={prodPR.quantity || ''}
-                                                      readOnly
-                                                      onChange={(e) => InputQuantandDescription(i, e.target.value)}
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px'}}/>
-                                                  </td>
-                                                  <td>{prodPR.product.product_unitMeasurement}</td>
-                                                  <td>{prodPR.product.product_name}</td>
-                                                  <td>
-                                                      <Form.Control                                               
-                                                        type="text"
-                                                        value={prodPR.description}
-                                                        readOnly
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        placeholder="Input description"
-                                                        style={{ height: '40px', width: '180px', fontSize: '15px', overflowY: 'auto'}}
-                                                      />
-                                                  </td>
+                                              {productSelectedFetch.map((data, i) => (
+                                                <tr key={i} >
+                                                    <td >{data.product.product_code}</td>
+                                                    <td >{data.quantity}</td>
+                                                    <td >{data.product.product_unitMeasurement}</td>
+                                                    <td >{data.product.product_name}</td>
+                                                    <td >{data.description}</td>
                                                 </tr>
-                                              ))}
+                                              ))}   
 
-
-                                              {assemblySelectedFetch.map((assemblyPR,i) =>(
-                                                <tr>
-                                                  <td>{assemblyPR.assembly.assembly_code}</td>
-                                                  <td>
-                                                  <Form.Control
-                                                        type="number"
-                                                        value={assemblyPR.quantity || ''}
-                                                        readOnly
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
-                                                        placeholder='input quality'
-                                                      />
-                                                  </td>
-                                                  <td>{assemblyPR.assembly.assembly_unitMeasurement}</td>
-                                                  <td>{assemblyPR.assembly.assembly_name}</td>
-                                                  <td>
-                                                      <Form.Control                                              
-                                                        type="text"
-                                                        value={assemblyPR.description}
-                                                        readOnly
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        placeholder="Input description"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
-                                                      />
-                                                  </td>
+                                              {assemblySelectedFetch.map((data, i) => (
+                                                <tr key={i} >
+                                                    <td >{data.assembly.assembly_code}</td>
+                                                    <td >{data.quantity}</td>
+                                                    <td >{data.assembly.assembly_unitMeasurement}</td>
+                                                    <td >{data.assembly.assembly_name}</td>
+                                                    <td >{data.description}</td>
                                                 </tr>
-                                              ))}
+                                              ))}     
 
-                                              {spareSelectedFetch.map((sparePR,i) =>(
-                                                <tr>
-                                                  <td>{sparePR.sparePart.spareParts_code}</td>
-                                                  <td>
-                                                  <Form.Control
-                                                        type="number"
-                                                        value={sparePR.quantity || ''}
-                                                        readOnly
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
-                                                        placeholder='input quality'
-                                                      />
-                                                  </td>
-                                                  <td>{sparePR.sparePart.spareParts_unitMeasurement}</td>
-                                                  <td>{sparePR.sparePart.spareParts_name}</td>
-                                                  <td>
-                                                      <Form.Control                                              
-                                                        type="text"
-                                                        value={sparePR.description}
-                                                        readOnly
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        placeholder="Input description"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
-                                                      />
-                                                  </td>
+                                              {spareSelectedFetch.map((data, i) => (
+                                                <tr key={i} >
+                                                    <td >{data.sparePart.spareParts_code}</td>
+                                                    <td >{data.quantity}</td>
+                                                    <td >{data.sparePart.spareParts_unitMeasurement}</td>
+                                                    <td >{data.sparePart.spareParts_name}</td>
+                                                    <td >{data.description}</td>
                                                 </tr>
-                                              ))}
+                                              ))}     
 
-                                                {subPartSelectedFetch.map((subPR,i) =>(
-                                                <tr>
-                                                  <td>{subPR.subPart.subPart_code}</td>
-                                                  <td>
-                                                  <Form.Control
-                                                        type="number"
-                                                        readOnly
-                                                        value={subPR.quantity || ''}
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
-                                                        placeholder='input quality'
-                                                      />
-                                                  </td>
-                                                  <td>{subPR.subPart.subPart_unitMeasurement}</td>
-                                                  <td>{subPR.subPart.subPart_name}</td>
-                                                  <td>
-                                                      <Form.Control                                              
-                                                        type="text"
-                                                        value={subPR.description}
-                                                        readOnly
-                                                        // onChange={(e) => handleInputChange(i, e.target.value)}
-                                                        placeholder="Input description"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px'}}
-                                                      />
-                                                  </td>
+                                              {subPartSelectedFetch.map((data, i) => (
+                                                <tr key={i} >
+                                                    <td >{data.subPart.subPart_code}</td>
+                                                    <td >{data.quantity}</td>
+                                                    <td >{data.subPart.subPart_unitMeasurement}</td>
+                                                    <td >{data.subPart.subPart_name}</td>
+                                                    <td >{data.description}</td>
                                                 </tr>
-                                              ))}
-
-
-                                              
+                                                ))}                                            
                                             </tbody>
-                                        {showDropdown && (
-                                        <div className="dropdown mt-3">
-                                              <Select
-                                                  isMulti
-                                                  options={fetchProduct.map(product => ({
-                                                    value: product.product_id,
-                                                    label: `Product Code: ${product.product_code} / Name: ${product.product_name}`,
-                                                    type: 'Product',
-                                                    prodcode: product.product_code,
-                                                    prodUM: product.product_unitMeasurement,
-                                                    prodname: product.product_name,
-                                                  }))
-                                                }
-                                                  value={valuePRproduct}
-                                                  onChange={selectProduct}
-                                                />
-                                        </div>
-                                      )}
-                                      {isReadOnly && (
-                                            <div className="item">
-                                                <div className="new_item">
-                                                    <button type="button" onClick={displayDropdown}>
-                                                      <span style={{marginRight: '4px'}}>
-                                                      </span>
-                                                      <Plus size={20} /> New Item
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            )}
+                                        
                                     </table>
                                 </div>
                             </div>

@@ -368,36 +368,37 @@ function PurchaseRequest({ authrztn }) {
                   <tbody>
                     {filteredPR.map((data, i) => (
                       <tr key={i}>
-                        <td
-                          onClick={() =>
-                            navigate(`/purchaseRequestPreview/${data.id}`)
-                          }>
+                        <td onClick={() => 
+                          data.status === 'For-Canvassing' ?
+                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
+                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                        >
                           {data.pr_num}
                         </td>
-                        <td
-                          onClick={() =>
-                            navigate(`/purchaseRequestPreview/${data.id}`)
-                          }>
+                          <td onClick={() => 
+                          data.status === 'For-Canvassing' ?
+                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
+                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                        >
                           --
                         </td>
-                        <td
-                          onClick={() =>
-                            navigate(`/purchaseRequestPreview/${data.id}`)
-                          }>
+                        <td onClick={() => 
+                          data.status === 'For-Canvassing' ?
+                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
+                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                        >
                           <p className="" style={{ fontSize: "12px" }}>
                             {data.status}
                           </p>
                         </td>
-                        <td
-                          onClick={() =>
-                            navigate(`/purchaseRequestPreview/${data.id}`)
-                          }>
+                        <td onClick={() => 
+                          data.status === 'For-Canvassing' ?
+                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
+                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                        >
                           {formatDatetime(data.createdAt)}
                         </td>
-                        <td
-                          onClick={() =>
-                            navigate(`/purchaseRequestPreview/${data.id}`)
-                          }>
+                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>
                           {data.remarks}
                         </td>
                         <td>

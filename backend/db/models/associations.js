@@ -130,9 +130,20 @@ Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id"});
 Product.hasMany(Product_image, { foreignKey: "product_id"});
 Product_image.belongsTo(Product, { foreignKey: "product_id"});
 
+Product.hasMany(PR_product, { foreignKey: "product_id"});
+PR_product.belongsTo(Product, { foreignKey: "product_id"});
+
+Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id"});
+PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+SparePart.hasMany(PR_sparePart, { foreignKey: "spare_id"});
+PR_sparePart.belongsTo(SparePart, { foreignKey: "spare_id"});
+
+SubPart.hasMany(PR_subPart, { foreignKey: "subPart_id"});
+PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id"});
+
 // Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
 // Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
-
 
 // product_spareparts` table
 Product.hasMany(Product_Spareparts, { foreignKey: "product_id"});
