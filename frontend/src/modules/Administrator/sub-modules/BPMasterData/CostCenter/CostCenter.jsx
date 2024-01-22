@@ -12,22 +12,13 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/esm/Button";
 import {
-  // MagnifyingGlass,
-  // Gear,
-  // Bell,
-  // UserCircle,
   Plus,
-  // Trash,
-  // NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
-
 import * as $ from "jquery";
-// import Header from "../../../../../partials/header";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-
 import { jwtDecode } from "jwt-decode";
 
 function CostCenter({ authrztn }) {
@@ -272,13 +263,6 @@ function CostCenter({ authrztn }) {
   };
   // ----------------------------------End Add new Cost center------------------------------//
 
-  // ----------------------------------Start Search------------------------------//
-  // React.useEffect(() => {
-  //   $(document).ready(function () {
-  //     $("#order-listing").DataTable();
-  //   });
-  // }, []);
-  // ----------------------------------End Serach------------------------------//
 
   // ----------------------------------Validation------------------------------//
   const SuccessInserted = (res) => {
@@ -339,29 +323,6 @@ function CostCenter({ authrztn }) {
         </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
-
-                </div> */}
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -370,15 +331,6 @@ function CostCenter({ authrztn }) {
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  {/* <Link
-                    to="/createCostCenter"
-                    onClick={handleShow}
-                    className="button">
-                    <span style={{}}>
-                      <Plus size={25} />
-                    </span>
-                    Create New
-                  </Link> */}
                   { authrztn?.includes('Cost Centre - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
@@ -430,7 +382,20 @@ function CostCenter({ authrztn }) {
                       </td>
                       <td
                         onClick={() => navigate(`/viewCostCenter/${data.id}`)}>
+                          <div className="colorstatus"
+                          style={{
+                            backgroundColor:
+                              data.status === "Active"
+                                ? "green"
+                                : "red",
+                            color: "white",
+                            padding: "5px",
+                            borderRadius: "5px",
+                            textAlign: "center",
+                            width: "80px",
+                          }}>
                         {data.status}
+                          </div>
                       </td>
                       <td
                         onClick={() => navigate(`/viewCostCenter/${data.id}`)}>

@@ -74,7 +74,35 @@ router.route('/fetchCanvass').get(async (req, res) => {
 
 
 
+router.route('/fetchSupplierSpare').get(async (req, res) => {
+  try {
+    
+    console.log(req.query.id)
+    const data = await SparePart_Supplier.findAll({
+      include: [{
+        model: SparePart,
+        required: true
+      },
 
+      {
+        model: Supplier,
+        required: true
+      }
+    ],
+      where: {sparePart_id: req.query.id}
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
 
 
 

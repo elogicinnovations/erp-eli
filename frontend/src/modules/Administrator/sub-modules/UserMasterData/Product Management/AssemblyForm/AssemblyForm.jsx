@@ -350,7 +350,7 @@ function AssemblyForm({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+              <table className="table-hover" title="View Information" id="order-listing">
                 <thead>
                   <tr>
                     <th className="tableh">

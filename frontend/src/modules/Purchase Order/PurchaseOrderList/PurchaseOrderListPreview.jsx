@@ -34,6 +34,14 @@ function PurchaseOrderListPreview() {
 
   const [validated, setValidated] = useState(false);
 
+  const [containers, setContainers] = useState({});
+  const [selectedProduct, setSelectedProduct] = useState({ 
+    code: '', 
+    name: '', 
+    supplier_Code: '', 
+    supplier_name: '' 
+  });
+
 
   //para sa subpart data na e canvass
   const [suppSubpart, setSuppSubpart] = useState([]);
@@ -179,53 +187,43 @@ const handleCanvass = (product_id) => {
 
 
 
-const handleAddToTablePO = (itemId) => {
-  // Find the item in table 1 by ID
-  const selectedItem = suppProducts.find((item) => item.id === itemId);
+const handleAddToTablePO = (id) => {
+  const selectedData = suppProducts.find((data) => data.id === id);
+  const supplierCode = selectedData.supplier.supplier_code;
 
-   // Check if the item already exists in table 2
-  const isItemInTablePO = addProductPO.some((item) => item.id === itemId);
-
-
-  if (selectedItem && !isItemInTablePO) {
-    // Transfer the item to table 2
-    setAddProductPO([...addProductPO, selectedItem]);
-
-    // Optionally, you can remove the item from table 1 if needed
-    const updatedTable1Data = suppProducts.filter((item) => item.id !== itemId);
-    setSuppProducts(updatedTable1Data);
+  if (containers[supplierCode]) {
+    // Supplier container already exists, update it
+    setContainers((prevContainers) => ({
+      ...prevContainers,
+      [supplierCode]: {
+        ...prevContainers[supplierCode],
+        products: [...prevContainers[supplierCode].products, selectedData.product],
+      },
+    }));
+  } else {
+    // Create a new supplier container
+    setContainers((prevContainers) => ({
+      ...prevContainers,
+      [supplierCode]: {
+        supplierCode: supplierCode,
+        supplierName: selectedData.supplier.supplier_name,
+        products: [selectedData.product],
+      },
+    }));
   }
-  // handleClose()
 
-  return selectedItem
-  
+  setSelectedProduct({
+    code: selectedData.product.product_code,
+    name: selectedData.product.product_name,
+    supplier_Code: selectedData.supplier.supplier_code,
+    supplier_name: selectedData.supplier.supplier_name,
+  });
 };
 
-const handleQuantityChange = (value, productValue) => {
-  // Update the quantityInputs state for the corresponding product
-  setQuantityInputs((prevInputs) => {
-    const updatedInputs = {
-      ...prevInputs,
-      [productValue]: value,
-    };
-
-    // Use the updatedInputs directly to create the serializedProducts array
-    const serializedProducts = addProductPO.map((product) => ({
-      quantity: updatedInputs[product.id] || '',
-      tagSupplier_ID: product.id
-    }));
-
-//     console.log("Value:", value);
-// console.log("Product Value:", productValue);
-// console.log("Updated Inputs:", updatedInputs);
-
-    setAddProductbackend(serializedProducts);
-
-    console.log("Selected Products:", serializedProducts);
-
-    // Return the updatedInputs to be used as the new state
-    return updatedInputs;
-  });
+const closeContainer = () => {
+  // setIsContainerVisible(false);
+  // Optionally, you can reset the selected product when the container is closed
+  setSelectedProduct({ code: '', name: '', supplier_Code: '', supplier_name: '' });
 };
 
 
@@ -277,32 +275,6 @@ const handleAddToTablePO_Assembly = (itemId) => {
 };
 
 
-const handleQuantityChange_Ass = (value, productValue) => {
-  // Update the quantityInputs state for the corresponding product
-  setQuantityInputsAss((prevInputs) => {
-    const updatedInputs = {
-      ...prevInputs,
-      [productValue]: value,
-    };
-
-    // Use the updatedInputs directly to create the serializedProducts array
-    const serializedProducts = addAssemblyPO.map((product) => ({
-      quantity: updatedInputs[product.id] || '',
-      tagSupplier_ID: product.id
-    }));
-
-//     console.log("Value:", value);
-// console.log("Product Value:", productValue);
-// console.log("Updated Inputs:", updatedInputs);
-
-    setAddAssemblybackend(serializedProducts);
-
-    console.log("Selected Assembly:", serializedProducts);
-
-    // Return the updatedInputs to be used as the new state
-    return updatedInputs;
-  });
-};
 
 
   //------------------------------------------------Spare rendering data ------------------------------------------------//
@@ -347,34 +319,6 @@ const handleAddToTablePO_Spare = (itemId) => {
 
   return selectedItem
   
-};
-
-
-const handleQuantityChange_Spare = (value, productValue) => {
-  // Update the quantityInputs state for the corresponding product
-  setQuantityInputSpare((prevInputs) => {
-    const updatedInputs = {
-      ...prevInputs,
-      [productValue]: value,
-    };
-
-    // Use the updatedInputs directly to create the serializedProducts array
-    const serializedProducts = addSparePO.map((product) => ({
-      quantity: updatedInputs[product.id] || '',
-      tagSupplier_ID: product.id
-    }));
-
-//     console.log("Value:", value);
-// console.log("Product Value:", productValue);
-// console.log("Updated Inputs:", updatedInputs);
-
-    setAddSparebackend(serializedProducts);
-
-    console.log("Selected Spare:", serializedProducts);
-
-    // Return the updatedInputs to be used as the new state
-    return updatedInputs;
-  });
 };
 
 
@@ -425,33 +369,6 @@ const handleAddToTablePO_Subpart = (itemId) => {
   
 };
 
-
-const handleQuantityChange_Subpart = (value, productValue) => {
-  // Update the quantityInputs state for the corresponding product
-  setQuantityInputSubpart((prevInputs) => {
-    const updatedInputs = {
-      ...prevInputs,
-      [productValue]: value,
-    };
-
-    // Use the updatedInputs directly to create the serializedProducts array
-    const serializedProducts = addSubpartPO.map((product) => ({
-      quantity: updatedInputs[product.id] || '',
-      tagSupplier_ID: product.id
-    }));
-
-//     console.log("Value:", value);
-// console.log("Product Value:", productValue);
-// console.log("Updated Inputs:", updatedInputs);
-
-    setAddSubpartbackend(serializedProducts);
-
-    console.log("Selected Subpart:", serializedProducts);
-
-    // Return the updatedInputs to be used as the new state
-    return updatedInputs;
-  });
-};
 
 
 
@@ -720,7 +637,7 @@ const handleQuantityChange_Subpart = (value, productValue) => {
                             </div>
                         </div>
                         <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Purchase Order
+                          Canvassing Supplier
                           <span
                             style={{
                               position: 'absolute',
@@ -735,113 +652,20 @@ const handleQuantityChange_Subpart = (value, productValue) => {
                         </div>
                         <div className="table-containss">
                             <div className="main-of-all-tables">
-                                <table id='' className='tab-po'>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Code</th>
-                                            <th className='tableh'>Quantity</th>
-                                            <th className='tableh'>Product</th>
-                                            <th className='tableh'>Supplier</th>
-                                            <th className='tableh'>Price</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {addProductPO.map((data) =>(
-                                                  <tr key={data.id}>
-                                                    <td>{data.product.product_code}</td>
-                                                    <td>
-                                                        <div className='d-flex flex-direction-row align-items-center'>
-                                                          <input
-                                                            type="number"
-                                                            value={quantityInputs[data.id] || ''}
-                                                            onChange={(e) => handleQuantityChange(e.target.value, data.id)}
-                                                            required
-                                                            placeholder="Input quantity"
-                                                            style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                          />
-                                                          /{data.quantity}
-                                                        </div>
-                                                    </td>
-                                                    <td>{data.product.product_name}</td>
-                                                    <td>{data.supplier.supplier_name}</td>
-                                                    <td>{data.product_price}</td>
-                                            
-                                                  </tr>
-                                                ))}
 
-
-                                              {addAssemblyPO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.assembly.assembly_code}</td>
-                                                  <td>
-                                                      <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsAss[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Ass(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        />
-                                                        /{data.quantity}
-                                                      </div>
-                                                  </td>
-                                                  <td>{data.assembly.assembly_name}</td>
-                                                  <td>{data.supplier.supplier_name}</td>
-                                                  <td>{data.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
-
-
-                                              {addSparePO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.sparePart.spareParts_code}</td>
-                                                  <td>
-                                                      <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsSpare[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Spare(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        />
-                                                        /{data.quantity}
-                                                      </div>
-                                                  </td>
-                                                  <td>{data.sparePart.spareParts_name}</td>
-                                                  <td>{data.supplier.supplier_name}</td>
-                                                  <td>{data.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
-
-
-                                              {addSubpartPO.map((data) =>(
-                                                <tr key={data.id}>
-                                                  <td>{data.subPart.subPart_code}</td>
-                                                  <td>
-                                                      <div className='d-flex flex-direction-row align-items-center'>
-                                                        <input
-                                                          type="number"
-                                                          value={quantityInputsSubpart[data.id] || ''}
-                                                          onChange={(e) => handleQuantityChange_Subpart(e.target.value, data.id)}
-                                                          required
-                                                          placeholder="Input quantity"
-                                                          style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                        />
-                                                        /{data.quantity}
-                                                      </div>
-                                                  </td>
-                                                  <td>{data.subPart.subPart_name}</td>
-                                                  <td>{data.supplier.supplier_name}</td>
-                                                  <td>{data.supplier_price}</td>
-                                          
-                                                </tr>
-                                              ))}
-                                    </tbody>
-                                </table>
+                            {Object.values(containers).map((container) => (
+                              <div key={container.supplierCode} className='container border border-warning'>
+                                <h2>{container.supplierCode} - {container.supplierName}</h2>
+                                {container.products.map((product, index) => (
+                                  <div key={index}>
+                                    <p>Product Code: {product.product_code}</p>
+                                    <p>Product Name: {product.product_name}</p>
+                                  </div>
+                                ))}
+                                <button onClick={closeContainer}>Close</button>
+                              </div>
+                            ))}
+                               
                             </div>
                         </div>
                         <div className='save-cancel'>

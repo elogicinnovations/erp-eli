@@ -185,7 +185,7 @@ function UpdateAssemblyForm() {
           },
         })),
     ];
-  
+    setIsSaveButtonDisabled(false);
     setTableSupp(updatedTable);
   };
 
@@ -904,8 +904,8 @@ const update = async (e) => {
                                               </td>
                                               <td>
                                                 {data.supplier.supplier_vat
-                                                  ? (data.supplier.supplier_vat / 100 * data.supplier_price).toFixed(2)
-                                                  : (addPriceInput.find((option) => option.value === data.supplier.supplier_code)?.vatable / 100 * data.supplier_price).toFixed(2)
+                                                  ? (data.supplier.supplier_vat / 100 * (data.supplier_price || 0)).toFixed(2)
+                                                  : (addPriceInput.find((option) => option.value === data.supplier.supplier_code)?.vatable / 100 * (data.supplier_price || 0)).toFixed(2)
                                                 }
                                               </td>
 

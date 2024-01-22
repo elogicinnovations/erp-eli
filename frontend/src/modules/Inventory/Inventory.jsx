@@ -479,7 +479,7 @@ const navigate = useNavigate()
                                                                 onClick={() => navigate(`/returnForm/${data.issuance_id}`)}
                                                                 style={{ fontSize: '12px' }}
                                                                 className='btn'
-                                                                disabled={issuanceExpirationStatus[data.issuance_id]}
+                                                                disabled={data.status !== "Approved" || issuanceExpirationStatus[data.issuance_id]}
                                                               >
                                                                 Return
                                                               </button>

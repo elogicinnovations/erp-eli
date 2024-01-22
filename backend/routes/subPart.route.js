@@ -1,7 +1,14 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {SubPart, Subpart_supplier, Inventory_Subpart, BinLocation, Category, Manufacturer, Subpart_image} = require('../db/models/associations')
+const {SubPart, 
+      Subpart_supplier, 
+      Inventory_Subpart, 
+      BinLocation, 
+      Category, 
+      Manufacturer, 
+      Subpart_image,
+      Subpart_Price_History} = require('../db/models/associations')
 const session = require('express-session')
 const multer = require('multer');
 const upload = multer();
@@ -84,7 +91,8 @@ router.route('/fetchTable').get(async (req, res) => {
             bin_id: slct_binLocation,
             subPart_unitMeasurement: unitMeasurement,
             subPart_Manufacturer: slct_manufacturer,
-            category_code: slct_category
+            category_code: slct_category,
+            subPart_status: 'Active'
           });
 
           const createdID = subpart_newData.id;
@@ -98,6 +106,13 @@ router.route('/fetchTable').get(async (req, res) => {
                 supplier_code: supplierValue,
                 supplier_price: supplierPrices
             });
+
+            await Subpart_Price_History.create({
+                subpart_id: createdID,
+                supplier_code: supplierValue,
+                supplier_price: supplierPrices
+            })
+
             await Inventory_Subpart.create({
               subpart_tag_supp_id: SupplierSubpart_ID.id,
               quantity: 0,
@@ -168,23 +183,45 @@ router.route("/update").post(
 
 
 
-        const deletesupplier = Subpart_supplier.destroy({
-          where: {
-            subpart_id: id
-          },
-        });
-
-        if(deletesupplier){
-          const selectedSuppliers = subpartTAGSuppliers;
-          for (const supplier of selectedSuppliers) {
-            const { value, price } = supplier;
-            await Subpart_supplier.create({
+      const deletesupplier = Subpart_supplier.destroy({
+        where: {
+          subpart_id: id,
+        },
+      });
+      
+      if (deletesupplier) {
+        const selectedSuppliers = subpartTAGSuppliers;
+        for (const supplier of selectedSuppliers) {
+          const { value, price } = supplier;
+      
+          // Check if the price is different from the existing supplier_price
+          const existingSupplier = await Subpart_supplier.findOne({
+            where: {
               subpart_id: id,
               supplier_code: value,
-              supplier_price: price
-              });
-            }
+            },
+          });
+      
+          await Subpart_supplier.create({
+            subpart_id: id,
+            supplier_code: value,
+            supplier_price: price,
+          });
+      
+          if (existingSupplier && existingSupplier.supplier_price === price) {
+            continue;
           }
+      
+          if (existingSupplier && existingSupplier.supplier_price !== price) {
+            await Subpart_Price_History.create({
+              subpart_id: id,
+              supplier_code: value,
+              supplier_price: price,
+            });
+          }
+        }
+      }
+      
 
           const deletesubImage = Subpart_image.destroy({
             where: {
@@ -211,67 +248,23 @@ router.route("/update").post(
   }
 });  
 
-// router.route("/update").post(async (req, res) => {
-//   try {
-//     const existingDataCode = await SubPart.findOne({
-//       where: {
-//         subPart_code: req.query.prodcode,
-//         id: { [Op.ne]: req.query.id },
-//       },
-//     });
+router.route('/statusupdate').put(async (req, res) => {
+  try {
+    const { subpartIDs, status } = req.body;
 
-//     if (existingDataCode) {
-//       return res.status(201).send("Exist");
-//     } else {
-//       const subpart_newData = await SubPart.update(
-//         {
-//           subPart_code: req.query.prodcode,
-//           subPart_name: req.query.prodname,
-//           subPart_desc: req.query.proddetails,
-//           threshhold: req.query.prodthreshold,
-//           bin_id: req.query.prodlocation,
-//           subPart_unitMeasurement: req.query.prodmeasurement,
-//           subPart_Manufacturer: req.query.prodmanufacture,
-//           category_code: req.query.prodcategory
-//         },
-//         {
-//           where: {
-//             id: req.query.id,
-//           },
-//         }
-//       );
+    for (const subpartId of subpartIDs) {
+      await SubPart.update(
+        { subPart_status: status },
+        { where: { id: subpartId } }
+      );
+    }
 
-
-//       if (subpart_newData) {
-//         const deletesupplier = Subpart_supplier.destroy({
-//           where: {
-//             subpart_id: req.query.id
-//           },
-//         });
-
-//         if(deletesupplier !== null || deletesupplier !== undefined){
-//           const selectedSuppliers = req.query.subpartTAGSuppliers;
-//           if (selectedSuppliers && typeof selectedSuppliers[Symbol.iterator] === 'function') {
-//           for (const supplier of selectedSuppliers) {
-//             const { value, price } = supplier;
-//             await Subpart_supplier.create({
-//               subpart_id: req.query.id,
-//               supplier_code: value,
-//               supplier_price: price
-//              });
-//            }
-//           }
-//         }
-
-//       }
-
-//       res.status(200).json();
-//     }
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("An error occurred");
-//   }
-// });  
+    res.status(200).json({ message: 'Products updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
   

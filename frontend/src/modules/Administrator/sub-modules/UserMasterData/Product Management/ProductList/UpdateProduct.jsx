@@ -179,27 +179,8 @@ function UpdateProduct() {
         })),
     ];
     settablesupplier(updatedTable);
+    setIsSaveButtonDisabled(false);
   };
-
-  // const handlePriceChange = (index, value) => {
-  //   const updatedTable = [...tablesupplier];
-  //   updatedTable[index].product_price = value;
-
-  //   const productTAGSuppliersData = productTAGSuppliers.map((row) => {
-  //     if (row.value === updatedTable[index].supplier_code) {
-  //       return {
-  //         ...row,
-  //         price: value,
-  //       };
-  //     }
-  //     return row;
-  //   });
-
-  //   setProductTAGSuppliers(productTAGSuppliersData);
-  //   settablesupplier(updatedTable);
-
-  //   return updatedTable;
-  // };
 
   const handlePriceChange = (index, value) => {
     const updatedTable = [...tablesupplier];
@@ -259,11 +240,24 @@ useEffect(() => {
       setslct_manufacturer(res.data[0].product_manufacturer);
       setDetails(res.data[0].product_details);
       setThresholds(res.data[0].product_threshold);
-      setproductImages(res.data[0].product_images);
   })
     .catch(err => console.log(err));
 }, []);
 
+  //fetching of Image
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/productImage/fetchproductImage", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const data = res.data;
+        setproductImages(data);
+      })
+      .catch((err) => console.log(err));
+  }, [id]);
 
   //Supplier Fetch
   useEffect(() => {
@@ -396,6 +390,133 @@ useEffect(() => {
       });
   }, []);
 
+
+  const fileInputRef = useRef(null);
+
+  function selectFiles() {
+    fileInputRef.current.click();
+    setIsSaveButtonDisabled(false);
+  }
+  
+  function onFileSelect(event) {
+    const files = event.target.files;
+    setIsSaveButtonDisabled(false);
+    if (files.length + productImages.length > 5) {
+      swal({
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
+      });
+      return;
+    }
+  
+    for (let i = 0; i < files.length; i++) {
+      if (!productImages.some((e) => e.name === files[i].name)) {
+        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+        
+        if (!allowedFileTypes.includes(files[i].type)) {
+          swal({
+            icon: "error",
+            title: "Invalid File Type",
+            text: "Only JPEG, PNG, and WebP file types are allowed.",
+          });
+          return;
+        }
+  
+        if (files[i].size > 5 * 1024 * 1024) {
+          swal({
+            icon: "error",
+            title: "File Size Exceeded",
+            text: "Maximum file size is 5MB.",
+          });
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setproductImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              product_image: e.target.result.split(',')[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+  }
+  
+  
+  
+  function deleteImage(index){
+    const updatedImages = [...productImages];
+    updatedImages.splice(index, 1);
+    setproductImages(updatedImages);
+    setIsSaveButtonDisabled(false);
+  }
+  
+  function onDragOver(event){
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    setIsSaveButtonDisabled(false);
+  }
+  function onDragLeave(event) {
+    event.preventDefault();
+    setIsSaveButtonDisabled(false);
+  }
+  
+  function onDropImages(event){
+    event.preventDefault();
+    setIsSaveButtonDisabled(false);
+    const files = event.dataTransfer.files;
+  
+    if (files.length + productImages.length > 5) {
+      swal({
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
+      });
+      return;
+    }
+  
+    for (let i = 0; i < files.length; i++) {
+      if (!productImages.some((e) => e.name === files[i].name)) {
+  
+        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+        
+        if (!allowedFileTypes.includes(files[i].type)) {
+          swal({
+            icon: "error",
+            title: "Invalid File Type",
+            text: "Only JPEG, PNG, and WebP file types are allowed.",
+          });
+          return;
+        }
+  
+        if (files[i].size > 5 * 1024 * 1024) {
+          swal({
+            icon: "error",
+            title: "File Size Exceeded",
+            text: "Maximum file size is 5MB.",
+          });
+          return;
+        }
+  
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setproductImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              product_image: e.target.result.split(',')[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+  }
+
   const update = async (e) => {
     e.preventDefault();
 
@@ -406,27 +527,26 @@ useEffect(() => {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill the Required text fields",
       });
     } else {
       axios
-        .post(`${BASE_URL}/product/update`, null, {
-          params: {
-            id,
-            prod_id,
-            code,
-            name,
-            slct_category,
-            slct_binLocation,
-            unitMeasurement,
-            slct_manufacturer,
-            details,
-            thresholds,
-            assembly,
-            spareParts,
-            subparting,
-            productTAGSuppliers,
-          },
+        .post(`${BASE_URL}/product/update`,  {
+          id,
+          prod_id,
+          code,
+          name,
+          slct_category,
+          slct_binLocation,
+          unitMeasurement,
+          slct_manufacturer,
+          details,
+          thresholds,
+          assembly,
+          spareParts,
+          subparting,
+          productTAGSuppliers,
+          productImages,
         })
         .then((res) => {
           // console.log(res);
@@ -438,6 +558,7 @@ useEffect(() => {
               button: "OK",
             }).then(() => {
               navigate("/productList");
+              setIsSaveButtonDisabled(true);
             });
           } else if (res.status === 201) {
             swal({
@@ -456,15 +577,90 @@ useEffect(() => {
     }
     setValidated(true); //for validations
   };
-  console.log(subparting);
+  
+  // const update = async (e) => {
+  //   e.preventDefault();
+
+  //   const form = e.currentTarget;
+  //   if (form.checkValidity() === false) {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //     swal({
+  //       icon: "error",
+  //       title: "Fields are required",
+  //       text: "Please fill the red text fields",
+  //     });
+  //   } else {
+  //     axios
+  //       .post(`${BASE_URL}/product/update`, null, {
+  //         params: {
+  //           id,
+  //           prod_id,
+  //           code,
+  //           name,
+  //           slct_category,
+  //           slct_binLocation,
+  //           unitMeasurement,
+  //           slct_manufacturer,
+  //           details,
+  //           thresholds,
+  //           assembly,
+  //           spareParts,
+  //           subparting,
+  //           productTAGSuppliers,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         // console.log(res);
+  //         if (res.status === 200) {
+  //           swal({
+  //             title: "Product List Update Successful!",
+  //             text: "The Product List has been Update Successfully.",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             navigate("/productList");
+  //           });
+  //         } else if (res.status === 201) {
+  //           swal({
+  //             icon: "error",
+  //             title: "Product code Already Exist",
+  //             text: "Please input another code",
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       });
+  //   }
+  //   setValidated(true); //for validations
+  // };
+
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
           <h1>Update Product</h1>
+          <div className="row">
+              {productImages.length > 0 && (
+                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                  {productImages.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className="carousel-image"
+                        src={`data:image/png;base64,${image.product_image}`}
+                        alt={`subpart-img-${image.id}`}
+                      />
+                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
+          </div>
+
           <div
             className="gen-info"
             style={{
@@ -483,23 +679,6 @@ useEffect(() => {
                 left: "18rem",
                 transform: "translateY(-50%)",
               }}></span>
-          </div>
-
-          <div className="row">
-              {productImages.length > 0 && (
-                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
-                  {productImages.map((image, index) => (
-                    <Carousel.Item key={index}>
-                      <img
-                        className="carousel-image"
-                        src={`data:image/png;base64,${image.product_image}`}
-                        alt={`subpart-img-${image.id}`}
-                      />
-                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              )}
           </div>
 
           <Form noValidate validated={validated} onSubmit={update}>
@@ -799,6 +978,40 @@ useEffect(() => {
                 </Form.Group>
               </div>
               <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Image Upload:{" "}
+                  </Form.Label>
+                  <div className="card">
+                      <div className="top">
+                        <p>Drag & Drop Image Upload</p>
+                      </div>
+                      <div className="drag-area" 
+                      onDragOver={onDragOver} 
+                      onDragLeave={onDragLeave} 
+                      onDrop={onDropImages}>
+                          <>
+                          Drag & Drop image here or {" "}
+                          <span  
+                          className="select" role="button" onClick={selectFiles}>
+                            Browse
+                          </span>
+                          </>
+                        <input
+                        name="file" type="file" className="file" multiple ref={fileInputRef}
+                        onChange={(e) => onFileSelect(e)}/>
+                      </div>
+                      <div className="ccontainerss">
+                        {productImages.map((image,index)=>(
+                        <div className="imagess" key={index}>
+                          <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                          <img src={`data:image/png;base64,${image.product_image}`} 
+                          alt={`Sub Part ${image.product_id}`} />
+                        </div>
+                        ))}
+                      </div>
+                    </div> 
+                  </Form.Group>
               </div>
             </div>
 
@@ -864,7 +1077,11 @@ useEffect(() => {
                         </div>
                       </td>
                       <td>
-                        {(prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2) }
+                        {/* {(prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2)} */}
+                        {prod.supplier.supplier_vat
+                          ? (prod.supplier.supplier_vat / 100 * (prod.product_price || 0)).toFixed(2)
+                          : (productTAGSuppliers.find((option) => option.value === prod.supplier.supplier_code)?.vatable / 100 * (prod.product_price || 0)).toFixed(2)
+                        }
                       </td>
                     </tr>
                   ))}
@@ -881,6 +1098,7 @@ useEffect(() => {
                         number: supplier.supplier_number,
                         address: supplier.supplier_address,
                         receiving: supplier.supplier_receiving,
+                        vatable: supplier.supplier_vat
                       }))}
                       value={productTAGSuppliers}
                       onChange={handleSelectChange}

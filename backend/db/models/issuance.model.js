@@ -19,16 +19,20 @@ const Issuance = sequelize.define('issuance', {
     unique: false
   },
   with_accountability: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   accountability_refcode: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   serial_number: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   job_order_refcode: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   received_by: {
     type: DataTypes.INTEGER,
@@ -39,10 +43,16 @@ const Issuance = sequelize.define('issuance', {
     allowNull: true
   },
   mrs: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   remarks: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  status:{
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 
 });

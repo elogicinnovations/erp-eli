@@ -16,6 +16,7 @@ const Product_Assembly = require("./product_assembly.model");
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model")
 const Subpart_image = require("./subpart_image.model")
+const Subpart_Price_History = require("./subpart_price_history.model")
 
 const SparePart = require("./sparePart.model");
 const SparePart_SubPart = require("./sparePart_subPart.model");
@@ -110,6 +111,14 @@ SubPart.hasMany(Subpart_image, { foreignKey: "subpart_id"});
 Subpart_image.belongsTo(SubPart, { foreignKey: "subpart_id"});
 
 
+//subpart price history table
+SubPart.hasMany(Subpart_Price_History, { foreignKey: "subpart_id"});
+Subpart_Price_History.belongsTo(SubPart, { foreignKey: "subpart_id"});
+
+Supplier.hasMany(Subpart_Price_History, { foreignKey: "supplier_code"});
+Subpart_Price_History.belongsTo(Supplier, { foreignKey: "supplier_code"});
+
+
 //product tag supplier table
 Product.hasMany(ProductTAGSupplier, { foreignKey: "product_id"});
 ProductTAGSupplier.belongsTo(Product, { foreignKey: "product_id"});
@@ -130,9 +139,20 @@ Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id"});
 Product.hasMany(Product_image, { foreignKey: "product_id"});
 Product_image.belongsTo(Product, { foreignKey: "product_id"});
 
+Product.hasMany(PR_product, { foreignKey: "product_id"});
+PR_product.belongsTo(Product, { foreignKey: "product_id"});
+
+Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id"});
+PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id"});
+
+SparePart.hasMany(PR_sparePart, { foreignKey: "spare_id"});
+PR_sparePart.belongsTo(SparePart, { foreignKey: "spare_id"});
+
+SubPart.hasMany(PR_subPart, { foreignKey: "subPart_id"});
+PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id"});
+
 // Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
 // Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
-
 
 // product_spareparts` table
 Product.hasMany(Product_Spareparts, { foreignKey: "product_id"});
@@ -405,6 +425,7 @@ module.exports = {
                     SubPart,
                     Subpart_supplier,
                     Subpart_image,
+                    Subpart_Price_History,
                     
                     SparePart,
                     SparePart_SubPart,

@@ -30,15 +30,6 @@ const Assembly = sequelize.define('assembly', {
     allowNull: true,
     unique: false,
   },
-  assembly_image: {
-    type: DataTypes.BLOB('long'),
-    allowNull: true,
-  },
-  assembly_imageType: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: false,
-  },
   assembly_desc: {
     type: DataTypes.STRING,
     allowNull: true,

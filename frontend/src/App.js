@@ -32,6 +32,7 @@ import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Prod
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList"
 import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/SubParts"
 import UpdateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/UpdateSubParts"
+import ViewSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/ViewSubParts"
 import CreateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/CreateSubParts"
 import SpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/SpareParts"
 import CreateSpareParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SpareParts/CreateSpareParts"
@@ -118,7 +119,7 @@ const handleToggleSidebar = () => {
     <div className="main-of-containers">
       
         <div className={`left-of-main-containers ${showSidebar ? 'show-sidebar' : ''}`}>
-          {window.innerWidth <= 750 && (
+          {window.innerWidth <= 1300 && (
             <div className="sidebar-button">
               <button className="sidebar-back-button" onClick={handleToggleSidebar}>
                 <CaretCircleLeft size={50} weight="bold" />
@@ -136,7 +137,7 @@ const handleToggleSidebar = () => {
             }
           </Roles>
         </div>
-          {window.innerWidth <= 750 && (
+          {window.innerWidth <= 1300 && (
             <div className="sidebar-button">
               <button className="sidebar-menu-button" onClick={handleToggleSidebar}>
                 <List size={50} weight="bold" />
@@ -270,8 +271,10 @@ const handleToggleSidebar = () => {
                     path="/updatesubParts/:id"
                     element={<UpdateSubParts/>}
                   />
-                  
-
+                  <Route
+                    path="/viewsubParts/:id"
+                    element={<ViewSubParts/>}
+                  />
 
           <Route
             path="/spareParts"

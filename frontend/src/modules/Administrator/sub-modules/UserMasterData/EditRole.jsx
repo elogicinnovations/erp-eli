@@ -1489,6 +1489,7 @@ function EditRole() {
                               id="Product Manufacturer - Aprroval"
                               name="vehicle1"
                               value="Product Manufacturer - Aprroval"
+                              disabled
                               checked={selectedCheckboxes.some(
                                 (item) =>
                                   item.value === "Product Manufacturer - Aprroval"
@@ -1512,6 +1513,7 @@ function EditRole() {
                               id="Product Manufacturer - Reject"
                               name="vehicle1"
                               value="Product Manufacturer - Reject"
+                              disabled
                               checked={selectedCheckboxes.some(
                                 (item) =>
                                   item.value === "Product Manufacturer - Reject"
