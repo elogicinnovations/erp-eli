@@ -288,17 +288,28 @@ router.route("/update").post(
           for(const supplier of selectedSupplier) {
             const { value, price } = supplier;
 
+            const existingPrice = await Assembly_Supplier.findOne({
+              assembly_id: id,
+              supplier_code: value,
+            });
+
             await Assembly_Supplier.create({
               assembly_id: id,
               supplier_code: value,
               supplier_price: price
              });
 
-             await AssemblyPrice_History.create({
-              assembly_id: id,
-              supplier_code: value,
-              supplier_price: price
-             });
+             if (existingPrice && existingPrice.supplier_price === price) {
+              continue;
+            }
+
+            if (existingPrice && existingPrice.supplier_price !== price) {
+              await AssemblyPrice_History.create({
+                assembly_id: id,
+                supplier_code: value,
+                supplier_price: price
+              });
+             }
           }
         }
 

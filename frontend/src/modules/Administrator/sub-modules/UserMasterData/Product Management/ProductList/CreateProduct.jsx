@@ -211,7 +211,6 @@ function CreateProduct() {
   }, []);
 
 const [images, setImages] = useState([]);
-const [isDragging, setIsDragging] = useState([]);
 const fileInputRef = useRef(null);
 
 function selectFiles() {
@@ -278,18 +277,15 @@ function deleteImage(index){
 
 function onDragOver(event){
   event.preventDefault();
-  setIsDragging(true);
   event.dataTransfer.dropEffect = "copy";
 }
 
 function onDragLeave(event) {
   event.preventDefault();
-  setIsDragging(false);
 }
 
 function onDropImages(event) {
   event.preventDefault();
-  setIsDragging(false);
   const files = event.dataTransfer.files;
 
   if (images.length + files.length > 5) {
@@ -763,16 +759,12 @@ function onDropImages(event) {
                       <p>Drag & Drop Image Upload</p>
                     </div>
                     <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
-                      {isDragging ? (
-                        <span className="select">Drop images here</span>
-                      ) : (
                         <>
                          Drag & Drop image here or {" "}
                         <span className="select" role="button" onClick={selectFiles}>
                           Browse
                         </span>
                         </>
-                      )}
                       <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
                     </div>
                     <div className="ccontainerss">

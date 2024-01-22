@@ -27,11 +27,6 @@ const Product = sequelize.define('product', {
     allowNull: true,
     unique: false,
   },
-  product_unit: { // dapat e delete na kasi tinanggal na sa product
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: false,
-  },
   product_location: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -49,15 +44,6 @@ const Product = sequelize.define('product', {
   },
   product_threshold: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    unique: false,
-  },
-  product_image: {
-    type: DataTypes.BLOB('long'),
-    allowNull: true,
-  },
-  product_imageType: {
-    type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },

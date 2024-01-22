@@ -39,6 +39,10 @@ const SubPart = sequelize.define('subPart', {
   category_code: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  subPart_status: {
+    type: DataTypes.STRING,
+    allowNull: false,
   }
 });
 

@@ -55,12 +55,14 @@ const Product_Assembly = require("./routes/product_assembly.route");
 const Product_Subparts = require("./routes/product_subpart.route");
 const Product_Spareparts = require("./routes/product_sparepart");
 const productTAGsupplierHistory = require("./routes/productTAGSupplierHistory.route");
+const ProductImage = require("./routes/product_image.route");
 
 const manufacturer = require("./routes/manufacturer.route");
 
 const subPart = require("./routes/subPart.route");
 const subPart_supplier = require("./routes/subpart_supplier.route");
 const subPart_image = require("./routes/subpart_image.route");
+const Subpart_Price_History = require("./routes/subpart_price_history.route");
 
 const sparePart = require("./routes/sparePart.route");
 const supp_SparePart = require("./routes/sparePart_supplier.route");
@@ -127,6 +129,7 @@ app.use("/productAssembly", Product_Assembly);
 app.use("/productSubpart", Product_Subparts);
 app.use("/productSparepart", Product_Spareparts);
 app.use("/productpricehistoy", productTAGsupplierHistory);
+app.use("/productImage", ProductImage);
 
 app.use("/costCenter", costCenter);
 app.use("/manufacturer", manufacturer);
@@ -134,6 +137,7 @@ app.use("/manufacturer", manufacturer);
 app.use("/subpart", subPart);
 app.use("/subpartSupplier", subPart_supplier);
 app.use("/subPart_image", subPart_image);
+app.use("/subpricehistory", Subpart_Price_History);
 
 app.use("/sparePart", sparePart);
 app.use("/supp_SparePart", supp_SparePart);

@@ -26,6 +26,7 @@ function ViewAssembly() {
   const [activeTab, setActiveTab] = useState("Subparts");
   const [Subparts, setSubParts] = useState([]);
   const [Spareparts, setSpareparts] = useState([]);
+  const [viewSupplier, setviewSupplier] = useState([]);
   const tabStyle = {
     padding: "10px 15px",
     margin: "0 10px",
@@ -33,8 +34,6 @@ function ViewAssembly() {
     transition: "color 0.3s",
   };
 
-  console.log(Subparts);
-  console.log(Spareparts);
   //for sub parts
   useEffect(() => {
     axios
@@ -56,6 +55,19 @@ function ViewAssembly() {
         },
       })
       .then((res) => setSpareparts(res.data))
+      .catch((err) => console.log(err));
+  }, [id]);
+
+
+  //for supplier
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/supplier_assembly/fetchAssigned", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => setviewSupplier(res.data))
       .catch((err) => console.log(err));
   }, [id]);
 
@@ -100,7 +112,7 @@ function ViewAssembly() {
                   <table id="order-listing">
                     <thead>
                       <tr>
-                        <th>Supplier Code</th>
+                        <th>Sub-Part Code</th>
                         <th>Sub-Part Name</th>
                         <th>Description</th>
                       </tr>
@@ -131,8 +143,8 @@ function ViewAssembly() {
                   <table id="ordered-listing">
                     <thead>
                       <tr>
-                        <th>Supplier Code</th>
-                        <th>Spare-Part Name</th>
+                        <th>Spare-Parts Code</th>
+                        <th>Spare-Parts Name</th>
                         <th>Description</th>
                       </tr>
                     </thead>
@@ -142,6 +154,39 @@ function ViewAssembly() {
                           <td>{spares.sparePart.spareParts_code}</td>
                           <td>{spares.sparePart.spareParts_name}</td>
                           <td>{spares.sparePart.spareParts_desc}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Tab>
+              <Tab
+                eventKey="Supplier"
+                title={
+                  <span style={{ ...tabStyle, fontSize: "20px" }}>
+                    Supplier
+                  </span>
+                }>
+                <div className="orderhistory-side">
+                  <div className="printersbtn"></div>
+                </div>
+                <div className="main-of-all-tables">
+                  <table id="ordered-listing">
+                    <thead>
+                      <tr>
+                        <th>Supplier Code</th>
+                        <th>Supplier Name</th>
+                        <th>Price</th>
+                        <th>Contact</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewSupplier.map((supp, i) => (
+                        <tr key={i}>
+                          <td>{supp.supplier.supplier_code}</td>
+                          <td>{supp.supplier.supplier_name}</td>
+                          <td>{supp.supplier_price}</td>
+                          <td>{supp.supplier.supplier_number}</td>
                         </tr>
                       ))}
                     </tbody>

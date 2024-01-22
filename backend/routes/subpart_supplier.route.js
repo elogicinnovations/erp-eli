@@ -12,7 +12,7 @@ router.use(session({
 
 router.route('/fetchCanvass').get(async (req, res) => {
   try {
-    console.log(req.query.sub_id)
+    console.log(req.query.id)
     const data = await Subpart_supplier.findAll({
       include: [
         {
@@ -25,7 +25,7 @@ router.route('/fetchCanvass').get(async (req, res) => {
           required: true,
         },
       ],
-      where: { subpart_id: req.query.sub_id },
+      where: { subpart_id: req.query.id },
       // where: { subpart_id: req.query['sub_id'] },
     });
 

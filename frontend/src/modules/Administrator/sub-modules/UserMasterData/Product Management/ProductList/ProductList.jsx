@@ -8,13 +8,9 @@ import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import {
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
-  CircleNotch,
   ArrowsClockwise,
 } from "@phosphor-icons/react";
 import Button from "react-bootstrap/Button";
@@ -333,7 +329,7 @@ function ProductList({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+              <table className="table-hover" title="View Information" id="order-listing">
                 <thead>
                   <tr>
                     <th className="tableh" id="check">
@@ -507,6 +503,7 @@ function ProductList({ authrztn }) {
               value={selectedStatus}>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
+              <option value="Archive">Archive</option>
             </Form.Select>
           </Form.Group>
         </Modal.Body>
