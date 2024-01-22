@@ -221,7 +221,7 @@ const handleAddToTablePO = (id) => {
 };
 
 const closeContainer = () => {
-  setIsContainerVisible(false);
+  // setIsContainerVisible(false);
   // Optionally, you can reset the selected product when the container is closed
   setSelectedProduct({ code: '', name: '', supplier_Code: '', supplier_name: '' });
 };
