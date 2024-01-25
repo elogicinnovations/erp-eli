@@ -552,7 +552,7 @@ function AssemblyForm({ authrztn }) {
             <table responsive="xl" id="order-listing1">
               <thead className="priceHH">
                 <tr>
-                  <th className="priceHH">Assembly Name</th>
+                  <th className="priceHH">Supplier Name</th>
                   <th className="priceHH">Price</th>
                   <th className="priceHH">Date Created</th>
                 </tr>
@@ -560,7 +560,7 @@ function AssemblyForm({ authrztn }) {
               <tbody>
                 {historypricemodal.map((history, i) => (
                   <tr key={i}>
-                    <td className="priceHB">{history.assembly.assembly_name}</td>
+                    <td className="priceHB">{history.supplier.supplier_name}</td>
                     <td className="priceHB">{history.supplier_price}</td>
                     <td className="priceHB">{ModalformatDate(history.createdAt)}</td>
                   </tr>

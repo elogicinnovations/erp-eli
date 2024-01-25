@@ -504,7 +504,7 @@ function SpareParts({ authrztn }) {
             <table responsive="xl" id="order-listing1">
               <thead className="priceHH">
                 <tr>
-                  <th className="priceHH">Spare Parts Name</th>
+                  <th className="priceHH">Supplier Name</th>
                   <th className="priceHH">Price</th>
                   <th className="priceHH">Date Created</th>
                 </tr>
@@ -512,7 +512,7 @@ function SpareParts({ authrztn }) {
               <tbody>
                 {historypricemodal.map((pricehistory, i) => (
                   <tr>
-                    <td className="priceHB">{pricehistory.sparePart.spareParts_name}</td>
+                    <td className="priceHB">{pricehistory.supplier.supplier_name}</td>
                     <td className="priceHB">{pricehistory.supplier_price}</td>
                     <td className="priceHB">{ModalformatDate(pricehistory.createdAt)}</td>
                   </tr>

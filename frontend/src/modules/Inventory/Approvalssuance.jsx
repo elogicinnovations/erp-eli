@@ -411,14 +411,14 @@ const ApprovalIssuance = ({ setActiveTab }) => {
                         Reject
                   </Button>
 
-                    <Link
+                    {/* <Link
                         to="/inventory"  onClick={() => handleTabClick("issuance")}
                         className="btn btn-secondary btn-md"
                         size="md"
                         style={{ fontSize: "20px", margin: "0px 5px" }}
                     >
                         Close
-                    </Link>
+                    </Link> */}
                 </div>
               </div>
             </div>

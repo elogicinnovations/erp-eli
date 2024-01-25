@@ -328,7 +328,7 @@ function SubParts({ authrztn }) {
 
 
                 <div className="button-create-side">
-                  <Form.Select aria-label="item status"
+                  {/* <Form.Select aria-label="item status"
                     style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro', cursor: 'pointer', width: '500px'}}
                     onChange={handledropdownstatus}
                     value={Dropdownstatus.length === 1 ? Dropdownstatus[0] : ''}>
@@ -344,7 +344,7 @@ function SubParts({ authrztn }) {
                     style={{ width: '150px'}}
                     onClick={clearFilter}>
                           Clear Filter
-                    </button>
+                    </button> */}
                   {authrztn?.includes('Sub-Part - Add') && (
                     showChangeStatusButton ? (
                       <div className="Buttonmodal-change">
@@ -565,7 +565,7 @@ function SubParts({ authrztn }) {
             <table responsive="xl" id="order-listing1">
               <thead className="priceHH">
                 <tr>
-                  <th className="priceHH">Subpart Name</th>
+                  <th className="priceHH">Supplier Name</th>
                   <th className="priceHH">Price</th>
                   <th className="priceHH">Date Created</th>
                 </tr>
@@ -573,7 +573,7 @@ function SubParts({ authrztn }) {
               <tbody>
                 {historypricemodal.map((pricehistory, i) => (
                   <tr>
-                    <td className="priceHB">{pricehistory.subPart.subPart_name}</td>
+                    <td className="priceHB">{pricehistory.supplier.supplier_name}</td>
                     <td className="priceHB">{pricehistory.supplier_price}</td>
                     <td className="priceHB">{ModalformatDate(pricehistory.createdAt)}</td>
                   </tr>

@@ -286,85 +286,101 @@ router.route('/fetchView_product').get(async (req, res) => {
   //save
 router.route('/save').post(async (req, res) => {
     try {
-       const {id, addProductbackend, addAssemblybackend, addSparebackend, addSubpartbackend} = req.body;
+       const {id, productArray} = req.body;
         
    
 
           
         /// inserting Product canvass supplier product 
-          for (const prod of addProductbackend) {
-            const prod_quantity = prod.quantity;
-            const taggedIDSUpplier = prod.tagSupplier_ID;
+          // for (const arrayProd_parent of productArray) {
+            
+          //   const supplier_code = arrayProd_parent.supplierCode
+            
+            // for(const prod of arrayProd_parent.products){
+
+            //   const prod_code = prod.product_code;
+            //   const prod_name = prod.product_name;
+
+
+            //   console.log("supp code", supplier_code)
+            //   console.log("prod code", prod_code)
+            //   console.log("prod name", prod_name)
+  
+            
+            // }
 
 
 
-            await PR_PO.create({
-                pr_id: id,
-                quantity: prod_quantity, 
-                product_tag_supplier_ID: taggedIDSUpplier,
+
+
+
+            // await PR_PO.create({
+            //     pr_id: id,
+            //     quantity: prod_quantity, 
+            //     product_tag_supplier_ID: taggedIDSUpplier,
                          
-            });
-          }
+            // });
+          // }
 
 
-           /// inserting Product canvass supplier assembly 
-           for (const asmbly of addAssemblybackend) {
-            const prod_quantity = asmbly.quantity;
-            const taggedIDSUpplier = asmbly.tagSupplier_ID;
+        //    /// inserting Product canvass supplier assembly 
+        //    for (const asmbly of addAssemblybackend) {
+        //     const prod_quantity = asmbly.quantity;
+        //     const taggedIDSUpplier = asmbly.tagSupplier_ID;
 
 
 
-            await PR_PO_asmbly.create({
-                pr_id: id,
-                quantity: prod_quantity, 
-                assembly_suppliers_ID: taggedIDSUpplier,
+        //     await PR_PO_asmbly.create({
+        //         pr_id: id,
+        //         quantity: prod_quantity, 
+        //         assembly_suppliers_ID: taggedIDSUpplier,
                          
-            });
-          }
+        //     });
+        //   }
 
-          /// inserting Product canvass supplier spare 
-          for (const sparepart of addSparebackend) {
-          const prod_quantity = sparepart.quantity;
-          const taggedIDSUpplier = sparepart.tagSupplier_ID;
-
-
-
-          await PR_PO_spare.create({
-              pr_id: id,
-              quantity: prod_quantity, 
-              spare_suppliers_ID: taggedIDSUpplier,       
-          });
-        }
-
-         /// inserting Product canvass supplier subpart 
-         for (const subpart of addSubpartbackend) {
-          const prod_quantity = subpart.quantity;
-          const taggedIDSUpplier = subpart.tagSupplier_ID;
+        //   /// inserting Product canvass supplier spare 
+        //   for (const sparepart of addSparebackend) {
+        //   const prod_quantity = sparepart.quantity;
+        //   const taggedIDSUpplier = sparepart.tagSupplier_ID;
 
 
 
-          await PR_PO_subpart.create({
-              pr_id: id,
-              quantity: prod_quantity, 
-              subpart_suppliers_ID: taggedIDSUpplier,       
-          });
-        }
+        //   await PR_PO_spare.create({
+        //       pr_id: id,
+        //       quantity: prod_quantity, 
+        //       spare_suppliers_ID: taggedIDSUpplier,       
+        //   });
+        // }
+
+        //  /// inserting Product canvass supplier subpart 
+        //  for (const subpart of addSubpartbackend) {
+        //   const prod_quantity = subpart.quantity;
+        //   const taggedIDSUpplier = subpart.tagSupplier_ID;
+
+
+
+        //   await PR_PO_subpart.create({
+        //       pr_id: id,
+        //       quantity: prod_quantity, 
+        //       subpart_suppliers_ID: taggedIDSUpplier,       
+        //   });
+        // }
         
 
 
 
-            await PR.update({
-                status: 'For-Approval (PO)',
-            },
-            {
-                where: { id: id }
-            }); 
+          //   await PR.update({
+          //       status: 'For-Approval (PO)',
+          //   },
+          //   {
+          //       where: { id: id }
+          //   }); 
 
-          const PR_historical = await PR_history.create({
-            pr_id: id,
-            status: 'For-Approval (PO)',
-            remarks: null,
-          });
+          // const PR_historical = await PR_history.create({
+          //   pr_id: id,
+          //   status: 'For-Approval (PO)',
+          //   remarks: null,
+          // });
     
     
           res.status(200).json();

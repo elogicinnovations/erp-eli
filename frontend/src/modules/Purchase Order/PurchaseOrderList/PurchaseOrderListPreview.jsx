@@ -34,6 +34,30 @@ function PurchaseOrderListPreview() {
 
   const [validated, setValidated] = useState(false);
 
+
+
+  //para sa subpart data na e canvass
+
+  const [addSubpartPO, setAddSubpartPO] = useState([]);
+  const [quantityInputsSubpart, setQuantityInputSubpart] = useState({});
+
+
+
+
+
+  //para sa assembly data na e canvass
+
+
+ 
+
+
+   // for PRoduct canvassing
+  //for adding the data from table canvass to table PO
+  const [products, setProducts] = useState([]);
+  const [suppProducts, setSuppProducts] = useState([]);
+  const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
+
+ 
   const [containers, setContainers] = useState({});
   const [selectedProduct, setSelectedProduct] = useState({ 
     code: '', 
@@ -42,36 +66,48 @@ function PurchaseOrderListPreview() {
     supplier_name: '' 
   });
 
-
-  //para sa subpart data na e canvass
-  const [suppSubpart, setSuppSubpart] = useState([]);
-  const [addSubpartPO, setAddSubpartPO] = useState([]);
-  const [quantityInputsSubpart, setQuantityInputSubpart] = useState({});
-  const [addSubpartbackend, setAddSubpartbackend] = useState([]);
-
-  //para sa spare data na e canvass
-  const [suppSpare, setSuppSpare] = useState([]);
-  const [addSparePO, setAddSparePO] = useState([]);
-  const [quantityInputsSpare, setQuantityInputSpare] = useState({});
-  const [addSparebackend, setAddSparebackend] = useState([]);
-
-
-  //para sa assembly data na e canvass
+  // for Assembly canvassing
   const [assembly, setAssembly] = useState([]);
-  const [spare, setSpare] = useState([]);
-  const [subpart, setSubpart] = useState([]);
   const [suppAssembly, setSuppAssembly] = useState([]);
-  const [addAssemblyPO, setAddAssemblyPO] = useState([]);
-  const [quantityInputsAss, setQuantityInputsAss] = useState({}); // for asse,blly quantity array holder
-  const [addAssemblybackend, setAddAssemblybackend] = useState([]); // para sa pag ng product na e issue sa backend
+  const [addAssemblybackend, setAddAssemblybackend] = useState([]); 
 
-  //for adding the data from table canvass to table PO
-  const [products, setProducts] = useState([]);
-  const [suppProducts, setSuppProducts] = useState([]);
-  const [addProductPO, setAddProductPO] = useState([]);
-  const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
-  const [quantityInputs, setQuantityInputs] = useState({}); // for product quantity array holder
+  const [containers_asm, setContainers_asm] = useState({});
+  const [selected_asm, setSelected_asm] = useState({ 
+    code: '', 
+    name: '', 
+    supplier_Code: '', 
+    supplier_name: '' 
+  });
 
+
+
+
+//for Spare canvassing
+const [spare, setSpare] = useState([]);
+const [suppSpare, setSuppSpare] = useState([]);
+const [addSparebackend, setAddSparebackend] = useState([]);
+
+const [containers_spare, setContainers_spare] = useState({});
+const [selected_spare, setSelected_spare] = useState({
+  code: '',
+  name: '',
+  supplier_Code: '',
+  supplier_name: '',
+});
+
+
+//for Subpart canvassing
+const [subpart, setSubpart] = useState([]);
+const [suppSubpart, setSuppSubpart] = useState([]);
+const [addSubpartbackend, setAddSubpartbackend] = useState([]);
+
+const [containers_subpart, setContainers_subpart] = useState({});
+const [selected_subpart, setSelected_subpart] = useState({
+  code: '',
+  name: '',
+  supplier_Code: '',
+  supplier_name: '',
+});
 
 
 
@@ -184,22 +220,36 @@ const handleCanvass = (product_id) => {
   // console.log(product_id)
 
 };
-
-
-
 const handleAddToTablePO = (id) => {
   const selectedData = suppProducts.find((data) => data.id === id);
   const supplierCode = selectedData.supplier.supplier_code;
+  const productCode = selectedData.product.product_code;
 
   if (containers[supplierCode]) {
-    // Supplier container already exists, update it
-    setContainers((prevContainers) => ({
-      ...prevContainers,
-      [supplierCode]: {
-        ...prevContainers[supplierCode],
-        products: [...prevContainers[supplierCode].products, selectedData.product],
-      },
-    }));
+    // Supplier container already exists
+    if (!containers[supplierCode].products.some(product => product.product_code === productCode)) {
+      // Product with the same code does not exist in the container, add it
+      setContainers((prevContainers) => ({
+        ...prevContainers,
+        [supplierCode]: {
+          ...prevContainers[supplierCode],
+          products: [...prevContainers[supplierCode].products, selectedData.product],
+        },
+      }));
+
+      // Close the modal
+      handleClose();
+
+      // Remove the selected product row from suppProducts
+      setSuppProducts((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
+    } else {
+      // Product with the same code exists, show an alert
+      swal({
+        icon: "error",
+        title: 'Product Already Added',
+        text: 'The selected product is already added to the supplier container.',
+      });
+    }
   } else {
     // Create a new supplier container
     setContainers((prevContainers) => ({
@@ -210,6 +260,12 @@ const handleAddToTablePO = (id) => {
         products: [selectedData.product],
       },
     }));
+
+    // Close the modal
+    handleClose();
+
+    // Remove the selected product row from suppProducts
+    setSuppProducts((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
   }
 
   setSelectedProduct({
@@ -220,10 +276,12 @@ const handleAddToTablePO = (id) => {
   });
 };
 
-const closeContainer = () => {
-  // setIsContainerVisible(false);
-  // Optionally, you can reset the selected product when the container is closed
-  setSelectedProduct({ code: '', name: '', supplier_Code: '', supplier_name: '' });
+const closeContainer = (supplierCode) => {
+  setContainers((prevContainers) => {
+    const updatedContainers = { ...prevContainers };
+    delete updatedContainers[supplierCode];
+    return updatedContainers;
+  });
 };
 
 
@@ -252,31 +310,69 @@ const handleCanvassAssembly = (id) => {
 };
 
 
-const handleAddToTablePO_Assembly = (itemId) => {
-  // Find the item in table 1 by ID
-  const selectedItem = suppAssembly.find((item) => item.id === itemId);
+const handleAddToTablePO_Assembly = (id) => {
+  const selectedData = suppAssembly.find((data) => data.id === id);
+  const supplierCode = selectedData.supplier.supplier_code;
+  const assemblyCode = selectedData.assembly.assembly_code;
 
-   // Check if the item already exists in table 2
-  const isItemInTablePO = addAssemblyPO.some((item) => item.id === itemId);
+  if (containers_asm[supplierCode]) {
+    // Supplier container already exists
+    if (!containers_asm[supplierCode].products.some(assembly => assembly.assembly_code === assemblyCode)) {
+      // Assembly with the same code does not exist in the container, add it
+      setContainers_asm((prevContainers) => ({
+        ...prevContainers,
+        [supplierCode]: {
+          ...prevContainers[supplierCode],
+          products: [...prevContainers[supplierCode].products, selectedData.assembly],
+        },
+      }));
 
+      // Close the modal
+      handleClose();
 
-  if (selectedItem && !isItemInTablePO) {
-    // Transfer the item to table 2
-    setAddAssemblyPO([...addAssemblyPO, selectedItem]);
+      // Remove the selected product row from suppAssembly
+      setSuppAssembly((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
+    } else {
+      // Assembly with the same code exists, show an alert
+      swal({
+        icon: "error",
+        title: 'Product Assembly Already Added',
+        text: 'The selected product assembly is already added to the supplier container.',
+      });
+    }
+  } else {
+    // Create a new supplier container
+    setContainers_asm((prevContainers) => ({
+      ...prevContainers,
+      [supplierCode]: {
+        supplierCode: supplierCode,
+        supplierName: selectedData.supplier.supplier_name,
+        products: [selectedData.assembly],
+      },
+    }));
 
-    // Optionally, you can remove the item from table 1 if needed
-    const updatedTable1Data = suppAssembly.filter((item) => item.id !== itemId);
-    setSuppAssembly(updatedTable1Data);
+    // Close the modal
+    handleClose();
+
+    // Remove the selected product row from suppAssembly
+    setSuppAssembly((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
   }
-  // handleClose()
 
-  return selectedItem
-  
+  setSelected_asm({
+    code: selectedData.assembly.assembly_code,
+    name: selectedData.assembly.assembly_name,
+    supplier_Code: selectedData.supplier.supplier_code,
+    supplier_name: selectedData.supplier.supplier_name,
+  });
 };
 
-
-
-
+const closeContainer_asm = (supplierCode) => {
+  setContainers_asm((prevContainers) => {
+    const updatedContainers_asm = { ...prevContainers };
+    delete updatedContainers_asm[supplierCode];
+    return updatedContainers_asm;
+  });
+};
   //------------------------------------------------Spare rendering data ------------------------------------------------//
 
 
@@ -298,28 +394,69 @@ const handleAddToTablePO_Assembly = (itemId) => {
       .catch(err => console.log(err));
   };
   
-
-const handleAddToTablePO_Spare = (itemId) => {
-  // Find the item in table 1 by ID
-  const selectedItem = suppSpare.find((item) => item.id === itemId);
-
-   // Check if the item already exists in table 2
-  const isItemInTablePO = addSparePO.some((item) => item.id === itemId);
-
-
-  if (selectedItem && !isItemInTablePO) {
-    // Transfer the item to table 2
-    setAddSparePO([...addSparePO, selectedItem]);
-
-    // Optionally, you can remove the item from table 1 if needed
-    const updatedTable1Data = suppSpare.filter((item) => item.id !== itemId);
-    setSuppSpare(updatedTable1Data);
-  }
-  // handleClose()
-
-  return selectedItem
+  const handleAddToTablePO_Spare = (id) => {
+    const selectedData = suppSpare.find((data) => data.id === id);
+    const supplierCode = selectedData.supplier.supplier_code;
+    const sparePartCode = selectedData.sparePart.spareParts_code;
   
-};
+    if (containers_spare[supplierCode]) {
+      // Supplier container already exists
+      if (!containers_spare[supplierCode].products.some(sparePart => sparePart.spareParts_code === sparePartCode)) {
+        // Spare part with the same code does not exist in the container, add it
+        setContainers_spare((prevContainers) => ({
+          ...prevContainers,
+          [supplierCode]: {
+            ...prevContainers[supplierCode],
+            products: [...prevContainers[supplierCode].products, selectedData.sparePart],
+          },
+        }));
+  
+        // Close the modal
+        handleClose();
+  
+        // Remove the selected spare part row from suppSpare
+        setSuppSpare((prevSuppSpare) => prevSuppSpare.filter((data) => data.id !== id));
+      } else {
+        // Spare part with the same code exists, show an alert
+        swal({
+          icon: "error",
+          title: 'Product Spare Already Added',
+          text: 'The selected product spare part is already added to the supplier container.',
+        });
+      }
+    } else {
+      // Create a new supplier container
+      setContainers_spare((prevContainers) => ({
+        ...prevContainers,
+        [supplierCode]: {
+          supplierCode: supplierCode,
+          supplierName: selectedData.supplier.supplier_name,
+          products: [selectedData.sparePart],
+        },
+      }));
+  
+      // Close the modal
+      handleClose();
+  
+      // Remove the selected spare part row from suppSpare
+      setSuppSpare((prevSuppSpare) => prevSuppSpare.filter((data) => data.id !== id));
+    }
+  
+    setSelected_spare({
+      code: selectedData.sparePart.spareParts_code,
+      name: selectedData.sparePart.spareParts_name,
+      supplier_Code: selectedData.supplier.supplier_code,
+      supplier_name: selectedData.supplier.supplier_name,
+    });
+  };
+
+  const closeContainer_spare = (supplierCode) => {
+    setContainers_spare((prevContainers) => {
+      const updatedContainers_spare = { ...prevContainers };
+      delete updatedContainers_spare[supplierCode];
+      return updatedContainers_spare;
+    });
+  };
 
 
 //------------------------------------------------SubPart rendering data ------------------------------------------------//
@@ -331,7 +468,7 @@ const handleCanvassSubpart = (sub_partID) => {
   console.log("subpart ID" + sub_partID)
   axios.get(BASE_URL + '/subpartSupplier/fetchCanvass', {
     params: {
-      sub_id: sub_partID
+      id: sub_partID
     }
   })
   
@@ -346,29 +483,70 @@ const handleCanvassSubpart = (sub_partID) => {
 
 };
 
+const handleAddToTablePO_Subpart = (id) => {
+  const selectedData = suppSubpart.find((data) => data.id === id);
+  const supplierCode = selectedData.supplier.supplier_code;
+  const subPartCode = selectedData.subPart.subPart_code;
 
-const handleAddToTablePO_Subpart = (itemId) => {
-  // Find the item in table 1 by ID
-  const selectedItem = suppSubpart.find((item) => item.id === itemId);
+  if (containers_subpart[supplierCode]) {
+    // Supplier container already exists
+    if (!containers_subpart[supplierCode].products.some(subPart => subPart.subPart_code === subPartCode)) {
+      // Sub-part with the same code does not exist in the container, add it
+      setContainers_subpart((prevContainers) => ({
+        ...prevContainers,
+        [supplierCode]: {
+          ...prevContainers[supplierCode],
+          products: [...prevContainers[supplierCode].products, selectedData.subPart],
+        },
+      }));
 
-   // Check if the item already exists in table 2
-  const isItemInTablePO = addSubpartPO.some((item) => item.id === itemId);
+      // Close the modal
+      handleClose();
 
+      // Remove the selected sub-part row from suppSubpart
+      setSuppSubpart((prevSuppSubpart) => prevSuppSubpart.filter((data) => data.id !== id));
+    } else {
+      // Sub-part with the same code exists, show an alert
+      swal({
+        icon: "error",
+        title: 'Product Sub-Part Already Added',
+        text: 'The selected product sub-part is already added to the supplier container.',
+      });
+    }
+  } else {
+    // Create a new supplier container
+    setContainers_subpart((prevContainers) => ({
+      ...prevContainers,
+      [supplierCode]: {
+        supplierCode: supplierCode,
+        supplierName: selectedData.supplier.supplier_name,
+        products: [selectedData.subPart],
+      },
+    }));
 
-  if (selectedItem && !isItemInTablePO) {
-    // Transfer the item to table 2
-    setAddSubpartPO([...addSubpartPO, selectedItem]);
+    // Close the modal
+    handleClose();
 
-    // Optionally, you can remove the item from table 1 if needed
-    const updatedTable1Data = suppSubpart.filter((item) => item.id !== itemId);
-    setSuppSubpart(updatedTable1Data);
+    // Remove the selected sub-part row from suppSubpart
+    setSuppSubpart((prevSuppSubpart) => prevSuppSubpart.filter((data) => data.id !== id));
   }
-  // handleClose()
 
-  return selectedItem
-  
+  setSelected_subpart({
+    code: selectedData.subPart.subPart_code,
+    name: selectedData.subPart.subPart_name,
+    supplier_Code: selectedData.supplier.supplier_code,
+    supplier_name: selectedData.supplier.supplier_name,
+  });
 };
 
+
+const closeContainer_subpart = (supplierCode) => {
+  setContainers_subpart((prevContainers) => {
+    const updatedContainers_subpart = { ...prevContainers };
+    delete updatedContainers_subpart[supplierCode];
+    return updatedContainers_subpart;
+  });
+};
 
 
 
@@ -446,24 +624,71 @@ const handleAddToTablePO_Subpart = (itemId) => {
           });
     }
     else{
+
+    // Assuming your product has a unique identifier, adjust this based on your actual structure
+const getUniqueIdentifier = (item) => item.product_code || item.assembly_code || item.spareParts_code || item.subPart_code;
+
+// Concatenate arrays
+const consolidatedArray = [].concat(
+  ...Object.values(containers),
+  ...Object.values(containers_asm),
+  ...Object.values(containers_spare),
+  ...Object.values(containers_subpart)
+);
+
+// Create a map to group items by supplierCode
+const groupedBySupplier = new Map();
+
+consolidatedArray.forEach(item => {
+  const supplierCode = item.supplierCode;
+
+  if (!groupedBySupplier.has(supplierCode)) {
+    // If the supplier code is not in the map, add it with an empty array
+    groupedBySupplier.set(supplierCode, []);
+  }
+
+  const supplierItems = groupedBySupplier.get(supplierCode);
+  const uniqueIdentifier = getUniqueIdentifier(item);
+
+  // Check if the item with the same unique identifier exists in the array
+  const existingItemIndex = supplierItems.findIndex(existingItem => getUniqueIdentifier(existingItem) === uniqueIdentifier);
+
+  if (existingItemIndex === -1) {
+    // If not found, add the item to the array
+    supplierItems.push(item);
+  } else {
+    // If found, you might want to merge or update the existing item based on your requirement
+    // For now, I'll just log a message
+    console.log(`Item with identifier ${uniqueIdentifier} already exists for supplier ${supplierCode}`);
+  }
+});
+
+// Now, groupedBySupplier contains arrays of unique items grouped by supplierCode
+console.log('Grouped by Supplier:', groupedBySupplier);
+
+
   
       axios.post(`${BASE_URL}/PR_PO/save`, {
-        addProductbackend,addAssemblybackend,
-        addSubpartbackend, addSparebackend,
+        // product: Object.values(containers),  
+        // assembly: Object.values(containers_asm),
+        // spare: Object.values(containers_spare),
+        // subpart: Object.values(containers_subpart),
+
+       
         id: id, 
       })
       .then((res) => {
         console.log(res);
         if (res.status === 200) {
-          swal({
-            title: 'The Purchase sucessfully request!',
-            text: 'The Purchase Request has been added successfully.',
-            icon: 'success',
-            button: 'OK'
-          }).then(() => {
-            navigate('/purchaseOrderList')
+          // swal({
+          //   title: 'The Purchase sucessfully request!',
+          //   text: 'The Purchase Request has been added successfully.',
+          //   icon: 'success',
+          //   button: 'OK'
+          // }).then(() => {
+          //   navigate('/purchaseOrderList')
             
-          });
+          // });
         } else {
           swal({
             icon: 'error',
@@ -471,7 +696,7 @@ const handleAddToTablePO_Subpart = (itemId) => {
             text: 'Please contact our support'
           });
         }
-      })
+      });
   
     }
   
@@ -653,29 +878,95 @@ const handleAddToTablePO_Subpart = (itemId) => {
                         <div className="table-containss">
                             <div className="main-of-all-tables">
 
-                            {Object.values(containers).map((container) => (
-                              <div key={container.supplierCode} className='container border border-warning'>
-                                <h2>{container.supplierCode} - {container.supplierName}</h2>
-                                {container.products.map((product, index) => (
-                                  <div key={index}>
-                                    <p>Product Code: {product.product_code}</p>
-                                    <p>Product Name: {product.product_name}</p>
+                                  {Object.values(containers).map((container) => (
+                                    <div key={container.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
+                                      <h2>{container.supplierCode} - {container.supplierName}</h2>
+                                      {container.products.map((product, index) => (
+                                        <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
+                                          <p className='fs-5'>Product Code: <strong>{product.product_code}</strong> {"----"}</p> 
+                                          <p className='fs-5'>Product Name: <strong>{product.product_name}</strong></p>
+                                        </div>
+                                      ))}
+                                      <button 
+                                        className='btn btn-danger'
+                                        type='button' 
+                                        onClick={() => closeContainer(container.supplierCode)}
+                                      >
+                                        Remove Supplier
+                                      </button>
+                                    </div>
+                                  ))}
+
+                                  {Object.values(containers_asm).map((container_asm) => (
+                                    <div key={container_asm.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
+                                      <h2>{container_asm.supplierCode} - {container_asm.supplierName}</h2>
+                                      {container_asm.products.map((assembly, index) => (
+                                        <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
+                                          <p className='fs-5'>Assembly Code: <strong>{assembly.assembly_code}</strong> {"----"}</p> 
+                                          <p className='fs-5'>Assembly Name: <strong>{assembly.assembly_name}</strong></p>
+                                        </div>
+                                      ))}
+                                      <button 
+                                        className='btn btn-danger'
+                                        type='button' 
+                                        onClick={() => closeContainer_asm(container_asm.supplierCode)}
+                                      >
+                                        Remove Supplier
+                                      </button>
+                                    </div>
+                                  ))}      
+
+                                                            
+                                {Object.values(containers_spare).map((container_spare) => (
+                                  <div key={container_spare.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
+                                    <h2>{container_spare.supplierCode} - {container_spare.supplierName}</h2>
+                                    {container_spare.products.map((sparePart, index) => (
+                                      <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
+                                        <p className='fs-5'>Spare Part Code: <strong>{sparePart.spareParts_code}</strong> {"----"}</p> 
+                                        <p className='fs-5'>Spare Part Name: <strong>{sparePart.spareParts_name}</strong></p>
+                                      </div>
+                                    ))}
+                                    <button 
+                                      className='btn btn-danger'
+                                      type='button' 
+                                      onClick={() => closeContainer_spare(container_spare.supplierCode)}
+                                    >
+                                      Remove Supplier Spare Part
+                                    </button>
                                   </div>
-                                ))}
-                                <button onClick={closeContainer}>Close</button>
-                              </div>
-                            ))}
-                               
+                                ))}      
+
+                                  {Object.values(containers_subpart).map((container_subpart) => (
+                                  <div key={container_subpart.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
+                                    <h2>{container_subpart.supplierCode} - {container_subpart.supplierName}</h2>
+                                    {container_subpart.products.map((subPart, index) => (
+                                      <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
+                                        <p className='fs-5'>Sub-Part Code: <strong>{subPart.subPart_code}</strong> {"----"}</p> 
+                                        <p className='fs-5'>Sub-Part Name: <strong>{subPart.subPart_name}</strong></p>
+                                      </div>
+                                    ))}
+                                    <button 
+                                      className='btn btn-danger'
+                                      type='button' 
+                                      onClick={() => closeContainer_subpart(container_subpart.supplierCode)}
+                                    >
+                                      Remove Supplier Sub-Part
+                                    </button>
+                                  </div>
+                                ))}                   
                             </div>
                         </div>
+
+
+
+
                         <div className='save-cancel'>
                         <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
                         <Button type='button'  
                           className='btn btn-danger' 
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
                           onClick={() => handleCancel(status, id)}
-                          >Cancel Purchase Order</Button>
-                          
+                          >Cancel Purchase Order</Button>                        
                         </div>
                 </Form>
                       <Modal show={showModal} onHide={handleClose} size="xl">

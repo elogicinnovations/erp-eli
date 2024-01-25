@@ -22,6 +22,7 @@ router.route("/login").post(async (req, res) => {
     const user = await MasterList.findOne({
       where: {
         col_email: username,
+        col_status: 'Active'
       },
       include: {
         model: UserRole
