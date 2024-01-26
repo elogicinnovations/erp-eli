@@ -1,6 +1,9 @@
 const router = require('express').Router()
 const {where, Op, fn, col} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
+const fs = require('fs');
+const PDFDocument = require('pdfkit');
+const nodemailer = require('nodemailer');
 // const PR_PO = require('../db/models/pr_toPO.model')
 const { PR, PR_PO,
         PR_PO_asmbly,
@@ -285,110 +288,80 @@ router.route('/fetchView_product').get(async (req, res) => {
 
   //save
 router.route('/save').post(async (req, res) => {
-    try {
-       const {id, productArray} = req.body;
-        
-   
-
-          
-        /// inserting Product canvass supplier product 
-          // for (const arrayProd_parent of productArray) {
-            
-          //   const supplier_code = arrayProd_parent.supplierCode
-            
-            // for(const prod of arrayProd_parent.products){
-
-            //   const prod_code = prod.product_code;
-            //   const prod_name = prod.product_name;
-
-
-            //   console.log("supp code", supplier_code)
-            //   console.log("prod code", prod_code)
-            //   console.log("prod name", prod_name)
+  try {
+    const { id, productArrays } = req.body;
   
-            
-            // }
+    // Loop through the productArrays
+    Object.entries(productArrays).forEach(([supplierCode, products]) => {
+      console.log(`Supplier ${supplierCode}:`);
+  
+      // Create a new PDF document
+      const doc = new PDFDocument();
+  
+      // Add content to the PDF
+      products.forEach((item, index) => {
+        console.log(`${item.code} => ${item.name}`);
+        console.log(`Supplier_email ${item.supp_email}:`);
+  
+        doc.fontSize(12).text(`Product: ${item.code} => ${item.name}`, 50, 50).moveDown();
 
-
-
-
-
-
-            // await PR_PO.create({
-            //     pr_id: id,
-            //     quantity: prod_quantity, 
-            //     product_tag_supplier_ID: taggedIDSUpplier,
-                         
-            // });
-          // }
-
-
-        //    /// inserting Product canvass supplier assembly 
-        //    for (const asmbly of addAssemblybackend) {
-        //     const prod_quantity = asmbly.quantity;
-        //     const taggedIDSUpplier = asmbly.tagSupplier_ID;
-
-
-
-        //     await PR_PO_asmbly.create({
-        //         pr_id: id,
-        //         quantity: prod_quantity, 
-        //         assembly_suppliers_ID: taggedIDSUpplier,
-                         
-        //     });
-        //   }
-
-        //   /// inserting Product canvass supplier spare 
-        //   for (const sparepart of addSparebackend) {
-        //   const prod_quantity = sparepart.quantity;
-        //   const taggedIDSUpplier = sparepart.tagSupplier_ID;
-
-
-
-        //   await PR_PO_spare.create({
-        //       pr_id: id,
-        //       quantity: prod_quantity, 
-        //       spare_suppliers_ID: taggedIDSUpplier,       
-        //   });
-        // }
-
-        //  /// inserting Product canvass supplier subpart 
-        //  for (const subpart of addSubpartbackend) {
-        //   const prod_quantity = subpart.quantity;
-        //   const taggedIDSUpplier = subpart.tagSupplier_ID;
-
-
-
-        //   await PR_PO_subpart.create({
-        //       pr_id: id,
-        //       quantity: prod_quantity, 
-        //       subpart_suppliers_ID: taggedIDSUpplier,       
-        //   });
-        // }
-        
-
-
-
-          //   await PR.update({
-          //       status: 'For-Approval (PO)',
-          //   },
-          //   {
-          //       where: { id: id }
-          //   }); 
-
-          // const PR_historical = await PR_history.create({
-          //   pr_id: id,
-          //   status: 'For-Approval (PO)',
-          //   remarks: null,
-          // });
-    
-    
-          res.status(200).json();
-        
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('An error occurred');
-      }
+      });
+  
+      // Finalize the PDF document
+      doc.end();
+  
+      // Pipe the PDF content to a writable stream (in this case, a file)
+      const pdfFilePath = `output_${supplierCode}.pdf`; // Adjust the file name dynamically if needed
+      const stream = fs.createWriteStream(pdfFilePath);
+      doc.pipe(stream);
+  
+      // Handle the 'finish' event to know when the PDF has been generated
+      stream.on('finish', () => {
+        console.log('PDF created successfully.');
+  
+        // Create a nodemailer transporter
+        const gmailEmail = "infintyerpslash@gmail.com";
+        const gmailPassword = "kaaokvxtaahuckvp";
+  
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: gmailEmail,
+            pass: gmailPassword,
+          },
+        });
+  
+        // Define email options
+        const mailOptions = {
+          from: gmailEmail,
+          to: products[0].supp_email, // Use the email of the first product's supplier
+          subject: 'PDF Attachment',
+          text: 'Check out the attached PDF!',
+          attachments: [
+            {
+              filename: 'output.pdf',
+              path: pdfFilePath,
+              encoding: 'base64',
+            },
+          ],
+        };
+  
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            return console.log('Error sending email:', error);
+          }
+          console.log('Email sent:', info.response);
+        });
+      });
+    });
+  
+    res.status(200).json();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
+  
 });
 
 

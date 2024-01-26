@@ -191,7 +191,56 @@ const [selected_subpart, setSelected_subpart] = useState({
 
   // const handleShow = () => setShowModal(true);
 
-  
+  const [productArrays, setProductArrays] = useState({});
+
+// Function to handle adding a product to the array
+const handleAddToTable = (product, type, code, name, supp_email) => {
+  setProductArrays((prevArrays) => {
+    const supplierCode = product.supplier.supplier_code;
+
+    // Create a new array for the supplier if it doesn't exist
+    const newArray = (prevArrays[supplierCode] || []).slice(); // Make a shallow copy of the array
+
+    // Check if the product is already in the array for the specific supplier
+    const isProductAlreadyAdded = newArray.some(
+      (item) => item.product.id === product.id
+    );
+
+    if (!isProductAlreadyAdded) {
+      // Add the product to the array
+      newArray.push({
+        type: type,
+        product: product,
+        code: code,
+        name: name,
+        supp_email: supp_email
+      });
+
+      // Sort the array based on some criteria (e.g., product code)
+      newArray.sort((a, b) => {
+        const codeA = a.product.product_code || '';
+        const codeB = b.product.product_code || '';
+        return codeA.localeCompare(codeB);
+      });
+
+      // Log the array to the console
+      console.log('Product Arrays:', { ...prevArrays, [supplierCode]: newArray });
+
+      // Update the state with the new array for the supplier
+      return { ...prevArrays, [supplierCode]: newArray };
+    } else {
+      // Trigger SweetAlert for duplicate
+      swal({
+        title: 'Duplicate Product',
+        text: 'This product is already in the array.',
+        icon: 'error',
+      });
+
+      return prevArrays;
+    }
+  });
+};
+
 
 
 
@@ -220,68 +269,9 @@ const handleCanvass = (product_id) => {
   // console.log(product_id)
 
 };
-const handleAddToTablePO = (id) => {
-  const selectedData = suppProducts.find((data) => data.id === id);
-  const supplierCode = selectedData.supplier.supplier_code;
-  const productCode = selectedData.product.product_code;
-
-  if (containers[supplierCode]) {
-    // Supplier container already exists
-    if (!containers[supplierCode].products.some(product => product.product_code === productCode)) {
-      // Product with the same code does not exist in the container, add it
-      setContainers((prevContainers) => ({
-        ...prevContainers,
-        [supplierCode]: {
-          ...prevContainers[supplierCode],
-          products: [...prevContainers[supplierCode].products, selectedData.product],
-        },
-      }));
-
-      // Close the modal
-      handleClose();
-
-      // Remove the selected product row from suppProducts
-      setSuppProducts((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
-    } else {
-      // Product with the same code exists, show an alert
-      swal({
-        icon: "error",
-        title: 'Product Already Added',
-        text: 'The selected product is already added to the supplier container.',
-      });
-    }
-  } else {
-    // Create a new supplier container
-    setContainers((prevContainers) => ({
-      ...prevContainers,
-      [supplierCode]: {
-        supplierCode: supplierCode,
-        supplierName: selectedData.supplier.supplier_name,
-        products: [selectedData.product],
-      },
-    }));
-
-    // Close the modal
-    handleClose();
-
-    // Remove the selected product row from suppProducts
-    setSuppProducts((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
-  }
-
-  setSelectedProduct({
-    code: selectedData.product.product_code,
-    name: selectedData.product.product_name,
-    supplier_Code: selectedData.supplier.supplier_code,
-    supplier_name: selectedData.supplier.supplier_name,
-  });
-};
-
-const closeContainer = (supplierCode) => {
-  setContainers((prevContainers) => {
-    const updatedContainers = { ...prevContainers };
-    delete updatedContainers[supplierCode];
-    return updatedContainers;
-  });
+const handleAddToTablePO = (productId, code, name, supp_email) => {
+  const product = suppProducts.find((data) => data.id === productId);
+  handleAddToTable(product, 'product', code, name, supp_email);
 };
 
 
@@ -309,69 +299,9 @@ const handleCanvassAssembly = (id) => {
 
 };
 
-
-const handleAddToTablePO_Assembly = (id) => {
-  const selectedData = suppAssembly.find((data) => data.id === id);
-  const supplierCode = selectedData.supplier.supplier_code;
-  const assemblyCode = selectedData.assembly.assembly_code;
-
-  if (containers_asm[supplierCode]) {
-    // Supplier container already exists
-    if (!containers_asm[supplierCode].products.some(assembly => assembly.assembly_code === assemblyCode)) {
-      // Assembly with the same code does not exist in the container, add it
-      setContainers_asm((prevContainers) => ({
-        ...prevContainers,
-        [supplierCode]: {
-          ...prevContainers[supplierCode],
-          products: [...prevContainers[supplierCode].products, selectedData.assembly],
-        },
-      }));
-
-      // Close the modal
-      handleClose();
-
-      // Remove the selected product row from suppAssembly
-      setSuppAssembly((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
-    } else {
-      // Assembly with the same code exists, show an alert
-      swal({
-        icon: "error",
-        title: 'Product Assembly Already Added',
-        text: 'The selected product assembly is already added to the supplier container.',
-      });
-    }
-  } else {
-    // Create a new supplier container
-    setContainers_asm((prevContainers) => ({
-      ...prevContainers,
-      [supplierCode]: {
-        supplierCode: supplierCode,
-        supplierName: selectedData.supplier.supplier_name,
-        products: [selectedData.assembly],
-      },
-    }));
-
-    // Close the modal
-    handleClose();
-
-    // Remove the selected product row from suppAssembly
-    setSuppAssembly((prevSuppProducts) => prevSuppProducts.filter((data) => data.id !== id));
-  }
-
-  setSelected_asm({
-    code: selectedData.assembly.assembly_code,
-    name: selectedData.assembly.assembly_name,
-    supplier_Code: selectedData.supplier.supplier_code,
-    supplier_name: selectedData.supplier.supplier_name,
-  });
-};
-
-const closeContainer_asm = (supplierCode) => {
-  setContainers_asm((prevContainers) => {
-    const updatedContainers_asm = { ...prevContainers };
-    delete updatedContainers_asm[supplierCode];
-    return updatedContainers_asm;
-  });
+const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
+  const assembly = suppAssembly.find((data) => data.id === assemblyId);
+  handleAddToTable(assembly, 'assembly', code, name, supp_email);
 };
   //------------------------------------------------Spare rendering data ------------------------------------------------//
 
@@ -394,70 +324,10 @@ const closeContainer_asm = (supplierCode) => {
       .catch(err => console.log(err));
   };
   
-  const handleAddToTablePO_Spare = (id) => {
-    const selectedData = suppSpare.find((data) => data.id === id);
-    const supplierCode = selectedData.supplier.supplier_code;
-    const sparePartCode = selectedData.sparePart.spareParts_code;
-  
-    if (containers_spare[supplierCode]) {
-      // Supplier container already exists
-      if (!containers_spare[supplierCode].products.some(sparePart => sparePart.spareParts_code === sparePartCode)) {
-        // Spare part with the same code does not exist in the container, add it
-        setContainers_spare((prevContainers) => ({
-          ...prevContainers,
-          [supplierCode]: {
-            ...prevContainers[supplierCode],
-            products: [...prevContainers[supplierCode].products, selectedData.sparePart],
-          },
-        }));
-  
-        // Close the modal
-        handleClose();
-  
-        // Remove the selected spare part row from suppSpare
-        setSuppSpare((prevSuppSpare) => prevSuppSpare.filter((data) => data.id !== id));
-      } else {
-        // Spare part with the same code exists, show an alert
-        swal({
-          icon: "error",
-          title: 'Product Spare Already Added',
-          text: 'The selected product spare part is already added to the supplier container.',
-        });
-      }
-    } else {
-      // Create a new supplier container
-      setContainers_spare((prevContainers) => ({
-        ...prevContainers,
-        [supplierCode]: {
-          supplierCode: supplierCode,
-          supplierName: selectedData.supplier.supplier_name,
-          products: [selectedData.sparePart],
-        },
-      }));
-  
-      // Close the modal
-      handleClose();
-  
-      // Remove the selected spare part row from suppSpare
-      setSuppSpare((prevSuppSpare) => prevSuppSpare.filter((data) => data.id !== id));
-    }
-  
-    setSelected_spare({
-      code: selectedData.sparePart.spareParts_code,
-      name: selectedData.sparePart.spareParts_name,
-      supplier_Code: selectedData.supplier.supplier_code,
-      supplier_name: selectedData.supplier.supplier_name,
-    });
+  const handleAddToTablePO_Spare = (spareId, code, name, supp_email) => {
+    const spare = suppSpare.find((data) => data.id === spareId);
+    handleAddToTable(spare, 'spare', code, name, supp_email);
   };
-
-  const closeContainer_spare = (supplierCode) => {
-    setContainers_spare((prevContainers) => {
-      const updatedContainers_spare = { ...prevContainers };
-      delete updatedContainers_spare[supplierCode];
-      return updatedContainers_spare;
-    });
-  };
-
 
 //------------------------------------------------SubPart rendering data ------------------------------------------------//
 
@@ -482,72 +352,10 @@ const handleCanvassSubpart = (sub_partID) => {
   // console.log(product_id)
 
 };
-
-const handleAddToTablePO_Subpart = (id) => {
-  const selectedData = suppSubpart.find((data) => data.id === id);
-  const supplierCode = selectedData.supplier.supplier_code;
-  const subPartCode = selectedData.subPart.subPart_code;
-
-  if (containers_subpart[supplierCode]) {
-    // Supplier container already exists
-    if (!containers_subpart[supplierCode].products.some(subPart => subPart.subPart_code === subPartCode)) {
-      // Sub-part with the same code does not exist in the container, add it
-      setContainers_subpart((prevContainers) => ({
-        ...prevContainers,
-        [supplierCode]: {
-          ...prevContainers[supplierCode],
-          products: [...prevContainers[supplierCode].products, selectedData.subPart],
-        },
-      }));
-
-      // Close the modal
-      handleClose();
-
-      // Remove the selected sub-part row from suppSubpart
-      setSuppSubpart((prevSuppSubpart) => prevSuppSubpart.filter((data) => data.id !== id));
-    } else {
-      // Sub-part with the same code exists, show an alert
-      swal({
-        icon: "error",
-        title: 'Product Sub-Part Already Added',
-        text: 'The selected product sub-part is already added to the supplier container.',
-      });
-    }
-  } else {
-    // Create a new supplier container
-    setContainers_subpart((prevContainers) => ({
-      ...prevContainers,
-      [supplierCode]: {
-        supplierCode: supplierCode,
-        supplierName: selectedData.supplier.supplier_name,
-        products: [selectedData.subPart],
-      },
-    }));
-
-    // Close the modal
-    handleClose();
-
-    // Remove the selected sub-part row from suppSubpart
-    setSuppSubpart((prevSuppSubpart) => prevSuppSubpart.filter((data) => data.id !== id));
-  }
-
-  setSelected_subpart({
-    code: selectedData.subPart.subPart_code,
-    name: selectedData.subPart.subPart_name,
-    supplier_Code: selectedData.supplier.supplier_code,
-    supplier_name: selectedData.supplier.supplier_name,
-  });
+const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
+  const subpart = suppSubpart.find((data) => data.id === subpartId);
+  handleAddToTable(subpart, 'subpart', code, name, supp_email);
 };
-
-
-const closeContainer_subpart = (supplierCode) => {
-  setContainers_subpart((prevContainers) => {
-    const updatedContainers_subpart = { ...prevContainers };
-    delete updatedContainers_subpart[supplierCode];
-    return updatedContainers_subpart;
-  });
-};
-
 
 
 
@@ -625,56 +433,8 @@ const closeContainer_subpart = (supplierCode) => {
     }
     else{
 
-    // Assuming your product has a unique identifier, adjust this based on your actual structure
-const getUniqueIdentifier = (item) => item.product_code || item.assembly_code || item.spareParts_code || item.subPart_code;
-
-// Concatenate arrays
-const consolidatedArray = [].concat(
-  ...Object.values(containers),
-  ...Object.values(containers_asm),
-  ...Object.values(containers_spare),
-  ...Object.values(containers_subpart)
-);
-
-// Create a map to group items by supplierCode
-const groupedBySupplier = new Map();
-
-consolidatedArray.forEach(item => {
-  const supplierCode = item.supplierCode;
-
-  if (!groupedBySupplier.has(supplierCode)) {
-    // If the supplier code is not in the map, add it with an empty array
-    groupedBySupplier.set(supplierCode, []);
-  }
-
-  const supplierItems = groupedBySupplier.get(supplierCode);
-  const uniqueIdentifier = getUniqueIdentifier(item);
-
-  // Check if the item with the same unique identifier exists in the array
-  const existingItemIndex = supplierItems.findIndex(existingItem => getUniqueIdentifier(existingItem) === uniqueIdentifier);
-
-  if (existingItemIndex === -1) {
-    // If not found, add the item to the array
-    supplierItems.push(item);
-  } else {
-    // If found, you might want to merge or update the existing item based on your requirement
-    // For now, I'll just log a message
-    console.log(`Item with identifier ${uniqueIdentifier} already exists for supplier ${supplierCode}`);
-  }
-});
-
-// Now, groupedBySupplier contains arrays of unique items grouped by supplierCode
-console.log('Grouped by Supplier:', groupedBySupplier);
-
-
-  
       axios.post(`${BASE_URL}/PR_PO/save`, {
-        // product: Object.values(containers),  
-        // assembly: Object.values(containers_asm),
-        // spare: Object.values(containers_spare),
-        // subpart: Object.values(containers_subpart),
-
-       
+        productArrays,   
         id: id, 
       })
       .then((res) => {
@@ -877,83 +637,17 @@ console.log('Grouped by Supplier:', groupedBySupplier);
                         </div>
                         <div className="table-containss">
                             <div className="main-of-all-tables">
-
-                                  {Object.values(containers).map((container) => (
-                                    <div key={container.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
-                                      <h2>{container.supplierCode} - {container.supplierName}</h2>
-                                      {container.products.map((product, index) => (
-                                        <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
-                                          <p className='fs-5'>Product Code: <strong>{product.product_code}</strong> {"----"}</p> 
-                                          <p className='fs-5'>Product Name: <strong>{product.product_name}</strong></p>
-                                        </div>
+                                {Object.entries(productArrays).map(([supplierCode, products]) => (
+                                  <div className='border border-warning m-3 mb-4 p-3' key={supplierCode}>
+                                    <h3>Supplier {supplierCode}</h3>
+                                    <ul>
+                                      {products.map((item, index) => (
+                                        <li className='fs-5 fw-bold' key={index}>{item.code + "=>" + item.name} </li>
+                                        
                                       ))}
-                                      <button 
-                                        className='btn btn-danger'
-                                        type='button' 
-                                        onClick={() => closeContainer(container.supplierCode)}
-                                      >
-                                        Remove Supplier
-                                      </button>
-                                    </div>
-                                  ))}
-
-                                  {Object.values(containers_asm).map((container_asm) => (
-                                    <div key={container_asm.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
-                                      <h2>{container_asm.supplierCode} - {container_asm.supplierName}</h2>
-                                      {container_asm.products.map((assembly, index) => (
-                                        <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
-                                          <p className='fs-5'>Assembly Code: <strong>{assembly.assembly_code}</strong> {"----"}</p> 
-                                          <p className='fs-5'>Assembly Name: <strong>{assembly.assembly_name}</strong></p>
-                                        </div>
-                                      ))}
-                                      <button 
-                                        className='btn btn-danger'
-                                        type='button' 
-                                        onClick={() => closeContainer_asm(container_asm.supplierCode)}
-                                      >
-                                        Remove Supplier
-                                      </button>
-                                    </div>
-                                  ))}      
-
-                                                            
-                                {Object.values(containers_spare).map((container_spare) => (
-                                  <div key={container_spare.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
-                                    <h2>{container_spare.supplierCode} - {container_spare.supplierName}</h2>
-                                    {container_spare.products.map((sparePart, index) => (
-                                      <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
-                                        <p className='fs-5'>Spare Part Code: <strong>{sparePart.spareParts_code}</strong> {"----"}</p> 
-                                        <p className='fs-5'>Spare Part Name: <strong>{sparePart.spareParts_name}</strong></p>
-                                      </div>
-                                    ))}
-                                    <button 
-                                      className='btn btn-danger'
-                                      type='button' 
-                                      onClick={() => closeContainer_spare(container_spare.supplierCode)}
-                                    >
-                                      Remove Supplier Spare Part
-                                    </button>
+                                    </ul>
                                   </div>
-                                ))}      
-
-                                  {Object.values(containers_subpart).map((container_subpart) => (
-                                  <div key={container_subpart.supplierCode} className='container border border-warning' style={{ marginBottom: '10px', padding: '10px' }}>
-                                    <h2>{container_subpart.supplierCode} - {container_subpart.supplierName}</h2>
-                                    {container_subpart.products.map((subPart, index) => (
-                                      <div key={index} className='d-flex flex-row' style={{ marginBottom: '5px' }}>
-                                        <p className='fs-5'>Sub-Part Code: <strong>{subPart.subPart_code}</strong> {"----"}</p> 
-                                        <p className='fs-5'>Sub-Part Name: <strong>{subPart.subPart_name}</strong></p>
-                                      </div>
-                                    ))}
-                                    <button 
-                                      className='btn btn-danger'
-                                      type='button' 
-                                      onClick={() => closeContainer_subpart(container_subpart.supplierCode)}
-                                    >
-                                      Remove Supplier Sub-Part
-                                    </button>
-                                  </div>
-                                ))}                   
+                                ))}
                             </div>
                         </div>
 
@@ -996,11 +690,11 @@ console.log('Grouped by Supplier:', groupedBySupplier);
                                                                     <td>{data.product.product_name}</td>
                                                                     <td>{data.product.category.category_name}</td>
                                                                     <td>{data.product.product_unitMeasurement}</td>
-                                                                    <td>{data.supplier.supplier_name}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
                                                                     <td>{data.product_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email)}>
                                                                         <PlusCircle size={32}/>
                                                                       </button>
                                                                     </td>
@@ -1050,11 +744,11 @@ console.log('Grouped by Supplier:', groupedBySupplier);
                                                                     <td>{data.assembly.assembly_name}</td>
                                                                     <td>--</td>
                                                                     <td>--</td>
-                                                                    <td>{data.supplier.supplier_name}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email)}>
                                                                         <PlusCircle size={32}/>
                                                                       </button>
                                                                     </td>
@@ -1103,11 +797,11 @@ console.log('Grouped by Supplier:', groupedBySupplier);
                                                                     <td>{data.sparePart.spareParts_name}</td>
                                                                     <td>--</td>
                                                                     <td>--</td>
-                                                                    <td>{data.supplier.supplier_name}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email)}>
                                                                         <PlusCircle size={32}/>
                                                                       </button>
                                                                     </td>
@@ -1156,12 +850,12 @@ console.log('Grouped by Supplier:', groupedBySupplier);
                                                             <td>{data.subPart.subPart_code}</td>
                                                             <td>{data.subPart.subPart_name}</td>
                                                             <td>--</td>
-                                                            <td>--</td>
-                                                            <td>{data.supplier.supplier_name}</td>
+                                                            <td>{data.subPart.subPart_unitMeasurement}</td>
+                                                            <td>{data.supplier.supplier_code}</td>
                                                             <td>{data.supplier.supplier_number}</td>
                                                             <td>{data.supplier_price}</td>
                                                             <td>                                                
-                                                              <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id)}>
+                                                              <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email)}>
                                                                 <PlusCircle size={32}/>
                                                               </button>
                                                             </td>
