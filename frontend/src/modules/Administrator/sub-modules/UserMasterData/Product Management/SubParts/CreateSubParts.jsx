@@ -12,6 +12,9 @@ import Select from "react-select";
 import { Plus, Trash, NotePencil, X } from "@phosphor-icons/react";
 import Dropzone from "react-dropzone";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
+import {
+  ArrowCircleLeft
+} from "@phosphor-icons/react";
 
 function CreateSubParts() {
   const [validated, setValidated] = useState(false);
@@ -428,13 +431,18 @@ function onDropImages(event) {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-                <Sidebar/>
-            </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contentss">
           <Form noValidate validated={validated} onSubmit={add}>
-            <h1>Add Sub Parts</h1>
+          <div className="arrowandtitle">
+              <Link to="/subParts">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Add Sub Parts</h1>
+                  </div>
+              </div>
+            
             <div
               className="gen-info"
               style={{
@@ -615,17 +623,23 @@ function onDropImages(event) {
                     Image Upload:{" "}
                   </Form.Label>
                   <div className="card">
-                    <div className="top">
-                      <p>Drag & Drop Image Upload</p>
-                    </div>
-                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                    <div className="drag-area" 
+                    onDragOver={onDragOver} 
+                    onDragLeave={onDragLeave} 
+                    onDrop={onDropImages}>
                         <>
                          Drag & Drop image here or {" "}
-                        <span className="select" role="button" onClick={selectFiles}>
+                        <span className="select" 
+                        role="button" 
+                        onClick={selectFiles}>
                           Browse
                         </span>
                         </>
-                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
+                      <input name="file" 
+                      type="file" 
+                      className="file" 
+                      multiple ref={fileInputRef} 
+                      onChange={onFileSelect}/>
                     </div>
                     <div className="ccontainerss">
                       {images.map((images,index)=>(

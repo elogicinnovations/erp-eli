@@ -15,6 +15,7 @@ import {
   DotsThreeCircleVertical,
   ArrowsClockwise
 } from "@phosphor-icons/react";
+import deleteSubpart from "../../../../../Archiving Delete/subpart_delete";
 // import "../../../../../assets/skydash/vendors/feather/feather.css";
 // import "../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 // import "../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -127,8 +128,30 @@ function SubParts({ authrztn }) {
   };
 
   useEffect(() => {
+    deleteSubpart();
     reloadTable();
   }, []);
+
+//   const reloadSubpart = () => {
+//     axios
+//         .post(`${BASE_URL}/subpart/deleteOldArchivedSubParts`)
+//         .then((res) => {
+//             if (res.status === 200) {
+//                 console.log("Successfully deleted archive");
+//             } else if (res.status === 201) {
+//                 console.log(res.data.message);
+//             } else {
+//                 console.log("There seems to be an error");
+//             }
+//             reloadTable();
+//         })
+//         .catch((err) => console.log(err));
+// };
+
+//   useEffect(() =>{
+//     reloadSubpart();
+//   }, []);
+
 
   //Main table
   function formatDate(isoDate) {
@@ -163,47 +186,47 @@ function SubParts({ authrztn }) {
     subPart_code: "",
   });
 
-  const handleDelete = async (table_id) => {
-    swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        try {
-          const response = await axios.delete(
-            BASE_URL + `/subPart/delete/${table_id}`
-          );
-          if (response.status === 200) {
-            swal({
-              title: "Product Sub-Parts Delete Successful!",
-              text: "The Product Sub-Parts has been Deleted Successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              reloadTable();
-            });
-          } else if (response.status === 202) {
-            swal({
-              icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete Sub Part that is used",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    });
-  };
+  // const handleDelete = async (table_id) => {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "Once deleted, you will not be able to recover this user file!",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //   }).then(async (willDelete) => {
+  //     if (willDelete) {
+  //       try {
+  //         const response = await axios.delete(
+  //           BASE_URL + `/subPart/delete/${table_id}`
+  //         );
+  //         if (response.status === 200) {
+  //           swal({
+  //             title: "Product Sub-Parts Delete Successful!",
+  //             text: "The Product Sub-Parts has been Deleted Successfully.",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             reloadTable();
+  //           });
+  //         } else if (response.status === 202) {
+  //           swal({
+  //             icon: "error",
+  //             title: "Delete Prohibited",
+  //             text: "You cannot delete Sub Part that is used",
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   });
+  // };
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -315,7 +338,7 @@ function SubParts({ authrztn }) {
       });
   };
  //end of updating status 
-
+ 
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -335,7 +358,6 @@ function SubParts({ authrztn }) {
                       <option value="" disabled>
                         Select Status
                       </option>
-                      <option value="All Status">All Status</option>
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
                       <option value="Archive">Archive</option>
@@ -474,7 +496,7 @@ function SubParts({ authrztn }) {
                               </Link>
                               )}
 
-                              { authrztn?.includes('Sub-Part - Delete') && (
+                              {/* { authrztn?.includes('Sub-Part - Delete') && (
                               <button
                                 onClick={() => {
                                   handleDelete(data.id);
@@ -483,7 +505,7 @@ function SubParts({ authrztn }) {
                                 className="btn">
                                 Delete
                               </button>
-                              )}
+                              )} */}
 
                               { authrztn?.includes('Sub-Part - View') && (
                               <button

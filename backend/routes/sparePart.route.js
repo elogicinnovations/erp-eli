@@ -6,7 +6,8 @@ const { SparePart_Supplier,
         SparePart, 
         Inventory_Spare, 
         SparePartPrice_history, 
-        SparePart_image} = require("../db/models/associations"); 
+        SparePart_image,
+        IssuedSpare} = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -285,64 +286,146 @@ router.route("/update").post(
 
 
 
-router.route('/delete/:table_id').delete(async (req, res) => {
-    const id = req.params.table_id;
-            await SparePart.destroy({
-            where : {
-              id: id
-            },
-          })
-        .then(() => {
-            SparePart_Supplier.destroy({
-              where : {
-                sparePart_id: id
-              }
-            })
-            .then(() => {
+// router.route('/delete/:table_id').delete(async (req, res) => {
+//     const id = req.params.table_id;
+//             await SparePart.destroy({
+//             where : {
+//               id: id
+//             },
+//           })
+//         .then(() => {
+//             SparePart_Supplier.destroy({
+//               where : {
+//                 sparePart_id: id
+//               }
+//             })
+//             .then(() => {
               
-                  SparePart_SubPart.destroy({
-                    where : {
-                      sparePart_id: id
-                    }
-                  })
-                  .then(() => {
-                    return res.status(200).json({success : true})
-                  })
-                  .catch((err) => {
-                    console.error(err)
-                    res.status(409)
-                  });
+//                   SparePart_SubPart.destroy({
+//                     where : {
+//                       sparePart_id: id
+//                     }
+//                   })
+//                   .then(() => {
+//                     return res.status(200).json({success : true})
+//                   })
+//                   .catch((err) => {
+//                     console.error(err)
+//                     res.status(409)
+//                   });
              
-              }
-            )
-            .catch(
-                (err) => {
-                    console.error(err)
-                    res.status(409)
-                }
-            );
-        })
-        .catch(
-            (err) => {
-                console.error(err)
-                res.status(409)
-            }
-        );
-    //     }
-    //   })
-  });
+//               }
+//             )
+//             .catch(
+//                 (err) => {
+//                     console.error(err)
+//                     res.status(409)
+//                 }
+//             );
+//         })
+//         .catch(
+//             (err) => {
+//                 console.error(err)
+//                 res.status(409)
+//             }
+//         );
+//   });
   
 
+router.route('/deleteOldArchivedSpare').post(async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const currentManilaDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+
+    const Sparerows = await SparePart.findAll({
+      where: {
+        spareParts_status: 'Archive',
+      },
+    });
+
+    if (Sparerows && Sparerows.length === 0) {
+      console.log("No spare archive found");
+      return res.status(201).json({ message: "No spare archive found" });
+    }
+
+    for (let i = 0; i < Sparerows.length; i++) {
+      const archiveDate = new Date(Sparerows[i].archive_date);
+      // const nextDay = new Date(archiveDate);
+      // nextDay.setDate(archiveDate.getDate() + 1);
+      const newArchiveDate = new Date(archiveDate);
+      newArchiveDate.setFullYear(newArchiveDate.getFullYear() + 1);
+
+      const spareId = Sparerows[i].id;
+
+      // Select spare supplier
+      const Sparesupprows = await SparePart_Supplier.findAll({
+        where: {
+          sparePart_id: spareId,
+        },
+      });
+
+      if (Sparesupprows && Sparesupprows.length === 0) {
+        console.log( "No archive spare supplier found");
+        continue;
+      }
+
+      const SparesuppId = Sparesupprows.map(supprow => supprow.id);
+
+      //Select inventory spare
+      const Inventoryspare = await Inventory_Spare.findAll({
+        where: {
+          spare_tag_supp_id: SparesuppId,
+        },
+      });
+
+      if (Inventoryspare && Inventoryspare.length === 0) {
+        console.log("No archive Inventory spare found");
+        continue;
+      }
+
+      const InventoryId = Inventoryspare.map(invrow => invrow.inventory_id);
+
+      if(newArchiveDate <= currentDate) {
+        await IssuedSpare.destroy({
+          where: {
+            inventory_Spare_id: InventoryId,
+          },
+        });
+
+        await Inventory_Spare.destroy({
+          where: {
+            spare_tag_supp_id: SparesuppId,
+          },
+        });
+
+        await SparePart.destroy({
+          where: {
+            spareParts_status: 'Archive',
+          }
+        });
+      }
+    }
+    
+    res.status(200).json({ message: "Successfully deleted spare archive" });
+    // console.log("Delete archived successfully" + res);
+
+  } catch (error) {
+    console.error("Error Problem on delete archived spare" + error);
+  }
+}); 
 
   router.route('/statusupdate').put(async (req, res) => {
     try {
       const { sparePartIds, status } = req.body;
   
+      const updateData = { spareParts_status: status };
+
+      if (status === 'Archive') {
+        updateData.archive_date = new Date();
+      }  
+
       for (const sparePartId of sparePartIds) {
-        await SparePart.update(
-          { spareParts_status: status },
-          { where: { id: sparePartId } }
-        );
+        await SparePart.update(updateData, { where: { id: sparePartId } });
       }
   
       res.status(200).json({ message: 'Products updated successfully' });

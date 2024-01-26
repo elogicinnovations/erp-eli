@@ -10,7 +10,8 @@ const {
   Product_Spareparts,
   Product_Subparts,
   Product_image,
-  productTAGsupplierHistory
+  productTAGsupplierHistory,
+  IssuedProduct
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer"); // Import multer
@@ -395,67 +396,152 @@ router.route("/update").post(
 
 
 
-router.route("/delete/:table_id").delete(async (req, res) => {
-  const id = req.params.table_id;
-  Product.destroy({
-    where: {
-      product_id: id,
-    },
-  })
-    .then((del) => {
-      if (del) {
-        ProductTAGSupplier.destroy({
-          where: {
-            product_id: id,
-          },
-        })
-          .then((deleted) => {
-            if (deleted) {
-              Inventory.destroy({
-                where: {
-                  product_id: id,
-                },
-              })
-                .then((deletedInventory) => {
-                  // if (deletedInventory) {
-                    res.status(200).json({ success: true });
-                  // } else {
-                    // res.status(400).json({ success: false });
-                  // }
-                })
-                .catch((err) => {
-                  console.error(err);
-                  res.status(409);
-                });
-            } else {
-              // res.status(400).json({ success: false });
-              res.status(200).json({ success: true });
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            res.status(409);
-          });
-      } else {
-        res.status(400).json({ success: false });
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(409);
+// router.route("/delete/:table_id").delete(async (req, res) => {
+//   const id = req.params.table_id;
+//   Product.destroy({
+//     where: {
+//       product_id: id,
+//     },
+//   })
+//     .then((del) => {
+//       if (del) {
+//         ProductTAGSupplier.destroy({
+//           where: {
+//             product_id: id,
+//           },
+//         })
+//           .then((deleted) => {
+//             if (deleted) {
+//               Inventory.destroy({
+//                 where: {
+//                   product_id: id,
+//                 },
+//               })
+//                 .then((deletedInventory) => {
+//                   // if (deletedInventory) {
+//                     res.status(200).json({ success: true });
+//                   // } else {
+//                     // res.status(400).json({ success: false });
+//                   // }
+//                 })
+//                 .catch((err) => {
+//                   console.error(err);
+//                   res.status(409);
+//                 });
+//             } else {
+//               // res.status(400).json({ success: false });
+//               res.status(200).json({ success: true });
+//             }
+//           })
+//           .catch((err) => {
+//             console.error(err);
+//             res.status(409);
+//           });
+//       } else {
+//         res.status(400).json({ success: false });
+//       }
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//       res.status(409);
+//     });
+// });
+
+
+router.route('/deleteOldArchivedProduct').post(async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const currentManilaDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+
+    const productRows = await Product.findAll({
+      where: {
+        product_status: 'Archive',
+      },
     });
+
+    if (productRows && productRows.length === 0) {
+      console.log("No product archive found");
+      return res.status(201).json({ message: "No product archive found" });
+    }
+      for (let i = 0; i < productRows.length; i++) {
+        const archiveDate = new Date(productRows[i].archive_date);
+        // const nextDay = new Date(archiveDate);
+        // nextDay.setDate(archiveDate.getDate() + 1);
+        const newArchiveDate = new Date(archiveDate);
+        newArchiveDate.setFullYear(newArchiveDate.getFullYear() + 1);
+  
+        const prodId = productRows[i].product_id;
+  
+        //Select Product supplier
+        const Productsupprows = await ProductTAGSupplier.findAll({
+          where : {
+            product_id: prodId,
+          },
+        });
+  
+        if(Productsupprows && Productsupprows.length === 0){
+          console.log("No archive product supplier");
+          continue;
+        }
+  
+        const prodSuppId = Productsupprows.map(prodsupp => prodsupp.id);
+  
+        //Select Inventory Product
+        const Inventoryprod = await Inventory.findAll({
+          where: {
+            product_tag_supp_id: prodSuppId,
+          },
+        });
+  
+        if(Inventoryprod && Inventoryprod.length === 0){
+          console.log("No inventory found");
+          continue;
+        }
+  
+        const InventoryId = Inventoryprod.map(invprod => invprod.inventory_id)
+  
+        if(newArchiveDate >= currentDate) {
+          await IssuedProduct.destroy({
+            where: {
+              inventory_id: InventoryId,
+            },
+          });
+  
+          await Inventory.destroy({
+            where : {
+              product_tag_supp_id: prodSuppId,
+            },
+          });
+  
+          await Product.destroy({
+            where: {
+              product_status: 'Archive',
+            },
+          });
+        }
+      }
+  
+
+
+    res.status(200).json({ message: "Successfully deleted product archive" });
+  } catch (error) {
+    console.error("Error Problem on delete archived subparts" + error);
+  }
 });
+
 
 
 router.route('/statusupdate').put(async (req, res) => {
   try {
     const { productIds, status } = req.body;
 
+    const updateData = { product_status: status };
+
+    if (status === 'Archive') {
+      updateData.archive_date = new Date();
+    }
     for (const productId of productIds) {
-      await Product.update(
-        { product_status: status },
-        { where: { product_id: productId } }
-      );
+      await Product.update(updateData, { where: { product_id: productId } });
     }
 
     res.status(200).json({ message: 'Products updated successfully' });

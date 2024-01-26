@@ -29,6 +29,7 @@ import "../../../../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
+import deleteSpare from "../../../../../Archiving Delete/spare_delete";
 
 function SpareParts({ authrztn }) {
   const [sparePart, setSparePart] = useState([]);
@@ -45,7 +46,21 @@ function SpareParts({ authrztn }) {
     Array(sparePart.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
 
+  const handledropdownstatus = (event) => {
+    const value = event.target.value;
+    if (value === 'All Status') {
+      setDropdownstatus(['Active', 'Inactive', 'Archive']);
+    } else {
+      setDropdownstatus([value]);
+    }
+  }
+  
+
+  const clearFilter = () => {
+    setDropdownstatus(['Active', 'Inactive']);
+  }
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
     if (index === openDropdownIndex) {
@@ -97,6 +112,7 @@ function SpareParts({ authrztn }) {
   };
   useEffect(() => {
     reloadTable();
+    deleteSpare();
   }, []);
 
   //Date format sa main table
@@ -296,7 +312,22 @@ function SpareParts({ authrztn }) {
               </div>
 
               <div className="button-create-side">
-
+                  <Form.Select aria-label="item status"
+                    style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro', cursor: 'pointer', width: '500px'}}
+                    onChange={handledropdownstatus}
+                    value={Dropdownstatus.length === 1 ? Dropdownstatus[0] : ''}>
+                      <option value="" disabled>
+                        Select Status
+                      </option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Archive">Archive</option>
+                    </Form.Select>  
+                    <button className='Filterclear'
+                    style={{ width: '150px'}}
+                    onClick={clearFilter}>
+                          Clear Filter
+                    </button>
                   { authrztn.includes('Spare Part - Add') && (
                   showChangeStatusButton ? (
                   <div className="Buttonmodal-change">
@@ -332,7 +363,6 @@ function SpareParts({ authrztn }) {
                         type="checkbox"
                         checked={selectAllChecked}
                         onChange={handleSelectAllChange}
-                        // when check check all
                       />
                     </th>
                     <th className="tableh">Code</th>
@@ -345,7 +375,9 @@ function SpareParts({ authrztn }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {sparePart.map((data, i) => (
+                  {sparePart
+                  .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.spareParts_status))
+                  .map((data, i) => (
                     <tr key={i}>
                       <td>
                       <input
@@ -375,6 +407,8 @@ function SpareParts({ authrztn }) {
                             backgroundColor:
                               data.spareParts_status === "Active"
                                 ? "green"
+                                : data.spareParts_status === "Archive"
+                                ? "gray"
                                 : "red",
                             color: "white",
                             padding: "5px",
@@ -471,6 +505,7 @@ function SpareParts({ authrztn }) {
               value={selectedStatus}>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
+              <option value="Archive">Archive</option>
             </Form.Select>
           </Form.Group>
         </Modal.Body>

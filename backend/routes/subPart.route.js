@@ -4,11 +4,9 @@ const sequelize = require('../db/config/sequelize.config');
 const {SubPart, 
       Subpart_supplier, 
       Inventory_Subpart, 
-      BinLocation, 
-      Category, 
-      Manufacturer, 
       Subpart_image,
-      Subpart_Price_History} = require('../db/models/associations')
+      Subpart_Price_History,
+      IssuedSubpart} = require('../db/models/associations')
 const session = require('express-session')
 const multer = require('multer');
 const upload = multer();
@@ -193,8 +191,7 @@ router.route("/update").post(
         const selectedSuppliers = subpartTAGSuppliers;
         for (const supplier of selectedSuppliers) {
           const { value, price } = supplier;
-      
-          // Check if the price is different from the existing supplier_price
+
           const existingSupplier = await Subpart_supplier.findOne({
             where: {
               subpart_id: id,
@@ -248,15 +245,19 @@ router.route("/update").post(
   }
 });  
 
+
 router.route('/statusupdate').put(async (req, res) => {
   try {
     const { subpartIDs, status } = req.body;
 
+    const updateData = { subPart_status: status };
+
+    if (status === 'Archive') {
+      updateData.archive_date = new Date();
+    }
+
     for (const subpartId of subpartIDs) {
-      await SubPart.update(
-        { subPart_status: status },
-        { where: { id: subpartId } }
-      );
+      await SubPart.update(updateData, { where: { id: subpartId } });
     }
 
     res.status(200).json({ message: 'Products updated successfully' });
@@ -268,28 +269,89 @@ router.route('/statusupdate').put(async (req, res) => {
 
 
   
-  router.route('/delete/:subPartId').delete(async (req, res) => {
-    const subPartId = req.params.subPartId;
-  
+
+  router.route('/deleteOldArchivedSubParts').post(async (req, res) => {
     try {
-      // Delete the SubPart record
-      const deletedRows = await SubPart.destroy({
+      const currentDate = new Date();
+      const currentManilaDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+
+      const Subpartrows = await SubPart.findAll({
         where: {
-          id: subPartId,
+          subPart_status: 'Archive',
         },
       });
   
-      if (deletedRows > 0) {
-        return res.json({ success: true, message: 'SubPart record deleted successfully' });
-      } else {
-        return res.status(404).json({ success: false, message: 'Record not found' });
+      if (Subpartrows && Subpartrows.length === 0) {
+        console.log("No subpart archive found");
+        return res.status(201).json({ message: "No subpart archive found" });
       }
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ success: false, message: 'An error occurred' });
+  
+      for (let i = 0; i < Subpartrows.length; i++) {
+        const archiveDate = new Date(Subpartrows[i].archive_date);
+        // const nextDay = new Date(archiveDate);
+        // nextDay.setDate(archiveDate.getDate() + 1);
+        const newArchiveDate = new Date(archiveDate);
+        newArchiveDate.setFullYear(newArchiveDate.getFullYear() + 1);
+  
+        const subPartId = Subpartrows[i].id;
+  
+        // Select subpart supplier
+        const Subpartsupprows = await Subpart_supplier.findAll({
+          where: {
+            subpart_id: subPartId,
+          },
+        });
+  
+        if (Subpartsupprows && Subpartsupprows.length === 0) {
+          console.log("No archive supplier found");
+          continue;
+        }
+  
+        const subpartsuppId = Subpartsupprows.map(supprow => supprow.id);
+  
+        // Select inventory subpart
+        const Inventorysub = await Inventory_Subpart.findAll({
+          where: {
+            subpart_tag_supp_id: subpartsuppId,
+          },
+        });
+  
+        if (Inventorysub && Inventorysub.length === 0) {
+          console.log("Inventory archive not found");
+          continue;  
+        }
+  
+        const InventoryId = Inventorysub.map(invrow => invrow.inventory_id);
+
+        if(newArchiveDate <= currentDate){
+          await IssuedSubpart.destroy({
+            where: {
+              inventory_Subpart_id: InventoryId,
+            },
+          });
+
+          await Inventory_Subpart.destroy({
+            where: {
+              subpart_tag_supp_id: subpartsuppId,
+            },
+          });
+
+          await SubPart.destroy({
+            where: {
+              subPart_status: 'Archive',
+            }
+          });
+        }
+      }
+      
+      res.status(200).json({ message: "Successfully deleted subpart archive" });
+      // console.log("Delete archived successfully" + res);
+  
+    } catch (error) {
+      console.error("Error Problem on delete archived subparts" + error);
     }
   });
   
   
-
+  
 module.exports = router;

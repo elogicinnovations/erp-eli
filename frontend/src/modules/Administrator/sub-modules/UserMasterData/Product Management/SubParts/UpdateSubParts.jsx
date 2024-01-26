@@ -8,7 +8,9 @@ import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
-// import * as $ from "jquery";
+import {
+  ArrowCircleLeft
+} from "@phosphor-icons/react";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Carousel from 'react-bootstrap/Carousel';
 
@@ -431,7 +433,15 @@ function selectFiles() {
       <div className="right-of-main-containers">
         <div className="right-body-contentss">
           <Form noValidate validated={validated} onSubmit={update}>
-            <h1>Update Sub Parts</h1>
+          <div className="arrowandtitle">
+              <Link to="/subParts">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                    <h1>Update Sub Parts</h1>
+                  </div>
+              </div>
+
 
             <div className="row">
                 {subpartImages.length > 0 && (

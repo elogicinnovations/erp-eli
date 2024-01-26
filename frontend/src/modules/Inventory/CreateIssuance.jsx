@@ -457,9 +457,9 @@ const CreateIssuance = ({ setActiveTab }) => {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-2">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>MRS #: </Form.Label>
+                  <Form.Label style={{ fontSize: "20px" }}>M.R.S #: </Form.Label>
                   <Form.Control
                     type="text"
                     required

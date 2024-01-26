@@ -13,6 +13,7 @@ import Select from 'react-select';
 import Carousel from 'react-bootstrap/Carousel';
 import {
   NotePencil,
+  ArrowCircleLeft
 } from "@phosphor-icons/react";
 
 
@@ -494,9 +495,14 @@ const update = async (e) => {
         <div className="right-of-main-containers">
             <div className="right-body-contents-a"> 
             
-                <div className='d-flex flex-direction-row'>
-                    <h1>Update Spare Parts</h1>
-                </div>
+            <div className="arrowandtitle">
+              <Link to="/spareParts">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                    <h1>Add Spare Parts</h1>
+                  </div>
+              </div>
                
                 <Form noValidate validated={validated} onSubmit={update}>
                 <div className="row">
@@ -536,7 +542,7 @@ const update = async (e) => {
                           <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>
-                                  Code: 
+                                  Spare Parts Code: 
                                 </Form.Label>
                                 <Form.Control disabled={!isReadOnly} 
                                 value={code} 
@@ -548,7 +554,7 @@ const update = async (e) => {
                             </div>
                             <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Name: </Form.Label>
+                                <Form.Label style={{ fontSize: '20px' }}>Spare Parts Name: </Form.Label>
                                 <Form.Control type="text" 
                                 value={name} 
                                 disabled={!isReadOnly}  
@@ -566,6 +572,19 @@ const update = async (e) => {
                                       value: subPart.id,
                                       label: subPart.subPart_name, 
                                     }))}
+                                    styles={{
+                                      control: (provided) => ({
+                                        ...provided,
+                                        color: 'red', 
+                                        fontSize: '15px',
+                                        fontWeight: 650
+                                      }),
+                                      option: (provided) => ({
+                                        ...provided,
+                                        color: 'black', 
+                                        fontSize: '15px', 
+                                      }),
+                                    }}
                                     onChange={handleSelectChange_SubPart}
                                     value={SubParts}
                                   />

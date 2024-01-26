@@ -3127,6 +3127,7 @@ div#ordered-listing_length label {
   align-items: center;
   user-select: none;
   -webkit-user-select: none;
+  font-size: 16px;
 }
 
 .card .drag-area .visible {
@@ -3139,6 +3140,7 @@ div#ordered-listing_length label {
   cursor: pointer;
   transition: 0.4s;
   margin-left: 5px;
+  font-size: 16px;
 }
 
 .card .select:hover {

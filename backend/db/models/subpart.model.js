@@ -43,7 +43,12 @@ const SubPart = sequelize.define('subPart', {
   subPart_status: {
     type: DataTypes.STRING,
     allowNull: false,
-  }
+  },
+  archive_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    defaultValue: null,
+  },
 });
 
 module.exports = SubPart;

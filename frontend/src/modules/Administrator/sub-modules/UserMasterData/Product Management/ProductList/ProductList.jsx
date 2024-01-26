@@ -13,6 +13,7 @@ import {
   DotsThreeCircleVertical,
   ArrowsClockwise,
 } from "@phosphor-icons/react";
+import deleteProduct from "../../../../../Archiving Delete/product_delete";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -50,6 +51,20 @@ function ProductList({ authrztn }) {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
   const [showhistorical, setshowhistorical] = useState(false);
+  const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
+
+  const handledropdownstatus = (event) => {
+    const value = event.target.value;
+    if (value === 'All Status') {
+      setDropdownstatus(['Active', 'Inactive', 'Archive']);
+    } else {
+      setDropdownstatus([value]);
+    }
+  }
+  
+  const clearFilter = () => {
+    setDropdownstatus(['Active', 'Inactive']);
+  }
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -106,6 +121,7 @@ function ProductList({ authrztn }) {
       .catch((err) => console.log(err));
   };
   useEffect(() => {
+    // deleteProduct();
     reloadTable();
   }, []);
 
@@ -134,52 +150,50 @@ function ProductList({ authrztn }) {
     return num.toString().padStart(2, "0");
   }
 
-  const handleDelete = async (table_id) => {
-    swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this product data!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        try {
-          const response = await axios.delete(
-            BASE_URL + `/product/delete/${table_id}`
-          );
-          if (response.status === 200) {
-            swal({
-              title: "Product List Delete Successful!",
-              text: "The Product List has been Deleted Successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              setproduct((prev) =>
-                prev.filter((data) => data.product_code !== table_id)
-              );
-              reloadTable();
-            });
-          } else if (response.status === 202) {
-            swal({
-              icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete product that is used",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    });
-  };
-
-  
+  // const handleDelete = async (table_id) => {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "Once deleted, you will not be able to recover this product data!",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //   }).then(async (willDelete) => {
+  //     if (willDelete) {
+  //       try {
+  //         const response = await axios.delete(
+  //           BASE_URL + `/product/delete/${table_id}`
+  //         );
+  //         if (response.status === 200) {
+  //           swal({
+  //             title: "Product List Delete Successful!",
+  //             text: "The Product List has been Deleted Successfully.",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             setproduct((prev) =>
+  //               prev.filter((data) => data.product_code !== table_id)
+  //             );
+  //             reloadTable();
+  //           });
+  //         } else if (response.status === 202) {
+  //           swal({
+  //             icon: "error",
+  //             title: "Delete Prohibited",
+  //             text: "You cannot delete product that is used",
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   });
+  // };
 
   const toggleButtons = (userId) => {
     setVisibleButtons((prevVisibleButtons) => {
@@ -301,7 +315,22 @@ function ProductList({ authrztn }) {
               </div>
 
               <div className="button-create-side">
-
+              <Form.Select aria-label="item status"
+                  style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro', cursor: 'pointer', width: '500px'}}
+                  onChange={handledropdownstatus}
+                  value={Dropdownstatus.length === 1 ? Dropdownstatus[0] : ''}>
+                    <option value="" disabled>
+                      Select Status
+                    </option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Archive">Archive</option>
+                </Form.Select>  
+                <button className='Filterclear'
+                  style={{ width: '150px'}}
+                  onClick={clearFilter}>
+                  Clear Filter
+                </button>
                 { authrztn.includes('Product List - Add') && (
                   showChangeStatusButton ? (
                   <div className="Buttonmodal-change">
@@ -349,7 +378,9 @@ function ProductList({ authrztn }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {product.map((data, i) => (
+                  {product
+                  .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.product_status))
+                  .map((data, i) => (
                     <tr key={i}>
                       <td>
                         <input
@@ -391,6 +422,8 @@ function ProductList({ authrztn }) {
                             backgroundColor:
                               data.product_status === "Active"
                                 ? "green"
+                                : data.product_status === "Archive"
+                                ? "gray"
                                 : "red",
                             color: "white",
                             padding: "5px",
@@ -448,7 +481,7 @@ function ProductList({ authrztn }) {
                               </Link>
                               )}
 
-                              { authrztn.includes('Product List - Delete') && (
+                              {/* { authrztn.includes('Product List - Delete') && (
                               <button
                                 className="btn"
                                 type="button"
@@ -458,7 +491,7 @@ function ProductList({ authrztn }) {
                                 }}>
                                 Delete
                               </button>
-                              )}
+                              )} */}
 
                               { authrztn.includes('Product List - View') && (
                               <button

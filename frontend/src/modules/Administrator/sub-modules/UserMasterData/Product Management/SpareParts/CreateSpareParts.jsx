@@ -10,7 +10,7 @@ import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
-import { Plus, Trash, NotePencil, X} from "@phosphor-icons/react";
+import { Plus, Trash, NotePencil, X, ArrowCircleLeft} from "@phosphor-icons/react";
 import Dropzone from 'react-dropzone';
 
 function CreateSpareParts() {
@@ -383,7 +383,14 @@ function CreateSpareParts() {
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={add}>
-            <h1>Add Spare Parts</h1>
+            <div className="arrowandtitle">
+              <Link to="/spareParts">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                    <h1>Add Spare Parts</h1>
+                  </div>
+              </div>
             <div
               className="gen-info"
               style={{
@@ -407,7 +414,7 @@ function CreateSpareParts() {
             <div className="row mt-3">
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>Code: </Form.Label>
+                  <Form.Label style={{ fontSize: "20px" }}>Spare Parts Code: </Form.Label>
                   <Form.Control
                     onChange={(e) => setCode(e.target.value)}
                     required
@@ -419,7 +426,7 @@ function CreateSpareParts() {
               </div>
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>Name: </Form.Label>
+                  <Form.Label style={{ fontSize: "20px" }}>Spare Parts Name: </Form.Label>
                   <Form.Control
                     type="text"
                     onChange={(e) => setName(e.target.value)}
@@ -441,6 +448,19 @@ function CreateSpareParts() {
                       label: subPart.subPart_name,
                     }))}
                     onChange={handleSelectChange_SubPart}
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        color: 'red', 
+                        fontSize: '15px',
+                        fontWeight: 650
+                      }),
+                      option: (provided) => ({
+                        ...provided,
+                        color: 'black', 
+                        fontSize: '15px', 
+                      }),
+                    }}
                   />
                 </Form.Group>
               </div>
@@ -572,10 +592,11 @@ function CreateSpareParts() {
                 </Form.Group>
               </div>
               <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Image Upload:{" "}
+                  </Form.Label>
                   <div className="card">
-                    <div className="top">
-                      <p>Drag & Drop Image Upload</p>
-                    </div>
                     <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
                         <>
                          Drag & Drop image here or {" "}
@@ -594,6 +615,7 @@ function CreateSpareParts() {
                       ))}
                     </div>
                   </div>
+                  </Form.Group>
               </div>
             </div>
 

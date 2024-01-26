@@ -12,6 +12,7 @@ import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement
 import Select from "react-select";
 import Dropzone from "react-dropzone";
 import Carousel from 'react-bootstrap/Carousel';
+import { ArrowCircleLeft } from "@phosphor-icons/react";
 
 function UpdateProduct() {
   const navigate = useNavigate();
@@ -642,8 +643,16 @@ useEffect(() => {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-        <div className="right-body-contents-a">
-          <h1>Update Product</h1>
+        <div className="right-body-contentss">
+        <div className="arrowandtitle">
+          <Link to="/productList">
+              <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+          </Link>
+              <div className="titletext">
+                  <h1>Update Product</h1>
+              </div>
+          </div>
+
           <div className="row">
               {productImages.length > 0 && (
                 <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
