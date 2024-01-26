@@ -8,7 +8,8 @@ const {
   Assembly_SubPart,
   Inventory_Assembly,
   AssemblyPrice_History,
-  Assembly_image
+  Assembly_image,
+  IssuedAssembly,
 } = require("../db/models/associations");
 
 const session = require("express-session");
@@ -323,59 +324,140 @@ router.route("/update").post(
 );
 
 
-router.route("/delete/:table_id").delete(async (req, res) => {
-  const id = req.params.table_id;
+// router.route("/delete/:table_id").delete(async (req, res) => {
+//   const id = req.params.table_id;
 
-  await Assembly.destroy({
-    where: {
-      id: id,
-    },
-  })
-    .then((del) => {
-      Assembly_Supplier.destroy({
-        where: {
-          assembly_id: id,
-        },
-      })
-        .then((del) => {
-          if (del) {
-            Assembly_SparePart.destroy({
-              where: {
-                assembly_id: id,
-              },
-            })
-              .then((del) => {
-                res.status(200).json({ success: true });
-                //    if (del) {
-                //      return res.status(200).json({ success: true });
-                //    } else {
-                //      res.status(400).json({ success: false });
-                //    }
-              })
-              .catch((err) => {
-                console.error(err);
-                res.status(409);
-              });
-          } else {
-            res.status(200).json({ success: false });
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(409);
-        });
-      //   if (del) {
+//   await Assembly.destroy({
+//     where: {
+//       id: id,
+//     },
+//   })
+//     .then((del) => {
+//       Assembly_Supplier.destroy({
+//         where: {
+//           assembly_id: id,
+//         },
+//       })
+//         .then((del) => {
+//           if (del) {
+//             Assembly_SparePart.destroy({
+//               where: {
+//                 assembly_id: id,
+//               },
+//             })
+//               .then((del) => {
+//                 res.status(200).json({ success: true });
+//                 //    if (del) {
+//                 //      return res.status(200).json({ success: true });
+//                 //    } else {
+//                 //      res.status(400).json({ success: false });
+//                 //    }
+//               })
+//               .catch((err) => {
+//                 console.error(err);
+//                 res.status(409);
+//               });
+//           } else {
+//             res.status(200).json({ success: false });
+//           }
+//         })
+//         .catch((err) => {
+//           console.error(err);
+//           res.status(409);
+//         });
+//       //   if (del) {
 
-      //   } else {
-      //     res.status(400).json({ success: false });
-      //   }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(409);
+//       //   } else {
+//       //     res.status(400).json({ success: false });
+//       //   }
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//       res.status(409);
+//     });
+//   //     }
+//   //   })
+// });
+
+
+router.route('/deleteOldArchivedAssembly').post(async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const currentManilaDate = new Date(currentDate.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+
+    const Assemblyrows = await Assembly.findAll({
+      where: {
+        assembly_status: 'Archive',
+      },
     });
-  //     }
-  //   })
+
+    if (Assemblyrows && Assemblyrows.length === 0) {
+      console.log("No Assembly archive found");
+      return res.status(201).json({ message: "No assembly archive found" });
+    }
+      for (let i = 0; i < Assemblyrows.length; i++) {
+        const archiveDate = new Date(Assemblyrows[i].archive_date);
+  
+        const newArchiveDate = new Date(archiveDate);
+        newArchiveDate.setFullYear(newArchiveDate.getFullYear() + 1);
+  
+        const assemblyId = Assemblyrows[i].id;
+  
+        // Select Assembly supplier
+        const Assemblysupprows = await Assembly_Supplier.findAll({
+          where: {
+            assembly_id: assemblyId,
+          },
+        });
+  
+        if(Assemblysupprows && Assemblysupprows.length === 0) {
+          console.log("No assembly supplier archive found");
+          continue;
+        }
+  
+        const assemblysuppId = Assemblysupprows.map(supprow => supprow.id);
+  
+        //Select Inventory assembly
+        const InventoryAss = await Inventory_Assembly.findAll({
+          where: {
+            assembly_tag_supp_id: assemblysuppId,
+          },
+        });
+  
+        if(InventoryAss && InventoryAss.length === 0) {
+          console.log("Inventory assembly archive not found");
+          continue;
+        }
+  
+        const InventoryId = InventoryAss.map(invrow => invrow.inventory_id);
+  
+        if(newArchiveDate <= currentDate) {
+          await IssuedAssembly.destroy({
+            where: {
+              inventory_Assembly_id: InventoryId,
+            },
+          });
+  
+          await Inventory_Assembly.destroy({
+            where : {
+              assembly_tag_supp_id: assemblysuppId,
+            },
+          });
+  
+          await Assembly.destroy({
+            where: {
+              assembly_status: 'Archive',
+            },
+          });
+        }
+      }  
+    
+
+    res.status(200).json({ message: "Successfully deleted assembly archive" });
+
+  } catch (error) {
+    console.error("Error Problem on delete archived subparts" + error);
+  }
 });
 
 
@@ -383,11 +465,14 @@ router.route('/statusupdate').put(async (req, res) => {
   try {
     const { assemblyIds, status } = req.body;
 
+    const updateData = {assembly_status: status};
+
+    if (status === 'Archive') {
+      updateData.archive_date = new Date();
+    }
+
     for (const assemblyId of assemblyIds) {
-      await Assembly.update(
-        { assembly_status: status },
-        { where: { id: assemblyId } }
-      );
+      await Assembly.update(updateData, { where: { id: assemblyId } });
     }
 
     res.status(200).json({ message: 'Products updated successfully' });

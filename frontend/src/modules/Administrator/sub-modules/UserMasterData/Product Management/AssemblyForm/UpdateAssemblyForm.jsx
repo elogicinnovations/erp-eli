@@ -11,7 +11,7 @@ import Select from 'react-select';
 import { Button, Form } from "react-bootstrap";
 import cls_unitMeasurement from '../../../../../../assets/global/unitMeasurement';
 import Carousel from 'react-bootstrap/Carousel';
-import {NotePencil } from "@phosphor-icons/react";
+import {NotePencil, ArrowCircleLeft } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -567,7 +567,15 @@ const update = async (e) => {
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={update}>
-            <h1>Update Assembly Parts</h1>
+          <div className="arrowandtitle">
+              <Link to="/assemblyForm">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Update Assembly Parts</h1>
+                  </div>
+              </div>
+
 
             <div className="row">
                   {assemblyimage.length > 0 && (
@@ -624,7 +632,7 @@ const update = async (e) => {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Item Name:{" "}
+                    Assembly Name:{" "}
                   </Form.Label>
                   <Form.Control
                     required
@@ -675,6 +683,19 @@ const update = async (e) => {
                         onChange={handleSparepartChange}
                         value={spareParts}
                         isDisabled={!isReadOnly}
+                        styles={{
+                          control: (provided) => ({
+                            ...provided,
+                            color: 'red', 
+                            fontSize: '15px',
+                            fontWeight: 650
+                          }),
+                          option: (provided) => ({
+                            ...provided,
+                            color: 'black', 
+                            fontSize: '15px', 
+                          }),
+                        }}
                       />
                   </Form.Group>
                 </div>
@@ -690,6 +711,19 @@ const update = async (e) => {
                       }))}
                       onChange={handleSubpartChange}
                       value={Subparts}
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          color: 'red', 
+                          fontSize: '15px',
+                          fontWeight: 650
+                        }),
+                        option: (provided) => ({
+                          ...provided,
+                          color: 'black', 
+                          fontSize: '15px', 
+                        }),
+                      }}
                     />
                   </Form.Group>
               </div>

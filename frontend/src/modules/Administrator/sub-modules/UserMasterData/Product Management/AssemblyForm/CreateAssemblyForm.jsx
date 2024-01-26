@@ -11,7 +11,7 @@ import Select from "react-select";
 import Button from "react-bootstrap/Button";
 import Dropzone from "react-dropzone";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
-import { Trash, NotePencil, X } from "@phosphor-icons/react";
+import { Trash, NotePencil, X, ArrowCircleLeft } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -366,7 +366,14 @@ function onDropImages(event) {
       <div className="right-of-main-containers">
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={add}>
-            <h1>Add Assembly Parts</h1>
+            <div className="arrowandtitle">
+              <Link to="/assemblyForm">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Add Assembly Parts</h1>
+                  </div>
+              </div>
             <div
               className="gen-info"
               style={{
@@ -405,7 +412,7 @@ function onDropImages(event) {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Item Name:{" "}
+                    Assembly Name:{" "}
                   </Form.Label>
                   <Form.Control
                     required
@@ -458,6 +465,19 @@ function onDropImages(event) {
                         label: sparePart.spareParts_name,
                       }))}
                       onChange={handleSelectChange}
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          color: 'red', 
+                          fontSize: '15px',
+                          fontWeight: 650
+                        }),
+                        option: (provided) => ({
+                          ...provided,
+                          color: 'black', 
+                          fontSize: '15px', 
+                        }),
+                      }}
                     />
                   </Form.Group>
                 </div>
@@ -473,6 +493,19 @@ function onDropImages(event) {
                         label: subpart.subPart_name,
                       }))}
                       onChange={handleSubpartChange}
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          color: 'red', 
+                          fontSize: '15px',
+                          fontWeight: 650
+                        }),
+                        option: (provided) => ({
+                          ...provided,
+                          color: 'black', 
+                          fontSize: '15px', 
+                        }),
+                      }}
                     />
                   </Form.Group>
                 </div>
@@ -609,10 +642,10 @@ function onDropImages(event) {
                 </Form.Group>
               </div>
               <div className="col-6">
+              <Form.Label style={{ fontSize: "20px" }}>
+                    Image Upload:{" "}
+                  </Form.Label>
                   <div className="card">
-                    <div className="top">
-                      <p>Drag & Drop Image Upload</p>
-                    </div>
                     <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
                         <>
                          Drag & Drop image here or {" "}

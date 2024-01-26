@@ -43,7 +43,12 @@ const SpareParts = sequelize.define("spareParts", {
   spareParts_status: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  archive_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    defaultValue: null,
+  },
 });
 
 module.exports = SpareParts;

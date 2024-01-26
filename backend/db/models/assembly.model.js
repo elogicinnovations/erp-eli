@@ -45,7 +45,12 @@ const Assembly = sequelize.define('assembly', {
   assembly_status: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  archive_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    defaultValue: null,
+  },
 });
 
 module.exports = Assembly;

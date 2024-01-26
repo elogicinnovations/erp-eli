@@ -8,9 +8,6 @@ import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import {
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
@@ -19,7 +16,7 @@ import {
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Table from 'react-bootstrap/Table';
+import deleteAssembly from "../../../../../Archiving Delete/assembly_delete";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -42,9 +39,23 @@ function AssemblyForm({ authrztn }) {
     Array(assembly.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-
+  const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
   const [showhistorical, setshowhistorical] = useState(false);
   const [historypricemodal, sethistorypricemodal] = useState([]);
+
+  const handledropdownstatus = (event) => {
+    const value = event.target.value;
+    if (value === 'All Status') {
+      setDropdownstatus(['Active', 'Inactive', 'Archive']);
+    } else {
+      setDropdownstatus([value]);
+    }
+  }
+  
+
+  const clearFilter = () => {
+    setDropdownstatus(['Active', 'Inactive']);
+  }
 
   const navigate = useNavigate();
 
@@ -100,6 +111,7 @@ function AssemblyForm({ authrztn }) {
       .catch((err) => console.log(err));
   };
   useEffect(() => {
+    // deleteAssembly();
     reloadTable();
   }, []);
 
@@ -322,7 +334,22 @@ function AssemblyForm({ authrztn }) {
               </div>
 
               <div className="button-create-side">
-
+                <Form.Select aria-label="item status"
+                    style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro', cursor: 'pointer', width: '500px'}}
+                    onChange={handledropdownstatus}
+                    value={Dropdownstatus.length === 1 ? Dropdownstatus[0] : ''}>
+                      <option value="" disabled>
+                        Select Status
+                      </option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Archive">Archive</option>
+                    </Form.Select>  
+                  <button className='Filterclear'
+                  style={{ width: '150px'}}
+                  onClick={clearFilter}>
+                        Clear Filter
+                  </button>
                   { authrztn.includes('Assembly - Add') && (
                   showChangeStatusButton ? (
                   <div className="Buttonmodal-change">
@@ -371,7 +398,8 @@ function AssemblyForm({ authrztn }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {assembly.map((data, i) => (
+                  {assembly.filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.assembly_status))
+                  .map((data, i) => (
                     <tr key={i}>
                       <td>
                       <input
@@ -408,6 +436,8 @@ function AssemblyForm({ authrztn }) {
                             backgroundColor:
                               data.assembly_status === "Active"
                                 ? "green"
+                                : data.assembly_status === "Archive"
+                                ? "gray"
                                 : "red",
                             color: "white",
                             padding: "5px",
@@ -463,7 +493,7 @@ function AssemblyForm({ authrztn }) {
                               </Link>
                               )}
 
-                              { authrztn.includes('Assembly - Delete') && (
+                              {/* { authrztn.includes('Assembly - Delete') && (
                               <button
                                 onClick={() => {
                                   handleDelete(data.id);
@@ -472,7 +502,7 @@ function AssemblyForm({ authrztn }) {
                                 className="btn">
                                 Delete
                               </button>
-                              )}
+                              )} */}
 
                               { authrztn.includes('Assembly - View') && (
                               <button
@@ -515,6 +545,7 @@ function AssemblyForm({ authrztn }) {
               value={selectedStatus}>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
+              <option value="Archive">Archive</option>
             </Form.Select>
           </Form.Group>
         </Modal.Body>
@@ -552,7 +583,7 @@ function AssemblyForm({ authrztn }) {
             <table responsive="xl" id="order-listing1">
               <thead className="priceHH">
                 <tr>
-                  <th className="priceHH">Assembly Name</th>
+                  <th className="priceHH">Supplier Name</th>
                   <th className="priceHH">Price</th>
                   <th className="priceHH">Date Created</th>
                 </tr>
@@ -560,7 +591,7 @@ function AssemblyForm({ authrztn }) {
               <tbody>
                 {historypricemodal.map((history, i) => (
                   <tr key={i}>
-                    <td className="priceHB">{history.assembly.assembly_name}</td>
+                    <td className="priceHB">{history.supplier.supplier_name}</td>
                     <td className="priceHB">{history.supplier_price}</td>
                     <td className="priceHB">{ModalformatDate(history.createdAt)}</td>
                   </tr>
@@ -570,7 +601,6 @@ function AssemblyForm({ authrztn }) {
           </div>                       
         </Modal.Body>
         <Modal.Footer>
-          {/* Footer content */}
         </Modal.Footer>
       </Modal>
     </div>

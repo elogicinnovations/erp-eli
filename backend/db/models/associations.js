@@ -12,6 +12,7 @@ const ProductTAGSupplier = require("./productTAGsupplier.model");
 const Product_Subparts = require("./product_subparts.model");
 const Product_Spareparts = require("./product_spare.model");
 const Product_Assembly = require("./product_assembly.model");
+const Product_image = require("./product_image.model");
 
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model")
@@ -67,7 +68,7 @@ const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
 
-const Product_image = require("./product_image.model");
+
 
 
 

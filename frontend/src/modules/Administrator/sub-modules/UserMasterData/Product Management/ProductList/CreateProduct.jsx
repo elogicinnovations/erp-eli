@@ -11,7 +11,7 @@ import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Select from "react-select";
 import Dropzone from "react-dropzone";
-import { X } from "@phosphor-icons/react";
+import { X, ArrowCircleLeft } from "@phosphor-icons/react";
 import { green } from "@mui/material/colors";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
@@ -422,13 +422,16 @@ function onDropImages(event) {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
       <div className="right-of-main-containers">
-        <div className="right-body-contents-a">
-          <h1>Add Product</h1>
-
+        <div className="right-body-contentss">
+          <div className="arrowandtitle">
+              <Link to="/productList">
+                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Add Product</h1>
+                  </div>
+              </div>
           <div
             className="gen-info"
             style={{
@@ -453,7 +456,7 @@ function onDropImages(event) {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Item Code:{" "}
+                    Product Code:{" "}
                   </Form.Label>
                   <Form.Control
                     required
@@ -481,7 +484,7 @@ function onDropImages(event) {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Item Name:{" "}
+                    Product Name:{" "}
                   </Form.Label>
                   <Form.Control
                     required
@@ -755,10 +758,8 @@ function onDropImages(event) {
                     Image Upload:{" "}
                   </Form.Label>
                   <div className="card">
-                    <div className="top">
-                      <p>Drag & Drop Image Upload</p>
-                    </div>
-                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                    <div className="drag-area" 
+                    onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
                         <>
                          Drag & Drop image here or {" "}
                         <span className="select" role="button" onClick={selectFiles}>
