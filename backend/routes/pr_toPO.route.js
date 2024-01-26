@@ -304,20 +304,20 @@ router.route('/save').post(async (req, res) => {
         console.log(`Supplier_email ${item.supp_email}:`);
   
         doc.fontSize(12).text(`Product: ${item.code} => ${item.name}`, 50, 50).moveDown();
-
       });
   
       // Finalize the PDF document
       doc.end();
   
-      // Pipe the PDF content to a writable stream (in this case, a file)
-      const pdfFilePath = `output_${supplierCode}.pdf`; // Adjust the file name dynamically if needed
-      const stream = fs.createWriteStream(pdfFilePath);
-      doc.pipe(stream);
+      // Pipe the PDF content to a buffer
+      const pdfBuffer = [];
+      doc.on('data', (chunk) => {
+        pdfBuffer.push(chunk);
+      });
   
-      // Handle the 'finish' event to know when the PDF has been generated
-      stream.on('finish', () => {
-        console.log('PDF created successfully.');
+      doc.on('end', () => {
+        // Concatenate the chunks into a single buffer
+        const pdfContent = Buffer.concat(pdfBuffer);
   
         // Create a nodemailer transporter
         const gmailEmail = "infintyerpslash@gmail.com";
@@ -340,8 +340,7 @@ router.route('/save').post(async (req, res) => {
           attachments: [
             {
               filename: 'output.pdf',
-              path: pdfFilePath,
-              encoding: 'base64',
+              content: pdfContent,
             },
           ],
         };
@@ -361,7 +360,6 @@ router.route('/save').post(async (req, res) => {
     console.error(err);
     res.status(500).send('An error occurred');
   }
-  
 });
 
 
