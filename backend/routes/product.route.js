@@ -500,7 +500,7 @@ router.route('/deleteOldArchivedProduct').post(async (req, res) => {
   
         const InventoryId = Inventoryprod.map(invprod => invprod.inventory_id)
   
-        if(newArchiveDate >= currentDate) {
+        if(newArchiveDate <= currentDate) {
           await IssuedProduct.destroy({
             where: {
               inventory_id: InventoryId,
