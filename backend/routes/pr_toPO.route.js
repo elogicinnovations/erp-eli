@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op, fn, col} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 const fs = require('fs');
-const PDFDocument = require('pdfkit');
+const { Parser } = require('json2csv');
 const nodemailer = require('nodemailer');
 // const PR_PO = require('../db/models/pr_toPO.model')
 const { PR, PR_PO,
@@ -288,78 +288,59 @@ router.route('/fetchView_product').get(async (req, res) => {
 
   //save
 router.route('/save').post(async (req, res) => {
-  try {
-    const { id, productArrays } = req.body;
-  
-    // Loop through the productArrays
-    Object.entries(productArrays).forEach(([supplierCode, products]) => {
-      console.log(`Supplier ${supplierCode}:`);
-  
-      // Create a new PDF document
-      const doc = new PDFDocument();
-  
-      // Add content to the PDF
-      products.forEach((item, index) => {
-        console.log(`${item.code} => ${item.name}`);
-        console.log(`Supplier_email ${item.supp_email}:`);
-  
-        doc.fontSize(12).text(`Product: ${item.code} => ${item.name}`, 50, 50).moveDown();
-      });
-  
-      // Finalize the PDF document
-      doc.end();
-  
-      // Pipe the PDF content to a buffer
-      const pdfBuffer = [];
-      doc.on('data', (chunk) => {
-        pdfBuffer.push(chunk);
-      });
-  
-      doc.on('end', () => {
-        // Concatenate the chunks into a single buffer
-        const pdfContent = Buffer.concat(pdfBuffer);
-  
-        // Create a nodemailer transporter
-        const gmailEmail = "infintyerpslash@gmail.com";
-        const gmailPassword = "kaaokvxtaahuckvp";
-  
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: gmailEmail,
-            pass: gmailPassword,
-          },
-        });
-  
-        // Define email options
-        const mailOptions = {
-          from: gmailEmail,
-          to: products[0].supp_email, // Use the email of the first product's supplier
-          subject: 'PDF Attachment',
-          text: 'Check out the attached PDF!',
-          attachments: [
-            {
-              filename: 'output.pdf',
-              content: pdfContent,
-            },
-          ],
-        };
-  
-        // Send the email
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            return console.log('Error sending email:', error);
-          }
-          console.log('Email sent:', info.response);
-        });
-      });
+ 
+try {
+  const { id, productArrays } = req.body;
+
+  // Loop through the productArrays
+  Object.entries(productArrays).forEach(([supplierCode, products]) => {
+    console.log(`Supplier ${supplierCode}:`);
+
+    // Convert products to CSV
+    const fields = ['code', 'name'];
+    const json2csvParser = new Parser({ fields });
+    const csvContent = json2csvParser.parse(products);
+
+    // Create a nodemailer transporter
+    const gmailEmail = "infintyerpslash@gmail.com";
+    const gmailPassword = "kaaokvxtaahuckvp";
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: gmailEmail,
+        pass: gmailPassword,
+      },
     });
-  
-    res.status(200).json();
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('An error occurred');
-  }
+
+    // Define email options
+    const mailOptions = {
+      from: gmailEmail,
+      to: products[0].supp_email, // Use the email of the first product's supplier
+      subject: 'CSV Attachment',
+      text: 'Check out the attached CSV!',
+      attachments: [
+        {
+          filename: 'output.csv',
+          content: csvContent,
+        },
+      ],
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log('Error sending email:', error);
+      }
+      console.log('Email sent:', info.response);
+    });
+  });
+
+  res.status(200).json();
+} catch (err) {
+  console.error(err);
+  res.status(500).send('An error occurred');
+}
 });
 
 
