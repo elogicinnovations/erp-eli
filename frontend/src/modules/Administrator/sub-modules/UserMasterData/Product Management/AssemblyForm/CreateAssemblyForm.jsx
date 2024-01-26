@@ -722,8 +722,7 @@ function onDropImages(event) {
                             value: `${supp.supplier_code} - ${supp.supplier_name}`,
                             label: (
                               <div>
-                                Supplier Code: <strong>{supp.supplier_code}</strong> / Name:{" "}
-                                <strong>{supp.supplier_name}</strong>
+                                Supplier Code: <strong>{supp.supplier_code}</strong> / Name: <strong>{supp.supplier_name}</strong>
                               </div>
                             ),
                             codes: supp.supplier_code,

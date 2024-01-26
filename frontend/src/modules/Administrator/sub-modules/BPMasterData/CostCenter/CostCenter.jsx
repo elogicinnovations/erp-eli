@@ -406,7 +406,8 @@ function CostCenter({ authrztn }) {
                         {formatDatetime(data.updatedAt)}
                       </td>
                       <td>
-                        {isVertical[data.id] ? (
+                      {isVertical[data.id] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -414,7 +415,38 @@ function CostCenter({ authrztn }) {
                               toggleButtons(data.id);
                             }}
                           />
-                        ) : (
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.id) && (
+                              <div className="choices">
+                              { authrztn?.includes('Cost Centre - Edit') && (
+                              <Link
+                                to={`/initUpdateCostCenter/${data.id}`}
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}
+                                style={{ fontSize: "15px", fontWeight: "700" }}
+                                className="btn">
+                                Update
+                              </Link>
+                              )}
+
+                              { authrztn?.includes('Cost Centre - Delete') && (
+                                <button
+                                  onClick={() => {
+                                    handleDelete(data.id);
+                                    closeVisibleButtons();
+                                  }}
+                                  className="btn">
+                                  Delete
+                                </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircle
                             size={32}
                             className="dots-icon"
@@ -422,39 +454,37 @@ function CostCenter({ authrztn }) {
                               toggleButtons(data.id);
                             }}
                           />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.id) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-                                { authrztn?.includes('Cost Centre - Edit') && (
-                                <Link
-                                  to={`/initUpdateCostCenter/${data.id}`}
-                                  onClick={() => {
-                                    handleModalToggle(data);
-                                    closeVisibleButtons();
-                                  }}
-                                  style={{ fontSize: "12px" }}
-                                  className="btn">
-                                  Update
-                                </Link>
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.id) && (
+                              <div className="choices">
+                                {authrztn?.includes("Master List - Edit") && (
+                                  <button
+                                    className="btn"
+                                    onClick={() => {
+                                      handleModalToggle(data);
+                                      closeVisibleButtons();
+                                    }}
+                                  >
+                                    Update
+                                  </button>
                                 )}
 
-                                { authrztn?.includes('Cost Centre - Delete') && (
+                                {authrztn?.includes("Master List - Delete") && (
                                   <button
+                                    className="btn"
                                     onClick={() => {
                                       handleDelete(data.id);
                                       closeVisibleButtons();
                                     }}
-                                    className="btn">
+                                  >
                                     Delete
                                   </button>
                                 )}
-
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      )}
                       </td>
                     </tr>
                     ): null

@@ -42,6 +42,7 @@ function MasterList({ authrztn }) {
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
 
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -247,6 +248,10 @@ function MasterList({ authrztn }) {
         [name]: value,
       }));
     }
+  };
+
+  const toggleCurrentPasswordVisibility = () => {
+    setShowCurrentPassword(!showCurrentPassword);
   };
 
   const togglePasswordVisibility = () => {
@@ -663,6 +668,12 @@ function MasterList({ authrztn }) {
 
   // console.log("ln 128: ", authorization); // []
 
+  const [changePass, setChangePass] = useState(false);
+
+  const handleToggleChangePass = () => {
+    setChangePass(!changePass);
+  };
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -735,7 +746,8 @@ function MasterList({ authrztn }) {
                       <td>{data.col_email}</td>
                       <td>{data.col_status}</td>
                       <td>
-                        {isVertical[data.col_id] ? (
+                      {isVertical[data.col_id] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -743,7 +755,38 @@ function MasterList({ authrztn }) {
                               toggleButtons(data.col_id);
                             }}
                           />
-                        ) : (
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.col_id) && (
+                              <div className="choices">
+                                {authrztn?.includes("Master List - Edit") && (
+                                  <button
+                                    className="btn"
+                                    onClick={() => {
+                                      handleModalToggle(data);
+                                      closeVisibleButtons();
+                                    }}
+                                  >
+                                    Update
+                                  </button>
+                                )}
+
+                                {authrztn?.includes("Master List - Delete") && (
+                                  <button
+                                    className="btn"
+                                    onClick={() => {
+                                      handleDelete(data.col_id);
+                                      closeVisibleButtons();
+                                    }}
+                                  >
+                                    Delete
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircle
                             size={32}
                             className="dots-icon"
@@ -751,41 +794,38 @@ function MasterList({ authrztn }) {
                               toggleButtons(data.col_id);
                             }}
                           />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.col_id) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-                              {authrztn?.includes("Master List - Edit") && (
-                                <button
-                                  className="btn"
-                                  onClick={() => {
-                                    handleModalToggle(data);
-                                    closeVisibleButtons();
-                                  }}>
-                                  Update
-                                </button>
-                              )}
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.col_id) && (
+                              <div className="choices">
+                                {authrztn?.includes("Master List - Edit") && (
+                                  <button
+                                    className="btn"
+                                    onClick={() => {
+                                      handleModalToggle(data);
+                                      closeVisibleButtons();
+                                    }}
+                                  >
+                                    Update
+                                  </button>
+                                )}
 
-                              {authrztn?.includes("Master List - Delete") && (
-                                <button
-                                  className="btn"
-                                  onClick={() => {
-                                    handleDelete(data.col_id);
-                                    closeVisibleButtons();
-                                  }}>
-                                  Delete
-                                </button>
-                              )}
-                            </div>
-                          )}
+                                {authrztn?.includes("Master List - Delete") && (
+                                  <button
+                                    className="btn"
+                                    onClick={() => {
+                                      handleDelete(data.col_id);
+                                      closeVisibleButtons();
+                                    }}
+                                  >
+                                    Delete
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      )}
                       </td>
-                      {/* <td>
-                                  <button className='btn' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
-                                  <button className='btn' onClick={() => handleDelete(data.col_id)}><Trash size={32} color="#e60000" /></button>
-                                </td> */}
                     </tr>
                   ))}
                 </tbody>
@@ -1060,13 +1100,14 @@ function MasterList({ authrztn }) {
 
             <div className="form-group d-flex flex-row ">
               <React.Fragment>
+                <label className="userstatus">User Status</label>
                 <input
                   type="checkbox"
                   name="ustatus"
+                  className="toggle-switch" 
                   onChange={handleUpdateFormChange}
-                  defaultChecked={updateFormData.ustatus} // Set defaultChecked based on ustatus
+                  defaultChecked={updateFormData.ustatus}
                 />
-                <label className="userstatus">User Status</label>
               </React.Fragment>
             </div>
           </Modal.Header>
@@ -1214,19 +1255,55 @@ function MasterList({ authrztn }) {
               </div>
             </Form>
 
+          {!changePass && (
+            <div className="change-pass">
+              <button className="change-password" type="button" onClick={handleToggleChangePass}>
+                Change Password
+              </button>
+            </div>
+          )}
+
+          {changePass && (
             <Form>
               <div className="row">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
-                      Password:{" "}
+                      Current Password:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={updateFormData.uapass}
+                      disabled
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                    <div className="show">
+                      {showCurrentPassword ? (
+                        <FaEyeSlash
+                          className="eye"
+                          onClick={toggleCurrentPasswordVisibility}
+                        />
+                      ) : (
+                        <FaEye
+                          className="eye"
+                          onClick={toggleCurrentPasswordVisibility}
+                        />
+                      )}
+                    </div>
+                  </Form.Group>
+                </div>
+
+                <div className="col-6"></div>
+
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      New Password:{" "}
                     </Form.Label>
                     <Form.Control
                       type={showPassword ? "text" : "password"}
-                      value={updateFormData.uapass}
                       onChange={handleUpdateFormChange}
                       required
-                      name="uapass"
                       placeholder="Enter your password"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
@@ -1252,7 +1329,6 @@ function MasterList({ authrztn }) {
                     </Form.Label>
                     <Form.Control
                       type={showConfirmPassword ? "text" : "password"}
-                      value={updateFormData.uapass}
                       onChange={handleUpdateFormChange}
                       required
                       name="uapass"
@@ -1276,6 +1352,7 @@ function MasterList({ authrztn }) {
                 </div>
               </div>
             </Form>
+          )}
           </Modal.Body>
           <Modal.Footer>
             <Button

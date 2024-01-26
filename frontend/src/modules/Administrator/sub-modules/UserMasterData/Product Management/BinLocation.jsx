@@ -496,7 +496,8 @@ function BinLocation({ authrztn }) {
                       <td>{formatDate(data.createdAt)}</td>
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
-                        {isVertical[data.bin_id] ? (
+                      {isVertical[data.bin_id] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -504,7 +505,36 @@ function BinLocation({ authrztn }) {
                               toggleButtons(data.bin_id);
                             }}
                           />
-                        ) : (
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.bin_id) && (
+                              <div className="choices">
+                              { authrztn?.includes('Bin Location - Edit') && (
+                             <button
+                               className="btn"
+                               onClick={() => {
+                                 handleModalToggle(data);
+                                 closeVisibleButtons();
+                               }}>
+                               Update
+                             </button>
+                              )}
+
+                             { authrztn?.includes('Bin Location - Delete') && (
+                             <button
+                               className="btn"
+                               onClick={() => {
+                                 handleDelete(data.bin_id);
+                                 closeVisibleButtons();
+                               }}>
+                               Delete
+                             </button>
+                             )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircle
                             size={32}
                             className="dots-icon"
@@ -512,57 +542,36 @@ function BinLocation({ authrztn }) {
                               toggleButtons(data.bin_id);
                             }}
                           />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.bin_id) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-
-                               { authrztn?.includes('Bin Location - Edit') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleModalToggle(data);
-                                  closeVisibleButtons();
-                                }}>
-                                Update
-                              </button>
-                               )}
-
-                              { authrztn?.includes('Bin Location - Delete') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleDelete(data.bin_id);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.bin_id) && (
+                              <div className="choices">
+                              { authrztn?.includes('Bin Location - Edit') && (
+                             <button
+                               className="btn"
+                               onClick={() => {
+                                 handleModalToggle(data);
+                                 closeVisibleButtons();
+                               }}>
+                               Update
+                             </button>
                               )}
 
-                            </div>
-                          )}
+                             { authrztn?.includes('Bin Location - Delete') && (
+                             <button
+                               className="btn"
+                               onClick={() => {
+                                 handleDelete(data.bin_id);
+                                 closeVisibleButtons();
+                               }}>
+                               Delete
+                             </button>
+                             )}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div
-                          className="choices"
-                          style={{
-                            position: "fixed",
-                            top: dropdownPosition.top - 30 + "px",
-                            left: dropdownPosition.left - 100 + "px",
-                            opacity: showDropdown ? 1 : 0,
-                            visibility: showDropdown ? "visible" : "hidden",
-                            transition:
-                              "opacity 0.3s ease-in-out, visibility 0.3s ease-in-out",
-                            boxShadow: "0 3px 5px rgba(0, 0, 0, 0.2)",
-                          }}>
-                          {/* Your dropdown content here */}
-                        </div>
+                      )}
                       </td>
-                      {/* <td>
-                                          <button className='btn' onClick={() => handleModalToggle(data)}><NotePencil size={32} /></button>
-                                          <button className='btn' onClick={() => handleDelete(data.bin_id)}><Trash size={32} color="#e60000" /></button>
-                                          </td> */}
                     </tr>
                   ))}
                 </tbody>

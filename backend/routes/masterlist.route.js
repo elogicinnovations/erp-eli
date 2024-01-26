@@ -271,7 +271,7 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
       res.status(202).send("Exist");
     } else {
       // Convert boolean status to "Active" or "Inactive"
-      const status = req.body.col_status ? "Active" : "Inactive";
+      const status = req.body.cstatus ? "Active" : "Inactive";
 
       // Update the record in the table
       const [affectedRows] = await MasterList.update(
@@ -283,7 +283,7 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
           col_phone: req.body.col_phone,
           col_address: req.body.col_address,
           col_username: req.body.col_username,
-          col_status: status,
+          col_status: req.body.col_status,
         },
         {
           where: { col_id: updatemasterID },

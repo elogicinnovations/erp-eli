@@ -275,111 +275,78 @@ function UserRole() {
                       <td>{formatDate(data?.createdAt)}</td>
                       <td>{formatDate(data?.updatedAt)}</td>
                       <td>
-                        {/* Render the icon based on the state */}
-                        {/* Render the icon based on the state */}
-                        {isVertical[data?.col_id] ? (
+                      {isVertical[data.col_id] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
-                              toggleButtons(data?.col_id);
-                            }}
-                            style={{
-                              transition:
-                                "transform 0.3s ease-in-out, color 0.3s ease-in-out",
+                              toggleButtons(data.col_id);
                             }}
                           />
-                        ) : (
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.col_id) && (
+                              <div className="choices">
+                                  <button>
+                                  <Link
+                                    to={`/editRole/${data.col_id}`}
+                                    style={{
+                                      color: "black",
+                                      textDecoration: "none",
+                                    }}>
+                                    Update
+                                  </Link>
+                                  </button>
+
+                                  <button
+                                    className="btn"
+                                    onClick={() => {
+                                      handleDelete(data.col_id);
+                                      closeVisibleButtons();
+                                    }}>
+                                    Delete
+                                  </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircle
                             size={32}
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.col_id);
                             }}
-                            style={{
-                              transition:
-                                "transform 0.3s ease-in-out, color 0.3s ease-in-out",
-                            }}
                           />
-                        )}
-
-                        <div>
-                          {setButtonVisibles(data.col_id) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-                              <button>
-                                <Link
-                                  to={`/editRole/${data.col_id}`}
-                                  style={{
-                                    color: "black",
-                                    textDecoration: "none",
-                                  }}>
-                                  Update
-                                </Link>
-                              </button>
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleDelete(data.col_id);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                        {/* <DotsThreeCircle
-                          size={32}
-                          className="dots-icon"
-                          style={{
-                            cursor: "pointer",
-                            transform: `rotate(${
-                              rotatedIcons[i] ? "90deg" : "0deg"
-                            })`,
-                            color: rotatedIcons[i] ? "#666" : "#000",
-                            transition:
-                              "transform 0.3s ease-in-out, color 0.3s ease-in-out",
-                          }}
-                          onClick={(event) => toggleDropdown(event, i)}
-                        />
-                        <div
-                          className="choices"
-                          style={{
-                            position: "fixed",
-                            top: dropdownPosition.top - 30 + "px",
-                            left: dropdownPosition.left - 100 + "px",
-                            opacity: showDropdown ? 1 : 0,
-                            visibility: showDropdown ? "visible" : "hidden",
-                            transition:
-                              "opacity 0.3s ease-in-out, visibility 0.3s ease-in-out",
-                            boxShadow: "0 3px 5px rgba(0, 0, 0, 0.2)",
-                          }}>
-                          <button>
-                            <Link
-                              to={`/editRole/${data.col_id}`}
-                              style={{
-                                color: "black",
-                                textDecoration: "none",
-                              }}>
-                              Update
-                            </Link>
-                          </button>
-                          <button
-                            className="btn"
-                            onClick={() => {
-                              handleDelete(data.col_id);
-                            }}>
-                            Delete
-                          </button>
-                        </div> */}
-                      </td>
-                      {/* <td>
-                                  <button className='btn'>
-                                    <Link to={`/editRole/${data.col_id}`} style={{ color: "black" }}><NotePencil size={25} /></Link>
+                          <div className="float" style={{ position: 'absolute', left: '-50px', top: '0' }}>
+                            {setButtonVisibles(data.col_id) && (
+                              <div className="choices">
+                                  <button>
+                                  <Link
+                                    to={`/editRole/${data.col_id}`}
+                                    style={{
+                                      color: "black",
+                                      textDecoration: "none",
+                                    }}>
+                                    Update
+                                  </Link>
                                   </button>
-                                  <button className='btn' onClick={() => handleDelete(data.col_id)}><Trash size={25} color="#e60000" /></button>
-                                </td> */}
+
+                                  <button
+                                  className="btn"
+                                  onClick={() => {
+                                    handleDelete(data.col_id);
+                                    closeVisibleButtons();
+                                  }}>
+                                    Delete
+                                  </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
