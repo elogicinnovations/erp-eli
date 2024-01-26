@@ -471,7 +471,8 @@ function Productvariants({ authrztn }) {
                       <td>{formatDate(data.createdAt)}</td>
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
-                        {isVertical[data.manufacturer_code] ? (
+                      {isVertical[data.manufacturer_code] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -479,22 +480,9 @@ function Productvariants({ authrztn }) {
                               toggleButtons(data.manufacturer_code);
                             }}
                           />
-                        ) : (
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.manufacturer_code);
-                            }}
-                          />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.manufacturer_code) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-
-
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.manufacturer_code) && (
+                              <div className="choices">
                               { authrztn.includes('Product Manufacturer - Edit') && (
                               <button
                                 className="btn"
@@ -506,7 +494,7 @@ function Productvariants({ authrztn }) {
                               </button>
                               )}
 
-                              {/* { authrztn.includes('Product Manufacturer - Delete') && ( */}
+                              { authrztn.includes('Product Manufacturer - Delete') && (
                               <button
                                 className="btn"
                                 onClick={() => {
@@ -515,11 +503,49 @@ function Productvariants({ authrztn }) {
                                 }}>
                                 Delete
                               </button>
-                              {/* )} */}
-
-                            </div>
-                          )}
+                              )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <DotsThreeCircle
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.manufacturer_code);
+                            }}
+                          />
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.manufacturer_code) && (
+                              <div className="choices">
+                              { authrztn.includes('Product Manufacturer - Edit') && (
+                              <button
+                                className="btn"
+                                onClick={() => {
+                                  handleModalToggle(data);
+                                  closeVisibleButtons();
+                                }}>
+                                Update
+                              </button>
+                              )}
+
+                              { authrztn.includes('Product Manufacturer - Delete') && (
+                              <button
+                                className="btn"
+                                onClick={() => {
+                                  handleDelete(data.manufacturer_code);
+                                  closeVisibleButtons();
+                                }}>
+                                Delete
+                              </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       </td>
                       {/* <td>
                                   <button className="btn" onClick={() => handleModalToggle(data)}>

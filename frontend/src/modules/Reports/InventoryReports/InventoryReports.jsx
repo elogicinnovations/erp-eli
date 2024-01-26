@@ -212,7 +212,7 @@ const convertTableToCSV = () => {
                           </div>
                         </div>
                         <div className="date-filter">
-                          <div style={{width: '50%', zIndex: '3', margin:'0 0 10px 10px'}}>
+                          <div className='date-pick'>
                               <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={startDate}
@@ -221,10 +221,10 @@ const convertTableToCSV = () => {
                                   placeholderText="Start Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', position: 'relative', left: '220px', bottom: '30px'}}/>
                           </div>
-                          <div style={{width: '50%', zIndex: '3'}}>
+                          <div className='date-pick'>
                               <Form.Group controlId="exampleForm.ControlInput2" className='date'>
                                 <DatePicker
                                   selected={endDate}
@@ -233,8 +233,8 @@ const convertTableToCSV = () => {
                                   placeholderText="End Date"
                                   className="form-control"
                                 />
-                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', right:'25px'}}/>
                               </Form.Group>
+                                <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', position: 'relative', left: '220px', bottom: '30px'}}/>
                           </div>
                         </div>
                         </div>

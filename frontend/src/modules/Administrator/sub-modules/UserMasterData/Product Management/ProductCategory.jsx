@@ -451,7 +451,7 @@ const reloadTable = () => {
   };
 
   const closeVisibleButtons = () => {
-    setButtonVisibles({});
+    setVisibleButtons({});
     setIsVertical({});
   };
   const setButtonVisibles = (userId) => {
@@ -549,7 +549,8 @@ const reloadTable = () => {
                       <td>{formatDate(data.createdAt)}</td>
                       <td>{formatDate(data.updatedAt)}</td>
                       <td>
-                        {isVertical[data.category_code] ? (
+                      {isVertical[data.category_code] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -557,7 +558,36 @@ const reloadTable = () => {
                               toggleButtons(data.category_code);
                             }}
                           />
-                        ) : (
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.category_code) && (
+                              <div className="choices">
+                                { authrztn?.includes('Product Categories - Edit') && (
+                                <button
+                                  className="btn"
+                                  onClick={() => {
+                                    handleModalToggle(data);
+                                    closeVisibleButtons();
+                                  }}>
+                                  Update
+                                </button>
+                                )}
+
+                                { authrztn?.includes('Product Categories - Delete') && (
+                                <button
+                                  className="btn"
+                                  onClick={() => {
+                                    handleDelete(data.category_code);
+                                    closeVisibleButtons();
+                                  }}>
+                                  Delete
+                                </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircle
                             size={32}
                             className="dots-icon"
@@ -565,17 +595,13 @@ const reloadTable = () => {
                               toggleButtons(data.category_code);
                             }}
                           />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.category_code) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.category_code) && (
+                              <div className="choices">
 
                               { authrztn?.includes('Product Categories - Edit') && (
                               <button
                                 className="btn"
-                                type="button"
                                 onClick={() => {
                                   handleModalToggle(data);
                                   closeVisibleButtons();
@@ -584,21 +610,21 @@ const reloadTable = () => {
                               </button>
                               )}
 
-                              { authrztn?.includes('Product Categories - Delete') && (
-                              <button
-                                className="btn"
-                                type="button"
-                                onClick={() => {
-                                  handleDelete(data.category_code);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
+                                { authrztn?.includes('Product Categories - Delete') && (
+                                <button
+                                  className="btn"
+                                  onClick={() => {
+                                    handleDelete(data.category_code);
+                                    closeVisibleButtons();
+                                  }}>
+                                  Delete
+                                </button>
+                              )}
+                              </div>
                             )}
-
-                            </div>
-                          )}
+                          </div>
                         </div>
+                      )}
                       </td>
                     </tr>
                   ))}

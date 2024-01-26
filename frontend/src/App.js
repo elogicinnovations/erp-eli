@@ -96,9 +96,13 @@ function App() {
 
   const [showSidebar, setShowSidebar] = useState(false);
 
-const handleToggleSidebar = () => {
-  setShowSidebar(!showSidebar);
-};
+  const handleToggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
+  const handleCloseSidebar = () => {
+    setShowSidebar(false);
+  };
 
   return (
     <Router>
@@ -126,9 +130,6 @@ const handleToggleSidebar = () => {
               </button>
             </div>
           )}
-        {/* <div className="sidebar-button">
-            <button onClick={handleToggleSidebar}><CaretCircleLeft size={32} weight="bold" /></button>
-          </div> */}
           <Roles>
             {
               (authrztn) => (
@@ -148,7 +149,7 @@ const handleToggleSidebar = () => {
         <div className="mid-of-main-containers">
         </div>
 
-        <div className="right-of-main-container">
+        <div className="right-of-main-container" onClick={handleCloseSidebar}>
           <Header/>
 
         <Routes>
