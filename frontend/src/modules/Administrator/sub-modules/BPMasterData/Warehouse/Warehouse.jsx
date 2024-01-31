@@ -34,6 +34,20 @@ const handleClose = () => {
 
 const handleShow = () => setShowModal(true);
 
+// const addWarehouse = () => {
+//   axios
+//   .post(`${BASE_URL}/warehouses/automaticAdd`)
+//   .then((res) =>{
+//       if (res.status === 200) {
+//           console.log("Warehouse successfully inserted");
+//       } else if (res.status === 201) {
+//           console.log("Warehouse already existing");
+//       } else {
+//           console.log("There seems to be an error in warehouse");
+//       }
+//   })
+// };
+
 const reloadTable = () => {
     axios
     .get(BASE_URL + "/warehouses/fetchtableWarehouses")
@@ -43,6 +57,7 @@ const reloadTable = () => {
 
   useEffect(() => {
     reloadTable();
+    // addWarehouse();
   }, []);
 
   function formatDatetime(datetime) {
@@ -598,7 +613,7 @@ const handleDelete = async (table_id) => {
                     style={{ fontSize: "20px",
                     fontFamily: 'Poppins, Source Sans Pro',
                     margin: "0px 5px"}}
-                    type="submit">Add</Button>
+                    type="submit">Save</Button>
                 <Button 
                     variant="secondary" 
                     onClick={handleClose}

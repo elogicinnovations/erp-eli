@@ -135,7 +135,7 @@ function ProductList({ authrztn }) {
     return () => clearTimeout(delay);
   };
   useEffect(() => {
-    // deleteProduct();
+    deleteProduct();
     reloadTable();
   }, []);
 

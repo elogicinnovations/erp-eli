@@ -6,7 +6,8 @@ const {SubPart,
       Inventory_Subpart, 
       Subpart_image,
       Subpart_Price_History,
-      IssuedSubpart} = require('../db/models/associations')
+      IssuedSubpart,
+      Warehouses} = require('../db/models/associations')
 const session = require('express-session')
 const multer = require('multer');
 const upload = multer();
@@ -116,6 +117,15 @@ router.route('/fetchTable').get(async (req, res) => {
               quantity: 0,
               price: supplierPrices
             });
+
+            // const findwarehouse = await Warehouses.findOne({
+            //   where: {
+            //     warehouse_name: "Main",
+            //     location: "Agusan",
+            //   },
+            // });
+
+            // const warehouseId = findwarehouse.id;
           }
 
           if(images.length > 0){

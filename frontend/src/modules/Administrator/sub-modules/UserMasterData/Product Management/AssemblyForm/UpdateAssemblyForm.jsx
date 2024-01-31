@@ -1019,7 +1019,7 @@ const update = async (e) => {
                                 onClick={update}
                                 disabled={isSaveButtonDisabled}
                                 style={{ fontSize: "20px", margin: "0px 5px" }}>
-                                Save
+                                Update
                               </Button>
                             )}
                             {!isReadOnly && (

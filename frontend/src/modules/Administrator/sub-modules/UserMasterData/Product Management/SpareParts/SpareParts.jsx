@@ -125,8 +125,8 @@ function SpareParts({ authrztn }) {
     return () => clearTimeout(delay);
   };
   useEffect(() => {
-    reloadTable();
     deleteSpare();
+    reloadTable();
   }, []);
 
   //Date format sa main table

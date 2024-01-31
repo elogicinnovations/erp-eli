@@ -117,5 +117,64 @@ router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
   }
 });
 
+// router.route('/automaticAdd').post(async (req, res) => {
+//   try {
+//     const warehouseName = 'Main';
+//     const location = 'Agusan';
+
+//     // Check if warehouse with given name and location already exists
+//     const existingWarehouse = await Warehouses.findOne({
+//       where: {
+//         warehouse_name: warehouseName,
+//         location: location
+//       }
+//     });
+
+//     if (existingWarehouse) {
+//       res.status(200).json({ message: 'Warehouse already exists' });
+//     } else {
+//       // Warehouse does not exist, create a new one
+//       const newWarehouse = await Warehouses.create({
+//         warehouse_name: warehouseName,
+//         location: location,
+//         details: ""
+//       });
+
+//       res.status(201).json({ message: 'New warehouse created', warehouse: newWarehouse });
+//     }
+//   } catch (error) {
+//     console.error('Error: Problem on inserting warehouse', error);
+//     res.status(500).json({ message: 'Error warehouse inserting' });
+//   }
+// });
+
+// router.route('/automaticAdd').post(async (req, res) => {
+//   try {
+    
+//     const existingWarehouses = await Warehouses.findAll({
+//       where: {
+//         warehouse_name: "Main",
+//         location: "Agusan",
+//       },
+//     });
+
+//     if(existingWarehouses && existingWarehouses.length > 0){
+//       return res.status(201).json({message: "Warehouse already exists"});
+//     } else {
+//         await Warehouses.create({
+//         warehouse_name: "Main",
+//         location: "Agusan",
+//         details: "",
+//       });
+//       console.log("HAHAHAHA")
+//     }
+
+//     res.status(200).json({message: "Warehouse successfully inserted"});
+//   } catch (error) {
+//     console.error('Error: Problem on inserting warehouse');
+//     res.status(500).json({ message: 'Error warehouse inserting' });
+//   }
+// });
+
 
 module.exports = router;

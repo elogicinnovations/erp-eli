@@ -633,7 +633,7 @@ return () => clearTimeout(delay);
                 style={{ fontSize: "20px",
                     fontFamily: 'Poppins, Source Sans Pro',
                     margin: "0px 5px"}}>
-                Add
+                Save
               </Button>
               <Button
                 variant="secondary"
@@ -754,24 +754,6 @@ return () => clearTimeout(delay);
         
       </Modal>
 
-      {/* <Modal show={showuploadModal} onHide={handlecloseupload} backdrop="static" keyboard={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Import CSV File</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="formFile" className="mb-3">
-          <Form.Control type="file" accept=".csv" onChange={handleFileChange} required />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-        <Button variant="outline-warning" onClick={handleImportClick}>
-            Import
-          </Button>
-          <Button variant="outline-secondary" onClick={handlecloseupload}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
     </div>
   );
 }

@@ -125,7 +125,7 @@ function AssemblyForm({ authrztn }) {
     return () => clearTimeout(delay);
   };
   useEffect(() => {
-    // deleteAssembly();
+    deleteAssembly();
     reloadTable();
   }, []);
 
