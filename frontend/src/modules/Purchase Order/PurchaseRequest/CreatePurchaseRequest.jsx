@@ -43,13 +43,14 @@ function CreatePurchaseRequest() {
     axios
       .get(BASE_URL + "/PR/lastPRNumber")
       .then((res) => {
-        const prNumber = res.data !== null ? res.data : 0;
+        const code = res.data !== null ? res.data.toString().padStart(8, "0") : "00000001";
 
         // Increment the value by 1
-        setPrNum(prNumber + 1);
+        setPrNum(code);
       })
       .catch((err) => console.log(err));
   }, []);
+
 
   useEffect(() => {
     axios

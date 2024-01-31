@@ -542,7 +542,8 @@ function Sidebar({ authrztn }) {
                   className={`adminsub-menu ${
                     location.pathname.startsWith("/purchaseRequest") ||
                     location.pathname.startsWith("/purchaseRequestPreview") ||
-                    location.pathname.startsWith("/createPurchaseRequest")
+                    location.pathname.startsWith("/createPurchaseRequest") ||
+                    location.pathname.startsWith("/forCanvass")
                       ? "active"
                       : ""
                   }`}>
@@ -559,8 +560,8 @@ function Sidebar({ authrztn }) {
                 <ListItem
                   button
                   className={`adminsub-menu ${
-                    location.pathname.startsWith("/purchaseOrderList") ||
-                    location.pathname.startsWith("/purchaseOrderListPreview")
+                    location.pathname.startsWith("/purchaseOrderList") 
+                    
                       ? "active"
                       : ""
                   }`}>

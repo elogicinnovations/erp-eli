@@ -12,9 +12,13 @@ const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  po_id:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   quantity: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   product_tag_supplier_ID: {
     type: DataTypes.INTEGER,
@@ -26,7 +30,9 @@ const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
   },
   quality_assurance: {
     type: DataTypes.STRING,
+    allowNull: true,
   }
+  
 });
 
 module.exports = PR_PO;

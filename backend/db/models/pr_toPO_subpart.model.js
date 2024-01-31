@@ -12,9 +12,13 @@ const PR_PO_subpart = sequelize.define('purchase_req_canvassed_subpart', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  po_id:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   quantity: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   subpart_suppliers_ID: {
     type: DataTypes.INTEGER,
@@ -26,6 +30,7 @@ const PR_PO_subpart = sequelize.define('purchase_req_canvassed_subpart', {
   },
   quality_assurance: {
     type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

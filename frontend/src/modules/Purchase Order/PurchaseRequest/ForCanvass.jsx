@@ -192,12 +192,13 @@ const [selected_subpart, setSelected_subpart] = useState({
   // const handleShow = () => setShowModal(true);
 
   const [productArrays, setProductArrays] = useState({});
+  const [isArray, setIsArray] = useState(false);
 
 // Function to handle adding a product to the array
-const handleAddToTable = (product, type, code, name, supp_email) => {
+const handleAddToTable = (product, type, code, name, supp_email, supplier_id) => {
   setProductArrays((prevArrays) => {
     const supplierCode = product.supplier.supplier_code;
-
+    const supplierName = product.supplier.supplier_name;
     // Create a new array for the supplier if it doesn't exist
     const newArray = (prevArrays[supplierCode] || []).slice(); // Make a shallow copy of the array
 
@@ -207,13 +208,15 @@ const handleAddToTable = (product, type, code, name, supp_email) => {
     );
 
     if (!isProductAlreadyAdded) {
-      // Add the product to the array
+      setIsArray(true)
       newArray.push({
         type: type,
         product: product,
         code: code,
         name: name,
-        supp_email: supp_email
+        supp_email: supp_email,
+        suppTAG_id: supplier_id,
+        supplierName: supplierName
       });
 
       // Sort the array based on some criteria (e.g., product code)
@@ -271,7 +274,7 @@ const handleCanvass = (product_id) => {
 };
 const handleAddToTablePO = (productId, code, name, supp_email) => {
   const product = suppProducts.find((data) => data.id === productId);
-  handleAddToTable(product, 'product', code, name, supp_email);
+  handleAddToTable(product, 'product', code, name, supp_email, productId);
 };
 
 
@@ -301,7 +304,7 @@ const handleCanvassAssembly = (id) => {
 
 const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
   const assembly = suppAssembly.find((data) => data.id === assemblyId);
-  handleAddToTable(assembly, 'assembly', code, name, supp_email);
+  handleAddToTable(assembly, 'assembly', code, name, supp_email, assemblyId);
 };
   //------------------------------------------------Spare rendering data ------------------------------------------------//
 
@@ -326,7 +329,7 @@ const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
   
   const handleAddToTablePO_Spare = (spareId, code, name, supp_email) => {
     const spare = suppSpare.find((data) => data.id === spareId);
-    handleAddToTable(spare, 'spare', code, name, supp_email);
+    handleAddToTable(spare, 'spare', code, name, supp_email, spareId);
   };
 
 //------------------------------------------------SubPart rendering data ------------------------------------------------//
@@ -354,7 +357,7 @@ const handleCanvassSubpart = (sub_partID) => {
 };
 const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
   const subpart = suppSubpart.find((data) => data.id === subpartId);
-  handleAddToTable(subpart, 'subpart', code, name, supp_email);
+  handleAddToTable(subpart, 'subpart', code, name, supp_email, subpartId);
 };
 
 
@@ -440,15 +443,15 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
       .then((res) => {
         console.log(res);
         if (res.status === 200) {
-          // swal({
-          //   title: 'The Purchase sucessfully request!',
-          //   text: 'The Purchase Request has been added successfully.',
-          //   icon: 'success',
-          //   button: 'OK'
-          // }).then(() => {
-          //   navigate('/purchaseOrderList')
+          swal({
+            title: 'The Purchase sucessfully request!',
+            text: 'The Purchase Request has been added successfully.',
+            icon: 'success',
+            button: 'OK'
+          }).then(() => {
+            navigate('/purchaseRequest')
             
-          // });
+          });
         } else {
           swal({
             icon: 'error',
@@ -480,7 +483,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Purchase Order List Preview
+                        Purchase Order List Preview
                     </h1>
                 </div>
                 </Col>
@@ -503,7 +506,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                           <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PO Cont. #: </Form.Label>
+                                <Form.Label style={{ fontSize: '20px' }}>PR #: </Form.Label>
                                 <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
@@ -621,46 +624,60 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                 </table>
                             </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
-                          Canvassing Supplier
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '81%',
-                              left: '13.5rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-                        <div className="table-containss">
-                            <div className="main-of-all-tables">
-                                {Object.entries(productArrays).map(([supplierCode, products]) => (
-                                  <div className='border border-warning m-3 mb-4 p-3' key={supplierCode}>
-                                    <h3>Supplier {supplierCode}</h3>
-                                    <ul>
-                                      {products.map((item, index) => (
-                                        <li className='fs-5 fw-bold' key={index}>{item.code + "=>" + item.name} </li>
-                                        
-                                      ))}
-                                    </ul>
-                                  </div>
-                                ))}
+                        {isArray && (
+                          <>   
+                            <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                              Canvassing Supplier
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  height: '0.5px',
+                                  width: '-webkit-fill-available',
+                                  background: '#FFA500',
+                                  top: '81%',
+                                  left: '13.5rem',
+                                  transform: 'translateY(-50%)',
+                                }}
+                              ></span>
                             </div>
-                        </div>
-
-
+                            <div className="table-containss">
+                                <div className="main-of-all-tables">
+                                    {Object.entries(productArrays).map(([supplierCode, products]) => (
+                                      <div className='border border-warning m-3 mb-4 p-3' key={supplierCode}>
+                                        {products.length > 0 && (  
+                                          <>                                                                                          
+                                            <h3>{`Supplier : ${supplierCode} - ${products[0].supplierName}`}</h3>
+                                          </>
+                                        )}
+                                        <ul>
+                                          {products.map((item, index) => (
+                                            <li className='fs-5 fw-bold' key={index}>{item.code + "=>" + item.name} </li>
+                                            
+                                          ))}
+                                        </ul>
+                                      </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                      )}
 
 
                         <div className='save-cancel'>
-                        <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                        <Button type='button'  
+                        <Button 
+                              type='submit' 
+                              className='btn btn-warning' 
+                              size="md" 
+                              style={{ fontSize: '20px', margin: '0px 5px' }}
+                        >
+                          Send Email
+                        </Button>
+                        {/* <Button type='button'  
                           className='btn btn-danger' 
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
                           onClick={() => handleCancel(status, id)}
-                          >Cancel Purchase Order</Button>                        
+                          >Cancel Purchase Order
+                        </Button>                         */}
                         </div>
                 </Form>
                       <Modal show={showModal} onHide={handleClose} size="xl">
@@ -690,12 +707,12 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                                     <td>{data.product.product_name}</td>
                                                                     <td>{data.product.category.category_name}</td>
                                                                     <td>{data.product.product_unitMeasurement}</td>
-                                                                    <td>{data.supplier.supplier_code}</td>
+                                                                    <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
                                                                     <td>{data.product_price}</td>
                                                                     <td>                                                
                                                                       <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email)}>
-                                                                        <PlusCircle size={32}/>
+                                                                        <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
                                                                 </tr>
@@ -744,12 +761,12 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                                     <td>{data.assembly.assembly_name}</td>
                                                                     <td>--</td>
                                                                     <td>--</td>
-                                                                    <td>{data.supplier.supplier_code}</td>
+                                                                    <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
                                                                       <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email)}>
-                                                                        <PlusCircle size={32}/>
+                                                                        <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
                                                                 </tr>
@@ -797,12 +814,12 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                                     <td>{data.sparePart.spareParts_name}</td>
                                                                     <td>--</td>
                                                                     <td>--</td>
-                                                                    <td>{data.supplier.supplier_code}</td>
+                                                                    <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
                                                                       <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email)}>
-                                                                        <PlusCircle size={32}/>
+                                                                        <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
                                                                 </tr>
@@ -851,12 +868,12 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                             <td>{data.subPart.subPart_name}</td>
                                                             <td>--</td>
                                                             <td>{data.subPart.subPart_unitMeasurement}</td>
-                                                            <td>{data.supplier.supplier_code}</td>
+                                                            <td>{data.supplier.supplier_name}</td>
                                                             <td>{data.supplier.supplier_number}</td>
                                                             <td>{data.supplier_price}</td>
                                                             <td>                                                
                                                               <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email)}>
-                                                                <PlusCircle size={32}/>
+                                                                <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                               </button>
                                                             </td>
                                                         </tr>

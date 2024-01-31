@@ -289,58 +289,110 @@ router.route('/fetchView_product').get(async (req, res) => {
   //save
 router.route('/save').post(async (req, res) => {
  
-try {
-  const { id, productArrays } = req.body;
 
-  // Loop through the productArrays
-  Object.entries(productArrays).forEach(([supplierCode, products]) => {
-    console.log(`Supplier ${supplierCode}:`);
-
-    // Convert products to CSV
-    const fields = ['code', 'name'];
-    const json2csvParser = new Parser({ fields });
-    const csvContent = json2csvParser.parse(products);
-
-    // Create a nodemailer transporter
-    const gmailEmail = "infintyerpslash@gmail.com";
-    const gmailPassword = "kaaokvxtaahuckvp";
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: gmailEmail,
-        pass: gmailPassword,
-      },
-    });
-
-    // Define email options
-    const mailOptions = {
-      from: gmailEmail,
-      to: products[0].supp_email, // Use the email of the first product's supplier
-      subject: 'CSV Attachment',
-      text: 'Check out the attached CSV!',
-      attachments: [
-        {
-          filename: 'output.csv',
-          content: csvContent,
+  try {
+    const { id, productArrays } = req.body;
+  
+    // Loop through the productArrays
+    Object.entries(productArrays).forEach(([supplierCode, products]) => {
+      // console.log(`Supplier ${supplierCode}:`);
+  
+      // Customize fields and header names
+      const fields = ['code', 'name', 'price'];
+      const header = ['Product Code', 'Product Name', 'Price'];
+  
+      // Convert products to CSV with customized header
+      const json2csvParser = new Parser({ fields, header });
+      const csvContent = json2csvParser.parse(products);
+  
+      // Create a nodemailer transporter
+      const gmailEmail = "sbfmailer@gmail.com";
+      const gmailPassword = "uoetasnknsroxwnq";
+  
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: gmailEmail,
+          pass: gmailPassword,
         },
-      ],
-    };
+      });
+  
+      // Define email options
+      const mailOptions = {
+        from: gmailEmail,
+        to: products[0].supp_email, // Use the email of the first product's supplier
+        subject: 'Price Inquiry',
+        text: 'I trust this email finds you well. We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached CSV file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.',
+        attachments: [
+          {
+            filename: 'canvassing.csv',
+            content: csvContent,
+          },
+        ],
+      };
+  
+      // Send the email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log('Error sending email:', error);
+        }     
+        // console.log('Email sent:', info.response);
+      });
 
-    // Send the email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return console.log('Error sending email:', error);
-      }
-      console.log('Email sent:', info.response);
+
+      products.forEach((item, index) => {
+
+        // if(item.type === "product"){
+        //  PR_PO.create({
+        //     pr_id: id,
+        //     product_tag_supplier_ID: item.suppTAG_id,
+        //   })        
+        // }
+        // else if(item.type === "assembly"){
+        //   PR_PO_asmbly.create({
+        //     pr_id: id,
+        //     assembly_suppliers_ID: item.suppTAG_id,
+        //   })
+        // }
+        // else if(item.type === "spare"){
+        //   PR_PO_spare.create({
+        //     pr_id: id,
+        //     spare_suppliers_ID: item.suppTAG_id,
+        //   })
+        // }
+        // else if(item.type === "subpart"){
+        //   PR_PO_subpart.create({
+        //     pr_id: id,
+        //     subpart_suppliers_ID: item.suppTAG_id,
+        //   })
+        // }
+
+      })
     });
-  });
 
-  res.status(200).json();
-} catch (err) {
-  console.error(err);
-  res.status(500).send('An error occurred');
-}
+    const PR_update = PR.update({
+      status: 'On-Canvass'
+    },
+    {
+      where: { id: id }
+    }); 
+
+    if (PR_update){
+      const PR_historical = PR_history.create({
+        pr_id: id,
+        status: 'On-Canvass',
+      });
+
+
+      if(PR_historical){
+        return res.status(200).json()
+      }    
+    };
+  
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
 });
 
 

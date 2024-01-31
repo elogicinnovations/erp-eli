@@ -12,9 +12,13 @@ const PR_PO_spare = sequelize.define('purchase_req_canvassed_spare', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  po_id:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   quantity: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   spare_suppliers_ID: {
     type: DataTypes.INTEGER,
@@ -26,6 +30,7 @@ const PR_PO_spare = sequelize.define('purchase_req_canvassed_spare', {
   },
   quality_assurance: {
     type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

@@ -51,8 +51,8 @@ router.route("/login").post(async (req, res) => {
 
 //--------------------Forgot Password------------------//
 // Replace these with your Gmail credentials
-const gmailEmail = "infintyerpslash@gmail.com";
-const gmailPassword = "kaaokvxtaahuckvp";
+const gmailEmail = "sbfmailer@gmail.com";
+const gmailPassword = "uoetasnknsroxwnq";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",

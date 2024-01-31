@@ -9,7 +9,7 @@ const PR = sequelize.define('purchase_req', {
     autoIncrement: true,
   },
   pr_num:{
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   date_needed: {

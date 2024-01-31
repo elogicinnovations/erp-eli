@@ -12,9 +12,13 @@ const PR_PO_asmbly = sequelize.define('purchase_req_canvassed_asmbly', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  po_id:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   quantity: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   assembly_suppliers_ID: {
     type: DataTypes.INTEGER,
@@ -26,6 +30,7 @@ const PR_PO_asmbly = sequelize.define('purchase_req_canvassed_asmbly', {
   },
   quality_assurance: {
     type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

@@ -61,7 +61,8 @@ import PRNotification from "./modules/Purchase Order/PurchaseRequest/PRnotificat
 import CreatePurchaseRequest from "./modules/Purchase Order/PurchaseRequest/CreatePurchaseRequest";
 import PurchaseRequestPreview from "./modules/Purchase Order/PurchaseRequest/PurchaseRequestPreview";
 import PurchaseOrderList from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderList";
-import PurchaseOrderListPreview from "./modules/Purchase Order/PurchaseOrderList/PurchaseOrderListPreview";
+import PurchaseReqForCanvass from "./modules/Purchase Order/PurchaseRequest/ForCanvass";
+import PurchaseReqOnCanvass from "./modules/Purchase Order/PurchaseRequest/OnCanvass";
 import PO_approvalRejustify from "./modules/Purchase Order/PurchaseOrderList/PO_approval_rejustify";
 import PO_receive from "./modules/Purchase Order/PurchaseOrderList/PO_Receive";
 import StockManagement from "./modules/Warehouse/Stock Management/StockManagement";
@@ -413,14 +414,19 @@ function App() {
                         path="/PRredirect/:id"
                         element={<PRNotification/>}
                       />
+                      <Route
+                        path="/forCanvass/:id"
+                        element={<PurchaseReqForCanvass/>}
+                      />
+                        <Route
+                        path="/onCanvass/:id"
+                        element={<PurchaseReqOnCanvass/>}
+                      />
           <Route
             path="/purchaseOrderList"
             element={<PurchaseOrderList/>}
           />
-                  <Route
-                    path="/purchaseOrderListPreview/:id"
-                    element={<PurchaseOrderListPreview/>}
-                  />
+                  
                     <Route
                     path="/PO_approvalRejustify/:id"
                     element={<PO_approvalRejustify/>}

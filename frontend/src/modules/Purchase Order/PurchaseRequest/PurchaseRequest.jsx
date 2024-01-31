@@ -369,43 +369,62 @@ function PurchaseRequest({ authrztn }) {
                     {filteredPR.map((data, i) => (
                       <tr key={i}>
                         <td onClick={() => 
-                          data.status === 'For-Canvassing' ?
-                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
-                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                              data.status === 'For-Canvassing' ?
+                              navigate(`/forCanvass/${data.id}`) :   
+                              data.status === 'On-Canvass' ?
+                              navigate(`/onCanvass/${data.id}`) :                       
+                              navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
                         >
                           {data.pr_num}
                         </td>
                           <td onClick={() => 
-                          data.status === 'For-Canvassing' ?
-                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
-                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                              data.status === 'For-Canvassing' ?
+                              navigate(`/forCanvass/${data.id}`) :   
+                              data.status === 'On-Canvass' ?
+                              navigate(`/onCanvass/${data.id}`) :                       
+                              navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
                         >
                           --
                         </td>
                         <td onClick={() => 
-                          data.status === 'For-Canvassing' ?
-                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
-                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                              data.status === 'For-Canvassing' ?
+                              navigate(`/forCanvass/${data.id}`) :   
+                              data.status === 'On-Canvass' ?
+                              navigate(`/onCanvass/${data.id}`) :                       
+                              navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
                         >
                           <p className="" style={{ fontSize: "12px" }}>
                             {data.status}
                           </p>
                         </td>
                         <td onClick={() => 
-                          data.status === 'For-Canvassing' ?
-                          navigate(`/purchaseOrderListPreview/${data.id}`) :                         
-                          navigate(`/purchaseRequestPreview/${data.id}`)}
+                         data.status === 'For-Canvassing' ?
+                          navigate(`/forCanvass/${data.id}`) :   
+                          data.status === 'On-Canvass' ?
+                          navigate(`/onCanvass/${data.id}`) :                       
+                          navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
                         >
                           {formatDatetime(data.createdAt)}
                         </td>
-                        <td onClick={() => navigate(`/purchaseRequestPreview/${data.id}`)}>
+                        <td onClick={() =>                      
+                              data.status === 'For-Canvassing' ?
+                              navigate(`/forCanvass/${data.id}`) :   
+                              data.status === 'On-Canvass' ?
+                              navigate(`/onCanvass/${data.id}`) :                       
+                              navigate(`/purchaseRequestPreview/${data.id}`)
+                            }                      
+                          >
                           {data.remarks}
                         </td>
                         <td>
                           {/* Cancel Button */}
                           { authrztn.includes('PR - Reject') && (
 
-                          data.status !== "Cancelled" && data.status !== "For-Canvassing" && data.status !== "Delivered") && (
+                          data.status !== "Cancelled" && data.status !== "For-Canvassing" && data.status !== "On-Canvass"  && data.status !== "Delivered") && (
                             <button
                               className="btn btn-danger"
                               onClick={() => CancelRequest(data.id, data.status)}

@@ -153,17 +153,35 @@ router.route('/fetchTable_PO_view').get(async (req, res) => {
 
 
 router.route('/lastPRNumber').get(async (req, res) => {
+    // try {
+
+    //     const latestPR = await PR.findOne({
+    //         attributes: [[sequelize.fn('max', sequelize.col('pr_num')), 'latestPRNumber']],
+    //       });
+    //     const latestPRNumber = latestPR.getDataValue('latestPRNumber');
+
+    //     // console.log('Latest PR Number:', latestPRNumber);
+    //     return res.json(latestPRNumber);
+
+
+    // } catch (err) {
+    //   console.error(err);
+    //   res.status(500).json("Error");
+    // }
+
     try {
-
-        const latestPR = await PR.findOne({
-            attributes: [[sequelize.fn('max', sequelize.col('pr_num')), 'latestPRNumber']],
-          });
-        const latestPRNumber = latestPR.getDataValue('latestPRNumber');
-
-        // console.log('Latest PR Number:', latestPRNumber);
-        return res.json(latestPRNumber);
-
-
+      const latestPR = await PR.findOne({
+        attributes: [[sequelize.fn('max', sequelize.col('pr_num')), 'latestNumber']],
+      });
+      let latestNumber = latestPR.getDataValue('latestNumber');
+  
+      console.log('Latest Number:', latestNumber);
+  
+      // Increment the latestNumber by 1 for a new entry
+      latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+  
+      // Do not create a new entry, just return the incremented value
+      return res.json(latestNumber.padStart(8, '0'));
     } catch (err) {
       console.error(err);
       res.status(500).json("Error");
