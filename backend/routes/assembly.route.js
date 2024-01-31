@@ -278,41 +278,77 @@ router.route("/update").post(
           }
         }
 
-        const deletesupplier = Assembly_Supplier.destroy({
+        const assemblysupprows = await Assembly_Supplier.findAll({
           where: {
-            assembly_id: id
-          }
+            assembly_id: id,
+          },
         });
 
-        if(deletesupplier) {
-          const selectedSupplier = addPriceInput;
+        if(assemblysupprows && assemblysupprows.length === 0) {
+          console.log("No assembly supplier id found");
+          return res.status(201).json({message: "No assembly supplier found"})
+       }
+
+       const ExistSuppId = assemblysupprows.map(supprow => supprow.id);
+
+       await Inventory_Assembly.destroy({
+          where: {
+            assembly_tag_supp_id: ExistSuppId,
+          },
+       });
+
+       const deletesupplier = await Assembly_Supplier.destroy({
+          where: {
+            assembly_id: id,
+          },
+       });
+
+       if(deletesupplier) {
+        const selectedSupplier = addPriceInput;
           for(const supplier of selectedSupplier) {
             const { value, price } = supplier;
 
-            const existingPrice = await Assembly_Supplier.findOne({
-              assembly_id: id,
-              supplier_code: value,
-            });
-
-            await Assembly_Supplier.create({
+            const newAssemblysupp = await Assembly_Supplier.create({
               assembly_id: id,
               supplier_code: value,
               supplier_price: price
-             });
+            });
 
-             if (existingPrice && existingPrice.supplier_price === price) {
-              continue;
-            }
+            const createdID = newAssemblysupp.id;
 
-            if (existingPrice && existingPrice.supplier_price !== price) {
-              await AssemblyPrice_History.create({
+            await Inventory_Assembly.create({
+              assembly_tag_supp_id: createdID,
+              quantity: 0,
+              price: price,
+            });
+
+            const ExistingSupplier = await AssemblyPrice_History.findOne({
+              where: {
+                assembly_id: id,
+                supplier_code: value,
+              },
+              order: [['createdAt', 'DESC']],
+            });
+
+            if(!ExistingSupplier) {
+               await AssemblyPrice_History.create({
                 assembly_id: id,
                 supplier_code: value,
                 supplier_price: price
-              });
-             }
+               });
+            } else {
+              const existingPrice = ExistingSupplier.supplier_price;
+              if(existingPrice !== price){
+                await AssemblyPrice_History.create({
+                  assembly_id: id,
+                  supplier_code: value,
+                  supplier_price: price
+                });
+              }
+              
+            }
           }
-        }
+       }
 
         res.status(200).json();
       }
@@ -479,6 +515,26 @@ router.route('/statusupdate').put(async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.route('/lastCode').get(async (req, res) => {
+  try {
+    const latestPR = await Assembly.findOne({
+      attributes: [[sequelize.fn('max', sequelize.col('assembly_code')), 'latestNumber']],
+    });
+    let latestNumber = latestPR.getDataValue('latestNumber');
+
+    console.log('Latest Number:', latestNumber);
+
+    // Increment the latestNumber by 1 for a new entry
+    latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+
+    // Do not create a new entry, just return the incremented value
+    return res.json(latestNumber.padStart(6, '0'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
   }
 });
 

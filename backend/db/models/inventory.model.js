@@ -8,7 +8,7 @@ const Inventory = sequelize.define('inventory_prd', {
     primaryKey: true,
     autoIncrement: true,
   },
-  product_tag_supp_id: { //id from product_tag_suppliers
+  product_tag_supp_id: {
     type: DataTypes.INTEGER,
     allowNull: true, 
     unique: false,
@@ -23,8 +23,10 @@ const Inventory = sequelize.define('inventory_prd', {
     allowNull: true,
     unique: false
   },
-  warehouse: {
-    type: DataTypes.STRING
+  warehouse_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: null,
   },
   createdAt: {
     type: DataTypes.DATE,

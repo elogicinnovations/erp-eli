@@ -491,7 +491,7 @@ function selectFiles() {
                     required
                     onChange={(e) => handleSubpartCode(e)}
                     type="text"
-                    placeholder="Enter item code"
+                    readOnly
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>
@@ -794,7 +794,7 @@ function selectFiles() {
                 size="md"
                 style={{ fontSize: "20px", margin: "0px 5px" }}
                 disabled={isSaveButtonDisabled}>
-                Save
+                Update
               </Button>
               <Link
                 to="/subParts"

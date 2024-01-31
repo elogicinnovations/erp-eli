@@ -132,49 +132,29 @@ function SubParts({ authrztn }) {
     reloadTable();
   }, []);
 
-//   const reloadSubpart = () => {
-//     axios
-//         .post(`${BASE_URL}/subpart/deleteOldArchivedSubParts`)
-//         .then((res) => {
-//             if (res.status === 200) {
-//                 console.log("Successfully deleted archive");
-//             } else if (res.status === 201) {
-//                 console.log(res.data.message);
-//             } else {
-//                 console.log("There seems to be an error");
-//             }
-//             reloadTable();
-//         })
-//         .catch((err) => console.log(err));
-// };
-
-//   useEffect(() =>{
-//     reloadSubpart();
-//   }, []);
-
 
   //Main table
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
   //Table date modal
-  function ModalformatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
-  }
-
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
+  function ModalformatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
   const [updateFormData, setUpdateFormData] = useState({
@@ -351,7 +331,7 @@ function SubParts({ authrztn }) {
 
 
                 <div className="button-create-side">
-                  {/* <Form.Select aria-label="item status"
+                  <Form.Select aria-label="item status"
                     style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro', cursor: 'pointer', width: '500px'}}
                     onChange={handledropdownstatus}
                     value={Dropdownstatus.length === 1 ? Dropdownstatus[0] : ''}>
@@ -366,7 +346,7 @@ function SubParts({ authrztn }) {
                     style={{ width: '150px'}}
                     onClick={clearFilter}>
                           Clear Filter
-                    </button> */}
+                    </button>
                   {authrztn?.includes('Sub-Part - Add') && (
                     showChangeStatusButton ? (
                       <div className="Buttonmodal-change">
@@ -538,11 +518,11 @@ function SubParts({ authrztn }) {
         backdrop="static"
         animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
+          <Modal.Title style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}>Change Status</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group controlId="exampleForm.ControlInput2">
-            <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
+            <Form.Label style={{ fontSize: "20px", fontFamily: "Poppins, Source Sans Pro" }}>Status</Form.Label>
             <Form.Select
               style={{ height: "40px", fontSize: "15px" }}
               onChange={handleStatusChange}
@@ -579,8 +559,9 @@ function SubParts({ authrztn }) {
       >
         <Modal.Header closeButton>
           <Modal.Title 
-          style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}
-          >Historical Price</Modal.Title>
+          style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}>
+            Historical Price
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>

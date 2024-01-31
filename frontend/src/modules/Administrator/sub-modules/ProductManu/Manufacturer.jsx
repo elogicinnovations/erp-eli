@@ -90,26 +90,16 @@ function Productvariants({ authrztn }) {
     reloadTable()
   }, []);
 
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
-
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
-  }
-  //  function formatDate(isoDate) {
-  //     const date = new Date(isoDate);
-  //     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
-  //   }
-
-  //   function padZero(num) {
-  //     return num.toString().padStart(2, '0');
-  //   }
 
   const [validated, setValidated] = useState(false);
   const [code, setCode] = useState("");
@@ -139,8 +129,6 @@ function Productvariants({ authrztn }) {
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-      // if required fields has NO value
-      //    console.log('requried')
       swal({
         icon: "error",
         title: "Fields are required",
@@ -156,19 +144,30 @@ function Productvariants({ authrztn }) {
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
-            handleClose()
-            reloadTable()
-            SuccessInserted(res);
+            swal({
+              title: "Manufacturer Add Successful!",
+              text: "The Manufacturer has been Added Successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              reloadTable()
+              handleClose();
+            });
           } else if (res.status === 201) {
-            Duplicate_Message();
+            swal({
+              title: "Manufacturer is Already Exist",
+              text: "Please Input a New Manufacturer ",
+              icon: "error",
+            });;
           } else {
-            ErrorInserted();
+            swal({
+              title: "Something went wrong",
+              text: "Please Contact our Support",
+              icon: "error",
+              button: "OK",
+            });
           }
         });
-      // .catch((err) => {
-      //   console.error(err);
-      //   // ErrorInserted();
-      // });
     }
 
     setValidated(true); //for validations
@@ -223,36 +222,6 @@ function Productvariants({ authrztn }) {
     });
   };
 
-  const SuccessInserted = (res) => {
-    swal({
-      title: "Product Manufacturer Add Successful!",
-      text: "The Product Manufacturer has been Added Successfully.",
-      icon: "success",
-      button: "OK",
-    }).then(() => {
-      const newId = res.data.manufacturer_code;
-      
-      setName(""); // Clear the nameManu input field
-      setDescription(""); // Clear the descManu input field
-      
-    });
-  };
-  const Duplicate_Message = () => {
-    swal({
-      title: "Product Manufacturer is Already Exist",
-      text: "Please Input a New Product Manufacturer ",
-      icon: "error",
-    });
-  };
-
-  const ErrorInserted = () => {
-    swal({
-      title: "Something went wrong",
-      text: "Please Contact our Support",
-      icon: "error",
-      button: "OK",
-    });
-  };
 
   const [updateFormData, setUpdateFormData] = useState({
     manufacturer_name: "",
@@ -404,29 +373,9 @@ function Productvariants({ authrztn }) {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
+
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-            <div className="dropdown-and-iconics">
-              <div className="dropdown-side"></div>
-              <div className="iconic-side">
-                <div className="gearsides">
-                  <Gear size={35} />
-                </div>
-                <div className="bellsides">
-                  <Bell size={35} />
-                </div>
-                <div className="usersides">
-                  <UserCircle size={35} />
-                </div>
-                <h3>User Name</h3>
-              </div>
-            </div>
-          </div> */}
-
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -436,14 +385,14 @@ function Productvariants({ authrztn }) {
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
 
-                  {/* { authrztn.includes('Product Manufacturer - Add') && ( */}
+                  { authrztn.includes('Product Manufacturer - Add') && (
                     <button onClick={handleShow}>
                       <span style={{}}>
                         <Plus size={25} />
                       </span>
                       Create New
                     </button>
-                  {/* ) } */}
+                  ) }
 
                 </div>
               </div>
@@ -457,7 +406,7 @@ function Productvariants({ authrztn }) {
                     <th className="tableh">CODE</th>
                     <th className="tableh">NAME</th>
                     <th className="tableh">REMARKS</th>
-                    <th className="tableh">DATE CREATE</th>
+                    <th className="tableh">DATE CREATED</th>
                     <th className="tableh">DATE UPDATED</th>
                     <th className="tableh">ACTION</th>
                   </tr>
@@ -572,95 +521,96 @@ function Productvariants({ authrztn }) {
         size="lg">
         <Form noValidate validated={validated} onSubmit={addManufacturer}>
           <Modal.Header closeButton>
-            <Modal.Title style={{ fontSize: "24px" }}>
+            <Modal.Title style={{fontSize: '24px',
+                fontFamily: 'Poppins, Source Sans Pro'}}>
               Create Manufacturer
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div
-              className="gen-info"
-              style={{ fontSize: "20px", position: "relative" }}>
-              Manufacturer Info
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "75%",
-                  background: "#FFA500",
-                  top: "64%",
-                  left: "18rem",
-                  transform: "translateY(-50%)",
-                }}></span>
-            </div>
-
             <div className="row">
               <div className="col-6">
                 <Form.Group
-                  className="mb-3"
                   controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "18px" }}>Code: </Form.Label>
+                  <Form.Label style={{ fontSize: "20px",
+                              fontFamily: 'Poppins, Source Sans Pro'}}>
+                          Manufacturer Code
+                  </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter code"
                     disabled
                     value={code || nextCode}
                     onChange={(e) => setCode(e.target.value)}
-                    style={{ height: "40px", fontSize: "15px" }}
+                    style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
                   />
                 </Form.Group>
               </div>
               <div className="col-6">
                 <Form.Group
-                  className="mb-3"
                   controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "18px" }}>Name: </Form.Label>
+                  <Form.Label style={{ fontSize: "20px",
+                          fontFamily: 'Poppins, Source Sans Pro'}}>
+                           Manufacturer Name
+                    </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter name"
                     value={nameManu}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    style={{ height: "40px", fontSize: "15px" }}
+                    style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
                   />
                 </Form.Group>
               </div>
             </div>
+            
 
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1">
-              <Form.Label style={{ fontSize: "18px" }}>Description</Form.Label>
-              <Form.Control
-                value={descManu}
-                onChange={(e) => setDescription(e.target.value)}
-                as="textarea"
-                rows={3}
-                style={{
-                  fontSize: "16px",
-                  height: "200px",
-                  maxHeight: "200px",
-                  resize: "none",
-                  overflowY: "auto",
-                }}
-              />
-            </Form.Group>
+            <div className="mt-3">
+              <Form.Group
+                controlId="exampleForm.ControlTextarea1">
+                <Form.Label style={{ fontSize: "20px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}>
+                          Description
+                </Form.Label>
+                <Form.Control
+                  value={descManu}
+                  onChange={(e) => setDescription(e.target.value)}
+                  as="textarea"
+                  rows={3}
+                  style={{
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    fontSize: "16px",
+                    height: "200px",
+                    maxHeight: "200px",
+                    resize: "none",
+                    overflowY: "auto",
+                  }}
+                />
+              </Form.Group>
+            </div>
+          <div className="save-cancel">
+              <Button
+                type="submit"
+                variant="warning"
+                size="md"
+                style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                Save
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}
+                onClick={handleClose}>
+                Close
+              </Button>
+          </div>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              type="submit"
-              variant="warning"
-              size="md"
-              style={{ fontSize: "20px" }}>
-              Save
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              style={{ fontSize: "20px" }}
-              onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
         </Form>
       </Modal>
 
@@ -670,35 +620,22 @@ function Productvariants({ authrztn }) {
         backdrop="static"
         keyboard={false}
         size="lg">
-        <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title style={{ fontSize: "24px" }}>
+            <Modal.Title style={{fontSize: '24px',
+                fontFamily: 'Poppins, Source Sans Pro'}}>
               Update Manufacturer
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div
-              className="gen-info"
-              style={{ fontSize: "20px", position: "relative" }}>
-              Manufacturer Info
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "75%",
-                  background: "#FFA500",
-                  top: "64%",
-                  left: "18rem",
-                  transform: "translateY(-50%)",
-                }}></span>
-            </div>
-            <Form style={{ marginLeft: "10px", marginTop: "10px" }}>
+            <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
               <div className="row">
                 <div className="col-6">
                   <Form.Group
-                    className="mb-3"
                     controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "18px" }}>Code: </Form.Label>
+                    <Form.Label style={{ fontSize: "20px",
+                            fontFamily: 'Poppins, Source Sans Pro'}}>
+                      Manufacturer Code
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter code"
@@ -706,15 +643,19 @@ function Productvariants({ authrztn }) {
                       readOnly
                       onChange={handleUpdateFormChange}
                       name="manufacturer_code"
-                      style={{ height: "40px", fontSize: "15px" }}
+                      style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
                     />
                   </Form.Group>
                 </div>
                 <div className="col-6">
                   <Form.Group
-                    className="mb-3"
                     controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "18px" }}>Name: </Form.Label>
+                    <Form.Label style={{ fontSize: "20px",
+                            fontFamily: 'Poppins, Source Sans Pro'}}>
+                              Manufacturer Name 
+                      </Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter name"
@@ -722,18 +663,19 @@ function Productvariants({ authrztn }) {
                       onChange={handleUpdateFormChange}
                       name="manufacturer_name"
                       required
-                      style={{ height: "40px", fontSize: "15px" }}
+                      style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
                     />
                   </Form.Group>
                 </div>
               </div>
-            </Form>
 
-            <Form style={{ marginLeft: "10px", marginTop: "10px" }}>
+              <div className="mt-3">
               <Form.Group
-                className="mb-3"
                 controlId="exampleForm.ControlTextarea1">
-                <Form.Label style={{ fontSize: "18px" }}>
+                <Form.Label style={{ fontSize: "20px",
+                          fontFamily: 'Poppins, Source Sans Pro'}}>
                   Description
                 </Form.Label>
                 <Form.Control
@@ -741,35 +683,40 @@ function Productvariants({ authrztn }) {
                   onChange={handleUpdateFormChange}
                   name="manufacturer_remarks"
                   as="textarea"
-                  rows={3}
-                  style={{
+                    rows={3}
+                    style={{
+                    fontFamily: 'Poppins, Source Sans Pro',
                     fontSize: "16px",
                     height: "200px",
                     maxHeight: "200px",
                     resize: "none",
                     overflowY: "auto",
-                  }}
+                    }}
                 />
               </Form.Group>
+              </div>
+            <div className="save-cancel">
+              <Button
+                type="submit"
+                variant="warning"
+                size="md"
+                    style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                Update
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                    style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}
+                onClick={() => setUpdateModalShow(!updateModalShow)}>
+                Close
+              </Button>
+            </div>
             </Form>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              type="submit"
-              variant="warning"
-              size="md"
-              style={{ fontSize: "20px" }}>
-              Save
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              style={{ fontSize: "20px" }}
-              onClick={() => setUpdateModalShow(!updateModalShow)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Form>
       </Modal>
     </div>
   );

@@ -13,10 +13,6 @@ const Product = sequelize.define('product', {
     // type: DataTypes.INTEGER,
     allowNull: true,
   },
-  productsID: { // for consolidating of tagging items codes from assembly, spare, subpart
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
   product_name: {
     type: DataTypes.STRING, 
     allowNull: true,

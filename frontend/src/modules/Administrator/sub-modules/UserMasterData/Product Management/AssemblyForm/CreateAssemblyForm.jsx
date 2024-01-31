@@ -56,6 +56,20 @@ function CreateAssemblyForm() {
     event.target.value = event.target.value.replace(/[^0-9.]/);
   };
 
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/assembly/lastCode")
+      .then((res) => {
+        const codes =
+          res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+
+        // Increment the value by 1
+        setCode(codes);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
@@ -406,6 +420,8 @@ function onDropImages(event) {
                     type="text"
                     placeholder="Enter item code"
                     style={{ height: "40px", fontSize: "15px" }}
+                    value={code}
+                    readOnly
                   />
                 </Form.Group>
               </div>
@@ -741,7 +757,7 @@ function onDropImages(event) {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6" style={{ textAlign: "center" }}>
+                          <td colSpan="6" style={{ textAlign: "center", fontSize: '18px' }}>
                             No Supplier selected
                           </td>
                         </tr>

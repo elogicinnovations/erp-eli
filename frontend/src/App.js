@@ -49,6 +49,7 @@ import CostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCen
 import ViewCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/ViewCostCenter"
 import CreateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/CreateCostCenter"
 import UpdateCostCenter from "./modules/Administrator/sub-modules/BPMasterData/CostCenter/UpdateCostCenter"
+import Warehouses from "./modules/Administrator/sub-modules/BPMasterData/Warehouse/Warehouse"
 import Inventory from "./modules/Inventory/Inventory"
 import CreateIssuance from "./modules/Inventory/CreateIssuance"
 import ApprovalIssuance from "./modules/Inventory/Approvalssuance"
@@ -191,6 +192,16 @@ function App() {
                     <Route path="/createSupplier" element={<CreateSupplier />}/>
                     <Route path="/editSupp/:id" element={<EditSupplier/>}/>
                     <Route path="/viewsupplier/:id" element={<ViewSupplier />}/>
+
+              <Route path="/Warehouses" element={
+                <Roles>
+                {
+                  (authrztn) => (
+                    <Warehouses authrztn={authrztn}/>
+                  )
+                }
+                </Roles>
+              }/>
 
               <Route path="/productCategory" element={
               <Roles>

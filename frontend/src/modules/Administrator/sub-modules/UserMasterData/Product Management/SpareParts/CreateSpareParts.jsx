@@ -37,6 +37,19 @@ function CreateSpareParts() {
 
   useEffect(() => {
     axios
+      .get(BASE_URL + "/sparePart/lastCode")
+      .then((res) => {
+        const codes =
+          res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+
+        // Increment the value by 1
+        setCode(codes);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios
       .get(BASE_URL + "/supplier/fetchTable")
       .then((res) => setFetchSupp(res.data))
       .catch((err) => console.log(err));
@@ -419,7 +432,8 @@ function CreateSpareParts() {
                     onChange={(e) => setCode(e.target.value)}
                     required
                     type="text"
-                    placeholder="Enter item code"
+                    value={code}
+                    readOnly
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>
@@ -695,7 +709,9 @@ function CreateSpareParts() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6" style={{ textAlign: "center" }}>
+                          <td
+                            colSpan="6"
+                            style={{ textAlign: "center", fontSize: "18px" }}>
                             No Supplier selected
                           </td>
                         </tr>

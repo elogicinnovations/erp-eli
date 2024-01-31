@@ -468,6 +468,23 @@ function Sidebar({ authrztn }) {
                       </ListItem>
                     </NavLink>
                   )}
+
+                  {authrztn.includes("Warehouses - View") && (
+                    <NavLink
+                      to="/warehouses"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      activeClassName="active">
+                      <ListItem
+                        button
+                        className={`Employeesub-menu ${
+                          location.pathname.startsWith("/warehouses")
+                            ? "active"
+                            : ""
+                        }`}>
+                        <ListItemText primary="Warehouses" />
+                      </ListItem>
+                    </NavLink>
+                  )}
                 </List>
               </Collapse>
 

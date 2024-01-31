@@ -1678,12 +1678,14 @@ div#order-listing1_length {
 td.priceHB {
   padding: 10px 40px;
   border-bottom: solid 1px rgb(206, 206, 206);
+  font-family: Poppins, "Source Sans Pro";
 }
 
 .priceHH {
   padding: 20px 40px;
   background-color: #EDEDED;
   font-size: 15px;
+  font-family: Poppins, "Source Sans Pro";
 }
 
 .percnts {

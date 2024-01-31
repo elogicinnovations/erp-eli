@@ -692,7 +692,7 @@ useEffect(() => {
 
           <Form noValidate validated={validated} onSubmit={update}>
             <div className="row mt-3">
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Product Code:{" "}
@@ -701,26 +701,13 @@ useEffect(() => {
                     required
                     type="text"
                     value={code}
+                    readOnly
                     onChange={(e) => handleItemcode(e)}
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Product ID:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      required
-                      type="text"
-                      value={prod_id}
-                      onChange={(e) => handleProductID(e)}
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-              </div>
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Item Name:{" "}

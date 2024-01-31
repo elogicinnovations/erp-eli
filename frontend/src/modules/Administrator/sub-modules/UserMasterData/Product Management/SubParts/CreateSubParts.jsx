@@ -43,6 +43,20 @@ function CreateSubParts() {
   const [fetchSupp, setFetchSupp] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/subpart/lastCode")
+      .then((res) => {
+        const codes =
+          res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+
+        // Increment the value by 1
+        setCode(codes);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+
   const handleAddSuppClick = () => {
     setShowDropdown(true);
   };
@@ -475,6 +489,8 @@ function onDropImages(event) {
                     type="text"
                     placeholder="Enter item code"
                     style={{ height: "40px", fontSize: "15px" }}
+                    value={code}
+                    readOnly
                   />
                 </Form.Group>
               </div>

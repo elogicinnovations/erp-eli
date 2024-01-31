@@ -68,7 +68,7 @@ const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
 
-
+const Warehouses = require("./warehouse.model");
 
 
 
@@ -398,11 +398,21 @@ StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "pr_id"});
 SubPart.hasMany(StockTransfer_subpart, { foreignKey: "subPart_id"});
 StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "subPart_id"});
 
+//------------ Warehouse Product Inventory
+Warehouses.hasMany(Inventory, { foreignKey: "warehouse_id"});
+Inventory.belongsTo(Warehouses, { foreignKey: "warehouse_id"});
 
+//------------ Warehouse Assembly Inventory
+Warehouses.hasMany(Inventory_Assembly, { foreignKey: "warehouse_id"});
+Inventory_Assembly.belongsTo(Warehouses, { foreignKey: "warehouse_id"});
 
+//------------ Warehouse Spare parts Inventory
+Warehouses.hasMany(Inventory_Spare, { foreignKey: "warehouse_id"});
+Inventory_Spare.belongsTo(Warehouses, { foreignKey: "warehouse_id"});
 
-
-
+//------------ Warehouse Subpart Inventory
+Warehouses.hasMany(Inventory_Subpart, { foreignKey: "warehouse_id"});
+Inventory_Subpart.belongsTo(Warehouses, { foreignKey: "warehouse_id"});
 
 module.exports = { 
                     MasterList, 
@@ -477,5 +487,7 @@ module.exports = {
                     StockTransfer_assembly,
                     StockTransfer_spare,
                     StockTransfer_subpart,
+
+                    Warehouses,
                     
                 };

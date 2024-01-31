@@ -109,6 +109,8 @@ const Report_inv = require("./routes/report_inventory.route");
 
 const Report_PO = require("./routes/report_PO.route");
 
+const Warehouse = require("./routes/warehouse.route")
+
 const authenticateToken = require("./middleware/token_authentication.middleware");
 
 const jwt = require("jsonwebtoken");
@@ -178,6 +180,8 @@ app.use("/Setting", Setting);
 app.use("/Dashboard", Dashboard);
 app.use("/report_inv", Report_inv);
 app.use("/report_PO", Report_PO);
+
+app.use("/warehouses", Warehouse);
 
 app.listen(port, () => {
   console.log(`listening to port ${port}`);

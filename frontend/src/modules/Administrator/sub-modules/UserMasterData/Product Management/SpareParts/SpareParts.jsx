@@ -116,27 +116,28 @@ function SpareParts({ authrztn }) {
   }, []);
 
   //Date format sa main table
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  //Modal table data format
-    function ModalformatDate(isoDate) {
-      const date = new Date(isoDate);
-      return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-        date.getDate()
-      )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-        date.getSeconds()
-      )}`;
-    }
 
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
+  //Modal table data format
+  function ModalformatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
 
@@ -456,14 +457,14 @@ function SpareParts({ authrztn }) {
                                 className="btn">
                                 Update
                               </Link>
-                              <button
+                              {/* <button
                                 onClick={() => {
                                   handleDelete(data.id);
                                   closeVisibleButtons();
                                 }}
                                 className="btn">
                                 Delete
-                              </button>
+                              </button> */}
                               { authrztn.includes('Spare Part - View') && (
                               <button
                                 type="button"
@@ -494,11 +495,11 @@ function SpareParts({ authrztn }) {
         backdrop="static"
         animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
+          <Modal.Title style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}>Change Status</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group controlId="exampleForm.ControlInput2">
-            <Form.Label style={{ fontSize: "20px" }}>Status</Form.Label>
+            <Form.Label style={{ fontSize: "20px", fontFamily: "Poppins, Source Sans Pro" }}>Status</Form.Label>
             <Form.Select
               style={{ height: "40px", fontSize: "15px" }}
               onChange={handleStatusChange}
@@ -532,7 +533,10 @@ function SpareParts({ authrztn }) {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Historical Price</Modal.Title>
+          <Modal.Title
+          style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}>
+            Historical Price
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>

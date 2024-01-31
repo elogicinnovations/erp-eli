@@ -23,8 +23,10 @@ const Inventory_Subpart = sequelize.define('inventory_subpart', {
     allowNull: true,
     unique: false
   },
-  warehouse: {
-    type: DataTypes.STRING
+  warehouse_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: null,
   },
 });
 

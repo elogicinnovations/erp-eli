@@ -216,6 +216,10 @@ function EditRole() {
       "Supplier - Edit",
       "Supplier - Delete",
       "Supplier - View",
+      "Warehouses - Add",
+      "Warehouses - Edit",
+      "Warehouses - Delete",
+      "Warehouses - View",
       "Inventory - View",
       "Inventory - Add",
       "Inventory - Edit",
@@ -1933,6 +1937,140 @@ function EditRole() {
                           </div>
                         </td>
 
+
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}>
+                            Warehouses
+                          </td>
+                        </td>
+
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Warehouses - View"
+                              name="vehicle1"
+                              value="Warehouses - View"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Warehouses - View"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Warehouses - View")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Warehouses - View"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Warehouses - Add"
+                              name="vehicle1"
+                              value="Warehouses - Add"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Warehouses - Add"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Warehouses - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Warehouses - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Warehouses - Edit"
+                              name="vehicle1"
+                              value="Warehouses - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Warehouses - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Warehouses - Edit")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Warehouses - Edit"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Warehouses - Delete"
+                              name="vehicle1"
+                              value="Warehouses - Delete"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Warehouses - Delete"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Warehouses - Delete")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Warehouses - Delete"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Warehouses - Aprroval"
+                              name="vehicle1"
+                              value="Warehouses - Aprroval"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Warehouses - Aprroval"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Warehouses - Aprroval")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Warehouses - Aprroval"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Warehouses - Reject"
+                              name="vehicle1"
+                              value="Warehouses - Reject"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Warehouses - Reject"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Warehouses - Reject")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Warehouses - Reject"></label>
+                          </div>
+                        </td>
 
                       </tr>
 
