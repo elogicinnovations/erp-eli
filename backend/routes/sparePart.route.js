@@ -124,19 +124,18 @@ router.route('/create').post(async (req, res) => {
             });
           }
 
-          if(Array.isArray(SubParts)){
-          for (const subPart of SubParts) {
-            const subPartValue = subPart.value;
 
-            console.log('subpart id' + subPartValue)
+          const selectedSubpart = req.body.SubParts
+          for (const subpartDropdown of selectedSubpart) {
+            const subPartValue = subpartDropdown.value;
+
     
             await SparePart_SubPart.create({
                 sparePart_id: createdID,
                 subPart_id: subPartValue,
             });
           }
-          }
-    
+
           if(images.length > 0){
             images.forEach(async (i) => {
               await SparePart_image.create({
@@ -180,12 +179,6 @@ router.route("/update").post(
       if (existingDataCode) {
         res.status(201).send('Exist');
       } else {
-        let finalThreshold;
-        if (thresholds === "") {
-          finalThreshold = 0;
-        } else {
-          finalThreshold = thresholds;
-        }
 
         const Spare_newData = await SparePart.update(
           {
@@ -196,7 +189,7 @@ router.route("/update").post(
             spareParts_location: slct_binLocation,
             spareParts_unitMeasurement: unitMeasurement,
             spareParts_manufacturer: slct_manufacturer,
-            threshhold: finalThreshold,
+            threshhold: thresholds,
           },
           {
             where: {
@@ -223,9 +216,9 @@ router.route("/update").post(
         }
 
         const deletesubpart = SparePart_SubPart.destroy({
-            where: {
-              sparePart_id: id
-            },
+          where: {
+            sparePart_id: id
+          },
         });
 
         if(deletesubpart) {
@@ -239,41 +232,80 @@ router.route("/update").post(
           }
         }
 
-        const deletesupplier = SparePart_Supplier.destroy({
+
+        const sparesupprows = await SparePart_Supplier.findAll({
           where: {
-            sparePart_id: id
-          }
+            sparePart_id: id,
+          },
+        });
+
+        if(sparesupprows && sparesupprows.length === 0) {
+           console.log("No sparepart id found");
+           return res.status(201).json({message: "No spare part supplier found"})
+        }
+
+        const ExistSuppId = sparesupprows.map(supprow => supprow.id);
+
+        await Inventory_Spare.destroy({
+          where: {
+            spare_tag_supp_id: ExistSuppId,
+          },
+        });
+
+        const deletesupplier = await SparePart_Supplier.destroy({
+          where: {
+            sparePart_id: id,
+          },
         });
 
         if(deletesupplier) {
-          const selectedSupplier = addPriceInput;
-          for(const supplier of selectedSupplier) {
-            const { value, price } = supplier;
+            const selectedSupplier = addPriceInput;
+            for(const supplier of selectedSupplier) {
+              const { value, price } = supplier;
+              
+              const newSparesupp = await SparePart_Supplier.create({
+                sparePart_id: id,
+                supplier_code: value,
+                supplier_price: price,
+              });
 
-            const existingPrice = await SparePart_Supplier.findOne({
-              sparePart_id: id,
-              supplier_code: value,
-            })
+              const createdID = newSparesupp.id;
 
-            await SparePart_Supplier.create({
-              sparePart_id: id,
-              supplier_code: value,
-              supplier_price: price
-             });
 
-             if (existingPrice && existingPrice.supplier_price === price) {
-              continue;
-            }
+              await Inventory_Spare.create({
+                spare_tag_supp_id: createdID,
+                quantity: 0,
+                price: price,
+              });
 
-            if (existingPrice && existingPrice.supplier_price !== price) {
-             await SparePartPrice_history.create({
-              sparePart_id: id,
-              supplier_code: value,
-              supplier_price: price
-             });
+              const ExistingSupplier = await SparePartPrice_history.findOne({
+                where: {
+                  sparePart_id: id,
+                  supplier_code: value,
+                },
+                order: [['createdAt', 'DESC']],
+              });
+              if (!ExistingSupplier) {
+                // If the entry doesn't exist, create a new one
+                await SparePartPrice_history.create({
+                  sparePart_id: id,
+                  supplier_code: value,
+                  supplier_price: price,
+                });
+              } else {
+                const existingPrice = ExistingSupplier.supplier_price;
+            
+                if (existingPrice !== price) {
+                  await SparePartPrice_history.create({
+                    sparePart_id: id,
+                    supplier_code: value,
+                    supplier_price: price,
+                  });
+                }
+                // If the existing supplier_price is the same as the new price, walang process na mangyayari
+              }
             }
           }
-        }
 
         res.status(200).json();
       }
@@ -435,6 +467,24 @@ router.route('/deleteOldArchivedSpare').post(async (req, res) => {
     }
   });
   
-
+  router.route('/lastCode').get(async (req, res) => {
+    try {
+      const latestPR = await SparePart.findOne({
+        attributes: [[sequelize.fn('max', sequelize.col('spareParts_code')), 'latestNumber']],
+      });
+      let latestNumber = latestPR.getDataValue('latestNumber');
+  
+      console.log('Latest Number:', latestNumber);
+  
+      // Increment the latestNumber by 1 for a new entry
+      latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+  
+      // Do not create a new entry, just return the incremented value
+      return res.json(latestNumber.padStart(6, '0'));
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
 
 module.exports = router;

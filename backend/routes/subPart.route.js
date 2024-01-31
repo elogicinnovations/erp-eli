@@ -150,99 +150,129 @@ router.route("/update").post(
       subpartTAGSuppliers,
       subpartImages
     } = req.body;
-  try {
-    const existingDataCode = await SubPart.findOne({
-      where: {
-        subPart_code: prodcode,
-        id: { [Op.ne]: id },
-      },
-    });
-
-    if (existingDataCode) {
-      return res.status(201).send("Exist");
-    } else {
-      const subpart_newData = await SubPart.update(
-        {
-          subPart_code: prodcode,
-          subPart_name: prodname,
-          subPart_desc: proddetails,
-          threshhold: prodthreshold,
-          bin_id: prodlocation,
-          subPart_unitMeasurement: prodmeasurement,
-          subPart_Manufacturer: prodmanufacture,
-          category_code: prodcategory,
-        },
-        {
-          where: {
-            id: id,
-          },
-        }
-      );
-
-
-
-      const deletesupplier = Subpart_supplier.destroy({
+    try {
+      const existingDataCode = await SubPart.findOne({
         where: {
-          subpart_id: id,
+          subPart_code: prodcode,
+          id: { [Op.ne]: id },
         },
       });
-      
-      if (deletesupplier) {
-        const selectedSuppliers = subpartTAGSuppliers;
-        for (const supplier of selectedSuppliers) {
-          const { value, price } = supplier;
 
-          const existingSupplier = await Subpart_supplier.findOne({
+      if (existingDataCode) {
+        return res.status(201).send("Exist");
+      } else {
+        const subpart_newData = await SubPart.update(
+          {
+            subPart_code: prodcode,
+            subPart_name: prodname,
+            subPart_desc: proddetails,
+            threshhold: prodthreshold,
+            bin_id: prodlocation,
+            subPart_unitMeasurement: prodmeasurement,
+            subPart_Manufacturer: prodmanufacture,
+            category_code: prodcategory,
+          },
+          {
             where: {
-              subpart_id: id,
-              supplier_code: value,
+              id: id,
             },
-          });
-      
-          await Subpart_supplier.create({
-            subpart_id: id,
-            supplier_code: value,
-            supplier_price: price,
-          });
-      
-          if (existingSupplier && existingSupplier.supplier_price === price) {
-            continue;
           }
-      
-          if (existingSupplier && existingSupplier.supplier_price !== price) {
-            await Subpart_Price_History.create({
-              subpart_id: id,
-              supplier_code: value,
-              supplier_price: price,
+        );
+
+        const deletesubImage = Subpart_image.destroy({
+          where: {
+            subpart_id: id
+          }
+        });
+
+        if(deletesubImage){
+          if (subpartImages && subpartImages.length > 0) {
+            subpartImages.forEach(async (i) => {
+              await Subpart_image.create({
+                subpart_id: id,
+                subpart_image: i.subpart_image
+              });
             });
           }
         }
-      }
-      
 
-          const deletesubImage = Subpart_image.destroy({
+          const subsupprows = await Subpart_supplier.findAll({
             where: {
-              subpart_id: id
-            }
+              subpart_id: id,
+            },
+          });
+          
+          if(subsupprows && subsupprows.length === 0) {
+            console.log("No subpart id found");
+            return res.status(201).json({ message: "No subpart supplier found" });
+          }
+          
+          const ExistSuppId = subsupprows.map(supprow => supprow.id);
+
+          await Inventory_Subpart.destroy({
+            where: {
+              subpart_tag_supp_id: ExistSuppId,
+            },
           });
 
-          if(deletesubImage){
-            if (subpartImages && subpartImages.length > 0) {
-              subpartImages.forEach(async (i) => {
-                await Subpart_image.create({
-                  subpart_id: id,
-                  subpart_image: i.subpart_image
-                });
-              });
-            }
-          }
+         const deletesupplier = await Subpart_supplier.destroy({
+            where: {
+              subpart_id: id,
+            },
+          });
 
-      res.status(200).json();
+          if(deletesupplier) {
+            const selectedSuppliers = subpartTAGSuppliers;
+              for(const supplier of selectedSuppliers) {
+                const { value, price } = supplier;
+        
+                  const newSubpartsupp = await Subpart_supplier.create({
+                    subpart_id: id,
+                    supplier_code: value,
+                    supplier_price: price,
+                  });
+
+                  const createdID = newSubpartsupp.id;
+
+                  await Inventory_Subpart.create({
+                    subpart_tag_supp_id: createdID,
+                    quantity: 0,
+                    price: price,
+                  });
+
+                  const ExistingSupplier = await Subpart_Price_History.findOne({
+                    where: {
+                      subpart_id: id,
+                      supplier_code: value,
+                    },
+                    order: [['createdAt', 'DESC']],
+                  });
+
+                  if (!ExistingSupplier) {
+                      await Subpart_Price_History.create({
+                        subpart_id: id,
+                        supplier_code: value,
+                        supplier_price: price,
+                      });
+                  } else {
+                    const existingPrice = ExistingSupplier.supplier_price;
+                    
+                    if (existingPrice !== price) {
+                      await Subpart_Price_History.create({
+                        subpart_id: id,
+                        supplier_code: value,
+                        supplier_price: price,
+                      });
+                    }
+                  }
+              }
+           }
+        res.status(200).json();
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("An error occurred");
     }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("An error occurred");
-  }
 });  
 
 
@@ -353,5 +383,24 @@ router.route('/statusupdate').put(async (req, res) => {
   });
   
   
+  router.route('/lastCode').get(async (req, res) => {
+    try {
+      const latestPR = await SubPart.findOne({
+        attributes: [[sequelize.fn('max', sequelize.col('subPart_code')), 'latestNumber']],
+      });
+      let latestNumber = latestPR.getDataValue('latestNumber');
+  
+      console.log('Latest Number:', latestNumber);
+  
+      // Increment the latestNumber by 1 for a new entry
+      latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+  
+      // Do not create a new entry, just return the incremented value
+      return res.json(latestNumber.padStart(6, '0'));
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
   
 module.exports = router;

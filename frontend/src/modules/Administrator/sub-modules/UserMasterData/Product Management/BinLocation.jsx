@@ -104,17 +104,15 @@ function BinLocation({ authrztn }) {
       .catch((err) => console.log(err));
   }, []);
 
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
-  }
-
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
   const [updateFormData, setUpdateFormData] = useState({
@@ -427,30 +425,8 @@ function BinLocation({ authrztn }) {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-            <div className="dropdown-and-iconics">
-              <div className="dropdown-side"></div>
-              <div className="iconic-side">
-                <div className="gearsides">
-                  <Gear size={35} />
-                </div>
-                <div className="bellsides">
-                  <Bell size={35} />
-                </div>
-                <div className="usersides">
-                  <UserCircle size={35} />
-                </div>
-                <div className="username">
-                  <h3>User Name</h3>
-                </div>
-              </div>
-            </div>
-          </div> */}
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -464,7 +440,7 @@ function BinLocation({ authrztn }) {
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
-                    New Bin Location
+                    Create New
                   </button>
                   )}
 
@@ -580,147 +556,202 @@ function BinLocation({ authrztn }) {
           </div>
         </div>
       </div>
-      <Modal show={showModal} onHide={handleClose}>
-        <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+      <Modal 
+      show={showModal} 
+        onHide={handleClose}
+        backdrop="static"
+         keyboard={false}
+          size="lg">
+        
           <Modal.Header closeButton>
-            <Modal.Title style={{ fontSize: "24px" }}>
-              New Bin Location
+            <Modal.Title style={{fontSize: '24px',
+                fontFamily: 'Poppins, Source Sans Pro'}}>
+              Create Bin Location
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Location Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Name of the Bin Location..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  required
-                  value={binLocationName}
-                  onChange={(e) => setbinLocationName(e.target.value)}
-                />
-              </Form.Group>
+            <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px",
+                                  fontFamily: 'Poppins, Source Sans Pro'}}>
+                    Location Name:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    style={{ height: "40px", 
+                    fontSize: "15px", 
+                    fontFamily: 'Poppins, Source Sans Pro' }}
+                    required
+                    value={binLocationName}
+                    onChange={(e) => setbinLocationName(e.target.value)}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px",
+                      fontFamily: 'Poppins, Source Sans Pro'}}>
+                    Location Sub-Name:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    style={{ height: "40px", 
+                              fontSize: "15px", 
+                              fontFamily: 'Poppins, Source Sans Pro' }}
+                    value={binLocationSubName}
+                    onChange={(e) => setbinLocationSubName(e.target.value)}
+                  />
+                </Form.Group>
+              </div>
             </div>
-            <div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Location Sub-Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Sub-Name of the Bin Location..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={binLocationSubName}
-                  onChange={(e) => setbinLocationSubName(e.target.value)}
-                />
-              </Form.Group>
-            </div>
-            <div>
+
+            <div className="mt-3">
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Description: </Form.Label>
+                  <Form.Label style={{ fontSize: "20px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}>
+                        Description 
+                  </Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Enter Bin Location Description..."
-                  style={{ height: "40px", fontSize: "15px" }}
+                  as="textarea"
+                  rows={3}
+                  style={{
+                  fontFamily: 'Poppins, Source Sans Pro',
+                  fontSize: "16px",
+                  height: "200px",
+                  maxHeight: "200px",
+                  resize: "none",
+                  overflowY: "auto",
+                  }}
                   value={binLocationRemarks}
                   onChange={(e) => setbinLocationRemarks(e.target.value)}
-                  
                 />
               </Form.Group>
             </div>
+            <div className="save-cancel">
+              <Button
+                type="submit"
+                variant="warning"
+                size="md"
+                style={{ fontSize: "20px",
+                fontFamily: 'Poppins, Source Sans Pro',
+                margin: "0px 5px"}}>
+                Add
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                style={{ fontSize: "20px",
+                fontFamily: 'Poppins, Source Sans Pro',
+                margin: "0px 5px"}}
+                onClick={handleClose}>
+                Cancel
+              </Button>
+            </div>
+            </Form>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              type="submit"
-              variant="warning"
-              size="md"
-              style={{ fontSize: "20px" }}>
-              Add
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handleClose}
-              style={{ fontSize: "20px" }}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Form>
       </Modal>
 
-      <Modal show={updateModalShow} onHide={() => handleModalToggle()}>
+      <Modal 
+        show={updateModalShow} 
+          onHide={() => handleModalToggle()}
+          backdrop="static"
+          keyboard={false}
+           size="lg">
         <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
+            <Modal.Title style={{fontSize: '24px',
+                fontFamily: 'Poppins, Source Sans Pro'}}>
               Update Bin Location
             </Modal.Title>
-
-            <div className="form-group d-flex flex-row "></div>
           </Modal.Header>
           <Modal.Body>
-            <div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Location Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={updateFormData.bin_name}
-                  onChange={handleUpdateFormChange}
-                  name="bin_name"
-                  placeholder="Enter Name of the Bin Location..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  required
-                />
-              </Form.Group>
+            <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px",
+                                fontFamily: 'Poppins, Source Sans Pro'}}>
+                      Location Name
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={updateFormData.bin_name}
+                      onChange={handleUpdateFormChange}
+                      name="bin_name"
+                      style={{ height: "40px", 
+                      fontSize: "15px", 
+                      fontFamily: 'Poppins, Source Sans Pro' }}
+                      required
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px",
+                              fontFamily: 'Poppins, Source Sans Pro'}}>
+                      Location Sub-Name
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={updateFormData.bin_subname}
+                      onChange={handleUpdateFormChange}
+                      name="bin_subname"
+                      style={{ height: "40px", 
+                      fontSize: "15px", 
+                      fontFamily: 'Poppins, Source Sans Pro' }}
+                      required
+                    />
+                  </Form.Group>
+                </div>
             </div>
-            <div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Location Sub-Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={updateFormData.bin_subname}
-                  onChange={handleUpdateFormChange}
-                  name="bin_subname"
-                  placeholder="Enter Name of the Bin Location..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  required
-                />
-              </Form.Group>
-            </div>
-            <div>
+
+            <div className="mt-3">
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>Description: </Form.Label>
+                <Form.Label style={{ fontSize: "20px" ,
+                        fontFamily: 'Poppins, Source Sans Pro'}}>
+                  Description 
+                </Form.Label>
                 <Form.Control
-                  type="text"
                   value={updateFormData.bin_remarks}
                   onChange={handleUpdateFormChange}
                   name="bin_remarks"
-                  placeholder="Enter Bin Location Description..."
-                  style={{ height: "40px", fontSize: "15px" }}
+                  as="textarea"
+                  rows={3}
+                  style={{
+                  fontFamily: 'Poppins, Source Sans Pro',
+                  fontSize: "16px",
+                  height: "200px",
+                  maxHeight: "200px",
+                  resize: "none",
+                  overflowY: "auto",
+                  }}
                 />
               </Form.Group>
             </div>
+            <div className="save-cancel">
+              <Button
+                  type="submit"
+                  variant="warning"
+                  size="md"
+                    style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                  Update
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => setUpdateModalShow(!updateModalShow)}
+                  size="md"
+                    style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                  Close
+                </Button>
+            </div>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              type="submit"
-              variant="warning"
-              className=""
-              style={{ fontSize: "20px" }}>
-              Update
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setUpdateModalShow(!updateModalShow)}
-              style={{ fontSize: "20px" }}>
-              Close
-            </Button>
-          </Modal.Footer>
+
+
         </Form>
       </Modal>
     </div>

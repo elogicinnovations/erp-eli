@@ -23,8 +23,10 @@ const Inventory_Assembly = sequelize.define('inventory_assembly', {
     allowNull: true,
     unique: false
   },
-  warehouse: {
-    type: DataTypes.STRING
+  warehouse_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: null,
   },
 });
 

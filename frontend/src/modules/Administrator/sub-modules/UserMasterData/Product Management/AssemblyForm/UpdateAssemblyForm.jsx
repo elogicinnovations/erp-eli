@@ -621,11 +621,12 @@ const update = async (e) => {
                   <Form.Control
                     required
                     value={code}
-                    readOnly={!isReadOnly}
+                    disabled={!isReadOnly}
                     onChange={(e) => handleAssemblyCode(e)}
                     type="text"
                     placeholder="Enter item name"
                     style={{ height: "40px", fontSize: "15px" }}
+                    readOnly
                   />
                 </Form.Group>
               </div>

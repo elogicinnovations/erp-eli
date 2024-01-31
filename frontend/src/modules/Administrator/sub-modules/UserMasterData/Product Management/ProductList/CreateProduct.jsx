@@ -26,7 +26,6 @@ function CreateProduct() {
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
 
   const [code, setCode] = useState("");
-  const [prod_id, setProd_id] = useState("");
   const [name, setName] = useState("");
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
@@ -77,6 +76,19 @@ function CreateProduct() {
     }
     e.target.value = e.target.value.replace(/[^0-9.]/);
   };
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/product/lastCode")
+      .then((res) => {
+        const codes =
+          res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+
+        // Increment the value by 1
+        setCode(codes);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   //Supplier Fetch
   useEffect(() => {
@@ -351,7 +363,6 @@ function onDropImages(event) {
       axios
         .post(`${BASE_URL}/product/create`, {
           code,
-          prod_id,
           name,
           slct_category,
           slct_binLocation,
@@ -453,7 +464,7 @@ function onDropImages(event) {
           </div>
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="row mt-3">
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Product Code:{" "}
@@ -462,26 +473,13 @@ function onDropImages(event) {
                     required
                     type="text"
                     onChange={(e) => setCode(e.target.value)}
-                    placeholder="Enter item code"
+                    value={code}
+                    readOnly
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Product ID:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      required
-                      type="text"
-                      onChange={(e) => setProd_id(e.target.value)}
-                      placeholder="Enter product id"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-              </div>
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Product Name:{" "}
@@ -496,7 +494,6 @@ function onDropImages(event) {
                   />
                 </Form.Group>
               </div>
-             
             </div>
 
             <div className="row">
@@ -851,7 +848,7 @@ function onDropImages(event) {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6" style={{ textAlign: "center" }}>
+                          <td colSpan="6" style={{ textAlign: "center", fontSize: '18px' }}>
                             No Supplier selected
                           </td>
                         </tr>

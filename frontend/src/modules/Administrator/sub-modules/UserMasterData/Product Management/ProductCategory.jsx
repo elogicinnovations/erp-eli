@@ -99,17 +99,15 @@ const reloadTable = () => {
       reloadTable()
   }, []);
 
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
-  }
-
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
   const handleFormSubmit = async (e) => {
@@ -198,9 +196,6 @@ const reloadTable = () => {
               icon: "success",
               button: "OK",
             }).then(() => {
-              // setcategory((prev) =>
-              //   prev.filter((data) => data.category_code !== table_id)
-              // );
               reloadTable()
             });
           } else if (response.status === 202) {
@@ -243,92 +238,6 @@ const reloadTable = () => {
     setValidated(false);
     setShowModal(true);
   };
-
-  {/*bulk upload sa category end*/}
-  // const [showuploadModal, setshowuploadModal] = useState(false);
-
-  // const uploadmodal = () => {
-  //   setshowuploadModal(true);
-  // }
-  // const handlecloseupload = () => setshowuploadModal(false);
-
-  // const [file, setFile] = useState(null);
-  // const handleFileChange = (event) => {
-  //   const selectedFile = event.target.files[0];
-  //   if (selectedFile) {
-  //     setFile(selectedFile);
-  //   } else {
-  //     setFile(null);
-  //   }
-  // };
-
-  // console.log("eot ha" + file)
-  // const handleCSVSuccess = () => {
-  //   swal({
-  //     title: "Import Data!",
-  //     text: "Importing CSV successfully",
-  //     icon: "success",
-  //     button: "Ok",
-  //   }).then(() => {
-  //     handleClose(); // Close the modal
-  //   });
-  // };
-
-  // const handleCSVError = () => {
-  //   swal({
-  //     title: "Import Data Error!",
-  //     text: "Importing CSV Error",
-  //     icon: "error",
-  //     button: "Ok",
-  //   }).then(() => {
-  //     handleClose(); // Close the modal
-  //   });
-  // };
-
-  // const handlenotfound = () => {
-  //   swal({
-  //     title: "Error!",
-  //     text: "CSV Error",
-  //     icon: "error",
-  //     button: "Ok",
-  //   }).then(() => {
-  //     handleClose(); // Close the modal
-  //   });
-  // };
-
-  
-  // const handleImportClick = async () => {
-  //   if (file) {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  
-  //     try {
-  //       const response = await axios.post('/category/importCategory', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-  //         console.log(response)
-  //       if (response.data.success) {
-  //         console.log('Import success:', response.data);
-  //         handleCSVSuccess();
-  //       } else {
-  //         console.error('Import failed:', response.data.error);
-  //         handleCSVError();
-  //       }
-  
-  //       handleClose(); // Close the modal
-  //     } catch (error) {
-  //       if (error.response && error.response.status === 400) {
-  //         handlenotfound();
-  //       } else {
-  //         console.error('Error:', error.message);
-  //       }
-  //     }
-  //   }
-  // };
-
-  {/*bulk upload sa category end*/}
 
   const handleModalToggle = (updateData = null) => {
     setUpdateModalShow(!updateModalShow);
@@ -479,49 +388,22 @@ const reloadTable = () => {
 
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-            <div className="dropdown-and-iconics">
-              <div className="dropdown-side"></div>
-              <div className="iconic-side">
-                <div className="gearsides">
-                  <Gear size={35} />
-                </div>
-                <div className="bellsides">
-                  <Bell size={35} />
-                </div>
-                <div className="usersides">
-                  <UserCircle size={35} />
-                </div>
-                <div className="username">
-                  <h3>User Name</h3>
-                </div>
-              </div>
-            </div>
-          </div> */}
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
                 <p>Product Category</p>
               </div>
-              {/* <div className="upload-daily-time-records mr-3" onClick={uploadmodal}>
-              <button >
-                <DownloadSimple
-                  size={25}
-                  weight="bold"
-                />
-              </button>
-            </div> */}
 
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
-                  {/* { authrztn?.includes('Product Categories - Add') && ( */}
+                  { authrztn?.includes('Product Categories - Add') && (
                   <button onClick={handleShow}>
                     <span style={{}}>
                       <Plus size={25} />
                     </span>
-                    New Category
+                    Create New
                   </button>
-                  {/* )} */}
+                  )}
 
                 </div>
               </div>
@@ -634,152 +516,203 @@ const reloadTable = () => {
           </div>
         </div>
       </div>
-      <Modal show={showModal} onHide={handleClose}>
-        <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-          <Modal.Header closeButton>
-            <Modal.Title style={{ fontSize: "24px" }}>New Category</Modal.Title>
-          </Modal.Header>
+      <Modal 
+        show={showModal} 
+         onHide={handleClose}
+           backdrop="static"
+            keyboard={false}
+             size="lg">
 
+          <Modal.Header closeButton>
+            <Modal.Title style={{fontSize: '24px',
+                fontFamily: 'Poppins, Source Sans Pro'}}>
+                  Create Category
+              </Modal.Title>
+          </Modal.Header>
           <Modal.Body>
-            <div>
+            <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+            <div className="row">
+              <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Category Code:{" "}
+                <Form.Label style={{ fontSize: "20px",
+                      fontFamily: 'Poppins, Source Sans Pro'}}>
+                    Category Code:{" "}
                 </Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter Name of the Category Code..."
-                  style={{ height: "40px", fontSize: "15px" }}
+                  style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
                   value={nextCategoryCode}
                   disabled
                 />
               </Form.Group>
-            </div>
-
-            <div>
+              </div>
+              <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
+                <Form.Label style={{ fontSize: "20px" ,
+                              fontFamily: 'Poppins, Source Sans Pro'}}>
                   Category Name:{" "}
                 </Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Enter Name of the Category Name..."
                   value={categoryName}
-                  style={{ height: "40px", fontSize: "15px" }}
+                  style={{ height: "40px", fontSize: "15px", fontFamily: 'Poppins, Source Sans Pro' }}
                   onChange={(e) => setcategoryName(e.target.value)}
                   required
                 />
               </Form.Group>
+              </div>
             </div>
-            <div>
+
+            <div className="mt-3">
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>
+                <Form.Label style={{ fontSize: "20px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}>
                   Category Remarks:{" "}
                 </Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Enter Category Remarks..."
-                  style={{ height: "40px", fontSize: "15px" }}
+                  as="textarea"
+                  rows={3}
+                  style={{
+                  fontFamily: 'Poppins, Source Sans Pro',
+                  fontSize: "16px",
+                  height: "200px",
+                  maxHeight: "200px",
+                  resize: "none",
+                  overflowY: "auto",
+                  }}
                   onChange={(e) => setcategoryRemarks(e.target.value)}
                 />
               </Form.Group>
             </div>
+            <div className="save-cancel">
+              <Button
+                type="submit"
+                variant="warning"
+                size="md"
+                style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                Add
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleClose}
+                style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                Cancel
+              </Button>
+            </div>
+            </Form>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              type="submit"
-              variant="warning"
-              size="md"
-              style={{ fontSize: "20px" }}>
-              Add
-            </Button>
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handleClose}
-              style={{ fontSize: "20px" }}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Form>
       </Modal>
 
-      <Modal show={updateModalShow} onHide={() => handleModalToggle()}>
-        <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
+      <Modal 
+       show={updateModalShow} 
+        onHide={() => handleModalToggle()}
+         backdrop="static"
+          keyboard={false}
+            size="lg">
+        
           <Modal.Header closeButton>
-            <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
+            <Modal.Title  style={{fontSize: '24px',
+                fontFamily: 'Poppins, Source Sans Pro'}}>
               Update Category
             </Modal.Title>
-
-            <div className="form-group d-flex flex-row "></div>
           </Modal.Header>
           <Modal.Body>
-            <div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Category Code:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={updateFormData.category_code}
-                  onChange={handleUpdateFormChange}
-                  name="category_code"
-                  placeholder="Enter Name of the Category..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  required
-                  readOnly
-                />
-              </Form.Group>
+            <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px",
+                                fontFamily: 'Poppins, Source Sans Pro'}}>
+                    Category Code:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={updateFormData.category_code}
+                    onChange={handleUpdateFormChange}
+                    name="category_code"
+                    style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
+                    required
+                    readOnly
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px",
+                                fontFamily: 'Poppins, Source Sans Pro'}}>
+                    Category Name:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={updateFormData.category_name}
+                    onChange={handleUpdateFormChange}
+                    name="category_name"
+                    style={{ height: "40px", 
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
+                    required
+                  />
+                </Form.Group>
+              </div>
             </div>
-            <div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Category Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={updateFormData.category_name}
-                  onChange={handleUpdateFormChange}
-                  name="category_name"
-                  placeholder="Enter Name of the Category..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  required
-                />
-              </Form.Group>
-            </div>
+
             <div>
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>
+                <Form.Label style={{ fontSize: "20px",
+                        fontFamily: 'Poppins, Source Sans Pro'}}>
                   Category Remarks:{" "}
                 </Form.Label>
                 <Form.Control
                   type="text"
                   value={updateFormData.category_remarks}
-                  onChange={handleUpdateFormChange}
-                  name="category_remarks"
-                  placeholder="Enter Category Remarks..."
-                  style={{ height: "40px", fontSize: "15px" }}
+                    onChange={handleUpdateFormChange}
+                    name="category_remarks"
+                      as="textarea"
+                      rows={3}
+                      style={{
+                      fontFamily: 'Poppins, Source Sans Pro',
+                      fontSize: "16px",
+                      height: "200px",
+                      maxHeight: "200px",
+                      resize: "none",
+                      overflowY: "auto",
+                      }}
                   required
                 />
               </Form.Group>
             </div>
+            <div className="save-cancel">
+              <Button
+                type="submit"
+                variant="warning"
+                size="md"
+                style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                Update
+              </Button>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => setUpdateModalShow(!updateModalShow)}
+                style={{ fontSize: "20px",
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    margin: "0px 5px"}}>
+                Close
+              </Button>
+            </div>
+            </Form>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              type="submit"
-              variant="warning"
-              className=""
-              style={{ fontSize: "20px" }}>
-              Update
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setUpdateModalShow(!updateModalShow)}
-              style={{ fontSize: "20px" }}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Form>
+        
       </Modal>
 
       {/* <Modal show={showuploadModal} onHide={handlecloseupload} backdrop="static" keyboard={false}>

@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
-// const Product = require('../db/models/product.model')
 const {
   ProductTAGSupplier,
   Product,
@@ -14,13 +13,8 @@ const {
   IssuedProduct
 } = require("../db/models/associations");
 const session = require("express-session");
-const multer = require("multer"); // Import multer
-
-// const storage = multer.memoryStorage();
-// const uploader = multer({ storage });
+const multer = require("multer");
 const mime = require("mime-types");
-// const productTAGsupplier = require('../db/models/productTAGsupplier.model');
-// Create a multer instance to handle file uploads
 const upload = multer();
 
 router.use(
@@ -58,12 +52,6 @@ router.route("/fetchALLProduct").get(async (req, res) => {
 
 router.route("/fetchTable").get(async (req, res) => {
   try {
-    //   const data = await MasterList.findAll({
-    //     include: {
-    //       model: UserRole,
-    //       required: false,
-    //     },
-    //   });
     const data = await Product.findAll({
       attributes: [
         "product_id",
@@ -104,10 +92,8 @@ router.route('/fetchTableEdit').get(async (req, res) => {
     });
 
     if (!data) {
-      // No record found
       return res.status(404).json();
     }
-    // console.log(data)
     return res.json(data);
   } catch (error) {
     console.error(error);
@@ -119,7 +105,6 @@ router.route("/create").post(async (req, res) => {
     try {
       const {
         code,
-        prod_id,
         name,
         slct_category,
         slct_binLocation,
@@ -145,7 +130,6 @@ router.route("/create").post(async (req, res) => {
             const newData = await Product.create({
             product_code: code.toUpperCase(),
             product_name: name,
-            productsID: prod_id,
             product_category: slct_category,
             product_location: slct_binLocation,
             product_unitMeasurement: unitMeasurement,
@@ -235,7 +219,6 @@ router.route("/create").post(async (req, res) => {
 router.route("/update").post(
   async (req, res) => {
     const {id,
-      prod_id,
       code,
       name,
       slct_category,
@@ -264,7 +247,6 @@ router.route("/update").post(
       const product_newdata = await Product.update(
         {
           product_code: code,
-          productsID: prod_id,
           product_name: name,
           product_category: slct_category,
           product_location: slct_binLocation,
@@ -349,10 +331,28 @@ router.route("/update").post(
           }
         };
 
-
-        const deletesupplier = ProductTAGSupplier.destroy({
+        const prodsupprows = await ProductTAGSupplier.findAll({
           where: {
-            product_id: id
+            product_id: id,
+          },
+        });
+
+        if(prodsupprows && prodsupprows.length === 0) {
+          console.log("No product id found");
+          return res.status(201).json({ message: "No product supplier found" });
+        };
+
+        const ExistSuppId = prodsupprows.map(supprow => supprow.id);
+
+        await Inventory.destroy({
+          where: {
+            product_tag_supp_id: ExistSuppId,
+          },
+        });
+
+        const deletesupplier = await ProductTAGSupplier.destroy({
+          where: {
+            product_id: id,
           },
         });
 
@@ -361,30 +361,47 @@ router.route("/update").post(
           for(const supplier of selectedsupplier){
             const { value, price} = supplier;
 
-            const existingPrice = await ProductTAGSupplier.findOne({
-              product_id: id,
-              supplier_code: value,
-            })
-
-            await ProductTAGSupplier.create({
+            const newProductsupp = await ProductTAGSupplier.create({
               product_id: id,
               supplier_code: value,
               product_price: price
             });
 
-            if(existingPrice && existingPrice.product_price === price){
-              continue;
-            }
+            const createdID = newProductsupp.id;
 
-            if(existingPrice && existingPrice.product_price !== price){
+            await Inventory.create({
+              product_tag_supp_id: createdID,
+              quantity: 0,
+              price: price,
+            });
+
+            const ExistingSupplier = await productTAGsupplierHistory.findOne({
+              where: {
+                product_id: id,
+                supplier_code: value,
+              },
+              order: [['createdAt', 'DESC']],
+            }); 
+
+            if(!ExistingSupplier){
               await productTAGsupplierHistory.create({
                 product_id: id,
                 supplier_code: value,
                 product_price: price
               });
+            } else {
+              const existingPrice = ExistingSupplier.product_price;
+
+              if(existingPrice !== price){
+                await productTAGsupplierHistory.create({
+                  product_id: id,
+                  supplier_code: value,
+                  product_price: price
+                });
+              }
             }
           }
-        };
+        }
 
       res.status(200).json();
     }
@@ -552,7 +569,25 @@ router.route('/statusupdate').put(async (req, res) => {
 });
 
 
+router.route('/lastCode').get(async (req, res) => {
+  try {
+    const latestPR = await Product.findOne({
+      attributes: [[sequelize.fn('max', sequelize.col('product_code')), 'latestNumber']],
+    });
+    let latestNumber = latestPR.getDataValue('latestNumber');
 
+    console.log('Latest Number:', latestNumber);
+
+    // Increment the latestNumber by 1 for a new entry
+    latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+
+    // Do not create a new entry, just return the incremented value
+    return res.json(latestNumber.padStart(6, '0'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
 
 
 module.exports = router;

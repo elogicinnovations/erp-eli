@@ -744,7 +744,23 @@ function MasterList({ authrztn }) {
                       <td>{data.userRole.col_rolename}</td>
                       <td>{data.col_Fname}</td>
                       <td>{data.col_email}</td>
-                      <td>{data.col_status}</td>
+                      <td>
+                      <div
+                          className="colorstatus"
+                          style={{
+                            backgroundColor:
+                              data.col_status === "Active"
+                                ? "green"
+                                : "red",
+                            color: "white",
+                            padding: "5px",
+                            borderRadius: "5px",
+                            textAlign: "center",
+                            width: "80px",
+                          }}>
+                        {data.col_status}
+                        </div>
+                      </td>
                       <td>
                       {isVertical[data.col_id] ? (
                         <div style={{ position: 'relative', display: 'inline-block' }}>

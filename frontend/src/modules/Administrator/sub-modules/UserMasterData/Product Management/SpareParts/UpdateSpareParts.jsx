@@ -549,6 +549,7 @@ const update = async (e) => {
                                 onChange={(e) => handleSparepartCode(e)} 
                                 type="text" 
                                 style={{height: '40px', fontSize: '15px'}}
+                                readOnly
                                 />
                               </Form.Group>
                             </div>
@@ -694,7 +695,8 @@ const update = async (e) => {
                                 value={thresholds} 
                                 onChange={(e) => handlesparethreshold(e)}
                                 type="number" 
-                                style={{height: '40px', fontSize: '15px'}}/>
+                                style={{height: '40px', fontSize: '15px'}}
+                                required/>
                                 </Form.Group>
                             </div>
                             <div className="col-6">
