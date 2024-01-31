@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../Sidebar/sidebar';
+import ReactLoading from 'react-loading';
+import NoData from '../../../assets/image/NoData.png';
+import NoAccess from '../../../assets/image/NoAccess.png';
 import '../../../assets/global/style.css';
 import {  Link, useNavigate, useParams } from 'react-router-dom';
 import '../../styles/react-style.css';
@@ -27,7 +30,7 @@ import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
-function ReceivingStockTransferPreview() {
+function ReceivingStockTransferPreview({authrztn}) {
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
 
@@ -37,6 +40,7 @@ function ReceivingStockTransferPreview() {
   const [referenceCode, setReferenceCode] = useState();
   const [users, setUsers] = useState();
   const [remarks, setRemarks] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const [dateCreated, setDateCreated] = useState();
 
 
@@ -45,6 +49,7 @@ function ReceivingStockTransferPreview() {
 
   // -------------------- fetch data value --------------------- //
   useEffect(() => {   
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/StockTransfer/viewToReceiveStockTransfer', {
         params: {
           id: id
@@ -57,9 +62,16 @@ function ReceivingStockTransferPreview() {
         setUsers(res.data[0].masterlist.col_Fname);
         setRemarks(res.data[0].remarks);
         setDateCreated(res.data[0].createdAt);
-    })
-      .catch(err => console.log(err));
-  }, []);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 // -------------------- end fetch data value --------------------- //
 
 const [products, setProducts] = useState([]);
@@ -586,6 +598,13 @@ const handleDoneReceived = () => {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Receiving - View') ? (
             <div className="right-body-contents-a">
             <Row>
                 
@@ -824,6 +843,15 @@ const handleDoneReceived = () => {
                         
                        
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
   )

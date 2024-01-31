@@ -8,6 +8,9 @@ import Select from 'react-select';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
+import ReactLoading from 'react-loading';
+import NoData from '../../../assets/image/NoData.png';
+import NoAccess from '../../../assets/image/NoAccess.png';
 import Col from 'react-bootstrap/Col';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -26,7 +29,7 @@ import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 
-function StockTransferPreview() {
+function StockTransferPreview({authrztn}) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -35,6 +38,7 @@ function StockTransferPreview() {
   const [dateCreated, setDateCreated] = useState('');
   const [dateNeed, setDateNeed] = useState(null);
   const [useFor, setUseFor] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const [source, setSource] = useState([]);
   const [destination, setDestination] = useState([]);
@@ -188,28 +192,68 @@ function StockTransferPreview() {
 
   {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/product/fetchTable')
-      .then(res => setFetchProduct(res.data))
-      .catch(err => console.log(err));
-  }, []);
+      .then(res => {
+        setFetchProduct(res.data)
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching master list:', error);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/assembly/fetchTable')
-      .then(res => setFetchAssembly(res.data))
-      .catch(err => console.log(err));
-  }, []);
+      .then(res => {
+        setFetchAssembly(res.data)
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching master list:', error);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/sparePart/fetchTable')
-      .then(res => setFetchSpare(res.data))
-      .catch(err => console.log(err));
-  }, []);
+      .then(res => {
+        setFetchSpare(res.data)
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching master list:', error);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/subpart/fetchTable')
-      .then(res => setFetchSubPart(res.data))
-      .catch(err => console.log(err));
-  }, []);
+      .then(res => {
+        setFetchSubPart(res.data)
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching master list:', error);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
   {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
 
 
@@ -463,6 +507,13 @@ useEffect(() => {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Stock Management - View') ? (
             <div className="right-body-contents-a">
             <Row>
                 
@@ -932,6 +983,15 @@ useEffect(() => {
                         */}
                        
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
   )

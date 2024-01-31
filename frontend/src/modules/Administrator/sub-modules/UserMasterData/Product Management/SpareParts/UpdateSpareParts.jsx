@@ -3,6 +3,9 @@ import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import '../../../../../styles/react-style.css';
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import BASE_URL from '../../../../../../assets/global/url';
@@ -17,7 +20,7 @@ import {
 } from "@phosphor-icons/react";
 
 
-function UpdateSpareParts() {
+function UpdateSpareParts({authrztn}) {
 
 const [validated, setValidated] = useState(false);
 const [fetchSupp, setFetchSupp] = useState([]); 
@@ -26,6 +29,7 @@ const [code, setCode] = useState('');
 const [name, setName] = useState('');
 const [desc, setDesc] = useState('');
 const [addPriceInput, setaddPriceInputbackend] = useState([]);
+const [isLoading, setIsLoading] = useState(true);
 
 const [tableSupp, setTableSupp] = useState([]);
 
@@ -48,6 +52,7 @@ const { id } = useParams();
 
 //para sa mga input textfieldd fetch
 useEffect(() => {
+  const delay = setTimeout(() => {
   axios.get(BASE_URL + '/sparePart/fetchTableEdit', {
     params: {
       id: id
@@ -61,8 +66,15 @@ useEffect(() => {
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
       setThresholds(res.data[0].threshhold);
+      setIsLoading(false);
     })
-    .catch(err => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+}, 1000);
+
+return () => clearTimeout(delay);
 }, [id]);
 
 
@@ -493,6 +505,13 @@ const update = async (e) => {
   return (
     <div className="main-of-containers">
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Spare Part - Edit') ? (
             <div className="right-body-contents-a"> 
             
             <div className="arrowandtitle">
@@ -851,6 +870,15 @@ const update = async (e) => {
                 </Form>
                 
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
   )

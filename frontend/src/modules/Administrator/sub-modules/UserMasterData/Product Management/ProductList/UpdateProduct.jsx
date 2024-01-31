@@ -6,6 +6,9 @@ import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
@@ -14,9 +17,10 @@ import Dropzone from "react-dropzone";
 import Carousel from 'react-bootstrap/Carousel';
 import { ArrowCircleLeft } from "@phosphor-icons/react";
 
-function UpdateProduct() {
+function UpdateProduct({authrztn}) {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [validated, setValidated] = useState(false); // for form validation
 
@@ -75,6 +79,7 @@ function UpdateProduct() {
 
   //fetching of assembly in dropdown
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productAssembly/fetchassemblyTable", {
         params: {
@@ -89,12 +94,20 @@ function UpdateProduct() {
           label: row.assembly.assembly_name,
         }));
         setassemblies(selectedAssembly);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
 
   //fetching of subparts in dropdown
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productSubpart/fetchsubpartTable", {
         params: {
@@ -109,12 +122,20 @@ function UpdateProduct() {
           label: row.subPart.subPart_name,
         }));
         setsubparting(selectedSubparts);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
 
   //fetching of spareparts in dropdown
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productSparepart/fetchsparepartTable", {
         params: {
@@ -129,8 +150,15 @@ function UpdateProduct() {
           label: row.sparePart.spareParts_name,
         }));
         setSparePart(selectedSpareparts);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
 
   //for onchange dropdown of spareparts
@@ -643,6 +671,13 @@ useEffect(() => {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Product List - Edit') ? (
         <div className="right-body-contentss">
         <div className="arrowandtitle">
           <Link to="/productList">
@@ -1130,6 +1165,15 @@ useEffect(() => {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BASE_URL from "../../assets/global/url";
 import Sidebar from "../Sidebar/sidebar";
+import ReactLoading from 'react-loading';
+import NoData from '../../assets/image/NoData.png';
+import NoAccess from '../../assets/image/NoAccess.png';
 import "../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/react-style.css";
@@ -11,7 +14,7 @@ import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 
-const CreateIssuance = ({ setActiveTab }) => {
+const CreateIssuance = ({ setActiveTab, authrztn }) => {
 
 
   const handleTabClick = (tabKey) => {
@@ -20,6 +23,7 @@ const CreateIssuance = ({ setActiveTab }) => {
 
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchProduct, setFetchProduct] = useState([]);
@@ -119,11 +123,21 @@ const CreateIssuance = ({ setActiveTab }) => {
   
   //get supplier product
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/inventory/fetchToIssueProduct")
-      .then((res) => setFetchProduct(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setFetchProduct(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   //get supplier Assembly
   useEffect(() => {
@@ -301,6 +315,13 @@ const CreateIssuance = ({ setActiveTab }) => {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Inventory - Add') ? (
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={add}>
             <h1>Create Issuance</h1>
@@ -758,6 +779,15 @@ const CreateIssuance = ({ setActiveTab }) => {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

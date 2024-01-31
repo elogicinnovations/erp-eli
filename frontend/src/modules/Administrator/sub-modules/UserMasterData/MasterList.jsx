@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
 import axios from "axios";
 import "../../../../assets/global/style.css";
 import "../../../styles/react-style.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Sidebar from "../../../Sidebar/sidebar";
+import NoData from '../../../../assets/image/NoData.png';
+import NoAccess from '../../../../assets/image/NoAccess.png';
 import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
 // import 'bootstrap/dist/css/bootstrap.min.css'
@@ -41,6 +44,7 @@ function MasterList({ authrztn }) {
   const [masterListt, setmasterListt] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -120,7 +124,6 @@ function MasterList({ authrztn }) {
       .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
       .then((res) => {
         if (res.status === 200) {
-          console.log(res);
 
           setAuthorization(res.data.authorization);
         }
@@ -148,16 +151,25 @@ function MasterList({ authrztn }) {
   // };
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/masterList/masterTable")
-      .then((res) => setmasterListt(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setmasterListt(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
+  
   useEffect(() => {
     reloadTable();
   }, []);
-
-  console.log(masterListt);
 
   const handleClose = () => {
     setShowModal(false);
@@ -386,6 +398,34 @@ function MasterList({ authrztn }) {
           icon: "error",
           button: "OK",
         });
+      } else if (!/[A-Z]/.test(formData.cpass)) {
+        swal({
+          title: "Password Validation",
+          text: "Add at least one capital letter",
+          icon: "error",
+          button: "OK",
+        });
+      } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(formData.cpass)) {
+        swal({
+          title: "Password Validation",
+          text: "Add at least one special character",
+          icon: "error",
+          button: "OK",
+        });
+      } else if (!/\d/.test(formData.cpass)) {
+        swal({
+          title: "Password Validation",
+          text: "Add at least one number",
+          icon: "error",
+          button: "OK",
+        });
+      } else if (formData.cpass.length < 8) {
+        swal({
+          title: "Password Validation",
+          text: "Password must be at least 8 characters",
+          icon: "error",
+          button: "OK",
+        });
       }
       if (formData.cpass != formData.cpass2) {
         swal({
@@ -578,7 +618,9 @@ function MasterList({ authrztn }) {
           // Handle other errors, such as network issues
         }
       } else {
-        swal("Your user file is safe!");
+        swal("Your user file is safe!", {
+          icon: "success",
+        });
         // Handle the case where the user canceled the deletion
       }
     });
@@ -680,6 +722,13 @@ function MasterList({ authrztn }) {
         <Sidebar />
       </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Master List - View') ? (
         <div className="right-body-contents">
           {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
@@ -735,6 +784,7 @@ function MasterList({ authrztn }) {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {masterListt.length > 0 ? (
                 <tbody>
                   {masterListt.map((data, i) => (
                     <tr
@@ -845,12 +895,29 @@ function MasterList({ authrztn }) {
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
 
           <div className="pagination-contains"></div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
 
       {/* Add User */}

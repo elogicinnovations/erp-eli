@@ -17,7 +17,6 @@ export default function ProtectedRoutes({ children }) {
         'forgotPass',
         'forgotpass'
       ]
-      console.log(localStorage.getItem('accessToken'));
       if(localStorage.getItem('accessToken') === null && guestRoute.includes(location.pathname)){
         navigate('/');
       }

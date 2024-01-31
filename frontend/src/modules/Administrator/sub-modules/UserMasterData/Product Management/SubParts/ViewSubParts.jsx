@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import '../../../../styles/react-style.css';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router';
@@ -22,24 +25,42 @@ import '../../../../../../assets/skydash/js/off-canvas';
 import * as $ from 'jquery';
 
 
-function ViewSubParts() {
+function ViewSubParts({authrztn}) {
     const { id } = useParams();
     const [viewSupplier, setviewSupplier] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const delay = setTimeout(() => {
         axios.get(BASE_URL + '/subpartSupplier/fetchCanvass',{
           params: {
             id: id
           }
         })
-          .then(res => setviewSupplier(res.data))
-          .catch(err => console.log(err));
+          .then(res => {
+            setviewSupplier(res.data)
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+          });
+      }, 1000);
+      
+      return () => clearTimeout(delay);
       }, []);
 
     return(
         <div className="main-of-containers">
     
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Sub-Part - View') ? (
             <div className="right-body-contentss">
                 <div className="headers-text">
                     <div className="arrowandtitle">
@@ -76,6 +97,15 @@ function ViewSubParts() {
                     </div>
                 </div>
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
     )

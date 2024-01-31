@@ -3,6 +3,9 @@ import Sidebar from "../../../../Sidebar/sidebar";
 import "../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import swal from "sweetalert";
 import axios from "axios";
@@ -16,7 +19,7 @@ import * as $ from "jquery";
 
 import { CostContext } from "../../../../../contexts/contexts";
 
-function ViewCostCenter() {
+function ViewCostCenter({authrztn}) {
   const { id } = useParams();
   const [costName, setCostname] = useState("");
   const [assignUser, setAssignUser] = useState("");
@@ -24,8 +27,10 @@ function ViewCostCenter() {
   const [description, setDescrption] = useState("");
   const [status, setStatus] = useState("");
   const [productIssue, setproductIssue] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/costCenter/initUpdate", {
         params: {
@@ -38,13 +43,19 @@ function ViewCostCenter() {
         setContact(res.data[0].masterlist.col_phone);
         setDescrption(res.data[0].description);
         setStatus(res.data[0].status);
+        setIsLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.log(err);
+        setIsLoading(false);
       });
-  }, [id]);
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, [id]);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/issued_product/getissued", {
         params: {
@@ -53,11 +64,16 @@ function ViewCostCenter() {
       })
       .then((res) => {
         setproductIssue(res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.log(err);
+        setIsLoading(false);
       });
-  }, [id]);
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, [id]);
 
   const getToggleSwitchClass = () => {
     return status === "Active" ? "toggle-switch active" : "toggle-switch";
@@ -75,6 +91,13 @@ function ViewCostCenter() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Cost Centre - View') ? (
         <div className="right-body-contents-a">
           <Row>
             <Col style={{ display: "flex" }}>
@@ -257,6 +280,15 @@ function ViewCostCenter() {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

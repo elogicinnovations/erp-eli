@@ -11,6 +11,9 @@ import {
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Button from 'react-bootstrap/Button';
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 
 import '../../../../../../assets/skydash/vendors/feather/feather.css';
 import '../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
@@ -34,11 +37,11 @@ import "../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTable
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4";
 import "../../../../../../assets/skydash/js/off-canvas";
 
-function ProductSupplier() {
+function ProductSupplier({authrztn}) {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [product, setproduct] = useState([]); // for fetching product data that tag to supplier
-
+  const [product, setproduct] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("Assembly");
   const [Assembly, setAssembly] = useState([]); //for fetching ng assembly na may where clause id
@@ -48,6 +51,7 @@ function ProductSupplier() {
   //------------------------------for tagging of supplier ---------------------------//
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productTAGsupplier/fetchTable", {
         params: {
@@ -57,46 +61,83 @@ function ProductSupplier() {
       .then((res) => {
         const data = res.data;
         setproduct(data);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
 
 
   //fetching of assembly
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productAssembly/fetchassemblyTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setAssembly(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setAssembly(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+  }, [id]);
 
   //fetching of subparts
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productSubpart/fetchsubpartTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSubParts(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setSubParts(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+  }, [id]);
 
   //fetching of spareparts
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/productSparepart/fetchsparepartTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSpareparts(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setSpareparts(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+  }, [id]);
 
 
 
@@ -106,6 +147,13 @@ function ProductSupplier() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Product List - View') ? (
         <div className="right-body-contentss">
         <div className="headers-text">
             <div className="arrowandtitle">
@@ -252,6 +300,15 @@ function ProductSupplier() {
             </Link>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

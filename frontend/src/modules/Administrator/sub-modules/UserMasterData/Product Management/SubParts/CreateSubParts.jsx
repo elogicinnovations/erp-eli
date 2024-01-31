@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import "../../../../../styles/react-style.css";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
@@ -16,10 +19,11 @@ import {
   ArrowCircleLeft
 } from "@phosphor-icons/react";
 
-function CreateSubParts() {
+function CreateSubParts({authrztn}) {
   const [validated, setValidated] = useState(false);
   const navigate = useNavigate();
   const [category, setcategory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [binLocation, setbinLocation] = useState([]);
   const [manufacturer, setManufacturer] = useState([]);
@@ -87,10 +91,20 @@ function CreateSubParts() {
   // console.log(slct_binLocation);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => setFetchSupp(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchSupp(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+  
+  return () => clearTimeout(delay);
   }, []);
 
   const handlePriceinput = (value, priceValue) => {
@@ -446,6 +460,13 @@ function onDropImages(event) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Sub-Part - Add') ? (
         <div className="right-body-contentss">
           <Form noValidate validated={validated} onSubmit={add}>
           <div className="arrowandtitle">
@@ -819,6 +840,15 @@ function onDropImages(event) {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

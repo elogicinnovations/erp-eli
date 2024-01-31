@@ -131,16 +131,209 @@ function EditRole() {
 
   const handleCheckboxChange = (value) => {
     const updatedCheckboxes = [...selectedCheckboxes];
-
+  
     // Check if the checkbox is already checked
     const isCheckedIndex = selectedCheckboxes.findIndex((item) =>
       item.value.includes(value)
     );
-
+  
     if (isCheckedIndex !== -1) {
-      // Checkbox is checked, uncheck it
+      // Checkbox is checked, uncheck it and related checkboxes
       updatedCheckboxes.splice(isCheckedIndex, 1);
       console.log(`Unchecked: ${value}`);
+      
+      if (value === "Master List - View") {
+        ["Master List - Add", "Master List - Edit", "Master List - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "User Access Role - View") {
+        ["User Access Role - Add", "User Access Role - Edit", "User Access Role - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Product List - View") {
+        ["Product List - Add", "Product List - Edit", "Product List - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Assembly - View") {
+        ["Assembly - Add", "Assembly - Edit", "Assembly - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Spare Part - View") {
+        ["Spare Part - Add", "Spare Part - Edit", "Spare Part - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Sub-Part - View") {
+        ["Sub-Part - Add", "Sub-Part - Edit", "Sub-Part - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Product Categories - View") {
+        ["Product Categories - Add", "Product Categories - Edit", "Product Categories - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Product Manufacturer - View") {
+        ["Product Manufacturer - Add", "Product Manufacturer - Edit", "Product Manufacturer - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Bin Location - View") {
+        ["Bin Location - Add", "Bin Location - Edit", "Bin Location - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Cost Centre - View") {
+        ["Cost Centre - Add", "Cost Centre - Edit", "Cost Centre - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Supplier - View") {
+        ["Supplier - Add", "Supplier - Edit", "Supplier - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Inventory - View") {
+        ["Inventory - Add", "Inventory - Edit", "Inventory - Approval", "Inventory - Reject"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "PR - View") {
+        ["PR - Add", "PR - Edit", "PR - Approval", "PR - Reject"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "PO - View") {
+        ["PO - Approval", "PO - Reject"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Receiving - View") {
+        ["Receiving - Approval", "Receiving - Reject"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+      
+      if (value === "Stock Management - View") {
+        ["Stock Management - Add", "Stock Management - View", "Stock Management - Approval", "Stock Management - Reject"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
+
     } else {
       // Checkbox is unchecked, remove all instances of this value from the array
       const updatedCheckboxesFiltered = updatedCheckboxes.filter(
@@ -154,10 +347,10 @@ function EditRole() {
       });
       console.log(`Checked: ${value}`);
     }
-
+  
     setSelectedCheckboxes([...updatedCheckboxes]); // Update the state to trigger re-render
     console.log(updatedCheckboxes);
-
+  
     // Save the new string without unchecked values
     const newAuthorizationString = updatedCheckboxes
       .map((item) => item.authorization)
@@ -168,10 +361,6 @@ function EditRole() {
   const handleSelectAll = () => {
     // Select all checkboxes
     const allCheckboxValues = [
-      "Analytic Dashboard - Add",
-      "Analytic Dashboard - Edit",
-      "Analytic Dashboard - Delete",
-      "Analytic Dashboard - View",
       "Master List - Add",
       "Master List - Edit",
       "Master List - Delete",
@@ -258,6 +447,102 @@ function EditRole() {
     setSelectedCheckboxes([]);
   };
 
+  const MasterList = selectedCheckboxes.find((item) => item.value === "Master List - View");
+  const MasterListDisable = !MasterList;
+  const MasterListAdd = selectedCheckboxes.some((item) => item.value === "Master List - Add",) && !MasterListDisable;
+  const MasterListEdit = selectedCheckboxes.some((item) => item.value === "Master List - Edit") && !MasterListDisable;
+  const MasterListDelete = selectedCheckboxes.some((item) => item.value === "Master List - Delete") && !MasterListDisable;
+
+  const UserRole = selectedCheckboxes.some((item) => item.value === "User Access Role - View");
+  const UserRoleDisable = !UserRole;
+  const UserRoleAdd = selectedCheckboxes.some((item) => item.value === "User Access Role - Add") && !UserRoleDisable;
+  const UserRoleEdit = selectedCheckboxes.some((item) => item.value === "User Access Role - Edit") && !UserRoleDisable;
+  const UserRoleDelete = selectedCheckboxes.some((item) => item.value === "User Access Role - Delete") && !UserRoleDisable;
+
+  const ProductList = selectedCheckboxes.some((item) => item.value === "Product List - View");
+  const ProductListDisable = !ProductList;
+  const ProductListAdd = selectedCheckboxes.some((item) => item.value === "Product List - Add") && !ProductListDisable;
+  const ProductListEdit = selectedCheckboxes.some((item) => item.value === "Product List - Edit") && !ProductListDisable;
+  const ProductListDelete = selectedCheckboxes.some((item) => item.value === "Product List - Delete") && !ProductListDisable;
+
+  const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
+  const AssemblyDisable = !Assembly;
+  const AssemblyAdd = selectedCheckboxes.some((item) => item.value === "Assembly - Add") && !AssemblyDisable;
+  const AssemblyEdit = selectedCheckboxes.some((item) => item.value === "Assembly - Edit") && !AssemblyDisable;
+  const AssemblyDelete = selectedCheckboxes.some((item) => item.value === "Assembly - Delete") && !AssemblyDisable;
+
+  const SpareParts = selectedCheckboxes.some((item) => item.value === "Spare Part - View");
+  const SparePartsDisable = !SpareParts;
+  const SparePartsAdd = selectedCheckboxes.some((item) => item.value === "Spare Part - Add") && !SparePartsDisable;
+  const SparePartsEdit = selectedCheckboxes.some((item) => item.value === "Spare Part - Edit") && !SparePartsDisable;
+  const SparePartsDelete = selectedCheckboxes.some((item) => item.value === "Spare Part - Delete") && !SparePartsDisable;
+
+  const SubParts = selectedCheckboxes.some((item) => item.value === "Sub-Part - View");
+  const SubPartsDisable = !SubParts;
+  const SubPartsAdd = selectedCheckboxes.some((item) => item.value === "Sub-Part - Add") && !SubPartsDisable;
+  const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
+  const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
+
+  const ProductCategories = selectedCheckboxes.some((item) => item.value === "Product Categories - View");
+  const ProductCategoriesDisable = !ProductCategories;
+  const ProductCategoriesAdd = selectedCheckboxes.some((item) => item.value === "Product Categories - Add") && !ProductCategoriesDisable;
+  const ProductCategoriesEdit = selectedCheckboxes.some((item) => item.value === "Product Categories - Edit") && !ProductCategoriesDisable;
+  const ProductCategoriesDelete = selectedCheckboxes.some((item) => item.value === "Product Categories - Delete") && !ProductCategoriesDisable;
+
+  const ProductManufacturer = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - View");
+  const ProductManufacturerDisable = !ProductManufacturer;
+  const ProductManufacturerAdd = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Add") && !ProductManufacturerDisable;
+  const ProductManufacturerEdit = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Edit") && !ProductManufacturerDisable;
+  const ProductManufacturerDelete = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Delete") && !ProductManufacturerDisable;
+
+  const BinLocation = selectedCheckboxes.some((item) => item.value === "Bin Location - View");
+  const BinLocationDisable = !BinLocation;
+  const BinLocationAdd = selectedCheckboxes.some((item) => item.value === "Bin Location - Add") && !BinLocationDisable;
+  const BinLocationEdit = selectedCheckboxes.some((item) => item.value === "Bin Location - Edit") && !BinLocationDisable;
+  const BinLocationDelete = selectedCheckboxes.some((item) => item.value === "Bin Location - Delete") && !BinLocationDisable;
+
+  const CostCentre = selectedCheckboxes.some((item) => item.value === "Cost Centre - View");
+  const CostCentreDisable = !CostCentre;
+  const CostCentreAdd = selectedCheckboxes.some((item) => item.value === "Cost Centre - Add") && !CostCentreDisable;
+  const CostCentreEdit = selectedCheckboxes.some((item) => item.value === "Cost Centre - Edit") && !CostCentreDisable;
+  const CostCentreDelete = selectedCheckboxes.some((item) => item.value === "Cost Centre - Delete") && !CostCentreDisable;
+
+  const Supplier = selectedCheckboxes.some((item) => item.value === "Supplier - View");
+  const SupplierDisable = !Supplier;
+  const SupplierAdd = selectedCheckboxes.some((item) => item.value === "Supplier - Add") && !SupplierDisable;
+  const SupplierEdit = selectedCheckboxes.some((item) => item.value === "Supplier - Edit") && !SupplierDisable;
+  const SupplierDelete = selectedCheckboxes.some((item) => item.value === "Supplier - Delete") && !SupplierDisable;
+
+  const Inventory = selectedCheckboxes.some((item) => item.value === "Inventory - View");
+  const InventoryDisable = !Inventory;
+  const InventoryAdd = selectedCheckboxes.some((item) => item.value === "Inventory - Add") && !InventoryDisable;
+  const InventoryEdit = selectedCheckboxes.some((item) => item.value === "Inventory - Edit") && !InventoryDisable;
+  const InventoryApproval = selectedCheckboxes.some((item) => item.value === "Inventory - Approval") && !InventoryDisable;
+  const InventoryReject = selectedCheckboxes.some((item) => item.value === "Inventory - Reject") && !InventoryDisable;
+
+  const PurchaseRequest = selectedCheckboxes.some((item) => item.value === "PR - View");
+  const PurchaseRequestDisable = !PurchaseRequest;
+  const PurchaseRequestAdd = selectedCheckboxes.some((item) => item.value === "PR - Add") && !PurchaseRequestDisable;
+  const PurchaseRequestEdit = selectedCheckboxes.some((item) => item.value === "PR - Edit") && !PurchaseRequestDisable;
+  const PurchaseRequestApproval = selectedCheckboxes.some((item) => item.value === "PR - Approval") && !PurchaseRequestDisable;
+  const PurchaseRequestReject = selectedCheckboxes.some((item) => item.value === "PR - Reject") && !PurchaseRequestDisable;
+
+  const PurchaseOrder = selectedCheckboxes.some((item) => item.value === "PO - View");
+  const PurchaseOrderDisable = !PurchaseOrder;
+  const PurchaseOrderApproval = selectedCheckboxes.some((item) => item.value === "PO - Approval") && !PurchaseOrderDisable;
+  const PurchaseOrderReject = selectedCheckboxes.some((item) => item.value === "PO - Reject") && !PurchaseOrderDisable;
+
+  const Receiving = selectedCheckboxes.some((item) => item.value === "Receiving - View");
+  const ReceivingDisable = !Receiving;
+  const ReceivingApproval = selectedCheckboxes.some((item) => item.value === "Receiving - Approval") && !ReceivingDisable;
+  const ReceivingReject = selectedCheckboxes.some((item) => item.value === "Receiving - Reject") && !ReceivingDisable;
+
+  const StockTransfer = selectedCheckboxes.some((item) => item.value === "Stock Management - View");
+  const StockTransferDisable = !StockTransfer;
+  const StockTransferAdd = selectedCheckboxes.some((item) => item.value === "Stock Management - Add") && !StockTransferDisable;
+  const StockTransferApproval = selectedCheckboxes.some((item) => item.value === "Stock Management - Approval") && !StockTransferDisable;
+  const StockTransferReject = selectedCheckboxes.some((item) => item.value === "Stock Management - Reject") && !StockTransferDisable;
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -322,7 +607,6 @@ function EditRole() {
               </div>
 
               <div className="button-create-side">
-                <div className="Buttonmodal-new"></div>
               </div>
             </div>
           </div>
@@ -398,7 +682,7 @@ function EditRole() {
 
                 <div className="w-100 mt-1" style={{ marginLeft: "50px" }}>
                   <table class="table">
-                    <thead>
+                    <thead className="rbacthead">
                       <tr>
                         <th style={{ fontSize: 15 }}>Module</th>
                         <th style={{ fontSize: 15 }}>View</th>
@@ -413,6 +697,7 @@ function EditRole() {
 
                       {/* --------------------------------------BREAK ------------------------------*/}
 
+                      
                       <td>
                         <h3 className="role-head">Administrator</h3>
                       </td>
@@ -432,9 +717,7 @@ function EditRole() {
                               id="Master List - View"
                               name="vehicle1"
                               value="Master List - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - View"
-                              )}
+                              checked={MasterList}
                               onChange={() =>
                                 handleCheckboxChange("Master List - View")
                               }
@@ -452,9 +735,8 @@ function EditRole() {
                               id="Master List - Add"
                               name="vehicle1"
                               value="Master List - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Add"
-                              )}
+                              disabled={MasterListDisable}
+                              checked={MasterListAdd}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Add")
                               }
@@ -472,9 +754,8 @@ function EditRole() {
                               id="Master List - Edit"
                               name="vehicle1"
                               value="Master List - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Edit"
-                              )}
+                              disabled={MasterListDisable}
+                              checked={MasterListEdit}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Edit")
                               }
@@ -492,9 +773,8 @@ function EditRole() {
                               id="Master List - Delete"
                               name="vehicle1"
                               value="Master List - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Delete"
-                              )}
+                              disabled={MasterListDisable}
+                              checked={MasterListDelete}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Delete")
                               }
@@ -565,10 +845,7 @@ function EditRole() {
                               id="User Access Role - View"
                               name="vehicle1"
                               value="User Access Role - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - View"
-                              )}
+                              checked={UserRole}
                               onChange={() =>
                                 handleCheckboxChange("User Access Role - View")
                               }
@@ -586,10 +863,8 @@ function EditRole() {
                               id="User Access Role - Add"
                               name="vehicle1"
                               value="User Access Role - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - Add"
-                              )}
+                              disabled={UserRoleDisable}
+                              checked={UserRoleAdd}
                               onChange={() =>
                                 handleCheckboxChange("User Access Role - Add")
                               }
@@ -603,14 +878,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={UserRoleDisable}
                               type="checkbox"
                               id="User Access Role - Edit"
                               name="vehicle1"
                               value="User Access Role - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - Edit"
-                              )}
+                              checked={UserRoleEdit}
                               onChange={() =>
                                 handleCheckboxChange("User Access Role - Edit")
                               }
@@ -624,14 +897,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={UserRoleDisable}
                               type="checkbox"
                               id="User Access Role - Delete"
                               name="vehicle1"
                               value="User Access Role - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - Delete"
-                              )}
+                              checked={UserRoleDelete}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "User Access Role - Delete"
@@ -711,9 +982,7 @@ function EditRole() {
                               id="Product List - View"
                               name="vehicle1"
                               value="Product List - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - View"
-                              )}
+                              checked={ProductList}
                               onChange={() =>
                                 handleCheckboxChange("Product List - View")
                               }
@@ -727,13 +996,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                            disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Add"
                               name="vehicle1"
                               value="Product List - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Add"
-                              )}
+                              checked={ProductListAdd}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Add")
                               }
@@ -747,13 +1015,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                            disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Edit"
                               name="vehicle1"
                               value="Product List - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Edit"
-                              )}
+                              checked={ProductListEdit}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Edit")
                               }
@@ -767,13 +1034,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                            disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Delete"
                               name="vehicle1"
                               value="Product List - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Delete"
-                              )}
+                              checked={ProductListDelete}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Delete")
                               }
@@ -845,9 +1111,7 @@ function EditRole() {
                               id="Assembly - View"
                               name="vehicle1"
                               value="Assembly - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Assembly - View"
-                              )}
+                              checked={Assembly}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - View")
                               }
@@ -861,14 +1125,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={AssemblyDisable}
                               type="checkbox"
                               id="Assembly - Add"
                               name="vehicle1"
                               value="Assembly - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Assembly - Add"
-                              )}
+                              checked={AssemblyAdd}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - Add")
                               }
@@ -882,13 +1144,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={AssemblyDisable}
                               type="checkbox"
                               id="Assembly - Edit"
                               name="vehicle1"
                               value="Assembly - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Assembly - Edit"
-                              )}
+                              checked={AssemblyEdit}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - Edit")
                               }
@@ -902,13 +1163,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={AssemblyDisable}
                               type="checkbox"
                               id="Assembly - Delete"
                               name="vehicle1"
                               value="Assembly - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Assembly - Delete"
-                              )}
+                              checked={AssemblyDelete}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - Delete")
                               }
@@ -980,9 +1240,7 @@ function EditRole() {
                               id="Spare Part - View"
                               name="vehicle1"
                               value="Spare Part - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Spare Part - View"
-                              )}
+                              checked={SpareParts}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - View")
                               }
@@ -996,14 +1254,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SparePartsDisable}
                               type="checkbox"
                               id="Spare Part - Add"
                               name="vehicle1"
                               value="Spare Part - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Spare Part - Add"
-                              )}
+                              checked={SparePartsAdd}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - Add")
                               }
@@ -1017,13 +1273,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SparePartsDisable}
                               type="checkbox"
                               id="Spare Part - Edit"
                               name="vehicle1"
                               value="Spare Part - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Spare Part - Edit"
-                              )}
+                              checked={SparePartsEdit}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - Edit")
                               }
@@ -1037,13 +1292,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SparePartsDisable}
                               type="checkbox"
                               id="Spare Part - Delete"
                               name="vehicle1"
                               value="Spare Part - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Spare Part - Delete"
-                              )}
+                              checked={SparePartsDelete}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - Delete")
                               }
@@ -1096,7 +1350,6 @@ function EditRole() {
                           </div>
                         </td>
 
-
                       </tr>
 
                       <tr>
@@ -1115,9 +1368,7 @@ function EditRole() {
                               id="Sub-Part - View"
                               name="vehicle1"
                               value="Sub-Part  - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - View"
-                              )}
+                              checked={SubParts}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - View")
                               }
@@ -1131,13 +1382,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SubPartsDisable}
                               type="checkbox"
                               id="Sub-Part - Add"
                               name="vehicle1"
                               value="Sub-Part - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - Add"
-                              )}
+                              checked={SubPartsAdd}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - Add")
                               }
@@ -1151,13 +1401,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SubPartsDisable}
                               type="checkbox"
                               id="Sub-Part - Edit"
                               name="vehicle1"
                               value="Sub-Part - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - Edit"
-                              )}
+                              checked={SubPartsEdit}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - Edit")
                               }
@@ -1171,13 +1420,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SubPartsDisable}
                               type="checkbox"
                               id="Sub-Part - Delete"
                               name="vehicle1"
                               value="Sub-Part  - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - Delete"
-                              )}
+                              checked={SubPartsDelete}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - Delete")
                               }
@@ -1231,9 +1479,7 @@ function EditRole() {
                         </td>
 
 
-
                       </tr>
-
 
                       <tr>
                         <td>
@@ -1244,7 +1490,6 @@ function EditRole() {
                           </td>
                         </td>
 
-
                         <td>
                           <div className="input-group">
                             <input
@@ -1252,10 +1497,7 @@ function EditRole() {
                               id="Product Categories - View"
                               name="vehicle1"
                               value="Product Categories - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - View"
-                              )}
+                              checked={ProductCategories}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Categories - View"
@@ -1271,14 +1513,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductCategoriesDisable}
                               type="checkbox"
                               id="Product Categories - Add"
                               name="vehicle1"
                               value="Product Categories - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - Add"
-                              )}
+                              checked={ProductCategoriesAdd}
                               onChange={() =>
                                 handleCheckboxChange("Product Categories - Add")
                               }
@@ -1292,14 +1532,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductCategoriesDisable}
                               type="checkbox"
                               id="Product Categories - Edit"
                               name="vehicle1"
                               value="Product Categories - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - Edit"
-                              )}
+                              checked={ProductCategoriesEdit}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Categories - Edit"
@@ -1315,14 +1553,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductCategoriesDisable}
                               type="checkbox"
                               id="Product Categories - Delete"
                               name="vehicle1"
                               value="Product Categories - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - Delete"
-                              )}
+                              checked={ProductCategoriesDelete}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Categories - Delete"
@@ -1383,6 +1619,7 @@ function EditRole() {
                           </div>
                         </td>
 
+
                       </tr>
 
                       <tr>
@@ -1401,10 +1638,7 @@ function EditRole() {
                               id="Product Manufacturer - View"
                               name="vehicle1"
                               value="Product Manufacturer - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - View"
-                              )}
+                              checked={ProductManufacturer}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Manufacturer - View"
@@ -1420,17 +1654,15 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductManufacturerDisable}
                               type="checkbox"
                               id="Product Manufacturer - Add"
                               name="vehicle1"
                               value="Product Manufacturer - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - Add"
-                              )}
+                              checked={ProductManufacturerAdd}
                               onChange={() =>
                                 handleCheckboxChange(
-                                  "Product Manufacturers - Add"
+                                  "Product Manufacturer - Add"
                                 )
                               }
                             />
@@ -1443,14 +1675,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductManufacturerDisable}
                               type="checkbox"
                               id="Product Manufacturer - Edit"
                               name="vehicle1"
                               value="Product Manufacturer - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - Edit"
-                              )}
+                              checked={ProductManufacturerEdit}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Manufacturer - Edit"
@@ -1466,14 +1696,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductManufacturerDisable}
                               type="checkbox"
                               id="Product Manufacturer - Delete"
                               name="vehicle1"
                               value="Product Manufacturer - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - Delete"
-                              )}
+                              checked={ProductManufacturerDelete}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Manufacturer - Delete"
@@ -1486,14 +1714,15 @@ function EditRole() {
                           </div>
                         </td>
 
+
                         <td>
                           <div className="input-group">
                             <input
+                              disabled
                               type="checkbox"
                               id="Product Manufacturer - Aprroval"
                               name="vehicle1"
                               value="Product Manufacturer - Aprroval"
-                              disabled
                               checked={selectedCheckboxes.some(
                                 (item) =>
                                   item.value === "Product Manufacturer - Aprroval"
@@ -1513,11 +1742,11 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled
                               type="checkbox"
                               id="Product Manufacturer - Reject"
                               name="vehicle1"
                               value="Product Manufacturer - Reject"
-                              disabled
                               checked={selectedCheckboxes.some(
                                 (item) =>
                                   item.value === "Product Manufacturer - Reject"
@@ -1534,10 +1763,7 @@ function EditRole() {
                           </div>
                         </td>
 
-
-
                       </tr>
-
 
                       <tr>
                         <td>
@@ -1555,9 +1781,7 @@ function EditRole() {
                               id="Bin Location - View"
                               name="vehicle1"
                               value="Bin Location - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - View"
-                              )}
+                              checked={BinLocation}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - View")
                               }
@@ -1571,13 +1795,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={BinLocationDisable}
                               type="checkbox"
                               id="Bin Location - Add"
                               name="vehicle1"
                               value="Bin Location - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Add"
-                              )}
+                              checked={BinLocationAdd}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Add")
                               }
@@ -1591,13 +1814,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={BinLocationDisable}
                               type="checkbox"
                               id="Bin Location - Edit"
                               name="vehicle1"
                               value="Bin Location - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Edit"
-                              )}
+                              checked={BinLocationEdit}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Edit")
                               }
@@ -1611,13 +1833,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={BinLocationDisable}
                               type="checkbox"
                               id="Bin Location - Delete"
                               name="vehicle1"
                               value="Bin Location - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Delete"
-                              )}
+                              checked={BinLocationDelete}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Delete")
                               }
@@ -1682,6 +1903,7 @@ function EditRole() {
                           </td>
                         </td>
 
+
                         <td>
                           <div className="input-group">
                             <input
@@ -1689,9 +1911,7 @@ function EditRole() {
                               id="Cost Centre - View"
                               name="vehicle1"
                               value="Cost Centre - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - View"
-                              )}
+                              checked={CostCentre}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - View")
                               }
@@ -1705,13 +1925,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={CostCentreDisable}
                               type="checkbox"
                               id="Cost Centre - Add"
                               name="vehicle1"
                               value="Cost Centre - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Add"
-                              )}
+                              checked={CostCentreAdd}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Add")
                               }
@@ -1725,13 +1944,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={CostCentreDisable}
                               type="checkbox"
                               id="Cost Centre - Edit"
                               name="vehicle1"
                               value="Cost Centre - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Edit"
-                              )}
+                              checked={CostCentreEdit}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Edit")
                               }
@@ -1745,13 +1963,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={CostCentreDisable}
                               type="checkbox"
                               id="Cost Centre - Delete"
                               name="vehicle1"
                               value="Cost Centre - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Delete"
-                              )}
+                              checked={CostCentreDelete}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Delete")
                               }
@@ -1822,9 +2039,7 @@ function EditRole() {
                               id="Supplier - View"
                               name="vehicle1"
                               value="Supplier - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - View"
-                              )}
+                              checked={Supplier}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - View")
                               }
@@ -1838,13 +2053,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SupplierDisable}
                               type="checkbox"
                               id="Supplier - Add"
                               name="vehicle1"
                               value="Supplier - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - Add"
-                              )}
+                              checked={SupplierAdd}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - Add")
                               }
@@ -1858,13 +2072,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SupplierDisable}
                               type="checkbox"
                               id="Supplier - Edit"
                               name="vehicle1"
                               value="Supplier - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - Edit"
-                              )}
+                              checked={SupplierEdit}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - Edit")
                               }
@@ -1878,13 +2091,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SupplierDisable}
                               type="checkbox"
                               id="Supplier - Delete"
                               name="vehicle1"
                               value="Supplier - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - Delete"
-                              )}
+                              checked={SupplierDelete}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - Delete")
                               }
@@ -2074,8 +2286,10 @@ function EditRole() {
 
                       </tr>
 
+
+
                       <td>
-                        <h3 className="role-head">Inventory Access</h3>
+                        <h3 className="role-head">Inventory</h3>
                       </td>
 
                       <tr>
@@ -2083,9 +2297,10 @@ function EditRole() {
                           <td
                             className="role"
                             style={{ border: "0px", fontSize: "15px" }}>
-                            Inventory
+                            Inventory Access
                           </td>
                         </td>
+
 
                         <td>
                           <div className="input-group">
@@ -2094,9 +2309,7 @@ function EditRole() {
                               id="Inventory - View"
                               name="vehicle1"
                               value="Inventory - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory - View"
-                              )}
+                              checked={Inventory}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - View")
                               }
@@ -2110,13 +2323,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Add"
                               name="vehicle1"
                               value="Inventory - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory - Add"
-                              )}
+                              checked={InventoryAdd}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Add")
                               }
@@ -2130,20 +2342,20 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Edit"
                               name="vehicle1"
                               value="Inventory - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory - Edit"
-                              )}
+                              checked={InventoryEdit}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Edit")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Edit"></label>
+                              htmlFor="Inventory - Edit">
+                            </label>
                           </div>
                         </td>
 
@@ -2172,15 +2384,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Approval"
                               name="vehicle1"
                               value="Inventory - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Inventory - Approval"
-                              )}
+                              checked={InventoryApproval}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Approval")
                               }
@@ -2194,15 +2403,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Reject"
                               name="vehicle1"
                               value="Inventory - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Inventory - Reject"
-                              )}
+                              checked={InventoryReject}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Reject")
                               }
@@ -2212,7 +2418,6 @@ function EditRole() {
                               htmlFor="Inventory - Reject"></label>
                           </div>
                         </td>
-
 
                       </tr>
 
@@ -2235,9 +2440,7 @@ function EditRole() {
                               id="PR - View"
                               name="vehicle1"
                               value="PR - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PR - View"
-                              )}
+                              checked={PurchaseRequest}
                               onChange={() =>
                                 handleCheckboxChange("PR - View")
                               }
@@ -2251,13 +2454,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Add"
                               name="vehicle1"
                               value="PR - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PR - Add"
-                              )}
+                              checked={PurchaseRequestAdd}
                               onChange={() =>
                                 handleCheckboxChange("PR - Add")
                               }
@@ -2271,13 +2473,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Edit"
                               name="vehicle1"
                               value="PR - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PR - Edit"
-                              )}
+                              checked={PurchaseRequestEdit}
                               onChange={() =>
                                 handleCheckboxChange("PR - Edit")
                               }
@@ -2313,15 +2514,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Approval"
                               name="vehicle1"
                               value="PR - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "PR - Approval"
-                              )}
+                              checked={PurchaseRequestApproval}
                               onChange={() =>
                                 handleCheckboxChange("PR - Approval")
                               }
@@ -2335,15 +2533,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Reject"
                               name="vehicle1"
                               value="PR - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "PR - Reject"
-                              )}
+                              checked={PurchaseRequestReject}
                               onChange={() =>
                                 handleCheckboxChange("PR - Reject")
                               }
@@ -2373,9 +2568,7 @@ function EditRole() {
                               id="PO - View"
                               name="vehicle1"
                               value="PO - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PO - View"
-                              )}
+                              checked={PurchaseOrder}
                               onChange={() =>
                                 handleCheckboxChange("PO - View")
                               }
@@ -2452,13 +2645,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseOrderDisable}
                               type="checkbox"
                               id="PO - Approval"
                               name="vehicle1"
                               value="PO - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PO - Approval"
-                              )}
+                              checked={PurchaseOrderApproval}
                               onChange={() =>
                                 handleCheckboxChange("PO - Approval")
                               }
@@ -2472,13 +2664,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseOrderDisable}
                               type="checkbox"
                               id="PO - Reject"
                               name="vehicle1"
                               value="PO - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PO - Reject"
-                              )}
+                              checked={PurchaseOrderReject}
                               onChange={() =>
                                 handleCheckboxChange("PO - Reject")
                               }
@@ -2488,6 +2679,7 @@ function EditRole() {
                               htmlFor="PO - Reject"></label>
                           </div>
                         </td>
+
 
                       </tr>
 
@@ -2512,9 +2704,7 @@ function EditRole() {
                               id="Receiving - View"
                               name="vehicle1"
                               value="Receiving - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Receiving - View"
-                              )}
+                              checked={Receiving}
                               onChange={() =>
                                 handleCheckboxChange("Receiving - View")
                               }
@@ -2591,13 +2781,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ReceivingDisable}
                               type="checkbox"
                               id="Receiving - Approval"
                               name="vehicle1"
                               value="Receiving - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Receiving - Approval"
-                              )}
+                              checked={ReceivingApproval}
                               onChange={() =>
                                 handleCheckboxChange("Receiving - Approval")
                               }
@@ -2611,13 +2800,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ReceivingDisable}
                               type="checkbox"
                               id="Receiving - Reject"
                               name="vehicle1"
                               value="Receiving - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Receiving - Reject"
-                              )}
+                              checked={ReceivingReject}
                               onChange={() =>
                                 handleCheckboxChange("Receiving - Reject")
                               }
@@ -2646,10 +2834,7 @@ function EditRole() {
                               id="Stock Management - View"
                               name="vehicle1"
                               value="Stock Management - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - View"
-                              )}
+                              checked={StockTransfer}
                               onChange={() =>
                                 handleCheckboxChange("Stock Management - View")
                               }
@@ -2663,14 +2848,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={StockTransferDisable}
                               type="checkbox"
                               id="Stock Management - Add"
                               name="vehicle1"
                               value="Stock Management - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - Add"
-                              )}
+                              checked={StockTransferAdd}
                               onChange={() =>
                                 handleCheckboxChange("Stock Management - Add")
                               }
@@ -2730,14 +2913,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={StockTransferDisable}
                               type="checkbox"
                               id="Stock Management - Approval"
                               name="vehicle1"
                               value="Stock Management - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - Approval"
-                              )}
+                              checked={StockTransferApproval}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Stock Management - Approval"
@@ -2746,21 +2927,19 @@ function EditRole() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - Approval"></label>
+                              htmlFor="Stock Management - Aprroval"></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={StockTransferDisable}
                               type="checkbox"
                               id="Stock Management - Reject"
                               name="vehicle1"
                               value="Stock Management - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - Reject"
-                              )}
+                              checked={StockTransferReject}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Stock Management - Reject"
@@ -2772,6 +2951,7 @@ function EditRole() {
                               htmlFor="Stock Management - Reject"></label>
                           </div>
                         </td>
+
 
                       </tr>
 

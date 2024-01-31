@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import Sidebar from "../Sidebar/sidebar";
 import "../../assets/global/style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../assets/image/NoData.png';
+import NoAccess from '../../assets/image/NoAccess.png';
 import { Link, useParams } from "react-router-dom";
 import "../styles/react-style.css";
 import Form from "react-bootstrap/Form";
@@ -8,7 +11,7 @@ import BASE_URL from "../../assets/global/url";
 import axios from "axios";
 import { Trash } from "@phosphor-icons/react";
 
-function ViewAssembly() {
+function ViewAssembly({authrztn}) {
   const { id } = useParams();
 
   const [code, setCode] = useState("");
@@ -18,12 +21,14 @@ function ViewAssembly() {
 
   const [unit, setUnit] = useState("");
   const [binLocation, setBinLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [uM, setUm] = useState("");
   const [details, setDetails] = useState("");
   const [thresholds, setThresholds] = useState("");
   const [suppliers, setSupplier] = useState("");
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     // console.log('code' + id)
     axios
       .get(BASE_URL + "/inventory/fetchView_assembly", {
@@ -42,9 +47,16 @@ function ViewAssembly() {
         setDetails(res.data[0].assembly_supplier.assembly.assembly_desc);
         // setThresholds(res.data[0].product_tag_supplier.product.product_threshold);
         setSupplier(res.data[0].assembly_supplier.supplier.supplier_name);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   return (
     <div className="main-of-containers">
@@ -52,6 +64,13 @@ function ViewAssembly() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Inventory - View') ? (
         <div className="right-body-contents-a">
           <h1>View Product Information</h1>
           <div
@@ -310,6 +329,15 @@ function ViewAssembly() {
             </Link>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

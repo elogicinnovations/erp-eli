@@ -3,6 +3,9 @@ import Sidebar from "../../../../Sidebar/sidebar";
 import "../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import swal from "sweetalert";
 import axios from "axios";
@@ -11,13 +14,14 @@ import Col from "react-bootstrap/Col";
 import BASE_URL from "../../../../../assets/global/url";
 import Button from "react-bootstrap/Button";
 
-function UpdateCostCenter() {
+function UpdateCostCenter({authrztn}) {
   const [name, setName] = useState("");
   const [select_masterlist, setSelect_Masterlist] = useState([]);
   const [status, setStatus] = useState(false);
   const [contactNumber, setContactNumber] = useState("");
   const [description, setDescription] = useState("");
   const [checkedStatus, setcheckedStatus] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,6 +29,7 @@ function UpdateCostCenter() {
 
   //Render Cost Center By ID
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/costCenter/initUpdate", {
         params: {
@@ -36,6 +41,7 @@ function UpdateCostCenter() {
         setSelect_Masterlist(res.data[0].col_id);
         setContactNumber(res.data[0].masterlist.col_phone);
         setDescription(res.data[0].description);
+        setIsLoading(false);
 
         // Check if the status is "Active" and set suppStatus accordingly
         if (res.data[0].status === "Active") {
@@ -46,8 +52,14 @@ function UpdateCostCenter() {
           setStatus("Inactive"); // Uncheck the checkbox
         }
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   // ----------------------------------Start Get  Master List------------------------------//
   const [masterList, setMasteList] = useState([]);
@@ -127,6 +139,13 @@ function UpdateCostCenter() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Cost Centre - Edit') ? (
         <div className="right-body-contents-a">
           <Row>
             <Col>
@@ -244,6 +263,15 @@ function UpdateCostCenter() {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

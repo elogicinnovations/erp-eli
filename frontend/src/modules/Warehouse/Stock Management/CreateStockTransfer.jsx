@@ -7,6 +7,9 @@ import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
+import ReactLoading from 'react-loading';
+import NoData from '../../../assets/image/NoData.png';
+import NoAccess from '../../../assets/image/NoAccess.png';
 import Col from 'react-bootstrap/Col';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -20,13 +23,14 @@ import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 
-function CreateStockTransfer() {
+function CreateStockTransfer({authrztn}) {
   const navigate = useNavigate()
 
   const [source, setSource] = useState();
   const [destination, setDestination] = useState('');
   const [reference_code, setReferenceCode] = useState('');
   const [remarks, setRemarks] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   
   const [product, setProduct] = useState([]);
   const [addProductbackend, setAddProductbackend] = useState([]);
@@ -52,55 +56,101 @@ function CreateStockTransfer() {
 
   const [masterList, setMasteList] = useState([]); 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/masterList/masterTable')
       .then(response => {
         setMasteList(response.data);
+        setIsLoading(false);
       })
       .catch(error => {
         console.error('Error fetching master list:', error);
+        setIsLoading(false);
       });
-  }, []);
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/inventory/fetchInvetory_product_warehouse', {
       params: {
         warehouse: selectedWarehouse,
       },
     })
-      .then(res => setFetchProduct(res.data))
-      .catch(err => console.log(err));
-  }, [selectedWarehouse]);
+      .then(res => {
+        setFetchProduct(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/inventory/fetchInvetory_assembly_warehouse', {
       params: {
         warehouse: selectedWarehouse,
       },
     })
-      .then(res => setFetchAssembly(res.data))
-      .catch(err => console.log(err));
-  }, [selectedWarehouse]);
+      .then(res => {
+        setFetchAssembly(res.data)
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+  }, 1000);
+
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/inventory/fetchInvetory_spare_warehouse', {
       params: {
         warehouse: selectedWarehouse,
       },
     })
-      .then(res => setFetchSpare(res.data))
-      .catch(err => console.log(err));
-  }, [selectedWarehouse]);
+      .then(res => {
+        setFetchSpare(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/inventory/fetchInvetory_subpart_warehouse', {
       params: {
         warehouse: selectedWarehouse,
       },
     })
-      .then(res => setFetchSubPart(res.data))
-      .catch(err => console.log(err));
-  }, [selectedWarehouse]);
+      .then(res => {
+        setFetchSubPart(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
   
 
 const add = async (e) => {
@@ -214,6 +264,13 @@ function formatDatetime(datetime) {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Stock Management - Add') ? (
             <div className="right-body-contents-a">
             <Row>
                 
@@ -487,6 +544,15 @@ function formatDatetime(datetime) {
                 </Form>
                        
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
   )

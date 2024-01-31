@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
 import Sidebar from "../../../../../Sidebar/sidebar";
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import { Link } from "react-router-dom";
@@ -32,6 +35,7 @@ import * as $ from "jquery";
 
 function AssemblyForm({ authrztn }) {
   const [assembly, setAssembly] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -105,10 +109,20 @@ function AssemblyForm({ authrztn }) {
   }
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/assembly/fetchTable")
-      .then((res) => setAssembly(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setAssembly(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
   useEffect(() => {
     // deleteAssembly();
@@ -288,9 +302,23 @@ function AssemblyForm({ authrztn }) {
 
   const handleSelectAllChange = () => {
     const allAssemblyIds = assembly.map((data) => data.id);
-    setSelectedCheckboxes(selectAllChecked ? [] : allAssemblyIds);
-    setShowChangeStatusButton(!selectAllChecked);
-    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  
+    if (allAssemblyIds.length === 0) {
+      // No data, disable the checkbox
+      return;
+    }
+  
+    if (selectedCheckboxes.length === allAssemblyIds.length) {
+      setSelectedCheckboxes([]);
+      setShowChangeStatusButton(false);
+    } else {
+      setSelectedCheckboxes(allAssemblyIds);
+      setShowChangeStatusButton(true);
+    }
+  
+    setSelectAllChecked(selectedCheckboxes.length !== allAssemblyIds.length);
+  
+    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allAssemblyIds.length);
   };
 
   const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
@@ -305,6 +333,13 @@ function AssemblyForm({ authrztn }) {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Assembly - View') ? (
         <div className="right-body-contents">
           {/* <div className="settings-search-master">
 
@@ -387,7 +422,7 @@ function AssemblyForm({ authrztn }) {
                         type="checkbox"
                         checked={selectAllChecked}
                         onChange={handleSelectAllChange}
-                        // when check check all
+                        disabled={assembly.length === 0}
                       />
                     </th>
                     <th className="tableh">Product Code</th>
@@ -399,6 +434,7 @@ function AssemblyForm({ authrztn }) {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {assembly.length > 0 ? (
                 <tbody>
                   {assembly.filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.assembly_status))
                   .map((data, i) => (
@@ -463,7 +499,8 @@ function AssemblyForm({ authrztn }) {
                         {formatDate(data.updatedAt)}
                       </td>
                       <td>
-                        {isVertical[data.assembly_code] ? (
+                      {isVertical[data.assembly_code] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -471,41 +508,17 @@ function AssemblyForm({ authrztn }) {
                               toggleButtons(data.assembly_code);
                             }}
                           />
-                        ) : (
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.assembly_code);
-                            }}
-                          />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.assembly_code) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
-                              
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.assembly_code) && (
+                              <div className="choices">
                               { authrztn.includes('Assembly - Edit') && (
                               <Link
                                 to={`/updateAssemblyForm/${data.id}`}
-                                style={{ fontSize: "12px" }}
+                                style={{ fontSize: "15px", fontWeight: '700' }}
                                 className="btn">
                                 Update
                               </Link>
                               )}
-
-                              {/* { authrztn.includes('Assembly - Delete') && (
-                              <button
-                                onClick={() => {
-                                  handleDelete(data.id);
-                                  closeVisibleButtons();
-                                }}
-                                className="btn">
-                                Delete
-                              </button>
-                              )} */}
-
                               { authrztn.includes('Assembly - View') && (
                               <button
                                 onClick={() => {
@@ -516,17 +529,70 @@ function AssemblyForm({ authrztn }) {
                                 Price History
                               </button>
                               )}
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <DotsThreeCircle
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.assembly_code);
+                            }}
+                          />
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.assembly_code) && (
+                              <div className="choices">
+                              { authrztn.includes('Assembly - Edit') && (
+                              <Link
+                                to={`/updateAssemblyForm/${data.id}`}
+                                style={{ fontSize: "15px", fontWeight: '700' }}
+                                className="btn">
+                                Update
+                              </Link>
+                              )}
+                              { authrztn.includes('Assembly - View') && (
+                              <button
+                                onClick={() => {
+                                  handleassemblypricehistory(data.id);
+                                  closeVisibleButtons();
+                                }}
+                                className="btn">
+                                Price History
+                              </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
       
       <Modal

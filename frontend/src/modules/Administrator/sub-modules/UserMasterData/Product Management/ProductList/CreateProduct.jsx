@@ -6,6 +6,9 @@ import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
@@ -16,7 +19,7 @@ import { green } from "@mui/material/colors";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 
-function CreateProduct() {
+function CreateProduct({authrztn}) {
   const navigate = useNavigate();
   //try
   const [validated, setValidated] = useState(false); // for form validation
@@ -40,6 +43,7 @@ function CreateProduct() {
   const [subparting, setsubparting] = useState([]);
   const [assembly, setassemblies] = useState([]);
   const [productStatus, setproductStatus] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
@@ -92,34 +96,74 @@ function CreateProduct() {
 
   //Supplier Fetch
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => setFetchSupp(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchSupp(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, []);
 
   //Assembly Fetch
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/assembly/fetchTable")
-      .then((res) => setAssembly(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setAssembly(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   //Subpart Fetch
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/subpart/fetchTable")
-      .then((res) => setFetchsub(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchsub(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, []);
 
   //Spare part Fetch
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/sparePart/fetchTable")
-      .then((res) => setFetchPart(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchPart(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, []);
 
   const handleSparepartChange = (selectedOptions) => {
@@ -434,6 +478,13 @@ function onDropImages(event) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Product List - Add') ? (
         <div className="right-body-contentss">
           <div className="arrowandtitle">
               <Link to="/productList">
@@ -909,6 +960,15 @@ function onDropImages(event) {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
 import Sidebar from "../../../../../Sidebar/sidebar";
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -34,6 +37,7 @@ import { jwtDecode } from "jwt-decode";
 function SubParts({ authrztn }) {
   const navigate = useNavigate();
   const [subParts, setSubParts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [supplier, setSupplier] = useState([]);
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
@@ -121,11 +125,21 @@ function SubParts({ authrztn }) {
   }, []);
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/subPart/fetchTable")
-      .then((res) => setSubParts(res.data))
-      .catch((err) => console.log(err));
-  };
+      .then((res) => {
+      setSubParts(res.data)
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err)
+      setIsLoading(false);
+    });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+};
 
   useEffect(() => {
     deleteSubpart();
@@ -282,9 +296,23 @@ function SubParts({ authrztn }) {
 
   const handleSelectAllChange = () => {
     const allSubpartID = subParts.map((data) => data.id);
-    setSelectedCheckboxes(selectAllChecked ? [] : allSubpartID);
-    setShowChangeStatusButton(!selectAllChecked);
-    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  
+    if (allSubpartID.length === 0) {
+      // No data, disable the checkbox
+      return;
+    }
+  
+    if (selectedCheckboxes.length === allSubpartID.length) {
+      setSelectedCheckboxes([]);
+      setShowChangeStatusButton(false);
+    } else {
+      setSelectedCheckboxes(allSubpartID);
+      setShowChangeStatusButton(true);
+    }
+  
+    setSelectAllChecked(selectedCheckboxes.length !== allSubpartID.length);
+  
+    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allSubpartID.length);
   };
 
   const handleStatusChange = (event) => {
@@ -322,6 +350,13 @@ function SubParts({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Sub-Part - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">
@@ -383,6 +418,7 @@ function SubParts({ authrztn }) {
                         type="checkbox"
                         checked={selectAllChecked}
                         onChange={handleSelectAllChange}
+                        disabled={subParts.length === 0}
                       />
                     </th>
                     <th className="tableh">Code</th>
@@ -394,6 +430,7 @@ function SubParts({ authrztn }) {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {subParts.length > 0 ? (
                 <tbody>
                 {subParts
                   .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.subPart_status))
@@ -444,8 +481,8 @@ function SubParts({ authrztn }) {
                       <td
                       onClick={() => navigate(`/viewsubParts/${data.id}`)}>{formatDate(data.updatedAt)}</td>
                       <td>
-                        {" "}
-                        {isVertical[data.subPart_code] ? (
+                      {isVertical[data.subPart_code] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -453,40 +490,17 @@ function SubParts({ authrztn }) {
                               toggleButtons(data.subPart_code);
                             }}
                           />
-                        ) : (
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.subPart_code);
-                            }}
-                          />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.subPart_code) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.subPart_code) && (
+                              <div className="choices">
                               { authrztn?.includes('Sub-Part - Edit') && (
                               <Link
                                 to={`/updatesubParts/${data.id}`}
-                                style={{ fontSize: "12px" }}
+                                style={{ fontSize: "15px", fontWeight: '700' }}
                                 className="btn">
                                 Update
                               </Link>
                               )}
-
-                              {/* { authrztn?.includes('Sub-Part - Delete') && (
-                              <button
-                                onClick={() => {
-                                  handleDelete(data.id);
-                                  closeVisibleButtons();
-                                }}
-                                className="btn">
-                                Delete
-                              </button>
-                              )} */}
-
                               { authrztn?.includes('Sub-Part - View') && (
                               <button
                                 className="btn"
@@ -497,18 +511,70 @@ function SubParts({ authrztn }) {
                                 Price History
                               </button>
                               )}
-
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <DotsThreeCircle
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.subPart_code);
+                            }}
+                          />
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.subPart_code) && (
+                              <div className="choices">
+                              { authrztn?.includes('Sub-Part - Edit') && (
+                              <Link
+                                to={`/updatesubParts/${data.id}`}
+                                style={{ fontSize: "15px", fontWeight: '700' }}
+                                className="btn">
+                                Update
+                              </Link>
+                              )}
+                              { authrztn?.includes('Sub-Part - View') && (
+                              <button
+                                className="btn"
+                                onClick={() => {
+                                  handlepricehistory(data.id);
+                                  closeVisibleButtons();
+                                }}>
+                                Price History
+                              </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
       {/*Modal for updating status*/}
       <Modal

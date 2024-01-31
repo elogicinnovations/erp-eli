@@ -4,6 +4,9 @@ import axios from "axios";
 import BASE_URL from "../../../../assets/global/url";
 import swal from "sweetalert";
 import Container from "react-bootstrap/Container";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../assets/image/NoData.png';
+import NoAccess from '../../../../assets/image/NoAccess.png';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -13,7 +16,7 @@ import "../../../styles/react-style.css";
 import warehouse from "../../../../assets/global/warehouse";
 import { ArrowCircleLeft } from "@phosphor-icons/react";
 
-function EditSupplier() {
+function EditSupplier({authrztn}) {
   const [validated, setValidated] = useState(false);
 
   const [suppName, setsuppName] = useState("");
@@ -21,6 +24,7 @@ function EditSupplier() {
   const [suppTin, setsuppTin] = useState("");
   const [suppEmail, setsuppEmail] = useState("");
   const [suppAdd, setsuppAdd] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [suppCity, setsuppCity] = useState("");
   const [suppPcode, setsuppPcode] = useState("");
   const [suppCperson, setsuppCperson] = useState("");
@@ -76,6 +80,7 @@ function EditSupplier() {
   };
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTableEdit", {
         params: {
@@ -98,6 +103,7 @@ function EditSupplier() {
         setsuppTerms(res.data[0].supplier_terms);
         setsuppVat(res.data[0].supplier_vat);
         setsuppReceving(res.data[0].supplier_receiving);
+        setIsLoading(false);
         // setsuppStatus(res.data[0].supplier_status);
 
         // Check if the status is "Active" and set suppStatus accordingly
@@ -109,8 +115,14 @@ function EditSupplier() {
           setsuppStatus("Inactive"); // Uncheck the checkbox
         }
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -191,6 +203,13 @@ function EditSupplier() {
             <Sidebar />
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Supplier - Edit') ? (
         <div className="right-body-contentss">
           <div
             className="create-head-back"
@@ -547,6 +566,15 @@ function EditSupplier() {
             </Form>
           </Container>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

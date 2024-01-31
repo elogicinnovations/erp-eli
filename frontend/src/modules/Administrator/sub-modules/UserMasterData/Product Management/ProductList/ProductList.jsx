@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import "../../../../../styles/react-style.css";
@@ -37,6 +40,7 @@ function ProductList({ authrztn }) {
   const navigate = useNavigate();
 
   const [product, setproduct] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [historypricemodal, sethistorypricemodal] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -115,10 +119,20 @@ function ProductList({ authrztn }) {
   };
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/product/fetchTable")
-      .then((res) => setproduct(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setproduct(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
   useEffect(() => {
     // deleteProduct();
@@ -254,9 +268,23 @@ function ProductList({ authrztn }) {
 
   const handleSelectAllChange = () => {
     const allProductIds = product.map((data) => data.product_id);
-    setSelectedCheckboxes(selectAllChecked ? [] : allProductIds);
-    setShowChangeStatusButton(!selectAllChecked);
-    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  
+    if (allProductIds.length === 0) {
+      // No data, disable the checkbox
+      return;
+    }
+  
+    if (selectedCheckboxes.length === allProductIds.length) {
+      setSelectedCheckboxes([]);
+      setShowChangeStatusButton(false);
+    } else {
+      setSelectedCheckboxes(allProductIds);
+      setShowChangeStatusButton(true);
+    }
+  
+    setSelectAllChecked(selectedCheckboxes.length !== allProductIds.length);
+  
+    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allProductIds.length);
   };
 
   const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
@@ -306,6 +334,13 @@ function ProductList({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Product List - View') ? (
         <div className="right-body-contents">
 
           <div className="Employeetext-button">
@@ -366,6 +401,7 @@ function ProductList({ authrztn }) {
                         type="checkbox"
                         checked={selectAllChecked}
                         onChange={handleSelectAllChange}
+                        disabled={product.length === 0}
                       />
                     </th>
                     <th className="tableh">Item Code</th>
@@ -377,6 +413,7 @@ function ProductList({ authrztn }) {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {product.length > 0 ? (
                 <tbody>
                   {product
                   .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.product_status))
@@ -448,9 +485,9 @@ function ProductList({ authrztn }) {
                         }>
                         {formatDate(data.updatedAt)}
                       </td>
-
                       <td>
-                        {isVertical[data.product_id] ? (
+                      {isVertical[data.product_id] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
@@ -458,40 +495,17 @@ function ProductList({ authrztn }) {
                               toggleButtons(data.product_id);
                             }}
                           />
-                        ) : (
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.product_id);
-                            }}
-                          />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.product_id) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.product_id) && (
+                              <div className="choices">
                               { authrztn.includes('Product List - Edit') && (
                               <Link
                                 to={`/updateProduct/${data.product_id}`}
-                                style={{ fontSize: "12px" }}
+                                style={{ fontSize: "15px", fontWeight: '700' }}
                                 className="btn">
                                 Update
                               </Link>
                               )}
-
-                              {/* { authrztn.includes('Product List - Delete') && (
-                              <button
-                                className="btn"
-                                type="button"
-                                onClick={() => {
-                                  handleDelete(data.product_id);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
-                              )} */}
 
                               { authrztn.includes('Product List - View') && (
                               <button
@@ -504,17 +518,72 @@ function ProductList({ authrztn }) {
                                 Price History
                               </button>
                               )}
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <DotsThreeCircle
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.product_id);
+                            }}
+                          />
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.product_id) && (
+                              <div className="choices">
+                              { authrztn.includes('Product List - Edit') && (
+                              <Link
+                                to={`/updateProduct/${data.product_id}`}
+                                style={{ fontSize: "12px" }}
+                                className="btn">
+                                Update
+                              </Link>
+                              )}
+
+                              { authrztn.includes('Product List - View') && (
+                              <button
+                                className="btn"
+                                type="button"
+                                onClick={() => {
+                                  handlepricehistory(data.product_id);
+                                  closeVisibleButtons();
+                                }}>
+                                Price History
+                              </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
 
       {/* Modal for updating status*/}

@@ -3,6 +3,9 @@ import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
@@ -13,10 +16,11 @@ import Select from "react-select";
 import { Plus, Trash, NotePencil, X, ArrowCircleLeft} from "@phosphor-icons/react";
 import Dropzone from 'react-dropzone';
 
-function CreateSpareParts() {
+function CreateSpareParts({authrztn}) {
   const [validated, setValidated] = useState(false);
   const [fetchSupp, setFetchSupp] = useState([]);
   const [fetchSubPart, setFetchSubPart] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [supp, setSupp] = useState([]);
@@ -36,6 +40,7 @@ function CreateSpareParts() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/sparePart/lastCode")
       .then((res) => {
@@ -51,9 +56,18 @@ function CreateSpareParts() {
   useEffect(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => setFetchSupp(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setFetchSupp(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   useEffect(() => {
     axios
@@ -394,6 +408,13 @@ function CreateSpareParts() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Spare Part - Add') ? (
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="arrowandtitle">
@@ -772,6 +793,15 @@ function CreateSpareParts() {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

@@ -8,6 +8,9 @@ import Form from 'react-bootstrap/Form';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import warehouse from "../../../../assets/global/warehouse";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../assets/image/NoData.png';
+import NoAccess from '../../../../assets/image/NoAccess.png';
 import {
 Printer,
 ArrowCircleLeft,
@@ -27,7 +30,7 @@ import '../../../../assets/skydash/js/off-canvas';
 
 import * as $ from 'jquery';  
 
-function ViewSupplier() {
+function ViewSupplier({authrztn}) {
 
     const { id } = useParams();
 
@@ -45,6 +48,7 @@ function ViewSupplier() {
     const [suppTerms, setsuppTerms] = useState('');
     const [suppVat, setsuppVat] = useState('');
     const [suppReceving, setsuppReceving] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     // const [suppStatus, setsuppStatus] = useState('Active');
     // const [checkedStatus, setcheckedStatus] = useState();
 
@@ -76,6 +80,7 @@ function ViewSupplier() {
 
 
       useEffect(() => {   
+        const delay = setTimeout(() => {
         // console.log('code' + id)
         axios.get(BASE_URL + '/supplier/fetchTableEdit', {
             params: {
@@ -98,10 +103,17 @@ function ViewSupplier() {
             setsuppTerms(res.data[0].supplier_terms);
             setsuppVat(res.data[0].supplier_vat);
             setsuppReceving(res.data[0].supplier_receiving);
+            setIsLoading(false);
 
         })
-          .catch(err => console.log(err));
-      }, []);
+            .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+            });
+        }, 1000);
+    
+    return () => clearTimeout(delay);
+    }, []);
 
 
       useEffect(() => {
@@ -156,6 +168,13 @@ function ViewSupplier() {
             <Sidebar />
             </div> */}
                 <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Supplier - View') ? (
                     <div className="right-body-contentss">
                         <div className="headers-text">
                             <div className="arrowandtitle">
@@ -393,6 +412,15 @@ function ViewSupplier() {
                         </div>
 
                 </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
             </div>    
         </div>
     );

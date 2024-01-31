@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../../../Sidebar/sidebar';
 import '../../../../../../assets/global/style.css';
 import '../../../../styles/react-style.css';
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router';
 import axios from 'axios';
@@ -24,11 +27,12 @@ import '../../../../../../assets/skydash/js/off-canvas';
 import * as $ from 'jquery';
 
 
-function ViewSpareParts() {
+function ViewSpareParts({authrztn}) {
     const { id } = useParams();
     const [viewsubparts, setviewsubparts] = useState([]);
     const [viewSupplier, setviewSupplier] = useState([]);
     const [activeTab, setActiveTab] = useState("Subparts");
+    const [isLoading, setIsLoading] = useState(true);
     const tabStyle = {
         padding: "10px 15px",
         margin: "0 10px",
@@ -47,18 +51,34 @@ function ViewSpareParts() {
       }, []);
 
       useEffect(() => {
+        const delay = setTimeout(() => {
         axios.get(BASE_URL + '/supp_SparePart/fetchSupplierSpare',{
           params: {
             id: id
           }
         })
-          .then(res => setviewSupplier(res.data))
-          .catch(err => console.log(err));
-      }, []);
+          .then(res => {setviewSupplier(res.data)
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+    
+    return () => clearTimeout(delay);
+    }, [id]);
     return(
         <div className="main-of-containers">
     
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Spare Part - View') ? (
             <div className="right-body-contentss">
                 <div className="headers-text">
                     <div className="arrowandtitle">
@@ -145,6 +165,15 @@ function ViewSpareParts() {
                     </Tabs>
                 </div>
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
     )
