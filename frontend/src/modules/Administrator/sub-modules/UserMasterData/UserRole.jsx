@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
 import Sidebar from "../../../Sidebar/sidebar";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 // import Header from '../../../Sidebar/header';
 import "../../../../assets/global/style.css";
+import NoData from '../../../../assets/image/NoData.png';
 import axios from "axios";
 import { Link } from "react-router-dom";
 import swal from "sweetalert";
@@ -52,6 +54,7 @@ function UserRole() {
   }
 
   const [role, setRole] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
@@ -89,12 +92,20 @@ function UserRole() {
   };
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/userRole/fetchuserrole")
       .then((res) => {
         setRole(res.data);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   }, []);
 
   const fetch = () => {
@@ -213,6 +224,12 @@ function UserRole() {
         <Sidebar />
       </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
         <div className="right-body-contents">
           {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
@@ -264,6 +281,7 @@ function UserRole() {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {role.length > 0 ? (
                 <tbody>
                   {role.map((data, i) => (
                     <tr
@@ -350,11 +368,20 @@ function UserRole() {
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
           <div className="pagination-contains"></div>
         </div>
+              )}
       </div>
     </div>
   );

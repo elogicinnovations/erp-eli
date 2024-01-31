@@ -15,6 +15,7 @@
 .carousel-image{
   max-width: 100%;
   max-height: 400px;
+  min-height: 400px;
   width: auto;
   height: auto;
   margin: auto;
@@ -31,6 +32,7 @@
   height: 100vh;
   display: flex;
   position: relative;
+  z-index: 100;
 }
 
 .login-main-containers::before {
@@ -337,6 +339,7 @@ padding: 10px; /* Adjust the padding as needed */
   height: 88%;
   border-radius: 15px;
   width: -webkit-fill-available;
+  overflow-y: auto;
 }
 
 .right-of-main-container {
@@ -1211,9 +1214,6 @@ input[type="number"]::-webkit-clear-button {
   .left-of-main-containers {
     flex: 0 0 30%;
   }
-  .right-of-main-containers {
-    flex: 0 0 50%;
-  }
   .right-of-main-container {
     flex: 0 0 50%;
   }
@@ -1222,7 +1222,7 @@ input[type="number"]::-webkit-clear-button {
 
 /* Jerome's Mobile CSS */
 
-@media only screen and (max-height: 1000px) {
+/* @media only screen and (max-height: 1000px) {
   .right-of-main-container {
     overflow-y: auto;
   }
@@ -1230,6 +1230,12 @@ input[type="number"]::-webkit-clear-button {
   .right-body-contents {
     background: #fff;
     border-radius: 15px;
+  }
+} */
+
+@media only screen and (min-width: 1300px) {
+  button.sidebar-back-button{
+    z-index: 0 !important;
   }
 }
 
@@ -1612,6 +1618,52 @@ input[type="number"]::-webkit-clear-button {
 }
 
 /* Jerome's CSS */
+
+img.no-access-img {
+  height: 150px;
+  margin-bottom: 27px;
+}
+
+.no-access {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  flex-direction: column;
+}
+
+img.no-data-img {
+  width: 150px;
+}
+
+.float {
+  border-radius: 10px;
+  box-shadow: #aeaeae -7px 7px 20px 0px;
+}
+
+.react-loading {
+  fill: #007BFF !important;
+  height: 100px !important;
+  width: 100px !important;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  font-size: 20px;
+  font-weight: 500;
+}
 
 thead {
   z-index: 1 !important;
@@ -2645,7 +2697,7 @@ td.autho {
   border: solid 1px #c1c1c1;
   border-radius: 10px;
   background: white;
-  height: 60px;
+  padding: 5px 0;
   justify-content: center;
 }
 
@@ -2769,15 +2821,11 @@ table {
   overflow-x: hidden;
 }
 
-.table {
-  max-height: fit-content;
-}
-
 thead {
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 0;
+  z-index: 2 !important;
 }
 
 h3.role-head {

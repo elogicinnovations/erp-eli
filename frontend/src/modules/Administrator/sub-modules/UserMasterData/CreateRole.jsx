@@ -107,27 +107,199 @@ function Create_role() {
   const handleCheckboxChange = (value) => {
     const rolename = document.getElementsByName("rolename")[0].value;
     const desc = document.getElementsByName("desc")[0].value;
-    const authorization = value; // Value from the checkbox
-
-    if (selectedCheckboxes.some((item) => item.value === value)) {
+    const authorization = value;
+  
+    if (value === "Master List - View" && selectedCheckboxes.some((item) => item.value === "Master List - View")) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => item.value !== value)
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Master List - View" &&
+          item.value !== "Master List - Add" &&
+          item.value !== "Master List - Edit" &&
+          item.value !== "Master List - Delete"
+        )
+      );
+    } else
+  
+    if (value === "User Access Role - View" && selectedCheckboxes.some((item) => item.value === "User Access Role - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "User Access Role - View" &&
+          item.value !== "User Access Role - Add" &&
+          item.value !== "User Access Role - Edit" &&
+          item.value !== "User Access Role - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Product List - View" && selectedCheckboxes.some((item) => item.value === "Product List - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Product List - View" &&
+          item.value !== "Product List - Add" &&
+          item.value !== "Product List - Edit" &&
+          item.value !== "Product List - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Assembly - View" && selectedCheckboxes.some((item) => item.value === "Assembly - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Assembly - View" &&
+          item.value !== "Assembly - Add" &&
+          item.value !== "Assembly - Edit" &&
+          item.value !== "Assembly - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Spare Part - View" && selectedCheckboxes.some((item) => item.value === "Spare Part - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Spare Part - View" &&
+          item.value !== "Spare Part - Add" &&
+          item.value !== "Spare Part - Edit" &&
+          item.value !== "Spare Part - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Sub-Part - View" && selectedCheckboxes.some((item) => item.value === "Sub-Part - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Sub-Part - View" &&
+          item.value !== "Sub-Part - Add" &&
+          item.value !== "Sub-Part - Edit" &&
+          item.value !== "Sub-Part - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Product Categories - View" && selectedCheckboxes.some((item) => item.value === "Product Categories - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Product Categories - View" &&
+          item.value !== "Product Categories - Add" &&
+          item.value !== "Product Categories - Edit" &&
+          item.value !== "Product Categories - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Product Manufacturer - View" && selectedCheckboxes.some((item) => item.value === "Product Manufacturer - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Product Manufacturer - View" &&
+          item.value !== "Product Manufacturer - Add" &&
+          item.value !== "Product Manufacturer - Edit" &&
+          item.value !== "Product Manufacturer - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Bin Location - View" && selectedCheckboxes.some((item) => item.value === "Bin Location - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Bin Location - View" &&
+          item.value !== "Bin Location - Add" &&
+          item.value !== "Bin Location - Edit" &&
+          item.value !== "Bin Location - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Cost Centre - View" && selectedCheckboxes.some((item) => item.value === "Cost Centre - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Cost Centre - View" &&
+          item.value !== "Cost Centre - Add" &&
+          item.value !== "Cost Centre - Edit" &&
+          item.value !== "Cost Centre - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Supplier - View" && selectedCheckboxes.some((item) => item.value === "Supplier - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Supplier - View" &&
+          item.value !== "Supplier - Add" &&
+          item.value !== "Supplier - Edit" &&
+          item.value !== "Supplier - Delete"
+        )
+      );
+    } else
+  
+    if (value === "Inventory - View" && selectedCheckboxes.some((item) => item.value === "Inventory - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Inventory - View" &&
+          item.value !== "Inventory - Add" &&
+          item.value !== "Inventory - Edit" &&
+          item.value !== "Inventory - Approval" &&
+          item.value !== "Inventory - Reject"
+        )
+      );
+    } else
+  
+    if (value === "PR - View" && selectedCheckboxes.some((item) => item.value === "PR - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+        item.value !== "PR - View" &&
+        item.value !== "PR - Add" &&
+        item.value !== "PR - Edit" &&
+        item.value !== "PR - Approval" &&
+        item.value !== "PR - Reject"
+        )
+      );
+    } else
+  
+    if (value === "PO - View" && selectedCheckboxes.some((item) => item.value === "PO - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "PO - View" &&
+          item.value !== "PO - Approval" &&
+          item.value !== "PO - Reject"
+        )
+      );
+    } else
+  
+    if (value === "Receiving - View" && selectedCheckboxes.some((item) => item.value === "Receiving - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+        item.value !== "Receiving - View" &&
+        item.value !== "Receiving - Approval" &&
+        item.value !== "Receiving - Reject"
+        )
+      );
+    } else
+  
+    if (value === "Stock Management - View" && selectedCheckboxes.some((item) => item.value === "Stock Management - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Stock Management - View" &&
+          item.value !== "Stock Management - Add" &&
+          item.value !== "Stock Management - Approval" &&
+          item.value !== "Stock Management - Reject"
+        )
       );
     } else {
-      setSelectedCheckboxes([
-        ...selectedCheckboxes,
-        { value, rolename, desc, authorization },
-      ]);
+      if (selectedCheckboxes.some((item) => item.value === value)) {
+        setSelectedCheckboxes(
+          selectedCheckboxes.filter((item) => item.value !== value)
+        );
+      } else {
+        setSelectedCheckboxes([
+          ...selectedCheckboxes,
+          { value, rolename, desc, authorization },
+        ]);
+      }
     }
   };
-
+  
   const handleSelectAll = () => {
     // Select all checkboxes
     const allCheckboxValues = [
-      "Analytic Dashboard - Add",
-      "Analytic Dashboard - Edit",
-      "Analytic Dashboard - Delete",
-      "Analytic Dashboard - View",
       "Master List - Add",
       "Master List - Edit",
       "Master List - Delete",
@@ -172,7 +344,7 @@ function Create_role() {
       "Supplier - Edit",
       "Supplier - Delete",
       "Supplier - View",
-      "Inventory Type - View",
+      "Inventory - View",
       "Inventory - Add",
       "Inventory - Edit",
       "Inventory - Approval",
@@ -210,60 +382,106 @@ function Create_role() {
     setSelectedCheckboxes([]);
   };
 
+  const MasterList = selectedCheckboxes.find((item) => item.value === "Master List - View");
+  const MasterListDisable = !MasterList;
+  const MasterListAdd = selectedCheckboxes.some((item) => item.value === "Master List - Add") && !MasterListDisable;
+  const MasterListEdit = selectedCheckboxes.some((item) => item.value === "Master List - Edit") && !MasterListDisable;
+  const MasterListDelete = selectedCheckboxes.some((item) => item.value === "Master List - Delete") && !MasterListDisable;
+
+  const UserRole = selectedCheckboxes.some((item) => item.value === "User Access Role - View");
+  const UserRoleDisable = !UserRole;
+  const UserRoleAdd = selectedCheckboxes.some((item) => item.value === "User Access Role - Add") && !UserRoleDisable;
+  const UserRoleEdit = selectedCheckboxes.some((item) => item.value === "User Access Role - Edit") && !UserRoleDisable;
+  const UserRoleDelete = selectedCheckboxes.some((item) => item.value === "User Access Role - Delete") && !UserRoleDisable;
+
+  const ProductList = selectedCheckboxes.some((item) => item.value === "Product List - View");
+  const ProductListDisable = !ProductList;
+  const ProductListAdd = selectedCheckboxes.some((item) => item.value === "Product List - Add") && !ProductListDisable;
+  const ProductListEdit = selectedCheckboxes.some((item) => item.value === "Product List - Edit") && !ProductListDisable;
+  const ProductListDelete = selectedCheckboxes.some((item) => item.value === "Product List - Delete") && !ProductListDisable;
+
+  const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
+  const AssemblyDisable = !Assembly;
+  const AssemblyAdd = selectedCheckboxes.some((item) => item.value === "Assembly - Add") && !AssemblyDisable;
+  const AssemblyEdit = selectedCheckboxes.some((item) => item.value === "Assembly - Edit") && !AssemblyDisable;
+  const AssemblyDelete = selectedCheckboxes.some((item) => item.value === "Assembly - Delete") && !AssemblyDisable;
+
+  const SpareParts = selectedCheckboxes.some((item) => item.value === "Spare Part - View");
+  const SparePartsDisable = !SpareParts;
+  const SparePartsAdd = selectedCheckboxes.some((item) => item.value === "Spare Part - Add") && !SparePartsDisable;
+  const SparePartsEdit = selectedCheckboxes.some((item) => item.value === "Spare Part - Edit") && !SparePartsDisable;
+  const SparePartsDelete = selectedCheckboxes.some((item) => item.value === "Spare Part - Delete") && !SparePartsDisable;
+
+  const SubParts = selectedCheckboxes.some((item) => item.value === "Sub-Part - View");
+  const SubPartsDisable = !SubParts;
+  const SubPartsAdd = selectedCheckboxes.some((item) => item.value === "Sub-Part - Add") && !SubPartsDisable;
+  const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
+  const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
+
+  const ProductCategories = selectedCheckboxes.some((item) => item.value === "Product Categories - View");
+  const ProductCategoriesDisable = !ProductCategories;
+  const ProductCategoriesAdd = selectedCheckboxes.some((item) => item.value === "Product Categories - Add") && !ProductCategoriesDisable;
+  const ProductCategoriesEdit = selectedCheckboxes.some((item) => item.value === "Product Categories - Edit") && !ProductCategoriesDisable;
+  const ProductCategoriesDelete = selectedCheckboxes.some((item) => item.value === "Product Categories - Delete") && !ProductCategoriesDisable;
+
+  const ProductManufacturer = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - View");
+  const ProductManufacturerDisable = !ProductManufacturer;
+  const ProductManufacturerAdd = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Add") && !ProductManufacturerDisable;
+  const ProductManufacturerEdit = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Edit") && !ProductManufacturerDisable;
+  const ProductManufacturerDelete = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Delete") && !ProductManufacturerDisable;
+
+  const BinLocation = selectedCheckboxes.some((item) => item.value === "Bin Location - View");
+  const BinLocationDisable = !BinLocation;
+  const BinLocationAdd = selectedCheckboxes.some((item) => item.value === "Bin Location - Add") && !BinLocationDisable;
+  const BinLocationEdit = selectedCheckboxes.some((item) => item.value === "Bin Location - Edit") && !BinLocationDisable;
+  const BinLocationDelete = selectedCheckboxes.some((item) => item.value === "Bin Location - Delete") && !BinLocationDisable;
+
+  const CostCentre = selectedCheckboxes.some((item) => item.value === "Cost Centre - View");
+  const CostCentreDisable = !CostCentre;
+  const CostCentreAdd = selectedCheckboxes.some((item) => item.value === "Cost Centre - Add") && !CostCentreDisable;
+  const CostCentreEdit = selectedCheckboxes.some((item) => item.value === "Cost Centre - Edit") && !CostCentreDisable;
+  const CostCentreDelete = selectedCheckboxes.some((item) => item.value === "Cost Centre - Delete") && !CostCentreDisable;
+
+  const Supplier = selectedCheckboxes.some((item) => item.value === "Supplier - View");
+  const SupplierDisable = !Supplier;
+  const SupplierAdd = selectedCheckboxes.some((item) => item.value === "Supplier - Add") && !SupplierDisable;
+  const SupplierEdit = selectedCheckboxes.some((item) => item.value === "Supplier - Edit") && !SupplierDisable;
+  const SupplierDelete = selectedCheckboxes.some((item) => item.value === "Supplier - Delete") && !SupplierDisable;
+
+  const Inventory = selectedCheckboxes.some((item) => item.value === "Inventory - View");
+  const InventoryDisable = !Inventory;
+  const InventoryAdd = selectedCheckboxes.some((item) => item.value === "Inventory - Add") && !InventoryDisable;
+  const InventoryEdit = selectedCheckboxes.some((item) => item.value === "Inventory - Edit") && !InventoryDisable;
+  const InventoryApproval = selectedCheckboxes.some((item) => item.value === "Inventory - Approval") && !InventoryDisable;
+  const InventoryReject = selectedCheckboxes.some((item) => item.value === "Inventory - Reject") && !InventoryDisable;
+
+  const PurchaseRequest = selectedCheckboxes.some((item) => item.value === "PR - View");
+  const PurchaseRequestDisable = !PurchaseRequest;
+  const PurchaseRequestAdd = selectedCheckboxes.some((item) => item.value === "PR - Add") && !PurchaseRequestDisable;
+  const PurchaseRequestEdit = selectedCheckboxes.some((item) => item.value === "PR - Edit") && !PurchaseRequestDisable;
+  const PurchaseRequestApproval = selectedCheckboxes.some((item) => item.value === "PR - Approval") && !PurchaseRequestDisable;
+  const PurchaseRequestReject = selectedCheckboxes.some((item) => item.value === "PR - Reject") && !PurchaseRequestDisable;
+
+  const PurchaseOrder = selectedCheckboxes.some((item) => item.value === "PO - View");
+  const PurchaseOrderDisable = !PurchaseOrder;
+  const PurchaseOrderApproval = selectedCheckboxes.some((item) => item.value === "PO - Approval") && !PurchaseOrderDisable;
+  const PurchaseOrderReject = selectedCheckboxes.some((item) => item.value === "PO - Reject") && !PurchaseOrderDisable;
+
+  const Receiving = selectedCheckboxes.some((item) => item.value === "Receiving - View");
+  const ReceivingDisable = !Receiving;
+  const ReceivingApproval = selectedCheckboxes.some((item) => item.value === "Receiving - Approval") && !ReceivingDisable;
+  const ReceivingReject = selectedCheckboxes.some((item) => item.value === "Receiving - Reject") && !ReceivingDisable;
+
+  const StockTransfer = selectedCheckboxes.some((item) => item.value === "Stock Management - View");
+  const StockTransferDisable = !StockTransfer;
+  const StockTransferAdd = selectedCheckboxes.some((item) => item.value === "Stock Management - Add") && !StockTransferDisable;
+  const StockTransferApproval = selectedCheckboxes.some((item) => item.value === "Stock Management - Approval") && !StockTransferDisable;
+  const StockTransferReject = selectedCheckboxes.some((item) => item.value === "Stock Management - Reject") && !StockTransferDisable;
+
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
         <div className="right-body-contentss">
-          {/* <div className="settings-search-master">
-
-                  <div className="dropdown-and-iconics">
-                      <div className="dropdown-side">
-                          <div className="dropdownsss">
-                              <select name="" id="">
-                                <option value="All">All</option>
-                              </select>
-                          </div>
-                          <div className="searcher-side">
-                              <div style={{ position: "relative" }}>
-                                <input
-                                  type="search"
-                                  placeholder="Search"
-                                  className="searchInput"
-                                  value={searchQuery}
-                                  onChange={(e) => setSearchQuery(e.target.value)}
-                                ></input>
-                                <MagnifyingGlass
-                                  size={23}
-                                  style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "0.9rem",
-                                    transform: "translateY(-50%)",
-                                    pointerEvents: "none",
-                                  }}
-                                />
-                              </div>
-                          </div>
-
-                          <div className="search-buttons">
-                            <button>Search</button>
-                          </div>
-                      </div>
-                      <div className="iconic-side">
-                            <div className="gearsides">
-                              <Gear size={35}/>
-                            </div>
-                            <div className="bellsides">
-                              <Bell size={35}/>
-                            </div>
-                            <div className="usersides">
-                              <UserCircle size={35}/>
-                          </div>
-                      </div>
-                  </div>
-
-                </div> */}
-
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -271,7 +489,6 @@ function Create_role() {
               </div>
 
               <div className="button-create-side">
-                <div className="Buttonmodal-new"></div>
               </div>
             </div>
           </div>
@@ -347,7 +564,7 @@ function Create_role() {
 
                 <div className="w-100 mt-1" style={{ marginLeft: "50px" }}>
                   <table class="table">
-                    <thead>
+                    <thead className="rbacthead">
                       <tr>
                         <th style={{ fontSize: 15 }}>Module</th>
                         <th style={{ fontSize: 15 }}>View</th>
@@ -382,9 +599,7 @@ function Create_role() {
                               id="Master List - View"
                               name="vehicle1"
                               value="Master List - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - View"
-                              )}
+                              checked={MasterList}
                               onChange={() =>
                                 handleCheckboxChange("Master List - View")
                               }
@@ -402,9 +617,8 @@ function Create_role() {
                               id="Master List - Add"
                               name="vehicle1"
                               value="Master List - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Add"
-                              )}
+                              disabled={MasterListDisable}
+                              checked={MasterListAdd}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Add")
                               }
@@ -422,9 +636,8 @@ function Create_role() {
                               id="Master List - Edit"
                               name="vehicle1"
                               value="Master List - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Edit"
-                              )}
+                              disabled={MasterListDisable}
+                              checked={MasterListEdit}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Edit")
                               }
@@ -442,9 +655,8 @@ function Create_role() {
                               id="Master List - Delete"
                               name="vehicle1"
                               value="Master List - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Delete"
-                              )}
+                              disabled={MasterListDisable}
+                              checked={MasterListDelete}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Delete")
                               }
@@ -515,10 +727,7 @@ function Create_role() {
                               id="User Access Role - View"
                               name="vehicle1"
                               value="User Access Role - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - View"
-                              )}
+                              checked={UserRole}
                               onChange={() =>
                                 handleCheckboxChange("User Access Role - View")
                               }
@@ -536,10 +745,8 @@ function Create_role() {
                               id="User Access Role - Add"
                               name="vehicle1"
                               value="User Access Role - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - Add"
-                              )}
+                              disabled={UserRoleDisable}
+                              checked={UserRoleAdd}
                               onChange={() =>
                                 handleCheckboxChange("User Access Role - Add")
                               }
@@ -553,15 +760,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={UserRoleDisable}
                               type="checkbox"
                               id="User Access Role - Edit"
                               name="vehicle1"
                               value="User Access Role - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - Edit"
-                              )}
+                              checked={UserRoleEdit}
                               onChange={() =>
                                 handleCheckboxChange("User Access Role - Edit")
                               }
@@ -575,15 +779,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={UserRoleDisable}
                               type="checkbox"
                               id="User Access Role - Delete"
                               name="vehicle1"
                               value="User Access Role - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "User Access Role - Delete"
-                              )}
+                              checked={UserRoleDelete}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "User Access Role - Delete"
@@ -663,9 +864,7 @@ function Create_role() {
                               id="Product List - View"
                               name="vehicle1"
                               value="Product List - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - View"
-                              )}
+                              checked={ProductList}
                               onChange={() =>
                                 handleCheckboxChange("Product List - View")
                               }
@@ -679,13 +878,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                            disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Add"
                               name="vehicle1"
                               value="Product List - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Add"
-                              )}
+                              checked={ProductListAdd}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Add")
                               }
@@ -699,13 +897,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                            disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Edit"
                               name="vehicle1"
                               value="Product List - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Edit"
-                              )}
+                              checked={ProductListEdit}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Edit")
                               }
@@ -719,13 +916,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                            disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Delete"
                               name="vehicle1"
                               value="Product List - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Delete"
-                              )}
+                              checked={ProductListDelete}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Delete")
                               }
@@ -797,9 +993,7 @@ function Create_role() {
                               id="Assembly - View"
                               name="vehicle1"
                               value="Assembly - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Assembly - View"
-                              )}
+                              checked={Assembly}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - View")
                               }
@@ -813,14 +1007,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={AssemblyDisable}
                               type="checkbox"
                               id="Assembly - Add"
                               name="vehicle1"
                               value="Assembly - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Assembly - Add"
-                              )}
+                              checked={AssemblyAdd}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - Add")
                               }
@@ -834,13 +1026,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={AssemblyDisable}
                               type="checkbox"
                               id="Assembly - Edit"
                               name="vehicle1"
                               value="Assembly - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Assembly - Edit"
-                              )}
+                              checked={AssemblyEdit}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - Edit")
                               }
@@ -854,13 +1045,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={AssemblyDisable}
                               type="checkbox"
                               id="Assembly - Delete"
                               name="vehicle1"
                               value="Assembly - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Assembly - Delete"
-                              )}
+                              checked={AssemblyDelete}
                               onChange={() =>
                                 handleCheckboxChange("Assembly - Delete")
                               }
@@ -932,9 +1122,7 @@ function Create_role() {
                               id="Spare Part - View"
                               name="vehicle1"
                               value="Spare Part - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Spare Part - View"
-                              )}
+                              checked={SpareParts}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - View")
                               }
@@ -948,14 +1136,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SparePartsDisable}
                               type="checkbox"
                               id="Spare Part - Add"
                               name="vehicle1"
                               value="Spare Part - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Spare Part - Add"
-                              )}
+                              checked={SparePartsAdd}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - Add")
                               }
@@ -969,13 +1155,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SparePartsDisable}
                               type="checkbox"
                               id="Spare Part - Edit"
                               name="vehicle1"
                               value="Spare Part - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Spare Part - Edit"
-                              )}
+                              checked={SparePartsEdit}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - Edit")
                               }
@@ -989,13 +1174,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SparePartsDisable}
                               type="checkbox"
                               id="Spare Part - Delete"
                               name="vehicle1"
                               value="Spare Part - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Spare Part - Delete"
-                              )}
+                              checked={SparePartsDelete}
                               onChange={() =>
                                 handleCheckboxChange("Spare Part - Delete")
                               }
@@ -1066,9 +1250,7 @@ function Create_role() {
                               id="Sub-Part - View"
                               name="vehicle1"
                               value="Sub-Part  - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - View"
-                              )}
+                              checked={SubParts}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - View")
                               }
@@ -1082,13 +1264,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SubPartsDisable}
                               type="checkbox"
                               id="Sub-Part - Add"
                               name="vehicle1"
                               value="Sub-Part - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - Add"
-                              )}
+                              checked={SubPartsAdd}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - Add")
                               }
@@ -1102,13 +1283,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SubPartsDisable}
                               type="checkbox"
                               id="Sub-Part - Edit"
                               name="vehicle1"
                               value="Sub-Part - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - Edit"
-                              )}
+                              checked={SubPartsEdit}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - Edit")
                               }
@@ -1122,13 +1302,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SubPartsDisable}
                               type="checkbox"
                               id="Sub-Part - Delete"
                               name="vehicle1"
                               value="Sub-Part  - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Sub-Part - Delete"
-                              )}
+                              checked={SubPartsDelete}
                               onChange={() =>
                                 handleCheckboxChange("Sub-Part - Delete")
                               }
@@ -1200,10 +1379,7 @@ function Create_role() {
                               id="Product Categories - View"
                               name="vehicle1"
                               value="Product Categories - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - View"
-                              )}
+                              checked={ProductCategories}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Categories - View"
@@ -1219,14 +1395,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductCategoriesDisable}
                               type="checkbox"
                               id="Product Categories - Add"
                               name="vehicle1"
                               value="Product Categories - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - Add"
-                              )}
+                              checked={ProductCategoriesAdd}
                               onChange={() =>
                                 handleCheckboxChange("Product Categories - Add")
                               }
@@ -1240,14 +1414,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductCategoriesDisable}
                               type="checkbox"
                               id="Product Categories - Edit"
                               name="vehicle1"
                               value="Product Categories - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - Edit"
-                              )}
+                              checked={ProductCategoriesEdit}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Categories - Edit"
@@ -1263,14 +1435,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductCategoriesDisable}
                               type="checkbox"
                               id="Product Categories - Delete"
                               name="vehicle1"
                               value="Product Categories - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Categories - Delete"
-                              )}
+                              checked={ProductCategoriesDelete}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Categories - Delete"
@@ -1350,10 +1520,7 @@ function Create_role() {
                               id="Product Manufacturer - View"
                               name="vehicle1"
                               value="Product Manufacturer - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - View"
-                              )}
+                              checked={ProductManufacturer}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Manufacturer - View"
@@ -1369,17 +1536,15 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductManufacturerDisable}
                               type="checkbox"
                               id="Product Manufacturer - Add"
                               name="vehicle1"
                               value="Product Manufacturer - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - Add"
-                              )}
+                              checked={ProductManufacturerAdd}
                               onChange={() =>
                                 handleCheckboxChange(
-                                  "Product Manufacturers - Add"
+                                  "Product Manufacturer - Add"
                                 )
                               }
                             />
@@ -1392,14 +1557,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductManufacturerDisable}
                               type="checkbox"
                               id="Product Manufacturer - Edit"
                               name="vehicle1"
                               value="Product Manufacturer - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - Edit"
-                              )}
+                              checked={ProductManufacturerEdit}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Manufacturer - Edit"
@@ -1415,14 +1578,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ProductManufacturerDisable}
                               type="checkbox"
                               id="Product Manufacturer - Delete"
                               name="vehicle1"
                               value="Product Manufacturer - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Product Manufacturer - Delete"
-                              )}
+                              checked={ProductManufacturerDelete}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Product Manufacturer - Delete"
@@ -1502,9 +1663,7 @@ function Create_role() {
                               id="Bin Location - View"
                               name="vehicle1"
                               value="Bin Location - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - View"
-                              )}
+                              checked={BinLocation}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - View")
                               }
@@ -1518,13 +1677,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={BinLocationDisable}
                               type="checkbox"
                               id="Bin Location - Add"
                               name="vehicle1"
                               value="Bin Location - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Add"
-                              )}
+                              checked={BinLocationAdd}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Add")
                               }
@@ -1538,13 +1696,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={BinLocationDisable}
                               type="checkbox"
                               id="Bin Location - Edit"
                               name="vehicle1"
                               value="Bin Location - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Edit"
-                              )}
+                              checked={BinLocationEdit}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Edit")
                               }
@@ -1558,13 +1715,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={BinLocationDisable}
                               type="checkbox"
                               id="Bin Location - Delete"
                               name="vehicle1"
                               value="Bin Location - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Delete"
-                              )}
+                              checked={BinLocationDelete}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Delete")
                               }
@@ -1637,9 +1793,7 @@ function Create_role() {
                               id="Cost Centre - View"
                               name="vehicle1"
                               value="Cost Centre - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - View"
-                              )}
+                              checked={CostCentre}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - View")
                               }
@@ -1653,13 +1807,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={CostCentreDisable}
                               type="checkbox"
                               id="Cost Centre - Add"
                               name="vehicle1"
                               value="Cost Centre - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Add"
-                              )}
+                              checked={CostCentreAdd}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Add")
                               }
@@ -1673,13 +1826,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={CostCentreDisable}
                               type="checkbox"
                               id="Cost Centre - Edit"
                               name="vehicle1"
                               value="Cost Centre - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Edit"
-                              )}
+                              checked={CostCentreEdit}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Edit")
                               }
@@ -1693,13 +1845,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={CostCentreDisable}
                               type="checkbox"
                               id="Cost Centre - Delete"
                               name="vehicle1"
                               value="Cost Centre - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Delete"
-                              )}
+                              checked={CostCentreDelete}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Delete")
                               }
@@ -1770,9 +1921,7 @@ function Create_role() {
                               id="Supplier - View"
                               name="vehicle1"
                               value="Supplier - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - View"
-                              )}
+                              checked={Supplier}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - View")
                               }
@@ -1786,13 +1935,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SupplierDisable}
                               type="checkbox"
                               id="Supplier - Add"
                               name="vehicle1"
                               value="Supplier - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - Add"
-                              )}
+                              checked={SupplierAdd}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - Add")
                               }
@@ -1806,13 +1954,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SupplierDisable}
                               type="checkbox"
                               id="Supplier - Edit"
                               name="vehicle1"
                               value="Supplier - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - Edit"
-                              )}
+                              checked={SupplierEdit}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - Edit")
                               }
@@ -1826,13 +1973,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={SupplierDisable}
                               type="checkbox"
                               id="Supplier - Delete"
                               name="vehicle1"
                               value="Supplier - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Supplier - Delete"
-                              )}
+                              checked={SupplierDelete}
                               onChange={() =>
                                 handleCheckboxChange("Supplier - Delete")
                               }
@@ -1908,32 +2054,29 @@ function Create_role() {
                           <div className="input-group">
                             <input
                               type="checkbox"
-                              id="Inventory Type - View"
+                              id="Inventory - View"
                               name="vehicle1"
-                              value="Inventory Type - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory Type - View"
-                              )}
+                              value="Inventory - View"
+                              checked={Inventory}
                               onChange={() =>
-                                handleCheckboxChange("Inventory Type - View")
+                                handleCheckboxChange("Inventory - View")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory Type - View"></label>
+                              htmlFor="Inventory - View"></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Add"
                               name="vehicle1"
                               value="Inventory - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory - Add"
-                              )}
+                              checked={InventoryAdd}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Add")
                               }
@@ -1947,13 +2090,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Edit"
                               name="vehicle1"
                               value="Inventory - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Inventory - Edit"
-                              )}
+                              checked={InventoryEdit}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Edit")
                               }
@@ -1990,15 +2132,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Approval"
                               name="vehicle1"
                               value="Inventory - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Inventory - Approval"
-                              )}
+                              checked={InventoryApproval}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Approval")
                               }
@@ -2012,15 +2151,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={InventoryDisable}
                               type="checkbox"
                               id="Inventory - Reject"
                               name="vehicle1"
                               value="Inventory - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Inventory - Reject"
-                              )}
+                              checked={InventoryReject}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Reject")
                               }
@@ -2052,9 +2188,7 @@ function Create_role() {
                               id="PR - View"
                               name="vehicle1"
                               value="PR - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PR - View"
-                              )}
+                              checked={PurchaseRequest}
                               onChange={() =>
                                 handleCheckboxChange("PR - View")
                               }
@@ -2068,13 +2202,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Add"
                               name="vehicle1"
                               value="PR - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PR - Add"
-                              )}
+                              checked={PurchaseRequestAdd}
                               onChange={() =>
                                 handleCheckboxChange("PR - Add")
                               }
@@ -2088,13 +2221,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Edit"
                               name="vehicle1"
                               value="PR - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PR - Edit"
-                              )}
+                              checked={PurchaseRequestEdit}
                               onChange={() =>
                                 handleCheckboxChange("PR - Edit")
                               }
@@ -2130,15 +2262,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Approval"
                               name="vehicle1"
                               value="PR - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "PR - Approval"
-                              )}
+                              checked={PurchaseRequestApproval}
                               onChange={() =>
                                 handleCheckboxChange("PR - Approval")
                               }
@@ -2152,15 +2281,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
-
+                              disabled={PurchaseRequestDisable}
                               type="checkbox"
                               id="PR - Reject"
                               name="vehicle1"
                               value="PR - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "PR - Reject"
-                              )}
+                              checked={PurchaseRequestReject}
                               onChange={() =>
                                 handleCheckboxChange("PR - Reject")
                               }
@@ -2190,9 +2316,7 @@ function Create_role() {
                               id="PO - View"
                               name="vehicle1"
                               value="PO - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PO - View"
-                              )}
+                              checked={PurchaseOrder}
                               onChange={() =>
                                 handleCheckboxChange("PO - View")
                               }
@@ -2269,13 +2393,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseOrderDisable}
                               type="checkbox"
                               id="PO - Approval"
                               name="vehicle1"
                               value="PO - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PO - Approval"
-                              )}
+                              checked={PurchaseOrderApproval}
                               onChange={() =>
                                 handleCheckboxChange("PO - Approval")
                               }
@@ -2289,13 +2412,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={PurchaseOrderDisable}
                               type="checkbox"
                               id="PO - Reject"
                               name="vehicle1"
                               value="PO - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "PO - Reject"
-                              )}
+                              checked={PurchaseOrderReject}
                               onChange={() =>
                                 handleCheckboxChange("PO - Reject")
                               }
@@ -2330,9 +2452,7 @@ function Create_role() {
                               id="Receiving - View"
                               name="vehicle1"
                               value="Receiving - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Receiving - View"
-                              )}
+                              checked={Receiving}
                               onChange={() =>
                                 handleCheckboxChange("Receiving - View")
                               }
@@ -2409,13 +2529,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ReceivingDisable}
                               type="checkbox"
                               id="Receiving - Approval"
                               name="vehicle1"
                               value="Receiving - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Receiving - Approval"
-                              )}
+                              checked={ReceivingApproval}
                               onChange={() =>
                                 handleCheckboxChange("Receiving - Approval")
                               }
@@ -2429,13 +2548,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={ReceivingDisable}
                               type="checkbox"
                               id="Receiving - Reject"
                               name="vehicle1"
                               value="Receiving - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Receiving - Reject"
-                              )}
+                              checked={ReceivingReject}
                               onChange={() =>
                                 handleCheckboxChange("Receiving - Reject")
                               }
@@ -2464,10 +2582,7 @@ function Create_role() {
                               id="Stock Management - View"
                               name="vehicle1"
                               value="Stock Management - View"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - View"
-                              )}
+                              checked={StockTransfer}
                               onChange={() =>
                                 handleCheckboxChange("Stock Management - View")
                               }
@@ -2481,14 +2596,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={StockTransferDisable}
                               type="checkbox"
                               id="Stock Management - Add"
                               name="vehicle1"
                               value="Stock Management - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - Add"
-                              )}
+                              checked={StockTransferAdd}
                               onChange={() =>
                                 handleCheckboxChange("Stock Management - Add")
                               }
@@ -2548,14 +2661,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={StockTransferDisable}
                               type="checkbox"
                               id="Stock Management - Approval"
                               name="vehicle1"
                               value="Stock Management - Approval"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - Approval"
-                              )}
+                              checked={StockTransferApproval}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Stock Management - Approval"
@@ -2571,14 +2682,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={StockTransferDisable}
                               type="checkbox"
                               id="Stock Management - Reject"
                               name="vehicle1"
                               value="Stock Management - Reject"
-                              checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Stock Management - Reject"
-                              )}
+                              checked={StockTransferReject}
                               onChange={() =>
                                 handleCheckboxChange(
                                   "Stock Management - Reject"

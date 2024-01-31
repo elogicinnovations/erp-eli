@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import ReactLoading from 'react-loading';
+import NoData from '../../assets/image/NoData.png';
+import NoAccess from '../../assets/image/NoAccess.png';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import Sidebar from '../Sidebar/sidebar';
 import axios from 'axios';
@@ -32,6 +35,7 @@ const navigate = useNavigate()
     const [assembly, setAssembly] = useState([]);
     const [spare, setSpare] = useState([]);
     const [subpart, setSubpart] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
 
 
@@ -79,15 +83,23 @@ const navigate = useNavigate()
       //   .then(res => setSubpart(res.data))
       //   .catch(err => console.log(err));
 
+      const delay = setTimeout(() => {
       axios.get(BASE_URL + '/inventory/fetchInventory')
         .then(res => {
           setInventory(res.data.product);
           setAssembly(res.data.assembly);
           setSpare(res.data.spare);
           setSubpart(res.data.subpart);
+          setIsLoading(false);
         })
-        .catch(err => console.log(err));
-    }
+        .catch((err) => {
+          console.log(err)
+          setIsLoading(false);
+        });
+      }, 1000);
+  
+      return () => clearTimeout(delay);
+    };
 
       useEffect(() => { 
         reloadTable_inventory()
@@ -319,6 +331,13 @@ const navigate = useNavigate()
             <Sidebar />
             </div> */}
                 <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Inventory - View') ? (
                     <div className="right-body-contentss">
 
                     {/* <div className="settings-search-master">
@@ -371,6 +390,7 @@ const navigate = useNavigate()
                                                         <th className='tableh'>Total Cost</th>
                                                     </tr>
                                                     </thead>
+                                                    {inventory.length > 0 || assembly.length > 0 || spare.length > 0 || subpart.length > 0 ? (
                                                     <tbody>
                                                         {inventory.map((data, i) => (
                                                         <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
@@ -431,6 +451,14 @@ const navigate = useNavigate()
 
 
                                                     </tbody>
+                                                      ) : (
+                                                        <div className="no-data">
+                                                          <img src={NoData} alt="NoData" className="no-data-img" />
+                                                          <h3>
+                                                            No Data Found
+                                                          </h3>
+                                                        </div>
+                                                    )}
                                             </table>
                                         </div>
                                     </div>
@@ -465,6 +493,7 @@ const navigate = useNavigate()
                                                         <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
+                                                    {issuance.length > 0 ? (
                                                     <tbody>
                                                         {issuance.map((data, i) => (
                                                         <tr key={i} >
@@ -487,6 +516,14 @@ const navigate = useNavigate()
                                                         </tr>
                                                         ))}
                                                     </tbody>
+                                                      ) : (
+                                                        <div className="no-data">
+                                                          <img src={NoData} alt="NoData" className="no-data-img" />
+                                                          <h3>
+                                                            No Data Found
+                                                          </h3>
+                                                        </div>
+                                                    )}
                                             </table>
                                         </div>
                                     </div>
@@ -511,6 +548,7 @@ const navigate = useNavigate()
                                                         <th className='tableh'>Action</th>
                                                     </tr>
                                                     </thead>
+                                                    {returned_prd.length > 0 ? (
                                                     <tbody>
                                                         {returned_prd.map((data, i) => (
                                                         <tr key={i}>
@@ -625,6 +663,14 @@ const navigate = useNavigate()
                                                         </tr>
                                                         ))}
                                                     </tbody>
+                                                    ) : (
+                                                      <div className="no-data">
+                                                        <img src={NoData} alt="NoData" className="no-data-img" />
+                                                        <h3>
+                                                          No Data Found
+                                                        </h3>
+                                                      </div>
+                                                  )}
                                             </table>
                                         </div>
                                     </div>
@@ -686,6 +732,15 @@ const navigate = useNavigate()
                         </div>
 
                 </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
             </div>
         </div>
     );

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
@@ -33,6 +36,7 @@ import deleteSpare from "../../../../../Archiving Delete/spare_delete";
 
 function SpareParts({ authrztn }) {
   const [sparePart, setSparePart] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [historypricemodal, sethistorypricemodal] = useState([]);
   const [showhistorical, setshowhistorical] = useState(false);
@@ -105,10 +109,20 @@ function SpareParts({ authrztn }) {
 
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/sparePart/fetchTable")
-      .then((res) => setSparePart(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setSparePart(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
   useEffect(() => {
     reloadTable();
@@ -289,9 +303,23 @@ function SpareParts({ authrztn }) {
 
   const handleSelectAllChange = () => {
     const allsparePartIds = sparePart.map((data) => data.id);
-    setSelectedCheckboxes(selectAllChecked ? [] : allsparePartIds);
-    setShowChangeStatusButton(!selectAllChecked);
-    $("input[type='checkbox']").prop("checked", !selectAllChecked);
+  
+    if (allsparePartIds.length === 0) {
+      // No data, disable the checkbox
+      return;
+    }
+  
+    if (selectedCheckboxes.length === allsparePartIds.length) {
+      setSelectedCheckboxes([]);
+      setShowChangeStatusButton(false);
+    } else {
+      setSelectedCheckboxes(allsparePartIds);
+      setShowChangeStatusButton(true);
+    }
+  
+    setSelectAllChecked(selectedCheckboxes.length !== allsparePartIds.length);
+  
+    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allsparePartIds.length);
   };
 
   const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
@@ -304,6 +332,13 @@ function SpareParts({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Spare Part - Edit') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">
@@ -363,6 +398,7 @@ function SpareParts({ authrztn }) {
                         type="checkbox"
                         checked={selectAllChecked}
                         onChange={handleSelectAllChange}
+                        disabled={sparePart.length === 0}
                       />
                     </th>
                     <th className="tableh">Code</th>
@@ -374,6 +410,7 @@ function SpareParts({ authrztn }) {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {sparePart.length > 0 ? (
                 <tbody>
                   {sparePart
                   .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.spareParts_status))
@@ -428,42 +465,34 @@ function SpareParts({ authrztn }) {
                         {formatDate(data.updatedAt)}
                       </td>
                       <td>
-                        {isVertical[data.spareParts_code] ? (
+                      {isVertical[data.id] ? (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
                             onClick={() => {
-                              toggleButtons(data.spareParts_code);
+                              toggleButtons(data.id);
                             }}
                           />
-                        ) : (
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.spareParts_code);
-                            }}
-                          />
-                        )}
-                        <div>
-                          {setButtonVisibles(data.spareParts_code) && (
-                            <div
-                              className="choices"
-                              style={{ position: "absolute" }}>
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.id) && (
+                              <div className="choices">
+                              { authrztn.includes('Spare Part - Edit') && (
                               <Link
                                 to={`/updateSpareParts/${data.id}`}
-                                style={{ fontSize: "12px" }}
+                                style={{ fontSize: "15px", fontWeight: '700' }}
                                 className="btn">
                                 Update
                               </Link>
-                              <button
+                              )}
+                              {/* <button
                                 onClick={() => {
                                   handleDelete(data.id);
                                   closeVisibleButtons();
                                 }}
                                 className="btn">
                                 Delete
-                              </button>
+                              </button> */}
                               { authrztn.includes('Spare Part - View') && (
                               <button
                                 type="button"
@@ -475,17 +504,79 @@ function SpareParts({ authrztn }) {
                                 Price History
                               </button>
                               )}
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </div>
+                      ) : (
+                        <div style={{ position: 'relative', display: 'inline-block' }}>
+                          <DotsThreeCircle
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => {
+                              toggleButtons(data.id);
+                            }}
+                          />
+                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                            {setButtonVisibles(data.id) && (
+                              <div className="choices">
+                              { authrztn.includes('Spare Part - Edit') && (
+                              <Link
+                                to={`/updateSpareParts/${data.id}`}
+                                style={{ fontSize: "12px" }}
+                                className="btn">
+                                Update
+                              </Link>
+                              )}
+                              {/* <button
+                                onClick={() => {
+                                  handleDelete(data.id);
+                                  closeVisibleButtons();
+                                }}
+                                className="btn">
+                                Delete
+                              </button> */}
+                              { authrztn.includes('Spare Part - View') && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handlepriceHistory(data.id)
+                                  closeVisibleButtons();
+                                }}
+                                className="btn">
+                                Price History
+                              </button>
+                              )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
       <Modal
         size="md"

@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
+import ReactLoading from 'react-loading';
+import NoData from '../../../assets/image/NoData.png';
 import Sidebar from '../../Sidebar/sidebar';
 import '../../../assets/global/style.css';
 import '../../styles/react-style.css';
@@ -110,29 +112,70 @@ const [invetory_prd, setInvetory_prd] = useState([]);
 const [invetory_assmbly, setInvetory_assmbly] = useState([]);
 const [invetory_spare, setInvetory_spare] = useState([]);
 const [invetory_subpart, setInvetory_subpart] = useState([]);
+const [isLoading, setIsLoading] = useState(true);
   
-useEffect(() => { //fetch product for inventory
+useEffect(() => {
+  const delay = setTimeout(() => {
   axios.get(BASE_URL + '/report_inv/inventoryPRD')
-    .then(res => setInvetory_prd(res.data))
-    .catch(err => console.log(err));
+    .then(res => {
+      setInvetory_prd(res.data);
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+}, 1000);
+
+return () => clearTimeout(delay);
 }, []);
 
-useEffect(() => { //fetch product for inventory
+useEffect(() => {
+  const delay = setTimeout(() => {
   axios.get(BASE_URL + '/report_inv/inventoryAssmbly')
-    .then(res => setInvetory_assmbly(res.data))
-    .catch(err => console.log(err));
+    .then(res => {
+      setInvetory_assmbly(res.data)
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+}, 1000);
+
+return () => clearTimeout(delay);
 }, []);
 
-useEffect(() => { //fetch product for inventory
+useEffect(() => {
+  const delay = setTimeout(() => {
   axios.get(BASE_URL + '/report_inv/inventorySpare')
-    .then(res => setInvetory_spare(res.data))
-    .catch(err => console.log(err));
+    .then(res => {
+      setInvetory_spare(res.data)
+      setIsLoading(false);
+  })
+  .catch((err) => {
+    console.log(err);
+    setIsLoading(false);
+  });
+}, 1000);
+
+return () => clearTimeout(delay);
 }, []);
 
-useEffect(() => { //fetch product for inventory
+useEffect(() => {
+  const delay = setTimeout(() => {
   axios.get(BASE_URL + '/report_inv/inventorySubpart')
-    .then(res => setInvetory_subpart(res.data))
-    .catch(err => console.log(err));
+    .then(res => {
+      setInvetory_subpart(res.data)
+      setIsLoading(false);
+  })
+  .catch((err) => {
+    console.log(err);
+    setIsLoading(false);
+  });
+}, 1000);
+
+return () => clearTimeout(delay);
 }, []);
 
   
@@ -184,6 +227,12 @@ const convertTableToCSV = () => {
   return (
     <div className="main-of-containers">
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
             <div className="right-body-contents">
 
                 <div className="Employeetext-button">
@@ -264,6 +313,7 @@ const convertTableToCSV = () => {
                                     <th className='tableh'>Total</th>
                                 </tr>
                                 </thead>
+                                {invetory_prd.length > 0 ? (
                                 <tbody>
                                       {invetory_prd.map((data,i) =>(
                                         <tr key={i}>
@@ -318,10 +368,19 @@ const convertTableToCSV = () => {
                                         </tr>
                                       ))} */}
                                 </tbody>
+                                  ) : (
+                                    <div className="no-data">
+                                      <img src={NoData} alt="NoData" className="no-data-img" />
+                                      <h3>
+                                        No Data Found
+                                      </h3>
+                                    </div>
+                                )}
                         </table>
                     </div>
                 </div>
             </div>
+              )}
 
             <Modal
               show={modalshow}

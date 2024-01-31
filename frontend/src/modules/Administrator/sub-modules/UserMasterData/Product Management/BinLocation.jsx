@@ -4,6 +4,9 @@ import "../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import axios from "axios";
 import BASE_URL from "../../../../../assets/global/url";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../assets/image/NoAccess.png';
 import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
@@ -39,7 +42,8 @@ function BinLocation({ authrztn }) {
 
   // Artifitial data
 
-  const [binLocation, setbinLocation] = useState([]); // for table
+  const [binLocation, setbinLocation] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [validated, setValidated] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -98,11 +102,21 @@ function BinLocation({ authrztn }) {
   };
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/binLocation/fetchTable")
-      .then((res) => setbinLocation(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+      setbinLocation(res.data)
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+}, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   function formatDate(isoDate) {
     const date = new Date(isoDate);
@@ -431,6 +445,13 @@ function BinLocation({ authrztn }) {
         <Sidebar />
       </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Bin Location - View') ? (
         <div className="right-body-contents">
           {/* <div className="settings-search-master">
             <div className="dropdown-and-iconics">
@@ -486,6 +507,7 @@ function BinLocation({ authrztn }) {
                     <th className="tableh">Action</th>
                   </tr>
                 </thead>
+                {binLocation.length > 0 ? (
                 <tbody>
                   {binLocation.map((data, i) => (
                     <tr key={i}>
@@ -575,10 +597,27 @@ function BinLocation({ authrztn }) {
                     </tr>
                   ))}
                 </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
       <Modal show={showModal} onHide={handleClose}>
         <Form noValidate validated={validated} onSubmit={handleFormSubmit}>

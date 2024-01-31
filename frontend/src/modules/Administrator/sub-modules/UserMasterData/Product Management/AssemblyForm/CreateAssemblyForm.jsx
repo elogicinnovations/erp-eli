@@ -3,6 +3,9 @@ import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
@@ -25,12 +28,13 @@ import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 
-function CreateAssemblyForm() {
+function CreateAssemblyForm({authrztn}) {
   const [validated, setValidated] = useState(false);
   const [category, setcategory] = useState([]);
   const [fetchSparePart, setFetchPart] = useState([]);
   const [fetchSupp, setFetchSupp] = useState([]);
   const [fetchSubPart, setFetchsub] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [spareParts, setSparePart] = useState([]);
   const [subparting, setsubparting] = useState([]);
   const [thresholds, setThresholds] = useState("");
@@ -57,36 +61,72 @@ function CreateAssemblyForm() {
   };
 
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => setFetchSupp(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchSupp(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, []);
 
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/sparePart/fetchTable")
-      .then((res) => setFetchPart(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchPart(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, []);
 
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/subpart/fetchTable")
-      .then((res) => setFetchsub(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setFetchsub(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, []);
 
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/binLocation/fetchTable")
       .then((response) => {
         setbinLocation(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching roles:", error);
-      });
-  }, []);
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+}, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   useEffect(() => {
     axios
@@ -364,6 +404,13 @@ function onDropImages(event) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Assembly - Add') ? (
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="arrowandtitle">
@@ -801,6 +848,15 @@ function onDropImages(event) {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

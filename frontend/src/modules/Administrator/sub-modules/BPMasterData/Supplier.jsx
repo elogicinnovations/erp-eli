@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../assets/image/NoData.png';
+import NoAccess from '../../../../assets/image/NoAccess.png';
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../../Sidebar/sidebar";
 import axios from "axios";
@@ -35,6 +38,7 @@ function Supplier({ authrztn }) {
   const [supplier, setsupplier] = useState([]);
 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(
     Array(supplier.length).fill(false)
@@ -70,11 +74,22 @@ function Supplier({ authrztn }) {
   };
 
   useEffect(() => {
-    axios
-      .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => setsupplier(res.data))
-      .catch((err) => console.log(err));
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/supplier/fetchTable")
+        .then((res) => {
+          setsupplier(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   }, []);
+
 
   function formatDate(isoDate) {
     const date = new Date(isoDate);
@@ -216,6 +231,13 @@ function Supplier({ authrztn }) {
             <Sidebar />
             </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Supplier - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">
@@ -254,6 +276,7 @@ function Supplier({ authrztn }) {
                                         <th className='tableh'>ACTION</th>
                                     </tr>
                                     </thead>
+                                    {supplier.length > 0 ? (
                                     <tbody>
                                         {supplier.map((data,i) =>(
                                             <tr key={i}>
@@ -279,110 +302,98 @@ function Supplier({ authrztn }) {
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.createdAt)}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.updatedAt)}</td>
                                                 <td>
-                                                    {isVertical[data.supplier_code] ? (
-                                                      <DotsThreeCircleVertical
-                                                        size={32}
-                                                        className="dots-icon"
-                                                        onClick={() => {
-                                                          toggleButtons(data.supplier_code);
-                                                        }}
-                                                      />
-                                                    ) : (
-                                                      <DotsThreeCircle
-                                                        size={32}
-                                                        className="dots-icon"
-                                                        onClick={() => {
-                                                          toggleButtons(data.supplier_code);
-                                                        }}
-                                                      />
-                                                    )}
-                                                    <div>
+                                                {isVertical[data.supplier_code] ? (
+                                                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                                                    <DotsThreeCircleVertical
+                                                      size={32}
+                                                      className="dots-icon"
+                                                      onClick={() => {
+                                                        toggleButtons(data.supplier_code);
+                                                      }}
+                                                    />
+                                                    <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
                                                       {setButtonVisibles(data.supplier_code) && (
-                                                        <div
-                                                          className="choices"
-                                                          style={{ position: "absolute" }}>
-
-                                                          { authrztn.includes('Supplier - Edit') && (
-                                                            <button className='btn'  type='button' >
-                                                                <Link to={`/editSupp/${data.supplier_code}`} 
-                                                                style={{textDecoration:'none', color:'#252129'}}>Update</Link>
-                                                            </button>
-                                                          )}
-
-                                                        { authrztn.includes('Supplier - Delete') && (
-                                                          <button className='btn' 
-                                                                  type='button' 
-                                                                  onClick={() => {
-                                                                    handleDelete(data.supplier_code)
-                                                                    closeVisibleButtons();
-                                                                  }}>
-                                                              Delete
+                                                        <div className="choices">
+                                                        { authrztn.includes('Supplier - Edit') && (
+                                                          <button className='btn'  type='button' >
+                                                              <Link to={`/editSupp/${data.supplier_code}`} 
+                                                              style={{textDecoration:'none', color:'#252129'}}>Update</Link>
                                                           </button>
                                                         )}
 
+                                                      { authrztn.includes('Supplier - Delete') && (
+                                                        <button className='btn' 
+                                                                type='button' 
+                                                                onClick={() => {
+                                                                  handleDelete(data.supplier_code)
+                                                                  closeVisibleButtons();
+                                                                }}>
+                                                            Delete
+                                                        </button>
+                                                      )}
                                                         </div>
                                                       )}
                                                     </div>
-                                                  </td>
-                                                {/* <td>
-                                                <DotsThreeCircle
-                                                    size={32}
-                                                    className="dots-icon"
-                                                    style={{
-                                                    cursor: 'pointer',
-                                                    transform: `rotate(${rotatedIcons[i] ? '90deg' : '0deg'})`,
-                                                    color: rotatedIcons[i] ? '#666' : '#000',
-                                                    transition: 'transform 0.3s ease-in-out, color 0.3s ease-in-out',
-                                                    }}
-                                                    onClick={(event) => toggleDropdown(event, i)}
-                                                />
+                                                  </div>
+                                                ) : (
+                                                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                                                    <DotsThreeCircle
+                                                      size={32}
+                                                      className="dots-icon"
+                                                      onClick={() => {
+                                                        toggleButtons(data.supplier_code);
+                                                      }}
+                                                    />
+                                                    <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                                                      {setButtonVisibles(data.supplier_code) && (
+                                                        <div className="choices">
+                                                        { authrztn.includes('Supplier - Edit') && (
+                                                          <button className='btn'  type='button' >
+                                                              <Link to={`/editSupp/${data.supplier_code}`} 
+                                                              style={{textDecoration:'none', color:'#252129'}}>Update</Link>
+                                                          </button>
+                                                        )}
 
-
-                                                <div
-                                                    className='choices'
-                                                    style={{
-                                                    position: 'fixed',
-                                                    top: dropdownPosition.top - 30 + 'px',
-                                                    left: dropdownPosition.left - 100 + 'px',
-                                                    opacity: showDropdown ? 1 : 0,
-                                                    visibility: showDropdown ? 'visible' : 'hidden',
-                                                    transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-                                                    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
-                                                    }}>
-
-                
-
-                                                    { authrztn.includes('Supplier - Edit') && (
-                                                      <button className='btn'  type='button' >
-                                                          <Link to={`/editSupp/${data.supplier_code}`} 
-                                                          style={{textDecoration:'none', color:'#252129'}}>Update</Link>
-                                                      </button>
-                                                    )}
-
-                                                    { authrztn.includes('Supplier - Delete') && (
-                                                      <button className='btn' 
-                                                              type='button' 
-                                                              onClick={() => {
-                                                                handleDelete(data.supplier_code)
-                                                                closeVisibleButtons();
-                                                              }}>
-                                                          Delete
-                                                      </button>
-                                                    )}
-
-                                                </div>
-
-
-                                                </td> */}
-                                               
+                                                      { authrztn.includes('Supplier - Delete') && (
+                                                        <button className='btn' 
+                                                                type='button' 
+                                                                onClick={() => {
+                                                                  handleDelete(data.supplier_code)
+                                                                  closeVisibleButtons();
+                                                                }}>
+                                                            Delete
+                                                        </button>
+                                                      )}
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                )}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
+                                      ) : (
+                                        <div className="no-data">
+                                          <img src={NoData} alt="NoData" className="no-data-img" />
+                                          <h3>
+                                            No Data Found
+                                          </h3>
+                                        </div>
+                                    )}
                                 </table>
                             </div>
                         </div>
-
                 </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
             </div>
         </div>
     );

@@ -4,6 +4,9 @@ import "../../../../styles/react-style.css";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import Form from "react-bootstrap/Form";
@@ -14,7 +17,7 @@ import {
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Carousel from 'react-bootstrap/Carousel';
 
-function UpdateSubparts() {
+function UpdateSubparts({authrztn}) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
@@ -23,6 +26,7 @@ function UpdateSubparts() {
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
   const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier
   const [category, setcategory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [prodcode, setprodcode] = useState("");
   const [prodname, setprodname] = useState("");
@@ -41,6 +45,7 @@ function UpdateSubparts() {
   const [subpartImages, setSubpartImages] = useState([]);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/subpart/fetchsubpartEdit", {
         params: {
@@ -56,8 +61,15 @@ function UpdateSubparts() {
         setprodthreshold(res.data[0].threshhold);
         setproddetails(res.data[0].subPart_desc);
         setprodcategory(res.data[0].category_code);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+  
+  return () => clearTimeout(delay);
   }, [id]);
 
   const handleSelectChange = (selectedOptions) => {
@@ -431,6 +443,13 @@ function selectFiles() {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Sub-Part - Edit') ? (
         <div className="right-body-contentss">
           <Form noValidate validated={validated} onSubmit={update}>
           <div className="arrowandtitle">
@@ -806,6 +825,15 @@ function selectFiles() {
             </div>
           </Form>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

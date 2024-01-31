@@ -40,7 +40,6 @@ const Header = () => {
       setUsername(decoded.username);
       setFname(decoded.Fname)
       setUserRole(decoded.userrole)
-      console.log(decoded);
       }
     }
     // const navigate = useNavigate()

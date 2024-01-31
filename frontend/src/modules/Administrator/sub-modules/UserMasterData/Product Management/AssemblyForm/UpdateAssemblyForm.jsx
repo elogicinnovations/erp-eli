@@ -3,6 +3,9 @@ import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 // import Form from "react-bootstrap/Form";
 import axios from "axios";
 import BASE_URL from "../../../../../../assets/global/url";
@@ -25,7 +28,7 @@ import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
 
-function UpdateAssemblyForm() {
+function UpdateAssemblyForm({authrztn}) {
   const navigate = useNavigate();
   const { id } = useParams();
   //Fetching all data that didn't where clause
@@ -39,6 +42,7 @@ function UpdateAssemblyForm() {
   const [binLocation, setbinLocation] = useState([]); 
   const [manufacturer, setManufacturer] = useState([]);
   const [tableSupp, setTableSupp] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   //Fetching data that use to be where clause
   const [code, setCode] = useState("");
@@ -57,6 +61,7 @@ function UpdateAssemblyForm() {
   
 
   useEffect(() => {   
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/assembly/fetchTableEdit', {
         params: {
           id: id
@@ -72,9 +77,16 @@ function UpdateAssemblyForm() {
       setunitMeasurement(res.data[0].assembly_unitMeasurement);
       setslct_manufacturer(res.data[0].assembly_manufacturer);
       setThresholds(res.data[0].threshhold);
+      setIsLoading(false);
     })
-      .catch(err => console.log(err));
-  }, []);
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+}, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   //fetch image
   useEffect(() => {
@@ -565,6 +577,13 @@ const update = async (e) => {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Assembly - Edit') ? (
         <div className="right-body-contents-a">
           <Form noValidate validated={validated} onSubmit={update}>
           <div className="arrowandtitle">
@@ -1023,6 +1042,15 @@ const update = async (e) => {
                           </div>
                         </Form>
                       </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
                     </div>
                </div>
   );

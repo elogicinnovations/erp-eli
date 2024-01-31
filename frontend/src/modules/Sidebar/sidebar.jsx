@@ -116,8 +116,6 @@ function Sidebar({ authrztn }) {
   useEffect(() => {
     const path = location.pathname;
 
-    console.log("Role: ", authrztn);
-
     if (path === "/dashboard") {
       setActiveMenu("DASHBOARD");
     } else if (
@@ -242,6 +240,7 @@ function Sidebar({ authrztn }) {
 
               <Collapse in={openEmployeeData}>
                 <List component="div" disablePadding>
+                  {authrztn.includes("Master List - View") && (
                   <NavLink
                     to="/masterList"
                     style={{ textDecoration: "none", color: "inherit" }}
@@ -254,6 +253,7 @@ function Sidebar({ authrztn }) {
                       <ListItemText primary="Master List" />
                     </ListItem>
                   </NavLink>
+                  )}
                   {/* <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Employee Type" />
                   </ListItem> */}
@@ -276,6 +276,13 @@ function Sidebar({ authrztn }) {
                 </List>
               </Collapse>
 
+              {authrztn.includes("Product Categories - View") ||
+              authrztn.includes("Product Manufacturer - View") ||
+              authrztn.includes("Bin Location - View") ||
+              authrztn.includes("Sub-Part - View") ||
+              authrztn.includes("Spare Part - View") ||
+              authrztn.includes("Assembly - View") ||
+              authrztn.includes("Product List - View") && (
               <ListItem
                 button
                 className="adminsub-menu"
@@ -283,6 +290,7 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="Product Management" />
                 {openProductSettings ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+                  )}
 
               <Collapse in={openProductSettings}>
                 <List component="div" disablePadding>
@@ -420,10 +428,15 @@ function Sidebar({ authrztn }) {
                 </List>
               </Collapse>
 
+              
+
+              {authrztn.includes("Cost Centre - View") ||
+              authrztn.includes("Supplier - View") && (
               <ListItem button className="adminsub-menu" onClick={toggleBPData}>
                 <ListItemText primary="BP Master Data" />
                 {openBPData ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              )}
 
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>

@@ -4,6 +4,9 @@ import '../../assets/global/style.css';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import '../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
+import ReactLoading from 'react-loading';
+import NoData from '../../assets/image/NoData.png';
+import NoAccess from '../../assets/image/NoAccess.png';
 import Select from 'react-select';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -27,7 +30,7 @@ import swal from 'sweetalert';
 
 import * as $ from 'jquery';
 
-  const ReturnForm = ({ setActiveTab }) => {
+  const ReturnForm = ({ setActiveTab, authrztn }) => {
 
 
     const handleTabClick = (tabKey) => {
@@ -36,6 +39,7 @@ import * as $ from 'jquery';
 const navigate = useNavigate()
 const { id } = useParams();
 const [validated, setValidated] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
 const [issuanceCode, setIssuanceCode] = useState('');
 const [remarks, setRemarks] = useState('');
 const [status, setStatus] = useState('To be Return');
@@ -84,6 +88,7 @@ const [arrayDataSubpartBackend, setarrayDataSubpartBackend] = useState([]);
 
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/issued_product/getProducts", {
         params: {
@@ -99,9 +104,15 @@ const [arrayDataSubpartBackend, setarrayDataSubpartBackend] = useState([]);
           name: row.inventory_prd.product_tag_supplier.product.product_name
         }));
         setIssuedProduct(selectedSupplierOptions);
-        // setArrayDataProd(selectedSupplierOptions);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
     
 const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
@@ -481,6 +492,13 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Inventory - View') ? (
             <div className="right-body-contents-a">
             <Row>
                 
@@ -701,6 +719,15 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                         </Form>
                        
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
   )

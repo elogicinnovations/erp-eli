@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import { Link } from "react-router-dom";
 import { useParams } from "react-router";
 import axios from "axios";
@@ -21,12 +24,13 @@ import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.b
 import "../../../../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 
-function ViewAssembly() {
+function ViewAssembly({authrztn}) {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("Subparts");
   const [Subparts, setSubParts] = useState([]);
   const [Spareparts, setSpareparts] = useState([]);
   const [viewSupplier, setviewSupplier] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const tabStyle = {
     padding: "10px 15px",
     margin: "0 10px",
@@ -36,39 +40,69 @@ function ViewAssembly() {
 
   //for sub parts
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/assembly_subparts/fetchinTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSubParts(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setSubParts(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+  }, [id]);
 
   //for spare parts
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/spare_assembly/fetchinTable", {
         params: {
           id: id,
         },
       })
-      .then((res) => setSpareparts(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setSpareparts(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
 
 
   //for supplier
   useEffect(() => {
+  const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier_assembly/fetchAssigned", {
         params: {
           id: id,
         },
       })
-      .then((res) => setviewSupplier(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setviewSupplier(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
   }, [id]);
 
   return (
@@ -78,6 +112,13 @@ function ViewAssembly() {
       </div> */}
 
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Assembly - View') ? (
         <div className="right-body-contentss">
           <div className="headers-text">
             <div className="arrowandtitle">
@@ -196,6 +237,15 @@ function ViewAssembly() {
             </Tabs>
           </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

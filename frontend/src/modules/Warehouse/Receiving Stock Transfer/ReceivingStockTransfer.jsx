@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import ReactLoading from 'react-loading';
+import NoData from '../../../assets/image/NoData.png';
+import NoAccess from '../../../assets/image/NoAccess.png';
 // import Sidebar from '../../Sidebar/sidebar';
 import '../../../assets/global/style.css';
 import '../../styles/react-style.css';
@@ -30,24 +33,33 @@ import {
   import * as $ from 'jquery';
 import Header from '../../../partials/header';
 
-function ReceivingStockTransfer() {
+function ReceivingStockTransfer({authrztn}) {
   const navigate = useNavigate();
   const [stockTransfer, setStockTransfer] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [filteredPR, setFilteredPR] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
 // Fetch Data
 
 const reloadTable = () => {
+  const delay = setTimeout(() => {
   axios
     .get(BASE_URL + '/StockTransfer/fetchTable')
     .then((res) => {
       setStockTransfer(res.data)
-      setFilteredPR(res.data); 
+      setFilteredPR(res.data)
+      setIsLoading(false);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err)
+      setIsLoading(false);
+    });
+  }, 1000);
+
+  return () => clearTimeout(delay);
 };
 
 useEffect(() => {
@@ -141,6 +153,13 @@ const handleGoButtonClick = () => {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Receiving - View') ? (
             <div className="right-body-contents">
                 {/* <div className="settings-search-master">
 
@@ -295,19 +314,27 @@ const handleGoButtonClick = () => {
                                         </tr>
                                       ))}
                               </tbody>
-                              ) : (
-                                <tbody>
-                                <tr>
-                                  <td colSpan="6" style={{ textAlign: 'center' }}>
-                                    No matches found.
-                                  </td>
-                                </tr>
-                              </tbody>
-                            )}
+                                ) : (
+                                  <div className="no-data">
+                                    <img src={NoData} alt="NoData" className="no-data-img" />
+                                    <h3>
+                                      No Data Found
+                                    </h3>
+                                  </div>
+                              )}
                           </table>
                     </div>
                 </div>
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
 
         </div>
     </div>

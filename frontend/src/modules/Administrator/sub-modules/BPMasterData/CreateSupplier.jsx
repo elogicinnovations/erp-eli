@@ -2,6 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import Sidebar from "../../../Sidebar/sidebar";
 import axios from "axios";
 import BASE_URL from "../../../../assets/global/url";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../assets/image/NoData.png';
+import NoAccess from '../../../../assets/image/NoAccess.png';
 import swal from "sweetalert";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -14,8 +17,9 @@ import warehouse from "../../../../assets/global/warehouse";
 import { ArrowCircleLeft } from "@phosphor-icons/react";
 import { width } from "@mui/system";
 
-function CreateSupplier() {
+function CreateSupplier({authrztn}) {
   const [validated, setValidated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [suppName, setsuppName] = useState("");
   const [suppCurr, setsuppCurr] = useState("");
@@ -44,6 +48,7 @@ function CreateSupplier() {
 
   // para sa pag fetch ng last supplier code
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier/lastCode")
       .then((res) => {
@@ -52,16 +57,33 @@ function CreateSupplier() {
 
         // Increment the value by 1
         setsuppCode(code);
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => setSupplier(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .then((res) => {
+        setSupplier(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
   //function for existing code and name
   const checkexistingCode = useCallback(async () => {
@@ -221,6 +243,13 @@ function CreateSupplier() {
             <Sidebar />
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Supplier - Add') ? (
         <div className="right-body-contentss">
           <div
             className="create-head-back"
@@ -618,6 +647,15 @@ function CreateSupplier() {
             </Form>
           </Container>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

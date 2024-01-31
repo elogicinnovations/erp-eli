@@ -11,13 +11,11 @@ export default function Roles({ children }){
 
     if(typeof accessToken === 'string'){
       var decoded = jwtDecode(accessToken);
-      console.log("Decoded: ", decoded);
 
       axios.get(BASE_URL + '/masterList/viewAuthorization/' + decoded.id)
       .then((res) => {
         // console.log("Res: ",res);
         if(res.status === 200){
-          console.log("Authorization: ", res.data.userRole.col_authorization);
           setauthrztn(res.data.userRole.col_authorization);
         }
     })

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import ReactLoading from 'react-loading';
+import NoData from '../../../assets/image/NoData.png';
+import NoAccess from '../../../assets/image/NoAccess.png';
 import Sidebar from '../../Sidebar/sidebar';
 import '../../../assets/global/style.css';
 import '../../styles/react-style.css';
@@ -46,6 +49,7 @@ function StockManagement({ authrztn }) {
 
   const [stockMgnt, setStockMgnt] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(Array(stockMgnt.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
@@ -168,13 +172,21 @@ function StockManagement({ authrztn }) {
   const [filteredPR, setFilteredPR] = useState([]);
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + '/PR/fetchTableToReceive')
       .then((res) => {
         setStockMgnt(res.data)
-        setFilteredPR(res.data); 
+        setFilteredPR(res.data)
+        setIsLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
   useEffect(() => {
     reloadTable()
@@ -236,6 +248,13 @@ function StockManagement({ authrztn }) {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Stock Management - View') ? (
             <div className="right-body-contents">
                 <div className="settings-search-master">
 
@@ -391,6 +410,7 @@ function StockManagement({ authrztn }) {
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
+                                {stockTransfer.length > 0 ? (
                                 <tbody>
                                       {stockTransfer.map((data,i) =>(
                                         <tr key={i}>
@@ -432,10 +452,27 @@ function StockManagement({ authrztn }) {
                                         </tr>
                                       ))}
                             </tbody>
+                              ) : (
+                                <div className="no-data">
+                                  <img src={NoData} alt="NoData" className="no-data-img" />
+                                  <h3>
+                                    No Data Found
+                                  </h3>
+                                </div>
+                            )}
                         </table>
                     </div>
                 </div>
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
 
         </div>
     </div>

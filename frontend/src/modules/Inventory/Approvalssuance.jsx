@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BASE_URL from "../../assets/global/url";
 import "../../assets/global/style.css";
+import ReactLoading from 'react-loading';
+import NoData from '../../assets/image/NoData.png';
+import NoAccess from '../../assets/image/NoAccess.png';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../styles/react-style.css";
 import Form from "react-bootstrap/Form";
@@ -9,7 +12,7 @@ import subwarehouse from "../../assets/global/subwarehouse";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 
-const ApprovalIssuance = ({ setActiveTab }) => {
+const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
 
   const { id } = useParams();
   const handleTabClick = (tabKey) => {
@@ -20,6 +23,7 @@ const ApprovalIssuance = ({ setActiveTab }) => {
   const [fetchAssembly, setFetchAssembly] = useState([]);
   const [fetchSpare, setFetchSpare] = useState([]);
   const [fetchSubpart, setFetchSubpart] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [fromSite, setFromSite] = useState();
   const [issuedTo, setIssuedTo] = useState();
@@ -37,6 +41,7 @@ const ApprovalIssuance = ({ setActiveTab }) => {
 
 
   useEffect(() => {
+    const delay = setTimeout(() => {
     axios.get(BASE_URL + '/issuance/approvalIssuance', {
       params: {
         id: id
@@ -53,11 +58,16 @@ const ApprovalIssuance = ({ setActiveTab }) => {
       setTransportedBy(res.data[0].transported_by)
       setMrs(res.data[0].mrs)
       setRemarks(res.data[0].remarks)
+      setIsLoading(false);
     })
-    .catch(err => {
-      console.error(err);
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
     });
-  }, [id]);
+  }, 1000);
+
+return () => clearTimeout(delay);
+}, [id]);
 
    //get MasterList
    const [master, setMaster] = useState([]);
@@ -151,6 +161,13 @@ const ApprovalIssuance = ({ setActiveTab }) => {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Inventory - Approval') ? (
         <div className="right-body-contents-a">
             <h1>Approval Issuance</h1>
             <div
@@ -423,6 +440,15 @@ const ApprovalIssuance = ({ setActiveTab }) => {
               </div>
             </div>
         </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
       </div>
     </div>
   );

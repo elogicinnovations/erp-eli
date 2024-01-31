@@ -2,6 +2,9 @@ import React, {useEffect, useState, useRef}from 'react'
 import Sidebar from '../Sidebar/sidebar';
 import '../../assets/global/style.css';
 import { Link, useParams } from 'react-router-dom';
+import ReactLoading from 'react-loading';
+import NoData from '../../assets/image/NoData.png';
+import NoAccess from '../../assets/image/NoAccess.png';
 import '../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
 import BASE_URL from '../../assets/global/url';
@@ -10,13 +13,14 @@ import {
   Trash
 } from "@phosphor-icons/react";
 
-function ViewSubpart() {
+function ViewSubpart({authrztn}) {
   const { id } = useParams();
 
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   const [unit, setUnit] = useState('');
   const [binLocation, setBinLocation] = useState('');
@@ -27,7 +31,8 @@ function ViewSubpart() {
 
 
 
-  useEffect(() => {   
+  useEffect(() => {
+    const delay = setTimeout(() => {
     // console.log('code' + id)
     axios.get(BASE_URL + '/inventory/fetchView_subpart', {
         params: {
@@ -45,9 +50,16 @@ function ViewSubpart() {
         setDetails(res.data[0].subpart_supplier.subPart.subPart_desc);
         // setThresholds(res.data[0].product_tag_supplier.product.product_threshold);
         setSupplier(res.data[0].subpart_supplier.supplier.supplier_name);
-    })
-      .catch(err => console.log(err));
-  }, []);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+    }, 1000);
+
+return () => clearTimeout(delay);
+}, []);
 
 
 
@@ -58,6 +70,13 @@ function ViewSubpart() {
             <Sidebar/>
         </div> */}
         <div className="right-of-main-containers">
+              {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('Inventory - View') ? (
             <div className="right-body-contents-a">
                 <h1>View Product Information</h1>
                 <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
@@ -235,6 +254,15 @@ function ViewSubpart() {
                             </Link>
                         </div>
             </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+            <h3>
+              You don't have access to this function.
+            </h3>
+          </div>
+        )
+              )}
         </div>
     </div>
   )
