@@ -407,7 +407,7 @@ return () => clearTimeout(delay);
                   Loading Data...
                 </div>
               ) : (
-                authrztn.includes('Product Category - View') ? (
+                authrztn.includes('Product Categories - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">

@@ -184,7 +184,12 @@ function Sidebar({ authrztn }) {
     }
   }, [location.pathname]);
 
+  const hideProductManagement = authrztn.some(permission =>
+    ["Product Categories - View", "Product Manufacturer - View", "Bin Location - View", "Sub-Part - View", "Spare Part - View", "Assembly - View", "Product List - View"].includes(permission)
+  );
+
   return (
+
     <div className="containers-of-sidebard">
       <div className="sidebar-main-content">
         <div className="logo-head-sidebars">
@@ -276,13 +281,8 @@ function Sidebar({ authrztn }) {
                 </List>
               </Collapse>
 
-              {authrztn.includes("Product Categories - View") &&
-              authrztn.includes("Product Manufacturer - View") &&
-              authrztn.includes("Bin Location - View") &&
-              authrztn.includes("Sub-Part - View") &&
-              authrztn.includes("Spare Part - View") &&
-              authrztn.includes("Assembly - View") &&
-              authrztn.includes("Product List - View") && (
+
+              {hideProductManagement && (
                 <ListItem
                   button
                   className="adminsub-menu"
@@ -290,7 +290,7 @@ function Sidebar({ authrztn }) {
                   <ListItemText primary="Product Management" />
                   {openProductSettings ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
-                  )} 
+              )}
 
               <Collapse in={openProductSettings}>
                 <List component="div" disablePadding>
@@ -429,18 +429,14 @@ function Sidebar({ authrztn }) {
               </Collapse>
 
               
+              
 
-              {authrztn.includes("Cost Centre - View") &&
-              authrztn.includes("Supplier - View") && 
-              authrztn.includes("Warehouses - View") &&
-              (
                 
               <ListItem button className="adminsub-menu" onClick={toggleBPData}>
                 <ListItemText primary="BP Master Data" />
                 {openBPData ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-              )}
-
+              
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>
                   {/* Cost Center */}

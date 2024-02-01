@@ -339,7 +339,7 @@ function SpareParts({ authrztn }) {
                   Loading Data...
                 </div>
               ) : (
-        authrztn.includes('Spare Part - Edit') ? (
+        authrztn.includes('Spare Part - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">

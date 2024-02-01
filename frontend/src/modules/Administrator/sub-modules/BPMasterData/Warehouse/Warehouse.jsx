@@ -15,6 +15,9 @@ import {
     DotsThreeCircleVertical,
   } from "@phosphor-icons/react";
 import BASE_URL from "../../../../../assets/global/url";
+import ReactLoading from 'react-loading';
+import NoData from '../../../../../assets/image/NoData.png';
+import NoAccess from '../../../../../assets/image/NoAccess.png';
 
 function Warehouse ({authrztn}) {
 
@@ -27,6 +30,7 @@ const [visibleButtons, setVisibleButtons] = useState({});
 const [isVertical, setIsVertical] = useState({});
 const [showModal, setShowModal] = useState(false);
 const [updateModalShow, setUpdateModalShow] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
 
 const handleClose = () => {
     setShowModal(false);
@@ -34,30 +38,41 @@ const handleClose = () => {
 
 const handleShow = () => setShowModal(true);
 
-// const addWarehouse = () => {
-//   axios
-//   .post(`${BASE_URL}/warehouses/automaticAdd`)
-//   .then((res) =>{
-//       if (res.status === 200) {
-//           console.log("Warehouse successfully inserted");
-//       } else if (res.status === 201) {
-//           console.log("Warehouse already existing");
-//       } else {
-//           console.log("There seems to be an error in warehouse");
-//       }
-//   })
-// };
+const addWarehouse = () => {
+  axios
+  .post(`${BASE_URL}/warehouses/automaticAdd`)
+  .then((res) =>{
+      if (res.status === 200) {
+          console.log("Warehouse successfully inserted");
+      } else if (res.status === 201) {
+          console.log("Warehouse already existing");
+      } else {
+          console.log("There seems to be an error in warehouse");
+      }
+  })
+};
 
 const reloadTable = () => {
-    axios
-    .get(BASE_URL + "/warehouses/fetchtableWarehouses")
-    .then((res) => setWarehouses(res.data))
-    .catch((err) => console.log(err));
-  };
+  const delay = setTimeout(() => {
+  axios
+  .get(BASE_URL + "/warehouses/fetchtableWarehouses")
+  .then((res) => {
+    setWarehouses(res.data)
+    setIsLoading(false);
+  })
+  .catch((err) => {
+    console.log(err)
+    setIsLoading(false);
+  });
+}, 1000);
+
+return () => clearTimeout(delay);
+};
+
 
   useEffect(() => {
     reloadTable();
-    // addWarehouse();
+    addWarehouse();
   }, []);
 
   function formatDatetime(datetime) {
@@ -305,6 +320,14 @@ const handleDelete = async (table_id) => {
     return(
         <div className="main-of-containers">
         <div className="right-of-main-containers">
+        {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+                authrztn.includes('Warehouses - View') ? (
+
           <div className="right-body-contents">
             <div className="Employeetext-button">
               <div className="employee-and-button">
@@ -314,7 +337,7 @@ const handleDelete = async (table_id) => {
   
                 <div className="button-create-side">
                   <div className="Buttonmodal-new">
-                    { authrztn?.includes('Cost Centre - Add') && (
+                    { authrztn?.includes('Warehouses - Add') && (
                     <button onClick={handleShow}>
                       <span style={{}}>
                         <Plus size={25} />
@@ -339,7 +362,8 @@ const handleDelete = async (table_id) => {
                       <th className="tableh">Action</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  {warehouses.length > 0 ?(
+                    <tbody>
                   {warehouses.map((data, i) => (
                       <tr key={i}>
                         <td>{data.warehouse_name}</td>
@@ -426,10 +450,28 @@ const handleDelete = async (table_id) => {
                       </tr>
                     ))}
                   </tbody>
+                   ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
                 </table>
               </div>
             </div>
+            
           </div>
+              ) : (
+                <div className="no-access">
+                  <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+                  <h3>
+                    You don't have access to this function.
+                  </h3>
+                </div>
+              )
+            )}
         </div>
   
         <Modal
