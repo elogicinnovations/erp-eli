@@ -276,21 +276,21 @@ function Sidebar({ authrztn }) {
                 </List>
               </Collapse>
 
-              {authrztn.includes("Product Categories - View") ||
-              authrztn.includes("Product Manufacturer - View") ||
-              authrztn.includes("Bin Location - View") ||
-              authrztn.includes("Sub-Part - View") ||
-              authrztn.includes("Spare Part - View") ||
-              authrztn.includes("Assembly - View") ||
+              {authrztn.includes("Product Categories - View") &&
+              authrztn.includes("Product Manufacturer - View") &&
+              authrztn.includes("Bin Location - View") &&
+              authrztn.includes("Sub-Part - View") &&
+              authrztn.includes("Spare Part - View") &&
+              authrztn.includes("Assembly - View") &&
               authrztn.includes("Product List - View") && (
-              <ListItem
-                button
-                className="adminsub-menu"
-                onClick={toggleProductSettings}>
-                <ListItemText primary="Product Management" />
-                {openProductSettings ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-                  )}
+                <ListItem
+                  button
+                  className="adminsub-menu"
+                  onClick={toggleProductSettings}>
+                  <ListItemText primary="Product Management" />
+                  {openProductSettings ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                  )} 
 
               <Collapse in={openProductSettings}>
                 <List component="div" disablePadding>
@@ -430,8 +430,11 @@ function Sidebar({ authrztn }) {
 
               
 
-              {authrztn.includes("Cost Centre - View") ||
-              authrztn.includes("Supplier - View") && (
+              {authrztn.includes("Cost Centre - View") &&
+              authrztn.includes("Supplier - View") && 
+              authrztn.includes("Warehouses - View") &&
+              (
+                
               <ListItem button className="adminsub-menu" onClick={toggleBPData}>
                 <ListItemText primary="BP Master Data" />
                 {openBPData ? <ExpandLess /> : <ExpandMore />}
