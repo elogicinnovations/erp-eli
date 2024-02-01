@@ -39,8 +39,21 @@ function CreateSpareParts({authrztn}) {
 
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/sparePart/lastCode")
+  //     .then((res) => {
+  //       const codes =
+  //         res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+
+  //       // Increment the value by 1
+  //       setCode(codes);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
+
   useEffect(() => {
-    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/sparePart/lastCode")
       .then((res) => {
@@ -53,21 +66,34 @@ function CreateSpareParts({authrztn}) {
       .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => {
-        setFetchSupp(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-    }, 1000);
+//   useEffect(() => {
+//     axios
+//       .get(BASE_URL + "/supplier/fetchTable")
+//       .then((res) => {
+//         setFetchSupp(res.data)
+//         setIsLoading(false);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         setIsLoading(false);
+//       });
+//     }, 1000);
 
-return () => clearTimeout(delay);
-}, []);
+// return () => clearTimeout(delay);
+// }, []);
+
+useEffect(() => {
+  axios
+  .get(BASE_URL + "/supplier/fetchTable")
+  .then((res) =>{
+    setFetchSupp(res.data)
+    setIsLoading(false);
+  })
+  .catch((err) =>{
+    console.log(err);
+    setIsLoading(false);
+  });
+})
 
   useEffect(() => {
     axios
