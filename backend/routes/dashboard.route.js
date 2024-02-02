@@ -9,7 +9,8 @@ const { Issuance, MasterList,
         IssuedSpare, IssuedSubpart, 
         Inventory_Assembly, Inventory_Spare, 
         Inventory_Subpart, ProductTAGSupplier, 
-        Supplier, PR, Product, Assembly_Supplier, Assembly, SparePart_Supplier, SparePart, Subpart_supplier, SubPart
+        Supplier, PR, Product, Assembly_Supplier, Assembly, SparePart_Supplier, SparePart, Subpart_supplier, SubPart,
+        Warehouses
     } = require("../db/models/associations"); 
         
 // const Issued_Product = require('../db/models/issued_product.model')
@@ -696,7 +697,33 @@ router.route('/countInventory').get(async (req, res) => {
 
 
 
+router.route('/addauto').post(async (req, res) => {
+  try {
+    // Check if the warehouse already exists
+    const existingWarehouse = await Warehouses.findOne({
+      where: {
+        warehouse_name: "Main",
+        location: "Agusan"
+      }
+    });
 
+    if (existingWarehouse) {
+      return res.status(400).json({ message: 'Warehouse with the specified name and location already exists' });
+    }
+
+    const newWarehouse = await Warehouses.create({
+      warehouse_name: "Main",
+      location: "Agusan",
+      details: ""
+    });
+
+
+    res.status(201).json(newWarehouse);
+  } catch (error) {
+    console.error('Error: Problem on inserting warehouse', error);
+    res.status(500).json({ message: 'Error warehouse inserting' });
+  }
+});
 
 
 

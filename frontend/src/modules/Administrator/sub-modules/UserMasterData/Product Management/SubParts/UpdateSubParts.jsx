@@ -454,7 +454,7 @@ function selectFiles() {
           <Form noValidate validated={validated} onSubmit={update}>
           <div className="arrowandtitle">
               <Link to="/subParts">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
                   <div className="titletext">
                     <h1>Update Sub Parts</h1>
@@ -485,6 +485,7 @@ function selectFiles() {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               General Information
               <span
@@ -494,13 +495,13 @@ function selectFiles() {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "18rem",
+                  left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
 
             <div className="row">
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     SubParts Code{" "}
@@ -515,7 +516,7 @@ function selectFiles() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     SubParts Name{" "}
@@ -530,55 +531,55 @@ function selectFiles() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
+            </div>
+
+            <div className="row">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Category:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeCategory}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={prodcategory}>
-                    <option disabled value="">
-                      Select Category ...
-                    </option>
-                    {category.map((category) => (
-                      <option
-                        key={category.category_code}
-                        value={category.category_code}>
-                        {category.category_name}
-                      </option>
-                    ))}
-                  </Form.Select>
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Bin Location:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label=""
+                      onChange={handleFormChangeBinLocation}
+                      value={prodlocation}
+                      style={{ height: "40px", fontSize: "15px" }}>
+                      {binLocation.map((binLocation) => (
+                        <option
+                          key={binLocation.bin_id}
+                          value={binLocation.bin_id}>
+                            <strong>{binLocation.bin_name + "-"}</strong>
+                            <strong>{binLocation.bin_subname}</strong>
+                        </option>
+                      ))}
+                    </Form.Select>
                 </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Category:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label=""
+                      onChange={handleFormChangeCategory}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}
+                      value={prodcategory}>
+                      {category.map((category) => (
+                        <option
+                          key={category.category_code}
+                          value={category.category_code}>
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
               </div>
             </div>
 
             <div className="row">
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Bin Location:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeBinLocation}
-                    value={prodlocation}
-                    style={{ height: "40px", fontSize: "15px" }}>
-                    {binLocation.map((binLocation) => (
-                      <option
-                        key={binLocation.bin_id}
-                        value={binLocation.bin_id}>
-                          <strong>{binLocation.bin_name + "-"}</strong>
-                          <strong>{binLocation.bin_subname}</strong>
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Unit of Measurement:{" "}
@@ -596,7 +597,7 @@ function selectFiles() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Manufacturer:{" "}
@@ -641,53 +642,68 @@ function selectFiles() {
                 </Form.Group>
               </div>
               <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Image Upload:{" "}
-                  </Form.Label>
-                  <div className="card">
-                      <div className="top">
-                        <p>Drag & Drop Image Upload</p>
-                      </div>
-                      <div className="drag-area" 
-                      onDragOver={onDragOver} 
-                      onDragLeave={onDragLeave} 
-                      onDrop={onDropImages}>
-                          <>
-                          Drag & Drop image here or {" "}
-                          <span  
-                          className="select" role="button" onClick={selectFiles}>
-                            Browse
-                          </span>
-                          </>
-                        <input
-                        name="file" type="file" className="file" multiple ref={fileInputRef}
-                        onChange={(e) => onFileSelect(e)}/>
-                      </div>
-                      <div className="ccontainerss">
-                        {subpartImages.map((image,index)=>(
-                        <div className="imagess" key={index}>
-                          <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                          <img src={`data:image/png;base64,${image.subpart_image}`} 
-                          alt={`Sub Part ${image.subpart_id}`} />
-                        </div>
-                        ))}
-                      </div>
-                    </div> 
-                  </Form.Group>
+
               </div>
             </div>
 
-            <Form.Group controlId="exampleForm.ControlInput1">
-              <Form.Label style={{ fontSize: "20px" }}>Details</Form.Label>
-              <Form.Control
-                onChange={(e) => handledetails(e)}
-                as="textarea"
-                placeholder="Enter details"
-                style={{ height: "100px", fontSize: "15px", resize: "none" }}
-                value={proddetails}
-              />
-            </Form.Group>
+          <div className="row">
+            <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>Details</Form.Label>
+                <Form.Control
+                  onChange={(e) => handledetails(e)}
+                  as="textarea"
+                  rows={3}
+                  style={{
+                  fontFamily: 'Poppins, Source Sans Pro',
+                  fontSize: "16px",
+                  height: "227px",
+                  maxHeight: "227px",
+                  resize: "none",
+                  overflowY: "auto",
+                  }}
+                  value={proddetails}
+                />
+              </Form.Group>
+            </div>
+            <div className="col-6">
+             <Form.Group controlId="exampleForm.ControlInput1">
+              <Form.Label style={{ fontSize: "20px" }}>
+                Image Upload:{" "}
+              </Form.Label>
+              <div className="card">
+                  <div className="top">
+                    <p>Drag & Drop Image Upload</p>
+                  </div>
+                  <div className="drag-area" 
+                  onDragOver={onDragOver} 
+                  onDragLeave={onDragLeave} 
+                  onDrop={onDropImages}>
+                      <>
+                      Drag & Drop image here or {" "}
+                      <span  
+                      className="select" role="button" onClick={selectFiles}>
+                        Browse
+                      </span>
+                      </>
+                    <input
+                    name="file" type="file" className="file" multiple ref={fileInputRef}
+                    onChange={(e) => onFileSelect(e)}/>
+                  </div>
+                  <div className="ccontainerss">
+                    {subpartImages.map((image,index)=>(
+                    <div className="imagess" key={index}>
+                      <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                      <img src={`data:image/png;base64,${image.subpart_image}`} 
+                      alt={`Sub Part ${image.subpart_id}`} />
+                    </div>
+                    ))}
+                  </div>
+                </div> 
+              </Form.Group>
+            </div>
+          </div>
+
 
             <div
               className="gen-info"
@@ -695,6 +711,7 @@ function selectFiles() {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "30px",
+                fontFamily: "Poppins, Source Sans Pro",
               }}>
               Supplier List
               <span
@@ -767,8 +784,8 @@ function selectFiles() {
                       ) : (
                         <tr>
                           <td
-                            colSpan="6"
-                            style={{ textAlign: "center", fontSize: "18px" }}>
+                            colSpan="7"
+                            style={{ textAlign: "center"}}>
                             No Supplier selected
                           </td>
                         </tr>

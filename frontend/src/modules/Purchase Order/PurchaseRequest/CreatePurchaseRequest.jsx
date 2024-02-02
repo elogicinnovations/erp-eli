@@ -253,22 +253,15 @@ function CreatePurchaseRequest() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
-        <div className="right-body-contents-a">
-          <Row>
-            <Col>
-              <div
-                className="create-head-back"
-                style={{ display: "flex", alignItems: "center" }}>
-                <Link style={{ fontSize: "1.5rem" }} to="/purchaseRequest">
-                  <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
-                </Link>
-                <h1>Create Purchase Request</h1>
+        <div className="right-body-contentss">
+        <div className="arrowandtitle">
+              <Link to="/purchaseRequest">
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Create Purchase Request</h1>
+                  </div>
               </div>
-              <p1>
-                Purchasing please purchase the following item enumerated below{" "}
-              </p1>
-            </Col>
-          </Row>
           <Form noValidate validated={validated} onSubmit={add}>
             <div
               className="gen-info"

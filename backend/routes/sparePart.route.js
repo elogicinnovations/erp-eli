@@ -7,7 +7,8 @@ const { SparePart_Supplier,
         Inventory_Spare, 
         SparePartPrice_history, 
         SparePart_image,
-        IssuedSpare} = require("../db/models/associations"); 
+        IssuedSpare,
+      Warehouses} = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -71,6 +72,7 @@ router.route('/create').post(async (req, res) => {
               SpareaddPriceInput, 
               slct_binLocation, 
               slct_manufacturer, 
+              slct_category,
               thresholds, 
               unitMeasurement,
               images} = req.body;
@@ -95,10 +97,26 @@ router.route('/create').post(async (req, res) => {
             spareParts_manufacturer: slct_manufacturer,
             threshhold: threshholdValue,
             spareParts_unitMeasurement: unitMeasurement,
+            category_code: slct_category,
             spareParts_status: 'Active'
           });
 
           const createdID = spare_newData.id;
+
+          const findWarehouse = await Warehouses.findOne({
+            where: {
+              warehouse_name: "Main",
+              location: "Agusan",
+            },
+          });
+          
+          if (!findWarehouse) {
+            console.log("No warehouse found");
+          }
+  
+          const ExistWarehouseId = findWarehouse.id;
+          console.log("Id ng warehouse: " + ExistWarehouseId);
+
 
           for (const supplier of SpareaddPriceInput) {
             const supplierValue = supplier.code;
@@ -120,7 +138,8 @@ router.route('/create').post(async (req, res) => {
             await Inventory_Spare.create({
               spare_tag_supp_id: SupplierSpare_ID.id,
               quantity: 0,
-              price: supplierPrices
+              price: supplierPrices,
+              warehouse_id: ExistWarehouseId,
             });
           }
 
@@ -232,6 +251,20 @@ router.route("/update").post(
           }
         }
 
+        const findWarehouse = await Warehouses.findOne({
+          where: {
+            warehouse_name: "Main",
+            location: "Agusan",
+          },
+        });
+        
+        if (!findWarehouse) {
+          console.log("No warehouse found");
+        }
+
+        const ExistWarehouseId = findWarehouse.id;
+        console.log("Id ng warehouse: " + ExistWarehouseId);
+
 
         const sparesupprows = await SparePart_Supplier.findAll({
           where: {
@@ -276,6 +309,7 @@ router.route("/update").post(
                 spare_tag_supp_id: createdID,
                 quantity: 0,
                 price: price,
+                warehouse_id: ExistWarehouseId,
               });
 
               const ExistingSupplier = await SparePartPrice_history.findOne({

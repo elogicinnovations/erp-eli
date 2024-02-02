@@ -38,19 +38,6 @@ const handleClose = () => {
 
 const handleShow = () => setShowModal(true);
 
-const addWarehouse = () => {
-  axios
-  .post(`${BASE_URL}/warehouses/automaticAdd`)
-  .then((res) =>{
-      if (res.status === 200) {
-          console.log("Warehouse successfully inserted");
-      } else if (res.status === 201) {
-          console.log("Warehouse already existing");
-      } else {
-          console.log("There seems to be an error in warehouse");
-      }
-  })
-};
 
 const reloadTable = () => {
   const delay = setTimeout(() => {
@@ -69,10 +56,8 @@ const reloadTable = () => {
 return () => clearTimeout(delay);
 };
 
-
   useEffect(() => {
     reloadTable();
-    addWarehouse();
   }, []);
 
   function formatDatetime(datetime) {

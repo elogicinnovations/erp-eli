@@ -96,6 +96,20 @@ router.route('/fetchTable').get(async (req, res) => {
 
           const createdID = subpart_newData.id;
 
+          const findWarehouse = await Warehouses.findOne({
+            where: {
+              warehouse_name: "Main",
+              location: "Agusan",
+            },
+          });
+          
+          if (!findWarehouse) {
+            console.log("No warehouse found");
+          }
+  
+          const ExistWarehouseId = findWarehouse.id;
+          console.log("Id ng warehouse: " + ExistWarehouseId);
+
           for (const supplier of SubaddPriceInput) {
             const supplierValue = supplier.code;
             const supplierPrices = supplier.price;
@@ -115,7 +129,8 @@ router.route('/fetchTable').get(async (req, res) => {
             await Inventory_Subpart.create({
               subpart_tag_supp_id: SupplierSubpart_ID.id,
               quantity: 0,
-              price: supplierPrices
+              price: supplierPrices,
+              warehouse_id: ExistWarehouseId,
             });
 
             // const findwarehouse = await Warehouses.findOne({
@@ -206,6 +221,20 @@ router.route("/update").post(
           }
         }
 
+          const findWarehouse = await Warehouses.findOne({
+            where: {
+              warehouse_name: "Main",
+              location: "Agusan",
+            },
+          });
+          
+          if (!findWarehouse) {
+            console.log("No warehouse found");
+          }
+
+          const ExistWarehouseId = findWarehouse.id;
+          console.log("Id ng warehouse: " + ExistWarehouseId);
+
           const subsupprows = await Subpart_supplier.findAll({
             where: {
               subpart_id: id,
@@ -248,6 +277,7 @@ router.route("/update").post(
                     subpart_tag_supp_id: createdID,
                     quantity: 0,
                     price: price,
+                    warehouse_id: ExistWarehouseId,
                   });
 
                   const ExistingSupplier = await Subpart_Price_History.findOne({

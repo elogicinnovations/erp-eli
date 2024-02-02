@@ -13,6 +13,9 @@ import subwarehouse from "../../assets/global/subwarehouse";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
+import {
+  ArrowCircleLeft
+} from "@phosphor-icons/react";
 
 const CreateIssuance = ({ setActiveTab, authrztn }) => {
 
@@ -311,9 +314,6 @@ return () => clearTimeout(delay);
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -322,15 +322,23 @@ return () => clearTimeout(delay);
                 </div>
               ) : (
         authrztn.includes('Inventory - Add') ? (
-        <div className="right-body-contents-a">
+        <div className="right-body-contentss">
+          <div className="arrowandtitle">
+              <Link to="/inventory">
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Create Issuance</h1>
+                  </div>
+              </div>
           <Form noValidate validated={validated} onSubmit={add}>
-            <h1>Create Issuance</h1>
             <div
               className="gen-info"
               style={{
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               Issuance Info
               <span
@@ -340,7 +348,7 @@ return () => clearTimeout(delay);
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "11.5rem",
+                  left: "15rem",
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
@@ -559,7 +567,7 @@ return () => clearTimeout(delay);
                                     fontSize: "15px",
                                   }}
                                   min="0"
-                                  max="9999999999" // Set the maximum value to 9999999999 or any other desired limit
+                                  max="9999999999"
                                 />
                                 /{product.quantity_available}
                               </div>
@@ -569,181 +577,99 @@ return () => clearTimeout(delay);
                         ))
                       ) : (
                         <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td colSpan="6" style={{ textAlign: "center", fontFamily: "Poppins, Source Sans Pro" }}>
+                            No Product Selected
+                          </td>
                         </tr>
                       )}
                     </tbody>
                     {showDropdown && (
-                      // <Select
-                      // isMulti
-                      // options={fetchProduct.map((product) => ({
-                      // value: product.inventory_id,
-                      // label: <div>
-                      //   Product Name: <strong>{product.product_tag_supplier.product.product_name}</strong> /
-                      //   Supplier: <strong>{product.product_tag_supplier.supplier.supplier_name}</strong> /
-                      //   Price: <strong>{product.product_tag_supplier.product_price}</strong> /
-                      //   Stock: <strong>{product.quantity}</strong>
-                      // </div>,
-                      // inventory_id: product.inventory_id,
-                      // code: product.product_tag_supplier.product.product_code,
-                      // name: product.product_tag_supplier.product.product_name,
-                      // quantity_available: product.quantity,
-                      // desc: product.product_tag_supplier.product.product_details,
-                      // }))}
-
-                      // onChange={handleSelectChange_Prod}
-
-                      // />v
                       <Select
                         isMulti
+                        filterOption={({ label }, inputValue) =>
+                          label.props.children[1].props.children.toLowerCase().includes(inputValue.toLowerCase())
+                        }
                         options={fetchProduct
                           .map((product) => ({
                             value: `${product.inventory_id}_Product`,
                             label: (
                               <div>
-                                Product Name:{" "}
-                                <strong>
-                                  {
-                                    product.product_tag_supplier.product
-                                      .product_name
-                                  }
-                                </strong>{" "}
-                                / Supplier:{" "}
-                                <strong>
-                                  {
-                                    product.product_tag_supplier.supplier
-                                      .supplier_name
-                                  }
-                                </strong>{" "}
-                                / Price:{" "}
-                                <strong>
-                                  {product.product_tag_supplier.product_price}
-                                </strong>{" "}
-                                / Stock: <strong>{product.quantity}</strong>
+                                Product Name: <strong>
+                                  {product.product_tag_supplier.product.product_name}
+                                </strong>
+                                / Stock: <strong>
+                                  {product.quantity}
+                                </strong>
                               </div>
                             ),
                             type: "Product",
                             inventory_id: product.inventory_id,
-                            code: product.product_tag_supplier.product
-                              .product_code,
-                            name: product.product_tag_supplier.product
-                              .product_name,
+                            code: product.product_tag_supplier.product.product_code,
+                            name: product.product_tag_supplier.product.product_name,
                             quantity_available: product.quantity,
-                            desc: product.product_tag_supplier.product
-                              .product_details,
+                            desc: product.product_tag_supplier.product.product_details,
                           }))
                           .concat(
                             fetchAssembly.map((assembly) => ({
-                              value: `${assembly.inventory_id}_Assembly`, // Indicate that it's an assembly
+                              value: `${assembly.inventory_id}_Assembly`,
                               label: (
                                 <div>
-                                  Product Name:{" "}
-                                  <strong>
-                                    {
-                                      assembly.assembly_supplier.assembly
-                                        .assembly_name
-                                    }
-                                  </strong>{" "}
-                                  / Supplier:{" "}
-                                  <strong>
-                                    {
-                                      assembly.assembly_supplier.supplier
-                                        .supplier_name
-                                    }
-                                  </strong>{" "}
-                                  / Price:{" "}
-                                  <strong>
-                                    {assembly.assembly_supplier.supplier_price}
-                                  </strong>{" "}
-                                  / Stock: <strong>{assembly.quantity}</strong>
+                                  Product Name: <strong>
+                                    {assembly.assembly_supplier.assembly.assembly_name}
+                                  </strong>
+                                  / Stock: <strong>
+                                    {assembly.quantity}
+                                  </strong>
                                 </div>
                               ),
                               type: "Assembly",
                               inventory_id: assembly.inventory_id,
-                              code: assembly.assembly_supplier.assembly
-                                .assembly_code,
-                              name: assembly.assembly_supplier.assembly
-                                .assembly_name,
+                              code: assembly.assembly_supplier.assembly.assembly_code,
+                              name: assembly.assembly_supplier.assembly.assembly_name,
                               quantity_available: assembly.quantity,
-                              desc: assembly.assembly_supplier.assembly
-                                .assembly_desc,
+                              desc: assembly.assembly_supplier.assembly.assembly_desc,
                             }))
                           )
                           .concat(
                             fetchSpare.map((spare) => ({
-                              value: `${spare.inventory_id}_Spare`, // Indicate that it's an assembly
+                              value: `${spare.inventory_id}_Spare`,
                               label: (
                                 <div>
-                                  Product Name:{" "}
-                                  <strong>
-                                    {
-                                      spare.sparepart_supplier.sparePart
-                                        .spareParts_name
-                                    }
-                                  </strong>{" "}
-                                  / Supplier:{" "}
-                                  <strong>
-                                    {
-                                      spare.sparepart_supplier.supplier
-                                        .supplier_name
-                                    }
-                                  </strong>{" "}
-                                  / Price:{" "}
-                                  <strong>
-                                    {spare.sparepart_supplier.supplier_price}
-                                  </strong>{" "}
-                                  / Stock: <strong>{spare.quantity}</strong>
+                                  Product Name: <strong>
+                                    {spare.sparepart_supplier.sparePart.spareParts_name}
+                                  </strong>
+                                  / Stock: <strong>
+                                    {spare.quantity}
+                                  </strong>
                                 </div>
                               ),
                               type: "Spare",
                               inventory_id: spare.inventory_id,
-                              code: spare.sparepart_supplier.sparePart
-                                .spareParts_code,
-                              name: spare.sparepart_supplier.sparePart
-                                .spareParts_name,
+                              code: spare.sparepart_supplier.sparePart.spareParts_code,
+                              name: spare.sparepart_supplier.sparePart.spareParts_name,
                               quantity_available: spare.quantity,
-                              desc: spare.sparepart_supplier.sparePart
-                                .spareParts_desc,
+                              desc: spare.sparepart_supplier.sparePart.spareParts_desc,
                             }))
                           )
                           .concat(
                             fetchSubpart.map((subpart) => ({
-                              value: `${subpart.inventory_id}_Subpart`, // Indicate that it's an assembly
+                              value: `${subpart.inventory_id}_Subpart`,
                               label: (
                                 <div>
-                                  Product Name:{" "}
-                                  <strong>
-                                    {
-                                      subpart.subpart_supplier.subPart
-                                        .subPart_name
-                                    }
-                                  </strong>{" "}
-                                  / Supplier:{" "}
-                                  <strong>
-                                    {
-                                      subpart.subpart_supplier.supplier
-                                        .supplier_name
-                                    }
-                                  </strong>{" "}
-                                  / Price:{" "}
-                                  <strong>
-                                    {subpart.subpart_supplier.supplier_price}
-                                  </strong>{" "}
-                                  / Stock: <strong>{subpart.quantity}</strong>
+                                  Product Name: <strong>
+                                    {subpart.subpart_supplier.subPart.subPart_name}
+                                  </strong>
+                                  / Stock: <strong>
+                                    {subpart.quantity}
+                                  </strong>
                                 </div>
                               ),
                               type: "Subpart",
                               inventory_id: subpart.inventory_id,
-                              code: subpart.subpart_supplier.subPart
-                                .subPart_code,
-                              name: subpart.subpart_supplier.subPart
-                                .subPart_name,
+                              code: subpart.subpart_supplier.subPart.subPart_code,
+                              name: subpart.subpart_supplier.subPart.subPart_name,
                               quantity_available: subpart.quantity,
-                              desc: subpart.subpart_supplier.subPart
-                                .subPart_desc,
+                              desc: subpart.subpart_supplier.subPart.subPart_desc,
                             }))
                           )}
                         onChange={handleSelectChange_Prod}
@@ -751,10 +677,12 @@ return () => clearTimeout(delay);
                     )}
 
                     <Button
-                      className="btn btn-danger mt-1"
+                      variant="warning"
                       onClick={handleAddProdClick}
                       size="md"
-                      style={{ fontSize: "15px", margin: "0px 5px" }}>
+                      style={{ fontSize: "15px", 
+                               marginTop: "10px",
+                               fontFamily: "Poppins, Source Sans Pro" }}>
                       Add Product
                     </Button>
                   </table>
@@ -762,9 +690,9 @@ return () => clearTimeout(delay);
                 <div className="save-cancel">
                   <Button
                     type="submit"
-                    className="btn btn-warning"
+                    variant="warning"
                     size="md"
-                    style={{ fontSize: "20px", margin: "0px 5px" }}>
+                    style={{ fontSize: "20px", margin: "0px 5px", fontFamily: "Poppins, Source Sans Pro" }}>
                     Save
                   </Button>
                   <Link

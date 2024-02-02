@@ -681,7 +681,7 @@ useEffect(() => {
         <div className="right-body-contentss">
         <div className="arrowandtitle">
           <Link to="/productList">
-              <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+              <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
           </Link>
               <div className="titletext">
                   <h1>Update Product</h1>
@@ -711,6 +711,7 @@ useEffect(() => {
               fontSize: "20px",
               position: "relative",
               paddingTop: "20px",
+              fontFamily: "Poppins, Source Sans Pro"
             }}>
             General Information
             <span
@@ -720,7 +721,7 @@ useEffect(() => {
                 width: "-webkit-fill-available",
                 background: "#FFA500",
                 top: "81%",
-                left: "18rem",
+                left: "21rem",
                 transform: "translateY(-50%)",
               }}></span>
           </div>
@@ -953,21 +954,9 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="row">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Details Here:{" "}
-                </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  value={details}
-                  onChange={(e) => handledetails(e)}
-                  style={{ height: "100px", fontSize: "15px" }}
-                />
-              </Form.Group>
-            </div>
 
-            <div
+
+            {/* <div
               className="gen-info"
               style={{
                 fontSize: "20px",
@@ -986,7 +975,7 @@ useEffect(() => {
                   left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
-            </div>
+            </div> */}
 
             <div className="row mt-3">
               <div className="col-6">
@@ -1008,6 +997,34 @@ useEffect(() => {
                   />
                 </Form.Group>
               </div>
+              <div className="col-6">
+
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Details Here:{" "}
+                </Form.Label>
+                <Form.Control
+                  value={details}
+                  onChange={(e) => handledetails(e)}
+                  as="textarea"
+                        rows={3}
+                        style={{
+                        fontFamily: 'Poppins, Source Sans Pro',
+                        fontSize: "16px",
+                        height: "227px",
+                        maxHeight: "227px",
+                        resize: "none",
+                        overflowY: "auto",
+                      }}
+                />
+              </Form.Group>
+              </div>
+
               <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
@@ -1082,7 +1099,8 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody>
-                  {tablesupplier.map((prod, i) => (
+                  {tablesupplier.length > 0 ? (
+                  tablesupplier.map((prod, i) => (
                     <tr key={i}>
                       <td>{prod.supplier.supplier_code}</td>
                       <td>{prod.supplier.supplier_name}</td>
@@ -1115,7 +1133,14 @@ useEffect(() => {
                         }
                       </td>
                     </tr>
-                  ))}
+                  ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: "center"}}>
+                        No Supplier selected
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
                 {showDropdown && (
                   <div className="dropdown mt-3">

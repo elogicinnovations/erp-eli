@@ -10,6 +10,7 @@ const {
   AssemblyPrice_History,
   Assembly_image,
   IssuedAssembly,
+  Warehouses
 } = require("../db/models/associations");
 
 const session = require("express-session");
@@ -119,6 +120,20 @@ router.route("/create").post(async (req, res) => {
 
       const createdID = spare_newData.id;
 
+      const findWarehouse = await Warehouses.findOne({
+        where: {
+          warehouse_name: "Main",
+          location: "Agusan",
+        },
+      });
+      
+      if (!findWarehouse) {
+        console.log("No warehouse found");
+      }
+
+      const ExistWarehouseId = findWarehouse.id;
+      console.log("Id ng warehouse: " + ExistWarehouseId);
+
       for (const supplier of addPriceInput) {
         const supplierValue = supplier.code;
         const supplierPrice = supplier.price;
@@ -139,6 +154,7 @@ router.route("/create").post(async (req, res) => {
           assembly_tag_supp_id: SupplierAssembly_ID.id,
           quantity: 0,
           price: supplierPrice,
+          warehouse_id: ExistWarehouseId,
         });
       }
 
@@ -278,6 +294,21 @@ router.route("/update").post(
           }
         }
 
+        const findWarehouse = await Warehouses.findOne({
+          where: {
+            warehouse_name: "Main",
+            location: "Agusan",
+          },
+        });
+        
+        if (!findWarehouse) {
+          console.log("No warehouse found");
+        }
+  
+        const ExistWarehouseId = findWarehouse.id;
+        console.log("Id ng warehouse: " + ExistWarehouseId);
+
+        
         const assemblysupprows = await Assembly_Supplier.findAll({
           where: {
             assembly_id: id,
@@ -320,6 +351,7 @@ router.route("/update").post(
               assembly_tag_supp_id: createdID,
               quantity: 0,
               price: price,
+              warehouse_id: ExistWarehouseId,
             });
 
             const ExistingSupplier = await AssemblyPrice_History.findOne({

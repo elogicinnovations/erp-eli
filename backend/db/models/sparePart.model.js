@@ -30,7 +30,10 @@ const SpareParts = sequelize.define("spareParts", {
     allowNull: true,
     unique: false,
   },
-
+  category_code: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   spareParts_manufacturer: {
     type: DataTypes.STRING,
     allowNull: true,

@@ -12,6 +12,14 @@
   z-index: 1;
 }
 
+form label{
+  font-family: Poppins, "Source Sans Pro";
+}
+
+h1 {
+  font-family: Poppins, "Source Sans Pro";
+}
+
 .carousel-image{
   max-width: 100%;
   max-height: 400px;
@@ -2963,7 +2971,7 @@ a.paginate_button:hover {
 }
 
 .arrowandtitle h1 {
-  font-size: 35px;
+  font-size: 30px;
   font-family: Poppins, "Source Sans Pro";
   padding: 4px;
 }

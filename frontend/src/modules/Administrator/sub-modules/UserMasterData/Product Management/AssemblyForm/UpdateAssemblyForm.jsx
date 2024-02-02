@@ -588,7 +588,7 @@ const update = async (e) => {
           <Form noValidate validated={validated} onSubmit={update}>
           <div className="arrowandtitle">
               <Link to="/assemblyForm">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
                   <div className="titletext">
                       <h1>Update Assembly Parts</h1>
@@ -816,38 +816,7 @@ const update = async (e) => {
                 </div>
               </div>
 
-
-                        <div className="row">
-                          <Form.Group controlId="exampleForm.ControlInput1">
-                            <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
-                            <Form.Control
-                              value={desc}
-                              readOnly={!isReadOnly}
-                              onChange={(e) => handleassemblydescription(e)}
-                              as="textarea"
-                              placeholder="Enter details name"
-                              style={{ height: "100px", fontSize: "15px" }}
-                            />
-                          </Form.Group>
-                        </div>
-
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
-                          Notification Thresholds
-                          <p className='fs-5'>Sets your preferred thresholds.</p>
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '65%',
-                              left: '21rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-
-                        <div className="row mt-3">
+                     <div className="row">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
@@ -858,9 +827,35 @@ const update = async (e) => {
                                 style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
                             </div>
-                            
                             <div className="col-6">
-                              <Form.Group>
+                              
+                            </div>
+                          </div>
+
+                        <div className="row">
+                          <div className="col-6">
+                          <Form.Group controlId="exampleForm.ControlInput1">
+                            <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
+                            <Form.Control
+                              value={desc}
+                              readOnly={!isReadOnly}
+                              onChange={(e) => handleassemblydescription(e)}
+                              as="textarea"
+                                rows={3}
+                                style={{
+                                fontFamily: 'Poppins, Source Sans Pro',
+                                fontSize: "16px",
+                                height: "227px",
+                                maxHeight: "227px",
+                                resize: "none",
+                                overflowY: "auto",
+                              }}
+                            />
+                          </Form.Group>
+                          </div>
+
+                            <div className="col-6">
+                            <Form.Group>
                                 <Form.Label style={{ fontSize: '20px' }}>
                                   Image Upload:
                                 </Form.Label>
@@ -896,7 +891,25 @@ const update = async (e) => {
                                 </div>   
                               </Form.Group>
                             </div>
-                          </div>
+                        </div>
+
+                        {/* <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
+                          Notification Thresholds
+                          <p className='fs-5'>Sets your preferred thresholds.</p>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              height: '0.5px',
+                              width: '-webkit-fill-available',
+                              background: '#FFA500',
+                              top: '65%',
+                              left: '21rem',
+                              transform: 'translateY(-50%)',
+                            }}
+                          ></span>
+                        </div> */}
+
+
 
                           <div
                             className="gen-info"
@@ -904,6 +917,7 @@ const update = async (e) => {
                               fontSize: "20px",
                               position: "relative",
                               paddingTop: "30px",
+                              fontFamily: 'Poppins, Source Sans Pro',
                             }}>
                             Supplier List
                             <span
@@ -967,7 +981,7 @@ const update = async (e) => {
                                           ))
                                         ) : (
                                           <tr>
-                                            <td colSpan="6" style={{ textAlign: "center" }}>
+                                            <td colSpan="8" style={{ textAlign: "center" }}>
                                               No Supplier selected
                                             </td>
                                           </tr>

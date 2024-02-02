@@ -67,7 +67,7 @@ const Login = () => {
               </div>
 
               <div className="slash-footer">
-                  <div>Copyright © 2023 Slashtech, All Rights Reserved.</div>
+                  <div>Copyright © 2023 CCJJ, All Rights Reserved.</div>
               </div>
           </div>
 

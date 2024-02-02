@@ -688,7 +688,7 @@ function EditRole() {
                         <th style={{ fontSize: 15 }}>View</th>
                         <th style={{ fontSize: 15 }}>Add</th>
                         <th style={{ fontSize: 15 }}>Edit</th>
-                        <th style={{ fontSize: 15 }}>Archive</th>
+                        <th style={{ fontSize: 15 }}>Archive/Delete</th>
                         <th style={{ fontSize: 15 }}>Approval</th>
                         <th style={{ fontSize: 15 }}>Rejustify / Reject</th>
                       </tr>

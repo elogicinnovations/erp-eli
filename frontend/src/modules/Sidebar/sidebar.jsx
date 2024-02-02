@@ -188,6 +188,18 @@ function Sidebar({ authrztn }) {
     ["Product Categories - View", "Product Manufacturer - View", "Bin Location - View", "Sub-Part - View", "Spare Part - View", "Assembly - View", "Product List - View"].includes(permission)
   );
 
+  const hideBPmasterdata = authrztn.some(permission =>
+    ["Cost Centre - View", "Supplier - View", "Warehouses - View"].includes(permission)
+  );
+
+  const hidePurchaseOrder = authrztn.some(permission =>
+    ["PR - View", "PO - View"].includes(permission)
+  );
+
+  const hideWarehousemodule = authrztn.some(permission =>
+    ["Receiving - View", "Stock Management - View"].includes(permission)
+  );
+
   return (
 
     <div className="containers-of-sidebard">
@@ -431,11 +443,12 @@ function Sidebar({ authrztn }) {
               
               
 
-                
+              {hideBPmasterdata && (
               <ListItem button className="adminsub-menu" onClick={toggleBPData}>
                 <ListItemText primary="BP Master Data" />
                 {openBPData ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
+              )};
               
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>
@@ -544,6 +557,7 @@ function Sidebar({ authrztn }) {
           </NavLink>
           )}
 
+        {hidePurchaseOrder && (
           <ListItem
             button
             className={`menu-item ${
@@ -559,6 +573,7 @@ function Sidebar({ authrztn }) {
             <ListItemText primary="PURCHASE ORDER" />
             {openPurchaseOrder ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          )}
 
           <Collapse in={openPurchaseOrder}>
             {authrztn.includes("PR - View") && (
@@ -600,6 +615,7 @@ function Sidebar({ authrztn }) {
             )}
           </Collapse>
 
+         {hideWarehousemodule && (
           <ListItem
             button
             className={`menu-item ${
@@ -613,6 +629,7 @@ function Sidebar({ authrztn }) {
             <ListItemText primary="WAREHOUSE" />
             {openWarehouse ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          )}
 
           <Collapse in={openWarehouse}>
             {authrztn.includes("Receiving - View") && (

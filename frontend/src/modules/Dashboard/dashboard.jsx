@@ -283,6 +283,19 @@ const Dashboard = ({ setActiveTab }) => {
       .catch(err => console.log(err));
   }, []);
 
+  useEffect(() => {
+    const createWarehouse = async () => {
+      try {
+        const response = await axios.post(`${BASE_URL}/Dashboard/addauto`, {});
+
+        console.log("HAHAHA INSERTED" + response.data);
+      } catch (error) {
+        console.error('Error creating warehouse:', error);
+      }
+    };
+    createWarehouse();
+  }, []);
+
   return (
     <div className="main-of-containers">
         {/* <div className="left-of-main-containers">

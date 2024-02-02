@@ -28,8 +28,10 @@ function CreateSpareParts({authrztn}) {
   const [thresholds, setThresholds] = useState("");
   const [manufacturer, setManufacturer] = useState([]);
   const [binLocation, setbinLocation] = useState([]);
+  const [category, setcategory] = useState([]);
   const [slct_binLocation, setslct_binLocation] = useState("");
   const [slct_manufacturer, setslct_manufacturer] = useState("");
+  const [slct_category, setslct_category] = useState("");
   const [unitMeasurement, setUnitMeasurement] = useState("");
   const [sparepriceInput, setsparePriceInput] = useState({});
   const [SpareaddPriceInput, setsparePriceInputbackend] = useState([]);
@@ -66,34 +68,25 @@ function CreateSpareParts({authrztn}) {
       .catch((err) => console.log(err));
   }, []);
 
-//   useEffect(() => {
-//     axios
-//       .get(BASE_URL + "/supplier/fetchTable")
-//       .then((res) => {
-//         setFetchSupp(res.data)
-//         setIsLoading(false);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         setIsLoading(false);
-//       });
-//     }, 1000);
-
-// return () => clearTimeout(delay);
-// }, []);
 
 useEffect(() => {
-  axios
-  .get(BASE_URL + "/supplier/fetchTable")
-  .then((res) =>{
-    setFetchSupp(res.data)
-    setIsLoading(false);
-  })
-  .catch((err) =>{
-    console.log(err);
-    setIsLoading(false);
-  });
-})
+  const delay = setTimeout(() => {
+    axios
+      .get(BASE_URL + "/supplier/fetchTable")
+      .then((res) => {
+        setFetchSupp(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  // Cleanup function
+  return () => clearTimeout(delay);
+}, []);
+
 
   useEffect(() => {
     axios
@@ -124,6 +117,17 @@ useEffect(() => {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/category/fetchTable")
+      .then((response) => {
+        setcategory(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching roles:", error);
+      });
+  }, []);
+
   //for supplier selection values
   const handleSelectChange = (selectedOptions) => {
     setSupp(selectedOptions);
@@ -148,6 +152,11 @@ useEffect(() => {
   const handleFormChangeManufacturer = (event) => {
     setslct_manufacturer(event.target.value);
   };
+
+  const handleFormChangeCategory = (event) => {
+    setslct_category(event.target.value);
+  };
+
   const handleSparePriceinput = (value, priceValue) => {
     setsparePriceInput((prevInputs) => {
       const updatedInputs = {
@@ -324,8 +333,9 @@ useEffect(() => {
           slct_binLocation,
           unitMeasurement,
           slct_manufacturer,
+          slct_category,
           thresholds,
-          images
+          images,
         })
         .then((res) => {
           // console.log(res);
@@ -430,9 +440,6 @@ useEffect(() => {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -445,7 +452,7 @@ useEffect(() => {
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="arrowandtitle">
               <Link to="/spareParts">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
                   <div className="titletext">
                     <h1>Add Spare Parts</h1>
@@ -457,6 +464,7 @@ useEffect(() => {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               General Information
               <span
@@ -466,7 +474,7 @@ useEffect(() => {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "18rem",
+                  left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
@@ -555,19 +563,23 @@ useEffect(() => {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Unit of Measurement:{" "}
+                    Category:{" "}
                   </Form.Label>
+
                   <Form.Select
                     aria-label=""
+                    onChange={handleFormChangeCategory}
+                    required
                     style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeMeasurement}>
+                    defaultValue="">
                     <option disabled value="">
-                      Select Unit Measurement ...
+                      Select Category
                     </option>
-                    {cls_unitMeasurement.map((unitM, index) => (
-                      <option key={index} value={unitM}>
-                        {unitM}
+                    {category.map((category) => (
+                      <option
+                        key={category.category_code}
+                        value={category.category_code}>
+                        {category.category_name}
                       </option>
                     ))}
                   </Form.Select>
@@ -600,18 +612,8 @@ useEffect(() => {
             </div>
 
             
-            <div className="row">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
-                <Form.Control
-                  onChange={(e) => setDesc(e.target.value)}
-                  as="textarea"
-                  placeholder="Enter details name"
-                  style={{ height: "100px", fontSize: "15px" }}
-                />
-              </Form.Group>
-            </div>
-            <div
+
+            {/* <div
               className="gen-info"
               style={{
                 fontSize: "20px",
@@ -630,7 +632,7 @@ useEffect(() => {
                   left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
-            </div>
+            </div> */}
 
             <div className="row mt-3">
               <div className="col-6">
@@ -653,31 +655,73 @@ useEffect(() => {
                 </Form.Group>
               </div>
               <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
+              <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Image Upload:{" "}
+                    Unit of Measurement:{" "}
                   </Form.Label>
-                  <div className="card">
-                    <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
-                        <>
-                         Drag & Drop image here or {" "}
-                        <span className="select" role="button" onClick={selectFiles}>
-                          Browse
-                        </span>
-                        </>
-                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
-                    </div>
-                    <div className="ccontainerss">
-                      {images.map((images,index)=>(
-                      <div className="imagess" key={index}>
-                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                        <img src={images.url} alt={images.name} /> 
-                      </div>
-                      ))}
-                    </div>
-                  </div>
-                  </Form.Group>
+                  <Form.Select
+                    aria-label=""
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue=""
+                    onChange={handleChangeMeasurement}>
+                    <option disabled value="">
+                      Select Unit Measurement ...
+                    </option>
+                    {cls_unitMeasurement.map((unitM, index) => (
+                      <option key={index} value={unitM}>
+                        {unitM}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
               </div>
+            </div>
+
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
+                  <Form.Control
+                    onChange={(e) => setDesc(e.target.value)}
+                    as="textarea"
+                    rows={3}
+                    style={{
+                    fontFamily: 'Poppins, Source Sans Pro',
+                    fontSize: "16px",
+                    height: "125px",
+                    maxHeight: "125px",
+                    resize: "none",
+                    overflowY: "auto",
+                    }}
+                  />
+                </Form.Group>
+                </div>
+                <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Image Upload:{" "}
+                    </Form.Label>
+                    <div className="card">
+                      <div className="drag-area" onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                          <>
+                          Drag & Drop image here or {" "}
+                          <span className="select" role="button" onClick={selectFiles}>
+                            Browse
+                          </span>
+                          </>
+                        <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
+                      </div>
+                      <div className="ccontainerss">
+                        {images.map((images,index)=>(
+                        <div className="imagess" key={index}>
+                          <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                          <img src={images.url} alt={images.name} /> 
+                        </div>
+                        ))}
+                      </div>
+                    </div>
+                    </Form.Group>
+                </div>
             </div>
 
             <div
@@ -686,6 +730,7 @@ useEffect(() => {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "30px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               Supplier List
               <span
@@ -757,8 +802,8 @@ useEffect(() => {
                       ) : (
                         <tr>
                           <td
-                            colSpan="6"
-                            style={{ textAlign: "center", fontSize: "18px" }}>
+                            colSpan="8"
+                            style={{ textAlign: "center"}}>
                             No Supplier selected
                           </td>
                         </tr>

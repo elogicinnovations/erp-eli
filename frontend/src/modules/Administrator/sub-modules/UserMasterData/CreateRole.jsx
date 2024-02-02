@@ -453,6 +453,12 @@ function Create_role() {
   const SupplierEdit = selectedCheckboxes.some((item) => item.value === "Supplier - Edit") && !SupplierDisable;
   const SupplierDelete = selectedCheckboxes.some((item) => item.value === "Supplier - Delete") && !SupplierDisable;
 
+  const Warehouses = selectedCheckboxes.some((item) => item.value === "Warehouses - View");
+  const WarehousesDisable = !Warehouses;
+  const WarehousesAdd = selectedCheckboxes.some((item) => item.value === "Warehouses - Add") && !WarehousesDisable;
+  const WarehousesEdit = selectedCheckboxes.some((item) => item.value === "Warehouses - Edit") && !WarehousesDisable;
+  const WarehousesDelete = selectedCheckboxes.some((item) => item.value === "Warehouses - Delete") && !WarehousesDisable;
+
   const Inventory = selectedCheckboxes.some((item) => item.value === "Inventory - View");
   const InventoryDisable = !Inventory;
   const InventoryAdd = selectedCheckboxes.some((item) => item.value === "Inventory - Add") && !InventoryDisable;
@@ -575,7 +581,7 @@ function Create_role() {
                         <th style={{ fontSize: 15 }}>View</th>
                         <th style={{ fontSize: 15 }}>Add</th>
                         <th style={{ fontSize: 15 }}>Edit</th>
-                        <th style={{ fontSize: 15 }}>Archive</th>
+                        <th style={{ fontSize: 15 }}>Archive/Delete</th>
                         <th style={{ fontSize: 15 }}>Approval</th>
                         <th style={{ fontSize: 15 }}>Rejustify / Reject</th>
                       </tr>

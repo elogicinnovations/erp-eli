@@ -10,7 +10,8 @@ const {
   Product_Subparts,
   Product_image,
   productTAGsupplierHistory,
-  IssuedProduct
+  IssuedProduct,
+  Warehouses
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer");
@@ -171,7 +172,21 @@ router.route("/create").post(async (req, res) => {
               product_id: IdData,
               subPart_id: subpartValue
             });
-            }
+          }
+
+          const findWarehouse = await Warehouses.findOne({
+            where: {
+              warehouse_name: "Main",
+              location: "Agusan",
+            },
+          });
+          
+          if (!findWarehouse) {
+            console.log("No warehouse found");
+          }
+
+          const ExistWarehouseId = findWarehouse.id;
+          console.log("Id ng warehouse: " + ExistWarehouseId);
 
           //Supplier
           const selectedSuppliers = req.body.productTAGSuppliers;
@@ -194,9 +209,10 @@ router.route("/create").post(async (req, res) => {
             await Inventory.create({
               product_tag_supp_id: Inventories,
               quantity: 0,
-              price: price
+              price: price,
+              warehouse_id: ExistWarehouseId,
             });
-            }
+          };
 
           //Image
           const imageData = req.body.images;
@@ -331,6 +347,20 @@ router.route("/update").post(
           }
         };
 
+        const findWarehouse = await Warehouses.findOne({
+          where: {
+            warehouse_name: "Main",
+            location: "Agusan",
+          },
+        });
+        
+        if (!findWarehouse) {
+          console.log("No warehouse found");
+        }
+
+        const ExistWarehouseId = findWarehouse.id;
+        console.log("Id ng warehouse: " + ExistWarehouseId);
+        
         const prodsupprows = await ProductTAGSupplier.findAll({
           where: {
             product_id: id,
@@ -339,7 +369,6 @@ router.route("/update").post(
 
         if(prodsupprows && prodsupprows.length === 0) {
           console.log("No product id found");
-          return res.status(201).json({ message: "No product supplier found" });
         };
 
         const ExistSuppId = prodsupprows.map(supprow => supprow.id);
@@ -373,11 +402,12 @@ router.route("/update").post(
               product_tag_supp_id: createdID,
               quantity: 0,
               price: price,
+              warehouse_id: ExistWarehouseId,
             });
 
             const ExistingSupplier = await productTAGsupplierHistory.findOne({
               where: {
-                product_id: id,
+                product_id: id, 
                 supplier_code: value,
               },
               order: [['createdAt', 'DESC']],

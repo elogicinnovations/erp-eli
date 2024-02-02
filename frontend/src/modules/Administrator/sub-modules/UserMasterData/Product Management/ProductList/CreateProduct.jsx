@@ -488,7 +488,7 @@ function onDropImages(event) {
         <div className="right-body-contentss">
           <div className="arrowandtitle">
               <Link to="/productList">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
                   <div className="titletext">
                       <h1>Add Product</h1>
@@ -500,6 +500,7 @@ function onDropImages(event) {
               fontSize: "20px",
               position: "relative",
               paddingTop: "20px",
+              fontFamily: "Poppins, Source Sans Pro"
             }}>
             General Information
             <span
@@ -509,7 +510,7 @@ function onDropImages(event) {
                 width: "-webkit-fill-available",
                 background: "#FFA500",
                 top: "81%",
-                left: "18rem",
+                left: "21rem",
                 transform: "translateY(-50%)",
               }}></span>
           </div>
@@ -740,21 +741,8 @@ function onDropImages(event) {
               </div>
             </div>
 
-            <div className="row">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Details Here:{" "}
-                </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  onChange={(e) => setDetails(e.target.value)}
-                  placeholder="Enter item name"
-                  style={{ height: "100px", fontSize: "15px" }}
-                />
-              </Form.Group>
-            </div>
 
-            <div
+            {/* <div
               className="gen-info"
               style={{
                 fontSize: "20px",
@@ -773,7 +761,7 @@ function onDropImages(event) {
                   left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
-            </div>
+            </div> */}
 
             <div className="row mt-3">
               <div className="col-6">
@@ -801,9 +789,36 @@ function onDropImages(event) {
                 </Form.Group>
               </div>
               <div className="col-6">
+
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Image Upload:{" "}
+                    Details Here:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    onChange={(e) => setDetails(e.target.value)}
+                      as="textarea"
+                        rows={3}
+                        style={{
+                        fontFamily: 'Poppins, Source Sans Pro',
+                        fontSize: "16px",
+                        height: "124px",
+                        maxHeight: "124px",
+                        resize: "none",
+                        overflowY: "auto",
+                      }}
+                  />
+                </Form.Group>
+              </div>
+
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Image Upload:{" "}
                   </Form.Label>
                   <div className="card">
                     <div className="drag-area" 
@@ -829,12 +844,14 @@ function onDropImages(event) {
               </div>
             </div>
 
+
             <div
               className="gen-info"
               style={{
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "30px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               Supplier List
               <span
@@ -899,7 +916,7 @@ function onDropImages(event) {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6" style={{ textAlign: "center", fontSize: '18px' }}>
+                          <td colSpan="8" style={{ textAlign: "center"}}>
                             No Supplier selected
                           </td>
                         </tr>

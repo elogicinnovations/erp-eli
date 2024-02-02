@@ -310,6 +310,9 @@ SparePartPrice_history.belongsTo(SparePart, { foreignKey: "sparePart_id"});
 Supplier.hasMany(SparePartPrice_history, { foreignKey: "supplier_code"});
 SparePartPrice_history.belongsTo(Supplier, { foreignKey: "supplier_code"});
 
+//assembly tag category
+Category.hasMany(SparePart, { foreignKey: "category_code"});
+SparePart.belongsTo(Category, { foreignKey: "category_code"});
 
 
 //purchase_req_canvassed_subpart TAble (subparts)

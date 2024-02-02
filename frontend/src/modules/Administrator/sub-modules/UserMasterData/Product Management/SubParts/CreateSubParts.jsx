@@ -471,7 +471,7 @@ function onDropImages(event) {
           <Form noValidate validated={validated} onSubmit={add}>
           <div className="arrowandtitle">
               <Link to="/subParts">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
                   <div className="titletext">
                       <h1>Add Sub Parts</h1>
@@ -484,6 +484,7 @@ function onDropImages(event) {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               General Information
               <span
@@ -493,13 +494,14 @@ function onDropImages(event) {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "18rem",
+                  left: "21rem",
                   transform: "translateY(-50%)",
+                  
                 }}></span>
             </div>
 
             <div className="row">
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     SubParts Code{" "}
@@ -515,7 +517,7 @@ function onDropImages(event) {
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     SubParts Name{" "}
@@ -529,8 +531,36 @@ function onDropImages(event) {
                   />
                 </Form.Group>
               </div>
-              <div className="col-4">
+            </div>
+
+            <div className="row">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Bin Location:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    onChange={handleFormChangeBinLocation}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue="">
+                    <option disabled value="">
+                      Select Bin Location ...
+                    </option>
+                    {binLocation.map((binLocation) => (
+                      <option
+                        key={binLocation.bin_id}
+                        value={binLocation.bin_id}>
+                          <strong>{binLocation.bin_name + "-"}</strong>
+                          <strong>{binLocation.bin_subname}</strong>
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+              <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Category:{" "}
                   </Form.Label>
@@ -556,301 +586,290 @@ function onDropImages(event) {
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Bin Location:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeBinLocation}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue="">
-                    <option disabled value="">
-                      Select Bin Location ...
-                    </option>
-                    {binLocation.map((binLocation) => (
-                      <option
-                        key={binLocation.bin_id}
-                        value={binLocation.bin_id}>
-                          <strong>{binLocation.bin_name + "-"}</strong>
-                          <strong>{binLocation.bin_subname}</strong>
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Unit of Measurement:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeMeasurement}>
-                    <option disabled value="">
-                      Select Unit Measurement ...
-                    </option>
-                    {cls_unitMeasurement.map((unitM, index) => (
-                      <option key={index} value={unitM}>
-                        {unitM}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Manufacturer:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeManufacturer}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue="">
-                    <option disabled value="">
-                      Select Manufacturer ...
-                    </option>
-                    {manufacturer.map((manufacturer) => (
-                      <option
-                        key={manufacturer.manufacturer_code}
-                        value={manufacturer.manufacturer_code}>
-                        {manufacturer.manufacturer_name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-            </div>
+                      <div className="row">
+                        <div className="col-6">
+                          <Form.Group controlId="exampleForm.ControlInput2">
+                            <Form.Label style={{ fontSize: "20px" }}>
+                              Unit of Measurement:{" "}
+                            </Form.Label>
+                            <Form.Select
+                              aria-label=""
+                              style={{ height: "40px", fontSize: "15px" }}
+                              defaultValue=""
+                              onChange={handleChangeMeasurement}>
+                              <option disabled value="">
+                                Select Unit Measurement ...
+                              </option>
+                              {cls_unitMeasurement.map((unitM, index) => (
+                                <option key={index} value={unitM}>
+                                  {unitM}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
+                        </div>
 
-
-            <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Critical Inventory Thresholds:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      const sanitizedValue = inputValue
-                      .replace(/\D/g, "")
-                      .substring(0, 10);
-                      setThresholds(sanitizedValue);
-                    }}
-                    onInput={handleKeyPress}
-                    type="number"
-                    placeholder="Minimum Stocking"
-                    style={{ height: "40px", fontSize: "15px" }}
-                    maxLength={10}
-                    pattern="[0-9]*"
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Image Upload:{" "}
-                  </Form.Label>
-                  <div className="card">
-                    <div className="drag-area" 
-                    onDragOver={onDragOver} 
-                    onDragLeave={onDragLeave} 
-                    onDrop={onDropImages}>
-                        <>
-                         Drag & Drop image here or {" "}
-                        <span className="select" 
-                        role="button" 
-                        onClick={selectFiles}>
-                          Browse
-                        </span>
-                        </>
-                      <input name="file" 
-                      type="file" 
-                      className="file" 
-                      multiple ref={fileInputRef} 
-                      onChange={onFileSelect}/>
-                    </div>
-                    <div className="ccontainerss">
-                      {images.map((images,index)=>(
-                      <div className="imagess" key={index}>
-                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                        <img src={images.url} alt={images.name} /> 
+                        <div className="col-6">
+                        <Form.Group controlId="exampleForm.ControlInput2">
+                            <Form.Label style={{ fontSize: "20px" }}>
+                              Manufacturer:{" "}
+                            </Form.Label>
+                            <Form.Select
+                              aria-label=""
+                              onChange={handleFormChangeManufacturer}
+                              required
+                              style={{ height: "40px", fontSize: "15px" }}
+                              defaultValue="">
+                              <option disabled value="">
+                                Select Manufacturer ...
+                              </option>
+                              {manufacturer.map((manufacturer) => (
+                                <option
+                                  key={manufacturer.manufacturer_code}
+                                  value={manufacturer.manufacturer_code}>
+                                  {manufacturer.manufacturer_name}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
+                        </div>
                       </div>
-                      ))}
+
+                  <div className="row mt-3">
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Critical Inventory Thresholds:{" "}
+                        </Form.Label>
+                        <Form.Control
+                          required
+                          onChange={(e) => {
+                            const inputValue = e.target.value;
+                            const sanitizedValue = inputValue
+                            .replace(/\D/g, "")
+                            .substring(0, 10);
+                            setThresholds(sanitizedValue);
+                          }}
+                          onInput={handleKeyPress}
+                          type="number"
+                          placeholder="Minimum Stocking"
+                          style={{ height: "40px", fontSize: "15px" }}
+                          maxLength={10}
+                          pattern="[0-9]*"
+                        />
+                      </Form.Group>
+                    </div>
+                    <div className="col-6">
                     </div>
                   </div>
 
-                </Form.Group>
-              </div>
-            </div>
-
-            <Form.Group controlId="exampleForm.ControlInput1">
-              <Form.Label style={{ fontSize: "20px" }}>Details</Form.Label>
-              <Form.Control
-                onChange={(e) => setDetails(e.target.value)}
-                as="textarea"
-                placeholder="Enter details"
-                style={{ height: "100px", fontSize: "15px", resize: "none" }}
-              />
-            </Form.Group>
-
-            <div
-              className="gen-info"
-              style={{
-                fontSize: "20px",
-                position: "relative",
-                paddingTop: "30px",
-              }}>
-              Supplier List
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "-webkit-fill-available",
-                  background: "#FFA500",
-                  top: "85%",
-                  left: "12rem",
-                  transform: "translateY(-50%)",
-                }}></span>
-            </div>
-            <div className="supplier-table">
-              <div className="table-containss">
-                <div className="main-of-all-tables">
-                  <table id="order-listing">
-                    <thead>
-                      <tr>
-                        <th className="tableh">Product Code</th>
-                        <th className="tableh">Supplier</th>
-                        <th className="tableh">Email</th>
-                        <th className="tableh">Contact</th>
-                        <th className="tableh">Address</th>
-                        <th className="tableh">Price</th>
-                        <th className="tableh">VAT</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {supp.length > 0 ? (
-                        supp.map((supp) => (
-                          <tr>
-                            <td>{supp.codes}</td>
-                            <td>{supp.names}</td>
-                            <td>{supp.email}</td>
-                            <td>{supp.contact}</td>
-                            <td>{supp.address}</td>
-                            <td>
-                            <div className="d-flex align-items-center">
-                              <span
-                                style={{
-                                  fontSize: "20px",
-                                  marginRight: "5px",
-                                }}>
-                                ₱
-                              </span>
-                              <Form.Control
-                                type="number"
-                                style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
-                                placeholder="Input Price"
-                                value={priceInput[supp.value] || ""}
-                                onChange={(e) =>
-                                  handlePriceinput(e.target.value, supp.value)
-                                }
-                                onKeyDown={(e) =>
-                                  ["e", "E", "+", "-"].includes(e.key) &&
-                                  e.preventDefault()
-                                }
-                                required
-                              />
-                              </div>
-                            </td>
-                            <td>
-                            {isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : ((supp.vatable / 100) * priceInput[supp.value]).toFixed(2)}
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan="6"
-                            style={{ textAlign: "center", fontSize: "18px" }}>
-                            No Supplier selected
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                    {showDropdown && (
-                      <div className="dropdown mt-3">
-                        <Select
-                          isMulti
-                          options={fetchSupp.map((supp) => ({
-                            value: `${supp.supplier_code} - ${supp.supplier_name}`,
-                            label: (
-                              <div>
-                                Supplier Code: <strong>{supp.supplier_code}</strong> / Name:{" "}
-                                <strong>{supp.supplier_name}</strong>
-                              </div>
-                            ),
-                            codes: supp.supplier_code,
-                            vatable: supp.supplier_vat,
-                            names: supp.supplier_name,
-                            email: supp.supplier_email,
-                            contact: supp.supplier_number,
-                            address: supp.supplier_address,
-                            price: supp.supplier_price,
-                          }))}
-                          onChange={handleSelectChange_Supp}
-                        />
+                    <div className="row mt-3">
+                      <div className="col-6">
+                        <Form.Group controlId="exampleForm.ControlInput1">
+                            <Form.Label style={{ fontSize: "20px" }}>Details</Form.Label>
+                            <Form.Control
+                              onChange={(e) => setDetails(e.target.value)}
+                              as="textarea"
+                              rows={3}
+                              style={{
+                              fontFamily: 'Poppins, Source Sans Pro',
+                              fontSize: "16px",
+                              height: "122px",
+                              maxHeight: "122px",
+                              resize: "none",
+                              overflowY: "auto",
+                              }}
+                            />
+                          </Form.Group>
                       </div>
-                    )}
 
-                    <Button
-                      variant="outline-warning"
-                      onClick={handleAddSuppClick}
-                      size="md"
-                      style={{ fontSize: "15px", marginTop: "10px" }}>
-                      Add Supplier
-                    </Button>
-                  </table>
+                      <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                            <Form.Label style={{ fontSize: "20px" }}>
+                              Image Upload:{" "}
+                            </Form.Label>
+                            <div className="card">
+                              <div className="drag-area" 
+                              onDragOver={onDragOver} 
+                              onDragLeave={onDragLeave} 
+                              onDrop={onDropImages}>
+                                  <>
+                                  Drag & Drop image here or {" "}
+                                  <span className="select" 
+                                  role="button" 
+                                  onClick={selectFiles}>
+                                    Browse
+                                  </span>
+                                  </>
+                                <input name="file" 
+                                type="file" 
+                                className="file" 
+                                multiple ref={fileInputRef} 
+                                onChange={onFileSelect}/>
+                              </div>
+                              <div className="ccontainerss">
+                                {images.map((images,index)=>(
+                                <div className="imagess" key={index}>
+                                  <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
+                                  <img src={images.url} alt={images.name} /> 
+                                </div>
+                                ))}
+                              </div>
+                            </div>
+                        </Form.Group>
+                      </div>
+                    </div>
+
+                <div
+                  className="gen-info"
+                  style={{
+                    fontSize: "20px",
+                    position: "relative",
+                    paddingTop: "30px",
+                    fontFamily: "Poppins, Source Sans Pro"
+                  }}>
+                  Supplier List
+                  <span
+                    style={{
+                      position: "absolute",
+                      height: "0.5px",
+                      width: "-webkit-fill-available",
+                      background: "#FFA500",
+                      top: "85%",
+                      left: "12rem",
+                      transform: "translateY(-50%)",
+                    }}></span>
                 </div>
-              </div>
-            </div>
+                <div className="supplier-table">
+                  <div className="table-containss">
+                    <div className="main-of-all-tables">
+                      <table id="order-listing">
+                        <thead>
+                          <tr>
+                            <th className="tableh">Product Code</th>
+                            <th className="tableh">Supplier</th>
+                            <th className="tableh">Email</th>
+                            <th className="tableh">Contact</th>
+                            <th className="tableh">Address</th>
+                            <th className="tableh">Price</th>
+                            <th className="tableh">VAT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {supp.length > 0 ? (
+                            supp.map((supp) => (
+                              <tr>
+                                <td>{supp.codes}</td>
+                                <td>{supp.names}</td>
+                                <td>{supp.email}</td>
+                                <td>{supp.contact}</td>
+                                <td>{supp.address}</td>
+                                <td>
+                                <div className="d-flex align-items-center">
+                                  <span
+                                    style={{
+                                      fontSize: "20px",
+                                      marginRight: "5px",
+                                    }}>
+                                    ₱
+                                  </span>
+                                  <Form.Control
+                                    type="number"
+                                    style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
+                                    placeholder="Input Price"
+                                    value={priceInput[supp.value] || ""}
+                                    onChange={(e) =>
+                                      handlePriceinput(e.target.value, supp.value)
+                                    }
+                                    onKeyDown={(e) =>
+                                      ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault()
+                                    }
+                                    required
+                                  />
+                                  </div>
+                                </td>
+                                <td>
+                                {isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : ((supp.vatable / 100) * priceInput[supp.value]).toFixed(2)}
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td
+                                colSpan="7"
+                                style={{ textAlign: "center"}}>
+                                No Supplier selected
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                        {showDropdown && (
+                          <div className="dropdown mt-3">
+                            <Select
+                              isMulti
+                              options={fetchSupp.map((supp) => ({
+                                value: `${supp.supplier_code} - ${supp.supplier_name}`,
+                                label: (
+                                  <div>
+                                    Supplier Code: <strong>{supp.supplier_code}</strong> / Name:{" "}
+                                    <strong>{supp.supplier_name}</strong>
+                                  </div>
+                                ),
+                                codes: supp.supplier_code,
+                                vatable: supp.supplier_vat,
+                                names: supp.supplier_name,
+                                email: supp.supplier_email,
+                                contact: supp.supplier_number,
+                                address: supp.supplier_address,
+                                price: supp.supplier_price,
+                              }))}
+                              onChange={handleSelectChange_Supp}
+                            />
+                          </div>
+                        )}
 
-            <div className="save-cancel">
-              <Button
-                type="submit"
-                className="btn btn-warning"
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
-                Save
-              </Button>
-              <Link
-                to="/subParts"
-                className="btn btn-secondary btn-md"
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
-                Close
-              </Link>
+                        <Button
+                          variant="outline-warning"
+                          onClick={handleAddSuppClick}
+                          size="md"
+                          style={{ fontSize: "15px", marginTop: "10px" }}>
+                          Add Supplier
+                        </Button>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                  <div className="save-cancel">
+                    <Button
+                      type="submit"
+                      className="btn btn-warning"
+                      size="md"
+                      style={{ fontSize: "20px", margin: "0px 5px" }}>
+                      Save
+                    </Button>
+                    <Link
+                      to="/subParts"
+                      className="btn btn-secondary btn-md"
+                      size="md"
+                      style={{ fontSize: "20px", margin: "0px 5px" }}>
+                      Close
+                    </Link>
+                  </div>
+                </Form>
+              </div>
+              ) : (
+                <div className="no-access">
+                  <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+                  <h3>
+                    You don't have access to this function.
+                  </h3>
+                </div>
+              )
+                    )}
             </div>
-          </Form>
-        </div>
-        ) : (
-          <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
           </div>
-        )
-              )}
-      </div>
-    </div>
   );
 }
 

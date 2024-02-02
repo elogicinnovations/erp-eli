@@ -39,6 +39,8 @@ const [unitMeasurement, setunitMeasurement] = useState('');
 const [slct_manufacturer, setslct_manufacturer] = useState([]);
 const [manufacturer, setManufacturer] = useState([]);
 const [thresholds, setThresholds] = useState('');
+const [category, setcategory] = useState([]);
+const [prodcategory, setprodcategory] = useState([]);
 
 const [SubParts, setSubParts] = useState([]);
 const [showDropdown, setShowDropdown] = useState(false);
@@ -66,6 +68,7 @@ useEffect(() => {
       setunitMeasurement(res.data[0].spareParts_unitMeasurement);
       setslct_manufacturer(res.data[0].spareParts_manufacturer);
       setThresholds(res.data[0].threshhold);
+      setprodcategory(res.data[0].category_code);
       setIsLoading(false);
     })
     .catch((err) => {
@@ -201,6 +204,16 @@ useEffect(() => {
     });
 }, []);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/category/fetchTable")
+      .then((response) => {
+        setcategory(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching roles:", error);
+      });
+  }, []);
 
 useEffect(() => {
   axios.get(BASE_URL + '/subPart/fetchTable')
@@ -249,6 +262,12 @@ const handleChangeMeasurement = (event) => {
 
 const handleFormChangeManufacturer = (event) => {
   setslct_manufacturer(event.target.value);
+  setIsSaveButtonDisabled(false);
+};
+
+//for category on change function
+const handleFormChangeCategory = (event) => {
+  setprodcategory(event.target.value);
   setIsSaveButtonDisabled(false);
 };
 
@@ -410,7 +429,8 @@ const update = async (e) => {
       slct_manufacturer,
       slct_binLocation,
       thresholds,
-      sparepartimage 
+      sparepartimage,
+      prodcategory 
     })
       .then((res) => {
         if (res.status === 200) {
@@ -511,17 +531,17 @@ const update = async (e) => {
                   Loading Data...
                 </div>
               ) : (
-        authrztn.includes('Spare Part - Edit') ? (
-            <div className="right-body-contents-a"> 
-            
-            <div className="arrowandtitle">
-              <Link to="/spareParts">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
-              </Link>
-                  <div className="titletext">
-                    <h1>Add Spare Parts</h1>
+              authrztn.includes('Spare Part - Edit') ? (
+                <div className="right-body-contents-a"> 
+                
+                <div className="arrowandtitle">
+                  <Link to="/spareParts">
+                      <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+                  </Link>
+                      <div className="titletext">
+                        <h1>Update Spare Parts</h1>
+                      </div>
                   </div>
-              </div>
                
                 <Form noValidate validated={validated} onSubmit={update}>
                 <div className="row">
@@ -534,13 +554,16 @@ const update = async (e) => {
                                       src={`data:image/png;base64,${image.sparepart_image}`}
                                       alt={`sparepart-img-${image?.id}`}
                                     />
-                                    <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
                                   </Carousel.Item>
                                 ))}
                               </Carousel>
                             )}
                         </div>
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                  <div className="gen-info" 
+                    style={{ fontSize: '20px', 
+                              position: 'relative', 
+                              paddingTop: '20px',
+                              fontFamily: "Poppins, Source Sans Pro" }}>
                           General Information
                           <span
                             style={{
@@ -549,7 +572,7 @@ const update = async (e) => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '18rem',
+                              left: '21rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -637,25 +660,25 @@ const update = async (e) => {
                                   </Form.Group>
                               </div>
                               <div className="col-4">
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
-                                    <Form.Select
-                                      disabled={!isReadOnly}
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      value={unitMeasurement}
-                                      onChange={handleChangeMeasurement}>
-                                        <option disabled value=''>
-                                            Select Unit Measurement ...
-                                        </option>
-                                      {cls_unitMeasurement.map((unitM, index) => (
-                                        <option key={index} value={unitM}>
-                                            {unitM}
-                                        </option>
-                                      ))}
-                                      </Form.Select>
-                                  </Form.Group>
+                              <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: "20px" }}>
+                                    Category:{" "}
+                                  </Form.Label>
+                                  <Form.Select
+                                    aria-label=""
+                                    onChange={handleFormChangeCategory}
+                                    disabled={!isReadOnly}
+                                    style={{ height: "40px", fontSize: "15px" }}
+                                    value={prodcategory}>
+                                    {category.map((category) => (
+                                      <option
+                                        key={category.category_code}
+                                        value={category.category_code}>
+                                        {category.category_name}
+                                      </option>
+                                    ))}
+                                  </Form.Select>
+                                </Form.Group>
                               </div>
                               <div className="col-4">
                                   <Form.Group controlId="exampleForm.ControlInput2">
@@ -680,32 +703,6 @@ const update = async (e) => {
                               </div>
                           </div>
 
-                        <div className="row">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Details: </Form.Label>
-                                <Form.Control disabled={!isReadOnly} 
-                                value={desc} 
-                                onChange={(e) => handlesparedescription(e)}
-                                as="textarea"
-                                style={{height: '100px', fontSize: '15px'}}/>
-                            </Form.Group>
-                        </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '30px' }}>
-                          Notification Thresholds
-                          <p className='fs-5'>Sets your preferred thresholds.</p>
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '65%',
-                              left: '21rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-
                         <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
@@ -718,13 +715,53 @@ const update = async (e) => {
                                 required/>
                                 </Form.Group>
                             </div>
+                            
                             <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
+                            <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: '20px' }}>Unit of Measurment: </Form.Label>
+                                    <Form.Select
+                                      disabled={!isReadOnly}
+                                      aria-label=""
+                                      required
+                                      style={{ height: '40px', fontSize: '15px' }}
+                                      value={unitMeasurement}
+                                      onChange={handleChangeMeasurement}>
+                                        <option disabled value=''>
+                                            Select Unit Measurement ...
+                                        </option>
+                                      {cls_unitMeasurement.map((unitM, index) => (
+                                        <option key={index} value={unitM}>
+                                            {unitM}
+                                        </option>
+                                      ))}
+                                      </Form.Select>
+                                  </Form.Group>
+                            </div>
+                          </div>
+
+                          <div className="row mt-3">
+                          <div className="col-6">
+                            <Form.Group controlId="exampleForm.ControlInput1">
+                                <Form.Label style={{ fontSize: '20px' }}>Details: </Form.Label>
+                                <Form.Control disabled={!isReadOnly} 
+                                value={desc} 
+                                onChange={(e) => handlesparedescription(e)}
+                                as="textarea"
+                                rows={3}
+                                style={{
+                                fontFamily: 'Poppins, Source Sans Pro',
+                                fontSize: "16px",
+                                height: "205px",
+                                maxHeight: "205px",
+                                resize: "none",
+                                overflowY: "auto",
+                                }}/>
+                            </Form.Group>
+                          </div>
+                          <div className="col-6">
+                            <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
                                 <div className="card">
-                                  <div className="top">
-                                    <p>Drag & Drop Image Upload</p>
-                                  </div>
                                   <div className="drag-area" 
                                   onDragOver={onDragOver} 
                                   onDragLeave={onDragLeave} 
@@ -751,12 +788,16 @@ const update = async (e) => {
                                     ))}
                                   </div>
                                 </div>            
-                              </Form.Group>   
+                              </Form.Group> 
                             </div>
-                          </div>
+                        </div>
                         
 
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative'}}>
+                        <div className="gen-info" 
+                          style={{ fontSize: '20px',
+                                   position: 'relative',
+                                   paddingTop: "30px",
+                                   fontFamily: "Poppins, Source Sans Pro"}}>
                           Supplier List
                           <span
                             style={{
@@ -787,7 +828,8 @@ const update = async (e) => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                    {tableSupp.map((data,i) =>(
+                                    {tableSupp.length > 0 ? (
+                                    tableSupp.map((data,i) =>(
                                         <tr key={i}>
                                           <td>{data.supplier_code}</td>
                                           <td>{data.supplier.supplier_name}</td>
@@ -815,9 +857,16 @@ const update = async (e) => {
                                             }
                                           </td>
                                         </tr>
-                                      ))}
-
+                                      ))
+                                      ) : (
+                                        <tr>
+                                          <td colSpan="8" style={{ textAlign: "center" }}>
+                                            No Supplier selected
+                                          </td>
+                                        </tr>
+                                      )}
                                     </tbody>
+                                    
                                     {showDropdown && (
                                         <div className="dropdown mt-3">
                                            <Select

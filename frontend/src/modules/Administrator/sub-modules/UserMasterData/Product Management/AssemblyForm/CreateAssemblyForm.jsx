@@ -429,7 +429,7 @@ function onDropImages(event) {
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="arrowandtitle">
               <Link to="/assemblyForm">
-                  <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
                   <div className="titletext">
                       <h1>Add Assembly Parts</h1>
@@ -441,6 +441,7 @@ function onDropImages(event) {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               General Information
               <span
@@ -450,7 +451,7 @@ function onDropImages(event) {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "18rem",
+                  left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
@@ -646,25 +647,14 @@ function onDropImages(event) {
               </div>
             </div>
 
-            
-            <div className="row">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
-                <Form.Control
-                  onChange={(e) => setDesc(e.target.value)}
-                  as="textarea"
-                  placeholder="Enter details name"
-                  style={{ height: "100px", fontSize: "15px" }}
-                />
-              </Form.Group>
-            </div>
 
-            <div
+            {/* <div
               className="gen-info"
               style={{
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "30px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               Notification Thresholds
               <p>Sets your preferred thresholds.</p>
@@ -678,7 +668,7 @@ function onDropImages(event) {
                   left: "21rem",
                   transform: "translateY(-50%)",
                 }}></span>
-            </div>
+            </div> */}
 
             <div className="row mt-3">
               <div className="col-6">
@@ -703,6 +693,30 @@ function onDropImages(event) {
                     }
                   />
                 </Form.Group>
+              </div>
+              <div className="col-6">
+    
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>Details: </Form.Label>
+                    <Form.Control
+                      onChange={(e) => setDesc(e.target.value)}
+                      as="textarea"
+                      rows={3}
+                      style={{
+                      fontFamily: 'Poppins, Source Sans Pro',
+                      fontSize: "16px",
+                      height: "125px",
+                      maxHeight: "125px",
+                      resize: "none",
+                      overflowY: "auto",
+                      }}
+                    />
+                  </Form.Group>
               </div>
               <div className="col-6">
               <Form.Label style={{ fontSize: "20px" }}>
@@ -736,6 +750,7 @@ function onDropImages(event) {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "30px",
+                fontFamily: 'Poppins, Source Sans Pro',
               }}>
               Supplier List
               <span
@@ -804,7 +819,7 @@ function onDropImages(event) {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="6" style={{ textAlign: "center", fontSize: '18px' }}>
+                          <td colSpan="8" style={{ textAlign: "center"}}>
                             No Supplier selected
                           </td>
                         </tr>
@@ -818,7 +833,14 @@ function onDropImages(event) {
                             value: `${supp.supplier_code} - ${supp.supplier_name}`,
                             label: (
                               <div>
-                                Supplier Code: <strong>{supp.supplier_code}</strong> / Name: <strong>{supp.supplier_name}</strong>
+                                Supplier Code: 
+                                <strong>
+                                  {supp.supplier_code}
+                                  </strong> 
+                                  / Name: 
+                                  <strong>
+                                    {supp.supplier_name}
+                                    </strong>
                               </div>
                             ),
                             codes: supp.supplier_code,
