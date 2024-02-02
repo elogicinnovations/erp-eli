@@ -182,94 +182,120 @@ const [suppSubpart, setSuppSubpart] = useState([]);
   
   const [latestCount, setLatestCount] = useState("");
   useEffect(() => {
-    // // Fetch the latest count when the component mounts
-    // const fetchLatestCount = async () => {
-    //   try {
-    //     const response = await axios.get(BASE_URL + '/invoice/lastPONumber');
-    //     const latestCount = response.data.latestCount;
-    //     setLatestCount(latestCount);
-    //     console.log('codsadsa',latestCount)
-    //   } catch (error) {
-    //     console.error('Error fetching latest count:', error);
-    //   }
-    // };
-  
-    // fetchLatestCount();
-
     axios
-    .get(BASE_URL + "/invoice/lastPONumber")
-    .then((res) => {
-      const PO_increment = res.data !== null ? res.data.toString().padStart(8, "0") : "00000000";
-      setLatestCount(PO_increment)
-    })
-    .catch((err) => console.log(err));
-    
+      .get(BASE_URL + "/invoice/lastPONumber")
+      .then((res) => {
+        const PO_increment = res.data !== null ? res.data.toString().padStart(8, "0") : "00000000";
+        setLatestCount(PO_increment);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
 
   // console.log(latestCount)
 
+  const [parentArray, setParentArray] = useState([]);
+  const [titleCounter, setTitleCounter] = useState(1);
+  const [addPObackend, setAddPObackend] = useState([]);
+  const [quantityInputs, setQuantityInputs] = useState({});
 
-// Function to handle adding a product to the array
-const handleAddToTable = (product, type, code, name, supp_email) => {
- 
-
-
-  setProductArrays((prevArrays) => {
-    const supplierCode = product.supplier.supplier_code;
-    const supplierName = product.supplier.supplier_name;
-    const PO_id = (parseInt(latestCount, 10) + 1).toString()
-
-
-    // Create a new array for the supplier if it doesn't exist
-    const newArray = (prevArrays[supplierCode] || []).slice(); // Make a shallow copy of the array
-
-    // Check if the product is already in the array for the specific supplier
-    const isProductAlreadyAdded = newArray.some(
-      (item) => item.product.id === product.id
-    );
-
-    if (!isProductAlreadyAdded) {
-      setIsArray(true)
-      // Add the product to the array
-      newArray.push({
-        type: type,
-        product: product,
-        code: code,
-        name: name,
-        supp_email: supp_email,
-        supplierName: supplierName,
-        PO_id: PO_id, 
+  const handleQuantityChange = (title, type, supplier_prod_id, value) => {
+    setQuantityInputs((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [`${title}_${type}_${supplier_prod_id}`]: value,
+      };
+  
+      // Use the updatedInputs directly to create the serializedParent array
+      const serializedParent = parentArray.map(({ title, supplierCode, array }) => {
+        return {
+          title,
+          supplierCode,
+          serializedArray: array.map((item) => ({
+            quantity: updatedInputs[`${title}_${item.type}_${item.product.id}`] || "",
+            type: item.type,
+            prod_supplier: item.product.id,
+          })),
+        };
       });
-
-      // Sort the array based on some criteria (e.g., product code)
-      newArray.sort((a, b) => {
-        const codeA = a.product.product_code || '';
-        const codeB = b.product.product_code || '';
-        return codeA.localeCompare(codeB);
-      });
-
-      // Log the array to the console
-      console.log('Product Arrays:', { ...prevArrays, [supplierCode]: newArray  });
-
-      // Update the state with the new array for the supplier
-      return { ...prevArrays, [supplierCode]: newArray }; // dito ako nahinto dapat ma add ko sa array
-
-      
-    } else {
-      // Trigger SweetAlert for duplicate
-      swal({
-        title: 'Duplicate Product',
-        text: 'This product is already in the array.',
-        icon: 'error',
-      });
-
-      return prevArrays;
-    }
-  });
-};
+      setAddPObackend(serializedParent)
+      // console.log(`supplier ${type}_${supplier_prod_id}`);
+      console.log("Selected Products:", serializedParent);    
+  
+      // Return the updatedInputs to be used as the new state
+      return updatedInputs;
+    });
+  };
 
 
+  const handleAddToTable = (product, type, code, name, supp_email) => {
+    setProductArrays((prevArrays) => {
+      const supplierCode = product.supplier.supplier_code;
+      const supplierName = product.supplier.supplier_name;
+
+      const newArray = (prevArrays[supplierCode] || []).slice();
+      const isProductAlreadyAdded = newArray.some(
+        (item) => item.product.id === product.id
+      );
+
+      if (!isProductAlreadyAdded) {
+        setIsArray(true);
+
+        newArray.push({
+          type: type,
+          product: product,
+          code: code,
+          name: name,
+          supp_email: supp_email,
+          supplierName: supplierName
+        });
+
+        newArray.sort((a, b) => {
+          const codeA = a.product.product_code || '';
+          const codeB = b.product.product_code || '';
+          return codeA.localeCompare(codeB);
+        });
+
+        // Check if there is an existing container for the supplier
+        const existingContainerIndex = parentArray.findIndex(
+          (container) => container.supplierCode === supplierCode
+        );
+
+        if (existingContainerIndex !== -1) {
+          // If the container exists, update it
+          const updatedParentArray = [...parentArray];
+          updatedParentArray[existingContainerIndex].array = newArray;
+
+          setParentArray(updatedParentArray);
+        } else {
+          // If the container doesn't exist, create a new one
+          const newTitle = (parseInt(latestCount, 10) + titleCounter).toString().padStart(8, "0");
+          const newParentArray = [...parentArray, {
+            title: newTitle,
+            supplierCode: supplierCode,
+            array: newArray,
+          }];
+
+          // Increment the title counter
+          setTitleCounter(titleCounter + 1);
+
+          // Update the state with the new parent array and supplier array
+          setParentArray(newParentArray);
+        }
+
+        console.log('Parent Array:', parentArray);
+        return { ...prevArrays, [supplierCode]: newArray };
+      } else {
+        swal({
+          title: 'Duplicate Product',
+          text: 'This product is already in the array.',
+          icon: 'error',
+        });
+        return prevArrays;
+      }
+    });
+  };
+  
 
 const handleEditPrice = (index) => {
   setEditMode((prev) => ({ ...prev, [index]: true }));
@@ -679,12 +705,12 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     }
     else{
 
-      axios.post(`${BASE_URL}/PR_PO/save`, {
-        productArrays,   
-        id: id, 
+      axios.post(`${BASE_URL}/invoice/save`, {
+        arrayPO: addPObackend,   
+        pr_id: id, 
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.status === 200) {
           swal({
             title: 'The Purchase sucessfully request!',
@@ -692,7 +718,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
             icon: 'success',
             button: 'OK'
           }).then(() => {
-            navigate('/purchaseRequest')
+            navigate('/purchaseOrderList')
             
           });
         } else {
@@ -705,10 +731,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
       });
   
     }
-  
     setValidated(true); //for validations
-  
-    
   };
 
   return (
@@ -749,7 +772,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                           <div className="row mt-3">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PO Cont. #: </Form.Label>
+                                <Form.Label style={{ fontSize: '20px' }}>PR. #: </Form.Label>
                                 <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
@@ -885,23 +908,46 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                             </div>
                             <div className="table-containss">
                                 <div className="main-of-all-tables">
-                                    {Object.entries(productArrays).map(([supplierCode, products]) => (
-                                      <div className='border border-warning m-3 mb-4 p-3' key={supplierCode}>      
-                                      {products.length > 0 && (  
-                                        <>                         
-                                          <h2>{`Purchase Order #: ${products[0].PO_id}`}</h2>                                  
-                                            
-                                            <h3>{`Supplier : ${supplierCode} - ${products[0].supplierName}`}</h3>
-                                          </>
-                                        )}
-                                        <ul>
-                                          {products.map((item, index) => (
-                                            <li className='fs-5 fw-bold' key={index}>{item.code + "=>" + item.name} </li>
-                                            
-                                          ))}
-                                        </ul>
+                                {parentArray.map(({ title, supplierCode, array }) => (
+                                  <div className='border border-warning m-3 mb-4 p-3' key={supplierCode}>
+                                    {array.length > 0 && (
+                                      <>
+                                        <h3>{`PO #: ${title}`}</h3>
+                                        <h3>{`Supplier : ${supplierCode} - ${array[0].supplierName}`}</h3>
+                                      </>
+                                    )}
+
+                                    {array.map((item, index) => (
+                                      <div className='row fs-5 fw-bold' key={index}>
+                                        <div className="col-6">
+                                          {item.code + "=>" + item.name}
+                                        </div>
+                                        <div className="col-6">
+                                          <Form.Control
+                                            type="number"
+                                            placeholder="Quantity"
+                                            value={quantityInputs[`${title}_${item.type}_${item.product.id}`] || ''}
+                                            onChange={(e) => {
+                                              handleQuantityChange(title, item.type, item.product.id, e.target.value);
+                                            }}
+                                            required
+                                            onKeyDown={(e) => {                                          
+                                              ["e", "E", "+", "-"].includes(e.key) &&
+                                              e.preventDefault();
+                                            }}
+                                            style={{
+                                              height: "35px",
+                                              width: "100px",
+                                              fontSize: '14px',
+                                              fontFamily: 'Poppins, Source Sans Pro'
+                                            }}
+                                          />
+                                        </div>
                                       </div>
                                     ))}
+                                  </div>
+                                ))}
+
                                 </div>
                             </div>
                           
@@ -938,12 +984,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                       <tr>
-                                                          <th className='tableh'>Product Code</th>
-                                                          <th className='tableh'>Product Name</th>
-                                                          <th className='tableh'>Category</th>
-                                                          <th className='tableh'>UOM</th>
-                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
                                                           <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
                                                           <th className='tableh'>Price</th>
                                                           <th className='tableh'>Action</th>
                                                       </tr>
@@ -951,12 +995,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                       <tbody>
                                                               {suppProducts.map((data,i) =>(
                                                                 <tr key={i}>
-                                                                    <td>{data.product.product_code}</td>
-                                                                    <td>{data.product.product_name}</td>
-                                                                    <td>{data.product.category.category_name}</td>
-                                                                    <td>{data.product.product_unitMeasurement}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.supplier.supplier_email}</td>
                                                                     <td>
                                                                       {!editMode[i] && 
                                                                           <Form.Control
@@ -1056,26 +1098,22 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                       <tr>
-                                                          <th className='tableh'>Product Code</th>
-                                                          <th className='tableh'>Product Name</th>
-                                                          <th className='tableh'>Category</th>
-                                                          <th className='tableh'>UOM</th>
-                                                          <th className='tableh'>Supplier</th>
-                                                          <th className='tableh'>Contact</th>
-                                                          <th className='tableh'>Price</th>
-                                                          <th className='tableh'></th>
-                                                      </tr>
+                                                        <th className='tableh'>Supplier Code</th>
+                                                            <th className='tableh'>Supplier Name</th>
+                                                            <th className='tableh'>Contact</th>
+                                                            <th className='tableh'>Email</th>
+                                                            <th className='tableh'>Price</th>
+                                                            <th className='tableh'>Action</th>
+                                                        </tr>
                                                       </thead>
                                                       <tbody>
                                                              
                                                               {suppAssembly.map((data,i) =>(
                                                                 <tr key={i}>
-                                                                    <td>{data.assembly.assembly_code}</td>
-                                                                    <td>{data.assembly.assembly_name}</td>
-                                                                    <td>{data.assembly.category_code}</td>
-                                                                    <td>{data.assembly.assembly_unitMeasurement}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.supplier.supplier_email}</td>
                                                                     <td>
                                                                       {!editMode[i] && 
                                                                           <Form.Control
@@ -1175,26 +1213,22 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                       <tr>
-                                                          <th className='tableh'>Product Code</th>
-                                                          <th className='tableh'>Product Name</th>
-                                                          <th className='tableh'>Category</th>
-                                                          <th className='tableh'>UOM</th>
-                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
                                                           <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
                                                           <th className='tableh'>Price</th>
-                                                          <th className='tableh'></th>
+                                                          <th className='tableh'>Action</th>
                                                       </tr>
                                                       </thead>
                                                       <tbody>
                                                              
                                                               {suppSpare.map((data,i) =>(
                                                                 <tr key={i}>
-                                                                    <td>{data.sparePart.spareParts_code}</td>
-                                                                    <td>{data.sparePart.spareParts_name}</td>
-                                                                    <td>{}</td>
-                                                                    <td>{data.sparePart.spareParts_unitMeasurement}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.supplier.supplier_email}</td>
                                                                     <td>
                                                                         {!editMode[i] && 
                                                                           <Form.Control
@@ -1295,26 +1329,22 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                         <tr>
-                                                            <th className='tableh'>Product Code</th>
-                                                            <th className='tableh'>Product Name</th>
-                                                            <th className='tableh'>Category</th>
-                                                            <th className='tableh'>UOM</th>
-                                                            <th className='tableh'>Supplier</th>
-                                                            <th className='tableh'>Contact</th>
-                                                            <th className='tableh'>Price</th>
-                                                            <th className='tableh'></th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
+                                                          <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
+                                                          <th className='tableh'>Price</th>
+                                                          <th className='tableh'>Action</th>
                                                         </tr>
                                                       </thead>
                                                       <tbody>
                                                              
                                                       {suppSubpart.map((data,i) =>(
                                                         <tr key={i}>
-                                                            <td>{data.subPart.subPart_code}</td>
-                                                            <td>{data.subPart.subPart_name}</td>
-                                                            <td>{data.subPart.category_code}</td>
-                                                            <td>{data.subPart.subPart_unitMeasurement}</td>
+                                                            <td>{data.supplier.supplier_code}</td>
                                                             <td>{data.supplier.supplier_name}</td>
                                                             <td>{data.supplier.supplier_number}</td>
+                                                            <td>{data.supplier.supplier_email}</td>
                                                             <td>
                                                               {!editMode[i] && 
                                                                   <Form.Control
