@@ -174,7 +174,7 @@ SparePart.hasMany(SparePart_image, { foreignKey: "sparepart_id"});
 SparePart_image.belongsTo(SparePart, { foreignKey: "sparepart_id"});
 
 
-//product price history table
+// product price history table
 Product.hasMany(productTAGsupplierHistory, { foreignKey: "product_id" });
 productTAGsupplierHistory.belongsTo(Product, { foreignKey: "product_id" });
 
@@ -416,6 +416,37 @@ Inventory_Spare.belongsTo(Warehouses, { foreignKey: "warehouse_id"});
 //------------ Warehouse Subpart Inventory
 Warehouses.hasMany(Inventory_Subpart, { foreignKey: "warehouse_id"});
 Inventory_Subpart.belongsTo(Warehouses, { foreignKey: "warehouse_id"});
+
+
+//------------- Purchase Order Product------------
+PR.hasMany(PR_PO, { foreignKey: "pr_id"});
+PR_PO.belongsTo(PR, { foreignKey: "pr_id"});
+
+ProductTAGSupplier.hasMany(PR_PO, { foreignKey: "product_tag_supplier_ID"});
+PR_PO.belongsTo(ProductTAGSupplier, { foreignKey: "product_tag_supplier_ID"});
+
+
+//------------- Purchase Order Assembly------------
+PR.hasMany(PR_PO_asmbly, { foreignKey: "pr_id"});
+PR_PO_asmbly.belongsTo(PR, { foreignKey: "pr_id"});
+
+Assembly_Supplier.hasMany(PR_PO_asmbly,{ foreignKey: "assembly_suppliers_ID"});
+PR_PO_asmbly.belongsTo(Assembly_Supplier, { foreignKey: "assembly_suppliers_ID"});
+
+//------------- Purchase Order Spare------------
+PR.hasMany(PR_PO_spare, { foreignKey: "pr_id"});
+PR_PO_spare.belongsTo(PR, { foreignKey: "pr_id"});
+
+SparePart_Supplier.hasMany(PR_PO_spare,{ foreignKey: "spare_suppliers_ID"});
+PR_PO_spare.belongsTo(SparePart_Supplier, { foreignKey: "spare_suppliers_ID"});
+
+//------------- Purchase Order Subpart------------
+PR.hasMany(PR_PO_subpart, { foreignKey: "pr_id"});
+PR_PO_subpart.belongsTo(PR, { foreignKey: "pr_id"});
+
+Subpart_supplier.hasMany(PR_PO_subpart, { foreignKey: "subpart_suppliers_ID"});
+PR_PO_subpart.belongsTo(Subpart_supplier, { foreignKey: "subpart_suppliers_ID"});
+
 
 module.exports = { 
                     MasterList, 

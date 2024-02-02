@@ -338,36 +338,6 @@ router.route('/save').post(async (req, res) => {
         }     
         // console.log('Email sent:', info.response);
       });
-
-
-      products.forEach((item, index) => {
-
-        // if(item.type === "product"){
-        //  PR_PO.create({
-        //     pr_id: id,
-        //     product_tag_supplier_ID: item.suppTAG_id,
-        //   })        
-        // }
-        // else if(item.type === "assembly"){
-        //   PR_PO_asmbly.create({
-        //     pr_id: id,
-        //     assembly_suppliers_ID: item.suppTAG_id,
-        //   })
-        // }
-        // else if(item.type === "spare"){
-        //   PR_PO_spare.create({
-        //     pr_id: id,
-        //     spare_suppliers_ID: item.suppTAG_id,
-        //   })
-        // }
-        // else if(item.type === "subpart"){
-        //   PR_PO_subpart.create({
-        //     pr_id: id,
-        //     subpart_suppliers_ID: item.suppTAG_id,
-        //   })
-        // }
-
-      })
     });
 
     const PR_update = PR.update({

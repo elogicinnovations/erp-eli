@@ -1,10 +1,8 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {PR_PO, PR_PO_asmbly, PR_PO_spare, PR_PO_subpart} = require('../db/models/associations')
+const {PR_PO, PR_PO_asmbly, PR_PO_spare, PR_PO_subpart, PR, PR_history} = require('../db/models/associations')
 const session = require('express-session')
-
-
 
 
 router.route('/lastPONumber').get(async (req, res) => {
@@ -28,59 +26,145 @@ router.route('/lastPONumber').get(async (req, res) => {
   }
   });
 
-
-// router.route('/lastPONumber').get(async (req, res) => {
-//   try {
-//     const latestPoId = await findLatestPoId();
-//     console.log('--------------------------------------------')
-//     console.log('test', latestPoId)
-
-//     res.json({ latestPoId });
-//   } catch (error) {
-//     console.error('Error fetching latest PoId:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-//   });
-
-
   
-// async function findLatestPoId() {
-//   try {
-//     const latestPoIds = await Promise.all([
-//       findLatestPoIdForTable(PR_PO),
-//       findLatestPoIdForTable(PR_PO_asmbly),
-//       findLatestPoIdForTable(PR_PO_spare),
-//       findLatestPoIdForTable(PR_PO_subpart),
-//     ]);
+router.route('/save').post(async (req, res) => {
+  try {
+    const arrayPO = req.body.arrayPO
+    const PR_id = req.body.pr_id
+    for (const parent of arrayPO) {
+      const po_number = parent.title
 
-//     const maxPoId = Math.max(...latestPoIds);
+      for (const child of parent.serializedArray) {
+        const quantity = child.quantity
+        const type = child.type
+        const prod_supp_id = child.prod_supplier
 
-//     // If no data in any of the tables, set the initial value to '00000001'
-//     const initialPoId = latestPoIds.length === 0 ? '00000001' : maxPoId;
+        // console.log(`quantity${quantity} type ${type}`)
+        
 
-//     return initialPoId;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+            if (type === 'product') {
+              PR_PO.create({
+                  pr_id: PR_id,
+                  po_id: po_number,
+                  quantity: quantity,
+                  product_tag_supplier_ID: prod_supp_id
+              });           
+          } else if(type === 'assembly'){
+              PR_PO_asmbly.create({
+                pr_id: PR_id,
+                po_id: po_number,
+                quantity: quantity,
+                assembly_suppliers_ID: prod_supp_id
+              });           
+          } else if(type === 'spare'){
+              PR_PO_spare.create({
+                pr_id: PR_id,
+                po_id: po_number,
+                quantity: quantity,
+                spare_suppliers_ID: prod_supp_id
+              });           
+          } else if(type === 'subpart'){
+              PR_PO_subpart.create({
+                pr_id: PR_id,
+                po_id: po_number,
+                quantity: quantity,
+                subpart_suppliers_ID: prod_supp_id
+              });           
+          }
+      }    
+    }
 
-// async function findLatestPoIdForTable(model) {
-//   try {
-//     const latestPo = await model.findOne({
-//       attributes: ['po_id'],
-//       order: [['id', 'DESC']],
-//     });
+    const PR_update = PR.update({
+      status: 'For-Approval (PO)'
+    },
+    {
+      where: { id: PR_id }
+    }); 
 
-//     let latestCount = 1;
+    if (PR_update){
+      const PR_historical = PR_history.create({
+        pr_id: PR_id,
+        status: 'For-Approval (PO)'
+      });
 
-//     if (latestPo) {
-//       latestCount = parseInt(latestPo.po_id.substring(8)) + 1;
-//     }
 
-//     return latestCount;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+      if(PR_historical){
+        return res.status(200).json()
+      }    
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+  });
+
+  router.route('/fetchPOarray').get(async (req, res) => {
+    try {
+      const pr_id = req.query.id;
+  
+      // Fetch data from all four tables with the specified pr_id
+      const prPoData = await PR_PO.findAll({
+        where: { pr_id: pr_id },
+      });
+  
+      const prPoAsmblyData = await PR_PO_asmbly.findAll({
+        where: { pr_id: pr_id },
+      });
+  
+      const prPoSpareData = await PR_PO_spare.findAll({
+        where: { pr_id: pr_id },
+      });
+  
+      const prPoSubpartData = await PR_PO_subpart.findAll({
+        where: { pr_id: pr_id },
+      });
+  
+      // Consolidate data into an object with po_id as keys
+      const consolidatedObject = {};
+  
+      prPoData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push(item);
+      });
+  
+      prPoAsmblyData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push(item);
+      });
+  
+      prPoSpareData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push(item);
+      });
+  
+      prPoSubpartData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push(item);
+      });
+  
+      // Convert the object values back to an array
+      const consolidatedArray = Object.values(consolidatedObject);
+  
+      // Sort the consolidated array by po_id
+      consolidatedArray.forEach(group => {
+        group.items.sort((a, b) => a.po_id.localeCompare(b.po_id));
+      });
+  
+      // console.log(consolidatedArray);
+  
+      res.status(200).json(consolidatedArray);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+  
+  
+
 
 module.exports = router;

@@ -690,12 +690,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                       <tr>
-                                                          <th className='tableh'>Product Code</th>
-                                                          <th className='tableh'>Product Name</th>
-                                                          <th className='tableh'>Category</th>
-                                                          <th className='tableh'>UOM</th>
-                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
                                                           <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
                                                           <th className='tableh'>Price</th>
                                                           <th className='tableh'></th>
                                                       </tr>
@@ -703,12 +701,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                       <tbody>
                                                               {suppProducts.map((data,i) =>(
                                                                 <tr key={i}>
-                                                                    <td>{data.product.product_code}</td>
-                                                                    <td>{data.product.product_name}</td>
-                                                                    <td>{data.product.category.category_name}</td>
-                                                                    <td>{data.product.product_unitMeasurement}</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
+                                                                    <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.product_price}</td>
                                                                     <td>                                                
                                                                       <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email)}>
@@ -743,12 +739,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                       <tr>
-                                                          <th className='tableh'>Product Code</th>
-                                                          <th className='tableh'>Product Name</th>
-                                                          <th className='tableh'>Category</th>
-                                                          <th className='tableh'>UOM</th>
-                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
                                                           <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
                                                           <th className='tableh'>Price</th>
                                                           <th className='tableh'></th>
                                                       </tr>
@@ -757,13 +751,11 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                              
                                                               {suppAssembly.map((data,i) =>(
                                                                 <tr key={i}>
-                                                                    <td>{data.assembly.assembly_code}</td>
-                                                                    <td>{data.assembly.assembly_name}</td>
-                                                                    <td>--</td>
-                                                                    <td>--</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
-                                                                    <td>{data.supplier_price}</td>
+                                                                    <td>{data.supplier.supplier_email}</td>
+                                                                    <td>{data.product_price}</td>
                                                                     <td>                                                
                                                                       <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email)}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
@@ -796,12 +788,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                       <tr>
-                                                          <th className='tableh'>Product Code</th>
-                                                          <th className='tableh'>Product Name</th>
-                                                          <th className='tableh'>Category</th>
-                                                          <th className='tableh'>UOM</th>
-                                                          <th className='tableh'>Supplier</th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
                                                           <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
                                                           <th className='tableh'>Price</th>
                                                           <th className='tableh'></th>
                                                       </tr>
@@ -810,13 +800,11 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                              
                                                               {suppSpare.map((data,i) =>(
                                                                 <tr key={i}>
-                                                                    <td>{data.sparePart.spareParts_code}</td>
-                                                                    <td>{data.sparePart.spareParts_name}</td>
-                                                                    <td>--</td>
-                                                                    <td>--</td>
+                                                                    <td>{data.supplier.supplier_code}</td>
                                                                     <td>{data.supplier.supplier_name}</td>
                                                                     <td>{data.supplier.supplier_number}</td>
-                                                                    <td>{data.supplier_price}</td>
+                                                                    <td>{data.supplier.supplier_email}</td>
+                                                                    <td>{data.product_price}</td>
                                                                     <td>                                                
                                                                       <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email)}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
@@ -850,27 +838,23 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                               <table id='order2-listing'>
                                                       <thead>
                                                         <tr>
-                                                            <th className='tableh'>Product Code</th>
-                                                            <th className='tableh'>Product Name</th>
-                                                            <th className='tableh'>Category</th>
-                                                            <th className='tableh'>UOM</th>
-                                                            <th className='tableh'>Supplier</th>
-                                                            <th className='tableh'>Contact</th>
-                                                            <th className='tableh'>Price</th>
-                                                            <th className='tableh'></th>
+                                                          <th className='tableh'>Supplier Code</th>
+                                                          <th className='tableh'>Supplier Name</th>
+                                                          <th className='tableh'>Contact</th>
+                                                          <th className='tableh'>Email</th>
+                                                          <th className='tableh'>Price</th>
+                                                          <th className='tableh'></th>
                                                         </tr>
                                                       </thead>
                                                       <tbody>
                                                              
                                                       {suppSubpart.map((data,i) =>(
                                                         <tr key={i}>
-                                                            <td>{data.subPart.subPart_code}</td>
-                                                            <td>{data.subPart.subPart_name}</td>
-                                                            <td>--</td>
-                                                            <td>{data.subPart.subPart_unitMeasurement}</td>
+                                                            <td>{data.supplier.supplier_code}</td>
                                                             <td>{data.supplier.supplier_name}</td>
                                                             <td>{data.supplier.supplier_number}</td>
-                                                            <td>{data.supplier_price}</td>
+                                                            <td>{data.supplier.supplier_email}</td>
+                                                            <td>{data.product_price}</td>
                                                             <td>                                                
                                                               <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email)}>
                                                                 <PlusCircle size={22} color="#0d0d0d" weight="light"/>
