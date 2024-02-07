@@ -13,7 +13,7 @@ import NoAccess from '../../../assets/image/NoAccess.png';
 import Col from 'react-bootstrap/Col';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import subwarehouse from "../../../assets/global/subwarehouse";
+// import subwarehouse from "../../../assets/global/subwarehouse";
 import {
     ArrowCircleLeft,
     Plus,
@@ -47,14 +47,18 @@ function CreateStockTransfer({authrztn}) {
   const [fetchSubPart, setFetchSubPart] = useState([]);
 
   const [selectedWarehouse, setSelectedWarehouse] = useState('');
-
+  const [isSelected, setIsSelected] = useState(false);
 
   const [col_id, setSelect_Masterlist] = useState([]);
   const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.target.value);};
-  const handleFormSourceWarehouse = (event) => { setSelectedWarehouse(event.target.value)};
+  const handleFormSourceWarehouse = (event) => { 
+    setSelectedWarehouse(event.target.value)
+    setIsSelected(true)
+  };
   const handleFormDestinationWarehouse = (event) => { setDestination(event.target.value)};
 
   const [masterList, setMasteList] = useState([]); 
+
   useEffect(() => {
     const delay = setTimeout(() => {
     axios.get(BASE_URL + '/masterList/masterTable')
@@ -71,86 +75,99 @@ function CreateStockTransfer({authrztn}) {
 return () => clearTimeout(delay);
 }, []);
 
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/inventory/fetchInvetory_product_warehouse', {
-      params: {
-        warehouse: selectedWarehouse,
-      },
+const [warehouse, setWarehouse] = useState([]); 
+useEffect(() => {
+  axios
+    .get(BASE_URL + "/warehouses/fetchtableWarehouses")
+    .then((response) => {
+      setWarehouse(response.data);
+      console.log(response.data)
     })
-      .then(res => {
-        setFetchProduct(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-    }, 1000);
-
-return () => clearTimeout(delay);
-}, [selectedWarehouse]);
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/inventory/fetchInvetory_assembly_warehouse', {
-      params: {
-        warehouse: selectedWarehouse,
-      },
-    })
-      .then(res => {
-        setFetchAssembly(res.data)
-      setIsLoading(false);
-    })
-    .catch((err) => {
-      console.log(err);
-      setIsLoading(false);
+    .catch((error) => {
+      console.error("Error fetching roles:", error);
     });
-  }, 1000);
+}, []);
 
-return () => clearTimeout(delay);
-}, [selectedWarehouse]);
 
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/inventory/fetchInvetory_spare_warehouse', {
-      params: {
-        warehouse: selectedWarehouse,
-      },
-    })
-      .then(res => {
-        setFetchSpare(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-    }, 1000);
+//   useEffect(() => {
+//     const delay = setTimeout(() => {
+//     axios.get(BASE_URL + '/inventory/fetchInvetory_product_warehouse', {
+//       params: {
+//         warehouse: selectedWarehouse,
+//       },
+//     })
+//       .then(res => {
+//         setFetchProduct(res.data)
+//         setIsLoading(false);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         setIsLoading(false);
+//       });
+//     }, 1000);
 
-return () => clearTimeout(delay);
-}, [selectedWarehouse]);
+// return () => clearTimeout(delay);
+// }, [selectedWarehouse]);
 
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/inventory/fetchInvetory_subpart_warehouse', {
-      params: {
-        warehouse: selectedWarehouse,
-      },
-    })
-      .then(res => {
-        setFetchSubPart(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-    }, 1000);
+//   useEffect(() => {
+//     const delay = setTimeout(() => {
+//     axios.get(BASE_URL + '/inventory/fetchInvetory_assembly_warehouse', {
+//       params: {
+//         warehouse: selectedWarehouse,
+//       },
+//     })
+//       .then(res => {
+//         setFetchAssembly(res.data)
+//       setIsLoading(false);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       setIsLoading(false);
+//     });
+//   }, 1000);
 
-return () => clearTimeout(delay);
-}, [selectedWarehouse]);
+// return () => clearTimeout(delay);
+// }, [selectedWarehouse]);
+
+//   useEffect(() => {
+//     const delay = setTimeout(() => {
+//     axios.get(BASE_URL + '/inventory/fetchInvetory_spare_warehouse', {
+//       params: {
+//         warehouse: selectedWarehouse,
+//       },
+//     })
+//       .then(res => {
+//         setFetchSpare(res.data)
+//         setIsLoading(false);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         setIsLoading(false);
+//       });
+//     }, 1000);
+
+// return () => clearTimeout(delay);
+// }, [selectedWarehouse]);
+
+//   useEffect(() => {
+//     const delay = setTimeout(() => {
+//     axios.get(BASE_URL + '/inventory/fetchInvetory_subpart_warehouse', {
+//       params: {
+//         warehouse: selectedWarehouse,
+//       },
+//     })
+//       .then(res => {
+//         setFetchSubPart(res.data)
+//         setIsLoading(false);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         setIsLoading(false);
+//       });
+//     }, 1000);
+
+// return () => clearTimeout(delay);
+// }, [selectedWarehouse]);
   
 
 const add = async (e) => {
@@ -241,7 +258,7 @@ useEffect(() => {
 
   setAddProductbackend(serializedProducts);
 
-  console.log("Selected Products:", serializedProducts);
+  // console.log("Selected Products:", serializedProducts);
   
 }, [inputValues, product]);
 
@@ -280,7 +297,7 @@ function formatDatetime(datetime) {
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Transfer Stock
+                      Transfer Stock
                     </h1>
                 </div>
                     <p1>Purchasing please purchase the following item enumerated below </p1>
@@ -305,7 +322,7 @@ function formatDatetime(datetime) {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                               <Form.Label style={{ fontSize: '20px' }}>Source: </Form.Label>   
-                                  <Form.Select 
+                                  {/* <Form.Select 
                                       aria-label=""
                                       required
                                       style={{ height: '40px', fontSize: '15px' }}
@@ -320,13 +337,31 @@ function formatDatetime(datetime) {
                                             {name}
                                         </option>
                                         ))}
+                                    </Form.Select> */}
+
+                                    <Form.Select
+                                      aria-label=""
+                                      onChange={handleFormSourceWarehouse}
+                                      required
+                                      style={{ height: "40px", fontSize: "15px" }}
+                                      defaultValue="">
+                                      <option disabled value="">
+                                        Select Site ...
+                                      </option>
+                                      {warehouse.map((warehouse) => (
+                                        <option
+                                          key={warehouse.id}
+                                          value={warehouse.id}>
+                                          {warehouse.warehouse_name}
+                                        </option>
+                                      ))}
                                     </Form.Select>
                               </Form.Group>
                                 </div>
                                 <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                               <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
-                                  <Form.Select 
+                                  {/* <Form.Select 
                                       aria-label=""
                                       required
                                       style={{ height: '40px', fontSize: '15px' }}
@@ -341,6 +376,23 @@ function formatDatetime(datetime) {
                                             {name}
                                         </option>
                                         ))}
+                                    </Form.Select> */}
+                                    <Form.Select
+                                      aria-label=""
+                                      onChange={handleFormDestinationWarehouse}
+                                      required
+                                      style={{ height: "40px", fontSize: "15px" }}
+                                      defaultValue="">
+                                      <option disabled value="">
+                                        Select Site ...
+                                      </option>
+                                      {warehouse.map((warehouse) => (
+                                        <option
+                                          key={warehouse.id}
+                                          value={warehouse.id}>
+                                          {warehouse.warehouse_name}
+                                        </option>
+                                      ))}
                                     </Form.Select>
                               </Form.Group>
                                 </div>
@@ -523,6 +575,7 @@ function formatDatetime(datetime) {
                                         </div>
                                       )}
                                             <div className="item">
+                                              {isSelected && (
                                                 <div className="new_item">
                                                     <button type="button" onClick={displayDropdown}>
                                                       <span style={{marginRight: '4px'}}>
@@ -530,6 +583,8 @@ function formatDatetime(datetime) {
                                                       <Plus size={20} /> New Item
                                                     </button>
                                                 </div>
+                                              )}
+                                                
                                             </div>
                                     </table>
                                 </div>

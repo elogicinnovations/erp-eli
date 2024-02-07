@@ -135,7 +135,7 @@ useEffect(() => {
   const handleCancel = async (id) => {
     swal({
       title: "Are you sure?",
-      text: "You are about to cancel the request",
+      text: "You are about to set as re-canvass. This cannot be recover",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -150,8 +150,8 @@ useEffect(() => {
            
            if (response.status === 200) {
              swal({
-               title: 'Cancelled Successfully',
-               text: 'The Request is cancelled successfully',
+               title: 'Updated Successfully',
+               text: 'The Request is set to re-canvass successfully',
                icon: 'success',
                button: 'OK'
              }).then(() => {
@@ -193,8 +193,8 @@ useEffect(() => {
     }).then(async (approve) => {
       if (approve) {
         try {       
-            const  response = await axios.post(BASE_URL + `/PR_PO/approve_PO`, {
-             id
+            const  response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
+             id, POarray
            });
            
            if (response.status === 200) {
@@ -431,19 +431,27 @@ useEffect(() => {
                         </div>
                         <div className="table-containss">
                             <div className="main-of-all-tables">
-                            {POarray.map((group) => (
-                              <div key={group.title} className='border border-warning m-3 mb-4 p-3'>
-                                <h3>{group.title}</h3>
-                                {group.items.map((item, index) => (
-                                  <div key={index}>
-                                    <h3>{`Quantity: ${item.quantity}`}</h3>
-                                    {/* Add more properties as needed */}
-                                  </div>
-                                ))}
-                              </div>
-                            ))}
-
-
+                              {POarray.map((group) => (
+                                <div key={group.title} className='border border-warning m-3 mb-4 p-3'>
+                                  <h3>{`PO Number: ${group.title}`}</h3>
+                                  {group.items.length > 0 && (
+                                    <>
+                                      <h3>{`Supplier: ${group.items[0].suppliers.supplier_code}`}</h3>
+                                    </>
+                                  )}
+                                  {group.items.map((item, index) => (
+                                    <div  key={index}>
+                                      
+                                      <p className='fs-5 fw-bold'>
+                                        {`Product Code: ${item.supp_tag.code} Product Name: ${item.supp_tag.name}`}
+                                      </p>
+                                      <p className='fs-5 fw-bold'>
+                                        {`Quantity: ${item.item.quantity}`}
+                                      </p>                               
+                                    </div>
+                                  ))}
+                                </div>
+                              ))}
                             </div>
                         </div>
                         <div className='save-cancel'>
@@ -462,7 +470,8 @@ useEffect(() => {
                           className='btn btn-success' 
                           size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
                           onClick={() => handleApprove(id)}
-                          >Approve
+                        >
+                          Approve
                         </Button>    
 
                                              

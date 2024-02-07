@@ -73,7 +73,7 @@ router.post('/rejustify', upload.array('files'), async (req, res) => {
       
       const PR_historical = await PR_history.create({
         pr_id: id,
-        status: 'For-Rejustify',
+        status: 'For-Rejustify (PO)',
         remarks: remarks
       });
 
