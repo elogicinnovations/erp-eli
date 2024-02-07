@@ -27,43 +27,14 @@ import { jwtDecode } from "jwt-decode";
 function CostCenter({ authrztn }) {
   const [CostCenter, setCostCenter] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [name, setName] = useState("");
+  const [select_masterlist, setSelect_Masterlist] = useState([]);
+  const [description, setDescription] = useState("");
 
-  // const [showDropdown, setShowDropdown] = useState(false);
-  // const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  // const [rotatedIcons, setRotatedIcons] = useState(
-  //   Array(CostCenter.length).fill(false)
-  // );
-  // const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-
-  // const toggleDropdown = (event, index) => {
-  //   // Check if the clicked icon is already open, close it
-  //   if (index === openDropdownIndex) {
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = !newRotatedIcons[index];
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(false);
-  //     setOpenDropdownIndex(null);
-  //   } else {
-  //     // If a different icon is clicked, close the currently open dropdown and open the new one
-  //     setRotatedIcons(Array(CostCenter.length).fill(false));
-  //     const iconPosition = event.currentTarget.getBoundingClientRect();
-  //     setDropdownPosition({
-  //       top: iconPosition.bottom + window.scrollY,
-  //       left: iconPosition.left + window.scrollX,
-  //     });
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = true;
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(true);
-  //     setOpenDropdownIndex(index);
-  //   }
-  // };
-
-  // Fetch Data
+  const [validated, setValidated] = useState(false);
+  const [status, setStatus] = useState("Active");
+  const [visibleButtons, setVisibleButtons] = useState({});
+  const [isVertical, setIsVertical] = useState({});
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
@@ -149,8 +120,7 @@ function CostCenter({ authrztn }) {
     });
   };
 
-  const [visibleButtons, setVisibleButtons] = useState({});
-  const [isVertical, setIsVertical] = useState({});
+
 
   const toggleButtons = (userId) => {
     setVisibleButtons((prevVisibleButtons) => {
@@ -171,7 +141,6 @@ function CostCenter({ authrztn }) {
 
     setIsVertical((prevIsVertical) => {
       const updateVertical = { ...prevIsVertical };
-
       Object.keys(updateVertical).forEach((key) => {
         if (key !== userId) {
           updateVertical[key] = false;
@@ -180,7 +149,6 @@ function CostCenter({ authrztn }) {
 
       // Toggle buttons for the clicked item
       updateVertical[userId] = !prevIsVertical[userId];
-
       return updateVertical;
     });
   };
@@ -194,12 +162,6 @@ function CostCenter({ authrztn }) {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-  //search
-  useEffect(() => {
-    if (CostCenter.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [CostCenter]);
 
   //date format
   function formatDatetime(datetime) {
@@ -213,12 +175,7 @@ function CostCenter({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  const [name, setName] = useState("");
-  const [select_masterlist, setSelect_Masterlist] = useState([]);
-  const [description, setDescription] = useState("");
 
-  const [validated, setValidated] = useState(false);
-  const [status, setStatus] = useState("Active");
 
   // ----------------------------------Start Get  Master List------------------------------//
   const [masterList, setMasteList] = useState([]);
@@ -237,9 +194,7 @@ function CostCenter({ authrztn }) {
     setSelect_Masterlist(event.target.value);
   };
 
-  // ----------------------------------End Get  Master List------------------------------//
 
-  // ----------------------------------Start Add new Cost center------------------------------//
   const add = async (e) => {
     e.preventDefault();
 
@@ -262,48 +217,33 @@ function CostCenter({ authrztn }) {
           status,
         })
         .then((res) => {
-          console.log(res);
           if (res.status === 200) {
-            SuccessInserted(res);
-            reloadTable();
+            swal({
+              title: "Cost Center Add Successful!",
+              text: "The Cost Center has been Added Successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              reloadTable();
+              handleClose();
+            });
           } else if (res.status === 201) {
-            Duplicate_Message();
+            swal({
+              title: "Cost Center is Already Exist",
+              text: "Please Input a New Cost Center ",
+              icon: "error",
+            });
           } else {
-            ErrorInserted();
+            swal({
+              title: "Something went wrong",
+              text: "Please Contact our Support",
+              icon: "error",
+              button: "OK",
+            });
           }
         });
     }
     setValidated(true); //for validations
-  };
-  // ----------------------------------End Add new Cost center------------------------------//
-
-
-  // ----------------------------------Validation------------------------------//
-  const SuccessInserted = (res) => {
-    swal({
-      title: "Cost Center Add Successful!",
-      text: "The Cost Center has been Added Successfully.",
-      icon: "success",
-      button: "OK",
-    }).then(() => {
-      // navigate("/costCenter");
-      handleClose();
-    });
-  };
-  const Duplicate_Message = () => {
-    swal({
-      title: "Cost Center is Already Exist",
-      text: "Please Input a New Cost Center ",
-      icon: "error",
-    });
-  };
-  const ErrorInserted = () => {
-    swal({
-      title: "Something went wrong",
-      text: "Please Contact our Support",
-      icon: "error",
-      button: "OK",
-    });
   };
 
   const handleActiveStatus = (e) => {
@@ -313,28 +253,15 @@ function CostCenter({ authrztn }) {
       setStatus("Active");
     }
   };
-  // --
-  // const [authrztn, setauthrztn] = useState([]);
-  // useEffect(() => {
 
-  //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
-  //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-  //     .then((res) => {
-  //       if(res.status === 200){
-  //         setauthrztn(res.data.col_authorization);
-  //       }
-  //   })
-  //     .catch((err) => {
-  //       console.error(err);
-  //   });
-
-  // }, [authrztn]);
+  useEffect(() => {
+    if (CostCenter.length > 0) {
+      $("#order-listing").DataTable();
+    }
+  }, [CostCenter]);
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -532,48 +459,51 @@ function CostCenter({ authrztn }) {
             </h3>
           </div>
         )
-              )}
+      )}
       </div>
 
-      <Modal show={showModal} onHide={handleClose}>
+      <Modal       
+        show={showModal} 
+        onHide={handleClose}
+        backdrop="static"
+         keyboard={false}
+          size="lg">
         <Modal.Header>
-          <Modal.Title>
-            <Row>
-              <Col>
-                <h1>Create Cost Center</h1>
-              </Col>
-              <Col>
-                <div className="form-group d-flex flex-row justify-content-center align-items-center">
+          <Modal.Title
+          style={{fontSize: '24px',
+          fontFamily: 'Poppins, Source Sans Pro'}}>
+               <div className="costtoggleandtitle">
+               <h1>Create Cost Center</h1>
+
+                <div className="toggleStats">
                   <label
-                    className="userstatus"
-                    style={{ fontSize: 15, marginRight: 10 }}>
-                    Active Status
-                  </label>
-                  <input
-                    type="checkbox"
-                    name="cstatus"
-                    className="toggle-switch" // Add the custom class
-                    onChange={handleActiveStatus}
-                    defaultChecked={status}
-                  />
+                        style={{ fontSize: 15}}>
+                        Active Status
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="cstatus"
+                        className="toggle-switch" // Add the custom class
+                        onChange={handleActiveStatus}
+                        defaultChecked={status}
+                      />
                 </div>
-              </Col>
-            </Row>
+               </div>
+
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {" "}
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="row mt-3">
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Cost Center:{" "}
+                  <Form.Label style={{ fontSize: "20px", fontFamily: 'Poppins, Source Sans Pro' }}>
+                    Cost Center:
                   </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter name"
-                    style={{ height: "40px", fontSize: "15px" }}
+                    style={{ height: "40px", fontSize: "15px", fontFamily: 'Poppins, Source Sans Pro' }}
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
@@ -582,13 +512,13 @@ function CostCenter({ authrztn }) {
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Assign User:{" "}
+                    Assign User:
                   </Form.Label>
                   <Form.Select
                     aria-label=""
                     onChange={handleFormChangeMasterList}
                     required
-                    style={{ height: "40px", fontSize: "15px" }}
+                    style={{ height: "40px", fontSize: "15px", fontFamily: 'Poppins, Source Sans Pro' }}
                     defaultValue="">
                     <option disabled value="">
                       Select User
@@ -609,8 +539,15 @@ function CostCenter({ authrztn }) {
                 </Form.Label>
                 <Form.Control
                   as="textarea"
-                  placeholder="Enter details name"
-                  style={{ height: "100px", fontSize: "15px" }}
+                  rows={3}
+                  style={{
+                  fontFamily: 'Poppins, Source Sans Pro',
+                  fontSize: "16px",
+                  height: "200px",
+                  maxHeight: "200px",
+                  resize: "none",
+                  overflowY: "auto",
+                  }}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Form.Group>
@@ -621,7 +558,9 @@ function CostCenter({ authrztn }) {
                 type="submit"
                 className="btn btn-warning"
                 size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
+                style={{ fontSize: "20px",
+                fontFamily: 'Poppins, Source Sans Pro',
+                margin: "0px 5px"}}>
                 Save
               </Button>
               <Button
@@ -630,7 +569,9 @@ function CostCenter({ authrztn }) {
                 }}
                 className="btn btn-secondary btn-md"
                 size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
+                style={{ fontSize: "20px",
+                fontFamily: 'Poppins, Source Sans Pro',
+                margin: "0px 5px"}}>
                 Close
               </Button>
             </div>

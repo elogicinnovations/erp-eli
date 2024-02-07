@@ -37,7 +37,7 @@ const navigate = useNavigate()
     const [subpart, setSubpart] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
-
+    const [warehouseInv, setwarehouseInv] = useState([]);
 
     
 
@@ -121,19 +121,6 @@ const navigate = useNavigate()
     const [returned_subpart, setReturned_subpart] = useState([]);
 
     const reloadTable_return = () => {
-      // axios.get(BASE_URL + '/issuedReturn/getReturn',{
-      //   params: {
-      //     id: id
-      //   }
-      // })
-      // .then(res => {
-      //   setReturned_prd(res.data);
-      // })
-      // .catch(err => {
-      //   console.error(err);
-      //   // Handle error state or show an error message to the user
-      // });
-
       axios.get(BASE_URL + '/issuedReturn/fetchReturn')
       .then(res => {
         setReturned_prd(res.data.product);
@@ -160,26 +147,27 @@ const navigate = useNavigate()
         dangerMode: true,
       }).then((confirmed) => {
         if (confirmed) {
-          const types = type   
-          const invetory_id = inventoryID         
-          const table_quantity = quantity
-          const primary_id = prmy_id
-          // If confirmed, make the API call to move to inventory
-          axios.post(BASE_URL + '/issuedReturn/moveToInventory',{
-            invetory_id, table_quantity, primary_id, types
-          })
-            .then(() => {
-              swal('Success!', 'Item moved to inventory successfully!', 'success')
-                .then(() => {
-                  reloadTable_return()
-                  reloadTable_inventory()
-                });
-            })
-            .catch(err => {
-              console.log(err);
-              // Show error SweetAlert if the API call fails
-              swal('Error!', 'Failed to move item to inventory. Please try again.', 'error');
-            });
+          console.log(type)
+          // const types = type   
+          // const invetory_id = inventoryID         
+          // const table_quantity = quantity
+          // const primary_id = prmy_id
+          // // If confirmed, make the API call to move to inventory
+          // axios.post(BASE_URL + '/issuedReturn/moveToInventory',{
+          //   invetory_id, table_quantity, primary_id, types
+          // })
+          //   .then(() => {
+          //     swal('Success!', 'Item moved to inventory successfully!', 'success')
+          //       .then(() => {
+          //         reloadTable_return()
+          //         reloadTable_inventory()
+          //       });
+          //   })
+          //   .catch(err => {
+          //     console.log(err);
+          //     // Show error SweetAlert if the API call fails
+          //     swal('Error!', 'Failed to move item to inventory. Please try again.', 'error');
+          //   });
         }
       });
     };
@@ -216,73 +204,6 @@ const navigate = useNavigate()
       });
   };
 
-
-
-    // Artificial Data
-
-    // const [showDropdown, setShowDropdown] = useState(false);
-    // const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-
-    // const [showModal, setShowModal] = useState(false);
-    // const handleShow = () => setShowModal(true);
-    // const [validated, setValidated] = useState(false);
-
-    // const handleClose = () => {
-    //   setShowModal(false);
-    // };
-
-  // useEffect(() => {
-  //   // Close dropdown when the component unmounts or when another tab is selected
-  //   return () => setShowDropdown(false);
-  // }, []);
-
-  // const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  // const [rotatedIcons, setRotatedIcons] = useState(Array(inventory.length).fill(false));
-
-  // const toggleDropdown = (event, index) => {
-  //   // Check if the clicked icon is already open, close it
-  //   if (index === openDropdownIndex) {
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = !newRotatedIcons[index];
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(false);
-  //     setOpenDropdownIndex(null);
-  //   } else {
-  //     // If a different icon is clicked, close the currently open dropdown and open the new one
-  //     setRotatedIcons(Array(inventory.length).fill(false));
-  //     const iconPosition = event.currentTarget.getBoundingClientRect();
-  //     setDropdownPosition({
-  //       top: iconPosition.bottom + window.scrollY,
-  //       left: iconPosition.left + window.scrollX,
-  //     });
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = true;
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(true);
-  //     setOpenDropdownIndex(index);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // Close dropdown when clicking outside
-  //   const handleClickOutside = (event) => {
-  //     if (showDropdown && !event.target.closest('.dots-icon')) {
-  //       setRotatedIcons(Array(inventory.length).fill(false));
-  //       setShowDropdown(false);
-  //       setOpenDropdownIndex(null);
-  //     }
-  //   };
-
-  //   document.addEventListener('click', handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener('click', handleClickOutside);
-  //   };
-  // }, [showDropdown]);
 
   useEffect(() => {
     // Initialize DataTable when role data is available
@@ -327,9 +248,6 @@ const navigate = useNavigate()
 
     return (
         <div className="main-of-containers">
-            {/* <div className="left-of-main-containers">
-            <Sidebar />
-            </div> */}
                 <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -339,30 +257,6 @@ const navigate = useNavigate()
               ) : (
                 authrztn.includes('Inventory - View') ? (
                     <div className="right-body-contentss">
-
-                    {/* <div className="settings-search-master">
-
-                        <div className="dropdown-and-iconics">
-                            <div className="dropdown-side">
-
-                            </div>
-                            <div className="iconic-side">
-                                <div className="gearsides">
-                                    <Gear size={35}/>
-                                </div>
-                                <div className="bellsides">
-                                    <Bell size={35}/>
-                                </div>
-                                <div className="usersides">
-                                    <UserCircle size={35}/>
-                                </div>
-                                <div className="username">
-                                <h3>User Name</h3>
-                                </div>
-                            </div>
-                        </div>
-
-                        </div> */}
                         <div className="tabbutton-sides">
                             <Tabs
                                 activeKey={activeTab}
@@ -386,7 +280,7 @@ const navigate = useNavigate()
                                                         <th className='tableh'>Manufacturer</th>
                                                         <th className='tableh'>Quantity</th>
                                                         <th className='tableh'>Warehouse</th>
-                                                        <th className='tableh'>Cost per Item</th>
+                                                        <th className='tableh'>Cost Item</th>
                                                         <th className='tableh'>Total Cost</th>
                                                     </tr>
                                                     </thead>
@@ -399,7 +293,7 @@ const navigate = useNavigate()
                                                             <td>{data.product_tag_supplier.supplier.supplier_name}</td>
                                                             <td>{data.product_tag_supplier.product.manufacturer.manufacturer_name}</td>
                                                             <td>{data.quantity}</td>
-                                                            <td>{data.warehouse}</td>
+                                                            <td>{data.warehouse.warehouse_name}</td>
                                                             <td>{data.product_tag_supplier.product_price}</td>
                                                             <td>{data.product_tag_supplier.product_price * data.quantity}</td>
 
@@ -413,7 +307,7 @@ const navigate = useNavigate()
                                                               <td>{data.assembly_supplier.supplier.supplier_name}</td>
                                                               <td>{data.assembly_supplier.assembly.manufacturer.manufacturer_name}</td>
                                                               <td>{data.quantity}</td>
-                                                              <td>{data.warehouse}</td>
+                                                              <td>{data.warehouse.warehouse_name}</td>
                                                               <td>{data.assembly_supplier.supplier_price}</td>
                                                               <td>{data.assembly_supplier.supplier_price * data.quantity}</td>
 
@@ -427,7 +321,7 @@ const navigate = useNavigate()
                                                               <td>{data.sparepart_supplier.supplier.supplier_name}</td>
                                                               <td>{data.sparepart_supplier.sparePart.manufacturer.manufacturer_name}</td>
                                                               <td>{data.quantity}</td>
-                                                              <td>{data.warehouse}</td>
+                                                              <td>{data.warehouse.warehouse_name}</td>
                                                               <td>{data.sparepart_supplier.supplier_price}</td>
                                                               <td>{data.sparepart_supplier.supplier_price * data.quantity}</td>
 
@@ -441,7 +335,7 @@ const navigate = useNavigate()
                                                               <td>{data.subpart_supplier.supplier.supplier_name}</td>
                                                               <td>{data.subpart_supplier.subPart.manufacturer.manufacturer_name}</td>
                                                               <td>{data.quantity}</td>
-                                                              <td>{data.warehouse}</td>
+                                                              <td>{data.warehouse.warehouse_name}</td>
                                                               <td>{data.subpart_supplier.supplier_price}</td>
                                                               <td>{data.subpart_supplier.supplier_price * data.quantity}</td>
 
@@ -481,7 +375,7 @@ const navigate = useNavigate()
                                     </div>
                                     <div className="table-containss">
                                         <div className="main-of-all-tables">
-                                            <table id='order1-listing'>
+                                            <table id='order1-listing' className="table-hover" title="View Information">
                                                     <thead>
                                                     <tr>
                                                         <th className='tableh'>Issuance ID</th>
@@ -504,14 +398,21 @@ const navigate = useNavigate()
                                                             <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.masterlist.col_Fname}</td>
                                                             <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{formatDatetime(data.createdAt)}</td>
                                                             <td>
-                                                              <button
-                                                                onClick={() => navigate(`/returnForm/${data.issuance_id}`)}
-                                                                style={{ fontSize: '12px' }}
-                                                                className='btn'
-                                                                disabled={data.status !== "Approved" || issuanceExpirationStatus[data.issuance_id]}
+                                                              <Button
+                                                                onClick={() => {
+                                                                  if (data.status === 'Approved') {
+                                                                    navigate(`/returnForm/${data.issuance_id}`);
+                                                                  }
+                                                                }}
+                                                                style={{
+                                                                  fontSize: '12px',
+                                                                  color: 'black',
+                                                                  cursor: data.status !== 'Approved' ? 'not-allowed' : 'pointer'
+                                                                }}
+                                                                variant="outline-secondary"
                                                               >
                                                                 Return
-                                                              </button>
+                                                              </Button>
                                                             </td>
                                                         </tr>
                                                         ))}

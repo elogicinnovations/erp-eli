@@ -183,9 +183,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
             name: row.inventory_assembly.assembly_supplier.assembly.assembly_name
           }));
           setIssuedAssembly(selectedSupplierOptions);
-          // setArrayDataProd(selectedSupplierOptions);
-
-          // console.log('21111111111111111111111111',selectedSupplierOptions)
         })
         .catch((err) => console.log(err));
     }, [id]);
@@ -259,9 +256,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
             name: row.inventory_spare.sparepart_supplier.sparePart.spareParts_name
           }));
           setIssuedSpare(selectedSupplierOptions);
-          // setArrayDataProd(selectedSupplierOptions);
-
-        
         })
         .catch((err) => console.log(err));
     }, [id]);
@@ -332,9 +326,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
             name: row.inventory_subpart.subpart_supplier.subPart.subPart_name
           }));
           setIssuedSubpart(selectedSupplierOptions);
-          // setArrayDataProd(selectedSupplierOptions);
-
-        
         })
         .catch((err) => console.log(err));
     }, [id]);
@@ -382,12 +373,8 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
   
             // Return the updatedInputs to be used as the new state
             return updatedInputs;
-  
-        })
-  
-      }
-
-
+        });
+      };
 
 
     const handleSubmit = async (e) => {
@@ -397,28 +384,22 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
       if (form.checkValidity() === false) {
         e.preventDefault();
         // e.stopPropagation();
-    
         swal({
           icon: 'error',
           title: 'Fields are required',
           text: 'Please fill the red text fields',
         });
       } else {
-        // Your existing code for form submission
-    
-        axios.post(`${BASE_URL}/issuedReturn/issueReturn`, null, {
-          params: {
+        axios.post(`${BASE_URL}/issuedReturn/issueReturn`, {
             issuance_id: id,
             return_remarks: remarks,
             arrayDataProdBackend,
             arrayDataAsmBackend,
             arrayDataSpareBackend,
             arrayDataSubpartBackend,
-            status: 'To be Return', // Set the status here
-          },
-        })
+            status: 'To be Return',
+         })
           .then((res) => {
-            // Handle the response as needed
             console.log(res);
             if (res.status === 200) {
               swal({
@@ -465,8 +446,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
           setDateCreated(createDate);
           const receiveDate = new Date(res.data[0].updatedAt);
           setDateReceived(receiveDate);
-
-  
       })
       .catch(err => {
         console.error(err);
@@ -474,10 +453,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
       });
     }, [id]);
     
-
-
-
-
 
     useEffect(() => {
       // Initialize DataTable when role data is available
@@ -488,9 +463,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
 
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
         <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -498,7 +470,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                   Loading Data...
                 </div>
               ) : (
-        authrztn.includes('Inventory - View') ? (
+            authrztn.includes('Inventory - View') ? (
             <div className="right-body-contents-a">
             <Row>
                 
@@ -545,12 +517,6 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                     <div className="created">
                                         Issued Date: <p1>{formatDatetime(dateCreated)}</p1>
                                     </div>
-                                    {/* <div className="created mt-3">
-                                        Date Received: <p1>{formatDatetime(dateReceived)}</p1>
-                                    </div> */}
-                                    {/* <div className="created mt-3">
-                                        Created By: <p1>--</p1>
-                                    </div> */}
                                 </div>
                                 <div className="col-2">
                                 </div>
@@ -594,16 +560,16 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                   <td>{data.name}</td>
                                                   <td>{data.quantity}</td>
                                                   <td>
-                                                    <input
+                                                    <Form.Control
                                                       type="number"
-                                                      value={quantityInputs[data.value] || "0"}
+                                                      value={quantityInputs[data.value]}
                                                       onChange={(e) => handleQuantityChange(e.target.value, data.value, data.quantity)}
                                                       // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
                                                       required
                                                       placeholder="Input quantity"
                                                       style={{
                                                         height: "40px",
-                                                        width: "120px",
+                                                        width: "130px",
                                                         fontSize: "15px",
                                                       }}
                                                       onKeyDown={(e) =>
@@ -622,16 +588,16 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                 <td>{data.name}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
-                                                  <input
+                                                  <Form.Control
                                                     type="number"
-                                                    value={quantityInputs_asm[data.value] || "0"}
+                                                    value={quantityInputs_asm[data.value]}
                                                     onChange={(e) => handleQuantityChange_asm(e.target.value, data.value, data.quantity)}
                                                     // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
                                                     required
                                                     placeholder="Input quantity"
                                                     style={{
                                                       height: "40px",
-                                                      width: "120px",
+                                                      width: "130px",
                                                       fontSize: "15px",
                                                     }}
                                                     onKeyDown={(e) =>
@@ -651,16 +617,16 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                 <td>{data.name}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
-                                                  <input
+                                                  <Form.Control
                                                     type="number"
-                                                    value={quantityInputs_spare[data.value] || "0"}
+                                                    value={quantityInputs_spare[data.value]}
                                                     onChange={(e) => handleQuantityChange_spare(e.target.value, data.value, data.quantity)}
                                                     // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
-                                                    
+                                                    required
                                                     placeholder="Input quantity"
                                                     style={{
                                                       height: "40px",
-                                                      width: "120px",
+                                                      width: "130px",
                                                       fontSize: "15px",
                                                     }}
                                                     onKeyDown={(e) =>
@@ -679,16 +645,16 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                 <td>{data.name}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
-                                                  <input
+                                                  <Form.Control
                                                     type="number"
-                                                    value={quantityInputs_subpart[data.value] || "0"}
+                                                    value={quantityInputs_subpart[data.value]}
                                                     onChange={(e) => handleQuantityChange_subpart(e.target.value, data.value, data.quantity)}
                                                     // onChange={(e) => handleQuantityChange(e.target.value, 'asm', i)}
                                                     required
                                                     placeholder="Input quantity"
                                                     style={{
                                                       height: "40px",
-                                                      width: "120px",
+                                                      width: "130px",
                                                       fontSize: "15px",
                                                     }}
                                                     onKeyDown={(e) =>
@@ -705,20 +671,26 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                             </div>
                         </div>
                         
-                        <div className='save-cancel'>
-                        <Button type='submit'  className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
+                      
+                      <div className='save-cancel'>
+                        <Button type='submit' 
+                          className='btn btn-warning' 
+                          size="md" 
+                          style={{ fontSize: '20px', margin: '0px 5px' }}>
+                          Save
+                        </Button>
                         <Link to="/inventory"  
                               onClick={() => handleTabClick("issuance")} 
                               className='btn btn-secondary btn-md' 
                               size="md" 
-                              style={{ fontSize: '20px', margin: '0px 5px'  }}
-                        >
-                            Cancel
+                              style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                          Cancel
                         </Link>
-                        </div>
-                        </Form>
+                      </div>
+                      
+                    </Form>
                        
-            </div>
+              </div>
         ) : (
           <div className="no-access">
             <img src={NoAccess} alt="NoAccess" className="no-access-img"/>

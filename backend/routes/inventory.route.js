@@ -5,7 +5,8 @@ const sequelize = require('../db/config/sequelize.config');
 const { Inventory, Inventory_Assembly, Inventory_Spare, 
         Inventory_Subpart, Product, ProductTAGSupplier, 
         Assembly_Supplier, SparePart_Supplier, Subpart_supplier, 
-        Manufacturer, BinLocation,  Category, Supplier, Assembly, SparePart, SubPart
+        Manufacturer, BinLocation,  Category, Supplier, Assembly, SparePart, SubPart,
+        Warehouses
       } = require('../db/models/associations')
 
 const session = require('express-session')
@@ -37,6 +38,9 @@ router.route('/fetchInventory').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
+      },{
+        model: Warehouses,
+        required: true
       }]
     });
 
@@ -59,6 +63,9 @@ router.route('/fetchInventory').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
+      },{
+        model: Warehouses,
+        required: true,
       }]
     });
 
@@ -81,6 +88,9 @@ router.route('/fetchInventory').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
+      }, {
+        model: Warehouses,
+        required: true,
       }]
     });
 
@@ -103,6 +113,9 @@ router.route('/fetchInventory').get(async (req, res) => {
               model: Supplier,
               required: true
             }],            
+      }, {
+        model: Warehouses,
+        required: true,
       }]
     });
 

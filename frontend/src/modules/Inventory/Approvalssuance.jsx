@@ -11,6 +11,9 @@ import Form from "react-bootstrap/Form";
 import subwarehouse from "../../assets/global/subwarehouse";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
+import {
+  ArrowCircleLeft
+} from "@phosphor-icons/react";
 
 const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
 
@@ -35,7 +38,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
   const [transportedBy, setTransportedBy] = useState();
   const [mrs, setMrs] = useState();
   const [remarks, setRemarks] = useState();
-
+  const [IssueStatus, setIssueStatus] = useState();
 
   const navigate = useNavigate()
 
@@ -58,6 +61,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
       setTransportedBy(res.data[0].transported_by)
       setMrs(res.data[0].mrs)
       setRemarks(res.data[0].remarks)
+      setIssueStatus(res.data[0].status)
       setIsLoading(false);
     })
     .catch((err) => {
@@ -157,9 +161,7 @@ return () => clearTimeout(delay);
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
+
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -168,8 +170,16 @@ return () => clearTimeout(delay);
                 </div>
               ) : (
         authrztn.includes('Inventory - Approval') ? (
-        <div className="right-body-contents-a">
-            <h1>Approval Issuance</h1>
+        <div className="right-body-contentss">
+                    <div className="arrowandtitle">
+              <Link to="/inventory">
+                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+              </Link>
+                  <div className="titletext">
+                      <h1>Approval Issuance</h1>
+                  </div>
+              </div>
+
             <div
               className="gen-info"
               style={{
@@ -360,7 +370,7 @@ return () => clearTimeout(delay);
             <div className="supplier-table">
               <div className="table-containss">
                 <div className="main-of-all-tables">
-                  <table>
+                  <table >
                     <thead>
                       <tr>
                         <th className="tableh">Product Code</th>
@@ -404,11 +414,8 @@ return () => clearTimeout(delay);
                       
                     </tbody>
                   </table>
-                </div>
-
-
-
-                <div className="save-cancel">
+                  {IssueStatus !== "Approved" && IssueStatus !== "Rejected" && (
+                  <div className="save-cancel">
                     <Button
                         type="submit"
                         className="btn btn-success"
@@ -427,16 +434,12 @@ return () => clearTimeout(delay);
                     >
                         Reject
                   </Button>
-
-                    {/* <Link
-                        to="/inventory"  onClick={() => handleTabClick("issuance")}
-                        className="btn btn-secondary btn-md"
-                        size="md"
-                        style={{ fontSize: "20px", margin: "0px 5px" }}
-                    >
-                        Close
-                    </Link> */}
                 </div>
+                  )}
+              </div>
+
+
+                
               </div>
             </div>
         </div>

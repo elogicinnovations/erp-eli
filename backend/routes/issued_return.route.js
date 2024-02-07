@@ -182,15 +182,9 @@ router.route('/issueReturn').post(async (req, res) => {
                 issuance_id, return_remarks, status, 
                 arrayDataProdBackend, arrayDataAsmBackend, 
                 arrayDataSpareBackend, arrayDataSubpartBackend
-            } = req.query;
-
-        // console.log("id", issuance_id)
-        // console.log("status", status)
-
-        // const arrayDataProdBackend = req.query.arrayDataProdBackend;
+            } = req.body;
 
         for (const product of arrayDataProdBackend) {       
-             
             await IssuedReturn.create({
                 issued_id: issuance_id,
                 inventory_id: product.inventory_id,
@@ -206,10 +200,7 @@ router.route('/issueReturn').post(async (req, res) => {
                 });
 
                 if (updateRecord) {
-                    // console.log("check",updateRecord.quantity - product.quantity)
-                    const updatedQuantity = updateRecord.quantity - product.quantity
-                    
-
+                  const updatedQuantity = updateRecord.quantity - product.quantity
                     await IssuedProduct.update(
                         {
                             quantity: updatedQuantity
@@ -221,56 +212,50 @@ router.route('/issueReturn').post(async (req, res) => {
                         }
                     )
                 };
-        }
+            }
 
 
 // ----------------------------------   assembly --------------------------------
 
+                for (const product of arrayDataAsmBackend) {        
+                    await IssuedReturn_asm.create({
+                        issued_id: issuance_id,
+                        inventory_id: product.inventory_id,
+                        quantity: product.quantity,
+                        status: status,
+                        remarks: return_remarks,
+                    });
 
-        for (const product of arrayDataAsmBackend) {        
-            await IssuedReturn_asm.create({
-                issued_id: issuance_id,
-                inventory_id: product.inventory_id,
-                quantity: product.quantity,
-                status: status,
-                remarks: return_remarks,
-            });
-
-                const updateRecord = await IssuedAssembly.findOne({
-                    where: {
-                        inventory_Assembly_id: product.inventory_id,
-                    },
-                });
-
-                if (updateRecord) {
-                    // console.log("check",updateRecord.quantity - product.quantity)
-                    const updatedQuantity = updateRecord.quantity - product.quantity
-                    
-
-                    await IssuedAssembly.update(
-                        {
-                            quantity: updatedQuantity
-                        },
-                        {
+                        const updateRecord = await IssuedAssembly.findOne({
                             where: {
-                                inventory_Assembly_id: product.inventory_id
+                                inventory_Assembly_id: product.inventory_id,
                             },
-                        }
-                    )
-                };
-        };
+                        });
 
-        // ----------------------------------   Spare part --------------------------------
+                        if (updateRecord) {
+                            const updatedQuantity = updateRecord.quantity - product.quantity
+                            await IssuedAssembly.update(
+                                {
+                                    quantity: updatedQuantity
+                                },
+                                {
+                                    where: {
+                                        inventory_Assembly_id: product.inventory_id
+                                    },
+                                }
+                            )
+                        };
+                    };
 
-
-        for (const product of arrayDataSpareBackend) {        
-            await IssuedReturn_spare.create({
-                issued_id: issuance_id,
-                inventory_id: product.inventory_id,
-                quantity: product.quantity,
-                status: status,
-                remarks: return_remarks,
-            });
+// ----------------------------------   Spare part --------------------------------
+                for (const product of arrayDataSpareBackend) {        
+                    await IssuedReturn_spare.create({
+                        issued_id: issuance_id,
+                        inventory_id: product.inventory_id,
+                        quantity: product.quantity,
+                        status: status,
+                        remarks: return_remarks,
+                    });
 
                 const updateRecord = await IssuedSpare.findOne({
                     where: {
@@ -279,10 +264,7 @@ router.route('/issueReturn').post(async (req, res) => {
                 });
 
                 if (updateRecord) {
-                    // console.log("check",updateRecord.quantity - product.quantity)
                     const updatedQuantity = updateRecord.quantity - product.quantity
-                    
-
                     await IssuedSpare.update(
                         {
                             quantity: updatedQuantity
@@ -294,12 +276,10 @@ router.route('/issueReturn').post(async (req, res) => {
                         }
                     )
                 };
-        };
+            };
 
 
-           // ----------------------------------   Subpart part --------------------------------
-
-
+// ----------------------------------   Subpart part --------------------------------
            for (const product of arrayDataSubpartBackend) {        
             await IssuedReturn_subpart.create({
                 issued_id: issuance_id,
@@ -309,17 +289,14 @@ router.route('/issueReturn').post(async (req, res) => {
                 remarks: return_remarks,
             });
 
-                const updateRecord = await IssuedSubpart.findOne({
-                    where: {
-                        inventory_Subpart_id: product.inventory_id,
-                    },
-                });
+            const updateRecord = await IssuedSubpart.findOne({
+                where: {
+                    inventory_Subpart_id: product.inventory_id,
+                },
+            });
 
                 if (updateRecord) {
-                    // console.log("check",updateRecord.quantity - product.quantity)
                     const updatedQuantity = updateRecord.quantity - product.quantity
-                    
-
                     await IssuedSubpart.update(
                         {
                             quantity: updatedQuantity
@@ -331,11 +308,8 @@ router.route('/issueReturn').post(async (req, res) => {
                         }
                     )
                 };
-        };
+            };
 
-
-
-        // Send a response back to the client
         res.status(200).json({ message: 'Data saved successfully'});
     } catch (err) {
         console.error(err);

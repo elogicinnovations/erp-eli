@@ -279,6 +279,8 @@ MasterList.hasMany(IssuedReturn_subpart, { foreignKey: "return_by" });
 IssuedReturn_subpart.belongsTo(MasterList, { foreignKey: "return_by" });
 
 
+Warehouses.hasMany(Issuance, { foreignKey: "from_site" });
+Issuance.belongsTo(Warehouses, { foreignKey: "from_site" });
 
 
 

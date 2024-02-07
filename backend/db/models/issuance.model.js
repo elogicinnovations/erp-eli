@@ -9,9 +9,8 @@ const Issuance = sequelize.define('issuance', {
     autoIncrement: true,
   },
   from_site: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
-    unique: false,
   }, 
   issued_to: {
     type: DataTypes.INTEGER,

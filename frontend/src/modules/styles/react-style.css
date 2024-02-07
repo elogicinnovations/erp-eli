@@ -2550,6 +2550,20 @@ button.move_btn {
   color: white;
 }
 
+.costtoggleandtitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 720px;
+}
+
+.toggleStats {
+  display: flex;
+  margin-left: 45%;
+}
+
+
+
 .res-warehouse {
   padding: 5px 10px;
   width: fit-content;

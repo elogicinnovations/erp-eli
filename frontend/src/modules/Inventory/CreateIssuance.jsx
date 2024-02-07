@@ -9,7 +9,7 @@ import "../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/react-style.css";
 import Form from "react-bootstrap/Form";
-import subwarehouse from "../../assets/global/subwarehouse";
+// import subwarehouse from "../../assets/global/subwarehouse";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
@@ -33,6 +33,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const [addProduct, setAddProduct] = useState([]); // para sa pag ng product na e issue sa table
   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [quantityInputs, setQuantityInputs] = useState({});
+  const [fetchwarehouse, setFetchwarehouse] = useState([]);
 
   // assembly
   const [fetchAssembly, setFetchAssembly] = useState([]);
@@ -164,6 +165,14 @@ return () => clearTimeout(delay);
       .get(BASE_URL + "/inventory/fetchToIssueSubpart")
       .then((res) => setFetchSubpart(res.data))
       .catch((err) => console.log(err));
+  }, []);
+
+  //get warehouse
+  useEffect(() => {
+    axios
+    .get(BASE_URL + "/warehouses/fetchtableWarehouses")
+    .then((res) => setFetchwarehouse(res.data))
+    .catch((err) => console.log(err))
   }, []);
 
   //get MasterList
@@ -365,9 +374,9 @@ return () => clearTimeout(delay);
                     <option disabled selected value="">
                       Select Site
                     </option>
-                    {subwarehouse.map((name, index) => (
-                      <option key={index} value={name}>
-                        {name}
+                    {fetchwarehouse.map((ware, index) => (
+                      <option key={index} value={ware.id}>
+                        {ware.warehouse_name}
                       </option>
                     ))}
                   </Form.Select>
