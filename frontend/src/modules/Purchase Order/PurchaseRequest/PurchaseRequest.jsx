@@ -12,9 +12,7 @@ import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
-  Gear,
-  Bell,
-  UserCircle,
+  ClockCounterClockwise,
   Plus,
   CalendarBlank,
   XCircle,
@@ -190,11 +188,23 @@ function PurchaseRequest({ authrztn }) {
   }
 
   useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && allPR.length > 0) {
-      $("#order-listing").DataTable();
+    // Initialize DataTable when role data is available and allPR has changed
+    if ($("#order-listing").length > 0 && allPR.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
+      $('#order-listing').DataTable({
+        // Specify initial sorting order for the PR #. column
+        "order": [[ $('.pr-column').index(), 'desc' ]]
+      });
     }
   }, [allPR]);
+
+
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Function to toggle the visibility of the dropdown
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+  
 
   return (
     <div className="main-of-containers">
@@ -356,7 +366,7 @@ function PurchaseRequest({ authrztn }) {
               <table className="table-hover" id="order-listing">
                 <thead>
                   <tr>
-                    <th className="tableh">PR #.</th>
+                    <th className="pr-column">PR #.</th>
                     <th className="tableh">Requestor</th>
                     <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
@@ -365,75 +375,88 @@ function PurchaseRequest({ authrztn }) {
                   </tr>
                 </thead>
                 {filteredPR.length > 0 ? (
-                  <tbody>
+                  <tbody style={{display: 'table', width: '100%'}}>
                     {filteredPR.map((data, i) => (
-                      <tr key={i}>
-                        <td onClick={() => 
-                              data.status === 'For-Canvassing' ?
-                              navigate(`/forCanvass/${data.id}`) :   
-                              data.status === 'On-Canvass' ?
-                              navigate(`/onCanvass/${data.id}`) :                       
-                              navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                        >
-                          {data.pr_num}
-                        </td>
+                        <tr key={i}>
                           <td onClick={() => 
-                              data.status === 'For-Canvassing' ?
-                              navigate(`/forCanvass/${data.id}`) :   
-                              data.status === 'On-Canvass' ?
-                              navigate(`/onCanvass/${data.id}`) :                       
-                              navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                        >
-                          --
-                        </td>
-                        <td onClick={() => 
-                              data.status === 'For-Canvassing' ?
-                              navigate(`/forCanvass/${data.id}`) :   
-                              data.status === 'On-Canvass' ?
-                              navigate(`/onCanvass/${data.id}`) :                       
-                              navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                        >
-                          <p className="" style={{ fontSize: "12px" }}>
-                            {data.status}
-                          </p>
-                        </td>
-                        <td onClick={() => 
-                         data.status === 'For-Canvassing' ?
-                          navigate(`/forCanvass/${data.id}`) :   
-                          data.status === 'On-Canvass' ?
-                          navigate(`/onCanvass/${data.id}`) :                       
-                          navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                        >
-                          {formatDatetime(data.createdAt)}
-                        </td>
-                        <td onClick={() =>                      
-                              data.status === 'For-Canvassing' ?
-                              navigate(`/forCanvass/${data.id}`) :   
-                              data.status === 'On-Canvass' ?
-                              navigate(`/onCanvass/${data.id}`) :                       
-                              navigate(`/purchaseRequestPreview/${data.id}`)
-                            }                      
+                                data.status === 'For-Canvassing' ?
+                                navigate(`/forCanvass/${data.id}`) :   
+                                data.status === 'On-Canvass' ?
+                                navigate(`/onCanvass/${data.id}`) :                       
+                                navigate(`/purchaseRequestPreview/${data.id}`)
+                              }
                           >
-                          {data.remarks}
-                        </td>
-                        <td>
-                          {/* Cancel Button */}
-                          { authrztn.includes('PR - Reject') && (
-
-                          data.status !== "Cancelled" && data.status !== "For-Canvassing" && data.status !== "On-Canvass"  && data.status !== "Delivered") && (
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => CancelRequest(data.id, data.status)}
+                            {data.pr_num}
+                          </td>
+                            <td onClick={() => 
+                                data.status === 'For-Canvassing' ?
+                                navigate(`/forCanvass/${data.id}`) :   
+                                data.status === 'On-Canvass' ?
+                                navigate(`/onCanvass/${data.id}`) :                       
+                                navigate(`/purchaseRequestPreview/${data.id}`)
+                              }
+                          >
+                            --
+                          </td>
+                          <td onClick={() => 
+                                data.status === 'For-Canvassing' ?
+                                navigate(`/forCanvass/${data.id}`) :   
+                                data.status === 'On-Canvass' ?
+                                navigate(`/onCanvass/${data.id}`) :                       
+                                navigate(`/purchaseRequestPreview/${data.id}`)
+                              }
+                          >
+                            <p className="" style={{ fontSize: "12px" }}>
+                              {data.status}
+                            </p>
+                          </td>
+                          <td onClick={() => 
+                          data.status === 'For-Canvassing' ?
+                            navigate(`/forCanvass/${data.id}`) :   
+                            data.status === 'On-Canvass' ?
+                            navigate(`/onCanvass/${data.id}`) :                       
+                            navigate(`/purchaseRequestPreview/${data.id}`)
+                          }
+                          >
+                            {formatDatetime(data.createdAt)}
+                          </td>
+                          <td onClick={() =>                      
+                                data.status === 'For-Canvassing' ?
+                                navigate(`/forCanvass/${data.id}`) :   
+                                data.status === 'On-Canvass' ?
+                                navigate(`/onCanvass/${data.id}`) :                       
+                                navigate(`/purchaseRequestPreview/${data.id}`)
+                              }                      
                             >
-                              Cancel
-                            </button>
-                          )}
-                        </td>
-                      </tr>
+                            {data.remarks}
+                          </td>
+                          <td>
+                            <div className="d-flex flex-direction-row align-items-center">
+                              {/* Cancel Button */}
+                              { authrztn.includes('PR - Reject') && (
+                                data.status !== "Cancelled" && data.status !== "For-Canvassing"
+                                && data.status !== "On-Canvass" && data.status !== "For-Approval (PO)" 
+                                && data.status !== "To-Receive" && data.status !== "Delivered") && (
+                                  <button
+                                    className="btn btn-danger"
+                                    onClick={() => CancelRequest(data.id, data.status)}
+                                  >
+                                    Cancel
+                                  </button>
+                              )}
+                                  {/* <button
+                                    style={{background: 'white', border: 'none'}}
+                                    onClick={toggleDropdown}
+                                  >
+                                    <ClockCounterClockwise size={32} color="#4bd600" />
+                                  </button>
+                                 */}
+                            </div>                   
+                            </td>
+                          </tr>
+                          
+        
+
                     ))}
                   </tbody>
                 ) : (

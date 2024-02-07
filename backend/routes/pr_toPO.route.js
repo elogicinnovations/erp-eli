@@ -366,36 +366,6 @@ router.route('/save').post(async (req, res) => {
 });
 
 
-router.route('/approve_PO').post(async (req, res) => {
-  try {
-     const {id} = req.body;
-
-     console.log(id)
-      
-        const PR_newData = await PR.update({
-          status: 'To-Receive'
-        },
-        {
-          where: { id: id }
-        }); 
-
-        const PR_historical = await PR_history.create({
-          pr_id: id,
-          status: 'To-Receive',
-        });
-
-      //  return console.log(id)
-
-        
-      res.status(200).json();
-      
-      
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('An error occurred');
-    }
-});
-
 
 router.route('/receivedPRD').post(async (req, res) => {
   try {

@@ -2,7 +2,11 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR = require('../db/models/pr.model')
-const {PR, PR_product, PR_assembly,PR_Rejustify, PR_subPart, PR_history, PR_PO, PR_PO_asmbly, PR_sparePart} = require('../db/models/associations')
+const { PR, PR_product, PR_assembly,PR_Rejustify, 
+        PR_subPart, PR_history, PR_PO, PR_PO_asmbly, 
+        PR_sparePart, PR_PO_spare, PR_PO_subpart, 
+      
+      } = require('../db/models/associations')
 const session = require('express-session')
 
 router.use(session({
@@ -87,7 +91,6 @@ router.route('/fetchTable_PO').get(async (req, res) => {
     const data = await PR.findAll({
       where: {
         [Op.or]: [
-          { status: 'For-Canvassing' },
           { status: 'For-Approval (PO)' },
           { status: 'For-Rejustify (PO)' },
           { status: 'To-Receive' }
@@ -475,7 +478,7 @@ router.route('/cancel_PO').put(async (req, res) => {
     const PR_historical = await PR_history.create({
       pr_id: row_id,
       status: 'For-Canvassing',
-      remarks: 'Cancelled PO - Re Canvassing'
+      remarks: 'For-Approval (PO) - Re Canvassing'
     });
 
 
@@ -486,6 +489,18 @@ router.route('/cancel_PO').put(async (req, res) => {
     })
 
     await PR_PO_asmbly.destroy({
+      where : {
+        pr_id: row_id
+      }
+    })
+
+    await PR_PO_spare.destroy({
+      where : {
+        pr_id: row_id
+      }
+    })
+
+    await PR_PO_subpart.destroy({
       where : {
         pr_id: row_id
       }
