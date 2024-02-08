@@ -263,7 +263,7 @@ router.route("/update").post(
         }
 
         const ExistWarehouseId = findWarehouse.id;
-        console.log("Id ng warehouse: " + ExistWarehouseId);
+        // console.log("Id ng warehouse: " + ExistWarehouseId);
 
 
         const sparesupprows = await SparePart_Supplier.findAll({
@@ -274,7 +274,7 @@ router.route("/update").post(
 
         if(sparesupprows && sparesupprows.length === 0) {
            console.log("No sparepart id found");
-           return res.status(201).json({message: "No spare part supplier found"})
+          //  return res.status(201).json({message: "No spare part supplier found"})
         }
 
         const ExistSuppId = sparesupprows.map(supprow => supprow.id);
@@ -291,7 +291,7 @@ router.route("/update").post(
           },
         });
 
-        if(deletesupplier) {
+        // if(deletesupplier) {
             const selectedSupplier = addPriceInput;
             for(const supplier of selectedSupplier) {
               const { value, price } = supplier;
@@ -339,7 +339,7 @@ router.route("/update").post(
                 // If the existing supplier_price is the same as the new price, walang process na mangyayari
               }
             }
-          }
+          // }
 
         res.status(200).json();
       }

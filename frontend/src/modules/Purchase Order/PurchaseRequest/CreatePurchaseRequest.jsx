@@ -249,9 +249,6 @@ function CreatePurchaseRequest() {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
         <div className="right-body-contentss">
         <div className="arrowandtitle">
@@ -269,6 +266,7 @@ function CreatePurchaseRequest() {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               Purchase Information
               <span
@@ -278,14 +276,14 @@ function CreatePurchaseRequest() {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "19rem",
+                  left: "22rem",
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
             <div
               className="row mt-3"
-              style={{ position: "relative", marginBottom: "20px" }}>
-              <div className="col-6">
+              style={{ position: "relative"}}>
+              <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>PR #: </Form.Label>
                   <Form.Control
@@ -296,7 +294,8 @@ function CreatePurchaseRequest() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-3">
+              <div className="col-4">
+                <div className="date-beg" style={{ position: "relative", marginBottom: "15px" }}> 
                 <Form.Group
                   controlId="exampleForm.ControlInput2"
                   className="datepick">
@@ -318,49 +317,65 @@ function CreatePurchaseRequest() {
                     size={20}
                     style={{
                       position: "absolute",
-                      color: "#9a9a9a",
-                      right: "25px",
-                      top: "10px",
+                      left: "440px",
+                      top: "73%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
                     }}
                   />
                 </Form.Group>
+                </div>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      To be used for:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      required
+                      onChange={(e) => setUseFor(e.target.value)}
+                      placeholder="Enter where/whom will use"
+                      type="text"
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
               </div>
             </div>
-            <div className="row" style={{ marginBottom: "30px" }}>
+
+            <div className="row">
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    To be used for:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    onChange={(e) => setUseFor(e.target.value)}
-                    placeholder="Enter where/whom will use"
-                    type="text"
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
-                </Form.Group>
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Remarks:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      onChange={(e) => setRemarks(e.target.value)}
+                      placeholder="Enter details"
+                      as="textarea"
+                      rows={3}
+                      style={{
+                      fontFamily: 'Poppins, Source Sans Pro',
+                      fontSize: "16px",
+                      height: "150px",
+                      maxHeight: "150px",
+                      resize: "none",
+                      overflowY: "auto",
+                      }}
+                    />
+                  </Form.Group>
               </div>
               <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Remarks:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    onChange={(e) => setRemarks(e.target.value)}
-                    placeholder="Enter details"
-                    style={{ height: "100px", fontSize: "15px" }}
-                  />
-                </Form.Group>
+
               </div>
             </div>
+
             <div
               className="gen-info"
               style={{
                 fontSize: "20px",
                 position: "sticky",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}>
               Order Items
               <span
@@ -370,7 +385,7 @@ function CreatePurchaseRequest() {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "10.7rem",
+                  left: "12rem",
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
@@ -452,28 +467,16 @@ function CreatePurchaseRequest() {
                       ))
                     ) : (
                       <tr>
-                        <td>No Product selected</td>
-                      </tr>
+                      <td
+                        colSpan="5"
+                        style={{ textAlign: "center"}}>
+                        No Product selected
+                      </td>
+                    </tr>
                     )}
                   </tbody>
                   {showDropdown && (
                     <div className="dropdown mt-3">
-                      {/* <Select
-                                            isMulti
-                                            options={fetchProduct.map(prod => ({
-                                              value: prod.product_id,
-                                              label: <div>
-                                                Product Code: <strong>{prod.product_code}</strong> / 
-                                                Product Name: <strong>{prod.product_name}</strong> / 
-                                                
-                                              </div>,
-                                              code: prod.product_code,
-                                              name: prod.product_name,
-                                              created: prod.createdAt
-                                            }))}
-                                            onChange={selectProduct}
-                                          /> */}
-
                       <Select
                         isMulti
                         options={fetchProduct

@@ -359,7 +359,7 @@ router.route("/update").post(
         }
 
         const ExistWarehouseId = findWarehouse.id;
-        console.log("Id ng warehouse: " + ExistWarehouseId);
+        // console.log("Id ng warehouse: " + ExistWarehouseId);
         
         const prodsupprows = await ProductTAGSupplier.findAll({
           where: {
@@ -385,7 +385,7 @@ router.route("/update").post(
           },
         });
 
-        if(deletesupplier) {
+        // if(deletesupplier) {
           const selectedsupplier = productTAGSuppliers;
           for(const supplier of selectedsupplier){
             const { value, price} = supplier;
@@ -431,7 +431,7 @@ router.route("/update").post(
               }
             }
           }
-        }
+        // }
 
       res.status(200).json();
     }

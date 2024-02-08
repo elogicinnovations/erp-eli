@@ -60,6 +60,31 @@ router.use(session({
 
 router.route('/fetchReturn').get(async (req, res) => {
     try {
+        // const productData = await IssuedReturn.findAll({
+        //     include: [{
+        //             model: Inventory,
+        //             required: true,
+
+        //             include: [{
+        //                     model: ProductTAGSupplier,
+        //                     required: true,
+
+        //                     include: [{
+        //                         model: Product,
+        //                         required: true
+        //                     }]
+        //                 }]
+        //         },
+        //         {
+        //             model: Issuance,
+        //             required: true
+        //         }
+        //     ],
+        //     where: {
+        //         status: "To be Return"
+        //     }
+        // });
+
         const productData = await IssuedReturn.findAll({
             include: [{
                     model: Inventory,
@@ -213,10 +238,7 @@ router.route('/issueReturn').post(async (req, res) => {
                     )
                 };
             }
-
-
 // ----------------------------------   assembly --------------------------------
-
                 for (const product of arrayDataAsmBackend) {        
                     await IssuedReturn_asm.create({
                         issued_id: issuance_id,
@@ -246,7 +268,6 @@ router.route('/issueReturn').post(async (req, res) => {
                             )
                         };
                     };
-
 // ----------------------------------   Spare part --------------------------------
                 for (const product of arrayDataSpareBackend) {        
                     await IssuedReturn_spare.create({
@@ -277,7 +298,6 @@ router.route('/issueReturn').post(async (req, res) => {
                     )
                 };
             };
-
 
 // ----------------------------------   Subpart part --------------------------------
            for (const product of arrayDataSubpartBackend) {        
@@ -318,11 +338,8 @@ router.route('/issueReturn').post(async (req, res) => {
 });
 
 router.route('/moveToInventory').post(async (req, res) => {
-
-    console.log("pumasok")
     try {
         const {invetory_id, table_quantity, primary_id, types} = req.body;
-
 
         if(types === "product"){
             const updateRecord = await Inventory.findOne({
@@ -333,9 +350,6 @@ router.route('/moveToInventory').post(async (req, res) => {
     
             if (updateRecord) {
                 const addToInventory = updateRecord.quantity + table_quantity
-    
-    
-                console.log("addd",addToInventory)
     
                 const inventory_update = await Inventory.update(
                     {
@@ -352,7 +366,6 @@ router.route('/moveToInventory').post(async (req, res) => {
                     const prd_return = await IssuedReturn.update(
                         {
                             status: 'Returned',
-        
                         },
                         {
                             where: {
@@ -362,14 +375,11 @@ router.route('/moveToInventory').post(async (req, res) => {
                     )
     
                     if (prd_return){
-                        // Send a response back to the client
                         return res.status(200).json({ message: 'Data saved successfully'});
                     };
                    
                 };
     
-                
-               
             }
         }
         else if (types === "assembly"){
@@ -381,9 +391,6 @@ router.route('/moveToInventory').post(async (req, res) => {
     
             if (updateRecord) {
                 const addToInventory = updateRecord.quantity + table_quantity
-    
-    
-                console.log("addd",addToInventory)
     
                 const inventory_update = await Inventory_Assembly.update(
                     {
@@ -400,7 +407,6 @@ router.route('/moveToInventory').post(async (req, res) => {
                     const prd_return = await IssuedReturn_asm.update(
                         {
                             status: 'Returned',
-        
                         },
                         {
                             where: {
@@ -408,16 +414,11 @@ router.route('/moveToInventory').post(async (req, res) => {
                             },
                         }
                     )
-    
                     if (prd_return){
-                        // Send a response back to the client
                         return res.status(200).json({ message: 'Data saved successfully'});
                     };
                    
                 };
-    
-                
-               
             }
         }
         else if (types === "spare"){
@@ -429,10 +430,7 @@ router.route('/moveToInventory').post(async (req, res) => {
     
             if (updateRecord) {
                 const addToInventory = updateRecord.quantity + table_quantity
-    
-    
-                console.log("addd",addToInventory)
-    
+
                 const inventory_update = await Inventory_Spare.update(
                     {
                         quantity: addToInventory
@@ -448,7 +446,6 @@ router.route('/moveToInventory').post(async (req, res) => {
                     const prd_return = await IssuedReturn_spare.update(
                         {
                             status: 'Returned',
-        
                         },
                         {
                             where: {
@@ -458,14 +455,10 @@ router.route('/moveToInventory').post(async (req, res) => {
                     )
     
                     if (prd_return){
-                        // Send a response back to the client
                         return res.status(200).json({ message: 'Data saved successfully'});
                     };
                    
                 };
-    
-                
-               
             }
         }
         else if (types === "subpart"){
@@ -477,10 +470,7 @@ router.route('/moveToInventory').post(async (req, res) => {
     
             if (updateRecord) {
                 const addToInventory = updateRecord.quantity + table_quantity
-    
-    
-                console.log("addd",addToInventory)
-    
+
                 const inventory_update = await Inventory_Subpart.update(
                     {
                         quantity: addToInventory
@@ -496,7 +486,6 @@ router.route('/moveToInventory').post(async (req, res) => {
                     const prd_return = await IssuedReturn_subpart.update(
                         {
                             status: 'Returned',
-        
                         },
                         {
                             where: {
@@ -506,19 +495,12 @@ router.route('/moveToInventory').post(async (req, res) => {
                     )
     
                     if (prd_return){
-                        // Send a response back to the client
                         return res.status(200).json({ message: 'Data saved successfully'});
                     };
                    
                 };
-    
-                
-               
             }
         };
-
-        
-          
 
     } catch (err) {
         console.error(err);

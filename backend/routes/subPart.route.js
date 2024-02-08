@@ -233,7 +233,7 @@ router.route("/update").post(
           }
 
           const ExistWarehouseId = findWarehouse.id;
-          console.log("Id ng warehouse: " + ExistWarehouseId);
+          // console.log("Id ng warehouse: " + ExistWarehouseId);
 
           const subsupprows = await Subpart_supplier.findAll({
             where: {
@@ -243,7 +243,7 @@ router.route("/update").post(
           
           if(subsupprows && subsupprows.length === 0) {
             console.log("No subpart id found");
-            return res.status(201).json({ message: "No subpart supplier found" });
+            // return res.status(201).json({ message: "No subpart supplier found" });
           }
           
           const ExistSuppId = subsupprows.map(supprow => supprow.id);
@@ -260,7 +260,7 @@ router.route("/update").post(
             },
           });
 
-          if(deletesupplier) {
+          // if(deletesupplier) {
             const selectedSuppliers = subpartTAGSuppliers;
               for(const supplier of selectedSuppliers) {
                 const { value, price } = supplier;
@@ -306,7 +306,7 @@ router.route("/update").post(
                     }
                   }
               }
-           }
+          //  }
         res.status(200).json();
       }
     } catch (err) {

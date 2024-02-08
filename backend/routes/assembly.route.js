@@ -306,7 +306,7 @@ router.route("/update").post(
         }
   
         const ExistWarehouseId = findWarehouse.id;
-        console.log("Id ng warehouse: " + ExistWarehouseId);
+        // console.log("Id ng warehouse: " + ExistWarehouseId);
 
         
         const assemblysupprows = await Assembly_Supplier.findAll({
@@ -317,7 +317,7 @@ router.route("/update").post(
 
         if(assemblysupprows && assemblysupprows.length === 0) {
           console.log("No assembly supplier id found");
-          return res.status(201).json({message: "No assembly supplier found"})
+          // return res.status(201).json({message: "No assembly supplier found"})
        }
 
        const ExistSuppId = assemblysupprows.map(supprow => supprow.id);
@@ -334,7 +334,7 @@ router.route("/update").post(
           },
        });
 
-       if(deletesupplier) {
+      //  if(deletesupplier) {
         const selectedSupplier = addPriceInput;
           for(const supplier of selectedSupplier) {
             const { value, price } = supplier;
@@ -380,7 +380,7 @@ router.route("/update").post(
               
             }
           }
-       }
+      //  }
 
         res.status(200).json();
       }
