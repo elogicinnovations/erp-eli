@@ -448,7 +448,7 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="BP Master Data" />
                 {openBPData ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-              )};
+              )}
               
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>
@@ -644,7 +644,7 @@ function Sidebar({ authrztn }) {
                       ? "active"
                       : ""
                   }`}>
-                  <ListItemText primary="Recieving Management" />
+                  <ListItemText primary="Receiving Management" />
                 </ListItem>
               </NavLink>
             )}

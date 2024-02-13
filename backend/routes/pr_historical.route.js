@@ -115,4 +115,53 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       res.status(500).json("Error");
     }
   });
+
+
+  // router.route('/fetchdropdownData').get(async (req, res) => {
+  //   try {
+  //     const data = await PR_history.findAll({
+  //       where: {
+  //         pr_id: req.body.id,
+  //       },
+  //       include: {
+  //         model : PR,
+  //         required: true
+  //       }
+  //     });
+  
+  //     if (!data) {
+  //       return res.status(404).json();
+  //     }
+      
+  //     return res.json(data);
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res.status(500).json({ message: "An error occurred" });
+  //   }
+  // });
+
+
+  router.route("/fetchdropdownData").get(async (req, res) => {
+    try {
+      const data = await PR_history.findAll({
+        include: [
+          {
+            model: PR,
+            required: true,
+          },
+        ],
+        where: { pr_id: req.query.id },
+      });
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
 module.exports = router;

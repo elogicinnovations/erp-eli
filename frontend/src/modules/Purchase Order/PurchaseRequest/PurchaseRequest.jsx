@@ -11,8 +11,12 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 import {
-  ClockCounterClockwise,
   Plus,
   CalendarBlank,
   XCircle,
@@ -40,6 +44,21 @@ function PurchaseRequest({ authrztn }) {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [filteredPR, setFilteredPR] = useState([]);
   const [allPR, setAllPR] = useState([]);
+  const [openRows, setOpenRows] = useState(null);
+  const [specificPR, setSpecificPR] = useState([]);
+  const handleRowToggle = async (id) => {
+    try {
+      const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
+        params: { id: id },
+      });
+
+      setSpecificPR(res.data);
+
+      setOpenRows((prevOpenRow) => (prevOpenRow === id ? null : id)); // Toggle openRow
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleXCircleClick = () => {
     setStartDate(null);
@@ -335,9 +354,10 @@ function PurchaseRequest({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+              <table aria-label="collapsible table" className='table-hover'>
                 <thead>
                   <tr>
+                    <th className="tableh"></th>
                     <th className="pr-column">PR #.</th>
                     <th className="tableh">Requestor</th>
                     <th className="tableh">Status</th>
@@ -347,9 +367,22 @@ function PurchaseRequest({ authrztn }) {
                   </tr>
                 </thead>
                 {filteredPR.length > 0 ? (
-                  <tbody style={{display: 'table', width: '100%'}}>
+                  <tbody>
                     {filteredPR.map((data, i) => (
-                        <tr key={i}>
+                      <React.Fragment key={i}>
+                        <tr>
+                          <td>
+                            <IconButton
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => handleRowToggle(data.id)}>
+                               {openRows === data.id ? (
+                                  <KeyboardArrowUpIcon style={{ fontSize: 25 }}/>
+                                ) : (
+                                  <KeyboardArrowDownIcon style={{ fontSize: 25 }}/>
+                                )}
+                              </IconButton>
+                          </td>
                           <td onClick={() => 
                                 data.status === 'For-Canvassing' ?
                                 navigate(`/forCanvass/${data.id}`) :   
@@ -416,29 +449,41 @@ function PurchaseRequest({ authrztn }) {
                                     Cancel
                                   </button>
                               )}
-                                  {/* <button
-                                    style={{background: 'white', border: 'none'}}
-                                    onClick={toggleDropdown}
-                                  >
-                                    <ClockCounterClockwise size={32} color="#4bd600" />
-                                  </button>
-                                 */}
                             </div>                   
                             </td>
                           </tr>
-                          
-        
-
+                          <tr>
+                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="7">
+                              <Collapse in={openRows === data.id} timeout="auto" unmountOnExit>
+                                <div style={{width: '95%'}}>
+                                    <thead style={{borderBottom: '1px solid #CECECE'}}>
+                                      <tr>
+                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Status</th>
+                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Date</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                        {specificPR.map((history, i) => (
+                                        <tr key={i}>
+                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{history.status}</td>
+                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{formatDatetime(history.createdAt)}</td>
+                                        </tr>
+                                        ))}
+                                  </tbody>
+                                  </div>
+                              </Collapse>
+                            </td>
+                          </tr>
+                        </React.Fragment>
                     ))}
                   </tbody>
                 ) : (
-                  <tbody>
                     <tr>
-                      <td colSpan="6" style={{ textAlign: "center" }}>
-                        No matches found.
+                      <td colSpan="7" style={{ textAlign: "center" }}>
+                        No Data found
                       </td>
                     </tr>
-                  </tbody>
+                
                 )}
               </table>
             </div>

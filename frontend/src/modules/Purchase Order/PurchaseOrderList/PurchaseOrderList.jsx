@@ -376,7 +376,7 @@ const [pr_req, setPr_req] = useState([]);
                             <tbody>
                             <tr>
                               <td colSpan="6" style={{ textAlign: 'center' }}>
-                                No matches found.
+                                No Data Found
                               </td>
                             </tr>
                           </tbody>

@@ -745,7 +745,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                 
             <Col>
                 <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/purchaseOrderList">
+                    <Link style={{ fontSize: '1.5rem' }} to="/purchaseRequest">
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>

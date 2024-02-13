@@ -324,6 +324,8 @@ PR_PO_subpart.belongsTo(PR, { foreignKey: "pr_id"});
 Subpart_supplier.hasMany(PR_PO_subpart, { foreignKey: "subpart_suppliers_ID"});
 PR_PO_subpart.belongsTo(Subpart_supplier, { foreignKey: "subpart_suppliers_ID"});
 
+PR.hasMany(PR_history, { foreignKey: "pr_id"});
+PR_history.belongsTo(PR, { foreignKey: "pr_id"});
 
 //Assembly Sub parts PR_PO_asmbly
 Assembly.hasMany(Assembly_SubPart, { foreignKey: "assembly_id"});
