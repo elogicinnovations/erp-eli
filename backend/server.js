@@ -95,6 +95,7 @@ const PR_history = require("./routes/pr_historical.route");
 const PR_rejustify = require("./routes/pr_rejustify.route");
 const PR_PO = require("./routes/pr_toPO.route");
 const PO_Receveid = require("./routes/po_received.route");
+const Receiving  = require("./routes/receiving.route");
 
 const PO_Canvass = require("./routes/canvassing.route");
 const Invoice = require("./routes/invoicing.route");
@@ -174,6 +175,7 @@ app.use("/PR_rejustify", PR_rejustify);
 app.use("/PR_PO", PR_PO);
 app.use("/canvass", PO_Canvass);
 app.use("/invoice", Invoice);
+app.use("/receiving", Receiving);
 
 app.use("/PO_Received", PO_Receveid);
 app.use("/StockTransfer", StockTransfer);
