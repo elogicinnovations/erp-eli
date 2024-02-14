@@ -3319,3 +3319,74 @@ div#ordered-listing_length label {
 .card .drag-area.dragover .visible{
   display: none;
 }
+
+
+.canvass-main-container{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5%;
+  overflow-y: auto;
+
+}
+
+.canvass-supplier-container {
+  width: 100%;
+  height: 250px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #DAE2E2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+
+.canvass-supplier-content{
+  width: 100%;
+  height: 100%;
+}
+
+.PO-num {
+  padding: 4px;
+  width: 17%;
+  height: 25px;
+  background-color: #ECECEC;
+}
+
+.PO-num p {
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  color: #000000;
+}
+
+.canvass-title{
+  display: flex;
+  justify-content: center;
+  border-bottom: 4px solid #cfcece;
+  padding-top: 18px;
+}
+
+.canvass-title p{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 16px;
+  font-weight: bold;
+  color: #555555;
+}
+
+.canvass-data-container{
+  display: flex;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.canvass-data-list{
+  padding-left: 5px;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 14px;
+  font-weight: 600;
+  padding-top: 10px;
+  overflow-y: auto;
+}

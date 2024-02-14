@@ -311,13 +311,9 @@ function PurchaseRequestPreview() {
     
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
-            <Row>
-                
+          <Row>      
             <Col>
                 <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
                     <Link style={{ fontSize: '1.5rem' }} to="/purchaseRequest">
@@ -328,7 +324,7 @@ function PurchaseRequestPreview() {
                     </h1>
                 </div>
                     <p1>Purchasing please purchase the following item enumerated below </p1>
-                </Col>
+              </Col>
                 <Col>
                 <div className='Status' style={{display: 'flex', alignItems: 'center'}}>
                     
@@ -346,7 +342,11 @@ function PurchaseRequestPreview() {
                 </Col>
             </Row>
             <Form noValidate validated={validated}>
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                <div className="gen-info" 
+                  style={{ fontSize: '20px', 
+                           position: 'relative', 
+                           paddingTop: '20px',
+                           fontFamily: 'Poppins, Source Sans Pro' }}>
                           Purchase Information
                           <span
                             style={{
@@ -355,47 +355,69 @@ function PurchaseRequestPreview() {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '19rem',
+                              left: '21rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
                           <div className="row mt-3">
-                            <div className="col-6">
+                            <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>PR #: </Form.Label>
                                 <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-3">
-                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                  <DatePicker
-                                    readOnly={!isReadOnly} 
-                                    selected={dateNeed}
-                                    onChange={(date) => setDateNeed(date)}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="Start Date"
-                                    className="form-control"
-                                  />
-                            </Form.Group>
+
+                            <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
+                                    <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
+                                      <DatePicker
+                                        readOnly={!isReadOnly} 
+                                        selected={dateNeed}
+                                        onChange={(date) => setDateNeed(date)}
+                                        dateFormat="yyyy-MM-dd"
+                                        placeholderText="Start Date"
+                                        className="form-control"
+                                      />
+                                </Form.Group>
                               </div>
+
+                              <div className="col-4">
+                                <Form.Group controlId="exampleForm.ControlInput1">
+                                  <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
+                                  <Form.Control type="text" value={useFor}  readOnly={!isReadOnly} onChange={e => setUseFor(e.target.value)}  style={{height: '40px', fontSize: '15px'}}/>
+                                </Form.Group>
+                              </div>
+
+                  
                           </div>
                         <div className="row">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
-                                <Form.Control type="text" value={useFor}  readOnly={!isReadOnly} onChange={e => setUseFor(e.target.value)}  style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
+
                             <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea" readOnly={!isReadOnly} onChange={e => setRemarks(e.target.value)}  value={remarks} placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                              <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                <Form.Control readOnly={!isReadOnly} onChange={e => setRemarks(e.target.value)} value={remarks} 
+                                    as="textarea"
+                                    rows={3}
+                                    style={{
+                                    fontFamily: 'Poppins, Source Sans Pro',
+                                    fontSize: "16px",
+                                    height: "150px",
+                                    maxHeight: "150px",
+                                    resize: "none",
+                                    overflowY: "auto",
+                                    }}/>
                             </Form.Group>
                             </div>
+                            <div className="col-6">
+
+                            </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                        <div className="gen-info" 
+                        style={{ fontSize: '20px', 
+                        position: 'relative', 
+                        paddingTop: '20px',
+                        fontFamily: 'Poppins, Source Sans Pro' }}>
                           Order Items
                           <span
                             style={{
@@ -404,7 +426,7 @@ function PurchaseRequestPreview() {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '10.7rem',
+                              left: '12rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>

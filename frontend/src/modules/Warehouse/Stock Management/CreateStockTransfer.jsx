@@ -592,7 +592,7 @@ function formatDatetime(datetime) {
                         
                         <div className='save-cancel'>
                           <Button type='submit' className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                          <Link to='/stockTransfer' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
+                          <Link to='/stockManagement' className='btn btn-secondary btn-md' size="md" style={{ fontSize: '20px', margin: '0px 5px'  }}>
                               Close
                           </Link>
                         </div>

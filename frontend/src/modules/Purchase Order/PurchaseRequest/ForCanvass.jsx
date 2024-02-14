@@ -14,7 +14,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import {
     ArrowCircleLeft,
     ShoppingCart,
-    PlusCircle
+    PlusCircle,
+    CalendarBlank
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
@@ -489,7 +490,11 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                 </Col>
             </Row>
             <Form noValidate validated={validated} onSubmit={add}>
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                <div className="gen-info" 
+                  style={{ fontSize: '20px', 
+                  position: 'relative', 
+                  paddingTop: '20px',
+                  fontFamily: 'Poppins, Source Sans Pro' }}>
                           Purchase Request Details
                           <span
                             style={{
@@ -498,19 +503,19 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '22rem',
+                              left: '26rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
                           <div className="row mt-3">
-                            <div className="col-6">
+                            <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>PR #: </Form.Label>
                                 <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-3">
+                            <div className="col-4">
                             <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
                                 <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
                                   <DatePicker
@@ -521,24 +526,51 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                     placeholderText="Start Date"
                                     className="form-control"
                                   />
+                                <CalendarBlank
+                                  size={20}
+                                  style={{
+                                    position: "absolute",
+                                    left: "440px",
+                                    top: "73%",
+                                    transform: "translateY(-50%)",
+                                    cursor: "pointer",
+                                  }}
+                                />
                             </Form.Group>
                               </div>
-                          </div>
-                        <div className="row">
-                            <div className="col-6">
+                              <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
                                 <Form.Control readOnly value={useFor} type="text" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
+                          </div>
+                        <div className="row">
                             <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control readOnly value={remarks} as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
+                                <Form.Control readOnly value={remarks} as="textarea"
+                                  rows={3}
+                                  style={{
+                                  fontFamily: 'Poppins, Source Sans Pro',
+                                  fontSize: "16px",
+                                  height: "150px",
+                                  maxHeight: "150px",
+                                  resize: "none",
+                                  overflowY: "auto",
+                                  }}/>
                             </Form.Group>
                             </div>
+                            <div className="col-6">
+
+                            </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+
+                        <div className="gen-info" 
+                        style={{ fontSize: '20px', 
+                        position: 'relative', 
+                        paddingTop: '20px',
+                        fontFamily: 'Poppins, Source Sans Pro' }}>
                           Product List
                           <span
                             style={{
@@ -547,7 +579,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '10.7rem',
+                              left: '12rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -626,7 +658,11 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                         </div>
                         {isArray && (
                           <>   
-                            <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                            <div className="gen-info" 
+                            style={{ fontSize: '20px', 
+                            position: 'relative', 
+                            paddingTop: '20px',
+                            fontFamily: 'Poppins, Source Sans Pro' }}>
                               Canvassing Supplier
                               <span
                                 style={{
@@ -635,32 +671,35 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                   width: '-webkit-fill-available',
                                   background: '#FFA500',
                                   top: '81%',
-                                  left: '13.5rem',
+                                  left: '21rem',
                                   transform: 'translateY(-50%)',
                                 }}
                               ></span>
                             </div>
-                            <div className="table-containss">
-                                <div className="main-of-all-tables">
+                              <div className="canvass-main-container">
+
                                     {Object.entries(productArrays).map(([supplierCode, products]) => (
-                                      <div className='border border-warning m-3 mb-4 p-3' key={supplierCode}>
-                                        {products.length > 0 && (  
-                                          <>                                                                                          
-                                            <h3>{`Supplier : ${supplierCode} - ${products[0].supplierName}`}</h3>
-                                          </>
-                                        )}
-                                        <ul>
-                                          {products.map((item, index) => (
-                                            <li className='fs-5 fw-bold' key={index}>{item.code + "=>" + item.name} </li>
-                                            
-                                          ))}
-                                        </ul>
+                                      <div className='canvass-supplier-container' key={supplierCode}>
+                                        <div className="canvass-supplier-content">
+                                          {products.length > 0 && (  
+                                            <div className="canvass-title">
+                                                <p>{`Supplier : ${supplierCode} - ${products[0].supplierName}`}</p>
+                                            </div>                                                                                       
+                                          )}                    
+                                          <div className='canvass-data-container'>
+                                            <ul className="canvass-data-list">
+                                                {products.map((item, index) => (
+                                                  <li key={index}>{item.code + "  -  " + item.name} </li>
+                                        
+                                                ))}
+                                            </ul>
+                                          </div>
+                                        </div>
                                       </div>
                                     ))}
-                                </div>
-                            </div>
-                        </>
-                      )}
+                              </div>
+                          </>
+                        )}
 
 
                         <div className='save-cancel'>
