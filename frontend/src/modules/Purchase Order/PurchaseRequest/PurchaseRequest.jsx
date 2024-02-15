@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../Sidebar/sidebar";
+// import Sidebar from "../../Sidebar/sidebar";
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
-import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
+// import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { MDBDataTable } from 'mdbreact';
-
+import { IconButton, TextField, TablePagination, withStyles } from '@mui/material';
 import {
   Plus,
   CalendarBlank,
@@ -47,6 +44,9 @@ function PurchaseRequest({ authrztn }) {
   const [allPR, setAllPR] = useState([]);
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  
   const handleRowToggle = async (id) => {
     try {
       const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
@@ -89,6 +89,17 @@ function PurchaseRequest({ authrztn }) {
     reloadTable();
   }, []);
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+
+  
   const handleGoButtonClick = () => {
     if (!startDate || !endDate || !selectedStatus) {
       swal({
@@ -208,10 +219,8 @@ function PurchaseRequest({ authrztn }) {
   }
 
   useEffect(() => {
-    // Initialize DataTable when role data is available and allPR has changed
     if ($("#order-listing").length > 0 && allPR.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
       $('#order-listing').DataTable({
-        // Specify initial sorting order for the PR #. column
         "order": [[ $('.pr-column').index(), 'desc' ]]
       });
     }
@@ -355,6 +364,18 @@ function PurchaseRequest({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}/>
               <table aria-label="collapsible table" className='table-hover'>
                 <thead>
                   <tr>
@@ -438,7 +459,6 @@ function PurchaseRequest({ authrztn }) {
                           </td>
                           <td>
                             <div className="d-flex flex-direction-row align-items-center">
-                              {/* Cancel Button */}
                               { authrztn.includes('PR - Reject') && (
                                 data.status !== "Cancelled" && data.status !== "For-Canvassing"
                                 && data.status !== "On-Canvass" && data.status !== "For-Approval (PO)" 
@@ -487,6 +507,15 @@ function PurchaseRequest({ authrztn }) {
                 
                 )}
               </table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={filteredPR.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </div>
           </div>
         </div>
