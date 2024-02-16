@@ -158,16 +158,13 @@ function ReceivingManagementPreview({ authrztn }) {
   //   }));
   // };
 
-  const handleInputChange = (value, productValue, inputType) => {
-    //DITO AKO NAHINTO NAG NEED KO MA CALCULATE ANG MAX NA MA INPUT SA RECEIVING
+  const handleInputChange = (value, productValue, inputType, po_quantity) => {
     setInputValues((prevInputs) => {
       // Extracting the necessary details from productValue
       const [po_id, type, code, name] = productValue.split('_');
   
-      // Finding the corresponding parent object in products_receive based on the type
+      // Need para sa uniqueness ng row sa array
       const parent = products_receive.find(parent => parent.title === po_id);
-  
-      // Finding the corresponding item object within the parent's items array based on code and name
       const item = parent.items.find(item => item.supp_tag.code === code && item.supp_tag.name === name);
   
       // Constructing the new input values object
@@ -181,7 +178,7 @@ function ReceivingManagementPreview({ authrztn }) {
   
       // If inputType is "Rquantity" or "Cquantity", update corresponding fields in item
 
-      let Received_quantity, Checked_quantity
+      let Received_quantity, Checked_quantity, maxReceivedQuantity
       if (inputType === "Rquantity") {
         // item.Received_quantity = value;
         Received_quantity = value
@@ -190,8 +187,44 @@ function ReceivingManagementPreview({ authrztn }) {
         Checked_quantity = value
       }
 
-      console.log(`Received_quantity ${Received_quantity}`)
-      console.log(`Checked_quantity ${Checked_quantity}`)
+
+      if(prevInputs[productValue]?.Squantity === undefined){
+        console.log(`Undefined Set: ${Received_quantity} * ${po_quantity}`)
+        maxReceivedQuantity =  po_quantity;
+      }
+      else{
+        console.log(`Defined Set: ${(prevInputs[productValue]?.Squantity || 0)} * ${po_quantity}`)
+        maxReceivedQuantity = (prevInputs[productValue]?.Squantity || 0) * po_quantity;
+      }
+      console.log(`inputed value ${value}`)
+      console.log(`mXX_quantity ${maxReceivedQuantity}`)
+      // console.log(`Checked_quantity ${Checked_quantity}`)
+
+      if (Received_quantity > maxReceivedQuantity) {
+        // Show SweetAlert popup message
+        swal({
+          title: "Error",
+          text: "Received Quantity cannot exceed the calculated maximum.",
+          icon: "error",
+        }).then(() => {
+          // Set the input value to the maximum allowed quantity
+          setInputValues((prevInputs) => ({
+            ...prevInputs,
+            [productValue]: {
+              ...prevInputs[productValue],
+              [inputType]: maxReceivedQuantity,
+            },
+          }));
+        });
+      } else {
+        return {
+          ...prevInputs,
+          [productValue]: {
+            ...prevInputs[productValue],
+            [inputType]: value,
+          },
+        };
+      }
   
       return newInputValues;
     });
