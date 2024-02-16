@@ -16,9 +16,9 @@ const Receiving_Subpart = sequelize.define('receiving_subpart', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  check_quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+  freight_cost: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
   },
 });
 

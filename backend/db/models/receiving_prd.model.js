@@ -16,9 +16,9 @@ const Receiving_Prd = sequelize.define('receiving_prd', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  check_quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+  freight_cost: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
   },
 });
 

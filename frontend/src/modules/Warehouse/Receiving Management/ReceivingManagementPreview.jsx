@@ -158,15 +158,22 @@ function ReceivingManagementPreview({ authrztn }) {
   //   }));
   // };
 
+  const [shippingFee, setShippingFee] = useState("");
+  const handleInputChangeShipping = (value) => {
+    setShippingFee(value)
+  }
+
   const handleInputChange = (value, productValue, inputType, po_quantity) => {
     setInputValues((prevInputs) => {
       // Extracting the necessary details from productValue
-      const [po_id, type, code, name] = productValue.split('_');
-  
+      const [po_id, type, code, name] = productValue.split("_");
+
       // Need para sa uniqueness ng row sa array
-      const parent = products_receive.find(parent => parent.title === po_id);
-      const item = parent.items.find(item => item.supp_tag.code === code && item.supp_tag.name === name);
-  
+      const parent = products_receive.find((parent) => parent.title === po_id);
+      const item = parent.items.find(
+        (item) => item.supp_tag.code === code && item.supp_tag.name === name
+      );
+
       // Constructing the new input values object
       const newInputValues = {
         ...prevInputs,
@@ -175,29 +182,32 @@ function ReceivingManagementPreview({ authrztn }) {
           [inputType]: value,
         },
       };
-  
+
       // If inputType is "Rquantity" or "Cquantity", update corresponding fields in item
 
-      let Received_quantity, Checked_quantity, maxReceivedQuantity
+      let Received_quantity, Checked_quantity, maxReceivedQuantity;
       if (inputType === "Rquantity") {
         // item.Received_quantity = value;
-        Received_quantity = value
+        Received_quantity = value;
       } else if (inputType === "Cquantity") {
         // item.Checked_quantity = value;
-        Checked_quantity = value
+        Checked_quantity = value;
       }
 
-
-      if(prevInputs[productValue]?.Squantity === undefined){
-        console.log(`Undefined Set: ${Received_quantity} * ${po_quantity}`)
-        maxReceivedQuantity =  po_quantity;
+      if (prevInputs[productValue]?.Squantity === undefined) {
+        // console.log(`Undefined Set: ${Received_quantity} * ${po_quantity}`);
+        maxReceivedQuantity = po_quantity;
+      } else {
+        // console.log(
+        //   `Defined Set: ${
+        //     prevInputs[productValue]?.Squantity || 0
+        //   } * ${po_quantity}`
+        // );
+        maxReceivedQuantity =
+          (prevInputs[productValue]?.Squantity || 0) * po_quantity;
       }
-      else{
-        console.log(`Defined Set: ${(prevInputs[productValue]?.Squantity || 0)} * ${po_quantity}`)
-        maxReceivedQuantity = (prevInputs[productValue]?.Squantity || 0) * po_quantity;
-      }
-      console.log(`inputed value ${value}`)
-      console.log(`mXX_quantity ${maxReceivedQuantity}`)
+      // console.log(`inputed value ${value}`);
+      // console.log(`mXX_quantity ${maxReceivedQuantity}`);
       // console.log(`Checked_quantity ${Checked_quantity}`)
 
       if (Received_quantity > maxReceivedQuantity) {
@@ -225,7 +235,7 @@ function ReceivingManagementPreview({ authrztn }) {
           },
         };
       }
-  
+
       return newInputValues;
     });
   };
@@ -233,21 +243,21 @@ function ReceivingManagementPreview({ authrztn }) {
   // const handleInputChange = (value, productValue, inputType, po_quantity) => {
   //   setInputValues((prevInputs) => {
   //     const [po_id, type, code, name] = productValue.split('_');
-      
+
   //     // Finding the corresponding parent object in products_receive based on the po_id
   //     const parent = products_receive.find(parent => parent.title === po_id);
-  
+
   //     // Check if the parent object is defined
   //     if (!parent) {
   //       console.error(`Parent object with title ${po_id} not found.`);
   //       return prevInputs;
   //     }
-  
+
   //     // Finding the corresponding item object within the parent's items array based on code and name
   //     const item = parent.items.find(item => item.supp_tag.code === code && item.supp_tag.name === name);
-   
+
   //     const maxReceivedQuantity = po_quantity * (prevInputs[productValue]?.Squantity || 0);
-  
+
   //     if (value > maxReceivedQuantity) {
   //       // Show SweetAlert popup message
   //       swal({
@@ -275,8 +285,6 @@ function ReceivingManagementPreview({ authrztn }) {
   //     }
   //   });
   // };
-  
-
 
   const [addReceivebackend, setReceivebackend] = useState([]);
 
@@ -294,7 +302,7 @@ function ReceivingManagementPreview({ authrztn }) {
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
             ]?.Rquantity || "",
-            Checked_quantity:
+          Checked_quantity:
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
             ]?.Cquantity || "",
@@ -309,26 +317,24 @@ function ReceivingManagementPreview({ authrztn }) {
     console.log("Selected Products:", serializedParent);
   }, [inputValues]);
 
+  const handleSave = () => {
+    // setIsLoading(true);
+    const delay = setTimeout(() => {
+      axios
+        .post(BASE_URL + "/receiving/insertReceived", {
+          addReceivebackend, shippingFee
+        })
+        .then((res) => {
+          // setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-const handleSave = () => {
-  // setIsLoading(true);
-  const delay = setTimeout(() => {
-    axios
-      .post(BASE_URL + "/receiving/insertReceived", {
-        addReceivebackend
-      })
-      .then((res) => {
-        
-        // setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
-
-  return () => clearTimeout(delay);
-}
+    return () => clearTimeout(delay);
+  };
 
   return (
     <div className="main-of-containers">
@@ -476,9 +482,38 @@ const handleSave = () => {
                     <Modal.Title> {`PO Number: ${po_id}`}</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                    <h2 className="mb-5">
-                      {`Supplier: ${supplier_code} - ${supplier_name}`}
-                    </h2>
+                    <div className="row">
+                      <div className="col-6">
+                        <h2 className="mb-5">
+                          {`Supplier: ${supplier_code} - ${supplier_name}`}
+                        </h2>
+                      </div>
+                      <div className="col-6 ">
+                        <div className="d-flex flex-direction-row justify-content-center align-items-center">
+                          <Form.Label style={{ fontSize: "15px" }}>
+                            Shipping Fee{" "}
+                          </Form.Label>
+                          <Form.Control
+                            type="number"
+                            style={{
+                              height: "35px",
+                              width: "100px",
+                              fontSize: "14px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}    
+                            onChange={(e) =>
+                              handleInputChangeShipping(
+                                e.target.value,                               
+                              )
+                            }               
+                            onKeyDown={(e) => {
+                              ["e", "E", "+", "-"].includes(e.key) &&
+                                e.preventDefault();
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
 
                     {products_receive.map((parent, parentIndex) =>
                       parent.items.map((child, childIndex) => (
@@ -502,7 +537,7 @@ const handleSave = () => {
                           </div>
 
                           <div className="col-3 d-flex flex-direction-row">
-                            <div className="row" style={{marginTop: '-40px'}}>
+                            <div className="row" style={{ marginTop: "-40px" }}>
                               <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: "15px" }}>
@@ -523,47 +558,42 @@ const handleSave = () => {
                                 </Form.Group>
                               </div>
                               <div className="col-4">
-                              
-                                  {checkedRows[parentIndex]?.[childIndex] && (
-                                    <Form.Group
-                                      controlId="exampleForm.ControlInput2"
-                                    >
-                                      <Form.Label style={{ fontSize: "15px" }}>
-                                        /pcs:{" "}
-                                      </Form.Label>
-                                      <Form.Control
-                                        type="number"
-                                        placeholder="Quantity"
-                                        required
-                                        onKeyDown={(e) => {
-                                          ["e", "E", "+", "-", "0"].includes(
-                                            e.key
-                                          ) && e.preventDefault();
-                                        }}
-                                        value={
-                                          inputValues[
-                                            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                          ]?.Squantity || ""
-                                        }
-                                        onChange={(e) =>
-                                          handleInputChange(
-                                            e.target.value,
-                                            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                            "Squantity",
-                                            child.item.quantity
-                                          )
-                                        }
-                                        style={{
-                                          height: "35px",
-                                          width: "50px",
-                                          fontSize: "14px",
-                                          fontFamily:
-                                            "Poppins, Source Sans Pro",
-                                        }}
-                                      />
-                                    </Form.Group>
-                                  )}
-                    
+                                {checkedRows[parentIndex]?.[childIndex] && (
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                    <Form.Label style={{ fontSize: "15px" }}>
+                                      /pcs:{" "}
+                                    </Form.Label>
+                                    <Form.Control
+                                      type="number"
+                                      placeholder="Quantity"
+                                      required
+                                      onKeyDown={(e) => {
+                                        ["e", "E", "+", "-"].includes(
+                                          e.key
+                                        ) && e.preventDefault();
+                                      }}
+                                      value={
+                                        inputValues[
+                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                        ]?.Squantity || ""
+                                      }
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          e.target.value,
+                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                          "Squantity",
+                                          child.item.quantity
+                                        )
+                                      }
+                                      style={{
+                                        height: "35px",
+                                        width: "50px",
+                                        fontSize: "14px",
+                                        fontFamily: "Poppins, Source Sans Pro",
+                                      }}
+                                    />
+                                  </Form.Group>
+                                )}
                               </div>
                               <div className="col-4">
                                 <label
@@ -591,13 +621,11 @@ const handleSave = () => {
                             </div>
                           </div>
 
-                        
-
                           <div className="col-3">
-                            <Form.Group
-                              // style={{ marginTop: "20px" }}
-                              controlId="exampleForm.ControlInput2"
-                            >
+                              <Form.Group
+                                // style={{ marginTop: "20px" }}
+                                controlId="exampleForm.ControlInput2"
+                              >
                               <Form.Label style={{ fontSize: "15px" }}>
                                 Received Quantity:{" "}
                               </Form.Label>
@@ -629,8 +657,38 @@ const handleSave = () => {
                           </div>
 
                           <div className="col-3">
-                            
+                            {/* 
                           <Form.Group
+                              // style={{ marginTop: "20px" }}
+                              controlId="exampleForm.ControlInput2"
+                            >
+                              <Form.Label style={{ fontSize: "15px" }}>
+                                Price{" "}
+                              </Form.Label>
+                              <Form.Control
+                                type="number"
+                                placeholder="Quantity"
+                                readOnly
+                                value={
+                                  shippingFee
+                                }
+                                // onChange={(e) =>
+                                //   handleInputChange(
+                                //     e.target.value,
+                                //     `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                //     "Cquantity",
+                                //     child.item.quantity
+                                //   )
+                                // }
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            </Form.Group> */}
+                            {/* <Form.Group
                               // style={{ marginTop: "20px" }}
                               controlId="exampleForm.ControlInput2"
                             >
@@ -661,8 +719,7 @@ const handleSave = () => {
                                   fontFamily: "Poppins, Source Sans Pro",
                                 }}
                               />
-                            </Form.Group>
-                                                      
+                            </Form.Group> */}
                           </div>
                         </div>
                       ))
