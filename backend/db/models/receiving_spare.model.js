@@ -16,9 +16,9 @@ const Receiving_Spare = sequelize.define('receiving_spare', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  check_quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+  freight_cost: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
   },
 });
 

@@ -16,9 +16,9 @@ const Receiving_Asm = sequelize.define('receiving_asm', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  check_quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+  freight_cost: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
   },
 });
 
