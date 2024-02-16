@@ -956,34 +956,47 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                     )}
                                     {array.map((item, index) => (
                                       <div className='canvass-data-container' key={index}>
-                                        <div className="col-6">
+                                        <div className="col-4">
+                                            <ul className='canvass-data-list'>
+                                              <li>
+                                              {`Product Code: `}        
+                                              <strong>{item.code}</strong>
+                                                </li>
+                                            </ul>
+                                          </div>
+                                        <div className="col-4">
                                           <ul className='canvass-data-list'>
                                              <li>
-                                             {item.code + "  -  " + item.name}
+                                                {`Product Name: `}
+                                                <strong>{item.name}</strong> 
                                               </li>
                                           </ul>
                                         </div>
-                                        <div className="col-6">
-                                          <Form.Control
-                                            type="number"
-                                            placeholder="Quantity"
-                                            value={quantityInputs[`${title}_${item.type}_${item.product.id}`] || ''}
-                                            onChange={(e) => {
-                                              handleQuantityChange(title, item.type, item.product.id, e.target.value);
-                                            }}
-                                            required
-                                            onKeyDown={(e) => {                                          
-                                              ["e", "E", "+", "-"].includes(e.key) &&
-                                              e.preventDefault();
-                                            }}
-                                            style={{
-                                              height: "35px",
-                                              width: "100px",
-                                              fontSize: '14px',
-                                              fontFamily: 'Poppins, Source Sans Pro',
-                                              marginTop: '3%'
-                                            }}
-                                          />
+                                        <div className="col-4">
+                                          <ul>
+                                            <li>
+                                              <Form.Control
+                                                  type="number"
+                                                  placeholder="Quantity"
+                                                  value={quantityInputs[`${title}_${item.type}_${item.product.id}`] || ''}
+                                                  onChange={(e) => {
+                                                    handleQuantityChange(title, item.type, item.product.id, e.target.value);
+                                                  }}
+                                                  required
+                                                  onKeyDown={(e) => {                                          
+                                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                                    e.preventDefault();
+                                                  }}
+                                                  style={{
+                                                    height: "35px",
+                                                    width: "100px",
+                                                    fontSize: '14px',
+                                                    fontFamily: 'Poppins, Source Sans Pro',
+                                                    marginTop: '3%'
+                                                  }}
+                                                />
+                                            </li>
+                                          </ul>
                                         </div>
                                       </div>
                                     ))}

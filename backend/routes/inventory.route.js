@@ -589,7 +589,7 @@ router.route('/fetchInvetory_assembly_warehouse').get(async (req, res) => {
     const { warehouse } = req.query;
     const data = await Inventory_Assembly.findAll({
       where: {
-        warehouse : warehouse,
+        warehouse_id: warehouse,
       },
       include:[ {
         model: Assembly_Supplier,
@@ -624,7 +624,7 @@ router.route('/fetchInvetory_product_warehouse').get(async (req, res) => {
     const { warehouse } = req.query;
     const data = await Inventory.findAll({
       where: {
-        warehouse : warehouse,
+        warehouse_id : warehouse,
       },
       include:[ {
         model: ProductTAGSupplier,
@@ -667,7 +667,7 @@ router.route('/fetchInvetory_spare_warehouse').get(async (req, res) => {
     const { warehouse } = req.query;
     const data = await Inventory_Spare.findAll({
       where: {
-        warehouse : warehouse,
+        warehouse_id: warehouse,
       },
       include:[ {
         model: SparePart_Supplier,
@@ -706,7 +706,7 @@ router.route('/fetchInvetory_subpart_warehouse').get(async (req, res) => {
     const { warehouse } = req.query;
     const data = await Inventory_Subpart.findAll({
       where: {
-        warehouse : warehouse,
+        warehouse_id : warehouse,
       },
       include:[ {
         model: Subpart_supplier,

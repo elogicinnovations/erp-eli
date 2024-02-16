@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
-const { Warehouses } = require("../db/models/associations");
+const { Warehouses, Inventory, Inventory_Assembly, Inventory_Spare, Inventory_Subpart} = require("../db/models/associations");
 const session = require("express-session");
 const e = require("express");
 
@@ -96,26 +96,73 @@ router.route('/updateWarehouse/:param_id').put(async (req, res) => {
   }
 });
 
+// router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
+//   try {
+//     const id = req.params.table_id;
+
+//     const del = await Warehouses.destroy({
+//       where: {
+//         id: id,
+//       },
+//     });
+
+//     if (del) {
+//       res.json({ success: true });
+//     } else {
+//       res.status(400).json({ success: false });
+//     }
+//   } catch (error) {
+//     console.error("Error deleting warehouse:", error);
+//     res.status(500).json({ success: false, error: "Internal Server Error" });
+//   }
+// });
+
 router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
   try {
     const id = req.params.table_id;
 
-    const del = await Warehouses.destroy({
-      where: {
-        id: id,
-      },
+    const checkInventory = await Inventory.findAll({
+      where: { warehouse_id: id },
     });
 
-    if (del) {
-      res.json({ success: true });
+    const checkAssembly = await Inventory_Assembly.findAll({
+      where: { warehouse_id: id },
+    });
+
+    const checkSpare = await Inventory_Spare.findAll({
+      where: { warehouse_id: id },
+    });
+
+    const checkSubpart = await Inventory_Subpart.findAll({
+      where: { warehouse_id: id },
+    });
+
+    if (
+      checkInventory.length > 0 ||
+      checkAssembly.length > 0 ||
+      checkSpare.length > 0 ||
+      checkSubpart.length > 0
+    ) {
+      res.status(202).json({ success: true });
     } else {
-      res.status(400).json({ success: false });
+      const del = await Warehouses.destroy({
+        where: {
+          id: id,
+        },
+      });
+
+      if (del) {
+        res.json({ success: true });
+      } else {
+        res.status(400).json({ success: false });
+      }
     }
   } catch (error) {
     console.error("Error deleting warehouse:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
+
 
 // router.route('/automaticAdd').post(async (req, res) => {
 //   try {

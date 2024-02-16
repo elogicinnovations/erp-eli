@@ -13,8 +13,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
     ArrowCircleLeft,
-    ShoppingCart,
-    PlusCircle
+    CalendarBlank
   } from "@phosphor-icons/react";
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
@@ -277,26 +276,27 @@ useEffect(() => {
 
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
         <div className="right-of-main-containers">
             <div className="right-body-contents-a">
             <Row>
-                
-            <Col>
-                <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/purchaseOrderList">
+              <Col>
+                  <div className='create-head-back' 
+                    style={{display: 'flex', alignItems: 'center'}}>
+                      <Link style={{ fontSize: '1.5rem' }} to="/purchaseOrderList">
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
-                    Purchase Order List Approval
+                      Purchase Order List Approval
                     </h1>
                 </div>
-                </Col>
+              </Col>
             </Row>
             
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                <div className="gen-info" 
+                  style={{ fontSize: '20px', 
+                  position: 'relative', 
+                  paddingTop: '20px',
+                  fontFamily: 'Poppins, Source Sans Pro' }}>
                           Purchase Request Details
                           <span
                             style={{
@@ -305,47 +305,74 @@ useEffect(() => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '22rem',
+                              left: '26rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
                           <div className="row mt-3">
-                            <div className="col-6">
+                            <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>PR #: </Form.Label>
                                 <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
-                            <div className="col-3">
-                            <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                  <DatePicker
-                                    readOnly
-                                    selected={dateNeeded}
-                                    onChange={(date) => setDateNeeded(date)}
-                                    dateFormat="MM/dd/yyyy"
-                                    placeholderText="Start Date"
-                                    className="form-control"
-                                  />
-                            </Form.Group>
-                              </div>
-                          </div>
-                        <div className="row">
-                            <div className="col-6">
+                            <div className="col-4">
+                              <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
+                                  <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
+                                    <DatePicker
+                                      readOnly
+                                      selected={dateNeeded}
+                                      onChange={(date) => setDateNeeded(date)}
+                                      dateFormat="MM/dd/yyyy"
+                                      placeholderText="Start Date"
+                                      className="form-control"
+                                    />
+                                    <CalendarBlank
+                                      size={20}
+                                      style={{
+                                        position: "absolute",
+                                        left: "440px",
+                                        top: "73%",
+                                        transform: "translateY(-50%)",
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                              </Form.Group>
+                            </div>
+                            <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
                                 <Form.Control readOnly value={useFor} type="text" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
+                        </div>
+                        <div className="row">
                             <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control readOnly value={remarks} as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
-                            </Form.Group>
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                  <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                  <Form.Control readOnly value={remarks} as="textarea"
+                                    rows={3}
+                                    style={{
+                                    fontFamily: 'Poppins, Source Sans Pro',
+                                    fontSize: "16px",
+                                    height: "150px",
+                                    maxHeight: "150px",
+                                    resize: "none",
+                                    overflowY: "auto",
+                                    }}/>
+                              </Form.Group>
+                            </div>
+                            <div className="col-6">
+
                             </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+
+                        <div className="gen-info" 
+                        style={{ fontSize: '20px', 
+                        position: 'relative', 
+                        paddingTop: '20px',
+                        fontFamily: 'Poppins, Source Sans Pro' }}>
                           Requested Product
                           <span
                             style={{
@@ -354,7 +381,7 @@ useEffect(() => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '10.7rem',
+                              left: '20rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -415,7 +442,11 @@ useEffect(() => {
                                 </table>
                             </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                        <div className="gen-info" 
+                        style={{ fontSize: '20px', 
+                        position: 'relative', 
+                        paddingTop: '20px',
+                        fontFamily: 'Poppins, Source Sans Pro' }}>
                           Canvassed Item
                           <span
                             style={{
@@ -424,36 +455,56 @@ useEffect(() => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '13.5rem',
+                              left: '17rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
-                        <div className="table-containss">
-                            <div className="main-of-all-tables">
-                              {POarray.map((group) => (
-                                <div key={group.title} className='border border-warning m-3 mb-4 p-3'>
-                                  <h3>{`PO Number: ${group.title}`}</h3>
-                                  {group.items.length > 0 && (
-                                    <>
-                                      <h3>{`Supplier: ${group.items[0].suppliers.supplier_code}`}</h3>
-                                    </>
-                                  )}
-                                  {group.items.map((item, index) => (
-                                    <div  key={index}>
-                                      
-                                      <p className='fs-5 fw-bold'>
-                                        {`Product Code: ${item.supp_tag.code} Product Name: ${item.supp_tag.name}`}
-                                      </p>
-                                      <p className='fs-5 fw-bold'>
-                                        {`Quantity: ${item.item.quantity}`}
-                                      </p>                               
+
+                        <div className="table-contains">
+                          <div className="canvass-main-container">
+                            {POarray.map((group) => (
+                                <div key={group.title} className='canvass-supplier-container'>
+                                  <div className="canvass-supplier-content">
+                                    {/* <h3>{`PO Number: ${group.title}`}</h3> */}
+                                      <div className="PO-num">
+                                          <p>{`PO #: ${group.title}`}</p>
+                                        </div>
+                                    {group.items.length > 0 && (
+                                     <div className="canvass-title">
+                                        <div className="supplier-info">
+                                        <p>{`Supplier: ${group.items[0].suppliers.supplier_code}`}</p>
+                                        </div>
                                     </div>
-                                  ))}
+                                    )}
+                                    {group.items.map((item, index) => (
+                                      <div className='canvass-data-container' key={index}>
+                                          <div className="col-4" style={{fontFamily: 'Poppins, Source Sans Pro', fontSize: '14px'}}>
+                                            {`Product Code: `}
+                                              <strong>{`${item.supp_tag.code}`}</strong>
+                                            </div>
+                                          <div className="col-4" style={{fontFamily: 'Poppins, Source Sans Pro', fontSize: '14px'}}>
+                                                {`Product Name: `}
+                                                <strong>{`${item.supp_tag.name}`}</strong>
+                                            </div>
+                                          <div className="col-4" style={{fontFamily: 'Poppins, Source Sans Pro', fontSize: '14px'}}>
+                                            {`Quantity: `}
+                                            <strong>{`${item.item.quantity}`}</strong>
+                                          </div>
+                                        {/* <p className='fs-5 fw-bold'>
+                                          {`Product Code: ${item.supp_tag.code} Product Name: ${item.supp_tag.name}`}
+                                        </p>
+                                        <p className='fs-5 fw-bold'>
+                                          {`Quantity: ${item.item.quantity}`}
+                                        </p>                                */}
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               ))}
-                            </div>
+                          </div>
                         </div>
+
                         <div className='save-cancel'>
                         <Button type='button'  
                           className='btn btn-danger' 

@@ -28,16 +28,13 @@ function CreateStockTransfer({authrztn}) {
 
   const [source, setSource] = useState();
   const [destination, setDestination] = useState('');
-  const [reference_code, setReferenceCode] = useState('');
+  const [referenceCode, setReferenceCode] = useState('');
   const [remarks, setRemarks] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   
   const [product, setProduct] = useState([]);
   const [addProductbackend, setAddProductbackend] = useState([]);
-  // const [quantityInputs, setQuantityInputs] = useState({}); // to add the quantity to array 
-  // const [descInputs, setDescInputs] = useState({}); // to add the description to array 
   const [inputValues, setInputValues] = useState({});
-
 
   const [validated, setValidated] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -50,12 +47,36 @@ function CreateStockTransfer({authrztn}) {
   const [isSelected, setIsSelected] = useState(false);
 
   const [col_id, setSelect_Masterlist] = useState([]);
-  const handleFormChangeMasterList = (event) => { setSelect_Masterlist(event.target.value);};
+
+  const handleFormChangeMasterList = (event) => { 
+    setSelect_Masterlist(event.target.value);
+  };
+
   const handleFormSourceWarehouse = (event) => { 
     setSelectedWarehouse(event.target.value)
     setIsSelected(true)
   };
-  const handleFormDestinationWarehouse = (event) => { setDestination(event.target.value)};
+
+  const handleFormDestinationWarehouse = (event) => { 
+    setDestination(event.target.value)
+  };
+
+
+  useEffect(() => {
+    // Function to generate a random reference code with 12 characters
+    const generateReferenceCode = () => {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let code = '';
+
+      for (let i = 0; i < 12; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+      }
+
+      return code;
+    };
+    setReferenceCode(generateReferenceCode());
+  }, []); 
 
   const [masterList, setMasteList] = useState([]); 
 
@@ -75,6 +96,7 @@ function CreateStockTransfer({authrztn}) {
 return () => clearTimeout(delay);
 }, []);
 
+
 const [warehouse, setWarehouse] = useState([]); 
 useEffect(() => {
   axios
@@ -89,85 +111,85 @@ useEffect(() => {
 }, []);
 
 
-//   useEffect(() => {
-//     const delay = setTimeout(() => {
-//     axios.get(BASE_URL + '/inventory/fetchInvetory_product_warehouse', {
-//       params: {
-//         warehouse: selectedWarehouse,
-//       },
-//     })
-//       .then(res => {
-//         setFetchProduct(res.data)
-//         setIsLoading(false);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         setIsLoading(false);
-//       });
-//     }, 1000);
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios.get(BASE_URL + '/inventory/fetchInvetory_product_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
+      .then(res => {
+        setFetchProduct(res.data)
+        // setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        // setIsLoading(false);
+      });
+    }, 1000);
 
-// return () => clearTimeout(delay);
-// }, [selectedWarehouse]);
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
 
-//   useEffect(() => {
-//     const delay = setTimeout(() => {
-//     axios.get(BASE_URL + '/inventory/fetchInvetory_assembly_warehouse', {
-//       params: {
-//         warehouse: selectedWarehouse,
-//       },
-//     })
-//       .then(res => {
-//         setFetchAssembly(res.data)
-//       setIsLoading(false);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       setIsLoading(false);
-//     });
-//   }, 1000);
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios.get(BASE_URL + '/inventory/fetchInvetory_assembly_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
+      .then(res => {
+        setFetchAssembly(res.data)
+      // setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      // setIsLoading(false);
+    });
+  }, 1000);
 
-// return () => clearTimeout(delay);
-// }, [selectedWarehouse]);
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
 
-//   useEffect(() => {
-//     const delay = setTimeout(() => {
-//     axios.get(BASE_URL + '/inventory/fetchInvetory_spare_warehouse', {
-//       params: {
-//         warehouse: selectedWarehouse,
-//       },
-//     })
-//       .then(res => {
-//         setFetchSpare(res.data)
-//         setIsLoading(false);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         setIsLoading(false);
-//       });
-//     }, 1000);
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios.get(BASE_URL + '/inventory/fetchInvetory_spare_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
+      .then(res => {
+        setFetchSpare(res.data)
+        // setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        // setIsLoading(false);
+      });
+    }, 1000);
 
-// return () => clearTimeout(delay);
-// }, [selectedWarehouse]);
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
 
-//   useEffect(() => {
-//     const delay = setTimeout(() => {
-//     axios.get(BASE_URL + '/inventory/fetchInvetory_subpart_warehouse', {
-//       params: {
-//         warehouse: selectedWarehouse,
-//       },
-//     })
-//       .then(res => {
-//         setFetchSubPart(res.data)
-//         setIsLoading(false);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         setIsLoading(false);
-//       });
-//     }, 1000);
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios.get(BASE_URL + '/inventory/fetchInvetory_subpart_warehouse', {
+      params: {
+        warehouse: selectedWarehouse,
+      },
+    })
+      .then(res => {
+        setFetchSubPart(res.data)
+        // setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        // setIsLoading(false);
+      });
+    }, 1000);
 
-// return () => clearTimeout(delay);
-// }, [selectedWarehouse]);
+return () => clearTimeout(delay);
+}, [selectedWarehouse]);
   
 
 const add = async (e) => {
@@ -187,7 +209,7 @@ const add = async (e) => {
       const response = await axios.post(`${BASE_URL}/StockTransfer/create`, {
         selectedWarehouse,
         destination,
-        reference_code,
+        referenceCode,
         col_id,
         remarks,
         addProductbackend,
@@ -257,8 +279,6 @@ useEffect(() => {
   }));
 
   setAddProductbackend(serializedProducts);
-
-  // console.log("Selected Products:", serializedProducts);
   
 }, [inputValues, product]);
 
@@ -277,9 +297,6 @@ function formatDatetime(datetime) {
 
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
         <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -287,24 +304,27 @@ function formatDatetime(datetime) {
                   Loading Data...
                 </div>
               ) : (
-        authrztn.includes('Stock Management - Add') ? (
+            authrztn.includes('Stock Management - Add') ? (
             <div className="right-body-contents-a">
             <Row>
                 
                 <Col>
                 <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/purchaseRequest">
+                    <Link style={{ fontSize: '1.5rem' }} to="/stockManagement">
                         <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                     </Link>
                     <h1>
                       Transfer Stock
                     </h1>
                 </div>
-                    <p1>Purchasing please purchase the following item enumerated below </p1>
                 </Col>
             </Row>
               <Form noValidate validated={validated} onSubmit={add}>
-              <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+              <div className="gen-info" style={{ 
+                fontSize: '20px', 
+                position: 'relative', 
+                paddingTop: '20px',
+                fontFamily: 'Poppins, Source Sans Pro' }}>
                           General Information
                           <span
                             style={{
@@ -313,7 +333,7 @@ function formatDatetime(datetime) {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '17.8rem',
+                              left: '21rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -322,23 +342,6 @@ function formatDatetime(datetime) {
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
                               <Form.Label style={{ fontSize: '20px' }}>Source: </Form.Label>   
-                                  {/* <Form.Select 
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      onChange={handleFormSourceWarehouse}
-                                      defaultValue=''
-                                    >
-                                        <option disabled value=''>
-                                          Select Site
-                                        </option>
-                                        {subwarehouse.map((name, index) => (
-                                        <option key={index} value={name}>
-                                            {name}
-                                        </option>
-                                        ))}
-                                    </Form.Select> */}
-
                                     <Form.Select
                                       aria-label=""
                                       onChange={handleFormSourceWarehouse}
@@ -346,7 +349,7 @@ function formatDatetime(datetime) {
                                       style={{ height: "40px", fontSize: "15px" }}
                                       defaultValue="">
                                       <option disabled value="">
-                                        Select Site ...
+                                        Select Site
                                       </option>
                                       {warehouse.map((warehouse) => (
                                         <option
@@ -360,23 +363,7 @@ function formatDatetime(datetime) {
                                 </div>
                                 <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput2">
-                              <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
-                                  {/* <Form.Select 
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      onChange={handleFormDestinationWarehouse}
-                                      defaultValue=''
-                                    >
-                                        <option disabled value=''>
-                                          Select Site
-                                        </option>
-                                        {subwarehouse.map((name, index) => (
-                                        <option key={index} value={name}>
-                                            {name}
-                                        </option>
-                                        ))}
-                                    </Form.Select> */}
+                                <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
                                     <Form.Select
                                       aria-label=""
                                       onChange={handleFormDestinationWarehouse}
@@ -384,7 +371,7 @@ function formatDatetime(datetime) {
                                       style={{ height: "40px", fontSize: "15px" }}
                                       defaultValue="">
                                       <option disabled value="">
-                                        Select Site ...
+                                        Select Site
                                       </option>
                                       {warehouse.map((warehouse) => (
                                         <option
@@ -395,13 +382,13 @@ function formatDatetime(datetime) {
                                       ))}
                                     </Form.Select>
                               </Form.Group>
-                                </div>
+                            </div>
                           </div>
                         <div className="row">
-                        <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
+                          <div className="col-6">
+                            <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Reference code: </Form.Label>
-                                <Form.Control readOnly type="text" value={reference_code}  style={{height: '40px', fontSize: '15px'}}/>
+                                <Form.Control readOnly type="text" value={referenceCode} style={{ height: '40px', fontSize: '15px' }} />
                               </Form.Group>
                             </div>
                             <div className="col-6">
@@ -421,17 +408,39 @@ function formatDatetime(datetime) {
                                           <option key={masterList.col_id} value={masterList.col_id}>
                                             {masterList.col_Fname}
                                           </option>
-                                        ))}
-                                    </Form.Select>
+                                      ))}
+                                  </Form.Select>
                               </Form.Group>
-                                </div>
+                            </div>
                         </div>
-                        <Form.Group controlId="exampleForm.ControlInput1">
+                        <div className="row">
+                          <div className="col-6">
+                            <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}} onChange={e => setRemarks(e.target.value)}/>
+                                <Form.Control onChange={e => setRemarks(e.target.value)}
+                                as="textarea"
+                                rows={3}
+                                style={{
+                                fontFamily: 'Poppins, Source Sans Pro',
+                                fontSize: "16px",
+                                height: "150px",
+                                maxHeight: "150px",
+                                resize: "none",
+                                overflowY: "auto",
+                                }}/>
                             </Form.Group>
+                          </div>
+                          <div className="col-6">
 
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                          </div>
+                        </div>
+
+
+                        <div className="gen-info" style={{ 
+                          fontSize: '20px', 
+                          position: 'relative', 
+                          paddingTop: '20px',
+                          fontFamily: 'Poppins, Source Sans Pro' }}>
                           Product List
                           <span
                             style={{
@@ -440,7 +449,7 @@ function formatDatetime(datetime) {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '10.7rem',
+                              left: '12rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -455,10 +464,9 @@ function formatDatetime(datetime) {
                                                   <th className='tableh'>Code</th>
                                                   <th className='tableh'>Product Name</th>
                                                   <th className='tableh'>UOM</th>
-                                                  <th className='tableh'>Available</th>
+                                                  <th className='tableh'>Availability</th>
                                                   <th className='tableh'>Quantity</th>                                           
                                                   <th className='tableh'>Date Created</th>
-                                                  {/* <th className='tableh'>Description</th> */}
                                               </tr>
                                             </thead>
                                             <tbody>
@@ -466,13 +474,13 @@ function formatDatetime(datetime) {
                                             {product.length > 0 ? (
                                             product.map((product) => (
                                               <tr key={product.value}>
-                                                <td >{product.code}</td>
-                                                <td >{product.name}</td>  
-                                                <td >{product.unit}</td>    
-                                                <td >{product.available}</td>                                      
-                                                <td > 
+                                                <td>{product.code}</td>
+                                                <td>{product.name}</td>  
+                                                <td>{product.unit}</td>    
+                                                <td>{product.available}</td>                                      
+                                                <td> 
                                                   <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input
+                                                    <Form.Control
                                                       type="number"
                                                       value={inputValues[product.value]?.quantity || ''}
                                                       onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
@@ -483,29 +491,18 @@ function formatDatetime(datetime) {
                                                   </div>
                                                 </td>
                                                 <td >{formatDatetime(product.created)}</td>
-                                                {/* <td >
-                                                  <div className='d-flex flex-direction-row align-items-center'>
-                                                    <input                                              
-                                                      as="textarea"
-                                                      value={inputValues[product.value]?.desc || ''}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
-                                                      placeholder="Input description"
-                                                      style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                    />
-                                                  </div>
-                                                </td> */}
                                               </tr>
                                             ))
                                           ) : (
                                             <tr>
-                                              <td>No Product selected</td>
-                                            </tr>
-                                          )}
-                                                 
-                                            </tbody>
+                                              <td colSpan="6" style={{ textAlign: "center"}}>
+                                                No Product Selected
+                                              </td>
+                                          </tr>
+                                          )}         
+                                      </tbody>
                                         {showDropdown && (
                                         <div className="dropdown mt-3">
-                                
                                                 <Select
                                                   isMulti
                                                   options={fetchProduct.map(prod => ({
@@ -520,7 +517,7 @@ function formatDatetime(datetime) {
                                                     code: prod.product_tag_supplier.product.product_code,
                                                     name: prod.product_tag_supplier.product.product_name,
                                                     unit: prod.product_tag_supplier.product.product_unitMeasurement,
-                                                    avaliable: prod.quantity,
+                                                    available: prod.quantity,
                                                     created: prod.product_tag_supplier.product.createdAt
                                                   }))
                                                   .concat(fetchAssembly.map(assembly => ({
@@ -539,7 +536,7 @@ function formatDatetime(datetime) {
                                                     created: assembly.assembly_supplier.assembly.createdAt
                                                   })))
                                                   .concat(fetchSpare.map(spare => ({
-                                                    value: `${spare.sparepart_supplier.sparePart.id}_${spare.sparepart_supplier.sparePart.spareParts_code}_Spare`, // Indicate that it's an assembly
+                                                    value: `${spare.sparepart_supplier.sparePart.id}_${spare.sparepart_supplier.sparePart.spareParts_code}_Spare`, // Indicate that it's an Spare
                                                     label: <div>
                                                       Product Part Code: <strong>{spare.sparepart_supplier.sparePart.spareParts_code}</strong> / 
                                                       Product Part Name: <strong>{spare.sparepart_supplier.sparePart.spareParts_name}</strong> / 
@@ -554,7 +551,7 @@ function formatDatetime(datetime) {
                                                     created: spare.sparepart_supplier.sparePart.createdAt
                                                   })))
                                                   .concat(fetchSubPart.map(subPart => ({
-                                                    value: `${subPart.subpart_supplier.subPart.id}_${subPart.subpart_supplier.subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
+                                                    value: `${subPart.subpart_supplier.subPart.id}_${subPart.subpart_supplier.subPart.subPart_code}_SubPart`, // Indicate that it's an SubPart
                                                     label: <div>
                                                       Product Sub-Part Code: <strong>{subPart.subpart_supplier.subPart.subPart_code}</strong> / 
                                                       Product Sub-Part Name: <strong>{subPart.subpart_supplier.subPart.subPart_name}</strong> / 

@@ -13,7 +13,11 @@ import Collapse from '@mui/material/Collapse';
 // import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { IconButton, TextField, TablePagination, withStyles } from '@mui/material';
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+import usePagination from '@mui/material/usePagination';
+import { styled } from '@mui/material/styles';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import {
   Plus,
   CalendarBlank,
@@ -33,6 +37,8 @@ import "../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../partials/header";
 import { jwtDecode } from "jwt-decode";
+// const ITEMS_PER_PAGE = 5; 
+
 
 function PurchaseRequest({ authrztn }) {
   const { id } = useParams();
@@ -44,9 +50,27 @@ function PurchaseRequest({ authrztn }) {
   const [allPR, setAllPR] = useState([]);
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const { items, ...pagination } = usePagination({
+    count: Math.ceil(filteredPR.length / 5),
+  });
+
+  const List = styled('ul')({
+    listStyle: 'none',
+    padding: 0,
+    margin: 0,
+    display: 'flex',
+    float: 'right'
+  });
+
+  // const [currentPage, setCurrentPage] = useState(1);
+
+  // const handleChange = (event, value) => {
+  //   setCurrentPage(value);
+  // };
   
+  // const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  // const endIndex = startIndex + ITEMS_PER_PAGE;
+
   const handleRowToggle = async (id) => {
     try {
       const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
@@ -60,7 +84,7 @@ function PurchaseRequest({ authrztn }) {
       console.error(err);
     }
   };
-
+  
   const handleXCircleClick = () => {
     setStartDate(null);
   };
@@ -89,17 +113,21 @@ function PurchaseRequest({ authrztn }) {
     reloadTable();
   }, []);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = allPR.filter((data) => {
+      return (
+        data.pr_num.toLowerCase().includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.remarks.toLowerCase().includes(searchTerm)
+      );
+    });
   
+    setFilteredPR(filteredData);
+    
+  };
+
   const handleGoButtonClick = () => {
     if (!startDate || !endDate || !selectedStatus) {
       swal({
@@ -148,7 +176,6 @@ function PurchaseRequest({ authrztn }) {
     }).then(async (cancel) => {
       if (cancel) {
         try {
-          // console.log(row_status)
           if (
             row_status !== "For-Approval" &&
             row_status !== "For-Rejustification"
@@ -375,7 +402,8 @@ function PurchaseRequest({ authrztn }) {
                   }}
                   InputProps={{
                     style: { fontSize: '14px', width: '250px', height: '50px' },
-                  }}/>
+                  }}
+                  onChange={handleSearch}/>
               <table aria-label="collapsible table" className='table-hover'>
                 <thead>
                   <tr>
@@ -504,18 +532,65 @@ function PurchaseRequest({ authrztn }) {
                         No Data found
                       </td>
                     </tr>
-                
                 )}
               </table>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={filteredPR.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
+              {/* <Stack spacing={2} style={{float: 'right'}}>
+                  <Pagination
+                    count={Math.ceil(filteredPR.length / ITEMS_PER_PAGE)}
+                    page={currentPage}
+                    onChange={handleChange}
+                    size="large"
+                    sx={{
+                      '& .MuiPaginationItem-icon': {
+                        fontSize: '30px',
+                      },
+                      '& .MuiPaginationItem-page': {
+                        fontSize: '13px',
+                      },
+                    }}
+                  />
+              </Stack> */}
+              <nav>
+                <List>
+                  {items.map(({ page, type, selected, ...item }, index) => {
+                    let children = null;
+                    if (type === 'start-ellipsis' || type === 'end-ellipsis') {
+                      children = '…';
+                    } else if (type === 'page') {
+                      children = (
+                        <button
+                          type="button"
+                          style={{
+                            fontWeight: selected ? 'bold' : undefined,
+                            fontSize: '14px',
+                            width: '25px',
+                            background: '#FFA500',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            height: '28px',
+
+                          }}
+                          {...item}
+                        >
+                          {page}
+                        </button>
+                      );
+                    } else {
+                      children = (
+                        <button type="button" {...item}
+                        style={{fontSize: '14px',
+                        cursor: 'pointer',
+                        color: '#000000',
+                        textTransform: 'capitalize'}}>
+                          {type}
+                        </button>
+                      );
+                    }
+
+                    return <li key={index}>{children}</li>;
+                  })}
+                </List>
+              </nav>
             </div>
           </div>
         </div>
