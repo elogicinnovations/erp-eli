@@ -136,25 +136,25 @@ router.route("/PO_products").get(async (req, res) => {
         prPoData.forEach(item => {
           const po_id = item.po_id;
           consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
-          consolidatedObject[po_id].items.push({item, supp_tag: item.product_tag_supplier.product, suppliers: item.product_tag_supplier.supplier});
+          consolidatedObject[po_id].items.push({item, supp_tag: item.product_tag_supplier.product, suppliers: item.product_tag_supplier.supplier, type: 'Product'});
         });
     
         prPoAsmblyData.forEach(item => {
           const po_id = item.po_id;
           consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: []};
-          consolidatedObject[po_id].items.push({item, supp_tag: item.assembly_supplier.assembly, suppliers: item.assembly_supplier.supplier });
+          consolidatedObject[po_id].items.push({item, supp_tag: item.assembly_supplier.assembly, suppliers: item.assembly_supplier.supplier, type: 'Product Assembly' });
         });
     
         prPoSpareData.forEach(item => {
           const po_id = item.po_id;
           consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
-          consolidatedObject[po_id].items.push({item, supp_tag: item.sparepart_supplier.sparePart, suppliers: item.sparepart_supplier.supplier });
+          consolidatedObject[po_id].items.push({item, supp_tag: item.sparepart_supplier.sparePart, suppliers: item.sparepart_supplier.supplier, type: 'Product Part' });
         });
     
         prPoSubpartData.forEach(item => {
           const po_id = item.po_id;
           consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
-          consolidatedObject[po_id].items.push({item, supp_tag: item.subpart_supplier.subPart, suppliers: item.subpart_supplier.supplier});
+          consolidatedObject[po_id].items.push({item, supp_tag: item.subpart_supplier.subPart, suppliers: item.subpart_supplier.supplier, type: 'Product Subpart'});
         });
     
         // Convert the object values back to an array
@@ -165,7 +165,7 @@ router.route("/PO_products").get(async (req, res) => {
         //   group.items.sort((a, b) => a.po_id.localeCompare(b.po_id));
         // });
     
-        // console.log(consolidatedArray);
+        console.log(consolidatedArray);
     
         res.status(200).json(consolidatedArray);
       } catch (err) {
