@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import Sidebar from '../Sidebar/sidebar';
 import '../../assets/global/style.css';
 import '../styles/react-style.css';
@@ -283,25 +283,10 @@ const Dashboard = ({ setActiveTab }) => {
       .catch(err => console.log(err));
   }, []);
 
-  useEffect(() => {
-    const createWarehouse = async () => {
-      try {
-        const response = await axios.post(`${BASE_URL}/Dashboard/addauto`, {});
-
-        console.log("HAHAHA INSERTED" + response.data);
-      } catch (error) {
-        console.error('Error creating warehouse:', error);
-      }
-    };
-    createWarehouse();
-  }, []);
 
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
-        {/* <div className="right-of-main-container"> */}
+
             <div className="right-body-content">
               <div className="dashboard-container">
                 {/* <div className="settings-search-master">

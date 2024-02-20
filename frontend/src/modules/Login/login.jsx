@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../../assets/global/style.css';
 import '../styles/react-style.css';
@@ -57,6 +57,34 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const initialized = useRef(false)
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true
+
+      const createRbac = async () => {
+        try {
+          const response = await axios.post(`${BASE_URL}/userRole/rbacautoadd`);
+          if (response && response.status === 200) {
+            console.error("Superadmin role already exists");
+          } else if(response && response.status === 401) {
+            console.error("Superadmin user not found");
+          } else {
+            console.error('Error creating rbac:', response);
+          }
+        } catch (error) {  
+          console.error('Error creating rbac:', error);
+        }
+      };
+      createRbac();
+    }
+  }, [])
+
+
+
+
 
   return (
     <div className="login-main-containers">

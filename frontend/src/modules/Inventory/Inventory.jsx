@@ -14,16 +14,7 @@ import swal from 'sweetalert';
 import Button from 'react-bootstrap/Button';
 import { jwtDecode } from 'jwt-decode';
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
-  Trash,
-  NotePencil,
-  Eye,
-  ArrowUUpLeft,
-  DotsThreeCircle,
 } from "@phosphor-icons/react";
 
 import * as $ from 'jquery';

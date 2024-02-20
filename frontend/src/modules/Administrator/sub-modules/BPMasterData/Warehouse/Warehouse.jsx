@@ -71,54 +71,64 @@ return () => clearTimeout(delay);
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-const add = async (e) => {
+  const add = async (e) => {
     e.preventDefault();
 
     const form = e.currentTarget;
-    if(form.checkValidity === false) {
-        e.preventDefault();
-        e.stopPropagation();
-        swal({
-            icon: "error",
-            title: "Fields are required",
-            text: "Please fill the Required text fields",
-        });
+    if (warehousename.trim() === "" || locatename.trim() === "") {
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the Required text fields",
+      });
+      setValidated(true);
+      return;
+    }
+
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the Required text fields",
+      });
     } else {
-        axios
+      axios
         .post(BASE_URL + "/warehouses/createWarehouse", {
-            warehousename,
-            locatename,
-            description,
+          warehousename,
+          locatename,
+          description,
         })
         .then((res) => {
-            if (res.status === 200) {
-                swal({
-                    title: "Warehouse Add Successful!",
-                    text: "The Warehouse has been Added Successfully.",
-                    icon: "success",
-                    button: "OK",
-                  }).then(() => {
-                    handleClose();
-                    reloadTable();
-                  });
-            } else if (res.status === 201) {
-                swal({
-                    title: "Warehouse is Already Exist",
-                    text: "Please Input a New Warehouse ",
-                    icon: "error",
-                  });
-            } else {
-                swal({
-                    title: "Something went wrong",
-                    text: "Please Contact our Support",
-                    icon: "error",
-                    button: "OK",
-                  });
-            }
-       })
+          if (res.status === 200) {
+            swal({
+              title: "Warehouse Add Successful!",
+              text: "The Warehouse has been Added Successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              handleClose();
+              reloadTable();
+            });
+          } else if (res.status === 201) {
+            swal({
+              title: "Warehouse is Already Exist",
+              text: "Please Input a New Warehouse ",
+              icon: "error",
+            });
+          } else {
+            swal({
+              title: "Something went wrong",
+              text: "Please Contact our Support",
+              icon: "error",
+              button: "OK",
+            });
+          }
+        });
     }
     setValidated(true);
-};
+  };
 
 
 

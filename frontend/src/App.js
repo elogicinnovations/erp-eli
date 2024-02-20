@@ -72,7 +72,9 @@ import ProtectedRoutes from "./hooks/protectedRoute";
 import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
+import ActivityLog from "./modules/ActivityModule/ActivityLog"
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
+
 import Roles from "./hooks/roles";
 import { List } from "@phosphor-icons/react";
 import { CaretCircleLeft } from "@phosphor-icons/react/dist/ssr";
@@ -769,6 +771,18 @@ function App() {
                     element={<SystemSettings/>}
               />
 
+          <Route
+            path="/activityLogs"
+            element={
+              <Roles>
+              {
+                (authrztn) => (
+                  <ActivityLog authrztn={authrztn}/>
+                )
+              }
+            </Roles>
+            }
+          />     
              
         </Routes>
 

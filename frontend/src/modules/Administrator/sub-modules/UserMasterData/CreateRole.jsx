@@ -229,6 +229,17 @@ function Create_role() {
         )
       );
     } else
+
+    if (value === "Warehouses - View" && selectedCheckboxes.some((item) => item.value === "Warehouses - View")) {
+      setSelectedCheckboxes(
+        selectedCheckboxes.filter((item) => 
+          item.value !== "Warehouses - View" &&
+          item.value !== "Warehouses - Add" &&
+          item.value !== "Warehouses - Edit" &&
+          item.value !== "Warehouses - Delete"
+        )
+      );
+    } else
   
     if (value === "Inventory - View" && selectedCheckboxes.some((item) => item.value === "Inventory - View")) {
       setSelectedCheckboxes(
@@ -369,7 +380,8 @@ function Create_role() {
       "Stock Management - View",
       "Stock Management - Approval",
       "Stock Management - Reject",
-      "Report - View"
+      "Report - View",
+      "Activity Logs - View"
     ];
 
     const updatedCheckboxes = allCheckboxValues.map((value) => ({
@@ -2050,7 +2062,7 @@ function Create_role() {
                           <td
                             className="role"
                             style={{ border: "0px", fontSize: "15px" }}>
-                            Warehouses
+                            Warehouse
                           </td>
                         </td>
 
@@ -2062,9 +2074,7 @@ function Create_role() {
                               id="Warehouses - View"
                               name="vehicle1"
                               value="Warehouses - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - View"
-                              )}
+                              checked={Warehouses}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - View")
                               }
@@ -2078,13 +2088,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={WarehousesDisable}
                               type="checkbox"
                               id="Warehouses - Add"
                               name="vehicle1"
                               value="Warehouses - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - Add"
-                              )}
+                              checked={WarehousesAdd}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - Add")
                               }
@@ -2098,13 +2107,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={WarehousesDisable}
                               type="checkbox"
                               id="Warehouses - Edit"
                               name="vehicle1"
                               value="Warehouses - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - Edit"
-                              )}
+                              checked={WarehousesEdit}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - Edit")
                               }
@@ -2118,13 +2126,12 @@ function Create_role() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={WarehousesDisable}
                               type="checkbox"
                               id="Warehouses - Delete"
                               name="vehicle1"
                               value="Warehouses - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - Delete"
-                              )}
+                              checked={WarehousesDelete}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - Delete")
                               }
@@ -2984,14 +2991,10 @@ function Create_role() {
                               htmlFor="Report - Reject"></label>
                           </div>
                         </td>
-
-
                       </tr>
 
 
-
-                        {/* WAG E DELETE KASI GAGAMITIN PA SA PHASE 2 */}
-                      {/* <td>
+                      <td>
                         <h3 className="role-head">Activity Module</h3>
                       </td>
                       <tr>
@@ -3007,82 +3010,127 @@ function Create_role() {
                           <div className="input-group">
                             <input
                               type="checkbox"
-                              id="Activity Log - Add"
+                              id="Activity Logs - View"
                               name="vehicle1"
-                              value="Activity Log - Add"
+                              value="Activity Logs - View"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Log - Add"
+                                (item) => item.value === "Activity Logs - View"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Activity Log - Add")
+                                handleCheckboxChange("Activity Logs - View")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Log - Add"></label>
+                              htmlFor="Activity Logs - View"></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
+                              disabled
                               type="checkbox"
-                              id="Activity Log - Edit"
+                              id="Activity Logs - Add"
                               name="vehicle1"
-                              value="Activity Log - Edit"
+                              value="Activity Logs - Add"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Log - Edit"
+                                (item) => item.value === "Activity Logs - Add"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Activity Log - Edit")
+                                handleCheckboxChange("Activity Logs - Add")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Log - Edit"></label>
+                              htmlFor="Activity Logs - Add"></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
+                              disabled
                               type="checkbox"
-                              id="Activity Log - Delete"
+                              id="Activity Logs - Edit"
                               name="vehicle1"
-                              value="Activity Log - Delete"
+                              value="Activity Logs - Edit"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Log - Delete"
+                                (item) => item.value === "Activity Logs - Edit"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Activity Log - Delete")
+                                handleCheckboxChange("Activity Logs - Edit")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Log - Delete"></label>
+                              htmlFor="Activity Logs - Edit"></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
+                              disabled
                               type="checkbox"
-                              id="Activity Log - View"
+                              id="Activity Logs - Delete"
                               name="vehicle1"
-                              value="Activity Log - View"
+                              value="Activity Logs - Delete"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Log - View"
+                                (item) => item.value === "Activity Logs - Delete"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Activity Log - View")
+                                handleCheckboxChange("Activity Logs - Delete")
                               }
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Log - View"></label>
+                              htmlFor="Activity Logs - Delete"></label>
                           </div>
                         </td>
-                      </tr> */}
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Approval"
+                              name="vehicle1"
+                              value="Activity Logs - Approval"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Approval"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Approval")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Approval"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Reject"
+                              name="vehicle1"
+                              value="Activity Logs - Reject"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Reject"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Reject")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Reject"></label>
+                          </div>
+                        </td>
+                      </tr>
 
 
                     </tbody>

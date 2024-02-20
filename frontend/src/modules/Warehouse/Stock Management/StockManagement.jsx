@@ -378,7 +378,7 @@ function StockManagement({ authrztn }) {
                                   <option value="Cancelled">Cancelled</option>
                                 </Form.Select>  
                                   <button className='goesButton' onClick={handleGoButtonClick}>
-                                    GO
+                                    FILTER
                                   </button>
                                   <button className='Filterclear' onClick={clearFilters}>
                                     Clear Filter

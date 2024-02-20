@@ -273,6 +273,18 @@ function EditRole() {
           }
         });
       }
+
+      if (value === "Warehouses - View") {
+        ["Warehouses - Add", "Warehouses - Edit", "Warehouses - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
       
       if (value === "Inventory - View") {
         ["Inventory - Add", "Inventory - Edit", "Inventory - Approval", "Inventory - Reject"].forEach((relatedValue) => {
@@ -429,7 +441,8 @@ function EditRole() {
       "Stock Management - View",
       "Stock Management - Approval",
       "Stock Management - Reject",
-      "Report - View"
+      "Report - View",
+      "Activity Logs - View"
     ];
 
     const updatedCheckboxes = allCheckboxValues.map((value) => ({
@@ -512,6 +525,12 @@ function EditRole() {
   const SupplierAdd = selectedCheckboxes.some((item) => item.value === "Supplier - Add") && !SupplierDisable;
   const SupplierEdit = selectedCheckboxes.some((item) => item.value === "Supplier - Edit") && !SupplierDisable;
   const SupplierDelete = selectedCheckboxes.some((item) => item.value === "Supplier - Delete") && !SupplierDisable;
+
+  const Warehouses = selectedCheckboxes.some((item) => item.value === "Warehouses - View");
+  const WarehousesDisable = !Warehouses;
+  const WarehousesAdd = selectedCheckboxes.some((item) => item.value === "Warehouses - Add") && !WarehousesDisable;
+  const WarehousesEdit = selectedCheckboxes.some((item) => item.value === "Warehouses - Edit") && !WarehousesDisable;
+  const WarehousesDelete = selectedCheckboxes.some((item) => item.value === "Warehouses - Delete") && !WarehousesDisable;
 
   const Inventory = selectedCheckboxes.some((item) => item.value === "Inventory - View");
   const InventoryDisable = !Inventory;
@@ -2157,7 +2176,7 @@ function EditRole() {
                           <td
                             className="role"
                             style={{ border: "0px", fontSize: "15px" }}>
-                            Warehouses
+                            Warehouse
                           </td>
                         </td>
 
@@ -2169,9 +2188,7 @@ function EditRole() {
                               id="Warehouses - View"
                               name="vehicle1"
                               value="Warehouses - View"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - View"
-                              )}
+                              checked={Warehouses}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - View")
                               }
@@ -2185,13 +2202,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={WarehousesDisable}
                               type="checkbox"
                               id="Warehouses - Add"
                               name="vehicle1"
                               value="Warehouses - Add"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - Add"
-                              )}
+                              checked={WarehousesAdd}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - Add")
                               }
@@ -2205,13 +2221,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={WarehousesDisable}
                               type="checkbox"
                               id="Warehouses - Edit"
                               name="vehicle1"
                               value="Warehouses - Edit"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - Edit"
-                              )}
+                              checked={WarehousesEdit}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - Edit")
                               }
@@ -2225,13 +2240,12 @@ function EditRole() {
                         <td>
                           <div className="input-group">
                             <input
+                              disabled={WarehousesDisable}
                               type="checkbox"
                               id="Warehouses - Delete"
                               name="vehicle1"
                               value="Warehouses - Delete"
-                              checked={selectedCheckboxes.some(
-                                (item) => item.value === "Warehouses - Delete"
-                              )}
+                              checked={WarehousesDelete}
                               onChange={() =>
                                 handleCheckboxChange("Warehouses - Delete")
                               }
@@ -3093,8 +3107,146 @@ function EditRole() {
                               htmlFor="Report - Reject"></label>
                           </div>
                         </td>
+                      </tr>
+
+                      <td>
+                        <h3 className="role-head">Activity Module</h3>
+                      </td>
+
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}>
+                            Activity Log
+                          </td>
+                        </td>
 
 
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Activity Logs - View"
+                              name="vehicle1"
+                              value="Activity Logs - View"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - View"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - View")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - View"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Add"
+                              name="vehicle1"
+                              value="Activity Logs - Add"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Add"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Edit"
+                              name="vehicle1"
+                              value="Activity Logs - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Edit")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Edit"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Delete"
+                              name="vehicle1"
+                              value="Activity Logs - Delete"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Delete"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Delete")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Delete"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Approval"
+                              name="vehicle1"
+                              value="Activity Logs - Approval"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Approval"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Approval")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Approval"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Activity Logs - Reject"
+                              name="vehicle1"
+                              value="Activity Logs - Reject"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Activity Logs - Reject"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Activity Logs - Reject")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Activity Logs - Reject"></label>
+                          </div>
+                        </td>
                       </tr>
 
                     </tbody>

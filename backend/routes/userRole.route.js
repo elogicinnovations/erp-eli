@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { where } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
 // const UserRole = require('../db/models/userRole.model')
-const { MasterList, UserRole } = require("../db/models/associations");
+const { MasterList, UserRole, Warehouses } = require("../db/models/associations");
 const session = require("express-session");
 
 router.use(
@@ -157,5 +157,75 @@ router.post("/createUserrole/:rolename", async (req, res) => {
     res.status(500).json({ error: "An error occurred" });
   }
 });
+
+
+
+router.route('/rbacautoadd').post(async (req, res) => {
+  try {
+
+    //this is for checking of Superadmin role
+    const existingRBAC = await UserRole.findOne({
+      where: {
+        col_rolename: "Superadmin",
+      },
+    });
+
+    if (existingRBAC) {
+      return res.status(200).json({ message: 'Superadmin already exists' });
+    }
+
+    //if not exist create super admin
+    const newRBAC = await UserRole.create({
+      col_rolename: "Superadmin",
+      col_desc: "",
+      col_authorization: "Master List - Add, Master List - Edit, Master List - Delete, Master List - View, User Access Role - Add, User Access Role - Edit, User Access Role - Delete, User Access Role - View, Product List - Add, Product List - Edit, Product List - Delete, Product List - View, Assembly - Add, Assembly - Edit, Assembly - Delete, Assembly - View, Spare Part - Add, Spare Part - Edit, Spare Part - Delete, Spare Part - View, Sub-Part - Add, Sub-Part - Edit, Sub-Part - Delete, Sub-Part - View, Product Categories - Add, Product Categories - Edit, Product Categories - Delete, Product Categories - View, Product Manufacturer - Add, Product Manufacturer - Edit, Product Manufacturer - Delete, Product Manufacturer - View, Bin Location - Add, Bin Location - Edit, Bin Location - Delete, Bin Location - View, Cost Centre - Add, Cost Centre - Edit, Cost Centre - Delete, Cost Centre - View, Supplier - Add, Supplier - Edit, Supplier - Delete, Supplier - View, Warehouses - Add, Warehouses - Edit, Warehouses - Delete, Warehouses - View, Inventory - View, Inventory - Add, Inventory - Edit, Inventory - Approval, Inventory - Reject, PR - Add, PR - Edit, PR - Approval, PR - Reject, PR - View, PO - Approval, PO - Reject, PO - View, Receiving - View, Receiving - Approval, Receiving - Reject, Stock Management - Add, Stock Management - View, Stock Management - Approval, Stock Management - Reject, Report - View, Activity Logs - View"
+    });
+
+    const rbacId = newRBAC.col_id;
+
+    if(!newRBAC) {
+      return res.status(401).json({ message: 'No rbac id found' });
+    }
+
+    //create of masterlist
+    const newUseradmin = await MasterList.create({
+        col_roleID: rbacId,
+        col_Fname: "Superadmin",
+        col_address: "",
+        col_username: "Superadmin",
+        col_phone: null,
+        col_email: "cminoza@elogicinnovations.com",
+        col_Pass: "admin",
+        col_status: "Active",
+        user_type: "Superadmin",
+    });
+
+    //for warehouse
+    const existingWarehouse = await Warehouses.findOne({
+      where: {
+        warehouse_name: "Main",
+        location: "Agusan"
+      }
+    });
+
+    if (existingWarehouse) {
+      return res.status(200).json({ message: 'Warehouse with the specified name and location already exists' });
+    }
+
+    const newWarehouse = await Warehouses.create({
+      warehouse_name: "Main",
+      location: "Agusan",
+      details: ""
+    });
+
+    res.status(201).json(newUseradmin);
+  } catch (error) {
+    console.error('Error: Problem on inserting', error);
+    res.status(500).json({ message: 'Error inserting' });
+  }
+});
+
+
+
 
 module.exports = router;

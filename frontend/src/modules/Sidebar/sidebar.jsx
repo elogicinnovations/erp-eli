@@ -8,10 +8,8 @@ import {
   Archive,
   ClipboardText,
   Warehouse,
-  Coins,
   ChartLineUp,
-  SignOut,
-  Files,
+  Scroll,
 } from "@phosphor-icons/react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 // import Drawer from '@mui/material/Drawer';
@@ -748,6 +746,24 @@ function Sidebar({ authrztn }) {
               </ListItem>
             </NavLink>
           </Collapse>
+
+          { authrztn.includes('Activity Logs - View') && (
+          <NavLink
+            to="/activityLogs"
+            style={{ textDecoration: "none", color: "inherit" }}
+            activeClassName="active">
+            <ListItem
+              button
+              className={`menu-item ${
+                location.pathname === "/activityLogs" ? "active" : ""
+              }`}
+              onClick={toggleOff}
+              >
+              <Scroll size={20} />
+              <ListItemText primary="ACTIVITY LOGS" />
+            </ListItem>
+          </NavLink>
+          )}
         </List>
       </div>
     </div>
