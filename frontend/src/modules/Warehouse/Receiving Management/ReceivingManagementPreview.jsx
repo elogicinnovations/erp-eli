@@ -14,14 +14,11 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import warehouse from "../../../assets/global/warehouse";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import {
   ArrowCircleLeft,
-  Plus,
-  Paperclip,
-  DotsThreeCircle,
-  CalendarBlank,
-  PlusCircle,
+  Upload,
   Circle,
   ArrowUUpLeft,
 } from "@phosphor-icons/react";
@@ -47,7 +44,12 @@ function ReceivingManagementPreview({ authrztn }) {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setInputValues({});
+    setCheckedRows({});
+    setValidated(false);
+    setShow(false);
+  };
   // const handleShow = () => setShow(true);
 
   // -------------------- fetch data value --------------------- //
@@ -136,12 +138,32 @@ function ReceivingManagementPreview({ authrztn }) {
   };
   const [checkedRows, setCheckedRows] = useState({});
 
+  // const handleCheckbox = (event, parentIndex, childIndex) => {
+  //   const newCheckedRows = { ...checkedRows };
+  //   newCheckedRows[parentIndex] = { ...newCheckedRows[parentIndex] };
+  //   newCheckedRows[parentIndex][childIndex] =
+  //     !newCheckedRows[parentIndex][childIndex];
+  //     setInputValues({})
+  //   setCheckedRows(newCheckedRows);
+
+  // };
   const handleCheckbox = (event, parentIndex, childIndex) => {
     const newCheckedRows = { ...checkedRows };
     newCheckedRows[parentIndex] = { ...newCheckedRows[parentIndex] };
     newCheckedRows[parentIndex][childIndex] =
       !newCheckedRows[parentIndex][childIndex];
+
+    // If the checkbox is unchecked, reset input values for the specific row
+    if (!newCheckedRows[parentIndex][childIndex]) {
+      const updatedInputValues = { ...inputValues };
+      delete updatedInputValues[
+        `${po_id}_${products_receive[parentIndex].items[childIndex].type}_${products_receive[parentIndex].items[childIndex].supp_tag.code}_${products_receive[parentIndex].items[childIndex].supp_tag.name}`
+      ];
+      setInputValues(updatedInputValues);
+    }
+
     setCheckedRows(newCheckedRows);
+    setValidated(false)
   };
 
   console.log(products_receive);
@@ -160,8 +182,8 @@ function ReceivingManagementPreview({ authrztn }) {
 
   const [shippingFee, setShippingFee] = useState("");
   const handleInputChangeShipping = (value) => {
-    setShippingFee(value)
-  }
+    setShippingFee(value);
+  };
 
   const handleInputChange = (value, productValue, inputType, po_quantity) => {
     setInputValues((prevInputs) => {
@@ -185,32 +207,32 @@ function ReceivingManagementPreview({ authrztn }) {
 
       // If inputType is "Rquantity" or "Cquantity", update corresponding fields in item
 
-      let Received_quantity, Checked_quantity, maxReceivedQuantity;
+      let Received_quantity, Remaining_quantity, maxReceivedQuantity;
       if (inputType === "Rquantity") {
         // item.Received_quantity = value;
         Received_quantity = value;
-      } else if (inputType === "Cquantity") {
+      } else if (inputType === "Tquantity") {
         // item.Checked_quantity = value;
-        Checked_quantity = value;
+        Remaining_quantity = value;
       }
 
-      if (prevInputs[productValue]?.Squantity === undefined) {
-        // console.log(`Undefined Set: ${Received_quantity} * ${po_quantity}`);
-        maxReceivedQuantity = po_quantity;
-      } else {
-        // console.log(
-        //   `Defined Set: ${
-        //     prevInputs[productValue]?.Squantity || 0
-        //   } * ${po_quantity}`
-        // );
-        maxReceivedQuantity =
-          (prevInputs[productValue]?.Squantity || 0) * po_quantity;
-      }
+      // if (prevInputs[productValue]?.Squantity === undefined) {
+      //   // console.log(`Undefined Set: ${Received_quantity} * ${po_quantity}`);
+      //   maxReceivedQuantity = po_quantity;
+      // } else {
+      //   // console.log(
+      //   //   `Defined Set: ${
+      //   //     prevInputs[productValue]?.Squantity || 0
+      //   //   } * ${po_quantity}`
+      //   // );
+      //   maxReceivedQuantity =
+      //     (prevInputs[productValue]?.Squantity || 0) * po_quantity;
+      // }
       // console.log(`inputed value ${value}`);
       // console.log(`mXX_quantity ${maxReceivedQuantity}`);
       // console.log(`Checked_quantity ${Checked_quantity}`)
 
-      if (Received_quantity > maxReceivedQuantity) {
+      if (Received_quantity > po_quantity) {
         // Show SweetAlert popup message
         swal({
           title: "Error",
@@ -222,7 +244,7 @@ function ReceivingManagementPreview({ authrztn }) {
             ...prevInputs,
             [productValue]: {
               ...prevInputs[productValue],
-              [inputType]: maxReceivedQuantity,
+              [inputType]: po_quantity,
             },
           }));
         });
@@ -240,51 +262,10 @@ function ReceivingManagementPreview({ authrztn }) {
     });
   };
 
-  // const handleInputChange = (value, productValue, inputType, po_quantity) => {
-  //   setInputValues((prevInputs) => {
-  //     const [po_id, type, code, name] = productValue.split('_');
-
-  //     // Finding the corresponding parent object in products_receive based on the po_id
-  //     const parent = products_receive.find(parent => parent.title === po_id);
-
-  //     // Check if the parent object is defined
-  //     if (!parent) {
-  //       console.error(`Parent object with title ${po_id} not found.`);
-  //       return prevInputs;
-  //     }
-
-  //     // Finding the corresponding item object within the parent's items array based on code and name
-  //     const item = parent.items.find(item => item.supp_tag.code === code && item.supp_tag.name === name);
-
-  //     const maxReceivedQuantity = po_quantity * (prevInputs[productValue]?.Squantity || 0);
-
-  //     if (value > maxReceivedQuantity) {
-  //       // Show SweetAlert popup message
-  //       swal({
-  //         title: "Error",
-  //         text: "Received Quantity cannot exceed the calculated maximum.",
-  //         icon: "error",
-  //       }).then(() => {
-  //         // Set the input value to the maximum allowed quantity
-  //         setInputValues((prevInputs) => ({
-  //           ...prevInputs,
-  //           [productValue]: {
-  //             ...prevInputs[productValue],
-  //             [inputType]: maxReceivedQuantity,
-  //           },
-  //         }));
-  //       });
-  //     } else {
-  //       return {
-  //         ...prevInputs,
-  //         [productValue]: {
-  //           ...prevInputs[productValue],
-  //           [inputType]: value,
-  //         },
-  //       };
-  //     }
-  //   });
-  // };
+  const [suppReceving, setsuppReceving] = useState("");
+  const handleChangeReceiving = (event) => {
+    setsuppReceving(event.target.value);
+  };
 
   const [addReceivebackend, setReceivebackend] = useState([]);
 
@@ -294,6 +275,8 @@ function ReceivingManagementPreview({ authrztn }) {
         title,
         serializedArray: items.map((child) => ({
           canvassed_ID: child.item.id,
+          ordered_quantity: child.item.quantity,
+          type: child.type,
           set_quantity:
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
@@ -302,12 +285,23 @@ function ReceivingManagementPreview({ authrztn }) {
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
             ]?.Rquantity || "",
-          Checked_quantity:
-            inputValues[
-              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-            ]?.Cquantity || "",
-          type: child.type,
-          // prod_supplier: item.product.id,
+          Remaining_quantity: inputValues[
+            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+          ]?.Squantity
+            ? inputValues[
+                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+              ]?.Squantity *
+                child.item.quantity -
+              inputValues[
+                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+              ]?.Rquantity *
+                inputValues[
+                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                ]?.Squantity
+            : child.item.quantity -
+              inputValues[
+                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+              ]?.Rquantity,
         })),
       };
     });
@@ -317,24 +311,77 @@ function ReceivingManagementPreview({ authrztn }) {
     console.log("Selected Products:", serializedParent);
   }, [inputValues]);
 
-  const handleSave = () => {
-    // setIsLoading(true);
-    const delay = setTimeout(() => {
-      axios
-        .post(BASE_URL + "/receiving/insertReceived", {
-          addReceivebackend, shippingFee
-        })
-        .then((res) => {
-          // setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
-    }, 1000);
+  const add = async (e) => {
+    e.preventDefault();
 
-    return () => clearTimeout(delay);
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
+      });
+    } else {
+      try {
+        const response = await axios.post(
+          BASE_URL + "/receiving/insertReceived",
+          {
+            addReceivebackend,
+            shippingFee,
+            suppReceving,
+          }
+        );
+
+        if (response.status === 200) {
+          swal({
+            title: "Purchase Request Add Succesful!",
+            text: "The Purchase Request has been Added Successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleClose();
+          });
+        } else {
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle request error
+        swal({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
+        });
+      }
+    }
+
+    setValidated(true); // for validations
   };
+
+  // const handleSave = () => {
+  //   // setIsLoading(true);
+  //   const delay = setTimeout(() => {
+  //     axios
+  //       .post(BASE_URL + "/receiving/insertReceived", {
+  //         addReceivebackend, shippingFee, suppReceving
+  //       })
+  //       .then((res) => {
+  //         // setIsLoading(false);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         setIsLoading(false);
+  //       });
+  //   }, 1000);
+
+  //   return () => clearTimeout(delay);
+  // };
 
   return (
     <div className="main-of-containers">
@@ -478,266 +525,327 @@ function ReceivingManagementPreview({ authrztn }) {
                   backdrop="static"
                   size="lg"
                 >
-                  <Modal.Header closeButton>
-                    <Modal.Title> {`PO Number: ${po_id}`}</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <div className="row">
-                      <div className="col-6">
-                        <h2 className="mb-5">
-                          {`Supplier: ${supplier_code} - ${supplier_name}`}
-                        </h2>
-                      </div>
-                      <div className="col-6 ">
-                        <div className="d-flex flex-direction-row justify-content-center align-items-center">
-                          <Form.Label style={{ fontSize: "15px" }}>
-                            Shipping Fee{" "}
-                          </Form.Label>
-                          <Form.Control
-                            type="number"
-                            style={{
-                              height: "35px",
-                              width: "100px",
-                              fontSize: "14px",
-                              fontFamily: "Poppins, Source Sans Pro",
-                            }}    
-                            onChange={(e) =>
-                              handleInputChangeShipping(
-                                e.target.value,                               
-                              )
-                            }               
-                            onKeyDown={(e) => {
-                              ["e", "E", "+", "-"].includes(e.key) &&
-                                e.preventDefault();
-                            }}
-                          />
+                  <Form noValidate validated={validated} onSubmit={add}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>
+                        <div className="row" style={{ width: "720px" }}>
+                          <div className="col-6">{`PO Number: ${po_id}`}</div>
+                          <div className="col-6">
+                            <div
+                              className="d-flex flex-direction-row align-items-top"
+                              style={{ marginTop: "-20px" }}
+                            >
+                              <label
+                                className=""
+                                style={{ fontSize: 12, marginRight: 10 }}
+                              >
+                                Select a Receiving Area:{" "}
+                              </label>
+                              <div class="">
+                                <Form.Select
+                                  aria-label=""
+                                  required
+                                  style={{ fontSize: 13, width: "200px" }}
+                                  defaultValue=""
+                                  onChange={handleChangeReceiving}
+                                >
+                                  <option disabled value="">
+                                    Select City ...
+                                  </option>
+                                  {warehouse.map((city, index) => (
+                                    <option key={index} value={city}>
+                                      {city}
+                                    </option>
+                                  ))}
+                                </Form.Select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <div className="row">
+                        <div className="col-6">
+                          <h2 className="mb-5">
+                            {`Supplier: ${supplier_code} - ${supplier_name}`}
+                          </h2>
+                        </div>
+                        <div className="col-6 ">
+                          <div
+                            className="d-flex flex-direction-row justify-content-center align-items-center"
+                            style={{ float: "right", marginTop: "-20px" }}
+                          >
+                            <Form.Label style={{ fontSize: "15px" }}>
+                              Shipping Fee:
+                            </Form.Label>
+                            <Form.Control
+                              type="number"
+                              required
+                              style={{
+                                height: "35px",
+                                width: "100px",
+                                fontSize: "14px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                                marginLeft: "5px",
+                              }}
+                              onChange={(e) =>
+                                handleInputChangeShipping(e.target.value)
+                              }
+                              onKeyDown={(e) => {
+                                ["e", "E", "+", "-"].includes(e.key) &&
+                                  e.preventDefault();
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {products_receive.map((parent, parentIndex) =>
-                      parent.items.map((child, childIndex) => (
-                        <div
-                          className="row"
-                          style={{
-                            display:
-                              "d-flex flex-direction-row align-items-center",
-                          }}
-                          key={`${parentIndex}-${childIndex}`}
-                        >
-                          <div className="col-3">
-                            <Form.Group controlId="exampleForm.ControlInput2">
-                              <Form.Label style={{ fontSize: "15px" }}>
-                                {`${child.type} : `}
-                              </Form.Label>
-                              <label className="fs-4">
-                                {`${child.supp_tag.code} - ${child.supp_tag.name}`}
-                              </label>
-                            </Form.Group>
-                          </div>
+                      {products_receive.map((parent, parentIndex) =>
+                        parent.items.map((child, childIndex) => (
+                          <div
+                            className="row"
+                            style={{
+                              display:
+                                "d-flex flex-direction-row align-items-center",
+                            }}
+                            key={`${parentIndex}-${childIndex}`}
+                          >
+                            <div className="col-3">
+                              <Form.Group controlId="exampleForm.ControlInput2">
+                                <Form.Label style={{ fontSize: "15px" }}>
+                                  {`${child.type} : `}
+                                </Form.Label>
+                                <label className="fs-4">
+                                  {`${child.supp_tag.code} - ${child.supp_tag.name}`}
+                                </label>
+                              </Form.Group>
+                            </div>
 
-                          <div className="col-3 d-flex flex-direction-row">
-                            <div className="row" style={{ marginTop: "-40px" }}>
-                              <div className="col-4">
-                                <Form.Group controlId="exampleForm.ControlInput2">
-                                  <Form.Label style={{ fontSize: "15px" }}>
-                                    PR :{" "}
-                                  </Form.Label>
-                                  <Form.Control
-                                    value={child.item.quantity}
-                                    readOnly={
-                                      checkedRows[parentIndex]?.[childIndex]
-                                    }
-                                    style={{
-                                      height: "35px",
-                                      width: "50px",
-                                      fontSize: "14px",
-                                      fontFamily: "Poppins, Source Sans Pro",
-                                    }}
-                                  />
-                                </Form.Group>
-                              </div>
-                              <div className="col-4">
-                                {checkedRows[parentIndex]?.[childIndex] && (
+                            <div className="col-3 d-flex flex-direction-row">
+                              <div
+                                className="row"
+                                style={{ marginTop: "-40px" }}
+                              >
+                                <div className="col-4">
                                   <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: "15px" }}>
-                                      /pcs:{" "}
+                                    <Form.Label style={{ fontSize: "13px" }}>
+                                      PR :{" "}
                                     </Form.Label>
                                     <Form.Control
-                                      type="number"
-                                      placeholder="Quantity"
-                                      required
-                                      onKeyDown={(e) => {
-                                        ["e", "E", "+", "-"].includes(
-                                          e.key
-                                        ) && e.preventDefault();
-                                      }}
-                                      value={
-                                        inputValues[
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                        ]?.Squantity || ""
-                                      }
-                                      onChange={(e) =>
-                                        handleInputChange(
-                                          e.target.value,
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                          "Squantity",
-                                          child.item.quantity
-                                        )
-                                      }
+                                      value={child.item.quantity}
+                                      // readOnly={
+                                      //   checkedRows[parentIndex]?.[childIndex]
+                                      // }
+                                      readOnly
                                       style={{
                                         height: "35px",
-                                        width: "50px",
+                                        width: "40px",
                                         fontSize: "14px",
                                         fontFamily: "Poppins, Source Sans Pro",
                                       }}
                                     />
                                   </Form.Group>
-                                )}
-                              </div>
-                              <div className="col-4">
-                                <label
-                                  className="userstatus"
-                                  style={{
-                                    fontSize: 15,
-                                    marginRight: 10,
-                                    marginTop: "10px",
-                                  }}
-                                >
-                                  Set
-                                </label>
-                                <input
-                                  type="checkbox"
-                                  className="toggle-switch"
-                                  checked={
-                                    checkedRows[parentIndex]?.[childIndex]
-                                  }
-                                  onClick={(e) =>
-                                    handleCheckbox(e, parentIndex, childIndex)
-                                  }
-                                  // style={{ marginTop: "25px" }}
-                                />
+                                </div>
+                                <div className="col-4">
+                                  {checkedRows[parentIndex]?.[childIndex] && (
+                                    <Form.Group controlId="exampleForm.ControlInput2">
+                                      <Form.Label style={{ fontSize: "13px" }}>
+                                        /pcs:{" "}
+                                      </Form.Label>
+                                      <Form.Control
+                                        type="number"
+                                        readOnly={child.item.quantity === 0}
+                                        placeholder="Quantity"
+                                        required
+                                        onKeyDown={(e) => {
+                                          ["e", "E", "+", "-"].includes(
+                                            e.key
+                                          ) && e.preventDefault();
+                                        }}
+                                        value={
+                                          inputValues[
+                                            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                          ]?.Squantity || ""
+                                        }
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            e.target.value,
+                                            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                            "Squantity",
+                                            child.item.quantity
+                                          )
+                                        }
+                                        style={{
+                                          height: "35px",
+                                          width: "60px",
+                                          fontSize: "14px",
+                                          fontFamily:
+                                            "Poppins, Source Sans Pro",
+                                        }}
+                                      />
+                                    </Form.Group>
+                                  )}
+                                </div>
+                                <div className="col-4">
+                                  <label
+                                    className="userstatus"
+                                    style={{
+                                      fontSize: 13,
+                                      marginLeft: 10,
+                                      marginTop: "10px",
+                                    }}
+                                  >
+                                    Set
+                                  </label>
+                                  <input
+                                    style={{
+                                      marginLeft: 10,
+                                    }}
+                                    disabled={child.item.quantity === 0}
+                                    type="checkbox"
+                                    className="toggle-switch"
+                                    checked={
+                                      checkedRows[parentIndex]?.[childIndex]
+                                    }
+                                    onClick={(e) =>
+                                      handleCheckbox(e, parentIndex, childIndex)
+                                    }
+                                    // style={{ marginTop: "25px" }}
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          <div className="col-3">
+                            <div className="col-3">
+                              <div className="d-flex flex-direction-row">
+
+                              
                               <Form.Group
-                                // style={{ marginTop: "20px" }}
+                                style={{ marginTop: "-30px", marginRight: '10px' }}
+                                controlId="exampleForm.ControlInput2"
+                                
+                              >
+                                <Form.Label style={{ fontSize: "13px" }}>
+                                  Received :{" "}
+                                </Form.Label>
+                                <Form.Control
+                                  type="number"
+                            
+                                  required
+                                  readOnly={child.item.quantity === 0}
+                                  value={
+                                    inputValues[
+                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                    ]?.Rquantity || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      e.target.value,
+                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                      "Rquantity",
+                                      child.item.quantity
+                                    )
+                                  }
+                                  style={{
+                                    height: "35px",
+                                    width: "50px",
+                                    fontSize: "14px",
+                                    fontFamily: "Poppins, Source Sans Pro",
+                                  }}
+                                />
+                              </Form.Group>
+
+                              <Form.Group
+                                style={{ marginTop: "-30px" }}
                                 controlId="exampleForm.ControlInput2"
                               >
-                              <Form.Label style={{ fontSize: "15px" }}>
-                                Received Quantity:{" "}
-                              </Form.Label>
-                              <Form.Control
-                                type="number"
-                                placeholder="Quantity"
-                                required
-                                value={
-                                  inputValues[
-                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                  ]?.Rquantity || ""
-                                }
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    e.target.value,
-                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                    "Rquantity",
-                                    child.item.quantity
-                                  )
-                                }
-                                style={{
-                                  height: "35px",
-                                  width: "100px",
-                                  fontSize: "14px",
-                                  fontFamily: "Poppins, Source Sans Pro",
-                                }}
-                              />
-                            </Form.Group>
-                          </div>
+                                <Form.Label style={{ fontSize: "13px" }}>
+                                  Remaining :{" "}
+                                </Form.Label>
+                                <Form.Control
+                                  type="number"
+                                  placeholder="Quantity"
+                                  required
+                                  readOnly
+                                  style={{
+                                    height: "35px",
+                                    width: "50px",
+                                    fontSize: "14px",
+                                    fontFamily: "Poppins, Source Sans Pro",
+                                  }}
 
-                          <div className="col-3">
-                            {/* 
-                          <Form.Group
-                              // style={{ marginTop: "20px" }}
-                              controlId="exampleForm.ControlInput2"
-                            >
-                              <Form.Label style={{ fontSize: "15px" }}>
-                                Price{" "}
-                              </Form.Label>
-                              <Form.Control
-                                type="number"
-                                placeholder="Quantity"
-                                readOnly
-                                value={
-                                  shippingFee
-                                }
-                                // onChange={(e) =>
-                                //   handleInputChange(
-                                //     e.target.value,
-                                //     `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                //     "Cquantity",
-                                //     child.item.quantity
-                                //   )
-                                // }
-                                style={{
-                                  height: "35px",
-                                  width: "100px",
-                                  fontSize: "14px",
-                                  fontFamily: "Poppins, Source Sans Pro",
-                                }}
-                              />
-                            </Form.Group> */}
-                            {/* <Form.Group
-                              // style={{ marginTop: "20px" }}
-                              controlId="exampleForm.ControlInput2"
-                            >
-                              <Form.Label style={{ fontSize: "15px" }}>
-                                Checked Quantity:{" "}
-                              </Form.Label>
-                              <Form.Control
-                                type="number"
-                                placeholder="Quantity"
-                                required
-                                value={
-                                  inputValues[
-                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                  ]?.Cquantity || ""
-                                }
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    e.target.value,
-                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                    "Cquantity",
-                                    child.item.quantity
-                                  )
-                                }
-                                style={{
-                                  height: "35px",
-                                  width: "100px",
-                                  fontSize: "14px",
-                                  fontFamily: "Poppins, Source Sans Pro",
-                                }}
-                              />
-                            </Form.Group> */}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      e.target.value,
+                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                      "Tquantity",
+                                      child.item.quantity
+                                    )
+                                  }
+                                  value={
+                                    // inputValues[
+                                    //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                    // ]?.Tquantity || ""
+                                    (inputValues[
+                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                    ]?.Squantity
+                                      ? inputValues[
+                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                        ]?.Squantity *
+                                          child.item.quantity -
+                                        inputValues[
+                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                        ]?.Rquantity *
+                                          inputValues[
+                                            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                          ]?.Squantity
+                                      : child.item.quantity -
+                                        inputValues[
+                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                        ]?.Rquantity) || 0
+                                  }
+                                  
+                                 
+                                />
+                              </Form.Group>
+                            </div>
+                            </div>
+
+                            <div className="col-3">
+                              <div className="d-flex flex-direction-row">
+                              
+                                  <button type="button" className="btn btn-secondary">
+                                    <Upload size={20} /> 
+                                    Upload
+                                  </button>
+                              
+                              </div>
+                             
+                            </div>
                           </div>
-                        </div>
-                      ))
-                    )}
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button
-                      className="fs-5 lg"
-                      variant="secondary"
-                      onClick={handleClose}
-                      size="md"
-                    >
-                      Close
-                    </Button>
-                    <Button variant="primary" onClick={handleSave} size="md">
-                      Save
-                    </Button>
-                  </Modal.Footer>
+                        ))
+                      )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button
+                        className="fs-5 lg"
+                        variant="secondary"
+                        onClick={handleClose}
+                        size="md"
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        size="md"
+                        className="fs-5 lg"
+                      >
+                        Save
+                      </Button>
+                    </Modal.Footer>
+                  </Form>
                 </Modal>
               </div>
             </div>
