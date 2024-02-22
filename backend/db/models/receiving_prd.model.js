@@ -33,8 +33,15 @@ const Receiving_Prd = sequelize.define('receiving_prd', {
     allowNull: false,
   },
   picture: {
-    type: DataTypes.BLOB('long'),
-    allowNull: false,
+    type: DataTypes.BLOB("long"),
+    allowNull: true,
+    get() {
+      const value = this.getDataValue("product_image");
+      return value ? value.toString("base64") : null;
+    },
+    set(value) {
+      this.setDataValue("product_image", Buffer.from(value, "base64"));
+    },
   },
   status: {
     type: DataTypes.STRING,

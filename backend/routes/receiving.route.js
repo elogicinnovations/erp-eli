@@ -10,6 +10,7 @@ const {
   PR_PO_asmbly,
   PR_PO_spare,
   PR_PO_subpart,
+  Receiving_Image
 } = require("../db/models/associations");
 const session = require("express-session");
 
@@ -17,6 +18,9 @@ router.route("/insertReceived").post(async (req, res) => {
   const parentArray = req.body.addReceivebackend;
   const shippingFee = req.body.shippingFee;
   const receving_site = req.body.suppReceving;
+  const productImages = req.body.productImages;
+  const pr_id = req.body.id;
+  const po_id = req.body.po_id;
 
   let status = "";
   let totalReceived = 0;
@@ -150,6 +154,26 @@ console.log(formattedDate);
       }
     }
   }
+
+  const deleteproductImage = Receiving_Image.destroy({
+    where: {
+      pr_id: pr_id,
+      po_num: po_id
+    },
+  });
+
+  if(deleteproductImage){
+    if (productImages && productImages.length > 0) {
+      productImages.forEach(async (i) => {
+        await Receiving_Image.create({
+          pr_id: pr_id,
+          po_num: po_id,
+          image: i.image
+        });
+      });
+    }
+  };
+
 
   console.log(`Total Received: ${totalReceived}`);
   console.log(`Fr ${freighCost}`);
