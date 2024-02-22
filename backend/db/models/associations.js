@@ -67,6 +67,7 @@ const Receiving_Prd = require("./receiving_prd.model");
 const Receiving_Asm = require("./receiving_asm.model");
 const Receiving_Spare = require("./receiving_spare.model");
 const Receiving_Subpart = require("./receiving_subpart.model");
+const Receiving_Image = require("./receiving_picture.model");
 
 const StockTransfer = require("./stockTransfer.model");
 const StockTransfer_prod = require("./stockTransfer_product.model");
@@ -473,6 +474,9 @@ Receiving_Spare.belongsTo(PR_PO_spare, { foreignKey: "canvassed_id"});
 PR_PO_subpart.hasMany(Receiving_Subpart, { foreignKey: "canvassed_id"});
 Receiving_Subpart.belongsTo(PR_PO_subpart, { foreignKey: "canvassed_id"});
 
+PR.hasMany(Receiving_Image, { foreignKey: "pr_id"});
+Receiving_Image.belongsTo(PR, { foreignKey: "pr_id"});
+
 
 module.exports = { 
                     MasterList, 
@@ -548,6 +552,7 @@ module.exports = {
                     Receiving_Asm,
                     Receiving_Spare,
                     Receiving_Subpart,
+                    Receiving_Image,
 
                     StockTransfer,
                     StockTransfer_prod,
