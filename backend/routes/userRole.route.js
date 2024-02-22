@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
 // const UserRole = require('../db/models/userRole.model')
-const { MasterList, UserRole, Warehouses } = require("../db/models/associations");
+const { MasterList, UserRole, Warehouses, Activity_Log } = require("../db/models/associations");
 const session = require("express-session");
 
 router.use(
@@ -14,9 +14,11 @@ router.use(
 );
 
 router.route("/fetchuserrole").get(async (req, res) => {
-  // const departmentName = req.query.departmentName;
-
-  UserRole.findAll()
+ await UserRole.findAll({
+    where: {
+      col_id: { [Op.ne]: 1 }
+    },
+  })
     .then((data) => {
       return res.json(data);
     })
@@ -53,6 +55,8 @@ router.post("/editUserrole/:id/:rolename", async (req, res) => {
   const roleId = req.params.id;
   const rolename = req.params.rolename;
   const selectedCheckboxes = req.body.selectedCheckboxes;
+  const userId = req.query.userId;
+
   console.log("Received parameters:", roleId, rolename);
 
   try {
@@ -76,6 +80,11 @@ router.post("/editUserrole/:id/:rolename", async (req, res) => {
       return res.status(404).json({ error: "User role not found" });
     }
 
+    await Activity_Log.create({
+      masterlist_id: userId,
+      action_taken: `Updated the authorization named ${rolename}`
+    }); 
+
     return res.status(200).json({ message: "Data updated successfully" });
   } catch (error) {
     console.error("Error:", error);
@@ -87,6 +96,7 @@ router.post("/editUserrole/:id/:rolename", async (req, res) => {
 
 router.route("/deleteRoleById/:roleid").delete(async (req, res) => {
   const param_id = req.params.roleid;
+  const userId = req.query.userId;
 
   try {
     // Assuming that MasterList and UserRole models are correctly defined
@@ -102,6 +112,13 @@ router.route("/deleteRoleById/:roleid").delete(async (req, res) => {
         message: "Role is associated and cannot be deleted",
       });
     }
+   const rolename = await UserRole.findOne({
+      where: {
+        col_id: param_id,
+      }
+    });
+
+    const userRolename = rolename.col_rolename;
 
     const del = await UserRole.destroy({
       where: {
@@ -110,6 +127,10 @@ router.route("/deleteRoleById/:roleid").delete(async (req, res) => {
     });
 
     if (del > 0) {
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Deleted the authorization named ${userRolename}`
+      }); 
       return res.json({
         success: true,
         message: "User role deleted successfully",
@@ -130,6 +151,7 @@ router.route("/deleteRoleById/:roleid").delete(async (req, res) => {
 router.post("/createUserrole/:rolename", async (req, res) => {
   const selectedCheckboxes = req.body.selectedCheckboxes;
   const param_rolename = req.params.rolename;
+  const userId = req.query.userId;
 
   try {
     const existingRole = await UserRole.findOne({
@@ -149,6 +171,11 @@ router.post("/createUserrole/:rolename", async (req, res) => {
         col_desc: selectedCheckboxes[0].desc, // Use the first description as an example
         col_authorization: concatenatedAuthorization,
       });
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Created a new authorization named ${selectedCheckboxes[0].rolename}`
+      }); 
 
       return res.status(200).json({ message: "Data inserted successfully" });
     }

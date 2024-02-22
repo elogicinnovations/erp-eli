@@ -40,6 +40,10 @@ function SpareParts({ authrztn }) {
 
   const [historypricemodal, sethistorypricemodal] = useState([]);
   const [showhistorical, setshowhistorical] = useState(false);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
 
   const handlehistoricalClose = () => setshowhistorical(false);
   const handlehistoricalShow = () => setshowhistorical(true);
@@ -51,6 +55,14 @@ function SpareParts({ authrztn }) {
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
   const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
+  const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
+  const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
+  const [show, setShow] = useState(false);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const handledropdownstatus = (event) => {
     const value = event.target.value;
@@ -65,6 +77,23 @@ function SpareParts({ authrztn }) {
   const clearFilter = () => {
     setDropdownstatus(['Active', 'Inactive']);
   }
+
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
+
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
     if (index === openDropdownIndex) {
@@ -155,51 +184,50 @@ function SpareParts({ authrztn }) {
   }
 
 
-  const handleDelete = async (table_id) => {
-    swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        try {
-          const response = await axios.delete(
-            BASE_URL + `/sparePart/delete/${table_id}`
-          );
-          if (response.status === 200) {
-            swal({
-              title: "The Product Spare-Part Delete Succesful!",
-              text: "The Product Spare-Part has been Deleted successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              reloadTable();
-            });
-          } else if (response.status === 202) {
-            swal({
-              icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete a product that is in use",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    });
-  };
+  // const handleDelete = async (table_id) => {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "Once deleted, you will not be able to recover this user file!",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //   }).then(async (willDelete) => {
+  //     if (willDelete) {
+  //       try {
+  //         const response = await axios.delete(
+  //           BASE_URL + `/sparePart/delete/${table_id}`
+  //         );
+  //         if (response.status === 200) {
+  //           swal({
+  //             title: "The Product Spare-Part Delete Succesful!",
+  //             text: "The Product Spare-Part has been Deleted successfully.",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             reloadTable();
+  //           });
+  //         } else if (response.status === 202) {
+  //           swal({
+  //             icon: "error",
+  //             title: "Delete Prohibited",
+  //             text: "You cannot delete a product that is in use",
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   });
+  // };
 
-  const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
-  const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
+  
   const toggleButtons = (userId) => {
     setVisibleButtons((prevVisibleButtons) => {
       const updatedVisibleButtons = { ...prevVisibleButtons };
@@ -257,19 +285,15 @@ function SpareParts({ authrztn }) {
   }, [sparePart]);
   const navigate = useNavigate();
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  
-  const [selectAllChecked, setSelectAllChecked] = useState(false);
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+
+
 
   const handleSave = () => {
     axios
       .put(BASE_URL + "/sparePart/statusupdate", {
         sparePartIds: selectedCheckboxes,
         status: selectedStatus,
+        userId
       })
       .then((res) => {
         if (res.status === 200) {
@@ -281,6 +305,9 @@ function SpareParts({ authrztn }) {
           }).then(() => {
             handleClose();
             reloadTable();
+            setSelectAllChecked(false)
+            setSelectedCheckboxes([])
+            setShowChangeStatusButton(false)
           });
         }
       })

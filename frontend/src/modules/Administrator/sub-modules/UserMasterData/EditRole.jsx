@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../../Sidebar/sidebar";
-import Header from "../../../Sidebar/header";
+// import Sidebar from "../../../Sidebar/sidebar";
+// import Header from "../../../Sidebar/header";
 import "../../styles/userRole.css";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -9,7 +9,7 @@ import Button from "react-bootstrap/Button";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
-import { MagnifyingGlass, Gear, Bell, UserCircle } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 import BASE_URL from "../../../../assets/global/url";
 
@@ -21,6 +21,25 @@ function EditRole() {
   const [rolename, setRolename] = useState(""); // Initialize the state for Role Name
   const [desc, setDesc] = useState(""); // Initialize the state for Description
   const [searchQuery, setSearchQuery] = useState("");
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +102,7 @@ function EditRole() {
 
     try {
       const response = await fetch(
-        BASE_URL + `/userRole/editUserrole/${id}/${rolename}`,
+        BASE_URL + `/userRole/editUserrole/${id}/${rolename}?userId=${userId}`,
         {
           method: "POST",
           headers: {

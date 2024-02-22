@@ -49,6 +49,8 @@ const category = require("./routes/category.route");
 
 const binLocation = require("./routes/binLocation.route");
 
+const ActivityLog = require("./routes/activity_log.route");
+
 const product = require("./routes/product.route");
 const productTAGsupplier = require("./routes/productTAGsupplier.route");
 const Product_Assembly = require("./routes/product_assembly.route");
@@ -128,6 +130,7 @@ app.use("/userRole", userRoute);
 app.use("/supplier", supplier);
 app.use("/category", category);
 app.use("/binLocation", binLocation);
+app.use("/activitylog", ActivityLog);
 
 app.use("/product", product);
 app.use("/productTAGsupplier", productTAGsupplier);

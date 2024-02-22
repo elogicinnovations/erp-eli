@@ -7,7 +7,8 @@ const {SubPart,
       Subpart_image,
       Subpart_Price_History,
       IssuedSubpart,
-      Warehouses} = require('../db/models/associations')
+      Warehouses,
+      Activity_Log} = require('../db/models/associations')
 const session = require('express-session')
 const multer = require('multer');
 const upload = multer();
@@ -69,10 +70,10 @@ router.route('/fetchTable').get(async (req, res) => {
               slct_manufacturer,
               thresholds,
               slct_category,
-              images
+              images,
+              userId
             } = req.body;
         // Check if the supplier code is already exists in the table
-        console.log(slct_binLocation);
         const existingSubCode = await SubPart.findOne({
           where: {
             subPart_code: code,
@@ -94,6 +95,10 @@ router.route('/fetchTable').get(async (req, res) => {
             subPart_status: 'Active'
           });
 
+          await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Product SubPart: Created a new product subpart named ${subpartName}`,
+          });
           const createdID = subpart_newData.id;
 
           const findWarehouse = await Warehouses.findOne({
@@ -173,7 +178,8 @@ router.route("/update").post(
       prodthreshold,
       prodcategory,
       subpartTAGSuppliers,
-      subpartImages
+      subpartImages,
+      userId
     } = req.body;
     try {
       const existingDataCode = await SubPart.findOne({
@@ -203,6 +209,11 @@ router.route("/update").post(
             },
           }
         );
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Product SubPart: Updated the information product subpart ${prodname}`,
+        });
 
         const deletesubImage = Subpart_image.destroy({
           where: {
@@ -318,7 +329,7 @@ router.route("/update").post(
 
 router.route('/statusupdate').put(async (req, res) => {
   try {
-    const { subpartIDs, status } = req.body;
+    const { subpartIDs, status, userId } = req.body;
 
     const updateData = { subPart_status: status };
 
@@ -327,8 +338,26 @@ router.route('/statusupdate').put(async (req, res) => {
     }
 
     for (const subpartId of subpartIDs) {
-      await SubPart.update(updateData, { where: { id: subpartId } });
-    }
+      const data = await SubPart.findOne({
+        where: { id: subpartId} 
+      });
+
+      const subpartname = data.subPart_name;
+      const currentstatus = data.subPart_status;
+
+      if(data) {
+      const updateStatus = await SubPart.update(updateData, { 
+        where: { id: subpartId } 
+      });
+      
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Subpart: ${subpartname} Updated status from ${currentstatus} to ${status}`
+        })
+      }
+    };
+
+    
 
     res.status(200).json({ message: 'Products updated successfully' });
   } catch (error) {

@@ -18,7 +18,7 @@ import {
   NotePencil,
   ArrowCircleLeft
 } from "@phosphor-icons/react";
-
+import { jwtDecode } from "jwt-decode";
 
 function UpdateSpareParts({authrztn}) {
 
@@ -51,6 +51,25 @@ const [sparepartimage, setSparetpartImages] = useState([]);
 const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 const navigate = useNavigate();
 const { id } = useParams();
+const [Fname, setFname] = useState('');
+const [username, setUsername] = useState('');
+const [userRole, setUserRole] = useState('');
+const [userId, setuserId] = useState('');
+
+const decodeToken = () => {
+  var token = localStorage.getItem('accessToken');
+  if(typeof token === 'string'){
+  var decoded = jwtDecode(token);
+  setUsername(decoded.username);
+  setFname(decoded.Fname);
+  setUserRole(decoded.userrole);
+  setuserId(decoded.id);
+  }
+}
+
+useEffect(() => {
+  decodeToken();
+}, [])
 
 //para sa mga input textfieldd fetch
 useEffect(() => {
@@ -430,7 +449,8 @@ const update = async (e) => {
       slct_binLocation,
       thresholds,
       sparepartimage,
-      prodcategory 
+      prodcategory,
+      userId
     })
       .then((res) => {
         if (res.status === 200) {

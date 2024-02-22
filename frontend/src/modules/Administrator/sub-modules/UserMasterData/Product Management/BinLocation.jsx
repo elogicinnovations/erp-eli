@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../Sidebar/sidebar";
+// import Header from "../../../../../partials/header";
 import "../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import axios from "axios";
@@ -12,13 +13,7 @@ import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
-  Trash,
-  NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
@@ -34,7 +29,6 @@ import "../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.boot
 import "../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
-import Header from "../../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
 function BinLocation({ authrztn }) {
@@ -59,6 +53,25 @@ function BinLocation({ authrztn }) {
     Array(binLocation.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -87,9 +100,6 @@ function BinLocation({ authrztn }) {
       setOpenDropdownIndex(index);
     }
   };
-
-
-
 
 
   const handleClose = () => {
@@ -189,6 +199,7 @@ return () => clearTimeout(delay);
           binLocationName,
           binLocationSubName,
           binLocationRemarks,
+          userId,
         })
         .then((response) => {
           if (response.status === 200) {
@@ -255,7 +266,7 @@ return () => clearTimeout(delay);
     try {
       const id = updateFormData.bin_id;
       const response = await axios.put(
-        BASE_URL + `/binLocation/update/${updateFormData.bin_id}`,
+        BASE_URL + `/binLocation/update/${updateFormData.bin_id}?userId=${userId}`,
         {
           bin_name: updateFormData.bin_name,
           bin_subname: updateFormData.bin_subname,
@@ -323,13 +334,8 @@ return () => clearTimeout(delay);
       if (willDelete) {
         try {
           const response = await axios.delete(
-            BASE_URL + `/binLocation/delete/${table_id}`
+            BASE_URL + `/binLocation/delete/${table_id}?userId=${userId}`
           );
-
-          // swal("The User has been deleted!", {
-          //   icon: "success",
-          // });
-
           if (response.status === 200) {
             swal({
               title: "Bin Location Delete Successful!",

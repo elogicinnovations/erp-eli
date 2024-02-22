@@ -3,7 +3,6 @@ import ReactLoading from 'react-loading';
 import Sidebar from "../../../Sidebar/sidebar";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-// import Header from '../../../Sidebar/header';
 import "../../../../assets/global/style.css";
 import NoData from '../../../../assets/image/NoData.png';
 import axios from "axios";
@@ -12,19 +11,13 @@ import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Form from "react-bootstrap/Form";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faMagnifyingGlass, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
-// import Pagination from 'react-bootstrap/Pagination';
 import {
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
-  Trash,
-  NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
+
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -58,10 +51,30 @@ function UserRole() {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
   const [rotatedIcons, setRotatedIcons] = useState(
     Array(role.length).fill(false)
   );
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -130,7 +143,7 @@ function UserRole() {
       if (willDelete) {
         try {
           const response = await axios.delete(
-            `${BASE_URL}/userRole/deleteRoleById/${param_id}`
+            `${BASE_URL}/userRole/deleteRoleById/${param_id}?userId=${userId}`
           );
 
           if (response.status === 200) {
@@ -220,9 +233,6 @@ function UserRole() {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -231,23 +241,6 @@ function UserRole() {
                 </div>
               ) : (
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-            <div className="dropdown-and-iconics">
-              <div className="dropdown-side"></div>
-              <div className="iconic-side">
-                <div className="gearsides">
-                  <Gear size={35} />
-                </div>
-                <div className="bellsides">
-                  <Bell size={35} />
-                </div>
-                <div className="usersides">
-                  <UserCircle size={35} />
-                </div>
-                <h3>User Name</h3>
-              </div>
-            </div>
-          </div>{" "} */}
           {/*Setting search*/}
           <div className="Employeetext-button">
             <div className="employee-and-button">

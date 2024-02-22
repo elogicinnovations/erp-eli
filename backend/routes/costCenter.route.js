@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {Sequelize, where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const { CostCenter, MasterList } = require("../db/models/associations"); 
+const { CostCenter, MasterList, Activity_Log } = require("../db/models/associations"); 
 
 
 // Get All Cost Center
@@ -55,6 +55,7 @@ router.route('/getCostCenter').get(async (req, res) =>
 router.route('/create').post(async (req, res) => {
 
     try {
+      const userID = req.body.userId;
       const existingCostCenter = await CostCenter.findOne({
         where: {
           name: req.body.name
@@ -70,7 +71,12 @@ router.route('/create').post(async (req, res) => {
           description: req.body.description,
           status: req.body.status
         });
-  
+
+        await Activity_Log.create({
+          masterlist_id: userID,
+          action_taken: `Created a new cost center named ${req.body.name}`
+        });
+
         res.status(200).json(newData);
         // console.log(newDa)
       }
@@ -107,15 +113,18 @@ router.route('/initUpdate').get(async (req, res) => {
   });
 
   //Update
-  router.route('/update/').put(async (req, res) => {
+  router.route('/update/:param_id').put(async (req, res) => {
     try {
-      const id = req.body.id;
+      // const id = req.body.id;
+      const updatemasterID = req.params.param_id;
       const name = req.body.name;
+      const userId = req.query.userId;
+
       // Check if the costcenter already exists in the table for other records
       const existingData = await CostCenter.findOne({
         where: {
           name: name,
-          id: { [Op.ne]: id }, // Exclude the current record
+          id: { [Op.ne]: updatemasterID }, // Exclude the current record
         },
       });
   
@@ -127,14 +136,18 @@ router.route('/initUpdate').get(async (req, res) => {
         const [affectedRows] = await CostCenter.update(
           {
             name: req.body.name,
-            col_id: req.body.select_masterlist,
+            col_id: req.body.col_id,
             description: req.body.description,
             status: req.body.status,
           },
           {
-            where: { id: id },
+            where: { id: updatemasterID },
           }
         );
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Cost Center: Updated the information for ${req.body.name}`
+        }); 
   
         res.status(200).json({ message: "Data updated successfully", affectedRows });
       }
@@ -145,29 +158,62 @@ router.route('/initUpdate').get(async (req, res) => {
   });
 
   //Delete
-  router.route('/delete/:param_id').delete(async (req, res) => 
-  {
-    const id = req.params.param_id;
-    await CostCenter.destroy({
-              where : {
-                id: id
-              }
-          }).then(
-              (del) => {
-                  if(del){
-                      res.json({success : true})
-                  }
-                  else{
-                      res.status(400).json({success : false})
-                  }
-              }
-          ).catch(
-              (err) => {
-                  console.error(err)
-                  res.status(409)
-              }
-          );
+  router.route('/delete/:param_id').delete(async (req, res) => {
+    try {
+      const id = req.params.param_id;
+      const userId = req.query.userId;
+
+      const costcenterData = await CostCenter.findOne({
+        where : {
+          id: id
+        },
+      })
+      
+      const ccname = costcenterData.name;
+
+      const deletionResult = await CostCenter.destroy({
+        where : {
+          id: id
+        },
+      });
+
+      if(deletionResult) {
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Cost Center: Deleted the data of ${ccname}`,
         });
+        res.json({success : true})
+      } else {
+        res.status(400).json({success : false})
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+});
+  // router.route('/delete/:param_id').delete(async (req, res) => 
+  // {
+  //   const id = req.params.param_id;
+  //   await CostCenter.destroy({
+  //             where : {
+  //               id: id
+  //             }
+  //         }).then(
+  //             (del) => {
+  //                 if(del){
+  //                     res.json({success : true})
+  //                 }
+  //                 else{
+  //                     res.status(400).json({success : false})
+  //                 }
+  //             }
+  //         ).catch(
+  //             (err) => {
+  //                 console.error(err)
+  //                 res.status(409)
+  //             }
+  //         );
+  //       });
 
  
 module.exports = router;

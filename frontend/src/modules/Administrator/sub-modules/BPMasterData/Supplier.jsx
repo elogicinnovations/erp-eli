@@ -8,12 +8,7 @@ import axios from "axios";
 import BASE_URL from "../../../../assets/global/url";
 import swal from "sweetalert";
 import {
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
-  Trash,
-  NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
@@ -44,6 +39,25 @@ function Supplier({ authrztn }) {
     Array(supplier.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -115,7 +129,7 @@ function Supplier({ authrztn }) {
       if (willDelete) {
         try {
           const response = await axios.delete(
-            BASE_URL + `/supplier/delete/${table_id}`
+            BASE_URL + `/supplier/delete/${table_id}?userId=${userId}`
           );
 
           if (response.status === 200) {

@@ -1,7 +1,12 @@
 const router = require("express").Router();
 const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
-const { Warehouses, Inventory, Inventory_Assembly, Inventory_Spare, Inventory_Subpart} = require("../db/models/associations");
+const { Warehouses, 
+  Inventory, 
+  Inventory_Assembly, 
+  Inventory_Spare, 
+  Inventory_Subpart,
+  Activity_Log,} = require("../db/models/associations");
 const session = require("express-session");
 const e = require("express");
 
@@ -17,7 +22,8 @@ router.use(
   router.route('/createWarehouse').post(async (req, res) => {
     const { warehousename, 
             locatename,
-            description} = req.body; 
+            description,
+            userId} = req.body; 
     try {
       const existingWarehousename = await Warehouses.findOne({
         where: {
@@ -32,6 +38,11 @@ router.use(
           warehouse_name: warehousename,
           location: locatename,
           details: description
+        });
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Warehouse: Created a new warehouse named ${warehousename}`,
         });
 
         res.status(200).json(newWarehouseData);
@@ -63,6 +74,7 @@ router.route('/updateWarehouse/:param_id').put(async (req, res) => {
   try {
     const name = req.body.warehouse_name;
     const updatemasterID = req.params.param_id;
+    const userId = req.query.userId;
 
     // Check if the name already exists in the table for other records
     const existingData = await Warehouses.findOne({
@@ -87,6 +99,11 @@ router.route('/updateWarehouse/:param_id').put(async (req, res) => {
           where: { id: updatemasterID },
         }
       );
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Warehouse: Updated the information of warehouse ${req.body.warehouse_name}`,
+      });
 
       res.status(200).json({ message: "Data updated successfully", affectedRows });
     }
@@ -120,7 +137,7 @@ router.route('/updateWarehouse/:param_id').put(async (req, res) => {
 router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
   try {
     const id = req.params.table_id;
-
+    const userId = req.query.userId;
     const checkInventory = await Inventory.findAll({
       where: { warehouse_id: id },
     });
@@ -145,6 +162,15 @@ router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
     ) {
       res.status(202).json({ success: true });
     } else {
+
+      const warehouseData = await Warehouses.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      const wareName = warehouseData.warehouse_name;
+
       const del = await Warehouses.destroy({
         where: {
           id: id,
@@ -152,6 +178,10 @@ router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
       });
 
       if (del) {
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Deleted the data of warehouse named ${wareName}`
+        });
         res.json({ success: true });
       } else {
         res.status(400).json({ success: false });
@@ -162,39 +192,6 @@ router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
-
-
-// router.route('/automaticAdd').post(async (req, res) => {
-//   try {
-//     const warehouseName = 'Main';
-//     const location = 'Agusan';
-
-//     // Check if warehouse with given name and location already exists
-//     const existingWarehouse = await Warehouses.findOne({
-//       where: {
-//         warehouse_name: warehouseName,
-//         location: location
-//       }
-//     });
-
-//     if (existingWarehouse) {
-//       res.status(200).json({ message: 'Warehouse already exists' });
-//     } else {
-//       // Warehouse does not exist, create a new one
-//       const newWarehouse = await Warehouses.create({
-//         warehouse_name: warehouseName,
-//         location: location,
-//         details: ""
-//       });
-
-//       res.status(201).json({ message: 'New warehouse created', warehouse: newWarehouse });
-//     }
-//   } catch (error) {
-//     console.error('Error: Problem on inserting warehouse', error);
-//     res.status(500).json({ message: 'Error warehouse inserting' });
-//   }
-// });
-
 
 
 module.exports = router;

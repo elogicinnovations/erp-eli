@@ -12,7 +12,6 @@ import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import {
-  DownloadSimple,
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
@@ -43,13 +42,32 @@ function ProductCategory({authrztn}) {
   const [categoryCode, setcategoryCode] = useState("");
   const [categoryName, setcategoryName] = useState("");
   const [categoryRemarks, setcategoryRemarks] = useState("");
-
+  const [nextCategoryCode, setNextCategoryCode] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(
     Array(category.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+  
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -79,7 +97,7 @@ function ProductCategory({authrztn}) {
     }
   };
 
-  const [nextCategoryCode, setNextCategoryCode] = useState('');
+
 
 // Fetch next category code when the component mounts
 useEffect(() => {
@@ -131,22 +149,18 @@ return () => clearTimeout(delay);
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-      // if required fields has NO value
-      //    console.log('requried')
       swal({
         icon: "error",
         title: "Fields are required",
         text: "Please fill the Required text fields",
       });
     } else {
-      // if required fields has value (GOOD)
-      // console.log(suppCperson)
-
       axios
         .post(BASE_URL + "/category/create", {
           categoryCode,
           categoryName,
           categoryRemarks,
+          userId
         })
         .then((response) => {
           if (response.status === 200) {
@@ -200,7 +214,7 @@ return () => clearTimeout(delay);
       if (willDelete) {
         try {
           const response = await axios.delete(
-            BASE_URL + `/category/delete/${table_id}`
+            BASE_URL + `/category/delete/${table_id}?userId=${userId}`
           );
 
           if (response.status === 200) {
@@ -295,7 +309,7 @@ return () => clearTimeout(delay);
     try {
       const updaemasterID = updateFormData.category_code;
       const response = await axios.put(
-        BASE_URL + `/category/update/${updateFormData.category_code}`,
+        BASE_URL + `/category/update/${updateFormData.category_code}?userId=${userId}`,
         {
           category_name: updateFormData.category_name,
           category_remarks: updateFormData.category_remarks,

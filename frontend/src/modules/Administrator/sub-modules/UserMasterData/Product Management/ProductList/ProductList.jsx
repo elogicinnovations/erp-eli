@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
 import NoData from '../../../../../../assets/image/NoData.png';
 import NoAccess from '../../../../../../assets/image/NoAccess.png';
-import Sidebar from "../../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../../Sidebar/sidebar";
+// import Table from 'react-bootstrap/Table';
+// import { fontSize } from "@mui/system";
+// import Header from "../../../../../../partials/header";
 import "../../../../../../assets/global/style.css";
 import "../../../../../styles/react-style.css";
 import { Link } from "react-router-dom";
@@ -20,7 +23,7 @@ import deleteProduct from "../../../../../Archiving Delete/product_delete";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Table from 'react-bootstrap/Table';
+
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -33,8 +36,8 @@ import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.b
 import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
-import { fontSize } from "@mui/system";
-import Header from "../../../../../../partials/header";
+
+import { jwtDecode } from "jwt-decode";
 
 function ProductList({ authrztn }) {
   const navigate = useNavigate();
@@ -56,6 +59,26 @@ function ProductList({ authrztn }) {
   const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
   const [showhistorical, setshowhistorical] = useState(false);
   const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
+  const [selectedStatus, setSelectedStatus] = useState("Active");
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const handledropdownstatus = (event) => {
     const value = event.target.value;
@@ -287,7 +310,7 @@ function ProductList({ authrztn }) {
     $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allProductIds.length);
   };
 
-  const [selectedStatus, setSelectedStatus] = useState("Active"); // Add this state
+
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -298,6 +321,7 @@ function ProductList({ authrztn }) {
       .put(BASE_URL + "/product/statusupdate", {
         productIds: selectedCheckboxes,
         status: selectedStatus,
+        userId,
       })
       .then((res) => {
         if (res.status === 200) {
@@ -309,6 +333,9 @@ function ProductList({ authrztn }) {
           }).then(() => {
             handleClose();
             reloadTable();
+            setSelectAllChecked(false)
+            setSelectedCheckboxes([])
+            setShowChangeStatusButton(false)
           });
         }
       })

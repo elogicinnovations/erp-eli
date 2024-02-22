@@ -27,6 +27,7 @@ import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.b
 import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import { jwtDecode } from "jwt-decode";
 
 function UpdateAssemblyForm({authrztn}) {
   const navigate = useNavigate();
@@ -58,7 +59,25 @@ function UpdateAssemblyForm({authrztn}) {
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
   const [assemblyimage, setassemblyImages] = useState([]);
-  
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   useEffect(() => {   
     const delay = setTimeout(() => {
@@ -477,6 +496,7 @@ const update = async (e) => {
           thresholds,
           addPriceInput,
           assemblyimage,
+          userId,
       })
       .then((res) => {
         // console.log(res);

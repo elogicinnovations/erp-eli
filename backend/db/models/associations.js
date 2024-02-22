@@ -6,6 +6,7 @@ const BinLocation = require("./binLocation.model");
 const Manufacturer = require("./manufacturer.model");
 const Supplier = require("./supplier.model");
 const CostCenter = require("./costcenter.model");
+const Activity_Log = require("./activity_log.model");
 
 const productTAGsupplierHistory = require("./productTAGSupplierHistory.model");
 const ProductTAGSupplier = require("./productTAGsupplier.model");
@@ -92,6 +93,8 @@ Product.belongsTo(BinLocation, { foreignKey: "product_location"});
 Manufacturer.hasMany(Product, { foreignKey: "product_manufacturer"}); // ginamit ng product
 Product.belongsTo(Manufacturer, { foreignKey: "product_manufacturer"}); // gumamit sa manufacturer
 
+MasterList.hasMany(Activity_Log, { foreignKey: "masterlist_id"});
+Activity_Log.belongsTo(MasterList, { foreignKey: "masterlist_id"});
 
 //subpart tag supplier table
 SubPart.hasMany(Subpart_supplier, { foreignKey: "subpart_id"});
@@ -475,6 +478,7 @@ module.exports = {
                     MasterList, 
                     UserRole,  
                     Product, 
+                    Activity_Log,
                     
                     ProductTAGSupplier,
                     Product_Assembly,

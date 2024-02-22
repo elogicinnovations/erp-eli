@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Supplier = require('../db/models/supplier.model')
-const { ProductTAGSupplier, Supplier } = require("../db/models/associations"); 
+const { ProductTAGSupplier, Supplier, Activity_Log } = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -95,6 +95,7 @@ router.route('/create').post(async (req, res) => {
         const terms = req.body.suppTerms;
         const telNum = req.body.suppTelNum;
         const Vat = req.body.suppVat;
+        const userId = req.body.userId;
 
         let finalTin, finalTerms, finalTelNum, finalVat;
 
@@ -156,6 +157,11 @@ router.route('/create').post(async (req, res) => {
             supplier_status: req.body.suppStatus
           });
     
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Supplier: Created a new supplier named ${req.body.suppName}`,
+          });
+
           res.status(200).json(newData);
           // console.log(newDa)
         }
@@ -172,11 +178,11 @@ router.route('/update').put(async (req, res) => {
   try {
     const name = req.body.suppName;
     const updatemasterID = req.body.suppCode;
-    console.log(updatemasterID)
     const tin = req.body.suppTin;
     const terms = req.body.suppTerms;
     const telNum = req.body.suppTelNum;
     const Vat = req.body.suppVat;
+    const userId = req.body.userId;
 
     let finalTin, finalTerms, finalTelNum, finalVat;
 
@@ -243,6 +249,11 @@ router.route('/update').put(async (req, res) => {
         }
       );
 
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Supplier: Updated the information of supplier ${req.body.suppName}`,
+      });
+
       res.status(200).json({ message: "Data updated successfully", affectedRows });
     }
   } catch (err) {
@@ -252,54 +263,86 @@ router.route('/update').put(async (req, res) => {
 });
 
 
-
 router.route('/delete/:table_id').delete(async (req, res) => {
-  const id = req.params.table_id;
+  try{
+    const id = req.params.table_id;
+    const userId = req.query.userId;
 
+    const findProduct = await ProductTAGSupplier.findAll({
+      where: {
+        supplier_code: id,
+      },
+    });
 
+    if(findProduct && findProduct.length > 0){
+      res.status(202).json({ success: true });
+    } else {
+      const supplierData = await Supplier.findOne({
+        where : {
+          supplier_code: id
+        },
+      });
 
+      const suppname = supplierData.supplier_name;
 
-  await ProductTAGSupplier.findAll({
-    where: {
-      supplier_code: id,
-    },
-  })
-    .then((check) => {
-      if (check && check.length > 0) {
-        res.status(202).json({ success: true });
+      const deletionResult = await Supplier.destroy({
+        where : {
+          supplier_code: id
+        },
+      });
+
+      if(deletionResult){
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Deleted the data of supplier named ${suppname}`
+        });
+        res.json({success : true})
+      } else {
+        res.status(400).json({success : false})
       }
-
-      else{
-        Supplier.destroy({
-          where : {
-            supplier_code: id
-          }
-        }).then(
-            (del) => {
-                if(del){
-                    res.json({success : true})
-                }
-                else{
-                    res.status(400).json({success : false})
-                }
-            }
-        ).catch(
-            (err) => {
-                console.error(err)
-                res.status(409)
-            }
-        );
-
-
-      }
-    })
-
-
-
-
-
-
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('An error occurred');
+  }
 });
+
+// router.route('/delete/:table_id').delete(async (req, res) => {
+//   const id = req.params.table_id;
+
+//   await ProductTAGSupplier.findAll({
+//     where: {
+//       supplier_code: id,
+//     },
+//   })
+//     .then((check) => {
+//       if (check && check.length > 0) {
+//         res.status(202).json({ success: true });
+//       }
+
+//       else{
+//         Supplier.destroy({
+//           where : {
+//             supplier_code: id
+//           }
+//         }).then(
+//             (del) => {
+//                 if(del){
+//                     res.json({success : true})
+//                 }
+//                 else{
+//                     res.status(400).json({success : false})
+//                 }
+//             }
+//           ).catch(
+//             (err) => {
+//                 console.error(err)
+//                 res.status(409)
+//             }
+//         );
+//       }
+//     })
+// });
 
 
 

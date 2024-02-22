@@ -3,7 +3,7 @@ const { where, Op, col, fn } = require("sequelize");
 const nodemailer = require("nodemailer");
 //master Model
 // const MasterList = require('../db/models/masterlist.model')
-const { MasterList, UserRole } = require("../db/models/associations");
+const { MasterList, UserRole, Activity_Log } = require("../db/models/associations");
 const session = require('express-session')
 const jwt = require('jsonwebtoken');
 
@@ -29,7 +29,6 @@ router.route("/login").post(async (req, res) => {
       }
     });
 
-    // console.log(user);
     if (user && user.col_Pass === password) {
       const userData = { username: user.col_username, id: user.col_id, Fname: user.col_Fname, userrole: user.userRole.col_rolename}
       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
@@ -39,10 +38,38 @@ router.route("/login").post(async (req, res) => {
       res.cookie('access-token', accessToken, {
         // httpOnly : true
       });
+      await Activity_Log.create({
+        masterlist_id: userData.id,
+        action_taken: "User logged in"
+      }) 
       return res.status(200).json({ message: 'Login Success', accessToken: accessToken });
+      
     } else {
       return res.status(202).json({ message: "Incorrect credentials" });
     }
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+router.route("/logout").post(async (req, res) => {
+  console.log("check if the request is being pass")
+  const { userId } = req.body;
+
+  try {
+      const createActivity = await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: "User logged out"
+      });
+
+      if(createActivity) {
+        console.log("Yes")
+        return res.status(200).json({ message: 'Log out' });
+      } else {
+        return res.status(202).json({ message: "Cannot Log out, There's a problem" });
+      }
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Internal server error" });
@@ -160,6 +187,9 @@ router.route("/resetPassword").put(async (req, res) => {
 router.route("/masterTable").get(async (req, res) => {
   try {
     const data = await MasterList.findAll({
+      where: {
+        user_type: { [Op.ne]: 'Superadmin' }
+      },
       include: {
         model: UserRole,
         required: true,
@@ -183,8 +213,7 @@ router.route("/masterTable").get(async (req, res) => {
 router.route("/createMaster").post(async (req, res) => {
   try {
     const email = req.body.cemail;
-
-    console.log(req.body.crole);
+    const userID = req.body.userId;
 
     // Check if the email already exists in the table
     const existingData = await MasterList.findOne({
@@ -224,7 +253,13 @@ router.route("/createMaster").post(async (req, res) => {
         col_Pass: req.body.cpass,
         col_status: status,
         col_Fname: req.body.cname,
+        user_type: "Standard User"
       });
+
+      await Activity_Log.create({
+        masterlist_id: userID,
+        action_taken: `Created a new account for ${req.body.cname}`
+      }); 
 
       res.status(200).json(newData);
       // console.log(newDa)
@@ -258,7 +293,7 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
   try {
     const email = req.body.col_email;
     const updatemasterID = req.params.param_id;
-    // console.log(updatemasterID)
+    const userId = req.query.userId;
 
     // Check if the email already exists in the table for other records
     const existingData = await MasterList.findOne({
@@ -291,6 +326,11 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
         }
       );
 
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Updated the information for ${req.body.col_Fname}`
+      }); 
+
       res.json({ message: "Data updated successfully", affectedRows });
     }
   } catch (err) {
@@ -302,13 +342,27 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
 //DELETE:
 router.route("/deleteMaster/:param_id").delete(async (req, res) => {
   const id = req.params.param_id;
+  const userId = req.query.userId;
+
+  const userName = await MasterList.findOne({
+    where: {
+      col_id: id,
+    },
+  })
+
+  const masterlistName = userName.col_Fname;
+
   await MasterList.destroy({
     where: {
       col_id: id,
     },
   })
-    .then((del) => {
+    .then(async (del) => {
       if (del) {
+        await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Deleted the account of ${masterlistName}`
+      }); 
         res.json({ success: true });
       } else {
         res.status(400).json({ success: false });
@@ -380,6 +434,8 @@ router.route("/deleteMaster/:param_id").delete(async (req, res) => {
 //         }
 //     );
 // });
+
+
 router.route("/viewAuthorization/:id").get( async (req,res) => {
   try
   {

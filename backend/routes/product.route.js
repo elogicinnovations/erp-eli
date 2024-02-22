@@ -11,7 +11,8 @@ const {
   Product_image,
   productTAGsupplierHistory,
   IssuedProduct,
-  Warehouses
+  Warehouses,
+  Activity_Log,
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer");
@@ -116,7 +117,8 @@ router.route("/create").post(async (req, res) => {
         assembly,
         spareParts,
         subparting,
-        images
+        images,
+        userId,
       } = req.body;
       console.log(name)
         const existingDataCode = await Product.findOne({
@@ -140,7 +142,11 @@ router.route("/create").post(async (req, res) => {
             product_status: 'Active'
           });
 
-          //Assembly
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Product: Created a new product named ${name}`,
+          });
+
           const IdData = newData.product_id;
 
           const selectedAssemblies = req.body.assembly;
@@ -248,6 +254,7 @@ router.route("/update").post(
       subparting,
       productTAGSuppliers,
       productImages,
+      userId
     } = req.body;
   try {
     const existingDataCode = await Product.findOne({
@@ -277,6 +284,11 @@ router.route("/update").post(
           },
         }
       );
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Product: Updated the information product ${name}`,
+      });
 
         const deleteassembly = Product_Assembly.destroy({
           where: {
@@ -580,7 +592,7 @@ router.route('/deleteOldArchivedProduct').post(async (req, res) => {
 
 router.route('/statusupdate').put(async (req, res) => {
   try {
-    const { productIds, status } = req.body;
+    const { productIds, status, userId } = req.body;
 
     const updateData = { product_status: status };
 
@@ -588,7 +600,23 @@ router.route('/statusupdate').put(async (req, res) => {
       updateData.archive_date = new Date();
     }
     for (const productId of productIds) {
-      await Product.update(updateData, { where: { product_id: productId } });
+      const productdata = await Product.findOne({
+        where: { product_id: productId} 
+      });
+
+      const productname = productdata.product_name;
+      const currentstatus = productdata.product_status;
+
+      const updateStatus = await Product.update(updateData, { 
+        where: { product_id: productId } 
+      });
+
+      if(updateStatus){
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Product: ${productname} Updated status from ${currentstatus} to ${status}`
+        })
+      }
     }
 
     res.status(200).json({ message: 'Products updated successfully' });

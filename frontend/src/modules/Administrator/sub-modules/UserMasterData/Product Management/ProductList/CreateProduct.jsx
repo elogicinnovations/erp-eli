@@ -2,22 +2,22 @@ import React, { useState, useEffect, useRef } from "react";
 import swal from "sweetalert";
 import BASE_URL from "../../../../../../assets/global/url";
 import axios from "axios";
-import Sidebar from "../../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../../../styles/react-style.css";
 import ReactLoading from 'react-loading';
-import NoData from '../../../../../../assets/image/NoData.png';
+// import NoData from '../../../../../../assets/image/NoData.png';
 import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Select from "react-select";
-import Dropzone from "react-dropzone";
 import { X, ArrowCircleLeft } from "@phosphor-icons/react";
 import { green } from "@mui/material/colors";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
+import { jwtDecode } from "jwt-decode";
 
 function CreateProduct({authrztn}) {
   const navigate = useNavigate();
@@ -55,6 +55,25 @@ function CreateProduct({authrztn}) {
   const [productImage, setProductImage] = useState([]);
   const [productImageType, setProductImageType] = useState([]);
   const [status, setStatus] = useState("Active");
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
 
   //toggle switch Active and Inactive
@@ -418,7 +437,8 @@ function onDropImages(event) {
           spareParts,
           subparting,
           productTAGSuppliers,
-          images
+          images,
+          userId,
         })
         .then((res) => {
           console.log(res);

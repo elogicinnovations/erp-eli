@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Category = require('../db/models/category.model')
-const { Category, Product } = require("../db/models/associations"); 
+const { Category, Product, Activity_Log } = require("../db/models/associations"); 
 const session = require('express-session')
 
 
@@ -38,6 +38,7 @@ router.route('/fetchTable').get(async (req, res) => {
 
 router.route('/create').post(async (req, res) => {
     try {
+          const userID = req.body.userId;
           const lastCategory = await Category.findOne({
             order: [['createdAt', 'DESC']]
         });
@@ -69,7 +70,12 @@ router.route('/create').post(async (req, res) => {
             category_name: req.body.categoryName,
             category_remarks: req.body.categoryRemarks
           });
-    
+
+          await Activity_Log.create({
+            masterlist_id: userID,
+            action_taken: `Created a new category named ${req.body.categoryName}`
+          }); 
+
           res.status(200).json(newData);
           // console.log(newDa)
         }
@@ -133,7 +139,7 @@ router.route('/update/:param_id').put(async (req, res) => {
     try {
       const name = req.body.category_name;
       const updatemasterID = req.params.param_id;
-      // console.log(updatemasterID)
+      const userId = req.query.userId;
   
       // Check if the email already exists in the table for other records
       const existingData = await Category.findOne({
@@ -157,7 +163,11 @@ router.route('/update/:param_id').put(async (req, res) => {
             where: { category_code: updatemasterID },
           }
         );
-  
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Updated the information of category ${req.body.category_name}`
+        }); 
         res.status(200).json({ message: "Data updated successfully", affectedRows });
       }
     } catch (err) {
@@ -167,44 +177,88 @@ router.route('/update/:param_id').put(async (req, res) => {
   });
 
 
+// router.route('/delete/:table_id').delete(async (req, res) => {
+//     const id = req.params.table_id;
+    
+//     await Product.findAll({
+//       where: {
+//         product_category: id,
+//       },
+//     })
+//       .then((check) => {
+//         if (check && check.length > 0) {
+//           res.status(202).json({ success: true });
+//         }
+
+//         else{
+//            Category.destroy({
+//             where : {
+//               category_code: id
+//             }
+//           }).then(
+//               (del) => {
+//                   if(del){
+//                       res.json({success : true})
+//                   }
+//                   else{
+//                       res.status(400).json({success : false})
+//                   }
+//               }
+//           ).catch(
+//               (err) => {
+//                   console.error(err)
+//                   res.status(409)
+//               }
+//           );
+//         }
+//       })
+   
+// });
+
+
 router.route('/delete/:table_id').delete(async (req, res) => {
+  try {
     const id = req.params.table_id;
-    await Product.findAll({
+    const userId = req.query.userId;
+
+    const productsToDelete = await Product.findAll({
       where: {
         product_category: id,
       },
-    })
-      .then((check) => {
-        if (check && check.length > 0) {
-          res.status(202).json({ success: true });
-        }
+    });
 
-        else{
-           Category.destroy({
-            where : {
-              category_code: id
-            }
-          }).then(
-              (del) => {
-                  if(del){
-                      res.json({success : true})
-                  }
-                  else{
-                      res.status(400).json({success : false})
-                  }
-              }
-          ).catch(
-              (err) => {
-                  console.error(err)
-                  res.status(409)
-              }
-          );
-        }
-      })
-   
+    if (productsToDelete && productsToDelete.length > 0) {
+      res.status(202).json({ success: true });
+    } else {
+      const categoryData = await Category.findOne({
+        where: {
+          category_code: id,
+        },
+      });
+
+      const categoryname = categoryData.category_name;
+
+      const deletionResult = await Category.destroy({
+        where: {
+          category_code: id,
+        },
+      });
+
+      if (deletionResult) {
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Deleted the data category ${categoryname}`,
+        });
+        res.json({ success: true });
+      } else {
+        res.status(400).json({ success: false, message: 'Deletion failed' });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
 });
-
-
 
 
 module.exports = router;

@@ -41,7 +41,12 @@ import Header from "../../../../partials/header";
 function Productvariants({ authrztn }) {
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false)
+    setName("");
+    setDescription("");
+    setValidated(false);
+  };
   const handleShow = () => setShow(true);
 
   const [updateModalShow, setUpdateModalShow] = useState(false);
@@ -55,6 +60,30 @@ function Productvariants({ authrztn }) {
     Array(Manufacturer.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [validated, setValidated] = useState(false);
+  const [code, setCode] = useState("");
+  const [nameManu, setName] = useState();
+  const [descManu, setDescription] = useState();
+  const [nextCode, setNextCode] = useState("");
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+  
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   // const toggleDropdown = (event, index) => {
   //   // Check if the clicked icon is already open, close it
@@ -115,12 +144,8 @@ function Productvariants({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  const [validated, setValidated] = useState(false);
-  const [code, setCode] = useState("");
-  const [nameManu, setName] = useState();
-  const [descManu, setDescription] = useState();
-  const [nextCode, setNextCode] = useState("");
 
+  
   useEffect(() => {
     // Fetch the next code when the modal is opened
     if (show) {
@@ -154,6 +179,7 @@ function Productvariants({ authrztn }) {
           codeManu: code,
           nameManufacturer: nameManu,
           descriptManufacturer: descManu,
+          userId,
         })
         .then((res) => {
           console.log(res);
@@ -166,6 +192,7 @@ function Productvariants({ authrztn }) {
             }).then(() => {
               reloadTable()
               handleClose();
+
             });
           } else if (res.status === 201) {
             swal({
@@ -198,7 +225,7 @@ function Productvariants({ authrztn }) {
       if (willDelete) {
         try {
           const response = await axios.delete(
-            BASE_URL + `/manufacturer/delete/${table_id}`
+            BASE_URL + `/manufacturer/delete/${table_id}?userId=${userId}`
           );
 
           if (response.status === 200) {
@@ -284,7 +311,7 @@ function Productvariants({ authrztn }) {
     try {
       const updaemasterID = updateFormData.manufacturer_code;
       const response = await axios.put(
-        BASE_URL + `/manufacturer/update/${updaemasterID}`,
+        BASE_URL + `/manufacturer/update/${updaemasterID}?userId=${userId}`,
         {
           manufacturer_name: updateFormData.manufacturer_name,
           manufacturer_remarks: updateFormData.manufacturer_remarks,

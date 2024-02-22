@@ -35,6 +35,25 @@ function CostCenter({ authrztn }) {
   const [status, setStatus] = useState("Active");
   const [visibleButtons, setVisibleButtons] = useState({});
   const [isVertical, setIsVertical] = useState({});
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+  
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
@@ -56,9 +75,69 @@ function CostCenter({ authrztn }) {
     reloadTable();
   }, []);
 
-  // Artifitial data
+
+  const add = async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the Required text fields",
+      });
+    } else {
+      axios
+        .post(BASE_URL + "/costCenter/create", {
+          name,
+          masterList,
+          description,
+          select_masterlist,
+          status,
+          userId
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            swal({
+              title: "Cost Center Add Successful!",
+              text: "The Cost Center has been Added Successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              reloadTable();
+              handleClose();
+            });
+          } else if (res.status === 201) {
+            swal({
+              title: "Cost Center is Already Exist",
+              text: "Please Input a New Cost Center ",
+              icon: "error",
+            });
+          } else {
+            swal({
+              title: "Something went wrong",
+              text: "Please Contact our Support",
+              icon: "error",
+              button: "OK",
+            });
+          }
+        });
+    }
+    setValidated(true); //for validations
+  };
+
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
+  const [updateFormData, setUpdateFormData] = useState({
+    uname: "",
+    ucol_id: "",
+    udescription: "",
+    ustatus: false,
+    updateId: null,
+  });
+
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -67,9 +146,84 @@ function CostCenter({ authrztn }) {
 
   const handleShow = () => setShowModal(true);
 
-  const handleModalToggle = () => {
+  const handleModalToggle = (updateData = null) => {
     setUpdateModalShow(!updateModalShow);
+    if(updateData) {
+      setUpdateFormData({
+        updateId: updateData.id,
+        uname: updateData.name,
+        ucol_id: updateData.col_id,
+        udescription: updateData.description,
+        ustatus: updateData.status === "Active",
+      });
+    } else {
+      setUpdateFormData({
+        uname: "",
+        ucol_id: "",
+        udescription: "",
+        ustatus: false,
+        updateId: null,
+      })
+    }
   };
+
+  const handleUpdateFormChange = (e) => {
+    const { name, value } = e.target;
+
+    setUpdateFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updaemasterID = updateFormData.updateId;
+      const response = await axios.put(
+        BASE_URL + `/costCenter/update/${updateFormData.updateId}?userId=${userId}`,
+        {
+          name: updateFormData.uname,
+          col_id: updateFormData.ucol_id,
+          description: updateFormData.udescription,
+          status: updateFormData.ustatus ? "Active" : "Inactive",
+        }
+      );
+
+      if (response.status === 200) {
+        swal({
+          title: "Cost Center Update Successful!",
+          text: "The Cost Center has been Updated Successfully.",
+          icon: "success",
+          button: "OK",
+        }).then(() => {
+          handleModalToggle();
+          reloadTable()
+          setUpdateFormData({
+            uname: "",
+            ucol_id: "",
+            udescription: "",
+            ustatus: "",
+          });
+        });
+      } else if (response.status === 202) {
+        swal({
+          icon: "error",
+          title: "Email already exists",
+          text: "Please input another Email",
+        });
+      } else {
+        swal({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
 
   const handleDelete = async (id) => {
     swal({
@@ -82,7 +236,7 @@ function CostCenter({ authrztn }) {
       if (willDelete) {
         try {
           const response = await axios.delete(
-            BASE_URL + `/costCenter/delete/${id}`
+            BASE_URL + `/costCenter/delete/${id}?userId=${userId}`
           );
 
           if (response.status === 200) {
@@ -195,56 +349,7 @@ function CostCenter({ authrztn }) {
   };
 
 
-  const add = async (e) => {
-    e.preventDefault();
 
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-      swal({
-        icon: "error",
-        title: "Fields are required",
-        text: "Please fill the Required text fields",
-      });
-    } else {
-      axios
-        .post(BASE_URL + "/costCenter/create", {
-          name,
-          masterList,
-          description,
-          select_masterlist,
-          status,
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            swal({
-              title: "Cost Center Add Successful!",
-              text: "The Cost Center has been Added Successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              reloadTable();
-              handleClose();
-            });
-          } else if (res.status === 201) {
-            swal({
-              title: "Cost Center is Already Exist",
-              text: "Please Input a New Cost Center ",
-              icon: "error",
-            });
-          } else {
-            swal({
-              title: "Something went wrong",
-              text: "Please Contact our Support",
-              icon: "error",
-              button: "OK",
-            });
-          }
-        });
-    }
-    setValidated(true); //for validations
-  };
 
   const handleActiveStatus = (e) => {
     if (status === "Active") {
@@ -253,6 +358,7 @@ function CostCenter({ authrztn }) {
       setStatus("Active");
     }
   };
+
 
   useEffect(() => {
     if (CostCenter.length > 0) {
@@ -368,8 +474,7 @@ function CostCenter({ authrztn }) {
                             {setButtonVisibles(data.id) && (
                               <div className="choices">
                               { authrztn?.includes('Cost Centre - Edit') && (
-                              <Link
-                                to={`/initUpdateCostCenter/${data.id}`}
+                              <button
                                 onClick={() => {
                                   handleModalToggle(data);
                                   closeVisibleButtons();
@@ -377,7 +482,7 @@ function CostCenter({ authrztn }) {
                                 style={{ fontSize: "15px", fontWeight: "700" }}
                                 className="btn">
                                 Update
-                              </Link>
+                              </button>
                               )}
 
                               { authrztn?.includes('Cost Centre - Delete') && (
@@ -577,6 +682,127 @@ function CostCenter({ authrztn }) {
             </div>
           </Form>
         </Modal.Body>
+      </Modal>
+
+
+      <Modal       
+        show={updateModalShow} 
+        onHide={() => handleModalToggle()}
+        backdrop="static"
+         keyboard={false}
+          size="lg">
+        <form onSubmit={handleUpdateSubmit}>
+        <Modal.Header>
+          <Modal.Title
+          style={{fontSize: '24px',
+          fontFamily: 'Poppins, Source Sans Pro'}}>
+               <div className="costtoggleandtitle">
+               <h1>Update Cost Center</h1>
+
+                <div className="toggleStats">
+                  <label
+                        style={{ fontSize: 15}}>
+                        Active Status
+                      </label>
+                      <input
+                        type="checkbox"
+                        name="ustatus"
+                        className="toggle-switch" // Add the custom class
+                        onChange={handleUpdateFormChange}
+                        defaultChecked={updateFormData.ustatus}
+                      />
+                </div>
+               </div>
+
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px", fontFamily: 'Poppins, Source Sans Pro' }}>
+                    Cost Center:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    style={{ height: "40px", fontSize: "15px", fontFamily: 'Poppins, Source Sans Pro' }}
+                    onChange={handleUpdateFormChange}
+                    value={updateFormData.uname}
+                    required
+                    name="uname"
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Assign User:
+                  </Form.Label>
+                  <Form.Select
+                    aria-label=""
+                    onChange={handleUpdateFormChange}
+                    value={updateFormData.ucol_id}
+                    name="ucol_id"
+                    required
+                    style={{ height: "40px", fontSize: "15px", fontFamily: 'Poppins, Source Sans Pro' }}
+                    defaultValue="">
+                    <option disabled value="">
+                      Select User
+                    </option>
+                    {masterList.map((masterList) => (
+                      <option key={masterList.col_id} value={masterList.col_id}>
+                        {masterList.col_Fname}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <Form.Group controlId="exampleForm.ControlInput1">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Description:{" "}
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  style={{
+                  fontFamily: 'Poppins, Source Sans Pro',
+                  fontSize: "16px",
+                  height: "200px",
+                  maxHeight: "200px",
+                  resize: "none",
+                  overflowY: "auto",
+                  }}
+                  onChange={handleUpdateFormChange}
+                  value={updateFormData.udescription}
+                  name="udescription"
+                />
+              </Form.Group>
+            </div>
+
+            <div className="save-cancel">
+              <Button
+                type="submit"
+                className="btn btn-warning"
+                size="md"
+                style={{ fontSize: "20px",
+                fontFamily: 'Poppins, Source Sans Pro',
+                margin: "0px 5px"}}>
+                Update
+              </Button>
+              <Button
+                onClick={() => setUpdateModalShow(!updateModalShow)}
+                className="btn btn-secondary btn-md"
+                size="md"
+                style={{ fontSize: "20px",
+                fontFamily: 'Poppins, Source Sans Pro',
+                margin: "0px 5px"}}>
+                Close
+              </Button>
+            </div>
+        </Modal.Body>
+        </form>
       </Modal>
     </div>
   );

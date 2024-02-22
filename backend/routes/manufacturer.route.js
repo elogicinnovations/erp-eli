@@ -2,13 +2,14 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Manufacturer = require('../db/models/manufacturer.model');
-const { Manufacturer, Product } = require("../db/models/associations"); 
+const { Manufacturer, Product, Activity_Log } = require("../db/models/associations"); 
 
 
 
 
 router.route('/add').post(async (req, res) => {
   try {
+    const userID = req.body.userId;
     // Check if the supplier code is already exists in the table
     const existingDataCode = await Manufacturer.findAll({
       where: {
@@ -30,6 +31,10 @@ router.route('/add').post(async (req, res) => {
         manufacturer_name: req.body.nameManufacturer,
         manufacturer_remarks: req.body.descriptManufacturer,
       });
+      await Activity_Log.create({
+        masterlist_id: userID,
+        action_taken: `Created a new manufacturer named ${req.body.nameManufacturer}`
+      }); 
 
       res.status(200).json(newData);
     }
@@ -77,7 +82,7 @@ router.route('/update/:param_id').put(async (req, res) => {
   try {
     const name = req.body.manufacturer_name;
     const updatemasterID = req.params.param_id;
-    // console.log(updatemasterID)
+    const userId = req.query.userId;
 
     // Check if the email already exists in the table for other records
     const existingData = await Manufacturer.findOne({
@@ -101,6 +106,11 @@ router.route('/update/:param_id').put(async (req, res) => {
           where: { manufacturer_code: updatemasterID },
         }
       );
+      
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Updated the information of manufacturer ${req.body.manufacturer_name}`
+      });
 
       res.status(200).json({ message: "Data updated successfully", affectedRows });
     }
@@ -128,47 +138,88 @@ router.route('/retrieve').get(async (req, res) => {
     }
   });
 
+  router.route('/delete/:table_id').delete(async (req, res) => {
+    try {
+      const id = req.params.table_id;
+      const userId = req.query.userId;
+      
+      const productsToDelete = await Product.findAll({
+        where: {
+          product_manufacturer: id,
+        },
+      });
 
-
-  
-router.route('/delete/:table_id').delete(async (req, res) => {
-  const id = req.params.table_id;
-
-
-  await Product.findAll({
-    where: {
-      product_manufacturer: id,
-    },
-  })
-    .then((check) => {
-      if (check && check.length > 0) {
+      if (productsToDelete && productsToDelete.length > 0) {
         res.status(202).json({ success: true });
-      }
-      else{
-         Manufacturer.destroy({
+      } else {
+        const manufacturerData = await Manufacturer.findOne({
           where : {
             manufacturer_code: id
-          }
-        })
-        .then(
-            (del) => {
-                if(del){
-                    res.json({success : true})
-                }
-                else{
-                    res.status(400).json({success : false})
-                }
-            }
-        )
-        .catch(
-            (err) => {
-                console.error(err)
-                res.status(409)
-            }
-        );
+          },
+        });
+
+        const manufacturename = manufacturerData.manufacturer_name;
+
+        const deletionResult = await Manufacturer.destroy({
+          where : {
+            manufacturer_code: id
+          },
+        });
+
+        if(deletionResult){
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Deleted the data of manufacturer ${manufacturename}`,
+          });
+          res.json({success : true})
+        } else {
+          res.status(400).json({success : false})
+        }
       }
-    })
+    } catch (error) {
+      console.error(error);
+    }
 });
+  
+  
+// router.route('/delete/:table_id').delete(async (req, res) => {
+//   const id = req.params.table_id;
+
+
+//   await Product.findAll({
+//     where: {
+//       product_manufacturer: id,
+//     },
+//   })
+//     .then((check) => {
+//       if (check && check.length > 0) {
+//         res.status(202).json({ success: true });
+//       }
+//       else{
+//          Manufacturer.destroy({
+//           where : {
+//             manufacturer_code: id
+//           }
+//         })
+//         .then(
+//             (del) => {
+//                 if(del){
+//                     res.json({success : true})
+//                 }
+//                 else{
+//                     res.status(400).json({success : false})
+//                 }
+//             }
+//         )
+//         .catch(
+//             (err) => {
+//                 console.error(err)
+//                 res.status(409)
+//             }
+//         );
+//       }
+//     })
+// });
 
 
 

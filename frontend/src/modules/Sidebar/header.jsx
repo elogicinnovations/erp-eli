@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell,  
+import { 
+  Bell,  
   ChartLineDown, 
   Files, 
   Gear, 
@@ -16,6 +17,7 @@ import axios from 'axios';
 import BASE_URL from '../../assets/global/url';
 import '../styles/react-style.css'
 import { jwtDecode } from 'jwt-decode';
+import swal from 'sweetalert';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -31,15 +33,16 @@ const Header = () => {
     const [Fname, setFname] = useState('');
     const [username, setUsername] = useState('');
     const [userRole, setUserRole] = useState('');
-
+    const [userId, setuserId] = useState('');
     
     const decodeToken = () => {
       var token = localStorage.getItem('accessToken');
       if(typeof token === 'string'){
       var decoded = jwtDecode(token);
       setUsername(decoded.username);
-      setFname(decoded.Fname)
-      setUserRole(decoded.userrole)
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
       }
     }
     // const navigate = useNavigate()
@@ -47,6 +50,49 @@ const Header = () => {
       decodeToken();
     }, [])
 
+
+    const handleLogout = async () => {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this user file!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (willDelete) => {
+        if (willDelete) {
+          localStorage.removeItem('accessToken');
+          await axios.post(`${BASE_URL}/masterList/logout`, {
+            userId
+          }).then((res) => {
+            if(res.status === 200){
+              swal({
+                text: 'Log out Success!',
+                icon: 'success',
+                button: 'OK',
+              }).then(() => {
+                navigate('/');
+              });
+            } else if(res.status === 201) {
+              swal({
+                title: 'Log out Denied',
+                text: 'Try to log out again',
+                icon: 'error',
+                button: 'OK',
+              });
+            }
+          }).catch((error) => {
+            console.error(error.response.data);
+            swal({
+              title: 'Something Went Wrong',
+              text: 'Please contact our support team',
+              icon: 'error',
+            }).then(() => {
+            });
+          });
+        }
+      });
+    };
+    
  //end code for fetching the user login info
 
     useEffect(() => {
@@ -322,9 +368,11 @@ const Header = () => {
                         <button className='profile-card'>
                         <Files size={25} style={{ marginRight: '10px' }} />Activity Logs
                         </button>
-                        <Link to={'/'} className='profile-card' onClick={() => { localStorage.removeItem('accessToken') }}>
-                        <SignOut size={25} style={{ marginRight: '10px' }} />Logout
-                        </Link>
+                        <button 
+                          className='profile-card' 
+                          onClick={handleLogout}>
+                          <SignOut size={25} style={{ marginRight: '10px' }} />Logout
+                        </button>
                       </div>
                     </div>
                   )}

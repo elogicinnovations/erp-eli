@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../../Sidebar/sidebar";
+// import Sidebar from "../../../Sidebar/sidebar";
+// import NoData from '../../../../assets/image/NoData.png';
 import axios from "axios";
 import BASE_URL from "../../../../assets/global/url";
 import swal from "sweetalert";
 import Container from "react-bootstrap/Container";
 import ReactLoading from 'react-loading';
-import NoData from '../../../../assets/image/NoData.png';
 import NoAccess from '../../../../assets/image/NoAccess.png';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,6 +15,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../styles/react-style.css";
 import warehouse from "../../../../assets/global/warehouse";
 import { ArrowCircleLeft } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 function EditSupplier({authrztn}) {
   const [validated, setValidated] = useState(false);
@@ -37,6 +38,25 @@ function EditSupplier({authrztn}) {
   const [checkedStatus, setcheckedStatus] = useState();
 
   const [isChecked, setIsChecked] = useState(false);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   // Handle the checkbox change event
   const handleCheckboxChange = (event) => {
@@ -162,6 +182,7 @@ return () => clearTimeout(delay);
             selectedCountry,
             suppStatus,
             suppReceving,
+            userId,
           }
         )
         .then((response) => {

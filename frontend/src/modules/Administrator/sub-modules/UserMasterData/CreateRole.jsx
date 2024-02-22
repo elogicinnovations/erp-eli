@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../../Sidebar/sidebar";
 import axios from "axios";
 import "../../../../assets/global/style.css";
@@ -13,12 +13,33 @@ import Form from "react-bootstrap/Form";
 import BASE_URL from "../../../../assets/global/url";
 import { MagnifyingGlass, Gear, Bell, UserCircle } from "@phosphor-icons/react";
 import { border } from "@mui/system";
+import { jwtDecode } from "jwt-decode";
 
 function Create_role() {
   const navigate = useNavigate();
   // Inserting to database checkboxes
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
+
 
   const handleRoleNameInput = (e) => {
     const inputValue = e.target.value;
@@ -54,7 +75,7 @@ function Create_role() {
     } else {
       try {
         const response = await fetch(
-          BASE_URL + `/userRole/createUserrole/${rolename}`,
+          BASE_URL + `/userRole/createUserrole/${rolename}?userId=${userId}`,
           {
             rolename,
             method: "POST",
@@ -101,8 +122,6 @@ function Create_role() {
   };
 
   // Inserting to database checkboxes
-
-  // Select Unselect Checkbox
 
   const handleCheckboxChange = (value) => {
     const rolename = document.getElementsByName("rolename")[0].value;

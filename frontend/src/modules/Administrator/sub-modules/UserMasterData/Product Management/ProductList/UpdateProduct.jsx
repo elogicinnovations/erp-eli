@@ -2,20 +2,20 @@ import React, { useState, useEffect, useRef } from "react";
 import swal from "sweetalert";
 import BASE_URL from "../../../../../../assets/global/url";
 import axios from "axios";
-import Sidebar from "../../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../../styles/react-style.css";
 import ReactLoading from 'react-loading';
-import NoData from '../../../../../../assets/image/NoData.png';
+// import NoData from '../../../../../../assets/image/NoData.png';
 import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Select from "react-select";
-import Dropzone from "react-dropzone";
 import Carousel from 'react-bootstrap/Carousel';
 import { ArrowCircleLeft } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 function UpdateProduct({authrztn}) {
   const navigate = useNavigate();
@@ -55,7 +55,25 @@ function UpdateProduct({authrztn}) {
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
   const [productImages, setproductImages] = useState([]);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
 
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
   // const handlePriceChange = (index, value) => {
   //   const updatedTable = [...tablesupplier];
   //   updatedTable[index].product_price = value;
@@ -576,6 +594,7 @@ useEffect(() => {
           subparting,
           productTAGSuppliers,
           productImages,
+          userId,
         })
         .then((res) => {
           // console.log(res);

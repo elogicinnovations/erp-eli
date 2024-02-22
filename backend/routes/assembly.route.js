@@ -10,7 +10,8 @@ const {
   AssemblyPrice_History,
   Assembly_image,
   IssuedAssembly,
-  Warehouses
+  Warehouses,
+  Activity_Log
 } = require("../db/models/associations");
 
 const session = require("express-session");
@@ -91,7 +92,8 @@ router.route("/create").post(async (req, res) => {
       thresholds, 
       unitMeasurement,
       slct_category,
-      images
+      images,
+      userId
       } =
       req.body;
     // Check if the supplier code is already exists in the table
@@ -118,6 +120,10 @@ router.route("/create").post(async (req, res) => {
         assembly_status: 'Active'
       });
 
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Product Assembly: Created a new product assembly named ${name}`,
+    });
       const createdID = spare_newData.id;
 
       const findWarehouse = await Warehouses.findOne({
@@ -206,7 +212,9 @@ router.route("/update").post(
             slct_binLocation,
             thresholds,
             addPriceInput,
-            assemblyimage, } = req.body;
+            assemblyimage,
+            userId,
+          } = req.body;
 
     try {
       const existingDataCode = await Assembly.findOne({
@@ -242,6 +250,11 @@ router.route("/update").post(
             },
           }
         );
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Product Assembly: Updated the information product assembly ${name}`,
+        });
 
         const deleteAssemblyImage = Assembly_image.destroy({
           where: {
@@ -531,7 +544,7 @@ router.route('/deleteOldArchivedAssembly').post(async (req, res) => {
 
 router.route('/statusupdate').put(async (req, res) => {
   try {
-    const { assemblyIds, status } = req.body;
+    const { assemblyIds, status, userId } = req.body;
 
     const updateData = {assembly_status: status};
 
@@ -540,7 +553,23 @@ router.route('/statusupdate').put(async (req, res) => {
     }
 
     for (const assemblyId of assemblyIds) {
-      await Assembly.update(updateData, { where: { id: assemblyId } });
+      const assemdblyData = await Assembly.findOne({
+        where: { id: assemblyId} 
+      });
+
+      const assembly = assemdblyData.assembly_name;
+      const currentstatus = assemdblyData.assembly_status;
+
+     const updateStatus =  await Assembly.update(updateData, { 
+        where: { id: assemblyId } 
+      });
+
+      if(updateStatus){
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Product Assembly: ${assembly} Updated status from ${currentstatus} to ${status}`
+        })
+      }
     }
 
     res.status(200).json({ message: 'Products updated successfully' });

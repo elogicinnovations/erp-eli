@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import Sidebar from "../../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../../Sidebar/sidebar";
+// import Dropzone from "react-dropzone";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import ReactLoading from 'react-loading';
@@ -12,12 +13,12 @@ import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
-import { Plus, Trash, NotePencil, X } from "@phosphor-icons/react";
-import Dropzone from "react-dropzone";
+// import { Plus, Trash, NotePencil, X } from "@phosphor-icons/react";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import {
   ArrowCircleLeft
 } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 function CreateSubParts({authrztn}) {
   const [validated, setValidated] = useState(false);
@@ -46,6 +47,25 @@ function CreateSubParts({authrztn}) {
   const [supp, setSupp] = useState([]);
   const [fetchSupp, setFetchSupp] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   useEffect(() => {
     axios
@@ -169,105 +189,6 @@ function CreateSubParts({authrztn}) {
     e.target.value = e.target.value.replace(/[^0-9.]/);
   };
 
-  // const onDropImage = (acceptedFiles) => {
-  //   const newSelectedImages = [...selectedimage];
-
-  //   acceptedFiles.forEach((file) => {
-  //     if (
-  //       (file.type === "image/png" || file.type === "image/jpeg") &&
-  //       newSelectedImages.length < 5
-  //     ) {
-  //       newSelectedImages.push(file);
-  //     } else {
-  //       swal({
-  //         title: "Invalid file type or maximum limit reached",
-  //         text: "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //   });
-
-  //   setselectedimage(newSelectedImages);
-  // };
-
-//   const onDropImage = (acceptedFiles) => {
-//     const newSelectedImages = [...selectedimage];
-  
-//     acceptedFiles.forEach((file) => {
-//       if (
-//         (file.type === "image/png" || file.type === "image/jpeg") &&
-//         newSelectedImages.length < 5
-//       ) {
-//         // Check if the file size is less than or equal to 10MB (10 * 1024 * 1024 bytes)
-//         if (file.size <= 10 * 1024 * 1024) {
-//           newSelectedImages.push(file);
-//         } else {
-//           swal({
-//             title: "File size exceeds 10MB",
-//             text: "Please upload an image with a size of 10MB or below.",
-//             icon: "error",
-//             button: "OK",
-//           });
-//         }
-//       } else {
-//         swal({
-//           title: "Invalid file type or maximum limit reached",
-//           text:
-//             "Please select PNG or JPG files, and ensure the total selected images do not exceed 5.",
-//           icon: "error",
-//           button: "OK",
-//         });
-//       }
-//     });
-  
-//     setselectedimage(newSelectedImages);
-//   };
-
-//   const removeImage = (index) => {
-//     const newSelectedImages = [...selectedimage];
-//     newSelectedImages.splice(index, 1);
-//     setselectedimage(newSelectedImages);
-//   };
-//   const uploadClick = () => {
-//     if (fileInputRef.current) {
-//       fileInputRef.current.click();
-//     }
-//   };
-
-  
-// const [img, setImg] = useState([]);
-// useEffect(() => {
-//   // Create a function to handle the image processing
-//   const processImages = () => {
-//     const imageDataArray = [];
-
-//     selectedimage.forEach((image, index) => {
-//       const filereader = new FileReader();
-
-//       filereader.onload = function (event) {
-//         // Process image data
-//         const processedImage = {
-//           index, // or any other identifier for the image
-//           blobData: event.target.result,
-//           base64Data: btoa(event.target.result),
-//         };
-
-//         imageDataArray.push(processedImage);
-//       };
-
-//       if (image instanceof Blob) {
-//         filereader.readAsBinaryString(image);
-//       }
-//     });
-
-//     // Set the state once after processing all images
-//     setImg(imageDataArray);
-//   };
-
-//   // Call the image processing function
-//   processImages();
-// }, [selectedimage]);
 
 const [images, setImages] = useState([]);
 const [isDragging, setIsDragging] = useState([]);
@@ -426,7 +347,8 @@ function onDropImages(event) {
           slct_manufacturer,
           thresholds,
           slct_category,
-          images
+          images,
+          userId,
         })
         .then((res) => {
           // console.log(res);

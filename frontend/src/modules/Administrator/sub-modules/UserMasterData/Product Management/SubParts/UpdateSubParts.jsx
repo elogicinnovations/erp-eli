@@ -16,6 +16,7 @@ import {
 } from "@phosphor-icons/react";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Carousel from 'react-bootstrap/Carousel';
+import { jwtDecode } from "jwt-decode";
 
 function UpdateSubparts({authrztn}) {
   const { id } = useParams();
@@ -43,6 +44,25 @@ function UpdateSubparts({authrztn}) {
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);//for disabled of Save button
 
   const [subpartImages, setSubpartImages] = useState([]);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -409,7 +429,8 @@ function selectFiles() {
             prodthreshold,
             prodcategory,
             subpartTAGSuppliers,
-            subpartImages
+            subpartImages,
+            userId
         })
         .then((res) => {
           // console.log(res);

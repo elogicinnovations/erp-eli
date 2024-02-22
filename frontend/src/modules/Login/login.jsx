@@ -31,7 +31,7 @@ const Login = () => {
           }).then(() => {
             // login();
             navigate('/dashboard');
-        window.location.reload(); 
+            window.location.reload(); 
           });
         } else if (response.status === 202) {
           swal({

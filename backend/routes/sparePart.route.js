@@ -8,7 +8,8 @@ const { SparePart_Supplier,
         SparePartPrice_history, 
         SparePart_image,
         IssuedSpare,
-      Warehouses} = require("../db/models/associations"); 
+      Warehouses,
+    Activity_Log} = require("../db/models/associations"); 
 const session = require('express-session')
 
 router.use(session({
@@ -75,7 +76,8 @@ router.route('/create').post(async (req, res) => {
               slct_category,
               thresholds, 
               unitMeasurement,
-              images} = req.body;
+              images,
+              userId} = req.body;
 
         // Check if the supplier code is already exists in the table
         console.log(code);
@@ -101,6 +103,10 @@ router.route('/create').post(async (req, res) => {
             spareParts_status: 'Active'
           });
 
+          await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Product Part: Created a new product part named ${name}`,
+          });
           const createdID = spare_newData.id;
 
           const findWarehouse = await Warehouses.findOne({
@@ -185,7 +191,8 @@ router.route("/update").post(
             slct_manufacturer, 
             thresholds,
             SubParts,
-            addPriceInput, } = req.body;
+            addPriceInput,
+            userId } = req.body;
 
     try {
       const existingDataCode = await SparePart.findOne({
@@ -216,6 +223,11 @@ router.route("/update").post(
             },
           }
         );
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Product Part: Updated the information product part ${name}`,
+        });
 
         const deletespareImage = SparePart_image.destroy({
           where: {
@@ -482,7 +494,7 @@ router.route('/deleteOldArchivedSpare').post(async (req, res) => {
 
   router.route('/statusupdate').put(async (req, res) => {
     try {
-      const { sparePartIds, status } = req.body;
+      const { sparePartIds, status, userId } = req.body;
   
       const updateData = { spareParts_status: status };
 
@@ -491,7 +503,23 @@ router.route('/deleteOldArchivedSpare').post(async (req, res) => {
       }  
 
       for (const sparePartId of sparePartIds) {
-        await SparePart.update(updateData, { where: { id: sparePartId } });
+        const spareData = await SparePart.findOne({
+          where: { id: sparePartId } 
+        })
+
+        const sparename = spareData.spareParts_name;
+        const currentstatus = spareData.spareParts_status;
+
+        const Updatestatus =  await SparePart.update(updateData, { 
+          where: { id: sparePartId } 
+        });
+
+        if(Updatestatus){
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Product Part: ${sparename} Updated status from ${currentstatus} to ${status}`
+          });
+        }
       }
   
       res.status(200).json({ message: 'Products updated successfully' });

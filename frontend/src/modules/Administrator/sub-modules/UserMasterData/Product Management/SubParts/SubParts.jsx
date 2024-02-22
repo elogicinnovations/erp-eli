@@ -54,6 +54,26 @@ function SubParts({ authrztn }) {
 
   const [historypricemodal, sethistorypricemodal] = useState([]);
   const [showhistorical, setshowhistorical] = useState(false);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
+
   const handlehistoricalClose = () => setshowhistorical(false);
   const handlehistoricalShow = () => setshowhistorical(true);
 
@@ -327,6 +347,7 @@ function SubParts({ authrztn }) {
       .put(BASE_URL + "/subPart/statusupdate", {
         subpartIDs: selectedCheckboxes,
         status: selectedStatus,
+        userId
       })
       .then((res) => {
         if (res.status === 200) {
@@ -338,6 +359,9 @@ function SubParts({ authrztn }) {
           }).then(() => {
             handleClose();
             reloadTable();
+            setSelectAllChecked(false);
+            setSelectedCheckboxes([]);
+            setShowChangeStatusButton(false)
           });
         }
       })

@@ -8,7 +8,7 @@ import NoAccess from '../../assets/image/NoAccess.png';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import BASE_URL from '../../assets/global/url';
-import Header from '../../partials/header';
+import { jwtDecode } from 'jwt-decode';
 import {
     CalendarBlank,
     XCircle,
@@ -17,7 +17,19 @@ import DatePicker from "react-datepicker";
 
 const ActivityLog = ({authrztn})  => {
     const [isLoading, setIsLoading] = useState(false);
+    const [username, setUsername] = useState("");
 
+    const decodeToken = () => {
+        var token = localStorage.getItem('accessToken');
+        if(typeof token === 'string'){
+        var decoded = jwtDecode(token);
+        setUsername(decoded.id);
+        }
+      }
+
+      useEffect(() => {
+        decodeToken();
+      }, [])
     return (
         <div className="main-of-containers">
             <div className="right-of-main-containers">
@@ -31,7 +43,7 @@ const ActivityLog = ({authrztn})  => {
                         <div className="Employeetext-button">
                             <div className="employee-and-button">
                                 <div className="emp-text-side">
-                                <p>Activity Logs</p>
+                                <p>Activity Log</p>
                                 </div>
 
                                 <div className="button-create-side">
@@ -119,6 +131,7 @@ const ActivityLog = ({authrztn})  => {
                                         fontSize: "15px",
                                         marginBottom: "15px",
                                         fontFamily: "Poppins, Source Sans Pro",
+                                        width: "495px",
                                         }}
                                         required
                                         title="User is required"

@@ -32,6 +32,7 @@ import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.b
 import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import { jwtDecode } from "jwt-decode";
 
 function AssemblyForm({ authrztn }) {
   const [assembly, setAssembly] = useState([]);
@@ -46,6 +47,32 @@ function AssemblyForm({ authrztn }) {
   const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
   const [showhistorical, setshowhistorical] = useState(false);
   const [historypricemodal, sethistorypricemodal] = useState([]);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const handledropdownstatus = (event) => {
     const value = event.target.value;
@@ -155,48 +182,48 @@ function AssemblyForm({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  const handleDelete = async (table_id) => {
-    swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this product data!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        try {
-          const response = await axios.delete(
-            BASE_URL + `/assembly/delete/${table_id}`
-          );
+  // const handleDelete = async (table_id) => {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "Once deleted, you will not be able to recover this product data!",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //   }).then(async (willDelete) => {
+  //     if (willDelete) {
+  //       try {
+  //         const response = await axios.delete(
+  //           BASE_URL + `/assembly/delete/${table_id}`
+  //         );
 
-          if (response.status === 200) {
-            swal({
-              title: "The Product Assembly Delete Successful!",
-              text: "The Product Assembly has been Deleted successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              reloadTable();
-            });
-          } else if (response.status === 202) {
-            swal({
-              icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete product that is used",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    });
-  };
+  //         if (response.status === 200) {
+  //           swal({
+  //             title: "The Product Assembly Delete Successful!",
+  //             text: "The Product Assembly has been Deleted successfully.",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             reloadTable();
+  //           });
+  //         } else if (response.status === 202) {
+  //           swal({
+  //             icon: "error",
+  //             title: "Delete Prohibited",
+  //             text: "You cannot delete product that is used",
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   });
+  // };
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -255,19 +282,13 @@ function AssemblyForm({ authrztn }) {
     }
   }, [historypricemodal]);
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  
-  const [selectAllChecked, setSelectAllChecked] = useState(false);
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
 
   const handleSave = () => {
     axios
       .put(BASE_URL + "/assembly/statusupdate", {
         assemblyIds: selectedCheckboxes,
         status: selectedStatus,
+        userId,
       })
       .then((res) => {
         if (res.status === 200) {
@@ -279,6 +300,9 @@ function AssemblyForm({ authrztn }) {
           }).then(() => {
             handleClose();
             reloadTable();
+            setSelectAllChecked(false);
+            setSelectedCheckboxes([])
+            setShowChangeStatusButton(false)
           });
         }
       })

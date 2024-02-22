@@ -5,23 +5,18 @@ import "../../../../assets/global/style.css";
 import "../../../styles/react-style.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import Sidebar from "../../../Sidebar/sidebar";
+// import Sidebar from "../../../Sidebar/sidebar";
+// import Header from "../../../../partials/header";
 import NoData from '../../../../assets/image/NoData.png';
 import NoAccess from '../../../../assets/image/NoAccess.png';
 import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from "react-bootstrap/Form";
-import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
   Plus,
-  Trash,
-  NotePencil,
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
@@ -37,7 +32,7 @@ import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstr
 import "../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
-import Header from "../../../../partials/header";
+
 import { jwtDecode } from "jwt-decode";
 
 function MasterList({ authrztn }) {
@@ -56,6 +51,26 @@ function MasterList({ authrztn }) {
     Array(masterListt.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+    const [Fname, setFname] = useState('');
+    const [username, setUsername] = useState('');
+    const [userRole, setUserRole] = useState('');
+    const [userId, setuserId] = useState('');
+    
+    const decodeToken = () => {
+      var token = localStorage.getItem('accessToken');
+      if(typeof token === 'string'){
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
+      }
+    }
+
+    useEffect(() => {
+      decodeToken();
+    }, [])
+
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -270,15 +285,10 @@ function MasterList({ authrztn }) {
     setShowPassword(!showPassword);
   };
 
-  // Function to toggle confirm password visibility
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  // const getRoleName = (roleID) => {
-  //   const role = roles.find(role => role.col_roleID === roleID);
-  //   return role ? role.col_rolename : 'Unknown Role';
-  // };
 
   const handleUpdateFormChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -311,6 +321,82 @@ function MasterList({ authrztn }) {
     }
   };
 
+    const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updaemasterID = updateFormData.updateId;
+      const response = await axios.put(
+        BASE_URL + `/masterList/updateMaster/${updateFormData.updateId}?userId=${userId}`,
+        {
+          col_Fname: updateFormData.uaname,
+          col_address: updateFormData.uaaddress,
+          col_phone: updateFormData.uanum,
+          col_email: updateFormData.uaemail,
+          col_username: updateFormData.uauname,
+          col_roleID: updateFormData.uarole,
+          col_Pass: updateFormData.uapass,
+          col_status: updateFormData.ustatus ? "Active" : "Inactive",
+        }
+      );
+
+      if (response.status === 200) {
+        swal({
+          title: "User Update Successful!",
+          text: "The User has been Updated Successfully.",
+          icon: "success",
+          button: "OK",
+        }).then(() => {
+          window.location.reload();
+          handleModalToggle();
+          setmasterListt((prevStudent) =>
+            prevStudent.map((data) =>
+              data.col_ID === updateFormData.updateId
+                ? {
+                    ...data,
+                    col_Fname: updateFormData.uaname,
+                    col_address: updateFormData.uaaddress,
+                    col_phone: updateFormData.uanum,
+                    col_email: updateFormData.uaemail,
+                    col_username: updateFormData.uauname,
+                    col_roleID: updateFormData.uarole,
+                    col_Pass: updateFormData.uapass,
+                    col_status: updateFormData.ustatus ? "Active" : "Inactive",
+                  }
+                : data
+            )
+          );
+
+          // Reset the form fields
+          setUpdateFormData({
+            uaname: "",
+            uaaddress: "",
+            uanum: "",
+            uaemail: "",
+            uauname: "",
+            uarole: "",
+            uapass: "",
+            ustatus: false,
+            updateId: null,
+          });
+        });
+      } else if (response.status === 202) {
+        swal({
+          icon: "error",
+          title: "Email already exists",
+          text: "Please input another Email",
+        });
+      } else {
+        swal({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // Validation for PhoneNumber and Email
   function isValidPhoneNumber(phone) {
     const phoneRegex = /^09\d{9}$/;
@@ -325,8 +411,6 @@ function MasterList({ authrztn }) {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      // console.log(formData)
-
       if (formData.cname === "") {
         swal({
           title: "Required Field",
@@ -435,6 +519,7 @@ function MasterList({ authrztn }) {
           button: "OK",
         });
       } else {
+        formData.userId = userId;
         const status = formData.cstatus ? "Active" : "Inactive";
         const response = await axios.post(
           BASE_URL + "/masterList/createMaster",
@@ -449,23 +534,7 @@ function MasterList({ authrztn }) {
             icon: "success",
             button: "OK",
           }).then(() => {
-            // const newId = response.data.col_id;
-            // console.log(newId)
-            // setmasterListt(prevStudent => [...prevStudent, {
-            //   col_id: newId,
-            //   col_Fname: formData.cname,
-            //   col_address: formData.caddress,
-            //   col_phone: formData.cnum,
-            //   col_email: formData.cemail,
-            //   col_username: formData.cuname,
-            //   col_roleID: formData.crole,
-            //   col_Pass: formData.cpass,
-            //   col_status: status
-            // }]);
-
             reloadTable();
-
-            // Reset the form fields
             setFormData({
               cname: "",
               caddress: "",
@@ -493,93 +562,10 @@ function MasterList({ authrztn }) {
         }
       }
     } catch (err) {
-      // if (err.response.status === 400) {
-      //   swal({
-      //     icon: "error",
-      //     title: "Email Format Wrong",
-      //     // text: err.response.data.errors[0].message,
-      //     text: "Email must be (username@domain.com)",
-      //   });
-      // } else console.log(err);
     }
   };
 
-  const handleUpdateSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const updaemasterID = updateFormData.updateId;
-      console.log(updaemasterID);
-      const response = await axios.put(
-        BASE_URL + `/masterList/updateMaster/${updateFormData.updateId}`,
-        {
-          col_Fname: updateFormData.uaname,
-          col_address: updateFormData.uaaddress,
-          col_phone: updateFormData.uanum,
-          col_email: updateFormData.uaemail,
-          col_username: updateFormData.uauname,
-          col_roleID: updateFormData.uarole,
-          col_Pass: updateFormData.uapass,
-          col_status: updateFormData.ustatus ? "Active" : "Inactive",
-        }
-      );
 
-      if (response.status === 200) {
-        swal({
-          title: "User Update Successful!",
-          text: "The User has been Updated Successfully.",
-          icon: "success",
-          button: "OK",
-        }).then(() => {
-          window.location.reload();
-          handleModalToggle();
-          setmasterListt((prevStudent) =>
-            prevStudent.map((data) =>
-              data.col_ID === updateFormData.updateId
-                ? {
-                    ...data,
-                    col_Fname: updateFormData.uaname,
-                    col_address: updateFormData.uaaddress,
-                    col_phone: updateFormData.uanum,
-                    col_email: updateFormData.uaemail,
-                    col_username: updateFormData.uauname,
-                    col_roleID: updateFormData.uarole,
-                    col_Pass: updateFormData.uapass,
-                    col_status: updateFormData.ustatus ? "Active" : "Inactive",
-                  }
-                : data
-            )
-          );
-
-          // Reset the form fields
-          setUpdateFormData({
-            uaname: "",
-            uaaddress: "",
-            uanum: "",
-            uaemail: "",
-            uauname: "",
-            uarole: "",
-            uapass: "",
-            ustatus: false,
-            updateId: null,
-          });
-        });
-      } else if (response.status === 202) {
-        swal({
-          icon: "error",
-          title: "Email already exists",
-          text: "Please input another Email",
-        });
-      } else {
-        swal({
-          icon: "error",
-          title: "Something went wrong",
-          text: "Please contact our support",
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleDelete = async (param_id) => {
     swal({
@@ -592,7 +578,7 @@ function MasterList({ authrztn }) {
       if (willDelete) {
         try {
           const response = await axios.delete(
-            `${BASE_URL}/masterlist/deleteMaster/${param_id}`
+            `${BASE_URL}/masterlist/deleteMaster/${param_id}?userId=${userId}`
           );
           if (response.data.success) {
             swal({
@@ -617,11 +603,6 @@ function MasterList({ authrztn }) {
           });
           // Handle other errors, such as network issues
         }
-      } else {
-        swal("Your user file is safe!", {
-          icon: "success",
-        });
-        // Handle the case where the user canceled the deletion
       }
     });
   };
@@ -730,26 +711,6 @@ function MasterList({ authrztn }) {
               ) : (
         authrztn.includes('Master List - View') ? (
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-            <div className="dropdown-and-iconics">
-              <div className="dropdown-side"></div>
-              <div className="iconic-side">
-                <div className="gearsides">
-                  <Gear size={35} />
-                </div>
-                <div className="bellsides">
-                  <Bell size={35} />
-                </div>
-                <div className="usersides">
-                  <UserCircle size={35} />
-                </div>
-                <div className="username">
-                  <h3>User Name</h3>
-                </div>
-              </div>
-            </div>
-          </div> */}
-
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -773,7 +734,7 @@ function MasterList({ authrztn }) {
 
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table id="order-listing">
+              <table id="order-listing" className="hover-table">
                 <thead>
                   <tr>
                     <th className="tableh">ID</th>
@@ -1064,7 +1025,8 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
                 <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput2">
+
+                <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Role Type:{" "}
                     </Form.Label>
@@ -1313,7 +1275,7 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
                 <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput2">
+                <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Role Type:{" "}
                     </Form.Label>
@@ -1350,7 +1312,7 @@ function MasterList({ authrztn }) {
             <Form>
               <div className="row">
                 <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
+                  {/* <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Current Password:{" "}
                     </Form.Label>
@@ -1373,7 +1335,7 @@ function MasterList({ authrztn }) {
                         />
                       )}
                     </div>
-                  </Form.Group>
+                  </Form.Group> */}
                 </div>
 
                 <div className="col-6"></div>

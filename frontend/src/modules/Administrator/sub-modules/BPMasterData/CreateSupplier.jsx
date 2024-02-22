@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
-import Sidebar from "../../../Sidebar/sidebar";
+// import Sidebar from "../../../Sidebar/sidebar";
 import axios from "axios";
 import BASE_URL from "../../../../assets/global/url";
 import ReactLoading from 'react-loading';
-import NoData from '../../../../assets/image/NoData.png';
+// import NoData from '../../../../assets/image/NoData.png';
 import NoAccess from '../../../../assets/image/NoAccess.png';
 import swal from "sweetalert";
 import Container from "react-bootstrap/Container";
@@ -15,7 +15,9 @@ import { Link, useNavigate } from "react-router-dom";
 import "../../../styles/react-style.css";
 import warehouse from "../../../../assets/global/warehouse";
 import { ArrowCircleLeft } from "@phosphor-icons/react";
-import { width } from "@mui/system";
+import { jwtDecode } from "jwt-decode";
+// import { width } from "@mui/system";
+
 
 function CreateSupplier({authrztn}) {
   const [validated, setValidated] = useState(false);
@@ -42,6 +44,26 @@ function CreateSupplier({authrztn}) {
   const [isCodeExist, setIsCodeExist] = useState(false);
   // Handle the checkbox change event for toggle button VAtable textbox
   const [isChecked, setIsChecked] = useState(false);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
+
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   };
@@ -206,6 +228,7 @@ return () => clearTimeout(delay);
           selectedCountry,
           suppStatus,
           suppReceving,
+          userId,
         })
         .then((response) => {
           if (response.status === 200) {

@@ -12,7 +12,6 @@ import BASE_URL from "../../../../../../assets/global/url";
 import swal from "sweetalert";
 import Select from "react-select";
 import Button from "react-bootstrap/Button";
-import Dropzone from "react-dropzone";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import { Trash, NotePencil, X, ArrowCircleLeft } from "@phosphor-icons/react";
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
@@ -27,6 +26,7 @@ import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.b
 import "../../../../../../assets/skydash/js/off-canvas";
 
 import * as $ from "jquery";
+import { jwtDecode } from "jwt-decode";
 
 function CreateAssemblyForm({authrztn}) {
   const [validated, setValidated] = useState(false);
@@ -52,6 +52,26 @@ function CreateAssemblyForm({authrztn}) {
   // for display selected subPart in Table
   const [supp, setSupp] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const navigate = useNavigate();
 
@@ -377,7 +397,8 @@ function onDropImages(event) {
           slct_manufacturer,
           thresholds,
           slct_category,
-          images
+          images,
+          userId,
         })
         .then((res) => {
           if (res.status === 200) {

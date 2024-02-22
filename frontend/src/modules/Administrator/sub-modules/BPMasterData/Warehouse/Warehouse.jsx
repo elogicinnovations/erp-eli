@@ -18,6 +18,7 @@ import BASE_URL from "../../../../../assets/global/url";
 import ReactLoading from 'react-loading';
 import NoData from '../../../../../assets/image/NoData.png';
 import NoAccess from '../../../../../assets/image/NoAccess.png';
+import { jwtDecode } from "jwt-decode";
 
 function Warehouse ({authrztn}) {
 
@@ -31,6 +32,25 @@ const [isVertical, setIsVertical] = useState({});
 const [showModal, setShowModal] = useState(false);
 const [updateModalShow, setUpdateModalShow] = useState(false);
 const [isLoading, setIsLoading] = useState(true);
+const [Fname, setFname] = useState('');
+const [username, setUsername] = useState('');
+const [userRole, setUserRole] = useState('');
+const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
 const handleClose = () => {
     setShowModal(false);
@@ -99,6 +119,7 @@ return () => clearTimeout(delay);
           warehousename,
           locatename,
           description,
+          userId,
         })
         .then((res) => {
           if (res.status === 200) {
@@ -110,6 +131,7 @@ return () => clearTimeout(delay);
             }).then(() => {
               handleClose();
               reloadTable();
+              setValidated(false);
             });
           } else if (res.status === 201) {
             swal({
@@ -226,11 +248,11 @@ const handleUpdateSubmit = async (e) => {
   try {
     const updaemasterID = updateFormData.id;
     const response = await axios.put(
-      BASE_URL + `/warehouses/updateWarehouse/${updateFormData.id}`,
+      BASE_URL + `/warehouses/updateWarehouse/${updateFormData.id}?userId=${userId}`,
       {
         warehouse_name: updateFormData.warehouse_name,
         location: updateFormData.location,
-        details: updateFormData.details
+        details: updateFormData.details,
       }
     );
 
@@ -243,6 +265,7 @@ const handleUpdateSubmit = async (e) => {
       }).then(() => {
         handleModalToggle();
         reloadTable()
+        setValidated(false);
       });
     } else if (response.status === 202) {
       swal({
@@ -274,7 +297,7 @@ const handleDelete = async (table_id) => {
     if (willDelete) {
       try {
         const response = await axios.delete(
-          BASE_URL + `/warehouses/deleteWarehouse/${table_id}`
+          BASE_URL + `/warehouses/deleteWarehouse/${table_id}?userId=${userId}`
         );
 
         if (response.status === 200) {

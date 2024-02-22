@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import Sidebar from "../../../../../Sidebar/sidebar";
+// import Sidebar from "../../../../../Sidebar/sidebar";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../../../styles/react-style.css";
 import ReactLoading from 'react-loading';
-import NoData from '../../../../../../assets/image/NoData.png';
+// import NoData from '../../../../../../assets/image/NoData.png';
 import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import Form from "react-bootstrap/Form";
 import axios from "axios";
@@ -13,8 +13,8 @@ import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
-import { Plus, Trash, NotePencil, X, ArrowCircleLeft} from "@phosphor-icons/react";
-import Dropzone from 'react-dropzone';
+import { ArrowCircleLeft} from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 function CreateSpareParts({authrztn}) {
   const [validated, setValidated] = useState(false);
@@ -38,6 +38,25 @@ function CreateSpareParts({authrztn}) {
   // for display selected subPart in Table
   const [SubParts, setSubParts] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setUsername(decoded.username);
+    setFname(decoded.Fname);
+    setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const navigate = useNavigate();
 
@@ -61,8 +80,6 @@ function CreateSpareParts({authrztn}) {
       .then((res) => {
         const codes =
           res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
-
-        // Increment the value by 1
         setCode(codes);
       })
       .catch((err) => console.log(err));
@@ -336,6 +353,7 @@ useEffect(() => {
           slct_category,
           thresholds,
           images,
+          userId,
         })
         .then((res) => {
           // console.log(res);
