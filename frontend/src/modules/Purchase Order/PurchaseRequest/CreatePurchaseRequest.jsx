@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../Sidebar/sidebar";
+// import Sidebar from "../../Sidebar/sidebar";
+// import Row from "react-bootstrap/Row";
+// import Col from "react-bootstrap/Col";
+// import * as $ from "jquery";
 import "../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/react-style.css";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
 import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ArrowCircleLeft, Plus, CalendarBlank } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
-
-import * as $ from "jquery";
-import { FormControl } from "@mui/base";
+import { jwtDecode } from "jwt-decode";
 
 function CreatePurchaseRequest() {
   const navigate = useNavigate();
@@ -37,7 +36,25 @@ function CreatePurchaseRequest() {
   const [fetchAssembly, setFetchAssembly] = useState([]);
   const [fetchSpare, setFetchSpare] = useState([]);
   const [fetchSubPart, setFetchSubPart] = useState([]);
+  // const [Fname, setFname] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
 
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    // setUsername(decoded.username);
+    // setFname(decoded.Fname);
+    // setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
   // para sa pag fetch ng last pr number
   useEffect(() => {
     axios
@@ -143,6 +160,7 @@ function CreatePurchaseRequest() {
           useFor,
           remarks,
           addProductbackend,
+          userId,
         });
 
         console.log(response);

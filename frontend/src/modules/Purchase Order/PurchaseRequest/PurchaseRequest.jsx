@@ -50,6 +50,26 @@ function PurchaseRequest({ authrztn }) {
   const [allPR, setAllPR] = useState([]);
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
+  // const [Fname, setFname] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    // setUsername(decoded.username);
+    // setFname(decoded.Fname);
+    // setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
+
   const { items, ...pagination } = usePagination({
     count: Math.ceil(filteredPR.length / 5),
   });
@@ -189,6 +209,7 @@ function PurchaseRequest({ authrztn }) {
             const response = await axios.put(BASE_URL + `/PR/cancel`, {
               row_id,
               row_status,
+              userId,
             });
 
             if (response.status === 200) {
@@ -368,7 +389,7 @@ function PurchaseRequest({ authrztn }) {
                     <option value="Cancelled">Cancelled</option>
                   </Form.Select>
                   <button className="goesButton" onClick={handleGoButtonClick}>
-                    GO
+                    FILTER
                   </button>
                   <button className="Filterclear" onClick={clearFilters}>
                     Clear Filter

@@ -1,11 +1,10 @@
 const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-// const PR = require('../db/models/pr.model')
 const { PR, PR_product, PR_assembly,PR_Rejustify, 
         PR_subPart, PR_history, PR_PO, PR_PO_asmbly, 
         PR_sparePart, PR_PO_spare, PR_PO_subpart, 
-      
+        Activity_Log
       } = require('../db/models/associations')
 const session = require('express-session')
 
@@ -194,7 +193,7 @@ router.route('/lastPRNumber').get(async (req, res) => {
   
 router.route('/create').post(async (req, res) => {
     try {
-       const {prNum, dateNeed, useFor, remarks, addProductbackend} = req.body;
+       const {prNum, dateNeed, useFor, remarks, addProductbackend, userId} = req.body;
         
           const PR_newData = await PR.create({
             pr_num: prNum,
@@ -255,9 +254,14 @@ router.route('/create').post(async (req, res) => {
               console.log('SubPart insert')
             }
 
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Purchase Request: Created a new pr for ${prod_type} with number of ${prNum}`,
+            });
           }
-    
-    
+
+
+          
           res.status(200).json();
         
       } catch (err) {
@@ -438,7 +442,7 @@ router.route('/update').post(async (req, res) => {
 
 router.route('/cancel').put(async (req, res) => {
     try {
-       const {row_id} = req.body;
+       const {row_id, userId} = req.body;
         
        const [affectedRows] = await PR.update(
         {
@@ -449,10 +453,26 @@ router.route('/cancel').put(async (req, res) => {
         }
       );
 
+      const PRnum = await PR.findOne({
+          where: { 
+            id: row_id, 
+            status: 'Cancelled',
+          },
+      });
+
+      const prnumber = PRnum.pr_num;
+
       const PR_historical = await PR_history.create({
         pr_id: row_id,
         status: 'Cancelled',
       });
+
+      if(PR_historical) {
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Purchase Request has been cancelled with pr number ${prnumber}`,
+        });
+      }
     
           res.status(200).json();
         
