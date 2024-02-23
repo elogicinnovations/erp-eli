@@ -1,54 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import Sidebar from '../../Sidebar/sidebar';
-import '../../../assets/global/style.css';
-import { Link, useNavigate, useParams} from 'react-router-dom';
-import '../../styles/react-style.css';
-import Form from 'react-bootstrap/Form';
-import Select from 'react-select';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useEffect, useState } from "react";
+import Sidebar from "../../Sidebar/sidebar";
+import "../../../assets/global/style.css";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import "../../styles/react-style.css";
+import Form from "react-bootstrap/Form";
+import Select from "react-select";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
-    ArrowCircleLeft,
-    ShoppingCart,
-    PlusCircle,
-    NotePencil,
-    XCircle,
-    CalendarBlank, 
-  } from "@phosphor-icons/react";
-import axios from 'axios';
-import BASE_URL from '../../../assets/global/url';
-import swal from 'sweetalert';
+  ArrowCircleLeft,
+  ShoppingCart,
+  PlusCircle,
+  NotePencil,
+  XCircle,
+  CalendarBlank,
+} from "@phosphor-icons/react";
+import axios from "axios";
+import BASE_URL from "../../../assets/global/url";
+import swal from "sweetalert";
 
-import * as $ from 'jquery';
-
-
-
-
-
+import * as $ from "jquery";
 
 function PurchaseOrderListPreview() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [dateNeeded, setDateNeeded] = useState(null);
-  const [prNum, setPRnum] = useState('');
-  const [useFor, setUseFor] = useState('');
-  const [remarks, setRemarks] = useState('');
-  const [status, setStatus] = useState('');
+  const [prNum, setPRnum] = useState("");
+  const [useFor, setUseFor] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [status, setStatus] = useState("");
 
   const [validated, setValidated] = useState(false);
   const [editMode, setEditMode] = useState({});
 
-
-
   // const [Fname, setFname] = useState('');
   // const [username, setUsername] = useState('');
   // const [userRole, setUserRole] = useState('');
-
 
   // const decodeToken = () => {
   //   var token = localStorage.getItem('accessToken');
@@ -68,109 +60,98 @@ function PurchaseOrderListPreview() {
 
   //para sa assembly data na e canvass
 
-   // for PRoduct canvassing
+  // for PRoduct canvassing
   //for adding the data from table canvass to table PO
   const [products, setProducts] = useState([]);
   const [suppProducts, setSuppProducts] = useState([]);
-
 
   // for Assembly canvassing
   const [assembly, setAssembly] = useState([]);
   const [suppAssembly, setSuppAssembly] = useState([]);
 
+  //for Spare canvassing
+  const [spare, setSpare] = useState([]);
+  const [suppSpare, setSuppSpare] = useState([]);
 
+  //for Subpart canvassing
+  const [subpart, setSubpart] = useState([]);
+  const [suppSubpart, setSuppSubpart] = useState([]);
 
-
-
-//for Spare canvassing
-const [spare, setSpare] = useState([]);
-const [suppSpare, setSuppSpare] = useState([]);
-
-
-//for Subpart canvassing
-const [subpart, setSubpart] = useState([]);
-const [suppSubpart, setSuppSubpart] = useState([]);
-
-
-
-
-  const [showModal, setShowModal] = useState(false) //for product modal
-  const [showModalAs, setShowModalAS] = useState(false) //for assembly modal
-  const [showModalSpare, setShowModalspare] = useState(false) //for spare modal
-  const [showModalSubpart, setShowModalSubpart] = useState(false) //for assembly modal
-
-
+  const [showModal, setShowModal] = useState(false); //for product modal
+  const [showModalAs, setShowModalAS] = useState(false); //for assembly modal
+  const [showModalSpare, setShowModalspare] = useState(false); //for spare modal
+  const [showModalSubpart, setShowModalSubpart] = useState(false); //for assembly modal
 
   const handleClose = () => {
     setShowModal(false);
-    setShowModalAS(false)
+    setShowModalAS(false);
     setShowModalspare(false);
-    setShowModalSubpart(false)
+    setShowModalSubpart(false);
   };
 
-
-
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_product/fetchPrProduct',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setProducts(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_assembly/fetchViewAssembly',{
-      params:{
-        id: id
-      }
-    })
-      .then(res => setAssembly(res.data))
-      .catch(err => console.log(err));
+    axios
+      .get(BASE_URL + "/PR_product/fetchPrProduct", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/PR_spare/fetchViewSpare',{
-      params: {id: id}
-    })
-      .then(res => setSpare(res.data))
-      .catch(err => console.log(err));
-  }, []);
-  
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR_subpart/fetchViewSubpart',{
-      params: {id: id}
-    })
-      .then(res => setSubpart(res.data))
-      .catch(err => console.log(err));
+    axios
+      .get(BASE_URL + "/PR_assembly/fetchViewAssembly", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => setAssembly(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/PR_spare/fetchViewSpare", {
+        params: { id: id },
+      })
+      .then((res) => setSpare(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   useEffect(() => {
-    axios.get(BASE_URL + '/PR/fetchView', {
-      params: {
-        id: id
-      }
-    })
-    .then(res => {
-      // console.log('Response data:', res.data); // Log the entire response data
-      setPRnum(res.data.pr_num);
-      // Update this line to parse the date string correctly
-      const parsedDate = new Date(res.data.date_needed);
-      setDateNeeded(parsedDate);
+    axios
+      .get(BASE_URL + "/PR_subpart/fetchViewSubpart", {
+        params: { id: id },
+      })
+      .then((res) => setSubpart(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
-      setUseFor(res.data.used_for);
-      setRemarks(res.data.remarks);
-      setStatus(res.data.status);
-    })
-    .catch(err => {
-      console.error(err);
-      // Handle error state or show an error message to the user
-    });
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/PR/fetchView", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        // console.log('Response data:', res.data); // Log the entire response data
+        setPRnum(res.data.pr_num);
+        // Update this line to parse the date string correctly
+        const parsedDate = new Date(res.data.date_needed);
+        setDateNeeded(parsedDate);
+
+        setUseFor(res.data.used_for);
+        setRemarks(res.data.remarks);
+        setStatus(res.data.status);
+      })
+      .catch((err) => {
+        console.error(err);
+        // Handle error state or show an error message to the user
+      });
   }, [id]);
-
 
   // const handleShow = () => setShowModal(true);
 
@@ -178,19 +159,17 @@ const [suppSubpart, setSuppSubpart] = useState([]);
 
   const [isArray, setIsArray] = useState(false);
 
- 
-  
   const [latestCount, setLatestCount] = useState("");
   useEffect(() => {
     axios
       .get(BASE_URL + "/invoice/lastPONumber")
       .then((res) => {
-        const PO_increment = res.data !== null ? res.data.toString().padStart(8, "0") : "00000000";
+        const PO_increment =
+          res.data !== null ? res.data.toString().padStart(8, "0") : "00000000";
         setLatestCount(PO_increment);
       })
       .catch((err) => console.log(err));
   }, []);
-
 
   // console.log(latestCount)
 
@@ -205,28 +184,30 @@ const [suppSubpart, setSuppSubpart] = useState([]);
         ...prevInputs,
         [`${title}_${type}_${supplier_prod_id}`]: value,
       };
-  
+
       // Use the updatedInputs directly to create the serializedParent array
-      const serializedParent = parentArray.map(({ title, supplierCode, array }) => {
-        return {
-          title,
-          supplierCode,
-          serializedArray: array.map((item) => ({
-            quantity: updatedInputs[`${title}_${item.type}_${item.product.id}`] || "",
-            type: item.type,
-            prod_supplier: item.product.id,
-          })),
-        };
-      });
-      setAddPObackend(serializedParent)
+      const serializedParent = parentArray.map(
+        ({ title, supplierCode, array }) => {
+          return {
+            title,
+            supplierCode,
+            serializedArray: array.map((item) => ({
+              quantity:
+                updatedInputs[`${title}_${item.type}_${item.product.id}`] || "",
+              type: item.type,
+              prod_supplier: item.product.id,
+            })),
+          };
+        }
+      );
+      setAddPObackend(serializedParent);
       // console.log(`supplier ${type}_${supplier_prod_id}`);
-      console.log("Selected Products:", serializedParent);    
-  
+      console.log("Selected Products:", serializedParent);
+
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
-
 
   const handleAddToTable = (product, type, code, name, supp_email) => {
     setProductArrays((prevArrays) => {
@@ -235,7 +216,7 @@ const [suppSubpart, setSuppSubpart] = useState([]);
 
       const newArray = (prevArrays[supplierCode] || []).slice();
       const isProductAlreadyAdded = newArray.some(
-        (item) => item.product.id === product.id
+        (item) => item.product.id === product.id && item.type === type
       );
 
       if (!isProductAlreadyAdded) {
@@ -247,12 +228,12 @@ const [suppSubpart, setSuppSubpart] = useState([]);
           code: code,
           name: name,
           supp_email: supp_email,
-          supplierName: supplierName
+          supplierName: supplierName,
         });
 
         newArray.sort((a, b) => {
-          const codeA = a.product.product_code || '';
-          const codeB = b.product.product_code || '';
+          const codeA = a.product.product_code || "";
+          const codeB = b.product.product_code || "";
           return codeA.localeCompare(codeB);
         });
 
@@ -269,12 +250,17 @@ const [suppSubpart, setSuppSubpart] = useState([]);
           setParentArray(updatedParentArray);
         } else {
           // If the container doesn't exist, create a new one
-          const newTitle = (parseInt(latestCount, 10) + titleCounter).toString().padStart(8, "0");
-          const newParentArray = [...parentArray, {
-            title: newTitle,
-            supplierCode: supplierCode,
-            array: newArray,
-          }];
+          const newTitle = (parseInt(latestCount, 10) + titleCounter)
+            .toString()
+            .padStart(8, "0");
+          const newParentArray = [
+            ...parentArray,
+            {
+              title: newTitle,
+              supplierCode: supplierCode,
+              array: newArray,
+            },
+          ];
 
           // Increment the title counter
           setTitleCounter(titleCounter + 1);
@@ -283,358 +269,363 @@ const [suppSubpart, setSuppSubpart] = useState([]);
           setParentArray(newParentArray);
         }
 
-        console.log('Parent Array:', parentArray);
+        console.log("Parent Array:", parentArray);
         return { ...prevArrays, [supplierCode]: newArray };
       } else {
         swal({
-          title: 'Duplicate Product',
-          text: 'This product is already in the array.',
-          icon: 'error',
+          title: "Duplicate Product",
+          text: "This product is already in the array.",
+          icon: "error",
         });
         return prevArrays;
       }
     });
   };
-  
 
-const handleEditPrice = (index) => {
-  setEditMode((prev) => ({ ...prev, [index]: true }));
-};
+  const handleEditPrice = (index) => {
+    setEditMode((prev) => ({ ...prev, [index]: true }));
+  };
 
-const handleCancelEditPrice = (index) => {
-  setEditMode((prev) => ({ ...prev, [index]: false }));
-};
+  const handleCancelEditPrice = (index) => {
+    setEditMode((prev) => ({ ...prev, [index]: false }));
+  };
 
-const handleUpdatePrice = (updatedPrice, id, index, product_id, supplier_code) => {
-  const updatedPriced = updatedPrice;
-  const productSupplier_id = id;
-  const product_ID = product_id;
-  const supp_code = supplier_code;
+  const handleUpdatePrice = (
+    updatedPrice,
+    id,
+    index,
+    product_id,
+    supplier_code
+  ) => {
+    const updatedPriced = updatedPrice;
+    const productSupplier_id = id;
+    const product_ID = product_id;
+    const supp_code = supplier_code;
 
-  swal({
-    allowEscapeKey: false,
-    title: 'Are you sure?',
-    text: 'Do you really want to update the supplier price?',
-    icon: 'warning',
-    buttons: true,
-    dangerMode: true,
-  })
-  .then((confirmed) => {
-    if (confirmed) {
-      
-
-      axios.post(BASE_URL + '/canvass/updatePrice', {
-        productSupplier_id, updatedPriced, supp_code, product_ID
-      })
-      .then(res => {
-        if (res.status === 200) {
-          swal({
-            title: 'Successfully Updated',
-            text: "Supplier Price is updated to its new price",
-            icon: 'success',
-          });
-
-          setEditMode((prev) => ({ ...prev, [index]: false }));
-          axios.get(BASE_URL + '/productTAGsupplier/fetchCanvass', {
-            params: {
-              id: product_ID
-            }     
+    swal({
+      allowEscapeKey: false,
+      title: "Are you sure?",
+      text: "Do you really want to update the supplier price?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((confirmed) => {
+      if (confirmed) {
+        axios
+          .post(BASE_URL + "/canvass/updatePrice", {
+            productSupplier_id,
+            updatedPriced,
+            supp_code,
+            product_ID,
           })
-          .then(res => {
-            setSuppProducts(res.data);
-          })
-          .catch(err => console.log(err));
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
-    } else {
-      // If the user cancels or closes the confirmation dialog
-      swal('Update Canceled', 'Supplier price remains unchanged.', 'info');
-    }
-  });
-};
+          .then((res) => {
+            if (res.status === 200) {
+              swal({
+                title: "Successfully Updated",
+                text: "Supplier Price is updated to its new price",
+                icon: "success",
+              });
 
-
-
-const handleUpdatePrice_asm = (updatedPrice, id, index, product_id, supplier_code) => {
-  const updatedPriced = updatedPrice
-  const productSupplier_id = id
-  const product_ID = product_id
-  const supp_code = supplier_code;
-
-  swal({
-    allowEscapeKey: false,
-    title: 'Are you sure?',
-    text: 'Do you really want to update the supplier price?',
-    icon: 'warning',
-    buttons: true,
-    dangerMode: true,
-  })
-  .then((confirmed) => {
-    if (confirmed) {
-
-
-    axios.post(BASE_URL + '/canvass/updatePrice_asm', {
-      productSupplier_id, updatedPriced, product_ID, supp_code
-      
-    })
-    .then(res => {
-      if(res.status === 200){
-        swal({
-          title: 'Successfully Updated',
-          text: "Supplier Price is updated to it's new price",
-          icon: 'success',
-        });
-
-        setEditMode((prev) => ({ ...prev, [index]: false }));       
-        axios.get(BASE_URL + '/supplier_assembly/fetchCanvass',{
-          params:{
-            id: product_ID
-          }     
-        })   
-        .then(res => {
-            setSuppAssembly(res.data)       
-          })
-        .catch(err => console.log(err));
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  } 
-  else {
-        // If the user cancels or closes the confirmation dialog
-        swal('Update Canceled', 'Supplier price remains unchanged.', 'info');
-  }
-  });
- 
-};
-
-
-
-const handleUpdatePrice_spare = (updatedPrice, id, index, product_id, supplier_code) => {
-  const updatedPriced = updatedPrice
-  const productSupplier_id = id
-  const product_ID = product_id
-  const supp_code = supplier_code;
-
-
-  swal({
-    allowEscapeKey: false,
-    title: 'Are you sure?',
-    text: 'Do you really want to update the supplier price?',
-    icon: 'warning',
-    buttons: true,
-    dangerMode: true,
-  })
-  .then((confirmed) => {
-    // If the user confirms, proceed with the update
-  if (confirmed) {
-
-    axios.post(BASE_URL + '/canvass/updatePrice_spare', {
-      productSupplier_id, updatedPriced, supp_code, product_ID
-    })
-    .then(res => {
-      if(res.status === 200){
-        swal({
-          title: 'Successfully Updated',
-          text: "Supplier Price is updated to it's new price",
-          icon: 'success',
-        });
-
-        setEditMode((prev) => ({ ...prev, [index]: false }));       
-        axios.get(BASE_URL + '/supp_SparePart/fetchCanvass', {
-          params: {
-            spare_ID: product_ID
-          }
-        })
-        .then(res => {
-          setSuppSpare(res.data)
-        })
-        .catch(err => console.log(err));
-      }
-    })
-    .catch(err => {
-      console.error(err);
-    });
-
-  } else {
-    // If the user cancels or closes the confirmation dialog
-    swal('Update Canceled', 'Supplier price remains unchanged.', 'info');
-  }
-});
-};
-
-
-const handleUpdatePrice_subpart= (updatedPrice, id, index, product_id, supplier_code) => {
-  const updatedPriced = updatedPrice
-  const productSupplier_id = id
-  const product_ID = product_id
-  const supp_code = supplier_code
-
-  swal({
-    allowEscapeKey: false,
-    title: 'Are you sure?',
-    text: 'Do you really want to update the supplier price?',
-    icon: 'warning',
-    buttons: true,
-    dangerMode: true,
-  })
-  .then((confirmed) => {
-    if (confirmed) {
-      axios.post(BASE_URL + '/canvass/updatePrice_subpart', {
-        productSupplier_id, updatedPriced, supp_code, product_ID
-      })
-      .then(res => {
-        if(res.status === 200){
-          swal({
-            title: 'Successfully Updated',
-            text: "Supplier Price is updated to it's new price",
-            icon: 'success',
-          });
-
-          setEditMode((prev) => ({ ...prev, [index]: false }));       
-          axios.get(BASE_URL + '/subpartSupplier/fetchCanvass', {
-            params: {
-              id: product_ID
+              setEditMode((prev) => ({ ...prev, [index]: false }));
+              axios
+                .get(BASE_URL + "/productTAGsupplier/fetchCanvass", {
+                  params: {
+                    id: product_ID,
+                  },
+                })
+                .then((res) => {
+                  setSuppProducts(res.data);
+                })
+                .catch((err) => console.log(err));
             }
-          })   
-          .then(res => {
-            console.log("Axios Response", res.data);
-            setSuppSubpart(res.data)       
           })
-          .catch(err => console.log(err));
-        }
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        // If the user cancels or closes the confirmation dialog
+        swal("Update Canceled", "Supplier price remains unchanged.", "info");
+      }
+    });
+  };
+
+  const handleUpdatePrice_asm = (
+    updatedPrice,
+    id,
+    index,
+    product_id,
+    supplier_code
+  ) => {
+    const updatedPriced = updatedPrice;
+    const productSupplier_id = id;
+    const product_ID = product_id;
+    const supp_code = supplier_code;
+
+    swal({
+      allowEscapeKey: false,
+      title: "Are you sure?",
+      text: "Do you really want to update the supplier price?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((confirmed) => {
+      if (confirmed) {
+        axios
+          .post(BASE_URL + "/canvass/updatePrice_asm", {
+            productSupplier_id,
+            updatedPriced,
+            product_ID,
+            supp_code,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              swal({
+                title: "Successfully Updated",
+                text: "Supplier Price is updated to it's new price",
+                icon: "success",
+              });
+
+              setEditMode((prev) => ({ ...prev, [index]: false }));
+              axios
+                .get(BASE_URL + "/supplier_assembly/fetchCanvass", {
+                  params: {
+                    id: product_ID,
+                  },
+                })
+                .then((res) => {
+                  setSuppAssembly(res.data);
+                })
+                .catch((err) => console.log(err));
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        // If the user cancels or closes the confirmation dialog
+        swal("Update Canceled", "Supplier price remains unchanged.", "info");
+      }
+    });
+  };
+
+  const handleUpdatePrice_spare = (
+    updatedPrice,
+    id,
+    index,
+    product_id,
+    supplier_code
+  ) => {
+    const updatedPriced = updatedPrice;
+    const productSupplier_id = id;
+    const product_ID = product_id;
+    const supp_code = supplier_code;
+
+    swal({
+      allowEscapeKey: false,
+      title: "Are you sure?",
+      text: "Do you really want to update the supplier price?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((confirmed) => {
+      // If the user confirms, proceed with the update
+      if (confirmed) {
+        axios
+          .post(BASE_URL + "/canvass/updatePrice_spare", {
+            productSupplier_id,
+            updatedPriced,
+            supp_code,
+            product_ID,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              swal({
+                title: "Successfully Updated",
+                text: "Supplier Price is updated to it's new price",
+                icon: "success",
+              });
+
+              setEditMode((prev) => ({ ...prev, [index]: false }));
+              axios
+                .get(BASE_URL + "/supp_SparePart/fetchCanvass", {
+                  params: {
+                    spare_ID: product_ID,
+                  },
+                })
+                .then((res) => {
+                  setSuppSpare(res.data);
+                })
+                .catch((err) => console.log(err));
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        // If the user cancels or closes the confirmation dialog
+        swal("Update Canceled", "Supplier price remains unchanged.", "info");
+      }
+    });
+  };
+
+  const handleUpdatePrice_subpart = (
+    updatedPrice,
+    id,
+    index,
+    product_id,
+    supplier_code
+  ) => {
+    const updatedPriced = updatedPrice;
+    const productSupplier_id = id;
+    const product_ID = product_id;
+    const supp_code = supplier_code;
+
+    swal({
+      allowEscapeKey: false,
+      title: "Are you sure?",
+      text: "Do you really want to update the supplier price?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((confirmed) => {
+      if (confirmed) {
+        axios
+          .post(BASE_URL + "/canvass/updatePrice_subpart", {
+            productSupplier_id,
+            updatedPriced,
+            supp_code,
+            product_ID,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              swal({
+                title: "Successfully Updated",
+                text: "Supplier Price is updated to it's new price",
+                icon: "success",
+              });
+
+              setEditMode((prev) => ({ ...prev, [index]: false }));
+              axios
+                .get(BASE_URL + "/subpartSupplier/fetchCanvass", {
+                  params: {
+                    id: product_ID,
+                  },
+                })
+                .then((res) => {
+                  console.log("Axios Response", res.data);
+                  setSuppSubpart(res.data);
+                })
+                .catch((err) => console.log(err));
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        // If the user cancels or closes the confirmation dialog
+        swal("Update Canceled", "Supplier price remains unchanged.", "info");
+      }
+    });
+  };
+
+  //------------------------------------------------Product rendering data ------------------------------------------------//
+
+  const handleCanvass = (product_id) => {
+    setShowModal(true);
+
+    axios
+      .get(BASE_URL + "/productTAGsupplier/fetchCanvass", {
+        params: {
+          id: product_id,
+        },
       })
-      .catch(err => {
-        console.error(err);
-      });
-    } else {
-      // If the user cancels or closes the confirmation dialog
-      swal('Update Canceled', 'Supplier price remains unchanged.', 'info');
-    }
-  });
-};
 
+      .then((res) => {
+        setSuppProducts(res.data);
+      })
+      .catch((err) => console.log(err));
 
+    // console.log(product_id)
+  };
+  const handleAddToTablePO = (productId, code, name, supp_email) => {
+    const product = suppProducts.find((data) => data.id === productId);
+    handleAddToTable(product, "product", code, name, supp_email);
+  };
 
+  //------------------------------------------------Assembly rendering data ------------------------------------------------//
 
-//------------------------------------------------Product rendering data ------------------------------------------------//
+  const handleCanvassAssembly = (id) => {
+    setShowModalAS(true);
 
+    axios
+      .get(BASE_URL + "/supplier_assembly/fetchCanvass", {
+        params: {
+          id: id,
+        },
+      })
 
-const handleCanvass = (product_id) => {
-  setShowModal(true);
+      .then((res) => {
+        setSuppAssembly(res.data);
+      })
+      .catch((err) => console.log(err));
 
+    // console.log(product_id)
+  };
 
-  axios.get(BASE_URL + '/productTAGsupplier/fetchCanvass',{
-    params:{
-      id: product_id
-    }
-   
-  })
-  
-    .then(res => {
-      setSuppProducts(res.data)
-      
-    })
-    .catch(err => console.log(err));
-
-  // console.log(product_id)
-
-};
-const handleAddToTablePO = (productId, code, name, supp_email) => {
-  const product = suppProducts.find((data) => data.id === productId);
-  handleAddToTable(product, 'product', code, name, supp_email);
-};
-
-
-//------------------------------------------------Assembly rendering data ------------------------------------------------//
-
-
-const handleCanvassAssembly = (id) => {
-  setShowModalAS(true);
-
-
-  axios.get(BASE_URL + '/supplier_assembly/fetchCanvass',{
-    params:{
-      id: id
-    }
-   
-  })
-  
-    .then(res => {
-      setSuppAssembly(res.data)
-      
-    })
-    .catch(err => console.log(err));
-
-  // console.log(product_id)
-
-};
-
-const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
-  const assembly = suppAssembly.find((data) => data.id === assemblyId);
-  handleAddToTable(assembly, 'assembly', code, name, supp_email);
-};
+  const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
+    const assembly = suppAssembly.find((data) => data.id === assemblyId);
+    handleAddToTable(assembly, "assembly", code, name, supp_email);
+  };
   //------------------------------------------------Spare rendering data ------------------------------------------------//
-
-
-
 
   const handleCanvassSpare = (id) => {
     setShowModalspare(true);
-  
+
     // console.log(id)
-  
-    axios.get(BASE_URL + '/supp_SparePart/fetchCanvass', {
-      params: {
-        spare_ID: id
-      }
-    })
-      .then(res => {
-        setSuppSpare(res.data)
+
+    axios
+      .get(BASE_URL + "/supp_SparePart/fetchCanvass", {
+        params: {
+          spare_ID: id,
+        },
       })
-      .catch(err => console.log(err));
+      .then((res) => {
+        setSuppSpare(res.data);
+      })
+      .catch((err) => console.log(err));
   };
-  
+
   const handleAddToTablePO_Spare = (spareId, code, name, supp_email) => {
     const spare = suppSpare.find((data) => data.id === spareId);
-    handleAddToTable(spare, 'spare', code, name, supp_email);
+    handleAddToTable(spare, "spare", code, name, supp_email);
   };
 
-//------------------------------------------------SubPart rendering data ------------------------------------------------//
+  //------------------------------------------------SubPart rendering data ------------------------------------------------//
 
-const handleCanvassSubpart = (sub_partID) => {
-  setShowModalSubpart(true);
+  const handleCanvassSubpart = (sub_partID) => {
+    setShowModalSubpart(true);
 
+    // console.log("subpart ID" + sub_partID)
+    axios
+      .get(BASE_URL + "/subpartSupplier/fetchCanvass", {
+        params: {
+          id: sub_partID,
+        },
+      })
 
-  // console.log("subpart ID" + sub_partID)
-  axios.get(BASE_URL + '/subpartSupplier/fetchCanvass', {
-    params: {
-      id: sub_partID
-    }
-  })
-  
-    .then(res => {
-      console.log("Axios Response", res.data);
-      setSuppSubpart(res.data)
-      
-    })
-    .catch(err => console.log(err));
+      .then((res) => {
+        console.log("Axios Response", res.data);
+        setSuppSubpart(res.data);
+      })
+      .catch((err) => console.log(err));
 
-  // console.log(product_id)
+    // console.log(product_id)
+  };
+  const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
+    const subpart = suppSubpart.find((data) => data.id === subpartId);
+    handleAddToTable(subpart, "subpart", code, name, supp_email);
+  };
 
-};
-const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
-  const subpart = suppSubpart.find((data) => data.id === subpartId);
-  handleAddToTable(subpart, 'subpart', code, name, supp_email);
-};
-  
-
-
-  
   const handleCancel = async (status, id) => {
     swal({
       title: "Are you sure?",
@@ -645,31 +636,26 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     }).then(async (cancel) => {
       if (cancel) {
         try {
-                
-          
-            const  response = await axios.put(BASE_URL + `/PR/cancel_PO`,{
-              row_id: id
-           });
-           
-           if (response.status === 200) {
-             swal({
-               title: 'Cancelled Successfully',
-               text: 'The Request is cancelled successfully',
-               icon: 'success',
-               button: 'OK'
-             }).then(() => {
-               navigate("/purchaseOrderList")
-               
-             });
-           } else {
-           swal({
-             icon: 'error',
-             title: 'Something went wrong',
-             text: 'Please contact our support'
-           });
-         }
-                      
-         
+          const response = await axios.put(BASE_URL + `/PR/cancel_PO`, {
+            row_id: id,
+          });
+
+          if (response.status === 200) {
+            swal({
+              title: "Cancelled Successfully",
+              text: "The Request is cancelled successfully",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/purchaseOrderList");
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
         } catch (err) {
           console.log(err);
         }
@@ -683,341 +669,396 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     });
   };
 
-
- 
-
-
-
-  const add = async e => {
+  const add = async (e) => {
     e.preventDefault();
-  
+
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-    // if required fields has NO value
-    //    console.log('requried')
-        swal({
-            icon: 'error',
-            title: 'Fields are required',
-            text: 'Please fill the red text fields'
-          });
-    }
-    else{
-
-      axios.post(`${BASE_URL}/invoice/save`, {
-        arrayPO: addPObackend,   
-        pr_id: id, 
-      })
-      .then((res) => {
-        // console.log(res);
-        if (res.status === 200) {
-          swal({
-            title: 'The Purchase sucessfully request!',
-            text: 'The Purchase Request has been added successfully.',
-            icon: 'success',
-            button: 'OK'
-          }).then(() => {
-            navigate('/purchaseOrderList')
-            
-          });
-        } else {
-          swal({
-            icon: 'error',
-            title: 'Something went wrong',
-            text: 'Please contact our support'
-          });
-        }
+      // if required fields has NO value
+      //    console.log('requried')
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
       });
-  
+    } else {
+      axios
+        .post(`${BASE_URL}/invoice/save`, {
+          arrayPO: addPObackend,
+          pr_id: id,
+        })
+        .then((res) => {
+          // console.log(res);
+          if (res.status === 200) {
+            swal({
+              title: "The Purchase sucessfully request!",
+              text: "The Purchase Request has been added successfully.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/purchaseOrderList");
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        });
     }
     setValidated(true); //for validations
   };
 
   return (
     <div className="main-of-containers">
-        <div className="right-of-main-containers">
-            <div className="right-body-contents-a">
-            <Row>
-                
+      <div className="right-of-main-containers">
+        <div className="right-body-contents-a">
+          <Row>
             <Col>
-                <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/purchaseRequest">
-                        <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
-                    </Link>
-                    <h1>
-                        Purchase Order List Preview
-                    </h1>
+              <div
+                className="create-head-back"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <Link style={{ fontSize: "1.5rem" }} to="/purchaseRequest">
+                  <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+                </Link>
+                <h1>Purchase Order List Preview</h1>
+              </div>
+            </Col>
+          </Row>
+          <Form noValidate validated={validated} onSubmit={add}>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              Purchase Request Details
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "26rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+            <div className="row mt-3">
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>PR. #: </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={prNum}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group
+                  controlId="exampleForm.ControlInput2"
+                  className="datepick"
+                >
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Date Needed:{" "}
+                  </Form.Label>
+                  <DatePicker
+                    readOnly
+                    selected={dateNeeded}
+                    onChange={(date) => setDateNeeded(date)}
+                    dateFormat="MM/dd/yyyy"
+                    placeholderText="Start Date"
+                    className="form-control"
+                  />
+                  <CalendarBlank
+                    size={20}
+                    style={{
+                      position: "absolute",
+                      left: "440px",
+                      top: "73%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    To be used for:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    readOnly
+                    value={useFor}
+                    type="text"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Remarks:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    readOnly
+                    value={remarks}
+                    as="textarea"
+                    rows={3}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "150px",
+                      maxHeight: "150px",
+                      resize: "none",
+                      overflowY: "auto",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6"></div>
+            </div>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              Product List
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "12rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <table id="">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Product Code</th>
+                      <th className="tableh">Quantity</th>
+                      <th className="tableh">Product Name</th>
+                      <th className="tableh">Description</th>
+                      <th className="tableh">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.product.product_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.product.product_name}</td>
+                        <td>{data.description}</td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() => handleCanvass(data.product_id)}
+                            className="btn canvas"
+                          >
+                            <ShoppingCart size={20} />
+                            Canvas
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {assembly.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.assembly.assembly_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.assembly.assembly_name}</td>
+                        <td>{data.description}</td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleCanvassAssembly(data.assembly_id)
+                            }
+                            className="btn canvas"
+                          >
+                            <ShoppingCart size={20} />
+                            Canvas
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {spare.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.sparePart.spareParts_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.sparePart.spareParts_name}</td>
+                        <td>{data.description}</td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() => handleCanvassSpare(data.spare_id)}
+                            className="btn canvas"
+                          >
+                            <ShoppingCart size={20} />
+                            Canvas
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {subpart.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.subPart.subPart_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.subPart.subPart_name}</td>
+                        <td>{data.description}</td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleCanvassSubpart(data.subPart.id)
+                            }
+                            className="btn canvas"
+                          >
+                            <ShoppingCart size={20} />
+                            Canvas
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {isArray && (
+              <>
+                <div
+                  className="gen-info"
+                  style={{
+                    fontSize: "20px",
+                    position: "relative",
+                    paddingTop: "20px",
+                    fontFamily: "Poppins, Source Sans Pro",
+                  }}
+                >
+                  Canvassing Supplier
+                  <span
+                    style={{
+                      position: "absolute",
+                      height: "0.5px",
+                      width: "-webkit-fill-available",
+                      background: "#FFA500",
+                      top: "81%",
+                      left: "21rem",
+                      transform: "translateY(-50%)",
+                    }}
+                  ></span>
                 </div>
-                </Col>
-            </Row>
-            <Form noValidate validated={validated} onSubmit={add}>
-                <div className="gen-info" 
-                  style={{ fontSize: '20px', 
-                  position: 'relative', 
-                  paddingTop: '20px',
-                  fontFamily: 'Poppins, Source Sans Pro' }}>
-                          Purchase Request Details
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '81%',
-                              left: '26rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
+                <div className="canvass-main-container">
+                  {parentArray.map(({ title, supplierCode, array }) => (
+                    <div
+                      className="canvass-supplier-container"
+                      key={supplierCode}
+                    >
+                      <div className="canvass-supplier-content">
+                        <div className="PO-num">
+                          <p>{`PO #: ${title}`}</p>
                         </div>
-                          <div className="row mt-3">
-                            <div className="col-4">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PR. #: </Form.Label>
-                                <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
-                            </div>
-                              <div className="col-4">
-                                <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                    <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                      <DatePicker
-                                        readOnly
-                                        selected={dateNeeded}
-                                        onChange={(date) => setDateNeeded(date)}
-                                        dateFormat="MM/dd/yyyy"
-                                        placeholderText="Start Date"
-                                        className="form-control"
-                                      />
-                                      <CalendarBlank
-                                        size={20}
-                                        style={{
-                                          position: "absolute",
-                                          left: "440px",
-                                          top: "73%",
-                                          transform: "translateY(-50%)",
-                                          cursor: "pointer",
-                                        }}
-                                      />
-                                </Form.Group>
-                                </div>
-                              <div className="col-4">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
-                                <Form.Control readOnly value={useFor} type="text" style={{height: '40px', fontSize: '15px'}}/>
-                              </Form.Group>
+                        {array.length > 0 && (
+                          <div className="canvass-title">
+                            <div className="supplier-info">
+                              <p>{`Supplier : ${supplierCode} - ${array[0].supplierName}`}</p>
                             </div>
                           </div>
-                        <div className="row">
-
-                            <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control readOnly value={remarks} as="textarea"
-                                  rows={3}
-                                  style={{
-                                  fontFamily: 'Poppins, Source Sans Pro',
-                                  fontSize: "16px",
-                                  height: "150px",
-                                  maxHeight: "150px",
-                                  resize: "none",
-                                  overflowY: "auto",
-                                  }}/>
-                            </Form.Group>
+                        )}
+                        {array.map((item, index) => (
+                          <div className="canvass-data-container" key={index}>
+                            <div className="col-4">
+                              <ul className="canvass-data-list">
+                                <li>
+                                  {`Product Code: `}
+                                  <strong>{item.code}</strong>
+                                </li>
+                              </ul>
                             </div>
-                            <div className="col-6">
-
+                            <div className="col-4">
+                              <ul className="canvass-data-list">
+                                <li>
+                                  {`Product Name: `}
+                                  <strong>{item.name}</strong>
+                                </li>
+                              </ul>
                             </div>
-                        </div>
-                        <div className="gen-info" 
-                        style={{ fontSize: '20px', 
-                        position: 'relative',
-                        paddingTop: '20px',
-                        fontFamily: 'Poppins, Source Sans Pro' }}>
-                          Product List
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '81%',
-                              left: '12rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-                        <div className="table-containss">
-                            <div className="main-of-all-tables">
-                                <table id=''>
-                                        <thead>
-                                        <tr>
-                                            <th className='tableh'>Product Code</th>
-                                            <th className='tableh'>Quantity</th>
-                                            <th className='tableh'>Product Name</th>
-                                            <th className='tableh'>Description</th>
-                                            <th className='tableh'>Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                                {products.map((data,i) =>(
-                                                  <tr key={i}>
-                                                    <td>{data.product.product_code}</td>
-                                                    <td>{data.quantity}</td>
-                                                    <td>{data.product.product_name}</td>
-                                                    <td>{data.description}</td>
-                                                    <td>
-                                                        <button type='button' 
-                                                          onClick={() => handleCanvass(data.product_id)}
-                                                          className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
-                                                    </td>
-                                                  </tr>
-                                                ))}
-
-                                              {assembly.map((data,i) =>(
-                                                <tr key={i}>
-                                                  <td>{data.assembly.assembly_code}</td>
-                                                  <td>{data.quantity}</td>
-                                                  <td>{data.assembly.assembly_name}</td>
-                                                  <td>{data.description}</td>
-                                                  <td>
-                                                      <button type='button' 
-                                                        onClick={() => handleCanvassAssembly(data.assembly_id)}
-                                                        className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
-                                                  </td>
-                                                </tr>
-                                              ))}
-
-                                              {spare.map((data,i) =>(
-                                                <tr key={i}>
-                                                  <td>{data.sparePart.spareParts_code}</td>
-                                                  <td>{data.quantity}</td>
-                                                  <td>{data.sparePart.spareParts_name}</td>
-                                                  <td>{data.description}</td>
-                                                  <td>
-                                                      <button type='button' 
-                                                        onClick={() => handleCanvassSpare(data.spare_id)}
-                                                        className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
-                                                  </td>
-                                                </tr>
-                                              ))}
-
-                                              {subpart.map((data,i) =>(
-                                                <tr key={i}>
-                                                  <td>{data.subPart.subPart_code}</td>
-                                                  <td>{data.quantity}</td>
-                                                  <td>{data.subPart.subPart_name}</td>
-                                                  <td>{data.description}</td>
-                                                  <td>
-                                                      <button type='button' 
-                                                        onClick={() => handleCanvassSubpart(data.subPart.id)}
-                                                        className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
-                                                  </td>
-                                                </tr>
-                                              ))}
-                                    </tbody>
-                                </table>
+                            <div className="col-4">
+                              <ul>
+                                <li>
+                                  <Form.Control
+                                    type="number"
+                                    placeholder="Quantity"
+                                    value={
+                                      quantityInputs[
+                                        `${title}_${item.type}_${item.product.id}`
+                                      ] || ""
+                                    }
+                                    onChange={(e) => {
+                                      handleQuantityChange(
+                                        title,
+                                        item.type,
+                                        item.product.id,
+                                        e.target.value
+                                      );
+                                    }}
+                                    required
+                                    onKeyDown={(e) => {
+                                      ["e", "E", "+", "-"].includes(e.key) &&
+                                        e.preventDefault();
+                                    }}
+                                    style={{
+                                      height: "35px",
+                                      width: "100px",
+                                      fontSize: "14px",
+                                      fontFamily: "Poppins, Source Sans Pro",
+                                      marginTop: "3%",
+                                    }}
+                                  />
+                                </li>
+                              </ul>
                             </div>
-                        </div>
-                        {isArray && (
-                          <>                       
-                            <div className="gen-info" 
-                            style={{ fontSize: '20px', 
-                            position: 'relative', 
-                            paddingTop: '20px',
-                            fontFamily: 'Poppins, Source Sans Pro' }}>
-                              Canvassing Supplier
-                              <span
-                                style={{
-                                  position: 'absolute',
-                                  height: '0.5px',
-                                  width: '-webkit-fill-available',
-                                  background: '#FFA500',
-                                  top: '81%',
-                                  left: '21rem',
-                                  transform: 'translateY(-50%)',
-                                }}
-                              ></span>
-                            </div>
-                            <div className="canvass-main-container">
-                                {parentArray.map(({ title, supplierCode, array }) => (
-                                  <div className='canvass-supplier-container' key={supplierCode}>
-                                      
-                                    <div className="canvass-supplier-content">
-                                      <div className="PO-num">
-                                          <p>{`PO #: ${title}`}</p>
-                                        </div>
-                                    {array.length > 0 && (
-                                      <div className="canvass-title">
-                                        <div className="supplier-info">
-                                          <p>{`Supplier : ${supplierCode} - ${array[0].supplierName}`}</p>
-                                        </div>
-                                    </div>
-                                      
-                                    )}
-                                    {array.map((item, index) => (
-                                      <div className='canvass-data-container' key={index}>
-                                        <div className="col-4">
-                                            <ul className='canvass-data-list'>
-                                              <li>
-                                              {`Product Code: `}        
-                                              <strong>{item.code}</strong>
-                                                </li>
-                                            </ul>
-                                          </div>
-                                        <div className="col-4">
-                                          <ul className='canvass-data-list'>
-                                             <li>
-                                                {`Product Name: `}
-                                                <strong>{item.name}</strong> 
-                                              </li>
-                                          </ul>
-                                        </div>
-                                        <div className="col-4">
-                                          <ul>
-                                            <li>
-                                              <Form.Control
-                                                  type="number"
-                                                  placeholder="Quantity"
-                                                  value={quantityInputs[`${title}_${item.type}_${item.product.id}`] || ''}
-                                                  onChange={(e) => {
-                                                    handleQuantityChange(title, item.type, item.product.id, e.target.value);
-                                                  }}
-                                                  required
-                                                  onKeyDown={(e) => {                                          
-                                                    ["e", "E", "+", "-"].includes(e.key) &&
-                                                    e.preventDefault();
-                                                  }}
-                                                  style={{
-                                                    height: "35px",
-                                                    width: "100px",
-                                                    fontSize: '14px',
-                                                    fontFamily: 'Poppins, Source Sans Pro',
-                                                    marginTop: '3%'
-                                                  }}
-                                                />
-                                            </li>
-                                          </ul>
-                                        </div>
-                                      </div>
-                                    ))}
-                                    </div>
-                                  </div>
-                                ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-                                
-                            </div>
-                          
-
-                            <div className='save-cancel'>
-                              <Button 
-                                type='submit'  
-                                className='btn btn-warning' 
-                                size="md" 
-                                style={{ fontSize: '20px', margin: '0px 5px' }}
-                              >
-                                Save
-                              </Button>
-                              {/* <Button 
+                <div className="save-cancel">
+                  <Button
+                    type="submit"
+                    className="btn btn-warning"
+                    size="md"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                  >
+                    Save
+                  </Button>
+                  {/* <Button 
                                     type='button'  
                                     className='btn btn-danger' 
                                     size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
@@ -1025,473 +1066,574 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                   >
                                     Cancel Purchase Order
                                   </Button>                         */}
+                </div>
+              </>
+            )}
+          </Form>
+          <Modal show={showModal} onHide={handleClose} size="xl">
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontSize: "24px" }}>
+                Product List
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="table-containss">
+                <div className="main-of-all-tables">
+                  <table id="order2-listing">
+                    <thead>
+                      <tr>
+                        <th className="tableh">Supplier Code</th>
+                        <th className="tableh">Supplier Name</th>
+                        <th className="tableh">Contact</th>
+                        <th className="tableh">Email</th>
+                        <th className="tableh">Price</th>
+                        <th className="tableh">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {suppProducts.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.supplier.supplier_code}</td>
+                          <td>{data.supplier.supplier_name}</td>
+                          <td>{data.supplier.supplier_number}</td>
+                          <td>{data.supplier.supplier_email}</td>
+                          <td>
+                            {!editMode[i] && (
+                              <Form.Control
+                                readOnly
+                                value={data.product_price}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                            {editMode[i] && (
+                              <Form.Control
+                                type="number"
+                                placeholder="New Price"
+                                onBlur={(e) => {
+                                  handleUpdatePrice(
+                                    e.target.value,
+                                    data.id,
+                                    i,
+                                    data.product.product_id,
+                                    data.supplier.supplier_code
+                                  );
+                                }}
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                          </td>
+                          <td>
+                            <div className="d-flex flex-direction-row">
+                              {!editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleEditPrice(i)}
+                                  >
+                                    <NotePencil
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() =>
+                                      handleAddToTablePO(
+                                        data.id,
+                                        data.product.product_code,
+                                        data.product.product_name,
+                                        data.supplier.supplier_email
+                                      )
+                                    }
+                                  >
+                                    <PlusCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                              {editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleCancelEditPrice(i)}
+                                  >
+                                    <XCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
                             </div>
-                          </>
-                          )}
-                         
-                </Form>
-                      <Modal show={showModal} onHide={handleClose} size="xl">
-                          <Modal.Header closeButton>
-                            <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
-                          </Modal.Header>
-                            <Modal.Body>
-                            <div className="table-containss">
-                                          <div className="main-of-all-tables">
-                                              <table id='order2-listing'>
-                                                      <thead>
-                                                      <tr>
-                                                          <th className='tableh'>Supplier Code</th>
-                                                          <th className='tableh'>Supplier Name</th>
-                                                          <th className='tableh'>Contact</th>
-                                                          <th className='tableh'>Email</th>
-                                                          <th className='tableh'>Price</th>
-                                                          <th className='tableh'>Action</th>
-                                                      </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                              {suppProducts.map((data,i) =>(
-                                                                <tr key={i}>
-                                                                    <td>{data.supplier.supplier_code}</td>
-                                                                    <td>{data.supplier.supplier_name}</td>
-                                                                    <td>{data.supplier.supplier_number}</td>
-                                                                    <td>{data.supplier.supplier_email}</td>
-                                                                    <td>
-                                                                      {!editMode[i] && 
-                                                                          <Form.Control
-                                                                              readOnly
-                                                                              value={data.product_price}
-                                                                              style={{
-                                                                                height: "35px",
-                                                                                width: "100px",
-                                                                                fontSize: '14px',
-                                                                                fontFamily: 'Poppins, Source Sans Pro'
-                                                                              }}
-                                                                          />
-                                                                      }
-                                                                      {editMode[i] && (
-                                                                        <Form.Control
-                                                                          type="number"
-                                                                          placeholder="New Price"
-                                                                          onBlur={(e) => {
-                                                                            handleUpdatePrice(e.target.value, data.id, i, data.product.product_id, data.supplier.supplier_code);
-                                                                          }}
-                                                                          onKeyDown={(e) => {
-                                                                            ["e", "E", "+", "-"].includes(e.key) &&
-                                                                            e.preventDefault()
-                                                                          }}
-                                                                         
-                                                                          style={{
-                                                                            height: "35px",
-                                                                            width: "100px",
-                                                                            fontSize: '14px',
-                                                                            fontFamily: 'Poppins, Source Sans Pro'
-                                                                          }}
-                                                                        />
-                                                                      )}                                                                    
-                                                                    </td>
-                                                                    <td>    
-                                                                      <div className='d-flex flex-direction-row'>
-                                                                        {!editMode[i] && 
-                                                                          <>
-                                                                            <button
-                                                                                  type='button'
-                                                                                  className='btn canvas'
-                                                                                  onClick={() => handleEditPrice(i)}                                                                
-                                                                                >
-                                                                              <NotePencil size={22} color="#0d0d0d" weight="light" />
-                                                                            </button>
-                                                                          
-                                                                            <button type='button' className='btn canvas' 
-                                                                              onClick={() => 
-                                                                                  handleAddToTablePO(
-                                                                                    data.id, 
-                                                                                    data.product.product_code, 
-                                                                                    data.product.product_name, 
-                                                                                    data.supplier.supplier_email
-                                                                                  )}>
-                                                                                <PlusCircle size={22} color="#0d0d0d"  weight="light" />
-                                                                            </button>
-                                                                          </>                                                
-                                                                        }
-                                                                        {editMode[i] && 
-                                                                          <>
-                                                                          <button
-                                                                              type='button'
-                                                                              className='btn canvas'
-                                                                              onClick={() => handleCancelEditPrice(i)}                                                                
-                                                                            >
-                                                                              <XCircle size={22} color="#0d0d0d" weight="light" />
-                                                                            </button>
-                                                                          </>                                                                     
-                                                                        }                                                                                                                                         
-                                                                      </div>                                                                  
-                                                                    </td>
-                                                                </tr>
-                                                              ))}
-                                                  </tbody>
-                                              </table>
-                                          </div>
-                                      </div>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                                    Close
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-                                    {/* ------------------ END Product Modal ---------------- */}
-                  {/* ------------------------------------------- BREAK ----------------------------------------------- */}
-                                    {/* ------------------ Start Assembly Modal ---------------- */}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleClose}
+                style={{ fontSize: "20px" }}
+              >
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          {/* ------------------ END Product Modal ---------------- */}
+          {/* ------------------------------------------- BREAK ----------------------------------------------- */}
+          {/* ------------------ Start Assembly Modal ---------------- */}
 
+          <Modal show={showModalAs} onHide={handleClose} size="xl">
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontSize: "24px" }}>
+                Product Assembly List
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="table-containss">
+                <div className="main-of-all-tables">
+                  <table id="order2-listing">
+                    <thead>
+                      <tr>
+                        <th className="tableh">Supplier Code</th>
+                        <th className="tableh">Supplier Name</th>
+                        <th className="tableh">Contact</th>
+                        <th className="tableh">Email</th>
+                        <th className="tableh">Price</th>
+                        <th className="tableh">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {suppAssembly.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.supplier.supplier_code}</td>
+                          <td>{data.supplier.supplier_name}</td>
+                          <td>{data.supplier.supplier_number}</td>
+                          <td>{data.supplier.supplier_email}</td>
+                          <td>
+                            {!editMode[i] && (
+                              <Form.Control
+                                readOnly
+                                value={data.supplier_price}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                            {editMode[i] && (
+                              <Form.Control
+                                type="number"
+                                placeholder="New Price"
+                                onBlur={(e) => {
+                                  handleUpdatePrice_asm(
+                                    e.target.value,
+                                    data.id,
+                                    i,
+                                    data.assembly.id,
+                                    data.supplier.supplier_code
+                                  );
+                                }}
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                          </td>
+                          <td>
+                            <div className="d-flex flex-direction-row">
+                              {!editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleEditPrice(i)}
+                                  >
+                                    <NotePencil
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
 
-                        <Modal show={showModalAs} onHide={handleClose} size="xl">
-                          <Modal.Header closeButton>
-                            <Modal.Title style={{ fontSize: '24px' }}>Product Assembly List</Modal.Title>     
-                          </Modal.Header>
-                            <Modal.Body>
-                                      <div className="table-containss">
-                                          <div className="main-of-all-tables">
-                                              <table id='order2-listing'>
-                                                      <thead>
-                                                      <tr>
-                                                        <th className='tableh'>Supplier Code</th>
-                                                            <th className='tableh'>Supplier Name</th>
-                                                            <th className='tableh'>Contact</th>
-                                                            <th className='tableh'>Email</th>
-                                                            <th className='tableh'>Price</th>
-                                                            <th className='tableh'>Action</th>
-                                                        </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                             
-                                                              {suppAssembly.map((data,i) =>(
-                                                                <tr key={i}>
-                                                                    <td>{data.supplier.supplier_code}</td>
-                                                                    <td>{data.supplier.supplier_name}</td>
-                                                                    <td>{data.supplier.supplier_number}</td>
-                                                                    <td>{data.supplier.supplier_email}</td>
-                                                                    <td>
-                                                                      {!editMode[i] && 
-                                                                          <Form.Control
-                                                                              readOnly
-                                                                              value={data.supplier_price}
-                                                                              style={{
-                                                                                height: "35px",
-                                                                                width: "100px",
-                                                                                fontSize: '14px',
-                                                                                fontFamily: 'Poppins, Source Sans Pro'
-                                                                              }}
-                                                                          />
-                                                                      }
-                                                                      {editMode[i] && (
-                                                                        <Form.Control
-                                                                          type="number"
-                                                                          placeholder="New Price"
-                                                                          onBlur={(e) => {
-                                                                            handleUpdatePrice_asm(e.target.value, data.id, i, data.assembly.id, data.supplier.supplier_code);
-                                                                          }}
-                                                                          onKeyDown={(e) => {                                          
-                                                                            ["e", "E", "+", "-"].includes(e.key) &&
-                                                                            e.preventDefault()
-                                                                          }}
-                                                                          
-                                                                          style={{
-                                                                            height: "35px",
-                                                                            width: "100px",
-                                                                            fontSize: '14px',
-                                                                            fontFamily: 'Poppins, Source Sans Pro'
-                                                                          }}
-                                                                        />
-                                                                      )}                                                                    
-                                                                    </td>
-                                                                    <td>    
-                                                                      <div className='d-flex flex-direction-row'>
-                                                                        {!editMode[i] && 
-                                                                          <>
-                                                                            <button
-                                                                                  type='button'
-                                                                                  className='btn canvas'
-                                                                                  onClick={() => handleEditPrice(i)}                                                                
-                                                                                >
-                                                                              <NotePencil size={22} color="#0d0d0d" weight="light" />
-                                                                            </button>
-                                                                          
-                                                                            <button type='button' 
-                                                                                    className='btn canvas' 
-                                                                                    onClick={() => 
-                                                                                        handleAddToTablePO_Assembly(
-                                                                                            data.id, 
-                                                                                            data.assembly.assembly_code, 
-                                                                                            data.assembly.assembly_name, 
-                                                                                            data.supplier.supplier_email
-                                                                                            )}>
-                                                                              <PlusCircle size={22} color="#0d0d0d" weight="light"/>
-                                                                            </button>
-                                                                          </>                                                
-                                                                        }
-                                                                        {editMode[i] && 
-                                                                          <>
-                                                                          <button
-                                                                              type='button'
-                                                                              className='btn canvas'
-                                                                              onClick={() => handleCancelEditPrice(i)}                                                                
-                                                                            >
-                                                                              <XCircle size={22} color="#0d0d0d" weight="light" />
-                                                                            </button>
-                                                                          </>                                                                     
-                                                                        }                                                                                                                                         
-                                                                      </div>                                                                  
-                                                                    </td>
-                                                                </tr>
-                                                              ))}
-                                                  </tbody>
-                                              </table>
-                                          </div>
-                                      </div>
-                              </Modal.Body>
-                              <Modal.Footer>
-                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                                      Close
-                                  </Button>
-                              </Modal.Footer>
-                        </Modal>
-                                    {/* ------------------ END Assembly Modal ---------------- */}
-                  {/* ------------------------------------------- BREAK ----------------------------------------------- */}
-                                    {/* ------------------ Start SparePart Modal ---------------- */}
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() =>
+                                      handleAddToTablePO_Assembly(
+                                        data.id,
+                                        data.assembly.assembly_code,
+                                        data.assembly.assembly_name,
+                                        data.supplier.supplier_email
+                                      )
+                                    }
+                                  >
+                                    <PlusCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                              {editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleCancelEditPrice(i)}
+                                  >
+                                    <XCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleClose}
+                style={{ fontSize: "20px" }}
+              >
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          {/* ------------------ END Assembly Modal ---------------- */}
+          {/* ------------------------------------------- BREAK ----------------------------------------------- */}
+          {/* ------------------ Start SparePart Modal ---------------- */}
 
-                        <Modal show={showModalSpare} onHide={handleClose} size="xl">
-                          <Modal.Header closeButton>
-                            <Modal.Title style={{ fontSize: '24px' }}>Product Parts List</Modal.Title>     
-                          </Modal.Header>
-                            <Modal.Body>
-                                      <div className="table-containss">
-                                          <div className="main-of-all-tables">
-                                              <table id='order2-listing'>
-                                                      <thead>
-                                                      <tr>
-                                                          <th className='tableh'>Supplier Code</th>
-                                                          <th className='tableh'>Supplier Name</th>
-                                                          <th className='tableh'>Contact</th>
-                                                          <th className='tableh'>Email</th>
-                                                          <th className='tableh'>Price</th>
-                                                          <th className='tableh'>Action</th>
-                                                      </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                             
-                                                              {suppSpare.map((data,i) =>(
-                                                                <tr key={i}>
-                                                                    <td>{data.supplier.supplier_code}</td>
-                                                                    <td>{data.supplier.supplier_name}</td>
-                                                                    <td>{data.supplier.supplier_number}</td>
-                                                                    <td>{data.supplier.supplier_email}</td>
-                                                                    <td>
-                                                                        {!editMode[i] && 
-                                                                          <Form.Control
-                                                                              readOnly
-                                                                              value={data.supplier_price}
-                                                                              style={{
-                                                                                height: "35px",
-                                                                                width: "100px",
-                                                                                fontSize: '14px',
-                                                                                fontFamily: 'Poppins, Source Sans Pro'
-                                                                              }}
-                                                                          />
-                                                                        }
-                                                                        {editMode[i] && (
-                                                                          <Form.Control
-                                                                            type="number"
-                                                                            placeholder="New Price"
-                                                                            onBlur={(e) => {
-                                                                              handleUpdatePrice_spare(e.target.value, data.id, i, data.sparePart.id, data.supplier.supplier_code);
-                                                                            }}
-                                                                            onKeyDown={(e) => {                                          
-                                                                              ["e", "E", "+", "-"].includes(e.key) &&
-                                                                              e.preventDefault()
-                                                                            }}
-                                                                            
-                                                                            style={{
-                                                                              height: "35px",
-                                                                              width: "100px",
-                                                                              fontSize: '14px',
-                                                                              fontFamily: 'Poppins, Source Sans Pro'
-                                                                            }}
-                                                                          />
-                                                                        )}                                                                    
-                                                                    </td>
-                                                                    <td>    
-                                                                      <div className='d-flex flex-direction-row'>
-                                                                        {!editMode[i] && 
-                                                                          <>
-                                                                            <button
-                                                                                  type='button'
-                                                                                  className='btn canvas'
-                                                                                  onClick={() => handleEditPrice(i)}                                                                
-                                                                                >
-                                                                              <NotePencil size={22} color="#0d0d0d" weight="light" />
-                                                                            </button>
-                                                                            <button
-                                                                                type='button' 
-                                                                                className='btn canvas' 
-                                                                                onClick={() => handleAddToTablePO_Spare(
-                                                                                    data.id, 
-                                                                                    data.sparePart.spareParts_code, 
-                                                                                    data.sparePart.spareParts_name, 
-                                                                                    data.supplier.supplier_email
-                                                                                  )}>
-                                                                            <PlusCircle size={22} color="#0d0d0d" weight="light"/>
-                                                                          </button>
-                                                                          </>                                                
-                                                                        }
-                                                                        {editMode[i] && 
-                                                                          <>
-                                                                          <button
-                                                                              type='button'
-                                                                              className='btn canvas'
-                                                                              onClick={() => handleCancelEditPrice(i)}                                                                
-                                                                            >
-                                                                              <XCircle size={22} color="#0d0d0d" weight="light" />
-                                                                            </button>
-                                                                          </>                                                                     
-                                                                        }                                                                                                                                         
-                                                                      </div>                                                                  
-                                                                    </td>
-                                                                    
-                                                                </tr>
-                                                              ))}
-                                                  </tbody>
-                                              </table>
-                                          </div>
-                                      </div>
-                              </Modal.Body>
-                              <Modal.Footer>
-                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                                      Close
-                                  </Button>
-                              </Modal.Footer>
-                        </Modal>
+          <Modal show={showModalSpare} onHide={handleClose} size="xl">
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontSize: "24px" }}>
+                Product Parts List
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="table-containss">
+                <div className="main-of-all-tables">
+                  <table id="order2-listing">
+                    <thead>
+                      <tr>
+                        <th className="tableh">Supplier Code</th>
+                        <th className="tableh">Supplier Name</th>
+                        <th className="tableh">Contact</th>
+                        <th className="tableh">Email</th>
+                        <th className="tableh">Price</th>
+                        <th className="tableh">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {suppSpare.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.supplier.supplier_code}</td>
+                          <td>{data.supplier.supplier_name}</td>
+                          <td>{data.supplier.supplier_number}</td>
+                          <td>{data.supplier.supplier_email}</td>
+                          <td>
+                            {!editMode[i] && (
+                              <Form.Control
+                                readOnly
+                                value={data.supplier_price}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                            {editMode[i] && (
+                              <Form.Control
+                                type="number"
+                                placeholder="New Price"
+                                onBlur={(e) => {
+                                  handleUpdatePrice_spare(
+                                    e.target.value,
+                                    data.id,
+                                    i,
+                                    data.sparePart.id,
+                                    data.supplier.supplier_code
+                                  );
+                                }}
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                          </td>
+                          <td>
+                            <div className="d-flex flex-direction-row">
+                              {!editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleEditPrice(i)}
+                                  >
+                                    <NotePencil
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() =>
+                                      handleAddToTablePO_Spare(
+                                        data.id,
+                                        data.sparePart.spareParts_code,
+                                        data.sparePart.spareParts_name,
+                                        data.supplier.supplier_email
+                                      )
+                                    }
+                                  >
+                                    <PlusCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                              {editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleCancelEditPrice(i)}
+                                  >
+                                    <XCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleClose}
+                style={{ fontSize: "20px" }}
+              >
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
 
-                                        {/* ------------------ END SparePArt Modal ---------------- */}
-                  {/* ------------------------------------------- BREAK ----------------------------------------------- */}
-                                    {/* ------------------ Start SubPart Modal ---------------- */}
+          {/* ------------------ END SparePArt Modal ---------------- */}
+          {/* ------------------------------------------- BREAK ----------------------------------------------- */}
+          {/* ------------------ Start SubPart Modal ---------------- */}
 
-                        <Modal show={showModalSubpart} onHide={handleClose} size="xl">
-                          <Modal.Header closeButton>
-                            <Modal.Title style={{ fontSize: '24px' }}>Product Sub-Parts List</Modal.Title>     
-                          </Modal.Header>
-                            <Modal.Body>
-                                      <div className="table-containss">
-                                          <div className="main-of-all-tables">
-                                              <table id='order2-listing'>
-                                                      <thead>
-                                                        <tr>
-                                                          <th className='tableh'>Supplier Code</th>
-                                                          <th className='tableh'>Supplier Name</th>
-                                                          <th className='tableh'>Contact</th>
-                                                          <th className='tableh'>Email</th>
-                                                          <th className='tableh'>Price</th>
-                                                          <th className='tableh'>Action</th>
-                                                        </tr>
-                                                      </thead>
-                                                      <tbody>
-                                                             
-                                                      {suppSubpart.map((data,i) =>(
-                                                        <tr key={i}>
-                                                            <td>{data.supplier.supplier_code}</td>
-                                                            <td>{data.supplier.supplier_name}</td>
-                                                            <td>{data.supplier.supplier_number}</td>
-                                                            <td>{data.supplier.supplier_email}</td>
-                                                            <td>
-                                                              {!editMode[i] && 
-                                                                  <Form.Control
-                                                                      readOnly
-                                                                      value={data.supplier_price}
-                                                                      style={{
-                                                                        height: "35px",
-                                                                        width: "100px",
-                                                                        fontSize: '14px',
-                                                                        fontFamily: 'Poppins, Source Sans Pro'
-                                                                      }}
-                                                                  />
-                                                              }
-                                                              {editMode[i] && (
-                                                                <Form.Control
-                                                                  type="number"
-                                                                  placeholder="New Price"
-                                                                  onBlur={(e) => {
-                                                                    handleUpdatePrice_subpart(e.target.value, data.id, i, data.subPart.id, data.supplier.supplier_code);
-                                                                  }}
-                                                                  onKeyDown={(e) => {                                          
-                                                                    ["e", "E", "+", "-"].includes(e.key) &&
-                                                                    e.preventDefault()
-                                                                  }}
-                                                                               
-                                                                  style={{
-                                                                    height: "35px",
-                                                                    width: "100px",
-                                                                    fontSize: '14px',
-                                                                    fontFamily: 'Poppins, Source Sans Pro'
-                                                                  }}
-                                                                />
-                                                              )}                                                                    
-                                                            </td>
-                                                            <td>    
-                                                              <div className='d-flex flex-direction-row'>
-                                                                {!editMode[i] && 
-                                                                  <>
-                                                                    <button
-                                                                          type='button'
-                                                                          className='btn canvas'
-                                                                          onClick={() => handleEditPrice(i)}                                                                
-                                                                        >
-                                                                      <NotePencil size={22} color="#0d0d0d" weight="light" />
-                                                                    </button>
-                                                                  
-                                                                    <button 
-                                                                          type='button' 
-                                                                          className='btn canvas' 
-                                                                          onClick={() => 
-                                                                              handleAddToTablePO_Subpart(
-                                                                                data.id, 
-                                                                                data.subPart.subPart_code, 
-                                                                                data.subPart.subPart_name, 
-                                                                                data.supplier.supplier_email
-                                                                              )}>
-                                                                      <PlusCircle size={22} color="#0d0d0d" weight="light"/>
-                                                                    </button>
-                                                                  </>                                                
-                                                                }
-                                                                {editMode[i] && 
-                                                                  <>
-                                                                  <button
-                                                                      type='button'
-                                                                      className='btn canvas'
-                                                                      onClick={() => handleCancelEditPrice(i)}                                                                
-                                                                    >
-                                                                      <XCircle size={22} color="#0d0d0d" weight="light" />
-                                                                    </button>
-                                                                  </>                                                                     
-                                                                }                                                                                                                                         
-                                                              </div>                                                                  
-                                                            </td>
-                                                          
-                                                        </tr>
-                                                      ))}
-                                                  </tbody>
-                                              </table>
-                                          </div>
-                                      </div>
-                              </Modal.Body>
-                              <Modal.Footer>
-                                  <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                                      Close
-                                  </Button>
-                              </Modal.Footer>
-                        </Modal>                    
-            </div>
+          <Modal show={showModalSubpart} onHide={handleClose} size="xl">
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontSize: "24px" }}>
+                Product Sub-Parts List
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="table-containss">
+                <div className="main-of-all-tables">
+                  <table id="order2-listing">
+                    <thead>
+                      <tr>
+                        <th className="tableh">Supplier Code</th>
+                        <th className="tableh">Supplier Name</th>
+                        <th className="tableh">Contact</th>
+                        <th className="tableh">Email</th>
+                        <th className="tableh">Price</th>
+                        <th className="tableh">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {suppSubpart.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.supplier.supplier_code}</td>
+                          <td>{data.supplier.supplier_name}</td>
+                          <td>{data.supplier.supplier_number}</td>
+                          <td>{data.supplier.supplier_email}</td>
+                          <td>
+                            {!editMode[i] && (
+                              <Form.Control
+                                readOnly
+                                value={data.supplier_price}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                            {editMode[i] && (
+                              <Form.Control
+                                type="number"
+                                placeholder="New Price"
+                                onBlur={(e) => {
+                                  handleUpdatePrice_subpart(
+                                    e.target.value,
+                                    data.id,
+                                    i,
+                                    data.subPart.id,
+                                    data.supplier.supplier_code
+                                  );
+                                }}
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
+                                style={{
+                                  height: "35px",
+                                  width: "100px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                              />
+                            )}
+                          </td>
+                          <td>
+                            <div className="d-flex flex-direction-row">
+                              {!editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleEditPrice(i)}
+                                  >
+                                    <NotePencil
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() =>
+                                      handleAddToTablePO_Subpart(
+                                        data.id,
+                                        data.subPart.subPart_code,
+                                        data.subPart.subPart_name,
+                                        data.supplier.supplier_email
+                                      )
+                                    }
+                                  >
+                                    <PlusCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                              {editMode[i] && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn canvas"
+                                    onClick={() => handleCancelEditPrice(i)}
+                                  >
+                                    <XCircle
+                                      size={22}
+                                      color="#0d0d0d"
+                                      weight="light"
+                                    />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handleClose}
+                style={{ fontSize: "20px" }}
+              >
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default PurchaseOrderListPreview
+export default PurchaseOrderListPreview;

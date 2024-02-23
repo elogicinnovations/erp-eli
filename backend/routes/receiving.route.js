@@ -49,14 +49,21 @@ console.log(formattedDate);
 
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
-      totalReceived += parseInt(child.Received_quantity);
+      totalReceived += parseInt(child.Received_quantity || 0);
+
+      console.log(`child.Received_quantity ${child.Received_quantity}`)
     }
   }
 
   freighCost = (shippingFee / totalReceived).toFixed(2);
 
+  
+
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
+      const receivedQuantity = parseInt(child.Received_quantity);
+        if (!isNaN(receivedQuantity)) {
+        
       if (child.type === "Product") {
         // console.log(`Product ${freighCost}`)
 
@@ -152,6 +159,8 @@ console.log(formattedDate);
       } else {
         console.log(`Not a Product`);
       }
+
+    }
     }
   }
 
@@ -165,6 +174,8 @@ console.log(formattedDate);
   if(deleteproductImage){
     if (productImages && productImages.length > 0) {
       productImages.forEach(async (i) => {
+
+
         await Receiving_Image.create({
           pr_id: pr_id,
           po_num: po_id,
@@ -172,7 +183,9 @@ console.log(formattedDate);
         });
       });
     }
-  };
+  }else{
+    console.log('adwjkd')
+  }
 
 
   console.log(`Total Received: ${totalReceived}`);
