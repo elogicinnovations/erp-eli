@@ -200,16 +200,17 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id) =>
   setProductArrays((prevArrays) => {
     const supplierCode = product.supplier.supplier_code;
     const supplierName = product.supplier.supplier_name;
+
     // Create a new array for the supplier if it doesn't exist
     const newArray = (prevArrays[supplierCode] || []).slice(); // Make a shallow copy of the array
 
     // Check if the product is already in the array for the specific supplier
     const isProductAlreadyAdded = newArray.some(
-      (item) => item.product.id === product.id
+      (item) => item.product.id === product.id && item.suppTAG_id === supplier_id && item.type === type
     );
 
     if (!isProductAlreadyAdded) {
-      setIsArray(true)
+      setIsArray(true);
       newArray.push({
         type: type,
         product: product,
@@ -218,13 +219,6 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id) =>
         supp_email: supp_email,
         suppTAG_id: supplier_id,
         supplierName: supplierName
-      });
-
-      // Sort the array based on some criteria (e.g., product code)
-      newArray.sort((a, b) => {
-        const codeA = a.product.product_code || '';
-        const codeB = b.product.product_code || '';
-        return codeA.localeCompare(codeB);
       });
 
       // Log the array to the console
@@ -236,7 +230,7 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id) =>
       // Trigger SweetAlert for duplicate
       swal({
         title: 'Duplicate Product',
-        text: 'This product is already in the array.',
+        text: 'This product is already in the array for this supplier.',
         icon: 'error',
       });
 
@@ -244,7 +238,6 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id) =>
     }
   });
 };
-
 
 
 

@@ -3,6 +3,7 @@ const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
 const {
   PO_Received,
+  Receiving_Image,
   ProductTAGSupplier,
   Assembly_Supplier,
   SparePart_Supplier,
@@ -165,9 +166,21 @@ router.route("/PO_products").get(async (req, res) => {
         //   group.items.sort((a, b) => a.po_id.localeCompare(b.po_id));
         // });
     
-        console.log(consolidatedArray);
+        // console.log(consolidatedArray);
+
+        const Image = await Receiving_Image.findAll({
+          where: {
+              pr_id: pr_id,
+              po_num: po_num
+          },
+        });
+
+        console.log(Image)
     
-        res.status(200).json(consolidatedArray);
+        res.status(200).json({
+          consolidatedArray: consolidatedArray,
+          image_receiving: Image
+        });
       } catch (err) {
         console.error(err);
         res.status(500).json("Error");
