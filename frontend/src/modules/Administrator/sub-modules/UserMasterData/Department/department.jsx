@@ -21,11 +21,10 @@ import NoAccess from "../../../../../assets/image/NoAccess.png";
 import { jwtDecode } from "jwt-decode";
 
 function Warehouse({ authrztn }) {
-  const [warehousename, setWarehousename] = useState("");
-  const [locatename, setLocatename] = useState("");
+  const [departmentname, setDepartmentname] = useState("");
   const [description, setDescription] = useState("");
   const [validated, setValidated] = useState(false);
-  const [warehouses, setWarehouses] = useState([]);
+  const [department, setDepartment] = useState([]);
   const [visibleButtons, setVisibleButtons] = useState({});
   const [isVertical, setIsVertical] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -60,9 +59,9 @@ function Warehouse({ authrztn }) {
   const reloadTable = () => {
     const delay = setTimeout(() => {
       axios
-        .get(BASE_URL + "/warehouses/fetchtableWarehouses")
+        .get(BASE_URL + "/department/fetchtableDepartment")
         .then((res) => {
-          setWarehouses(res.data);
+          setDepartment(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -93,7 +92,7 @@ function Warehouse({ authrztn }) {
     e.preventDefault();
 
     const form = e.currentTarget;
-    if (warehousename.trim() === "" || locatename.trim() === "") {
+    if (departmentname.trim() === "") {
       swal({
         icon: "error",
         title: "Fields are required",
@@ -113,17 +112,16 @@ function Warehouse({ authrztn }) {
       });
     } else {
       axios
-        .post(BASE_URL + "/warehouses/createWarehouse", {
-          warehousename,
-          locatename,
+        .post(BASE_URL + "/department/createDepartment", {
+          departmentname,
           description,
           userId,
         })
         .then((res) => {
           if (res.status === 200) {
             swal({
-              title: "Warehouse Add Successful!",
-              text: "The Warehouse has been Added Successfully.",
+              title: "Department Add Successful!",
+              text: "The Department has been Added Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -133,8 +131,8 @@ function Warehouse({ authrztn }) {
             });
           } else if (res.status === 201) {
             swal({
-              title: "Warehouse is Already Exist",
-              text: "Please Input a New Warehouse ",
+              title: "Department is Already Exist",
+              text: "Please Input a New Department ",
               icon: "error",
             });
           } else {
@@ -150,19 +148,19 @@ function Warehouse({ authrztn }) {
     setValidated(true);
   };
 
-  const toggleButtons = (warehouseId) => {
+  const toggleButtons = (DepartmentId) => {
     setVisibleButtons((prevVisibleButtons) => {
       const updatedVisibleButtons = { ...prevVisibleButtons };
 
       // Close buttons for other items
       Object.keys(updatedVisibleButtons).forEach((key) => {
-        if (key !== warehouseId) {
+        if (key !== DepartmentId) {
           updatedVisibleButtons[key] = false;
         }
       });
 
       // Toggle buttons for the clicked item
-      updatedVisibleButtons[warehouseId] = !prevVisibleButtons[warehouseId];
+      updatedVisibleButtons[DepartmentId] = !prevVisibleButtons[DepartmentId];
 
       return updatedVisibleButtons;
     });
@@ -171,13 +169,13 @@ function Warehouse({ authrztn }) {
       const updateVertical = { ...prevIsVertical };
 
       Object.keys(updateVertical).forEach((key) => {
-        if (key !== warehouseId) {
+        if (key !== DepartmentId) {
           updateVertical[key] = false;
         }
       });
 
       // Toggle buttons for the clicked item
-      updateVertical[warehouseId] = !prevIsVertical[warehouseId];
+      updateVertical[DepartmentId] = !prevIsVertical[DepartmentId];
 
       return updateVertical;
     });
@@ -187,15 +185,14 @@ function Warehouse({ authrztn }) {
     setVisibleButtons({});
     setIsVertical({});
   };
-  const setButtonVisibles = (warehouseId) => {
-    return visibleButtons[warehouseId] || false;
+  const setButtonVisibles = (DepartmentId) => {
+    return visibleButtons[DepartmentId] || false;
   };
 
-  //Update warehouse in modal
+  //Update Department in modal
   const [updateFormData, setUpdateFormData] = useState({
-    warehouse_name: "",
-    location: "",
-    details: "",
+    department_name: "",
+    description: "",
     id: null,
   });
 
@@ -203,16 +200,14 @@ function Warehouse({ authrztn }) {
     setUpdateModalShow(!updateModalShow);
     if (updateData) {
       setUpdateFormData({
-        warehouse_name: updateData.warehouse_name,
-        location: updateData.location,
-        details: updateData.details,
+        department_name: updateData.department_name,
+        description: updateData.description,
         id: updateData.id,
       });
     } else {
       setUpdateFormData({
-        warehouse_name: "",
-        location: "",
-        details: "",
+        department_name: "",
+        description: "",
         id: null,
       });
     }
@@ -230,12 +225,12 @@ function Warehouse({ authrztn }) {
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
 
-    if (updateFormData.warehouse_name.trim() === "") {
+    if (updateFormData.department_name.trim() === "") {
       // Display an error message or take any other action you want when the category name is empty
       swal({
         icon: "error",
-        title: "Warehouse Name is required",
-        text: "Please enter a Warehouse Name before updating.",
+        title: "Department Name is required",
+        text: "Please enter a Department Name before updating.",
       });
       return;
     }
@@ -244,18 +239,17 @@ function Warehouse({ authrztn }) {
       const updaemasterID = updateFormData.id;
       const response = await axios.put(
         BASE_URL +
-          `/warehouses/updateWarehouse/${updateFormData.id}?userId=${userId}`,
+          `/department/updateDepartment/${updateFormData.id}?userId=${userId}`,
         {
-          warehouse_name: updateFormData.warehouse_name,
-          location: updateFormData.location,
-          details: updateFormData.details,
+            department_name: updateFormData.department_name,
+            description: updateFormData.description,
         }
       );
 
       if (response.status === 200) {
         swal({
-          title: "Warehouse Update Successful!",
-          text: "The Warehouse has been Updated Successfully.",
+          title: "Department Update Successful!",
+          text: "The Department has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -266,8 +260,8 @@ function Warehouse({ authrztn }) {
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Warehouse already exists",
-          text: "Please input another Warehouse",
+          title: "Department already exists",
+          text: "Please input another Department",
         });
       } else {
         swal({
@@ -281,7 +275,7 @@ function Warehouse({ authrztn }) {
     }
   };
 
-  //delete warehouse
+  //delete Department
   const handleDelete = async (table_id) => {
     swal({
       title: "Are you sure?",
@@ -294,13 +288,13 @@ function Warehouse({ authrztn }) {
         try {
           const response = await axios.delete(
             BASE_URL +
-              `/warehouses/deleteWarehouse/${table_id}?userId=${userId}`
+              `/department/deleteDepartment/${table_id}?userId=${userId}`
           );
 
           if (response.status === 200) {
             swal({
-              title: "Warehouse Delete Succesful!",
-              text: "The Warehouse has been Deleted Successfully.",
+              title: "Department Delete Succesful!",
+              text: "The Department has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -310,7 +304,7 @@ function Warehouse({ authrztn }) {
             swal({
               icon: "error",
               title: "Delete Prohibited",
-              text: "You cannot delete Warehouse that is used",
+              text: "You cannot delete Department that is used",
             });
           } else {
             swal({
@@ -327,10 +321,10 @@ function Warehouse({ authrztn }) {
   };
 
   useEffect(() => {
-    if ($("#order-listing").length > 0 && warehouses.length > 0) {
+    if ($("#order-listing").length > 0 && department.length > 0) {
       $("#order-listing").DataTable();
     }
-  }, [warehouses]);
+  }, [department]);
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -339,17 +333,17 @@ function Warehouse({ authrztn }) {
             <ReactLoading className="react-loading" type={"bubbles"} />
             Loading Data...
           </div>
-        ) : authrztn.includes("Warehouses - View") ? (
+        ) : authrztn.includes("Department - View") ? (
           <div className="right-body-contents">
             <div className="Employeetext-button">
               <div className="employee-and-button">
                 <div className="emp-text-side">
-                  <p>Warehouse</p>
+                  <p>Department</p>
                 </div>
 
                 <div className="button-create-side">
                   <div className="Buttonmodal-new">
-                    {authrztn?.includes("Warehouses - Add") && (
+                    {authrztn?.includes("Department - Add") && (
                       <button onClick={handleShow}>
                         <span style={{}}>
                           <Plus size={25} />
@@ -366,19 +360,19 @@ function Warehouse({ authrztn }) {
                 <table className="table-hover" id="order-listing">
                   <thead>
                     <tr>
-                      <th className="tableh">Warehouse Name</th>
-                      <th className="tableh">Location Name</th>
+                      <th className="tableh">Department Name</th>
+                      <th className="tableh">Description</th>
                       <th className="tableh">Date Created</th>
                       <th className="tableh">Date Modified</th>
                       <th className="tableh">Action</th>
                     </tr>
                   </thead>
-                  {warehouses.length > 0 ? (
+                  {department.length > 0 ? (
                     <tbody>
-                      {warehouses.map((data, i) => (
+                      {department.map((data, i) => (
                         <tr key={i}>
-                          <td>{data.warehouse_name}</td>
-                          <td>{data.location}</td>
+                          <td>{data.department_name}</td>
+                          <td>{data.description}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                           <td>{formatDatetime(data.updatedAt)}</td>
                           <td>
@@ -407,7 +401,7 @@ function Warehouse({ authrztn }) {
                                   {setButtonVisibles(data.id) && (
                                     <div className="choices">
                                       {authrztn?.includes(
-                                        "Warehouses - Edit"
+                                        "Department - Edit"
                                       ) && (
                                         <button
                                           className="btn"
@@ -421,7 +415,7 @@ function Warehouse({ authrztn }) {
                                       )}
 
                                       {authrztn?.includes(
-                                        "Warehouses - Delete"
+                                        "Department - Delete"
                                       ) && (
                                         <button
                                           className="btn"
@@ -462,7 +456,7 @@ function Warehouse({ authrztn }) {
                                   {setButtonVisibles(data.id) && (
                                     <div className="choices">
                                       {authrztn?.includes(
-                                        "Warehouses - Edit"
+                                        "Department - Edit"
                                       ) && (
                                         <button
                                           className="btn"
@@ -476,7 +470,7 @@ function Warehouse({ authrztn }) {
                                       )}
 
                                       {authrztn?.includes(
-                                        "Warehouses - Delete"
+                                        "Department - Delete"
                                       ) && (
                                         <button
                                           className="btn"
@@ -526,7 +520,7 @@ function Warehouse({ authrztn }) {
           <Modal.Title
             style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
           >
-            Update Warehouse
+            Update Department
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -540,7 +534,7 @@ function Warehouse({ authrztn }) {
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
                   >
-                    Warehouse Name
+                    Deparment Name
                   </Form.Label>
                   <Form.Control
                     type="text"
@@ -549,34 +543,14 @@ function Warehouse({ authrztn }) {
                       fontSize: "15px",
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
-                    value={updateFormData.warehouse_name}
+                    value={updateFormData.department_name}
                     onChange={handleUpdateFormChange}
-                    name="warehouse_name"
+                    name="department_name"
                   ></Form.Control>
                 </Form.Group>
               </div>
               <div className="col-6">
-                <Form.Group controlId="">
-                  <Form.Label
-                    style={{
-                      fontSize: "20px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
-                  >
-                    Address
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    style={{
-                      height: "40px",
-                      fontSize: "15px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
-                    value={updateFormData.location}
-                    onChange={handleUpdateFormChange}
-                    name="location"
-                  ></Form.Control>
-                </Form.Group>
+                
               </div>
               <div className="mt-3">
                 <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -599,9 +573,9 @@ function Warehouse({ authrztn }) {
                       resize: "none",
                       overflowY: "auto",
                     }}
-                    value={updateFormData.details}
+                    value={updateFormData.description}
                     onChange={handleUpdateFormChange}
-                    name="details"
+                    name="description"
                   />
                 </Form.Group>
               </div>
@@ -647,7 +621,7 @@ function Warehouse({ authrztn }) {
           <Modal.Title
             style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
           >
-            Create Warehouse
+            Create Department
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -661,7 +635,7 @@ function Warehouse({ authrztn }) {
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
                   >
-                    Warehouse Name:{" "}
+                    Department Name:{" "}
                   </Form.Label>
                   <Form.Control
                     type="text"
@@ -670,33 +644,12 @@ function Warehouse({ authrztn }) {
                       fontSize: "15px",
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
-                    onChange={(e) => setWarehousename(e.target.value)}
+                    onChange={(e) => setDepartmentname(e.target.value)}
                     required
                   ></Form.Control>
                 </Form.Group>
               </div>
-              <div className="col-6">
-                <Form.Group controlId="">
-                  <Form.Label
-                    style={{
-                      fontSize: "20px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
-                  >
-                    Warehouse address
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    style={{
-                      height: "40px",
-                      fontSize: "15px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
-                    onChange={(e) => setLocatename(e.target.value)}
-                    required
-                  ></Form.Control>
-                </Form.Group>
-              </div>
+              <div className="col-6"></div>
             </div>
             <div className="mt-3">
               <Form.Group controlId="exampleForm.ControlTextarea1">

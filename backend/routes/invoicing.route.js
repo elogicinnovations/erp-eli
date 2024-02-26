@@ -256,7 +256,7 @@ router.route('/save').post(async (req, res) => {
 
   router.route('/approve_PO').post(async (req, res) => {
     try {
-      const { id, POarray } = req.body;
+      const { id, POarray, prNum } = req.body;
       
       // Create an object to store items for each supplier
       const itemsBySupplier = {};
@@ -306,7 +306,7 @@ router.route('/save').post(async (req, res) => {
         const mailOptions = {
           from: gmailEmail,
           to: supplierEmail,
-          subject: 'Invoice Request for Order - SBF',
+          subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
           text: 'Attached is a CSV file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:',
           attachments: [
             {

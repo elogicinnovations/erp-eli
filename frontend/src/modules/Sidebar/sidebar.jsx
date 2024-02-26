@@ -118,6 +118,7 @@ function Sidebar({ authrztn }) {
       setActiveMenu("DASHBOARD");
     } else if (
       path.startsWith("/masterList") ||
+      path.startsWith("/department") ||
       path.startsWith("/userRole") ||
       path.startsWith("/createRole") ||
       path.match(/^\/editRole\/(\d+)$/)
@@ -182,24 +183,33 @@ function Sidebar({ authrztn }) {
     }
   }, [location.pathname]);
 
-  const hideProductManagement = authrztn.some(permission =>
-    ["Product Categories - View", "Product Manufacturer - View", "Bin Location - View", "Sub-Part - View", "Spare Part - View", "Assembly - View", "Product List - View"].includes(permission)
+  const hideProductManagement = authrztn.some((permission) =>
+    [
+      "Product Categories - View",
+      "Product Manufacturer - View",
+      "Bin Location - View",
+      "Sub-Part - View",
+      "Spare Part - View",
+      "Assembly - View",
+      "Product List - View",
+    ].includes(permission)
   );
 
-  const hideBPmasterdata = authrztn.some(permission =>
-    ["Cost Centre - View", "Supplier - View", "Warehouses - View"].includes(permission)
+  const hideBPmasterdata = authrztn.some((permission) =>
+    ["Cost Centre - View", "Supplier - View", "Warehouses - View"].includes(
+      permission
+    )
   );
 
-  const hidePurchaseOrder = authrztn.some(permission =>
+  const hidePurchaseOrder = authrztn.some((permission) =>
     ["PR - View", "PO - View"].includes(permission)
   );
 
-  const hideWarehousemodule = authrztn.some(permission =>
+  const hideWarehousemodule = authrztn.some((permission) =>
     ["Receiving - View", "Stock Management - View"].includes(permission)
   );
 
   return (
-
     <div className="containers-of-sidebard">
       <div className="sidebar-main-content">
         <div className="logo-head-sidebars">
@@ -215,13 +225,15 @@ function Sidebar({ authrztn }) {
           <NavLink
             to="/dashboard"
             style={{ textDecoration: "none", color: "inherit" }}
-            activeClassName="active">
+            activeClassName="active"
+          >
             <ListItem
               button
               className={`menu-item ${
                 location.pathname.startsWith("/dashboard") ? "active" : ""
               }`}
-              onClick={toggleOff}>
+              onClick={toggleOff}
+            >
               <SquaresFour size={20} />
               <ListItemText primary="DASHBOARD" />
             </ListItem>
@@ -237,7 +249,8 @@ function Sidebar({ authrztn }) {
                 activeMenu === "ADMINISTRATOR" ? "" : "ADMINISTRATOR"
               );
               toggleAdministrator();
-            }}>
+            }}
+          >
             <Users size={20} />
             <ListItemText primary="ADMINISTRATOR" />
             {openAdministrator ? <ExpandLess /> : <ExpandMore />}
@@ -248,7 +261,8 @@ function Sidebar({ authrztn }) {
               <ListItem
                 button
                 className="adminsub-menu"
-                onClick={toggleEmployeeData}>
+                onClick={toggleEmployeeData}
+              >
                 <ListItemText primary="User Master Data" />
                 {openEmployeeData ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
@@ -256,47 +270,69 @@ function Sidebar({ authrztn }) {
               <Collapse in={openEmployeeData}>
                 <List component="div" disablePadding>
                   {authrztn.includes("Master List - View") && (
-                  <NavLink
-                    to="/masterList"
-                    style={{ textDecoration: "none", color: "inherit" }}
-                    activeClassName="active">
-                    <ListItem
-                      button
-                      className={`Employeesub-menu ${
-                        location.pathname === "/masterList" ? "active" : ""
-                      }`}>
-                      <ListItemText primary="Master List" />
-                    </ListItem>
-                  </NavLink>
+                    <NavLink
+                      to="/masterList"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      activeClassName="active"
+                    >
+                      <ListItem
+                        button
+                        className={`Employeesub-menu ${
+                          location.pathname === "/masterList" ? "active" : ""
+                        }`}
+                      >
+                        <ListItemText primary="Master List" />
+                      </ListItem>
+                    </NavLink>
                   )}
                   {/* <ListItem button className='Employeesub-menu'>
                     <ListItemText primary="Employee Type" />
                   </ListItem> */}
-                  <NavLink
-                    to="/userRole"
-                    style={{ textDecoration: "none", color: "inherit" }}
-                    activeClassName="active">
-                    <ListItem
-                      button
-                      className={`Employeesub-menu ${
-                        location.pathname.startsWith("/userRole") ||
-                        location.pathname.startsWith("/createRole") ||
-                        location.pathname.startsWith("/editRole")
-                          ? "active"
-                          : ""
-                      }`}>
-                      <ListItemText primary="RBAC List" />
-                    </ListItem>
-                  </NavLink>
+                  {authrztn.includes("User Access Role - View") && (
+                    <NavLink
+                      to="/userRole"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      activeClassName="active"
+                    >
+                      <ListItem
+                        button
+                        className={`Employeesub-menu ${
+                          location.pathname.startsWith("/userRole") ||
+                          location.pathname.startsWith("/createRole") ||
+                          location.pathname.startsWith("/editRole")
+                            ? "active"
+                            : ""
+                        }`}
+                      >
+                        <ListItemText primary="RBAC List" />
+                      </ListItem>
+                    </NavLink>
+                  )}
+                  {authrztn.includes("Department - View") && (
+                    <NavLink
+                      to="/department"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                      activeClassName="active"
+                    >
+                      <ListItem
+                        button
+                        className={`Employeesub-menu ${
+                          location.pathname === "/department" ? "active" : ""
+                        }`}
+                      >
+                        <ListItemText primary="Department" />
+                      </ListItem>
+                    </NavLink>
+                  )}
                 </List>
               </Collapse>
-
 
               {hideProductManagement && (
                 <ListItem
                   button
                   className="adminsub-menu"
-                  onClick={toggleProductSettings}>
+                  onClick={toggleProductSettings}
+                >
                   <ListItemText primary="Product Management" />
                   {openProductSettings ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
@@ -309,14 +345,16 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/productCategory"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
                           location.pathname === "/productCategory"
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Product Categories" />
                       </ListItem>
                     </NavLink>
@@ -327,12 +365,14 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/ProductManu"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
                           location.pathname === "/ProductManu" ? "active" : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Product Manufacturer" />
                       </ListItem>
                     </NavLink>
@@ -343,12 +383,14 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/binLocation"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
                           location.pathname === "/binLocation" ? "active" : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Bin Location" />
                       </ListItem>
                     </NavLink>
@@ -359,7 +401,8 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/subParts"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
@@ -367,7 +410,8 @@ function Sidebar({ authrztn }) {
                           location.pathname.startsWith("/createsubParts")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Product Sub-Parts" />
                       </ListItem>
                     </NavLink>
@@ -378,7 +422,8 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/spareParts"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
@@ -388,7 +433,8 @@ function Sidebar({ authrztn }) {
                           location.pathname.startsWith("/viewSpareParts")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Product Parts" />
                       </ListItem>
                     </NavLink>
@@ -399,7 +445,8 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/assemblyForm"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
@@ -409,7 +456,8 @@ function Sidebar({ authrztn }) {
                           location.pathname.startsWith("/viewAssembleForm")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Product Assembly" />
                       </ListItem>
                     </NavLink>
@@ -420,7 +468,8 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/productList"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
@@ -430,7 +479,8 @@ function Sidebar({ authrztn }) {
                           location.pathname.startsWith("/productSupplier")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Product List" />
                       </ListItem>
                     </NavLink>
@@ -438,16 +488,17 @@ function Sidebar({ authrztn }) {
                 </List>
               </Collapse>
 
-              
-              
-
               {hideBPmasterdata && (
-              <ListItem button className="adminsub-menu" onClick={toggleBPData}>
-                <ListItemText primary="BP Master Data" />
-                {openBPData ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
+                <ListItem
+                  button
+                  className="adminsub-menu"
+                  onClick={toggleBPData}
+                >
+                  <ListItemText primary="BP Master Data" />
+                  {openBPData ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
               )}
-              
+
               <Collapse in={openBPData}>
                 <List component="div" disablePadding>
                   {/* Cost Center */}
@@ -456,7 +507,8 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/costCenter"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
@@ -466,7 +518,8 @@ function Sidebar({ authrztn }) {
                           location.pathname.startsWith("/initUpdateCostCenter")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Cost Center" />
                       </ListItem>
                     </NavLink>
@@ -476,7 +529,8 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/supplier"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
@@ -486,7 +540,8 @@ function Sidebar({ authrztn }) {
                           location.pathname.startsWith("/editSupp")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Suppliers" />
                       </ListItem>
                     </NavLink>
@@ -496,14 +551,16 @@ function Sidebar({ authrztn }) {
                     <NavLink
                       to="/warehouses"
                       style={{ textDecoration: "none", color: "inherit" }}
-                      activeClassName="active">
+                      activeClassName="active"
+                    >
                       <ListItem
                         button
                         className={`Employeesub-menu ${
                           location.pathname.startsWith("/warehouses")
                             ? "active"
                             : ""
-                        }`}>
+                        }`}
+                      >
                         <ListItemText primary="Warehouses" />
                       </ListItem>
                     </NavLink>
@@ -538,39 +595,42 @@ function Sidebar({ authrztn }) {
             </List>
           </Collapse>
 
-          { authrztn.includes('Inventory - View') && (
-          <NavLink
-            to="/inventory"
-            style={{ textDecoration: "none", color: "inherit" }}
-            activeClassName="active">
+          {authrztn.includes("Inventory - View") && (
+            <NavLink
+              to="/inventory"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`menu-item ${
+                  location.pathname === "/inventory" ? "active" : ""
+                }`}
+                onClick={toggleOff}
+              >
+                <Archive size={20} />
+                <ListItemText primary="INVENTORY" />
+              </ListItem>
+            </NavLink>
+          )}
+
+          {hidePurchaseOrder && (
             <ListItem
               button
               className={`menu-item ${
-                location.pathname === "/inventory" ? "active" : ""
+                activeMenu === "PURCHASE ORDER" ? "active-hover" : ""
               }`}
-              onClick={toggleOff}>
-              <Archive size={20} />
-              <ListItemText primary="INVENTORY" />
+              onClick={() => {
+                setActiveMenu(
+                  activeMenu === "PURCHASE ORDER" ? "" : "PURCHASE ORDER"
+                );
+                togglePurchaseOrder();
+              }}
+            >
+              <ClipboardText size={20} />
+              <ListItemText primary="PURCHASE ORDER" />
+              {openPurchaseOrder ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
-          </NavLink>
-          )}
-
-        {hidePurchaseOrder && (
-          <ListItem
-            button
-            className={`menu-item ${
-              activeMenu === "PURCHASE ORDER" ? "active-hover" : ""
-            }`}
-            onClick={() => {
-              setActiveMenu(
-                activeMenu === "PURCHASE ORDER" ? "" : "PURCHASE ORDER"
-              );
-              togglePurchaseOrder();
-            }}>
-            <ClipboardText size={20} />
-            <ListItemText primary="PURCHASE ORDER" />
-            {openPurchaseOrder ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
           )}
 
           <Collapse in={openPurchaseOrder}>
@@ -578,7 +638,8 @@ function Sidebar({ authrztn }) {
               <NavLink
                 to="/purchaseRequest"
                 style={{ textDecoration: "none", color: "inherit" }}
-                activeClassName="active">
+                activeClassName="active"
+              >
                 <ListItem
                   button
                   className={`adminsub-menu ${
@@ -588,7 +649,8 @@ function Sidebar({ authrztn }) {
                     location.pathname.startsWith("/forCanvass")
                       ? "active"
                       : ""
-                  }`}>
+                  }`}
+                >
                   <ListItemText primary="Purchase Request" />
                 </ListItem>
               </NavLink>
@@ -598,35 +660,37 @@ function Sidebar({ authrztn }) {
               <NavLink
                 to="/purchaseOrderList"
                 style={{ textDecoration: "none", color: "inherit" }}
-                activeClassName="active">
+                activeClassName="active"
+              >
                 <ListItem
                   button
                   className={`adminsub-menu ${
-                    location.pathname.startsWith("/purchaseOrderList") 
-                    
+                    location.pathname.startsWith("/purchaseOrderList")
                       ? "active"
                       : ""
-                  }`}>
+                  }`}
+                >
                   <ListItemText primary="Purchase Order List" />
                 </ListItem>
               </NavLink>
             )}
           </Collapse>
 
-         {hideWarehousemodule && (
-          <ListItem
-            button
-            className={`menu-item ${
-              activeMenu === "WAREHOUSE" ? "active-hover" : ""
-            }`}
-            onClick={() => {
-              setActiveMenu(activeMenu === "WAREHOUSE" ? "" : "WAREHOUSE");
-              toggleWarehouse();
-            }}>
-            <Warehouse size={20} />
-            <ListItemText primary="WAREHOUSE" />
-            {openWarehouse ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
+          {hideWarehousemodule && (
+            <ListItem
+              button
+              className={`menu-item ${
+                activeMenu === "WAREHOUSE" ? "active-hover" : ""
+              }`}
+              onClick={() => {
+                setActiveMenu(activeMenu === "WAREHOUSE" ? "" : "WAREHOUSE");
+                toggleWarehouse();
+              }}
+            >
+              <Warehouse size={20} />
+              <ListItemText primary="WAREHOUSE" />
+              {openWarehouse ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
           )}
 
           <Collapse in={openWarehouse}>
@@ -634,14 +698,16 @@ function Sidebar({ authrztn }) {
               <NavLink
                 to="/receivingManagement"
                 style={{ textDecoration: "none", color: "inherit" }}
-                activeClassName="active">
+                activeClassName="active"
+              >
                 <ListItem
                   button
                   className={`adminsub-menu ${
                     location.pathname.startsWith("/receivingManagement")
                       ? "active"
                       : ""
-                  }`}>
+                  }`}
+                >
                   <ListItemText primary="Receiving Management" />
                 </ListItem>
               </NavLink>
@@ -651,7 +717,8 @@ function Sidebar({ authrztn }) {
               <NavLink
                 to="/stockManagement"
                 style={{ textDecoration: "none", color: "inherit" }}
-                activeClassName="active">
+                activeClassName="active"
+              >
                 <ListItem
                   button
                   className={`adminsub-menu ${
@@ -660,29 +727,36 @@ function Sidebar({ authrztn }) {
                     location.pathname.startsWith("/stockManagementPreview")
                       ? "active"
                       : ""
-                  }`}>
+                  }`}
+                >
                   <ListItemText primary="Stock Transfer" />
                 </ListItem>
               </NavLink>
             )}
 
             {/* {authrztn.includes("Stock Management - View") && ( */}
-              <NavLink
-                to="/receivingStockTransfer"
-                style={{ textDecoration: "none", color: "inherit" }}
-                activeClassName="active">
-                <ListItem
-                  button
-                  className={`adminsub-menu ${
-                    location.pathname.startsWith("/receivingStockTransfer") ||
-                    location.pathname.startsWith("/receivingCreateStockTransfer") ||
-                    location.pathname.startsWith("/receivingStockManagementPreview")
-                      ? "active"
-                      : ""
-                  }`}>
-                  <ListItemText primary="Receiving Stock Transfer" />
-                </ListItem>
-              </NavLink>
+            <NavLink
+              to="/receivingStockTransfer"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`adminsub-menu ${
+                  location.pathname.startsWith("/receivingStockTransfer") ||
+                  location.pathname.startsWith(
+                    "/receivingCreateStockTransfer"
+                  ) ||
+                  location.pathname.startsWith(
+                    "/receivingStockManagementPreview"
+                  )
+                    ? "active"
+                    : ""
+                }`}
+              >
+                <ListItemText primary="Receiving Stock Transfer" />
+              </ListItem>
+            </NavLink>
             {/* )} */}
           </Collapse>
 
@@ -695,7 +769,8 @@ function Sidebar({ authrztn }) {
               onClick={() => {
                 setActiveMenu(activeMenu === "REPORTS" ? "" : "REPORTS");
                 toggleReports();
-              }}>
+              }}
+            >
               <ChartLineUp size={20} />
               <ListItemText primary="REPORTS" />
               {openReports ? <ExpandLess /> : <ExpandMore />}
@@ -706,63 +781,70 @@ function Sidebar({ authrztn }) {
             <NavLink
               to="/inventoryReports"
               style={{ textDecoration: "none", color: "inherit" }}
-              activeClassName="active">
+              activeClassName="active"
+            >
               <ListItem
                 button
                 className={`adminsub-menu ${
                   location.pathname.startsWith("/inventoryReports")
                     ? "active"
                     : ""
-                }`}>
+                }`}
+              >
                 <ListItemText primary="Inventory Report" />
               </ListItem>
             </NavLink>
             <NavLink
               to="/POTransactionReports"
               style={{ textDecoration: "none", color: "inherit" }}
-              activeClassName="active">
+              activeClassName="active"
+            >
               <ListItem
                 button
                 className={`adminsub-menu ${
                   location.pathname.startsWith("/POTransactionReports")
                     ? "active"
                     : ""
-                }`}>
+                }`}
+              >
                 <ListItemText primary="Purchase Order Transaction Report" />
               </ListItem>
             </NavLink>
             <NavLink
               to="/historicalData"
               style={{ textDecoration: "none", color: "inherit" }}
-              activeClassName="active">
+              activeClassName="active"
+            >
               <ListItem
                 button
                 className={`adminsub-menu ${
                   location.pathname.startsWith("/historicalData")
                     ? "active"
                     : ""
-                }`}>
+                }`}
+              >
                 <ListItemText primary="Historical Data" />
               </ListItem>
             </NavLink>
           </Collapse>
 
-          { authrztn.includes('Activity Logs - View') && (
-          <NavLink
-            to="/activityLogs"
-            style={{ textDecoration: "none", color: "inherit" }}
-            activeClassName="active">
-            <ListItem
-              button
-              className={`menu-item ${
-                location.pathname === "/activityLogs" ? "active" : ""
-              }`}
-              onClick={toggleOff}
+          {authrztn.includes("Activity Logs - View") && (
+            <NavLink
+              to="/activityLogs"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`menu-item ${
+                  location.pathname === "/activityLogs" ? "active" : ""
+                }`}
+                onClick={toggleOff}
               >
-              <Scroll size={20} />
-              <ListItemText primary="ACTIVITY LOGS" />
-            </ListItem>
-          </NavLink>
+                <Scroll size={20} />
+                <ListItemText primary="ACTIVITY LOGS" />
+              </ListItem>
+            </NavLink>
           )}
         </List>
       </div>

@@ -13,10 +13,15 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json({ limit:'500mb' })); // Add this line to parse incoming JSON data
+app.use(express.json({ limit: "500mb" })); // Add this line to parse incoming JSON data
 
-app.use(bodyParser.urlencoded({limit: '500mb', extended: true, parameterLimit:100000}));
-
+app.use(
+  bodyParser.urlencoded({
+    limit: "500mb",
+    extended: true,
+    parameterLimit: 100000,
+  })
+);
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -32,8 +37,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 // app.use(multer({
 //   limits: { fieldSize: 25 * 1024 * 1024 }
 // }))
@@ -42,6 +45,8 @@ app.use((req, res, next) => {
 const masterRoute = require("./routes/masterlist.route");
 
 const userRoute = require("./routes/userRole.route");
+
+const department = require("./routes/department.route");
 
 const supplier = require("./routes/supplier.route");
 
@@ -97,7 +102,7 @@ const PR_history = require("./routes/pr_historical.route");
 const PR_rejustify = require("./routes/pr_rejustify.route");
 const PR_PO = require("./routes/pr_toPO.route");
 const PO_Receveid = require("./routes/po_received.route");
-const Receiving  = require("./routes/receiving.route");
+const Receiving = require("./routes/receiving.route");
 
 const PO_Canvass = require("./routes/canvassing.route");
 const Invoice = require("./routes/invoicing.route");
@@ -115,7 +120,7 @@ const Report_inv = require("./routes/report_inventory.route");
 
 const Report_PO = require("./routes/report_PO.route");
 
-const Warehouse = require("./routes/warehouse.route")
+const Warehouse = require("./routes/warehouse.route");
 
 const authenticateToken = require("./middleware/token_authentication.middleware");
 
@@ -127,6 +132,7 @@ app.use(cookieParser());
 
 app.use("/masterList", masterRoute);
 app.use("/userRole", userRoute);
+app.use("/department", department);
 app.use("/supplier", supplier);
 app.use("/category", category);
 app.use("/binLocation", binLocation);

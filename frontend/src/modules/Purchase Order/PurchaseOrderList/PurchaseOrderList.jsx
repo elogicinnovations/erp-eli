@@ -135,13 +135,19 @@ const [pr_req, setPr_req] = useState([]);
     }
 
   
+    // useEffect(() => {
+    //   // Initialize DataTable when role data is available and pr_req has changed
+    //   if ($("#order-listing").length > 0 && pr_req.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
+    //     $('#order-listing').DataTable({
+    //       // Specify initial sorting order for the PR #. column
+    //       "order": [[ $('.pr-column').index(), 'asc' ]]
+    //     });
+    //   }
+    // }, [pr_req]);
     useEffect(() => {
-      // Initialize DataTable when role data is available and pr_req has changed
-      if ($("#order-listing").length > 0 && pr_req.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
-        $('#order-listing').DataTable({
-          // Specify initial sorting order for the PR #. column
-          "order": [[ $('.pr-column').index(), 'desc' ]]
-        });
+      // Initialize DataTable when role data is available
+      if ($('#order-listing').length > 0 && pr_req.length > 0) {
+        $('#order-listing').DataTable();
       }
     }, [pr_req]);
 
@@ -291,10 +297,10 @@ const [pr_req, setPr_req] = useState([]);
                       <table className='table-hover' id='order-listing'>
                           <thead>
                             <tr>
-                              <th className='pr-column'>PR No.</th>
+                              <th className='tableh'>PR No.</th>
                               <th className='tableh'>Requestor</th>
                               <th className='tableh'>Status</th>
-                              <th className='tableh'>Date Approved</th>
+                              <th className='pr-column'>Date Approved</th>
                               <th className='tableh'>Remarks</th>
                             </tr>
                           </thead>

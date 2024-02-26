@@ -184,6 +184,18 @@ function EditRole() {
           }
         });
       }
+
+      if (value === "Department - View") {
+        ["Department - Add", "Department - Edit", "Department - Delete"].forEach((relatedValue) => {
+          const relatedIndex = updatedCheckboxes.findIndex((item) =>
+            item.value.includes(relatedValue)
+          );
+          if (relatedIndex !== -1) {
+            updatedCheckboxes.splice(relatedIndex, 1);
+            console.log(`Unchecked: ${relatedValue}`);
+          }
+        });
+      }
       
       if (value === "Product List - View") {
         ["Product List - Add", "Product List - Edit", "Product List - Delete"].forEach((relatedValue) => {
@@ -400,6 +412,10 @@ function EditRole() {
       "User Access Role - Edit",
       "User Access Role - Delete",
       "User Access Role - View",
+      "Department - Add",
+      "Department - Edit",
+      "Department - Delete",
+      "Department - View",
       "Product List - Add",
       "Product List - Edit",
       "Product List - Delete",
@@ -490,6 +506,12 @@ function EditRole() {
   const UserRoleAdd = selectedCheckboxes.some((item) => item.value === "User Access Role - Add") && !UserRoleDisable;
   const UserRoleEdit = selectedCheckboxes.some((item) => item.value === "User Access Role - Edit") && !UserRoleDisable;
   const UserRoleDelete = selectedCheckboxes.some((item) => item.value === "User Access Role - Delete") && !UserRoleDisable;
+
+  const Department = selectedCheckboxes.find((item) => item.value === "Department - View");
+  const DepartmentDisable = !Department;
+  const DepartmentAdd = selectedCheckboxes.some((item) => item.value === "Department - Add",) && !DepartmentDisable;
+  const DepartmentEdit = selectedCheckboxes.some((item) => item.value === "Department - Edit") && !DepartmentDisable;
+  const DepartmentDelete = selectedCheckboxes.some((item) => item.value === "Department - Delete") && !DepartmentDisable;
 
   const ProductList = selectedCheckboxes.some((item) => item.value === "Product List - View");
   const ProductListDisable = !ProductList;
@@ -998,6 +1020,134 @@ function EditRole() {
                             <label
                               className="p-3"
                               htmlFor="User Access Role - Reject"></label>
+                          </div>
+                        </td>
+
+
+                      </tr>
+
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}>
+                              Department
+                          </td>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Department - View"
+                              name="vehicle1"
+                              value="Department - View"
+                              checked={Department}
+                              onChange={() =>
+                                handleCheckboxChange("Department - View")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Department - View"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Department - Add"
+                              name="vehicle1"
+                              value="Department - Add"
+                              disabled={DepartmentDisable}
+                              checked={DepartmentAdd}
+                              onChange={() =>
+                                handleCheckboxChange("Department - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Department - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Department - Edit"
+                              name="vehicle1"
+                              value="Department - Edit"
+                              disabled={DepartmentDisable}
+                              checked={DepartmentEdit}
+                              onChange={() =>
+                                handleCheckboxChange("Department - Edit")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Department - Edit"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Department - Delete"
+                              name="vehicle1"
+                              value="Department - Delete"
+                              disabled={DepartmentDisable}
+                              checked={DepartmentDelete}
+                              onChange={() =>
+                                handleCheckboxChange("Department - Delete")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Department - Delete"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Department - Aprroval"
+                              name="vehicle1"
+                              value="Department - Aprroval"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Department - Aprroval"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Department - Aprroval")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Department - Aprroval"></label>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Department - Reject"
+                              name="vehicle1"
+                              value="Department - Reject"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Department - Reject"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Department - Reject")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Department - Reject"></label>
                           </div>
                         </td>
 

@@ -292,7 +292,8 @@ router.route('/save').post(async (req, res) => {
  
 
   try {
-    const { id, productArrays, userId } = req.body;
+    const { id, productArrays, userId, prNum } = req.body;
+    // const { id, productArrays,  } = req.body;
   
     // Loop through the productArrays
     Object.entries(productArrays).forEach(([supplierCode, products]) => {
@@ -322,7 +323,7 @@ router.route('/save').post(async (req, res) => {
       const mailOptions = {
         from: gmailEmail,
         to: products[0].supp_email, // Use the email of the first product's supplier
-        subject: 'Price Inquiry',
+        subject: `PR number: ${prNum}. Price Inquiry`,
         text: 'I trust this email finds you well. We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached CSV file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.',
         attachments: [
           {

@@ -259,12 +259,19 @@ function PurchaseRequest({ authrztn }) {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
+//WAG e delete
+  // useEffect(() => {
+  //   if ($("#order-listing").length > 0 && allPR.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
+  //     $('#order-listing').DataTable({
+  //       "order": [[ $('.pr-column').index(), 'desc' ]]
+  //     });
+  //   }
+  // }, [allPR]);
 
   useEffect(() => {
-    if ($("#order-listing").length > 0 && allPR.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
-      $('#order-listing').DataTable({
-        "order": [[ $('.pr-column').index(), 'desc' ]]
-      });
+    // Initialize DataTable when role data is available
+    if ($('#order-listing').length > 0 && allPR.length > 0) {
+      $('#order-listing').DataTable();
     }
   }, [allPR]);
 
@@ -423,10 +430,10 @@ function PurchaseRequest({ authrztn }) {
                 <thead>
                   <tr>
                     <th className="tableh"></th>
-                    <th className="pr-column">PR #.</th>
+                    <th className="tableh">PR #.</th>
                     <th className="tableh">Requestor</th>
                     <th className="tableh">Status</th>
-                    <th className="tableh">Date Created</th>
+                    <th className="pr-column">Date Created</th>
                     <th className="tableh">Remarks</th>
                     <th className="tableh">Action</th>
                   </tr>
