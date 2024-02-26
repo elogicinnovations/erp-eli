@@ -431,6 +431,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     else{
 
       axios.post(`${BASE_URL}/PR_PO/save`, {
+        prNum,
         productArrays,   
         id: id, 
       })

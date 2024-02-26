@@ -15,6 +15,7 @@ import Rbac from "./modules/Administrator/sub-modules/UserMasterData/UserRole"
 import CreateRole from "./modules/Administrator/sub-modules/UserMasterData/CreateRole"
 import EditRole from "./modules/Administrator/sub-modules/UserMasterData/EditRole"
 import MasterList from "./modules/Administrator/sub-modules/UserMasterData/MasterList"
+import Department from "./modules/Administrator/sub-modules/UserMasterData/Department/department.jsx"
 import ProductCategory from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductCategory"
 import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer"
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation"
@@ -160,6 +161,15 @@ function App() {
                 {
                   (authrztn) => (
                     <MasterList authrztn={authrztn}/>
+                  )
+                }
+                </Roles>
+              }/>
+               <Route path="/department" element={
+                <Roles>
+                {
+                  (authrztn) => (
+                    <Department authrztn={authrztn}/>
                   )
                 }
                 </Roles>

@@ -193,7 +193,7 @@ useEffect(() => {
       if (approve) {
         try {       
             const  response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
-             id, POarray
+             id, POarray, prNum
            });
            
            if (response.status === 200) {

@@ -56,6 +56,10 @@ const MasterList = sequelize.define("masterlist", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  department_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });
 
 module.exports = MasterList;
