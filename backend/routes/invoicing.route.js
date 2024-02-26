@@ -4,7 +4,7 @@ const sequelize = require('../db/config/sequelize.config');
 const { PR_PO, PR_PO_asmbly, PR_PO_spare, PR_PO_subpart, 
         PR, PR_history, Assembly_Supplier, Assembly, Product, 
         SparePart, SubPart, ProductTAGSupplier, Subpart_supplier,
-        SparePart_Supplier, Supplier
+        SparePart_Supplier, Supplier, Activity_Log
       } = require('../db/models/associations')
 const session = require('express-session')
 const { Parser } = require('json2csv');
@@ -36,6 +36,7 @@ router.route('/save').post(async (req, res) => {
   try {
     const arrayPO = req.body.arrayPO
     const PR_id = req.body.pr_id
+    const userId = req.body.userId
     for (const parent of arrayPO) {
       const po_number = parent.title
 
@@ -94,6 +95,19 @@ router.route('/save').post(async (req, res) => {
 
 
       if(PR_historical){
+        const forPR = await PR.findOne({
+          where: {
+            id: PR_id,
+          },
+        });
+
+        const PRnum = forPR.pr_num;
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Purchase Request is For-Approval (PO) with pr number ${PRnum}`,
+        });
+
         return res.status(200).json()
       }    
     }

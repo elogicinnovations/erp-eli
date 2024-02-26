@@ -273,7 +273,7 @@ router.route('/create').post(async (req, res) => {
 
 router.route('/approve').post(async (req, res) => {
   try {
-     const {id} = req.query;
+     const {id, userId} = req.query;
       
         const PR_newData = await PR.update({
           status: 'For-Canvassing'
@@ -287,7 +287,20 @@ router.route('/approve').post(async (req, res) => {
           status: 'For-Canvassing',
         });
 
-      //  return console.log(id)
+        if(PR_historical) {
+          const forPR = await PR.findOne({
+            where: {
+              id: id,
+            },
+          });
+
+          const PRnum = forPR.pr_num;
+
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Purchase Request has been Approved with pr number ${PRnum}`,
+        });
+        }
 
         
       res.status(200).json();
@@ -328,6 +341,7 @@ router.route('/update').post(async (req, res) => {
             pr_id: id
           }
         })
+
         if(deletePR_prod){
           for (const prod of addProductbackend) {
             const prod_value = prod.value;
@@ -345,9 +359,6 @@ router.route('/update').post(async (req, res) => {
                 description: prod_desc,              
               });
             } 
-             
-
-            
           }
         }
 
@@ -505,13 +516,13 @@ router.route('/cancel_PO').put(async (req, res) => {
     await PR_PO.destroy({
       where : {
         pr_id: row_id
-      }
+      },
     })
 
     await PR_PO_asmbly.destroy({
       where : {
         pr_id: row_id
-      }
+      },
     })
 
     await PR_PO_spare.destroy({
@@ -525,7 +536,7 @@ router.route('/cancel_PO').put(async (req, res) => {
         pr_id: row_id
       }
     })
-  
+
         res.status(200).json();
       
     } catch (err) {

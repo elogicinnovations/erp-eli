@@ -50,18 +50,12 @@ function PurchaseRequest({ authrztn }) {
   const [allPR, setAllPR] = useState([]);
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
-  // const [Fname, setFname] = useState('');
-  // const [username, setUsername] = useState('');
-  // const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
     if(typeof token === 'string'){
     var decoded = jwtDecode(token);
-    // setUsername(decoded.username);
-    // setFname(decoded.Fname);
-    // setUserRole(decoded.userrole);
     setuserId(decoded.id);
     }
   }

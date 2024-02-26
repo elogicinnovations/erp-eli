@@ -54,7 +54,7 @@ const Header = () => {
     const handleLogout = async () => {
       swal({
         title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this user file!",
+        text: "Once you log out, you will redirect on login",
         icon: "warning",
         buttons: true,
         dangerMode: true,

@@ -22,8 +22,8 @@ import {
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
-
 import * as $ from 'jquery';
+import { jwtDecode } from "jwt-decode";
 
 function PurchaseRequestPreview() {
   const { id } = useParams();
@@ -55,6 +55,25 @@ function PurchaseRequestPreview() {
   const [rejustifyRemarks, setRejustifyRemarks] = useState('');
 
   const [ProductQuant, setProductQuant] = useState([]);
+  // const [Fname, setFname] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    // setUsername(decoded.username);
+    // setFname(decoded.Fname);
+    // setUserRole(decoded.userrole);
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
@@ -85,6 +104,7 @@ function PurchaseRequestPreview() {
           axios.post(`${BASE_URL}/PR/approve`, null, {
             params:{
               id: id,
+              userId,
             }
              
           })
@@ -135,11 +155,12 @@ function PurchaseRequestPreview() {
       formData.append('remarks', rejustifyRemarks);
       formData.append('id', id);
 
-
-      // Adjust the URL based on your backend server
       const response = await axios.post(BASE_URL + `/PR_rejustify/rejustify`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+        },
+        params: {
+          userId: userId,
         },
       });
 

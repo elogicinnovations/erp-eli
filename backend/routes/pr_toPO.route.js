@@ -22,7 +22,8 @@ const { PR, PR_PO,
         Inventory,
         Inventory_Assembly,
         Inventory_Spare,
-        Inventory_Subpart
+        Inventory_Subpart,
+        Activity_Log,
       } = require('../db/models/associations')
 const session = require('express-session');
 
@@ -291,7 +292,7 @@ router.route('/save').post(async (req, res) => {
  
 
   try {
-    const { id, productArrays } = req.body;
+    const { id, productArrays, userId } = req.body;
   
     // Loop through the productArrays
     Object.entries(productArrays).forEach(([supplierCode, products]) => {
@@ -352,9 +353,23 @@ router.route('/save').post(async (req, res) => {
         pr_id: id,
         status: 'On-Canvass',
       });
+      
 
 
       if(PR_historical){
+        const forPR = await PR.findOne({
+          where: {
+            id: id,
+          },
+        });
+
+        const PRnum = forPR.pr_num;
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Purchase Request has been On-Canvass with pr number ${PRnum}`,
+      });
+
         return res.status(200).json()
       }    
     };

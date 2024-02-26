@@ -22,8 +22,8 @@ import {
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
-
 import * as $ from "jquery";
+import { jwtDecode } from "jwt-decode";
 
 function PurchaseOrderListPreview() {
   const { id } = useParams();
@@ -37,26 +37,19 @@ function PurchaseOrderListPreview() {
 
   const [validated, setValidated] = useState(false);
   const [editMode, setEditMode] = useState({});
+  const [userId, setuserId] = useState('');
 
-  // const [Fname, setFname] = useState('');
-  // const [username, setUsername] = useState('');
-  // const [userRole, setUserRole] = useState('');
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setuserId(decoded.id);
+    }
+  }
 
-  // const decodeToken = () => {
-  //   var token = localStorage.getItem('accessToken');
-  //   if(typeof token === 'string'){
-  //   var decoded = jwtDecode(token);
-  //   setUsername(decoded.username);
-  //   setFname(decoded.Fname)
-  //   setUserRole(decoded.userrole)
-  //   console.log(decoded);
-  //   }
-  // }
-
-  //    useEffect(() => {
-  //     decodeToken();
-  //   }, [])
-  //para sa subpart data na e canvass
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   //para sa assembly data na e canvass
 
@@ -688,6 +681,7 @@ function PurchaseOrderListPreview() {
         .post(`${BASE_URL}/invoice/save`, {
           arrayPO: addPObackend,
           pr_id: id,
+          userId,
         })
         .then((res) => {
           // console.log(res);

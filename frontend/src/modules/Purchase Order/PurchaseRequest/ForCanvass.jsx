@@ -22,6 +22,7 @@ import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
 
 import * as $ from 'jquery';
+import { jwtDecode } from "jwt-decode";
 
 function PurchaseOrderListPreview() {
   const { id } = useParams();
@@ -109,13 +110,23 @@ const [selected_subpart, setSelected_subpart] = useState({
   supplier_Code: '',
   supplier_name: '',
 });
+const [showModal, setShowModal] = useState(false) //for product modal
+const [showModalAs, setShowModalAS] = useState(false) //for assembly modal
+const [showModalSpare, setShowModalspare] = useState(false) //for spare modal
+const [showModalSubpart, setShowModalSubpart] = useState(false) //for assembly modal
+const [userId, setuserId] = useState('');
 
+const decodeToken = () => {
+  var token = localStorage.getItem('accessToken');
+  if(typeof token === 'string'){
+  var decoded = jwtDecode(token);
+  setuserId(decoded.id);
+  }
+}
 
-
-  const [showModal, setShowModal] = useState(false) //for product modal
-  const [showModalAs, setShowModalAS] = useState(false) //for assembly modal
-  const [showModalSpare, setShowModalspare] = useState(false) //for spare modal
-  const [showModalSubpart, setShowModalSubpart] = useState(false) //for assembly modal
+useEffect(() => {
+  decodeToken();
+}, [])
 
 
 
@@ -433,6 +444,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
       axios.post(`${BASE_URL}/PR_PO/save`, {
         productArrays,   
         id: id, 
+        userId,
       })
       .then((res) => {
         console.log(res);
