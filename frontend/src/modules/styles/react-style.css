@@ -3390,3 +3390,215 @@ div#ordered-listing_length label {
   padding-top: 10px;
   overflow-y: auto;
 }
+
+.receive-container{
+  border: 1px solid #DEE2E6;
+  border-radius: 4px;
+  height: 150px;
+}
+
+.PR-num {
+  padding: 4px;
+  width: 17%;
+  height: 25px;
+  background-color: #ECECEC;
+}
+
+.PR-num p {
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  color: #000000;
+}
+
+.createdNdate-container{
+  display: flex;
+  height: 60px;
+}
+
+.statusanddate-content{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.status-receive{
+  width: 50%;
+}
+
+.status-receive p{
+  color: #000000;
+  font-size: 13px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.request-date{
+  padding-top: 10px;
+  padding-left: 98px;
+  width: 50%;
+
+}
+
+.request-date p{
+  color: #000000;
+  font-size: 13px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+
+.destination-container{
+  height: auto;
+}
+
+.contentof-request{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.destination-content{
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
+.destination-content p{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 13px;
+  color: #000000;
+}
+
+.requestdiv{
+  padding-right: 10px;
+  padding-top: 5px;
+}
+
+.requestdiv p{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 13px;
+  color: #000000;
+}
+
+.receivemanage-main-container{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5%;
+  overflow-y: auto;
+}
+
+.receive-supplier-container{
+  width: 100%;
+  height: 130px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #DAE2E2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+
+.receive-supplier-content{
+  width: 100%;
+  height: 100%;
+}
+
+.receivePO-num {
+  padding: 4px;
+  width: 25%;
+  height: 25px;
+  background-color: #ECECEC;
+}
+
+.receivePO-num p {
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  color: #000000;
+}
+
+.mid-receive-contents{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.first-div-content{
+  flex: 1;
+  border-top: 1px solid #DEE2E6;
+  border-right: 1px solid #DEE2E6;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.code-supp-div{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.code-supp-data{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+  color: #0091ff;
+}
+
+.second-div-content{
+  flex: 1;
+  border-top: 1px solid #DEE2E6;
+  border-right: 1px solid #DEE2E6;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.name-supp-div{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.name-supp-data{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+  color: #0091ff;
+}
+
+
+.third-div-content{
+  flex: 1;
+  border-top: 1px solid #DEE2E6;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-supp-div{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+  color: #000000;
+}
+
+.button-supp-data{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+}
+
+.button-supp-data button{
+  padding: 7px 15px 7px 15px;
+  font-size: 15px;
+}
+

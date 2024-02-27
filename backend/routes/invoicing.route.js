@@ -256,7 +256,7 @@ router.route('/save').post(async (req, res) => {
 
   router.route('/approve_PO').post(async (req, res) => {
     try {
-      const { id, POarray, prNum } = req.body;
+      const { id, POarray, prNum, userId } = req.body;
       
       // Create an object to store items for each supplier
       const itemsBySupplier = {};
@@ -336,7 +336,22 @@ router.route('/save').post(async (req, res) => {
             status: 'To-Receive',
           });
 
+          if(PR_newData){
+            const forPR = await PR.findOne({
+              where: {
+                id: id,
+              },
+            });
+    
+            const PRnum = forPR.pr_num;
+    
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `The Purchase Order is being To-Receive with pr number ${PRnum}`,
+            });
+          }
         // return console.log(id)
+
 
         res.status(200).json();
   

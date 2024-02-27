@@ -31,21 +31,22 @@ function POReceiving() {
   const [remarks, setRemarks] = useState('');
   const [status, setStatus] = useState('');
 
-//   const [validated, setValidated] = useState(false);
+  //const [validated, setValidated] = useState(false);
   const [products, setProducts] = useState([]);
   const [assembly, setAssembly] = useState([]);
   const [spare, setSpare] = useState([]);
   const [subpart, setSubpart] = useState([]);
-// for remarks 
+
+  //for remarks 
   const [files, setFiles] = useState([]);
   const [rejustifyRemarks, setRejustifyRemarks] = useState('');
 
-const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-const handleShow = () => setShowModal(true);
-const handleClose = () => {
-  setShowModal(false);
-};
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => {
+    setShowModal(false);
+  };
 
 const [POarray, setPOarray] = useState([]);
 useEffect(() => {

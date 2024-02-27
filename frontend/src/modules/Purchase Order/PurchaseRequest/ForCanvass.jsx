@@ -42,18 +42,6 @@ function PurchaseOrderListPreview() {
 
   const [addSubpartPO, setAddSubpartPO] = useState([]);
   const [quantityInputsSubpart, setQuantityInputSubpart] = useState({});
-
-
-
-
-
-  //para sa assembly data na e canvass
-
-
- 
-
-
-   // for PRoduct canvassing
   //for adding the data from table canvass to table PO
   const [products, setProducts] = useState([]);
   const [suppProducts, setSuppProducts] = useState([]);

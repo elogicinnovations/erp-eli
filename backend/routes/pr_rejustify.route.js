@@ -72,16 +72,13 @@ router.post('/rejustify', upload.array('files'), async (req, res) => {
 
   router.post('/rejustify_for_PO', upload.array('files'), async (req, res) => {
     try {
-      const { id, remarks } = req.body;
-  
-      // Handle the uploaded files
+      const { id, remarks, userId } = req.body;
       const fileData = req.files.map((file) => file.buffer);
-  
-      // Insert file data and additional data into the database using Sequelize
+
       const result = await PR_Rejustify.create({
         file: Buffer.concat(fileData),
-        pr_id: id,  // Assuming 'id' is a column in your model
-        remarks: remarks,  // Assuming 'remarks' is a column in your model
+        pr_id: id,
+        remarks: remarks,
       });
 
       
@@ -98,6 +95,21 @@ router.post('/rejustify', upload.array('files'), async (req, res) => {
       {
         where: { id }
       }); 
+
+      if(PR_newData){
+        const forPR = await PR.findOne({
+          where: {
+            id: id,
+          },
+        });
+
+        const PRnum = forPR.pr_num;
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `The Purchase Order has been Rejustified with pr number ${PRnum}`,
+        });
+      }
   
       console.log('File data and additional data inserted successfully');
       res.status(200).json();

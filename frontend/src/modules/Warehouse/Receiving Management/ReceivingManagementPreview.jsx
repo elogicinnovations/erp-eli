@@ -29,6 +29,7 @@ import { pink } from "@mui/material/colors";
 import Checkbox from "@mui/material/Checkbox";
 import { fontStyle } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
+import { jwtDecode } from "jwt-decode";
 
 function ReceivingManagementPreview({ authrztn }) {
   const label_qa = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -45,6 +46,19 @@ function ReceivingManagementPreview({ authrztn }) {
   const [dateCreated, setDateCreated] = useState();
 
   const [show, setShow] = useState(false);
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setuserId(decoded.id);
+    }
+  }
+  
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const handleClose = () => {
     setInputValues({});
@@ -548,61 +562,68 @@ function ReceivingManagementPreview({ authrztn }) {
                 }}
               ></span>
             </div>
-            <div className="row">
-                <div className="col-6">
-                <Form.Label style={{ fontSize: "20px" }}>Information: </Form.Label>
-                <div className="row receivingbox  mt-3">
-             
-             <div className="row" style={{ padding: "20px" }}>
-               <div className="col-6">
-                 <div className="ware">Destination Warehouse</div>
-                 <div className="pr-no">
-                   PR #: <p1>{prNumber}</p1>
-                 </div>
-                 <div className="res-warehouse">Agusan Del Sur</div>
-               </div>
-               <div className="col-4">
-                 <div className="created">
-                   Created date: <p1>{formatDatetime(dateCreated)}</p1>
-                 </div>
-                 <div className="created mt-3">
-                   Created By: <p1>Jerome De Guzman</p1>
-                 </div>
-               </div>
-               <div className="col-2">
-                 <div className="status">
-                   <Circle
-                     weight="fill"
-                     size={17}
-                     color="green"
-                     style={{ margin: "10px" }}
-                   />{" "}
-                   {status}
-                 </div>
-               </div>
-             </div>
-           </div>
+              
+              <div className="row">
+                <div className="col-6 ">
+                <Form.Label style={{ fontSize: "20px", fontFamily: 'Poppins, Source Sans Pro' }}>Information </Form.Label>
+                  <div className="receive-container">
+                      <div className="PR-num">
+                          <p>{`PR #: ${prNumber}`}</p>
+                        </div>
+
+                        <div className="createdNdate-container">
+                          <div className="statusanddate-content">
+                            <div className="status-receive">
+                              <div style={{ display: "flex", alignItems: "center" }}>
+                                  <Circle
+                                    weight="fill"
+                                    size={17}
+                                    color="green"
+                                    style={{ margin: "10px" }}
+                                  />
+                                  <p style={{ margin: "10px" }}>{status}</p>
+                                </div>
+                              </div>
+                              <div className="request-date">
+                                <p>{`Requested date: ${formatDatetime(dateCreated)}`}</p>
+                              </div>
+                          </div>
+                        </div>
+
+                      <div className="destination-container">
+                        <div className="contentof-request">
+                          <div className="destination-content">
+                            <p>{`To be used for: ${usedFor}`}</p>
+                            </div>
+
+                            <div className="requestdiv">
+                              <p>{`Requested by:`}</p>
+                            </div>
+                        </div>
+                      </div>
+
+                  </div>
                 </div>
                 <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-              <Form.Label style={{ fontSize: "20px", marginBottom: '15px' }}>Remarks: </Form.Label>
-              <Form.Control
-                onChange={(e) => setRemarks(e.target.value)}
-               
-                placeholder="Enter details name"
-                value={remarks}
-                as="textarea"
-                rows={3}
-                style={{
-                  fontFamily: "Poppins, Source Sans Pro",
-                  fontSize: "16px",
-                  height: "140px",
-                  maxHeight: "140px",
-                  resize: "none",
-                  overflowY: "auto",
-                }}
-              />
-            </Form.Group>
+                  <Form.Label style={{ fontSize: "20px", fontFamily: 'Poppins, Source Sans Pro' }}>Remarks </Form.Label>
+                  <Form.Control
+                    onChange={(e) => setRemarks(e.target.value)}
+                  
+                    placeholder="Enter details name"
+                    value={remarks}
+                    as="textarea"
+                    rows={3}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "150px",
+                      maxHeight: "150px",
+                      resize: "none",
+                      overflowY: "auto",
+                    }}
+                  />
+                </Form.Group>
                 </div>
               </div>
            
@@ -630,32 +651,62 @@ function ReceivingManagementPreview({ authrztn }) {
                 }}
               ></span>
             </div>
-            <div className="canvass-main-container">
+
+            <div className="receivemanage-main-container">
               {POarray.map((group) => (
-                <div key={group.title} className="canvass-supplier-container">
-                  <div className="canvass-supplier-content">
-                    <div className="PO-num">
-                      <p>{`PO #: ${group.title}`}</p>
-                    </div>
+                <div className="receive-supplier-container">
+                    
+                      <div className="receive-supplier-content">
+                          <div className="receivePO-num">
+                            <p>{`PO #: ${group.title}`}</p>
+                          </div>
+                          {group.items.length > 0 && (
+                            <div className="mid-receive-contents">
+                                <div className="first-div-content">
+                                      <div className="code-supp-div">
+                                        {`Supplier Code`}
+                                      </div>
+                                      <div className="code-supp-data">
+                                        {group.items[0].suppliers.supplier_code}
+                                      </div>
+                                  </div>
 
-                    {group.items.length > 0 && (
-                      <div className="canvass-title">
-                        <div className="supplier-info">
-                          <p>{`Supplier : ${group.items[0].suppliers.supplier_code} - ${group.items[0].suppliers.supplier_name}`}</p>
-                        </div>
+                                  <div className="second-div-content">
+                                      <div className="name-supp-div">
+                                          {`Supplier Name`}
+                                      </div>
+                                      <div className="name-supp-data">
+                                          {group.items[0].suppliers.supplier_name}
+                                      </div>
+                                  </div>
+
+                                  <div className="third-div-content">
+                                      <div className="button-supp-data">
+                                        <button
+                                            className="btn btn-warning"
+                                            onClick={() => handleReceived(group.title)}
+                                          >
+                                            Receive
+                                          </button>
+                                      </div>
+                                  </div>
+                            </div>
+                            
+                          )}
                       </div>
-                    )}
-                    <button
-                      className="btn btn-success fs-4"
-                      onClick={() => handleReceived(group.title)}
-                    >
-                      Receive
-                    </button>
-                  </div>
                 </div>
-              ))}
+                ))}
+            </div>
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
+        )}
+      </div>
 
-              <Modal
+          <Modal
                 show={show}
                 onHide={handleClose}
                 backdrop="static"
@@ -1060,15 +1111,6 @@ function ReceivingManagementPreview({ authrztn }) {
                   </Modal.Footer>
                 </Form>
               </Modal>
-            </div>
-          </div>
-        ) : (
-          <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
-            <h3>You don't have access to this function.</h3>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
