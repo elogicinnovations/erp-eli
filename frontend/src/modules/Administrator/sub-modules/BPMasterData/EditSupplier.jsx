@@ -5,8 +5,8 @@ import axios from "axios";
 import BASE_URL from "../../../../assets/global/url";
 import swal from "sweetalert";
 import Container from "react-bootstrap/Container";
-import ReactLoading from 'react-loading';
-import NoAccess from '../../../../assets/image/NoAccess.png';
+import ReactLoading from "react-loading";
+import NoAccess from "../../../../assets/image/NoAccess.png";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -17,7 +17,7 @@ import warehouse from "../../../../assets/global/warehouse";
 import { ArrowCircleLeft } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
 
-function EditSupplier({authrztn}) {
+function EditSupplier({ authrztn }) {
   const [validated, setValidated] = useState(false);
 
   const [suppName, setsuppName] = useState("");
@@ -38,25 +38,25 @@ function EditSupplier({authrztn}) {
   const [checkedStatus, setcheckedStatus] = useState();
 
   const [isChecked, setIsChecked] = useState(false);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userId, setuserId] = useState('');
+  const [Fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   // Handle the checkbox change event
   const handleCheckboxChange = (event) => {
@@ -101,48 +101,48 @@ function EditSupplier({authrztn}) {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/supplier/fetchTableEdit", {
-        params: {
-          id: id,
-        },
-      })
-      //   .then(res => setsupplier(res.data))
-      .then((res) => {
-        setsuppName(res.data[0].supplier_name);
-        setsuppCode(res.data[0].supplier_code);
-        setsuppTin(res.data[0].supplier_tin);
-        setSelectedCountry(res.data[0].supplier_country);
-        setsuppEmail(res.data[0].supplier_email);
-        setsuppAdd(res.data[0].supplier_address);
-        setsuppCity(res.data[0].supplier_city);
-        setsuppPcode(res.data[0].supplier_postcode);
-        setsuppCperson(res.data[0].supplier_contactPerson);
-        setsuppCnum(res.data[0].supplier_number);
-        setsuppTelNum(res.data[0].supplier_Telnumber);
-        setsuppTerms(res.data[0].supplier_terms);
-        setsuppVat(res.data[0].supplier_vat);
-        setsuppReceving(res.data[0].supplier_receiving);
-        setIsLoading(false);
-        // setsuppStatus(res.data[0].supplier_status);
+      axios
+        .get(BASE_URL + "/supplier/fetchTableEdit", {
+          params: {
+            id: id,
+          },
+        })
+        //   .then(res => setsupplier(res.data))
+        .then((res) => {
+          setsuppName(res.data[0].supplier_name);
+          setsuppCode(res.data[0].supplier_code);
+          setsuppTin(res.data[0].supplier_tin);
+          setSelectedCountry(res.data[0].supplier_country);
+          setsuppEmail(res.data[0].supplier_email);
+          setsuppAdd(res.data[0].supplier_address);
+          setsuppCity(res.data[0].supplier_city);
+          setsuppPcode(res.data[0].supplier_postcode);
+          setsuppCperson(res.data[0].supplier_contactPerson);
+          setsuppCnum(res.data[0].supplier_number);
+          setsuppTelNum(res.data[0].supplier_Telnumber);
+          setsuppTerms(res.data[0].supplier_terms);
+          setsuppVat(res.data[0].supplier_vat);
+          setsuppReceving(res.data[0].supplier_receiving);
+          setIsLoading(false);
+          // setsuppStatus(res.data[0].supplier_status);
 
-        // Check if the status is "Active" and set suppStatus accordingly
-        if (res.data[0].supplier_status === "Active") {
-          setcheckedStatus(true);
-          setsuppStatus("Active"); // Check the checkbox
-        } else if (res.data[0].supplier_status === "Inactive") {
-          setcheckedStatus(false);
-          setsuppStatus("Inactive"); // Uncheck the checkbox
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
+          // Check if the status is "Active" and set suppStatus accordingly
+          if (res.data[0].supplier_status === "Active") {
+            setcheckedStatus(true);
+            setsuppStatus("Active"); // Check the checkbox
+          } else if (res.data[0].supplier_status === "Inactive") {
+            setcheckedStatus(false);
+            setsuppStatus("Inactive"); // Uncheck the checkbox
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }, 1000);
 
-return () => clearTimeout(delay);
-}, []);
+    return () => clearTimeout(delay);
+  }, []);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -224,342 +224,358 @@ return () => clearTimeout(delay);
             <Sidebar />
         </div> */}
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-        authrztn.includes('Supplier - Edit') ? (
-        <div className="right-body-contentss">
-          <div
-            className="create-head-back"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderBottom: "1px solid #5A5D5A",
-              padding: 15,
-            }}>
-            <Link style={{ fontSize: "1.5rem" }} to="/Supplier">
-              <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
-            </Link>
-            <h1>Supplier</h1>
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
           </div>
+        ) : authrztn.includes("Supplier - Edit") ? (
+          <div className="right-body-contentss">
+            <div
+              className="create-head-back"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                borderBottom: "1px solid #5A5D5A",
+                padding: 15,
+              }}
+            >
+              <Link style={{ fontSize: "1.5rem" }} to="/Supplier">
+                <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+              </Link>
+              <h1>Supplier</h1>
+            </div>
 
-          <Container className="mt-5">
-            <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-              <Row>
-                <Col>
-                  <label style={{ fontSize: 30, fontWeight: "bold" }}>
-                    Details
-                  </label>
-                </Col>
+            <Container className="mt-5">
+              <Form
+                noValidate
+                validated={validated}
+                onSubmit={handleFormSubmit}
+              >
+                <Row>
+                  <Col>
+                    <label style={{ fontSize: 30, fontWeight: "bold" }}>
+                      Details
+                    </label>
+                  </Col>
 
-                <Col>
-                  <div className="form-group d-flex flex-row justify-content-center align-items-center">
-                    <React.Fragment>
-                      <label
-                        className="userstatus"
-                        style={{ fontSize: 15, marginRight: 10 }}>
-                        Supplier Status
-                      </label>
-                      <input
-                        type="checkbox"
-                        name="cstatus"
-                        className="toggle-switch"
-                        style={{ fontSize: 20 }}
-                        onClick={handleActiveStatus}
-                        defaultChecked={checkedStatus}
-                        // checked={checkedStatus}
-                      />
-                    </React.Fragment>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
-                  <Form.Label style={{ fontSize: 20 }}>
-                    Supplier Name:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    className="p-3  fs-3"
-                    placeholder="Supplier Name"
-                    maxLength={80}
-                    value={suppName}
-                    onChange={(e) => setsuppName(e.target.value)}
-                    required
-                  />
-                </Col>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Code:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    onChange={(e) => setsuppCode(e.target.value)}
-                    maxLength={10}
-                    value={suppCode}
-                    readOnly
-                    placeholder="Supplier Code"
-                  />
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    TIN:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3  fs-3"
-                    type="text"
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(/\D/, ""))
-                    }
-                    maxLength={30}
-                    onChange={(e) => setsuppTin(e.target.value)}
-                    value={suppTin}
-                    placeholder="TIN"
-                  />
-                </Col>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Terms:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    type="text"
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(/\D/, ""))
-                    }
-                    maxLength={4}
-                    onChange={(e) => setsuppTerms(e.target.value)}
-                    value={suppTerms}
-                    placeholder="0"
-                  />
-                </Col>
-              </Row>
-
-              <label style={{ fontSize: 30, fontWeight: "bold" }}>
-                Location Info
-              </label>
-
-              <Row>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Country:{" "}
-                  </label>
-                  <Form.Select
-                    aria-label=""
-                    required
-                    value={selectedCountry}
-                    onChange={handleChange}
-                    style={{ fontSize: 15 }}>
-                    {countries.map((country) => (
-                      <option key={country.value} value={country.value}>
-                        {country.label}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Col>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Address:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3  fs-3"
-                    onChange={(e) => setsuppAdd(e.target.value)}
-                    required
-                    placeholder="Enter Address..."
-                    value={suppAdd}
-                  />
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    City:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    maxLength={80}
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(
-                        /[^A-Za-z.'\-,\s]/g,
-                        ""
-                      ))
-                    }
-                    onChange={(e) => setsuppCity(e.target.value)}
-                    value={suppCity}
-                    required
-                    placeholder="City"
-                  />
-                </Col>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Zipcode/Postcode:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    type="text"
-                    maxLength={10}
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(/\D/, ""))
-                    }
-                    onChange={(e) => setsuppPcode(e.target.value)}
-                    required
-                    value={suppPcode}
-                    placeholder="0000"
-                  />
-                </Col>
-              </Row>
-
-              <label style={{ fontSize: 30, fontWeight: "bold" }}>
-                Contact Details
-              </label>
-
-              <Row>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Contact Person:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3  fs-3"
-                    maxLength={80}
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(
-                        /[^A-Za-z.'\-,\s]/g,
-                        ""
-                      ))
-                    }
-                    onChange={(e) => setsuppCperson(e.target.value)}
-                    required
-                    value={suppCperson}
-                    placeholder="Contact Person"
-                  />
-                </Col>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Mobile Number:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    type="text"
-                    maxLength={15}
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(/\D/, ""))
-                    }
-                    onChange={(e) => setsuppCnum(e.target.value)}
-                    required
-                    value={suppCnum}
-                    placeholder="09xxxxxxxx"
-                  />
-                </Col>
-              </Row>
-
-              <Row>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Tel. #{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3  fs-3"
-                    type="text"
-                    maxLength={15}
-                    onInput={(e) =>
-                      (e.target.value = e.target.value.replace(/\D/, ""))
-                    }
-                    onChange={(e) => setsuppTelNum(e.target.value)}
-                    placeholder="xxxxxxxxx"
-                    value={suppTelNum}
-                  />
-                </Col>
-                <Col>
-                  <label
-                    htmlFor=""
-                    className="label-head"
-                    style={{ fontSize: 20 }}>
-                    Email:{" "}
-                  </label>
-                  <Form.Control
-                    className="p-3 fs-3"
-                    type="email"
-                    onChange={(e) => setsuppEmail(e.target.value)}
-                    required
-                    placeholder="Enter your email..."
-                    value={suppEmail}
-                  />
-                </Col>
+                  <Col>
+                    <div className="form-group d-flex flex-row justify-content-center align-items-center">
+                      <React.Fragment>
+                        <label
+                          className="userstatus"
+                          style={{ fontSize: 15, marginRight: 10 }}
+                        >
+                          Supplier Status
+                        </label>
+                        <input
+                          type="checkbox"
+                          name="cstatus"
+                          className="toggle-switch"
+                          style={{ fontSize: 20 }}
+                          onClick={handleActiveStatus}
+                          defaultChecked={checkedStatus}
+                          // checked={checkedStatus}
+                        />
+                      </React.Fragment>
+                    </div>
+                  </Col>
+                </Row>
 
                 <Row>
                   <Col>
-                    <div className="d-flex flex-direction-row">
-                      <label
-                        htmlFor=""
-                        className="label-head"
-                        style={{ fontSize: 20 }}>
-                        Vatable
-                      </label>
-                      <Form.Control
-                        className="p-3  fs-3"
-                        value={suppVat}
-                        style={{ width: "20%", marginLeft: 50 }}
-                        type="text"
-                        maxLength={3}
-                        onInput={(e) =>
-                          (e.target.value = e.target.value.replace(/\D/, ""))
-                        }
-                        onChange={(e) => setsuppVat(e.target.value)}
-                        placeholder="0%"
-                      />
-                    </div>
+                    <Form.Label style={{ fontSize: 20 }}>
+                      Supplier Name:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      className="p-3  fs-3"
+                      placeholder="Supplier Name"
+                      maxLength={80}
+                      value={suppName}
+                      onChange={(e) => setsuppName(e.target.value)}
+                      required
+                    />
                   </Col>
                   <Col>
-                    <div className="d-flex flex-direction-row">
-                      <label
-                        className="label-head"
-                        style={{ fontSize: 20, marginRight: 10 }}>
-                        Select a Receiving Area:{" "}
-                      </label>
-                      <div class="cl-toggle-switch mt-2">
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Code:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3 fs-3"
+                      onChange={(e) => setsuppCode(e.target.value)}
+                      maxLength={10}
+                      value={suppCode}
+                      readOnly
+                      placeholder="Supplier Code"
+                    />
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      TIN:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3  fs-3"
+                      type="text"
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(/\D/, ""))
+                      }
+                      maxLength={30}
+                      onChange={(e) => setsuppTin(e.target.value)}
+                      value={suppTin}
+                      placeholder="TIN"
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Terms: (no. of days)
+                    </label>
+                    <Form.Control
+                      className="p-3 fs-3"
+                      type="text"
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(/\D/, ""))
+                      }
+                      maxLength={4}
+                      onChange={(e) => setsuppTerms(e.target.value)}
+                      value={suppTerms}
+                      placeholder="0"
+                    />
+                  </Col>
+                </Row>
+
+                <label style={{ fontSize: 30, fontWeight: "bold" }}>
+                  Location Info
+                </label>
+
+                <Row>
+                  <Col>
+                    <Form.Group>
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Country:{" "}
+                      </Form.Label>
+
+                      <Form.Select
+                        aria-label=""
+                        required
+                        value={selectedCountry}
+                        onChange={handleChange}
+                        style={{ fontSize: 15, padding: 8 }}
+                      >
+                        {countries.map((country) => (
+                          <option key={country.value} value={country.value}>
+                            {country.label}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Address:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3  fs-3"
+                      onChange={(e) => setsuppAdd(e.target.value)}
+                      required
+                      placeholder="Enter Address..."
+                      value={suppAdd}
+                    />
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      City:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3 fs-3"
+                      maxLength={80}
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(
+                          /[^A-Za-z.'\-,\s]/g,
+                          ""
+                        ))
+                      }
+                      onChange={(e) => setsuppCity(e.target.value)}
+                      value={suppCity}
+                      required
+                      placeholder="City"
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Zipcode/Postcode:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3 fs-3"
+                      type="text"
+                      maxLength={10}
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(/\D/, ""))
+                      }
+                      onChange={(e) => setsuppPcode(e.target.value)}
+                      required
+                      value={suppPcode}
+                      placeholder="0000"
+                    />
+                  </Col>
+                </Row>
+
+                <label style={{ fontSize: 30, fontWeight: "bold" }}>
+                  Contact Details
+                </label>
+
+                <Row>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Contact Person:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3  fs-3"
+                      maxLength={80}
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(
+                          /[^A-Za-z.'\-,\s]/g,
+                          ""
+                        ))
+                      }
+                      onChange={(e) => setsuppCperson(e.target.value)}
+                      required
+                      value={suppCperson}
+                      placeholder="Contact Person"
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Mobile Number:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3 fs-3"
+                      type="text"
+                      maxLength={15}
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(/\D/, ""))
+                      }
+                      onChange={(e) => setsuppCnum(e.target.value)}
+                      required
+                      value={suppCnum}
+                      placeholder="09xxxxxxxx"
+                    />
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Tel. #{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3  fs-3"
+                      type="text"
+                      maxLength={15}
+                      onInput={(e) =>
+                        (e.target.value = e.target.value.replace(/\D/, ""))
+                      }
+                      onChange={(e) => setsuppTelNum(e.target.value)}
+                      placeholder="xxxxxxxxx"
+                      value={suppTelNum}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Email:{" "}
+                    </label>
+                    <Form.Control
+                      className="p-3 fs-3"
+                      type="email"
+                      onChange={(e) => setsuppEmail(e.target.value)}
+                      required
+                      placeholder="Enter your email..."
+                      value={suppEmail}
+                    />
+                  </Col>
+
+                  <Row>
+                    <Col>
+                      <div className="d-flex flex-direction-row">
+                        <label
+                          htmlFor=""
+                          className="label-head"
+                          style={{ fontSize: 20 }}
+                        >
+                          Vatable (%)
+                        </label>
+                        <Form.Control
+                          className="p-3  fs-3"
+                          value={suppVat}
+                          style={{ width: "20%", marginLeft: 50 }}
+                          type="text"
+                          maxLength={3}
+                          onInput={(e) =>
+                            (e.target.value = e.target.value.replace(/\D/, ""))
+                          }
+                          onChange={(e) => setsuppVat(e.target.value)}
+                          placeholder="0%"
+                        />
+                      </div>
+                    </Col>
+                    <Col>
+                      <Form.Group>
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Receiving Area:{" "}
+                        </Form.Label>
                         <Form.Select
                           aria-label=""
                           required
-                          style={{ fontSize: 13, width: "350%" }}
+                          style={{ fontSize: 15, padding: 8, marginLeft: 10 }}
+                          maxLength={15}
                           value={suppReceving}
-                          onChange={handleChangeReceiving}>
+                          onChange={handleChangeReceiving}
+                        >
                           <option disabled value="">
                             Select City ...
                           </option>
@@ -569,33 +585,30 @@ return () => clearTimeout(delay);
                             </option>
                           ))}
                         </Form.Select>
-                      </div>
-                    </div>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Col>
+                    <Button
+                      type="submit"
+                      variant="success"
+                      size="lg"
+                      className="fs-5"
+                    >
+                      Update
+                    </Button>
                   </Col>
                 </Row>
-
-                <Col>
-                  <Button
-                    type="submit"
-                    variant="success"
-                    size="lg"
-                    className="fs-5">
-                    Update
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Container>
-        </div>
+              </Form>
+            </Container>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
     </div>
   );

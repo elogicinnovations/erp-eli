@@ -107,6 +107,7 @@ function MasterList({ authrztn }) {
     cemail: "",
     cuname: "",
     crole: "",
+    cdept: "",
     cpass: "",
     cpass2: "",
     cstatus: false,
@@ -125,6 +126,7 @@ function MasterList({ authrztn }) {
     uaemail: "",
     uauname: "",
     uarole: "",
+    uadept: "",
     uapass: "",
     ustatus: false,
     updateId: null,
@@ -196,6 +198,7 @@ function MasterList({ authrztn }) {
       cemail: "",
       cuname: "",
       crole: "",
+      cdept: "",
       cpass: "",
       cpass2: "",
       cstatus: false,
@@ -214,6 +217,7 @@ function MasterList({ authrztn }) {
         uaemail: updateData.col_email,
         uauname: updateData.col_username,
         uarole: updateData.col_roleID,
+        uadept: updateData.department_id,
         uapass: updateData.col_Pass,
         ustatus: updateData.col_status === "Active",
         updateId: updateData.col_id,
@@ -226,6 +230,7 @@ function MasterList({ authrztn }) {
         uaemail: "",
         uauname: "",
         uarole: "",
+        uadept: "",
         uapass: "",
         ustatus: false,
         updateId: null,
@@ -334,6 +339,7 @@ function MasterList({ authrztn }) {
           col_email: updateFormData.uaemail,
           col_username: updateFormData.uauname,
           col_roleID: updateFormData.uarole,
+          department_id: updateFormData.uadept,
           col_Pass: updateFormData.uapass,
           col_status: updateFormData.ustatus ? "Active" : "Inactive",
         }
@@ -359,6 +365,7 @@ function MasterList({ authrztn }) {
                     col_email: updateFormData.uaemail,
                     col_username: updateFormData.uauname,
                     col_roleID: updateFormData.uarole,
+                    department_id: updateFormData.uadept,
                     col_Pass: updateFormData.uapass,
                     col_status: updateFormData.ustatus ? "Active" : "Inactive",
                   }
@@ -374,6 +381,7 @@ function MasterList({ authrztn }) {
             uaemail: "",
             uauname: "",
             uarole: "",
+            uadept: "",
             uapass: "",
             ustatus: false,
             updateId: null,
@@ -542,6 +550,7 @@ function MasterList({ authrztn }) {
               cemail: "",
               cuname: "",
               crole: "",
+              cdept: "",
               cpass: "",
               cpass2: "",
               cstatus: false,
@@ -618,8 +627,22 @@ function MasterList({ authrztn }) {
       .catch((error) => {
         console.error("Error fetching roles:", error);
       });
+  }, []);
 
-    // console.log("ln 587: ",authorization);
+  const [department, setDepartment] = useState([]);
+
+  useEffect(() => {
+   
+    axios
+            .get(BASE_URL + "/department/fetchtableDepartment")
+            .then((res) => {
+              setDepartment(res.data);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              console.log(err);
+              setIsLoading(false);
+            });
   }, []);
 
   useEffect(() => {
@@ -741,6 +764,7 @@ function MasterList({ authrztn }) {
                     <th className="tableh">Role Type</th>
                     <th className="tableh">Name</th>
                     <th className="tableh">Email</th>
+                    <th className="tableh">Department</th>
                     <th className="tableh">Status</th>
                     <th className="tableh">Action</th>
                   </tr>
@@ -755,6 +779,7 @@ function MasterList({ authrztn }) {
                       <td>{data.userRole.col_rolename}</td>
                       <td>{data.col_Fname}</td>
                       <td>{data.col_email}</td>
+                      <td>{data.department.department_name}</td>
                       <td>
                       <div
                           className="colorstatus"
@@ -953,7 +978,7 @@ function MasterList({ authrztn }) {
 
             <Form>
               <div className="row">
-                <div className="col-6">
+                <div className="col-4">
                   <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Contact:{" "}
@@ -970,7 +995,7 @@ function MasterList({ authrztn }) {
                     />
                   </Form.Group>
                 </div>
-                <div className="col-6">
+                <div className="col-4">
                   <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Email:{" "}
@@ -985,6 +1010,29 @@ function MasterList({ authrztn }) {
                       pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
+                  </Form.Group>
+                </div>
+                <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Department:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label="Default select example"
+                      name="cdept"
+                      value={formData.cdept}
+                      onChange={handleFormChange}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}>
+                      <option disabled value="">
+                        Department
+                      </option>
+                      {department.map((dept) => (
+                        <option key={dept.id} value={dept.id}>
+                          {dept.department_name}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                 </div>
               </div>
@@ -1208,7 +1256,7 @@ function MasterList({ authrztn }) {
 
             <Form>
               <div className="row">
-                <div className="col-6">
+                <div className="col-4">
                   <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Contact:{" "}
@@ -1224,7 +1272,7 @@ function MasterList({ authrztn }) {
                     />
                   </Form.Group>
                 </div>
-                <div className="col-6">
+                <div className="col-4">
                   <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Email:{" "}
@@ -1237,6 +1285,30 @@ function MasterList({ authrztn }) {
                       name="uaemail"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
+                  </Form.Group>
+                </div>
+
+                <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Role Type:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label="Default select example"
+                      name="uadept"
+                      value={updateFormData.uadept}
+                      onChange={handleUpdateFormChange}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}>
+                      <option disabled value="">
+                        Department
+                      </option>
+                      {department.map((dept) => (
+                        <option key={dept.id} value={dept.id}>
+                          {dept.department_name}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                 </div>
               </div>

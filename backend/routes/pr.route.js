@@ -4,7 +4,7 @@ const sequelize = require('../db/config/sequelize.config');
 const { PR, PR_product, PR_assembly,PR_Rejustify, 
         PR_subPart, PR_history, PR_PO, PR_PO_asmbly, 
         PR_sparePart, PR_PO_spare, PR_PO_subpart, 
-        Activity_Log
+        Activity_Log, MasterList, Department
       } = require('../db/models/associations')
 const session = require('express-session')
 
@@ -19,7 +19,18 @@ router.use(session({
 router.route('/fetchTable').get(async (req, res) => {
     try {
      
-      const data = await PR.findAll();
+      const data = await PR.findAll({
+        include: [{
+          model: MasterList,
+          required: true,
+
+            include: [{
+              model: Department,
+              required: true
+            }]
+        }],
+        order: [['createdAt', 'ASC']]
+      });
   
       if (data) {
         // console.log(data);
@@ -88,6 +99,13 @@ router.route('/fetchTable_PO').get(async (req, res) => {
   try {
    
     const data = await PR.findAll({
+      include: [{
+        model: MasterList,
+        required: true,
+
+          include: Department,
+          required: true
+      }],
       where: {
         [Op.or]: [
           { status: 'For-Approval (PO)' },
@@ -199,6 +217,7 @@ router.route('/create').post(async (req, res) => {
             pr_num: prNum,
             date_needed: dateNeed,
             used_for: useFor,
+            masterlist_id: userId,
             remarks: remarks,
             status: 'For-Approval'
           });

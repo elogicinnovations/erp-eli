@@ -432,6 +432,7 @@ function PurchaseRequest({ authrztn }) {
                     <th className="tableh"></th>
                     <th className="tableh">PR #.</th>
                     <th className="tableh">Requestor</th>
+                    <th className="tableh">Department</th>
                     <th className="tableh">Status</th>
                     <th className="pr-column">Date Created</th>
                     <th className="tableh">Remarks</th>
@@ -473,7 +474,17 @@ function PurchaseRequest({ authrztn }) {
                                 navigate(`/purchaseRequestPreview/${data.id}`)
                               }
                           >
-                            --
+                           {data.masterlist.col_Fname}
+                          </td>
+                          <td onClick={() => 
+                                data.status === 'For-Canvassing' ?
+                                navigate(`/forCanvass/${data.id}`) :   
+                                data.status === 'On-Canvass' ?
+                                navigate(`/onCanvass/${data.id}`) :                       
+                                navigate(`/purchaseRequestPreview/${data.id}`)
+                              }
+                          >
+                           {data.masterlist.department.department_name}
                           </td>
                           <td onClick={() => 
                                 data.status === 'For-Canvassing' ?

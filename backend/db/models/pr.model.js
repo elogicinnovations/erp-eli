@@ -20,6 +20,10 @@ const PR = sequelize.define('purchase_req', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  masterlist_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   remarks: {
     type: DataTypes.STRING,
     allowNull: true,
