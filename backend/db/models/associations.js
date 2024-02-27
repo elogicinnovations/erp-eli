@@ -340,6 +340,10 @@ SparePart.belongsTo(Category, { foreignKey: "category_code" });
 PR.hasMany(PR_PO_subpart, { foreignKey: "pr_id" });
 PR_PO_subpart.belongsTo(PR, { foreignKey: "pr_id" });
 
+//For requested by
+MasterList.hasMany(PR, { foreignKey: "masterlist_id" });
+PR.belongsTo(MasterList, { foreignKey: "masterlist_id" });
+
 Subpart_supplier.hasMany(PR_PO_subpart, { foreignKey: "subpart_suppliers_ID" });
 PR_PO_subpart.belongsTo(Subpart_supplier, {
   foreignKey: "subpart_suppliers_ID",

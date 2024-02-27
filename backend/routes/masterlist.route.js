@@ -3,9 +3,14 @@ const { where, Op, col, fn } = require("sequelize");
 const nodemailer = require("nodemailer");
 //master Model
 // const MasterList = require('../db/models/masterlist.model')
-const { MasterList, UserRole, Activity_Log } = require("../db/models/associations");
-const session = require('express-session')
-const jwt = require('jsonwebtoken');
+const {
+  MasterList,
+  UserRole,
+  Activity_Log,
+  Department,
+} = require("../db/models/associations");
+const session = require("express-session");
+const jwt = require("jsonwebtoken");
 
 router.use(
   session({
@@ -22,28 +27,34 @@ router.route("/login").post(async (req, res) => {
     const user = await MasterList.findOne({
       where: {
         col_email: username,
-        col_status: 'Active'
+        col_status: "Active",
       },
       include: {
-        model: UserRole
-      }
+        model: UserRole,
+      },
     });
 
     if (user && user.col_Pass === password) {
-      const userData = { username: user.col_username, id: user.col_id, Fname: user.col_Fname, userrole: user.userRole.col_rolename}
+      const userData = {
+        username: user.col_username,
+        id: user.col_id,
+        Fname: user.col_Fname,
+        userrole: user.userRole.col_rolename,
+      };
       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
       // localStorage.setItem('access-token', accessToken);
 
       // localStorage.removeItem('access-token');
-      res.cookie('access-token', accessToken, {
+      res.cookie("access-token", accessToken, {
         // httpOnly : true
       });
       await Activity_Log.create({
         masterlist_id: userData.id,
-        action_taken: "User logged in"
-      }) 
-      return res.status(200).json({ message: 'Login Success', accessToken: accessToken });
-      
+        action_taken: "User logged in",
+      });
+      return res
+        .status(200)
+        .json({ message: "Login Success", accessToken: accessToken });
     } else {
       return res.status(202).json({ message: "Incorrect credentials" });
     }
@@ -53,23 +64,24 @@ router.route("/login").post(async (req, res) => {
   }
 });
 
-
 router.route("/logout").post(async (req, res) => {
-  console.log("check if the request is being pass")
+  console.log("check if the request is being pass");
   const { userId } = req.body;
 
   try {
-      const createActivity = await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: "User logged out"
-      });
+    const createActivity = await Activity_Log.create({
+      masterlist_id: userId,
+      action_taken: "User logged out",
+    });
 
-      if(createActivity) {
-        console.log("Yes")
-        return res.status(200).json({ message: 'Log out' });
-      } else {
-        return res.status(202).json({ message: "Cannot Log out, There's a problem" });
-      }
+    if (createActivity) {
+      console.log("Yes");
+      return res.status(200).json({ message: "Log out" });
+    } else {
+      return res
+        .status(202)
+        .json({ message: "Cannot Log out, There's a problem" });
+    }
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Internal server error" });
@@ -188,12 +200,19 @@ router.route("/masterTable").get(async (req, res) => {
   try {
     const data = await MasterList.findAll({
       where: {
-        user_type: { [Op.ne]: 'Superadmin' }
+        user_type: { [Op.ne]: "Superadmin" },
       },
-      include: {
-        model: UserRole,
-        required: true,
-      },
+      include: [
+        {
+          model: UserRole,
+          required: true,
+        },
+
+        {
+          model: Department,
+          required: true,
+        },
+      ],
     });
     // const data = await MasterList.findAll();
 
@@ -230,17 +249,17 @@ router.route("/createMaster").post(async (req, res) => {
 
       // Validate the password
       const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\S{8,}$/;
-        if (!passwordRegex.test(req.body.cpass)) {
-          return res.status(400).json({
-            errors: [
-              {
-                field: 'col_Pass',
-                message:
-                'Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one digit, and no spaces.',
-              },
-            ],
-          });
-        }
+      if (!passwordRegex.test(req.body.cpass)) {
+        return res.status(400).json({
+          errors: [
+            {
+              field: "col_Pass",
+              message:
+                "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one digit, and no spaces.",
+            },
+          ],
+        });
+      }
 
       // console.log('tyr: ' + req.body.crole)
       // Insert a new record into the table
@@ -249,17 +268,18 @@ router.route("/createMaster").post(async (req, res) => {
         col_phone: req.body.cnum,
         col_username: req.body.cuname,
         col_roleID: req.body.crole,
+        department_id: req.body.cdept,
         col_email: req.body.cemail,
         col_Pass: req.body.cpass,
         col_status: status,
         col_Fname: req.body.cname,
-        user_type: "Standard User"
+        user_type: "Standard User",
       });
 
       await Activity_Log.create({
         masterlist_id: userID,
-        action_taken: `Created a new account for ${req.body.cname}`
-      }); 
+        action_taken: `Created a new account for ${req.body.cname}`,
+      });
 
       res.status(200).json(newData);
       // console.log(newDa)
@@ -273,8 +293,8 @@ router.route("/createMaster").post(async (req, res) => {
 
     // res.status(500).send("An error occurred");
 
-    if (err.name === 'SequelizeValidationError') {
-      const validationErrors = err.errors.map(error => ({
+    if (err.name === "SequelizeValidationError") {
+      const validationErrors = err.errors.map((error) => ({
         field: error.path,
         message: error.message,
       }));
@@ -283,9 +303,9 @@ router.route("/createMaster").post(async (req, res) => {
       res.status(400).json({ errors: validationErrors });
     } else {
       // Handle other types of errors
-    console.error(err);
-    res.status(500).send("An error occurred");
-  }
+      console.error(err);
+      res.status(500).send("An error occurred");
+    }
   }
 });
 
@@ -313,6 +333,7 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
       const [affectedRows] = await MasterList.update(
         {
           col_roleID: req.body.col_roleID,
+          department_id: req.body.department_id,
           col_Fname: req.body.col_Fname,
           col_email: req.body.col_email,
           col_Pass: req.body.col_Pass,
@@ -328,8 +349,8 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
 
       await Activity_Log.create({
         masterlist_id: userId,
-        action_taken: `Updated the information for ${req.body.col_Fname}`
-      }); 
+        action_taken: `Updated the information for ${req.body.col_Fname}`,
+      });
 
       res.json({ message: "Data updated successfully", affectedRows });
     }
@@ -348,7 +369,7 @@ router.route("/deleteMaster/:param_id").delete(async (req, res) => {
     where: {
       col_id: id,
     },
-  })
+  });
 
   const masterlistName = userName.col_Fname;
 
@@ -360,9 +381,9 @@ router.route("/deleteMaster/:param_id").delete(async (req, res) => {
     .then(async (del) => {
       if (del) {
         await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Deleted the account of ${masterlistName}`
-      }); 
+          masterlist_id: userId,
+          action_taken: `Deleted the account of ${masterlistName}`,
+        });
         res.json({ success: true });
       } else {
         res.status(400).json({ success: false });
@@ -435,32 +456,26 @@ router.route("/deleteMaster/:param_id").delete(async (req, res) => {
 //     );
 // });
 
-
-router.route("/viewAuthorization/:id").get( async (req,res) => {
-  try
-  {
+router.route("/viewAuthorization/:id").get(async (req, res) => {
+  try {
     const id = req.params.id;
 
     const user = await MasterList.findByPk(id, {
-      include : {
-        model: UserRole
-      }
+      include: {
+        model: UserRole,
+      },
     });
 
-    if(user !== null){
+    if (user !== null) {
       // const authorization = user.userRole.col_authorization.split(', ');
 
       return res.json(user);
-    }
-    else
-    {
+    } else {
       return res.status(401);
     }
-  }
-  catch(err)
-  {
+  } catch (err) {
     return res.status(500);
   }
-})
+});
 
 module.exports = router;
