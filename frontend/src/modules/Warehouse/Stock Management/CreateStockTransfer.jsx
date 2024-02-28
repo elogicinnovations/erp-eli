@@ -22,6 +22,7 @@ import {
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
+import { jwtDecode } from "jwt-decode";
 
 function CreateStockTransfer({authrztn}) {
   const navigate = useNavigate()
@@ -47,6 +48,19 @@ function CreateStockTransfer({authrztn}) {
   const [isSelected, setIsSelected] = useState(false);
 
   const [col_id, setSelect_Masterlist] = useState([]);
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setuserId(decoded.id);
+    }
+  }
+  
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const handleFormChangeMasterList = (event) => { 
     setSelect_Masterlist(event.target.value);
@@ -63,20 +77,24 @@ function CreateStockTransfer({authrztn}) {
 
 
   useEffect(() => {
-    // Function to generate a random reference code with 12 characters
     const generateReferenceCode = () => {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let code = '';
-
-      for (let i = 0; i < 12; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        code += characters.charAt(randomIndex);
-      }
-
-      return code;
+      const prefix = 'ST-00';
+  
+      const currentDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+      const year = currentDate.getFullYear();
+      const month = (`0${currentDate.getMonth() + 1}`).slice(-2);
+      const day = (`0${currentDate.getDate()}`).slice(-2);
+  
+      const formattedDate = year + month + day;
+  
+      const fullReferenceCode = prefix + formattedDate;
+  
+      return fullReferenceCode;
     };
+  
     setReferenceCode(generateReferenceCode());
-  }, []); 
+  }, []);
+  
 
   const [masterList, setMasteList] = useState([]); 
 
@@ -213,6 +231,7 @@ const add = async (e) => {
         col_id,
         remarks,
         addProductbackend,
+        userId
       });
 
       console.log(response);
@@ -224,7 +243,7 @@ const add = async (e) => {
           icon: 'success',
           button: 'OK',
         }).then(() => {
-          navigate('/stockTransfer');
+          navigate('/stockManagement');
         });
       } else {
         swal({
@@ -259,28 +278,80 @@ const selectProduct = (selectedOptions) => {
     setProduct(selectedOptions);
 };
 
+const [quantityInputs, setQuantityInputs] = useState({});
 
-const handleInputChange = (value, productValue, inputType) => {
-  setInputValues((prevInputs) => ({
-    ...prevInputs,
-    [productValue]: {
-      ...prevInputs[productValue],
-      [inputType]: value,
-    },
-  }));
+const handleQuantityChange = (
+  value, productValue, inputType
+) => {
+  // Remove non-numeric characters and limit length to 10
+  const cleanedValue = value.replace(/\D/g, "").substring(0, 10);
+
+  // Convert cleanedValue to a number
+  const numericValue = parseInt(cleanedValue, 10);
+
+  // Create a variable to store the corrected value
+  let correctedValue = cleanedValue;
+
+  // Check if the numericValue is greater than the available quantity
+  if (numericValue > inputType) {
+    // If greater, set the correctedValue to the maximum available quantity
+    correctedValue = inputType.toString();
+    
+    swal({
+      icon: "error",
+      title: "Input value exceed",
+      text: "Please enter a quantity within the available limit.",
+    });
+
+  }
+
+  setQuantityInputs((prevInputs) => {
+    const updatedInputs = {
+      ...prevInputs,
+      [productValue]: correctedValue,
+    };
+
+    // Use the updatedInputs directly to create the serializedProducts array
+    const serializedProducts = product.map((product) => ({
+      quantity: updatedInputs[product.value] || "",
+      type: product.type,
+      value: product.values,
+      quantity_available: product.quantity_available,
+      desc: updatedInputs[product.value]?.desc || '',
+    }));
+
+    setAddProductbackend(serializedProducts);
+    // console.log("Selected Products:", addProductbackend);
+
+    // Return the updatedInputs to be used as the new state
+    return updatedInputs;
+  });
 };
 
-useEffect(() => {
-  const serializedProducts = product.map((product) => ({
-    type: product.type,
-    value: product.values,
-    quantity: inputValues[product.value]?.quantity || '',
-    desc: inputValues[product.value]?.desc || '',
-  }));
 
-  setAddProductbackend(serializedProducts);
-  
-}, [inputValues, product]);
+// const handleInputChange = (value, productValue, inputType) => {
+//   setInputValues((prevInputs) => ({
+//     ...prevInputs,
+//     [productValue]: {
+//       ...prevInputs[productValue],
+//       [inputType]: value,
+//     },
+//   }));
+
+// };
+
+
+
+// useEffect(() => {
+//   const serializedProducts = product.map((product) => ({
+//     type: product.type,
+//     value: product.values,
+//     quantity: inputValues[product.value]?.quantity || '',
+//     desc: inputValues[product.value]?.desc || '',
+//   }));
+
+//   setAddProductbackend(serializedProducts);
+// }, [inputValues, product]);
 
 
    //date format
@@ -477,13 +548,19 @@ function formatDatetime(datetime) {
                                                 <td>{product.code}</td>
                                                 <td>{product.name}</td>  
                                                 <td>{product.unit}</td>    
-                                                <td>{product.available}</td>                                      
+                                                <td>{product.quantity_available}</td>                                      
                                                 <td> 
                                                   <div className='d-flex flex-direction-row align-items-center'>
                                                     <Form.Control
                                                       type="number"
-                                                      value={inputValues[product.value]?.quantity || ''}
-                                                      onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
+                                                      value={quantityInputs[product.value] || ""}
+                                                      onInput={(e) =>
+                                                        handleQuantityChange(
+                                                          e.target.value,
+                                                          product.value,
+                                                          product.quantity_available
+                                                        )
+                                                      }
                                                       required
                                                       placeholder="Input quantity"
                                                       style={{ height: '40px', width: '120px', fontSize: '15px' }}
@@ -517,7 +594,7 @@ function formatDatetime(datetime) {
                                                     code: prod.product_tag_supplier.product.product_code,
                                                     name: prod.product_tag_supplier.product.product_name,
                                                     unit: prod.product_tag_supplier.product.product_unitMeasurement,
-                                                    available: prod.quantity,
+                                                    quantity_available: prod.quantity,
                                                     created: prod.product_tag_supplier.product.createdAt
                                                   }))
                                                   .concat(fetchAssembly.map(assembly => ({
@@ -532,7 +609,7 @@ function formatDatetime(datetime) {
                                                     code: assembly.assembly_supplier.assembly.assembly_code,
                                                     name: assembly.assembly_supplier.assembly.assembly_name,
                                                     unit: assembly.assembly_supplier.assembly.assembly_unitMeasurement,
-                                                    available: assembly.quantity,
+                                                    quantity_available: assembly.quantity,
                                                     created: assembly.assembly_supplier.assembly.createdAt
                                                   })))
                                                   .concat(fetchSpare.map(spare => ({
@@ -547,7 +624,7 @@ function formatDatetime(datetime) {
                                                     code: spare.sparepart_supplier.sparePart.spareParts_code,
                                                     name: spare.sparepart_supplier.sparePart.spareParts_name,
                                                     unit: spare.sparepart_supplier.sparePart.spareParts_unitMeasurement,
-                                                    available: spare.quantity,
+                                                    quantity_available: spare.quantity,
                                                     created: spare.sparepart_supplier.sparePart.createdAt
                                                   })))
                                                   .concat(fetchSubPart.map(subPart => ({
@@ -562,7 +639,7 @@ function formatDatetime(datetime) {
                                                     code: subPart.subpart_supplier.subPart.subPart_code,
                                                     name: subPart.subpart_supplier.subPart.subPart_name,
                                                     unit: subPart.subpart_supplier.subPart.subPart_unitMeasurement,
-                                                    available: subPart.quantity,
+                                                    quantity_available: subPart.quantity,
                                                     created: subPart.subpart_supplier.subPart.createdAt
                                                   })))
                                                 }

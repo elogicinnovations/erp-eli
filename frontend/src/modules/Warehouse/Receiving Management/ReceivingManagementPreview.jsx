@@ -351,6 +351,7 @@ function ReceivingManagementPreview({ authrztn }) {
             suppReceving,
             po_id,
             id,
+            userId
           }
         );
 
@@ -1090,25 +1091,33 @@ function ReceivingManagementPreview({ authrztn }) {
                         </div>
                       </div>
                     </Form.Group>
+                    <div className="save-cancel">
+                        <Button
+                          variant="warning"
+                          type="submit"
+                          size="md"
+                          style={{
+                            fontSize: "20px",
+                            fontFamily: "Poppins, Source Sans Pro",
+                            margin: "0px 5px",
+                          }}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          onClick={handleClose}
+                          size="md"
+                          style={{
+                            fontSize: "20px",
+                            fontFamily: "Poppins, Source Sans Pro",
+                            margin: "0px 5px",
+                          }}
+                        >
+                          Close
+                        </Button>
+                      </div>
                   </Modal.Body>
-                  <Modal.Footer>
-                    <Button
-                      className="fs-5 lg"
-                      variant="secondary"
-                      onClick={handleClose}
-                      size="md"
-                    >
-                      Close
-                    </Button>
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      size="md"
-                      className="fs-5 lg"
-                    >
-                      Save
-                    </Button>
-                  </Modal.Footer>
                 </Form>
               </Modal>
     </div>

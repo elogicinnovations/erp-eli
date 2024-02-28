@@ -8,9 +8,14 @@ const
   StockTransfer_spare,
   MasterList,
   StockTransfer_assembly,
+  Product,
   Assembly,
+  SparePart,
+  SubPart,
   Assembly_Supplier,
-  Supplier
+  Supplier,
+  Activity_Log,
+  Warehouses,
 } = require("../db/models/associations"); 
 const session = require('express-session');
 const StockTransfer_subpart = require('../db/models/stockTransfer_subpart.model');
@@ -27,7 +32,6 @@ router.route('/fetchTable').get(async (req, res) => {
       const data = await StockTransfer.findAll();
   
       if (data) {
-        // console.log("******************"+data);
         return res.json(data);
       } else {
         res.status(400);
@@ -60,12 +64,18 @@ router.route('/fetchTable').get(async (req, res) => {
 
   router.route('/create').post(async (req, res) => {
     try {
-       const {selectedWarehouse, destination, reference_code, col_id, remarks, addProductbackend} = req.body;
+       const {selectedWarehouse, 
+        destination, 
+        referenceCode, 
+        col_id, 
+        remarks, 
+        addProductbackend,
+        userId} = req.body;
         
           const StockTransfer_newData = await StockTransfer.create({
             source: selectedWarehouse,
             destination: destination,
-            reference_code: reference_code,
+            reference_code: referenceCode,
             col_id: col_id,
             remarks: remarks
           });
@@ -75,11 +85,13 @@ router.route('/fetchTable').get(async (req, res) => {
           
 
           for (const prod of addProductbackend) {
+
             const prod_value = prod.value;
             const prod_quantity = prod.quantity;
             const prod_desc = prod.desc;
             const prod_type= prod.type;
 
+            let productName;
 
             if (prod_type === "Product"){
 
@@ -90,9 +102,14 @@ router.route('/fetchTable').get(async (req, res) => {
                 description: prod_desc,              
               });
 
+              const getProdName = await StockTransfer_prod.findAll({
+                  include: [{
+                    model: Product,
+                    required: true,
+                  }]
+              });
 
-
-
+              productName = getProdName[0].product.product_name;
             } 
             else if (prod_type === "Assembly"){
               await StockTransfer_assembly.create({
@@ -100,7 +117,16 @@ router.route('/fetchTable').get(async (req, res) => {
                 assembly_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
-              } );
+              });
+
+              const getAssemblyName = await StockTransfer_assembly.findAll({
+                  include: [{
+                    model: Assembly,
+                    required: true,
+                  }]
+              });
+
+              productName = getAssemblyName[0].assembly.assembly_name;
             }
             else if (prod_type === "Spare"){
               await StockTransfer_spare.create({
@@ -108,8 +134,17 @@ router.route('/fetchTable').get(async (req, res) => {
                 spare_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
-              } );
-              console.log('Spare insert')
+              });
+
+              const getSpareName = await StockTransfer_spare.findAll({
+                include: [{
+                  model: SparePart,
+                  required: true,
+                }]
+              });
+
+              productName = getSpareName[0].sparePart.spareParts_name;
+
             }
             else if (prod_type === "SubPart"){
               await StockTransfer_subpart.create({
@@ -117,9 +152,30 @@ router.route('/fetchTable').get(async (req, res) => {
                 subPart_id: prod_value,
                 quantity: prod_quantity,
                 description: prod_desc,              
-              } );
-              console.log('SubPart insert')
+              });
+
+              const getSubName = await StockTransfer_subpart.findAll({
+                include: [{
+                  model: SubPart,
+                  required: true,
+                }]
+              });
+
+              productName = getSubName[0].subPart.subPart_name;
             }
+
+            const Warehousename = await Warehouses.findOne({
+              where:{
+                id: destination,
+              }
+            })
+
+            const warename = Warehousename.warehouse_name;
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Product ${productName} with quantity ${prod_quantity} is being transfer on ${warename} with reference code ${referenceCode}`,
+            });
 
           }
     

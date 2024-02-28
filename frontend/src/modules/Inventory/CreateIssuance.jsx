@@ -115,8 +115,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
       }));
   
       setAddProductbackend(serializedProducts);
-  
-      console.log("Selected Products:", serializedProducts);
+      // console.log("Selected Products:", serializedProducts);
   
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
@@ -559,7 +558,7 @@ return () => clearTimeout(delay);
                             <td>
                               <div className="d-flex flex-direction-row align-items-center">
                                 <input
-                                  type="text"
+                                  type="number"
                                   value={quantityInputs[product.value] || ""}
                                   onInput={(e) =>
                                     handleQuantityChange(
