@@ -677,31 +677,31 @@ function PurchaseOrderListPreview() {
         text: "Please fill the red text fields",
       });
     } else {
-      axios
-        .post(`${BASE_URL}/invoice/save`, {
-          arrayPO: addPObackend,
-          pr_id: id,
-          userId,
-        })
-        .then((res) => {
-          // console.log(res);
-          if (res.status === 200) {
-            swal({
-              title: "The Purchase sucessfully request!",
-              text: "The Purchase Request has been added successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate("/purchaseOrderList");
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        });
+      // axios
+      //   .post(`${BASE_URL}/invoice/save`, {
+      //     arrayPO: addPObackend,
+      //     pr_id: id,
+      //     userId,
+      //   })
+      //   .then((res) => {
+      //     // console.log(res);
+      //     if (res.status === 200) {
+      //       swal({
+      //         title: "The Purchase sucessfully request!",
+      //         text: "The Purchase Request has been added successfully.",
+      //         icon: "success",
+      //         button: "OK",
+      //       }).then(() => {
+      //         navigate("/purchaseOrderList");
+      //       });
+      //     } else {
+      //       swal({
+      //         icon: "error",
+      //         title: "Something went wrong",
+      //         text: "Please contact our support",
+      //       });
+      //     }
+      //   });
     }
     setValidated(true); //for validations
   };

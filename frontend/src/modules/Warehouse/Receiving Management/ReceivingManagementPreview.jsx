@@ -22,6 +22,7 @@ import {
   Circle,
   ArrowUUpLeft,
 } from "@phosphor-icons/react";
+import * as $ from "jquery";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
@@ -41,30 +42,34 @@ function ReceivingManagementPreview({ authrztn }) {
   const [prNumber, setPrNumber] = useState();
   const [dateNeeded, setDateNeeded] = useState();
   const [usedFor, setUsedFor] = useState();
+  const [department, setDepartment] = useState();
+  const [requestedBy, setRequestedBy] = useState();
   const [remarks, setRemarks] = useState();
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
 
   const [show, setShow] = useState(false);
-  const [userId, setuserId] = useState('');
+  const [showTransaction, setShowTransaction] = useState(false);
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
     }
-  }
-  
+  };
+
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   const handleClose = () => {
     setInputValues({});
     setCheckedRows({});
     setValidated(false);
     setShow(false);
+    setShowTransaction(false);
   };
   // const handleShow = () => setShow(true);
 
@@ -82,6 +87,8 @@ function ReceivingManagementPreview({ authrztn }) {
           setDateNeeded(res.data[0].date_needed);
           setUsedFor(res.data[0].used_for);
           setRemarks(res.data[0].remarks);
+          setDepartment(res.data[0].masterlist.department.department_name);
+          setRequestedBy(res.data[0].masterlist.col_Fname);
           setStatus(res.data[0].status);
           setDateCreated(res.data[0].createdAt);
           setIsLoading(false);
@@ -152,6 +159,55 @@ function ReceivingManagementPreview({ authrztn }) {
         console.log(err);
         setIsLoading(false);
       });
+  };
+
+  const [Transaction_prd, setTransaction_prd] = useState([]);
+  const [Transaction_asm, setTransaction_asm] = useState([]);
+  const [Transaction_spr, setTransaction_spr] = useState([]);
+  const [Transaction_sbp, setTransaction_sbp] = useState([]);
+  const [filteredPRD, setFilteredPRD] = useState([]);
+  const [filteredASM, setFilteredASM] = useState([]);
+  const [filteredSPR, setFilteredSPR] = useState([]);
+  const [filteredSBP, setFilteredSBP] = useState([]);
+  const handleViewTransaction = (po_number) => {
+    setIsLoading(true);
+    setShowTransaction(true);
+    const po_num = po_number
+
+    
+    
+      axios
+        .get(BASE_URL + "/receiving/fetchTransaction", {
+          
+          params: {
+            po_num,
+            pr_id : id
+          },
+        })
+        .then((res) => {
+          setFilteredPRD(res.data.prd);
+          setTransaction_prd(res.data.prd)
+
+          setFilteredASM(res.data.asm);       
+          setTransaction_asm(res.data.asm)
+
+          setFilteredSPR(res.data.spr);
+          setTransaction_spr(res.data.spr)
+
+          setFilteredSBP(res.data.sbp);       
+          setTransaction_sbp(res.data.sbp)
+
+
+
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+   
+
+    // return () => clearTimeout(delay);
   };
   const [checkedRows, setCheckedRows] = useState({});
 
@@ -510,6 +566,31 @@ function ReceivingManagementPreview({ authrztn }) {
       }
     }
   }
+
+
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
+
+
+
+  
+  useEffect(() => {
+    // Initialize DataTable when role data is available
+    if ($("#order-listing").length > 0 && Transaction_prd.length > 0) {
+      $("#order-listing").DataTable();
+    }
+  }, [Transaction_prd]);
+
+
+
   return (
     <div className="main-of-containers">
       {/* <div className="left-of-main-containers">
@@ -546,7 +627,7 @@ function ReceivingManagementPreview({ authrztn }) {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
-                fontFamily: "Poppins, Source Sans Pro"
+                fontFamily: "Poppins, Source Sans Pro",
               }}
             >
               Purchase Request Details
@@ -562,12 +643,19 @@ function ReceivingManagementPreview({ authrztn }) {
                 }}
               ></span>
             </div>
-              
-              <div className="row">
-                <div className="col-6 ">
-                <Form.Label style={{ fontSize: "20px", fontFamily: 'Poppins, Source Sans Pro' }}>Information </Form.Label>
-                  <div className="receive-container">
-                      <div className="PR-num">
+
+            <div className="row">
+              <div className="col-6 ">
+                <Form.Label
+                  style={{
+                    fontSize: "20px",
+                    fontFamily: "Poppins, Source Sans Pro",
+                  }}
+                >
+                  Information{" "}
+                </Form.Label>
+                <div className="receive-container">
+                  {/* <div className="PR-num">
                           <p>{`PR #: ${prNumber}`}</p>
                         </div>
 
@@ -597,19 +685,65 @@ function ReceivingManagementPreview({ authrztn }) {
                             </div>
 
                             <div className="requestdiv">
-                              <p>{`Requested by:`}</p>
+                              <p>{`Requested by: ${requestedBy}`}</p>
                             </div>
                         </div>
                       </div>
-
+                       */}
+                  <div className="row">
+                    <div className="col-6">
+                      <div className="receiving_list d-flex flex-direction-column">
+                        <ul>
+                          <li>
+                            <p>{`PR #: ${prNumber}`}</p>
+                          </li>
+                          <li>{`Requested by: ${requestedBy}`}</li>
+                          <li>{`Department: ${department}`}</li>
+                          <li>{`To be used for: ${usedFor}`}</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="receiving_list_right d-flex flex-direction-column">
+                        <ul>
+                          <li>
+                            <p>{`Requested date: ${formatDatetime(
+                              dateCreated
+                            )}`}</p>
+                          </li>
+                          <li>
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <Circle
+                                weight="fill"
+                                size={20}
+                                color="green"
+                                style={{ margin: "10px" }}
+                              />
+                              <p style={{ margin: "10px", fontSize: 24 }}>
+                                {status}
+                              </p>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="col-6">
+              </div>
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px", fontFamily: 'Poppins, Source Sans Pro' }}>Remarks </Form.Label>
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Remarks{" "}
+                  </Form.Label>
                   <Form.Control
                     onChange={(e) => setRemarks(e.target.value)}
-                  
                     placeholder="Enter details name"
                     value={remarks}
                     as="textarea"
@@ -617,17 +751,15 @@ function ReceivingManagementPreview({ authrztn }) {
                     style={{
                       fontFamily: "Poppins, Source Sans Pro",
                       fontSize: "16px",
-                      height: "150px",
-                      maxHeight: "150px",
+                      height: "225px",
+                      maxHeight: "225px",
                       resize: "none",
                       overflowY: "auto",
                     }}
                   />
                 </Form.Group>
-                </div>
               </div>
-           
-           
+            </div>
 
             <div
               className="gen-info"
@@ -655,47 +787,47 @@ function ReceivingManagementPreview({ authrztn }) {
             <div className="receivemanage-main-container">
               {POarray.map((group) => (
                 <div className="receive-supplier-container">
-                    
-                      <div className="receive-supplier-content">
-                          <div className="receivePO-num">
-                            <p>{`PO #: ${group.title}`}</p>
+                  <div className="receive-supplier-content">
+                    <div className="receivePO-num">
+                      <p>{`PO #: ${group.title}`}</p>
+                    </div>
+                    {group.items.length > 0 && (
+                      <div className="mid-receive-contents">
+                        <div className="first-div-content">
+                          <div className="code-supp-div">{`Supplier Code`}</div>
+                          <div className="code-supp-data">
+                            {group.items[0].suppliers.supplier_code}
                           </div>
-                          {group.items.length > 0 && (
-                            <div className="mid-receive-contents">
-                                <div className="first-div-content">
-                                      <div className="code-supp-div">
-                                        {`Supplier Code`}
-                                      </div>
-                                      <div className="code-supp-data">
-                                        {group.items[0].suppliers.supplier_code}
-                                      </div>
-                                  </div>
+                        </div>
 
-                                  <div className="second-div-content">
-                                      <div className="name-supp-div">
-                                          {`Supplier Name`}
-                                      </div>
-                                      <div className="name-supp-data">
-                                          {group.items[0].suppliers.supplier_name}
-                                      </div>
-                                  </div>
+                        <div className="second-div-content">
+                          <div className="name-supp-div">{`Supplier Name`}</div>
+                          <div className="name-supp-data">
+                            {group.items[0].suppliers.supplier_name}
+                          </div>
+                        </div>
 
-                                  <div className="third-div-content">
-                                      <div className="button-supp-data">
-                                        <button
-                                            className="btn btn-warning"
-                                            onClick={() => handleReceived(group.title)}
-                                          >
-                                            Receive
-                                          </button>
-                                      </div>
-                                  </div>
-                            </div>
-                            
-                          )}
+                        <div className="third-div-content">
+                          <div className="button-supp-data">
+                            <button
+                              className="btn btn-warning"
+                              onClick={() => handleReceived(group.title)}
+                            >
+                              Receive
+                            </button>
+                            <button
+                              className="btn btn-success"
+                              onClick={() => handleViewTransaction(group.title)}
+                            >
+                              View
+                            </button>
+                          </div>
+                        </div>
                       </div>
+                    )}
+                  </div>
                 </div>
-                ))}
+              ))}
             </div>
           </div>
         ) : (
@@ -706,411 +838,498 @@ function ReceivingManagementPreview({ authrztn }) {
         )}
       </div>
 
-          <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                size="xl"
-              >
-                <Form noValidate validated={validated} onSubmit={add}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>
-                      <div className="row" style={{ width: "1100px" }}>
-                        <div className="col-6">{`PO Number: ${po_id}`}</div>
-                        <div className="col-6">
-                          <div
-                            className="d-flex flex-direction-row align-items-center justify-content-center"
-                            style={{ marginTop: "-20px" }}
-                          >
-                            <label className="" style={{ fontSize: 12 }}>
-                              Select a Receiving Area:{" "}
-                            </label>
-                            <div class="">
-                              <Form.Select
-                                aria-label=""
-                                required
-                                style={{
-                                  fontSize: 13,
-                                  width: "200px",
-                                  marginRight: 10,
-                                }}
-                                defaultValue=""
-                                onChange={handleChangeReceiving}
-                              >
-                                <option disabled value="">
-                                  Select City ...
-                                </option>
-                                {warehouse.map((city, index) => (
-                                  <option key={index} value={city}>
-                                    {city}
-                                  </option>
-                                ))}
-                              </Form.Select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <div className="row">
-                      <div className="col-6">
-                        <h2 className="mb-5">
-                          {`Supplier: ${supplier_code} - ${supplier_name}`}
-                        </h2>
-                      </div>
-                      <div className="col-6 ">
-                        <div
-                          className="d-flex flex-direction-row justify-content-center align-items-center"
-                          style={{ float: "right", marginTop: "-20px" }}
-                        >
+      <Modal show={show} onHide={handleClose} backdrop="static" size="xl">
+        <Form noValidate validated={validated} onSubmit={add}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <div className="row" style={{ width: "1100px" }}>
+                <div className="col-6">{`PO Number: ${po_id}`}</div>
+                <div className="col-6">
+                  <div
+                    className="d-flex flex-direction-row align-items-center justify-content-center"
+                    style={{ marginTop: "-20px" }}
+                  >
+                    <label className="" style={{ fontSize: 12 }}>
+                      Select a Receiving Area:{" "}
+                    </label>
+                    <div class="">
+                      <Form.Select
+                        aria-label=""
+                        required
+                        style={{
+                          fontSize: 13,
+                          width: "200px",
+                          marginRight: 10,
+                        }}
+                        defaultValue=""
+                        onChange={handleChangeReceiving}
+                      >
+                        <option disabled value="">
+                          Select City ...
+                        </option>
+                        {warehouse.map((city, index) => (
+                          <option key={index} value={city}>
+                            {city}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="row">
+              <div className="col-6">
+                <h2 className="mb-5">
+                  {`Supplier: ${supplier_code} - ${supplier_name}`}
+                </h2>
+              </div>
+              <div className="col-6 ">
+                <div
+                  className="d-flex flex-direction-row justify-content-center align-items-center"
+                  style={{ float: "right", marginTop: "-20px" }}
+                >
+                  <Form.Label style={{ fontSize: "15px" }}>
+                    Shipping Fee:
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    required
+                    style={{
+                      height: "35px",
+                      width: "100px",
+                      fontSize: "14px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                      marginLeft: "5px",
+                    }}
+                    onChange={(e) => handleInputChangeShipping(e.target.value)}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="row mb-5">
+              {productImages.length > 0 && (
+                <Carousel
+                  data-bs-theme="dark"
+                  interval={3000}
+                  wrap={true}
+                  className="custom-carousel"
+                >
+                  {productImages.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className=""
+                        style={{
+                          width: "auto",
+                          height: "auto",
+                          margin: "auto",
+                          display: "block",
+                          maxHeight: "250px",
+                          minHeight: "250px",
+                        }}
+                        src={`data:image/png;base64,${image.image}`}
+                        alt={`subpart-img-${image.id}`}
+                      />
+                      <Carousel.Caption>
+                        {/* Caption content */}
+                      </Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
+            </div>
+
+            {products_receive.map((parent, parentIndex) =>
+              parent.items.map((child, childIndex) => (
+                <div
+                  className="row mb-5"
+                  style={{
+                    display: "d-flex flex-direction-row align-items-center",
+                    border: "1px solid #DEDEDE",
+                  }}
+                  key={`${parentIndex}-${childIndex}`}
+                >
+                  <div className="col-3">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: "15px" }}>
+                        {`${child.type} : `}
+                      </Form.Label>
+                      <label className="fs-4">
+                        {`${child.supp_tag.code} - ${child.supp_tag.name}`}
+                      </label>
+                    </Form.Group>
+                  </div>
+
+                  <div className="col-3 d-flex flex-direction-row">
+                    <div className="row" style={{ marginTop: "-40px" }}>
+                      <div className="col-4">
+                        <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: "15px" }}>
-                            Shipping Fee:
+                            PR :{" "}
                           </Form.Label>
                           <Form.Control
-                            type="number"
-                            required
+                            value={child.item.quantity}
+                            // readOnly={
+                            //   checkedRows[parentIndex]?.[childIndex]
+                            // }
+                            readOnly
                             style={{
                               height: "35px",
                               width: "100px",
                               fontSize: "14px",
                               fontFamily: "Poppins, Source Sans Pro",
-                              marginLeft: "5px",
-                            }}
-                            onChange={(e) =>
-                              handleInputChangeShipping(e.target.value)
-                            }
-                            onKeyDown={(e) => {
-                              ["e", "E", "+", "-"].includes(e.key) &&
-                                e.preventDefault();
                             }}
                           />
-                        </div>
+                        </Form.Group>
+                      </div>
+                      <div className="col-4">
+                        {checkedRows[parentIndex]?.[childIndex] && (
+                          <Form.Group controlId="exampleForm.ControlInput2">
+                            <Form.Label style={{ fontSize: "15px" }}>
+                              /pcs:{" "}
+                            </Form.Label>
+                            <Form.Control
+                              type="number"
+                              readOnly={child.item.quantity === 0}
+                              placeholder="Quantity"
+                              required
+                              onKeyDown={(e) => {
+                                ["e", "E", "+", "-"].includes(e.key) &&
+                                  e.preventDefault();
+                              }}
+                              value={
+                                inputValues[
+                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                ]?.Squantity || ""
+                              }
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e.target.value,
+                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                  "Squantity",
+                                  child.item.quantity
+                                )
+                              }
+                              style={{
+                                height: "35px",
+                                width: "100px",
+                                fontSize: "14px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                              }}
+                            />
+                          </Form.Group>
+                        )}
+                      </div>
+                      <div className="col-4">
+                        <label
+                          className="userstatus"
+                          style={{
+                            fontSize: 15,
+                            marginLeft: 15,
+                            marginTop: "10px",
+                          }}
+                        >
+                          Set
+                        </label>
+                        <input
+                          style={{
+                            marginLeft: 20,
+                          }}
+                          disabled={child.item.quantity === 0}
+                          type="checkbox"
+                          className="toggle-switch"
+                          checked={checkedRows[parentIndex]?.[childIndex]}
+                          onClick={(e) =>
+                            handleCheckbox(e, parentIndex, childIndex)
+                          }
+                          // style={{ marginTop: "25px" }}
+                        />
                       </div>
                     </div>
+                  </div>
 
-                    <div className="row mb-5">
-                      {productImages.length > 0 && (
-                        <Carousel
-                          data-bs-theme="dark"
-                          interval={3000}
-                          wrap={true}
-                          className="custom-carousel"
-                        >
-                          {productImages.map((image, index) => (
-                            <Carousel.Item key={index}>
-                              <img
-                                className=""
-                                style={{
-                                  width: "auto",
-                                  height: "auto",
-                                  margin: "auto",
-                                  display: "block",
-                                  maxHeight: "250px",
-                                  minHeight: "250px",
-                                }}
-                                src={`data:image/png;base64,${image.image}`}
-                                alt={`subpart-img-${image.id}`}
-                              />
-                              <Carousel.Caption>
-                                {/* Caption content */}
-                              </Carousel.Caption>
-                            </Carousel.Item>
-                          ))}
-                        </Carousel>
-                      )}
-                    </div>
-
-                    {products_receive.map((parent, parentIndex) =>
-                      parent.items.map((child, childIndex) => (
-                        <div
-                          className="row mb-5"
-                          style={{
-                            display:
-                              "d-flex flex-direction-row align-items-center",
-                            border: "1px solid #DEDEDE",
-                          }}
-                          key={`${parentIndex}-${childIndex}`}
-                        >
-                          <div className="col-3">
-                            <Form.Group controlId="exampleForm.ControlInput2">
-                              <Form.Label style={{ fontSize: "15px" }}>
-                                {`${child.type} : `}
-                              </Form.Label>
-                              <label className="fs-4">
-                                {`${child.supp_tag.code} - ${child.supp_tag.name}`}
-                              </label>
-                            </Form.Group>
-                          </div>
-
-                          <div className="col-3 d-flex flex-direction-row">
-                            <div className="row" style={{ marginTop: "-40px" }}>
-                              <div className="col-4">
-                                <Form.Group controlId="exampleForm.ControlInput2">
-                                  <Form.Label style={{ fontSize: "15px" }}>
-                                    PR :{" "}
-                                  </Form.Label>
-                                  <Form.Control
-                                    value={child.item.quantity}
-                                    // readOnly={
-                                    //   checkedRows[parentIndex]?.[childIndex]
-                                    // }
-                                    readOnly
-                                    style={{
-                                      height: "35px",
-                                      width: "100px",
-                                      fontSize: "14px",
-                                      fontFamily: "Poppins, Source Sans Pro",
-                                    }}
-                                  />
-                                </Form.Group>
-                              </div>
-                              <div className="col-4">
-                                {checkedRows[parentIndex]?.[childIndex] && (
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                    <Form.Label style={{ fontSize: "15px" }}>
-                                      /pcs:{" "}
-                                    </Form.Label>
-                                    <Form.Control
-                                      type="number"
-                                      readOnly={child.item.quantity === 0}
-                                      placeholder="Quantity"
-                                      required
-                                      onKeyDown={(e) => {
-                                        ["e", "E", "+", "-"].includes(e.key) &&
-                                          e.preventDefault();
-                                      }}
-                                      value={
-                                        inputValues[
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                        ]?.Squantity || ""
-                                      }
-                                      onChange={(e) =>
-                                        handleInputChange(
-                                          e.target.value,
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                          "Squantity",
-                                          child.item.quantity
-                                        )
-                                      }
-                                      style={{
-                                        height: "35px",
-                                        width: "100px",
-                                        fontSize: "14px",
-                                        fontFamily: "Poppins, Source Sans Pro",
-                                      }}
-                                    />
-                                  </Form.Group>
-                                )}
-                              </div>
-                              <div className="col-4">
-                                <label
-                                  className="userstatus"
-                                  style={{
-                                    fontSize: 15,
-                                    marginLeft: 15,
-                                    marginTop: "10px",
-                                  }}
-                                >
-                                  Set
-                                </label>
-                                <input
-                                  style={{
-                                    marginLeft: 20,
-                                  }}
-                                  disabled={child.item.quantity === 0}
-                                  type="checkbox"
-                                  className="toggle-switch"
-                                  checked={
-                                    checkedRows[parentIndex]?.[childIndex]
-                                  }
-                                  onClick={(e) =>
-                                    handleCheckbox(e, parentIndex, childIndex)
-                                  }
-                                  // style={{ marginTop: "25px" }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="col-3">
-                            <div className="d-flex flex-direction-row">
-                              <Form.Group
-                                style={{
-                                  marginTop: "-30px",
-                                  marginRight: "10px",
-                                }}
-                                controlId="exampleForm.ControlInput2"
-                              >
-                                <Form.Label style={{ fontSize: "15px" }}>
-                                  Received :{" "}
-                                </Form.Label>
-                                <Form.Control
-                                  type="number"
-                                  required
-                                  readOnly={child.item.quantity === 0}
-                                  value={
-                                    inputValues[
-                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                    ]?.Rquantity || ""
-                                  }
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      e.target.value,
-                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                      "Rquantity",
-                                      child.item.quantity
-                                    )
-                                  }
-                                  style={{
-                                    height: "35px",
-                                    width: "100px",
-                                    fontSize: "14px",
-                                    fontFamily: "Poppins, Source Sans Pro",
-                                  }}
-                                />
-                              </Form.Group>
-
-                              <Form.Group
-                                style={{ marginTop: "-30px" }}
-                                controlId="exampleForm.ControlInput2"
-                              >
-                                <Form.Label style={{ fontSize: "15px" }}>
-                                  Remaining :{" "}
-                                </Form.Label>
-                                <Form.Control
-                                  type="number"
-                                  placeholder="Quantity"
-                                  required
-                                  readOnly
-                                  style={{
-                                    height: "35px",
-                                    width: "100px",
-                                    fontSize: "14px",
-                                    fontFamily: "Poppins, Source Sans Pro",
-                                  }}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      e.target.value,
-                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                      "Tquantity",
-                                      child.item.quantity
-                                    )
-                                  }
-                                  value={
-                                    // inputValues[
-                                    //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                    // ]?.Tquantity || ""
-                                    (inputValues[
-                                      `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                    ]?.Squantity
-                                      ? inputValues[
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                        ]?.Squantity *
-                                          child.item.quantity -
-                                        inputValues[
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                        ]?.Rquantity *
-                                          inputValues[
-                                            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                          ]?.Squantity
-                                      : child.item.quantity -
-                                        inputValues[
-                                          `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                        ]?.Rquantity) || 0
-                                  }
-                                />
-                              </Form.Group>
-                            </div>
-                          </div>
-
-                          <div className="col-3"></div>
-                        </div>
-                      ))
-                    )}
-
-                    <Form.Group controlId="exampleForm.ControlInput1">
-                      <div
-                        className="card"
-                        style={{ border: "none", alignItems: "center" }}
+                  <div className="col-3">
+                    <div className="d-flex flex-direction-row">
+                      <Form.Group
+                        style={{
+                          marginTop: "-30px",
+                          marginRight: "10px",
+                        }}
+                        controlId="exampleForm.ControlInput2"
                       >
-                        <div
-                          className="drag-area"
-                          style={{ width: "70%" }}
-                          onDragOver={onDragOver}
-                          onDragLeave={onDragLeave}
-                          onDrop={(e) => onDropImages(e)}
-                        >
-                          <p style={{ fontSize: 11 }}>
-                            Drag & Drop image here or{" "}
-                            <span
-                              className="select"
-                              role="button"
-                              onClick={() => selectFiles()}
-                            >
-                              <p style={{ fontSize: 11 }}>Browse</p>
-                            </span>
-                          </p>
-                          <input
-                            name="file"
-                            type="file"
-                            className="file"
-                            multiple
-                            ref={fileInputRef}
-                            onChange={(e) => onFileSelect(e)}
-                          />
-                        </div>
-                        <div
-                          className="ccontainerss"
+                        <Form.Label style={{ fontSize: "15px" }}>
+                          Received :{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          required
+                          readOnly={child.item.quantity === 0}
+                          value={
+                            inputValues[
+                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                            ]?.Rquantity || ""
+                          }
+                          onChange={(e) =>
+                            handleInputChange(
+                              e.target.value,
+                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                              "Rquantity",
+                              child.item.quantity
+                            )
+                          }
                           style={{
-                            alignItems: "center",
-                            justifyContent: "center",
+                            height: "35px",
+                            width: "100px",
+                            fontSize: "14px",
+                            fontFamily: "Poppins, Source Sans Pro",
                           }}
-                        >
-                          {productImages.map((image, index) => (
-                            <div className="mt-2">
-                              <span
-                                className="fs-3"
-                                style={{ marginLeft: 20 }}
-                                onClick={() => deleteImage(index)}
-                              >
-                                &times;
-                              </span>
-                              <img
-                                style={{
-                                  width: 60,
-                                  height: 60,
-                                  marginLeft: 10,
-                                }}
-                                src={`data:image/png;base64,${image.image}`}
-                                alt={`Sub Part ${image.product_id}`}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </Form.Group>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button
-                      className="fs-5 lg"
-                      variant="secondary"
-                      onClick={handleClose}
-                      size="md"
+                        />
+                      </Form.Group>
+
+                      <Form.Group
+                        style={{ marginTop: "-30px" }}
+                        controlId="exampleForm.ControlInput2"
+                      >
+                        <Form.Label style={{ fontSize: "15px" }}>
+                          Remaining :{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="Quantity"
+                          required
+                          readOnly
+                          style={{
+                            height: "35px",
+                            width: "100px",
+                            fontSize: "14px",
+                            fontFamily: "Poppins, Source Sans Pro",
+                          }}
+                          onChange={(e) =>
+                            handleInputChange(
+                              e.target.value,
+                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                              "Tquantity",
+                              child.item.quantity
+                            )
+                          }
+                          value={
+                            // inputValues[
+                            //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                            // ]?.Tquantity || ""
+                            (inputValues[
+                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                            ]?.Squantity
+                              ? inputValues[
+                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                ]?.Squantity *
+                                  child.item.quantity -
+                                inputValues[
+                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                ]?.Rquantity *
+                                  inputValues[
+                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                  ]?.Squantity
+                              : child.item.quantity -
+                                inputValues[
+                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                ]?.Rquantity) || 0
+                          }
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  <div className="col-3"></div>
+                </div>
+              ))
+            )}
+
+            <Form.Group controlId="exampleForm.ControlInput1">
+              <div
+                className="card"
+                style={{ border: "none", alignItems: "center" }}
+              >
+                <div
+                  className="drag-area"
+                  style={{ width: "70%" }}
+                  onDragOver={onDragOver}
+                  onDragLeave={onDragLeave}
+                  onDrop={(e) => onDropImages(e)}
+                >
+                  <p style={{ fontSize: 11 }}>
+                    Drag & Drop image here or{" "}
+                    <span
+                      className="select"
+                      role="button"
+                      onClick={() => selectFiles()}
                     >
-                      Close
-                    </Button>
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      size="md"
-                      className="fs-5 lg"
-                    >
-                      Save
-                    </Button>
-                  </Modal.Footer>
-                </Form>
-              </Modal>
+                      <p style={{ fontSize: 11 }}>Browse</p>
+                    </span>
+                  </p>
+                  <input
+                    name="file"
+                    type="file"
+                    className="file"
+                    multiple
+                    ref={fileInputRef}
+                    onChange={(e) => onFileSelect(e)}
+                  />
+                </div>
+                <div
+                  className="ccontainerss"
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {productImages.map((image, index) => (
+                    <div className="mt-2">
+                      <span
+                        className="fs-3"
+                        style={{ marginLeft: 20 }}
+                        onClick={() => deleteImage(index)}
+                      >
+                        &times;
+                      </span>
+                      <img
+                        style={{
+                          width: 60,
+                          height: 60,
+                          marginLeft: 10,
+                        }}
+                        src={`data:image/png;base64,${image.image}`}
+                        alt={`Sub Part ${image.product_id}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className="fs-5 lg"
+              variant="secondary"
+              onClick={handleClose}
+              size="md"
+            >
+              Close
+            </Button>
+            <Button
+              variant="primary"
+              type="submit"
+              size="md"
+              className="fs-5 lg"
+            >
+              Save
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+      <Modal show={showTransaction} onHide={handleClose} backdrop="static" size="xl">
+        <Form noValidate validated={validated} onSubmit={add}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+                Receiving Transaction
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+          <div className="table-containss">
+              <div className="main-of-all-tables">
+                <table className="table-hover" id="order-listing">
+                  <thead>
+                    <tr>
+                    <th className="tableh">Product Code</th>
+                      <th className="tableh">Product Name</th>
+                      <th className="tableh">Received Quantity</th>
+                      <th className="tableh">Set</th>
+                      <th className="tableh">Freight Cost</th>
+                      <th className="tableh">Reference Code</th>
+                      <th className="tableh">Date Received</th>
+                    </tr>
+                  </thead>
+                  {filteredPRD.length > 0 || filteredASM.length > 0 || filteredSPR.length > 0  || filteredSBP.length > 0  ? (
+                    <tbody>
+                      {Transaction_prd.map((data, i) => (
+                        <tr key={i}>
+                        <td>{data.purchase_req_canvassed_prd.product_tag_supplier.product.product_code}</td>
+                        <td>{data.purchase_req_canvassed_prd.product_tag_supplier.product.product_name}</td>
+                        <td>{data.received_quantity}</td>
+                        <td>{data.set_quantity}</td>
+                        <td>{data.freight_cost}</td>
+                        <td>{data.ref_code}</td>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                      </tr>
+                      ))}
+
+                      {Transaction_asm.map((data, i) => (
+                        <tr key={i}>
+                        <td>{data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.product_code}</td>
+                        <td>{data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.product_name}</td>
+                        <td>{data.received_quantity}</td>
+                        <td>{data.set_quantity}</td>
+                        <td>{data.freight_cost}</td>
+                        <td>{data.ref_code}</td>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                      </tr>
+                      ))}
+
+
+                      {Transaction_spr.map((data, i) => (
+                        <tr key={i}>
+                        <td>{data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.product_code}</td>
+                        <td>{data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.product_name}</td>
+                        <td>{data.received_quantity}</td>
+                        <td>{data.set_quantity}</td>
+                        <td>{data.freight_cost}</td>
+                        <td>{data.ref_code}</td>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                      </tr>
+                      ))}
+
+                      {Transaction_sbp.map((data, i) => (
+                        <tr key={i}>
+                        <td>{data.purchase_req_canvassed_subpart.subpart_supplier.subPart.product_code}</td>
+                        <td>{data.purchase_req_canvassed_subpart.subpart_supplier.subPart.product_name}</td>
+                        <td>{data.received_quantity}</td>
+                        <td>{data.set_quantity}</td>
+                        <td>{data.freight_cost}</td>
+                        <td>{data.ref_code}</td>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                      </tr>
+                      ))}
+                     
+                    </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>No Data Found</h3>
+                    </div>
+                  )}
+                </table>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className="fs-5 lg"
+              variant="secondary"
+              onClick={handleClose}
+              size="md"
+            >
+              Close
+            </Button>
+           
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 }

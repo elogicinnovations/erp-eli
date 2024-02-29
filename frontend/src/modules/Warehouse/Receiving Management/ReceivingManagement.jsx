@@ -90,9 +90,9 @@ function ReceivingManagement({ authrztn }) {
 
     const filteredData = PurchaseRequest.filter((data) => {
       const createdAt = new Date(data.createdAt);
-      console.log("startDate:", startDate);
-      console.log("endDate:", endDate);
-      console.log("createdAt:", createdAt);
+      // console.log("startDate:", startDate);
+      // console.log("endDate:", endDate);
+      // console.log("createdAt:", createdAt);
 
       const isWithinDateRange =
         (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
@@ -304,6 +304,7 @@ function ReceivingManagement({ authrztn }) {
                     <tr>
                       <th className="tableh">PR NO.</th>
                       <th className="tableh">Requestor</th>
+                      <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
                       <th className="tableh">Date Created</th>
                       <th className="tableh">Remarks</th>
@@ -324,7 +325,13 @@ function ReceivingManagement({ authrztn }) {
                             onClick={() =>
                               navigate(`/viewToReceive/${data.id}`)
                             }
-                          ></td>
+                          >{data.masterlist.col_Fname}</td>
+
+<td
+                            onClick={() =>
+                              navigate(`/viewToReceive/${data.id}`)
+                            }
+                          >{data.masterlist.department.department_name}</td>
                           <td
                             onClick={() =>
                               navigate(`/viewToReceive/${data.id}`)
