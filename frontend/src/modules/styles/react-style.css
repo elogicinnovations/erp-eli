@@ -670,15 +670,16 @@ padding: 10px; /* Adjust the padding as needed */
 }
 
 .main-of-all-tables th {
-  background-color: #ededed;
+  background-color: #f3f0f0;
   font-family: Poppins, "Source Sans Pro";
-  font-weight: normal;
+  font-weight: bold;
   height: 50px;
   padding-left: 40px;
+  font-size: 16px;
 }
 
 .main-of-all-tables td{
-  padding: 10px 0px 10px 40px;
+  padding: 10px 0px 4px 40px;
   border-bottom: 1px solid #DDDDDD;
   font-family: Poppins, 'Source Sans Pro';
 }
@@ -2098,6 +2099,7 @@ button.genbutton {
 
 .table-hover>tbody>tr:hover>*{
   cursor: pointer;
+  
 }
 
 .nav-tabs .nav-link:focus, .nav-tabs .nav-link{

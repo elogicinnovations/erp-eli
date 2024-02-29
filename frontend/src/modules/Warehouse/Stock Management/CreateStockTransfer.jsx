@@ -46,7 +46,7 @@ function CreateStockTransfer({authrztn}) {
 
   const [selectedWarehouse, setSelectedWarehouse] = useState('');
   const [isSelected, setIsSelected] = useState(false);
-
+  const [masterList, setMasteList] = useState([]); 
   const [col_id, setSelect_Masterlist] = useState([]);
   const [userId, setuserId] = useState('');
 
@@ -75,28 +75,37 @@ function CreateStockTransfer({authrztn}) {
     setDestination(event.target.value)
   };
 
-
+  
   useEffect(() => {
-    const generateReferenceCode = () => {
-      const prefix = 'ST-00';
-  
-      const currentDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
-      const year = currentDate.getFullYear();
-      const month = (`0${currentDate.getMonth() + 1}`).slice(-2);
-      const day = (`0${currentDate.getDate()}`).slice(-2);
-  
-      const formattedDate = year + month + day;
-  
-      const fullReferenceCode = prefix + formattedDate;
-  
-      return fullReferenceCode;
-    };
-  
-    setReferenceCode(generateReferenceCode());
-  }, []);
-  
 
-  const [masterList, setMasteList] = useState([]); 
+    const generateReferenceCode = () => {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+
+      for (let i = 0; i < 12; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+      }
+
+      return code;
+    };
+    setReferenceCode(generateReferenceCode());
+  }, []); 
+
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/StockTransfer/latestRefcode")
+  //     .then((res) => {
+  //       const codes =
+  //         res.data !== null ? res.data.toString().padStart(3, "0") : "001";
+
+  //       // Increment the value by 1
+  //       setReferenceCode(codes);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+
 
   useEffect(() => {
     const delay = setTimeout(() => {

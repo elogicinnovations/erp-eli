@@ -505,6 +505,7 @@ function PurchaseRequest({ authrztn }) {
                             navigate(`/onCanvass/${data.id}`) :                       
                             navigate(`/purchaseRequestPreview/${data.id}`)
                           }
+                          style={{fontSize: '14px'}}
                           >
                             {formatDatetime(data.createdAt)}
                           </td>
@@ -535,7 +536,7 @@ function PurchaseRequest({ authrztn }) {
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="7">
+                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="8">
                               <Collapse in={openRows === data.id} timeout="auto" unmountOnExit>
                                 <div style={{width: '95%'}}>
                                     <thead style={{borderBottom: '1px solid #CECECE'}}>

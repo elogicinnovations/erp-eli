@@ -324,13 +324,13 @@ function POApprovalRejustify() {
                           <div className="row mt-3">
                             <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>PR #: </Form.Label>
+                                <Form.Label style={{ fontSize: '20px', fontFamily: "Poppins, Source Sans Pro" }}>PR #: </Form.Label>
                                 <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
                             <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                  <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
+                                  <Form.Label style={{ fontSize: '20px', fontFamily: "Poppins, Source Sans Pro" }}>Date Needed: </Form.Label>
                                     <DatePicker
                                       readOnly
                                       selected={dateNeeded}
@@ -353,7 +353,7 @@ function POApprovalRejustify() {
                             </div>
                             <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>To be used for: </Form.Label>
+                                <Form.Label style={{ fontSize: '20px', fontFamily: "Poppins, Source Sans Pro" }}>To be used for: </Form.Label>
                                 <Form.Control readOnly value={useFor} type="text" style={{height: '40px', fontSize: '15px'}}/>
                               </Form.Group>
                             </div>
@@ -361,7 +361,7 @@ function POApprovalRejustify() {
                         <div className="row">
                             <div className="col-6">
                               <Form.Group controlId="exampleForm.ControlInput1">
-                                  <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                  <Form.Label style={{ fontSize: '20px', fontFamily: "Poppins, Source Sans Pro" }}>Remarks: </Form.Label>
                                   <Form.Control readOnly value={remarks} as="textarea"
                                     rows={3}
                                     style={{

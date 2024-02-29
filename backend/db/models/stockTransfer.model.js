@@ -17,6 +17,7 @@ const StockTransfer = sequelize.define('stock_transfer', {
   },
   reference_code: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   col_id: {
     type: DataTypes.INTEGER,

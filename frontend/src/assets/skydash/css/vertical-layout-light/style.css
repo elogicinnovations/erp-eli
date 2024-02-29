@@ -26186,7 +26186,7 @@ body.avgrund-active {
 .dataTables_wrapper .dataTable thead .sorting_desc_disabled:after {
   line-height: 2.5;
   font-family: themify;
-  font-size: 15px;
+  font-size: 10px;
   left: 15px;
   font-weight: 900;
 }

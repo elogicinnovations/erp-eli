@@ -30,7 +30,7 @@ import {
   import '../../../assets/skydash/vendors/datatables.net/jquery.dataTables';
   import '../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4';
   import '../../../assets/skydash/js/off-canvas';
-  
+  import { jwtDecode } from "jwt-decode";
   import * as $ from 'jquery';
 
 function StockManagement({ authrztn }) {
@@ -39,14 +39,25 @@ function StockManagement({ authrztn }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  
-
   const [stockMgnt, setStockMgnt] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(Array(stockMgnt.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+    setuserId(decoded.id);
+    }
+  }
+  
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -122,7 +133,7 @@ function StockManagement({ authrztn }) {
       }).then(async (willDelete) => {
         if (willDelete) {
           try {
-            const response = await axios.delete(BASE_URL + `/stockTransfer/delete/${id}`);
+            const response = await axios.delete(BASE_URL + `/stockTransfer/delete/${id}?userId=${userId}`);
 
             if (response.status === 200) {
               swal({
@@ -151,12 +162,6 @@ function StockManagement({ authrztn }) {
           } catch (err) {
             console.log(err);
           }
-        } else {
-          swal({
-            title: "Cancel",
-            text: "",
-            icon: "warning",
-          });
         }
       });
     }; 
@@ -371,7 +376,7 @@ function StockManagement({ authrztn }) {
                 <div className="table-containss">
                     <div className="main-of-all-tables">
                         <table className='table-hover' id='order-listing'>
-                                <thead>
+                              <thead>
                                 <tr>
                                     <th className='tableh'>Transfer ID</th>
                                     <th className='tableh'>Description</th>
@@ -414,9 +419,6 @@ function StockManagement({ authrztn }) {
                                               boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)',
                                               }}
                                           >
-                                              {/* Your dropdown content here */}
-                                              
-                                          {/* <Link to={`/initUpdateCostCenter/${data.stock_id}`} onClick={() => handleModalToggle(data)} style={{fontSize:'12px'}} className='btn'>Update</Link> */}
                                           <button onClick={() => handleDelete(data.stock_id)} className='btn'>Cancel</button>
                                           </div>
                                           </td>

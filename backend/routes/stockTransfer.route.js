@@ -41,6 +41,28 @@ router.route('/fetchTable').get(async (req, res) => {
       res.status(500).json("Error");
     }
   });
+  
+
+  // router.route('/latestRefcode').get(async (req, res) => {
+  //   try {
+  //     const latestPR = await StockTransfer.findOne({
+  //       attributes: [[sequelize.fn('max', sequelize.col('reference_code')), 'latestNumber']],
+  //     });
+  //     let latestNumber = latestPR.getDataValue('latestNumber');
+  
+  //     console.log('Latest Number:', latestNumber);
+  
+  //     // Increment the latestNumber by 1 for a new entry
+  //     latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+  
+  //     // Do not create a new entry, just return the incremented value
+  //     return res.json(latestNumber.padStart(3, '0'));
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json("Error");
+  //   }
+  // });
+  
 
   // router.route('/lastPRNumber').get(async (req, res) => {
   //   try {
@@ -71,15 +93,17 @@ router.route('/fetchTable').get(async (req, res) => {
         remarks, 
         addProductbackend,
         userId} = req.body;
+
         
           const StockTransfer_newData = await StockTransfer.create({
             source: selectedWarehouse,
-            destination: destination,
+            warehouse_id: destination,
             reference_code: referenceCode,
             col_id: col_id,
             remarks: remarks
           });
 
+          console.log("Warehouse IDdsadsadasdsa" + destination);
           const createdID = StockTransfer_newData.stock_id;
 
           
@@ -214,27 +238,38 @@ router.route('/fetchView').get(async (req, res) => {
 //Delete
 router.route('/delete/:param_id').delete(async (req, res) => 
 {
-  const id = req.params.param_id;
-  await StockTransfer.destroy({
-            where : {
-              stock_id: id
-            }
-        }).then(
-            (del) => {
-                if(del){
-                    res.json({success : true})
-                }
-                else{
-                    res.status(400).json({success : false})
-                }
-            }
-        ).catch(
-            (err) => {
-                console.error(err)
-                res.status(409)
-            }
-        );
-      });
+  try{
+    const id = req.params.param_id;
+    const userId = req.query.userId;
+  
+    const stockData = await StockTransfer.findOne({
+      where : {
+        stock_id: id
+      }
+    })
+  
+    const stockRefcode = stockData.reference_code;
+  
+        const del = await StockTransfer.destroy({
+              where : {
+                stock_id: id
+              },
+          });
+  
+          if(del) {
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `The stock transfer is being cancelled with the reference code of ${stockRefcode}`
+            });
+            res.json({success : true})
+          } else {
+            res.status(400).json({success : false})
+          }
+      }catch (error) {
+        console.error("Error cancelling stock transfer:", error);
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+      }
+});
 
 
   router.route('/viewToReceiveStockTransfer').get(async (req, res) => {
