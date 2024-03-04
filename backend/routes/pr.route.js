@@ -48,6 +48,14 @@ router.route('/fetchTable').get(async (req, res) => {
     try {
      
       const data = await PR.findAll({
+        include:[{
+          model: MasterList,
+          required: true, 
+            include:  [{
+              model: Department,
+              required: true
+            }]
+        }],
         where: {
           status: {
             [Op.or]: ['To-Receive', 'Delivered']
@@ -71,6 +79,14 @@ router.route('/fetchTable').get(async (req, res) => {
 router.route('/viewToReceive').get(async (req, res) => {
   try {
       const data = await PR.findAll({
+        include:[{
+          model: MasterList,
+          required: true, 
+            include:  [{
+              model: Department,
+              required: true
+            }]
+        }],
       where: {
           id: req.query.id,
       }

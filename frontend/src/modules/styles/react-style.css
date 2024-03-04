@@ -3351,6 +3351,7 @@ div#ordered-listing_length label {
 .canvass-supplier-content{
   width: 100%;
   height: 100%;
+  overflow-y: auto;
 }
 
 .PO-num {
@@ -3397,7 +3398,7 @@ div#ordered-listing_length label {
 .receive-container{
   border: 1px solid #DEE2E6;
   border-radius: 4px;
-  height: 150px;
+  /* height: 150px; */
 }
 
 .PR-num {
@@ -3434,16 +3435,16 @@ div#ordered-listing_length label {
   font-family: Poppins, "Source Sans Pro";
 }
 
-.request-date{
+/* .request-date{
   padding-top: 10px;
   padding-left: 98px;
   width: 50%;
 
 }
-
+ */
 .request-date p{
   color: #000000;
-  font-size: 13px;
+  font-size: 11px;
   font-family: Poppins, "Source Sans Pro";
 }
 
@@ -3601,7 +3602,46 @@ div#ordered-listing_length label {
 }
 
 .button-supp-data button{
-  padding: 7px 15px 7px 15px;
+  padding: 5px 12px 5px 12px;
   font-size: 15px;
 }
 
+
+.receiving_list li{
+  font-size: 15px;
+  padding: 5px;
+  color: #000000;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.receiving_list p{
+  font-size: 20px;
+  padding: 10px 5px 10px 5px;
+  color: #fff;
+  background-color: orangered;
+  font-family: Poppins, "Source Sans Pro";
+  /* border: 1px solid black; */
+  /* width: max-content; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receiving_list_right ul{
+  padding-top: 10px;
+}
+
+.receiving_list_right ul li:nth-child(2){
+  padding-top: 35px;
+}
+
+.receiving_list_right{
+  height: 100%;
+}
+
+.receiving_list_right li p{
+  font-size: 19.5px;
+  padding: 5px;
+  color: #000000;
+  font-family: Poppins, "Source Sans Pro";
+}

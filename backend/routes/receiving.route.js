@@ -291,4 +291,128 @@ router.route("/insertReceived").post(async (req, res) => {
   return res.status(200).json();
 });
 
+router.route("/fetchTransaction").get(async (req, res) => {
+  try {
+
+    const PRD = await Receiving_Prd.findAll({
+      include:[{
+        model: PR_PO,
+        required: true,
+        
+          include: [{
+            model: ProductTAGSupplier,
+            required: true,
+            include: [{
+              model: Product,
+              required: true,
+              attributes: [
+                ['product_code', 'product_code'],
+                ['product_name', 'product_name'],
+              ],
+            }],
+          }],
+
+
+        where: {
+          pr_id: req.query.pr_id,
+          po_id: req.query.po_num
+        }
+      }]
+    });
+
+    const ASM = await Receiving_Asm.findAll({
+      include:[{
+        model: PR_PO_asmbly,
+        required: true,
+        
+          include: [{
+            model: Assembly_Supplier,
+            required: true,
+            include: [{
+              model: Assembly,
+              required: true,
+              attributes: [
+                ['assembly_code', 'product_code'],
+                ['assembly_name', 'product_name'],
+              ],
+            }],
+          }],
+
+
+        where: {
+          pr_id: req.query.pr_id,
+          po_id: req.query.po_num
+        }
+      }]
+    });
+
+    
+    const SPR = await Receiving_Spare.findAll({
+      include:[{
+        model: PR_PO_spare,
+        required: true,
+        
+          include: [{
+            model: SparePart_Supplier,
+            required: true,
+            include: [{
+              model: SparePart,
+              required: true,
+              attributes: [
+                ['spareParts_code', 'product_code'],
+                ['spareParts_name', 'product_name'],
+              ],
+            }],
+          }],
+
+
+        where: {
+          pr_id: req.query.pr_id,
+          po_id: req.query.po_num
+        }
+      }]
+    });
+
+    
+    const SBP = await Receiving_Subpart.findAll({
+      include:[{
+        model: PR_PO_subpart,
+        required: true,
+        
+          include: [{
+            model: Subpart_supplier,
+            required: true,
+            include: [{
+              model: SubPart,
+              required: true,
+              attributes: [
+                ['subPart_code', 'product_code'],
+                ['subPart_name', 'product_name'],
+              ],
+            }],
+          }],
+
+
+        where: {
+          pr_id: req.query.pr_id,
+          po_id: req.query.po_num
+        }
+      }]
+    });
+    
+    
+
+    return res.json({
+      prd: PRD,
+      asm: ASM,
+      spr: SPR,
+      sbp: SBP
+    });
+    
+} catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred' });
+}
+});
+
 module.exports = router;
