@@ -9,6 +9,8 @@ const { PR_PO, PR_PO_asmbly, PR_PO_spare, PR_PO_subpart,
 const session = require('express-session')
 const { Parser } = require('json2csv');
 const nodemailer = require('nodemailer');
+const pdf = require('html-pdf');
+const fs = require('fs');
 
 router.route('/lastPONumber').get(async (req, res) => {
   try {
@@ -116,6 +118,155 @@ router.route('/save').post(async (req, res) => {
     console.error(err);
     res.status(500).json("Error");
   }
+  });
+
+
+  router.route('/fetchPOPreview').get(async (req, res) => {
+    try {
+      const pr_id = req.query.id;
+      const po_num = req.query.po_number;
+  
+      // Fetch data from all four tables with the specified pr_id
+      const prPoData = await PR_PO.findAll({
+        include: [{
+          model: ProductTAGSupplier,
+          required: true,
+
+            include: [{
+              model: Product,
+              required: true,
+              attributes: [
+                ['product_code', 'code'],
+                ['product_name', 'name'],
+              ],
+            
+            },
+            {
+              model: Supplier,
+              required: true
+            }] 
+        }],
+        where: { 
+          pr_id: pr_id,
+          po_id: po_num
+        },
+      });
+  
+      const prPoAsmblyData = await PR_PO_asmbly.findAll({
+        include: [{
+          model: Assembly_Supplier,
+          required: true,
+
+            include: [{
+              model: Assembly,
+              required: true,
+              attributes: [
+                ['assembly_code', 'code'],
+                ['assembly_name', 'name'],
+              ],
+            },
+            {
+              model: Supplier,
+              required: true
+            }
+          ] 
+        }],
+        where: { 
+          pr_id: pr_id,
+          po_id: po_num
+        },
+      });
+  
+      const prPoSpareData = await PR_PO_spare.findAll({
+        include: [{
+          model: SparePart_Supplier,
+          required: true,
+
+            include: [{
+              model: SparePart,
+              required: true,
+              attributes: [
+                ['spareParts_code', 'code'],
+                ['spareParts_name', 'name'],
+              ],
+            },
+            {
+              model: Supplier,
+              required: true
+            }] 
+        }],
+        where: { 
+          pr_id: pr_id,
+          po_id: po_num
+        },
+      });
+  
+      const prPoSubpartData = await PR_PO_subpart.findAll({
+        include: [{
+          model: Subpart_supplier,
+          required: true,
+
+            include: [{
+              model: SubPart,
+              required: true,
+              attributes: [
+                ['subPart_code', 'code'],
+                ['subPart_name', 'name'],
+              ],
+            },
+            {
+              model: Supplier,
+              required: true
+            }] 
+        }],
+        where: { 
+          pr_id: pr_id,
+          po_id: po_num
+        },
+      });
+  
+      // Consolidate data into an object with po_id as keys
+      const consolidatedObject = {};
+  
+      prPoData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push({item, supp_tag: item.product_tag_supplier.product, suppliers: item.product_tag_supplier.supplier});
+      });
+  
+      prPoAsmblyData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: []};
+        consolidatedObject[po_id].items.push({item, supp_tag: item.assembly_supplier.assembly, suppliers: item.assembly_supplier.supplier });
+      });
+  
+      prPoSpareData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push({item, supp_tag: item.sparepart_supplier.sparePart, suppliers: item.sparepart_supplier.supplier });
+      });
+  
+      prPoSubpartData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push({item, supp_tag: item.subpart_supplier.subPart, suppliers: item.subpart_supplier.supplier});
+      });
+  
+      // Convert the object values back to an array
+      const consolidatedArray = Object.values(consolidatedObject);
+  
+      // Sort the consolidated array by po_id
+      // consolidatedArray.forEach(group => {
+      //   group.items.sort((a, b) => a.po_id.localeCompare(b.po_id));
+      // });
+  
+      // console.log(consolidatedArray);
+  
+      res.status(200).json(consolidatedArray);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
   });
 
   router.route('/fetchPOarray').get(async (req, res) => {
@@ -257,12 +408,11 @@ router.route('/save').post(async (req, res) => {
   router.route('/approve_PO').post(async (req, res) => {
     try {
       const { id, POarray, prNum, userId } = req.body;
-      
+      const gmailEmail = "sbfmailer@gmail.com";
+      const gmailPassword = "uoetasnknsroxwnq";
+  
       // Create an object to store items for each supplier
       const itemsBySupplier = {};
-      // Create a nodemailer transporter
-          const gmailEmail = "sbfmailer@gmail.com";
-          const gmailPassword = "uoetasnknsroxwnq";
   
       // Iterate through the POarray to gather items for each supplier
       POarray.forEach(parent => {
@@ -283,77 +433,124 @@ router.route('/save').post(async (req, res) => {
         });
       });
   
-      // Iterate through each supplier and send an email with the consolidated CSV attachment
+      // Iterate through each supplier and send an email with the consolidated PDF attachment
       for (const supplierEmail in itemsBySupplier) {
-        // Create CSV content with header
-        const header = ['ID', 'Product Name', 'Quantity'];
-        let csvContent = header.join(',') + '\n';
+        // Create PDF content
+        let htmlContent = `
+        <style>
+            /* Bootstrap styles */
+            .table {
+                width: 100%;
+                margin-bottom: 1rem;
+                color: #212529;
+                background-color: transparent;
+                border-collapse: collapse;
+            }
+    
+            .table th,
+            .table td {
+                padding: 0.75rem;
+                vertical-align: top;
+                border-top: 1px solid #dee2e6;
+            }
+    
+            .table thead th {
+                vertical-align: bottom;
+                border-bottom: 2px solid #dee2e6;
+            }
+    
+            .table tbody + tbody {
+                border-top: 2px solid #dee2e6;
+            }
+    
+            .table .table {
+                background-color: #fff;
+            }
+        </style>
+        <h2>SBF PHILIPPINES DRILLING \n RESOURCES CORPORATION</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>`;
+    
+    itemsBySupplier[supplierEmail].forEach(item => {
+        htmlContent += `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.quantity}</td></tr>`;
+    });
+    
+    htmlContent += '</table>';
   
-        itemsBySupplier[supplierEmail].forEach(item => {
-          csvContent += `${item.code},${item.name},${item.quantity}\n`;
-        });
+        // Generate PDF from HTML
+        pdf.create(htmlContent).toFile('./orders.pdf', async function(err, res) {
+          if (err) return console.log(err);
   
-        // Create a nodemailer transporter
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: gmailEmail,
-            pass: gmailPassword,
-          },
-        });
-  
-        // Define email options
-        const mailOptions = {
-          from: gmailEmail,
-          to: supplierEmail,
-          subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
-          text: 'Attached is a CSV file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:',
-          attachments: [
-            {
-              filename: 'orders.csv',
-              content: csvContent,
+          // Create a nodemailer transporter
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: gmailEmail,
+              pass: gmailPassword,
             },
-          ],
-        };
+          });
   
-        // Send the email
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log('Error sending email:', error);
-          }
+          // Define email options
+          const mailOptions = {
+            from: gmailEmail,
+            to: supplierEmail,
+            subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+            text: 'Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:',
+            attachments: [
+              {
+                filename: 'orders.pdf',
+                path: './orders.pdf',
+                contentType: 'application/pdf'
+              },
+            ],
+          };
+  
+          // Send the email
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.log('Error sending email:', error);
+            }
+            else{
+              console.log('Email Sent:', info);
+            }
+          });
         });
       }
   
-          const PR_newData = await PR.update({
-            status: 'To-Receive'
-          },
-          {
-            where: { id: id }
-          }); 
-
-          const PR_historical = await PR_history.create({
-            pr_id: id,
-            status: 'To-Receive',
-          });
-
-          if(PR_newData){
-            const forPR = await PR.findOne({
-              where: {
-                id: id,
-              },
-            });
-    
-            const PRnum = forPR.pr_num;
-    
-            await Activity_Log.create({
-              masterlist_id: userId,
-              action_taken: `The Purchase Order is being To-Receive with pr number ${PRnum}`,
-            });
-          }
-        // return console.log(id)
-
-
-        res.status(200).json();
+      // const PR_newData = await PR.update({
+      //   status: 'To-Receive'
+      // },
+      // {
+      //   where: { id: id }
+      // }); 
+  
+      // const PR_historical = await PR_history.create({
+      //   pr_id: id,
+      //   status: 'To-Receive',
+      // });
+  
+      // if (PR_newData) {
+      //   const forPR = await PR.findOne({
+      //     where: {
+      //       id: id,
+      //     },
+      //   });
+  
+      //   const PRnum = forPR.pr_num;
+  
+      //   await Activity_Log.create({
+      //     masterlist_id: userId,
+      //     action_taken: `The Purchase Order is being To-Receive with pr number ${PRnum}`,
+      //   });
+      // }
+  
+      // res.status(200).json();
   
     } catch (err) {
       console.error(err);
