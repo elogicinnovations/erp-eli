@@ -81,7 +81,42 @@ router.route('/fetchTable').get(async (req, res) => {
   //     res.status(500).json("Error");
   //   }
   // });
-
+  router.route('/fetchWarehouseData').get(async (req, res) => {
+    try {
+      const stockTransfers = await StockTransfer.findAll({
+        where: {
+          // Add any specific conditions if needed
+        },
+        include: [
+          {
+            model: Warehouses,
+            as: 'SourceWarehouse', // alias for the source warehouse
+            attributes: ['warehouse_name'],
+            foreignKey: 'source',
+          },
+          {
+            model: Warehouses,
+            as: 'DestinationWarehouse', // alias for the destination warehouse
+            attributes: ['warehouse_name'],
+            foreignKey: 'destination',
+          },
+        ],
+      });
+  
+      // Extract the source and destination warehouse names
+      const sourceWarehouses = stockTransfers.map((transfer) => transfer.SourceWarehouse?.warehouse_name);
+      const destinationWarehouses = stockTransfers.map((transfer) => transfer.DestinationWarehouse?.warehouse_name);
+  
+      res.status(200).json({
+        sourceWarehouses,
+        destinationWarehouses,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+  
 
 
   router.route('/create').post(async (req, res) => {
@@ -97,13 +132,13 @@ router.route('/fetchTable').get(async (req, res) => {
         
           const StockTransfer_newData = await StockTransfer.create({
             source: selectedWarehouse,
-            warehouse_id: destination,
+            destination: destination,
             reference_code: referenceCode,
             col_id: col_id,
             remarks: remarks
           });
 
-          console.log("Warehouse IDdsadsadasdsa" + destination);
+          // console.log("Warehouse IDdsadsadasdsa" + destination);
           const createdID = StockTransfer_newData.stock_id;
 
           
@@ -216,7 +251,7 @@ router.route('/fetchTable').get(async (req, res) => {
 router.route('/fetchView').get(async (req, res) => {
   try {
    
-    const data = await StockTransfer.findOne({
+    const data = await StockTransfer.findAll({
         where: {
           stock_id: req.query.id
         }

@@ -8,11 +8,11 @@ const StockTransfer_product = sequelize.define('stockTransfer_product', {
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id:{
+  stockTransfer_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  product_id:{
+  inventory_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },

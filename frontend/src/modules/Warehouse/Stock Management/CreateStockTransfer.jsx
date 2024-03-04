@@ -28,7 +28,6 @@ function CreateStockTransfer({authrztn}) {
   const navigate = useNavigate()
 
   const [source, setSource] = useState();
-  const [destination, setDestination] = useState('');
   const [referenceCode, setReferenceCode] = useState('');
   const [remarks, setRemarks] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -44,11 +43,15 @@ function CreateStockTransfer({authrztn}) {
   const [fetchSpare, setFetchSpare] = useState([]);
   const [fetchSubPart, setFetchSubPart] = useState([]);
 
-  const [selectedWarehouse, setSelectedWarehouse] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [masterList, setMasteList] = useState([]); 
   const [col_id, setSelect_Masterlist] = useState([]);
   const [userId, setuserId] = useState('');
+  const [disableDropdown, setdisableDropdown] = useState(false)
+  const [warehouse, setWarehouse] = useState([]); 
+  const [destinationwarehouse, setDestinationWarehouse] = useState([]); 
+  const [destination, setDestination] = useState('');
+  const [selectedWarehouse, setSelectedWarehouse] = useState('');
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
@@ -67,14 +70,29 @@ function CreateStockTransfer({authrztn}) {
   };
 
   const handleFormSourceWarehouse = (event) => { 
-    setSelectedWarehouse(event.target.value)
-    setIsSelected(true)
+    const selectedWarehouseId = event.target.value;
+    setSelectedWarehouse(selectedWarehouseId);
+    setIsSelected(true);
+    setdisableDropdown(true);
+  
+    axios
+      .get(BASE_URL + "/warehouses/fetchDestination", {
+        params: {
+          selectedWarehouseId: selectedWarehouseId,
+        },
+      })
+      .then((res) => setDestinationWarehouse(res.data))
+      .catch((err) => console.log(err));
   };
 
+  
+  
   const handleFormDestinationWarehouse = (event) => { 
-    setDestination(event.target.value)
-  };
+    setDestination(event.target.value);
 
+
+  };
+  console.log("HAHAHAHAHA" + destination)
   
   useEffect(() => {
 
@@ -124,7 +142,7 @@ return () => clearTimeout(delay);
 }, []);
 
 
-const [warehouse, setWarehouse] = useState([]); 
+
 useEffect(() => {
   axios
     .get(BASE_URL + "/warehouses/fetchtableWarehouses")
@@ -136,6 +154,9 @@ useEffect(() => {
       console.error("Error fetching roles:", error);
     });
 }, []);
+
+
+
 
 
   useEffect(() => {
@@ -442,6 +463,7 @@ function formatDatetime(datetime) {
                               </Form.Group>
                                 </div>
                                 <div className="col-6">
+                                  
                               <Form.Group controlId="exampleForm.ControlInput2">
                                 <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
                                     <Form.Select
@@ -449,11 +471,12 @@ function formatDatetime(datetime) {
                                       onChange={handleFormDestinationWarehouse}
                                       required
                                       style={{ height: "40px", fontSize: "15px" }}
-                                      defaultValue="">
+                                      defaultValue=""
+                                      >
                                       <option disabled value="">
                                         Select Site
                                       </option>
-                                      {warehouse.map((warehouse) => (
+                                      {destinationwarehouse.map((warehouse) => (
                                         <option
                                           key={warehouse.id}
                                           value={warehouse.id}>
@@ -599,7 +622,7 @@ function formatDatetime(datetime) {
                                                       Quantity: <strong>{prod.quantity}</strong> 
                                                     </div>,
                                                     type: 'Product',
-                                                    values: prod.product_tag_supplier.product.product_id,
+                                                    values: prod.inventory_id,
                                                     code: prod.product_tag_supplier.product.product_code,
                                                     name: prod.product_tag_supplier.product.product_name,
                                                     unit: prod.product_tag_supplier.product.product_unitMeasurement,
@@ -614,7 +637,7 @@ function formatDatetime(datetime) {
                                                       Quantity: <strong>{assembly.quantity}</strong>  
                                                     </div>,
                                                     type: 'Assembly',
-                                                    values: assembly.assembly_supplier.assembly.id,
+                                                    values: assembly.inventory_id,
                                                     code: assembly.assembly_supplier.assembly.assembly_code,
                                                     name: assembly.assembly_supplier.assembly.assembly_name,
                                                     unit: assembly.assembly_supplier.assembly.assembly_unitMeasurement,
@@ -629,7 +652,7 @@ function formatDatetime(datetime) {
                                                       Quantity: <strong>{spare.quantity}</strong>
                                                     </div>,
                                                     type: 'Spare',
-                                                    values: spare.sparepart_supplier.sparePart.id,
+                                                    values: spare.inventory_id,
                                                     code: spare.sparepart_supplier.sparePart.spareParts_code,
                                                     name: spare.sparepart_supplier.sparePart.spareParts_name,
                                                     unit: spare.sparepart_supplier.sparePart.spareParts_unitMeasurement,
@@ -644,7 +667,7 @@ function formatDatetime(datetime) {
                                                       Quantity: <strong>{subPart.quantity}</strong>
                                                     </div>,
                                                     type: 'SubPart',
-                                                    values: subPart.subpart_supplier.subPart.id,
+                                                    values: subPart.inventory_id,
                                                     code: subPart.subpart_supplier.subPart.subPart_code,
                                                     name: subPart.subpart_supplier.subPart.subPart_name,
                                                     unit: subPart.subpart_supplier.subPart.subPart_unitMeasurement,

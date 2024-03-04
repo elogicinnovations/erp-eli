@@ -70,6 +70,28 @@ router.use(
     }
 });
 
+router.route('/fetchDestination').get(async (req, res) => {
+  try {
+    const data = await Warehouses.findAll({
+      where: {
+        id: { [Op.ne]: req.query.selectedWarehouseId },
+      }
+    });
+
+    console.log("Selected Warehouse ID: " + req.query.selectedWarehouseId);
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400).json({ error: "No data found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 router.route('/updateWarehouse/:param_id').put(async (req, res) => {
   try {
     const name = req.body.warehouse_name;

@@ -47,8 +47,6 @@ function StockTransferPreview({authrztn}) {
   const [remarks, setRemarks] = useState();
   const [product, setProduct] = useState([]); //para pag fetch ng mga registered products 
 
-
-  
  
   const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
@@ -482,24 +480,41 @@ const update = async e => {
   setValidated(true); //for validations
 };
 
-useEffect(() => {
-  axios.get(BASE_URL + '/StockTransfer/fetchView', {
-    params: {
-      id: id
-    }
-  })
-  .then(res => {
-    setSource(res.data.source);
-    setDestination(res.data.destination);
-    setReferenceCode(res.data.reference_code);
-    setReceivedBy(res.data.col_id);
-    setRemarks(res.data.remarks);
-    setProduct(res.date.product_id);
-  })
-  .catch(err => {
-    console.error(err);
-  });
-}, [id]);
+  useEffect(() => {
+    axios.get(BASE_URL + '/StockTransfer/fetchView', {
+      params: {
+        id: id
+      }
+    })
+    .then(res => {
+      setReferenceCode(res.data[0].reference_code);
+      setReceivedBy(res.data[0].col_id);
+      setRemarks(res.data[0].remarks);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  }, [id]);
+
+
+  useEffect(() => {
+    axios.get(BASE_URL + '/StockTransfer/fetchWarehouseData', {
+      params: {
+        id: id,
+      },
+    })
+    .then(res => {
+      const { sourceWarehouses, destinationWarehouses } = res.data;
+  
+      // Use sourceWarehouses and destinationWarehouses in your application logic
+      setSource(sourceWarehouses);
+      setDestination(destinationWarehouses);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  }, [id]);
+  
 
   return (
     <div className="main-of-containers">
@@ -530,7 +545,11 @@ useEffect(() => {
                 </Col>
             </Row>
             <Form noValidate validated={validated} onSubmit={update}>
-                <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                <div className="gen-info" style={{ 
+                  fontSize: '20px', 
+                  position: 'relative', 
+                  paddingTop: '20px',
+                  fontFamily: 'Poppins, Source Sans Pro' }}>
                         General Information 
                           <span
                             style={{
@@ -539,70 +558,73 @@ useEffect(() => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '19rem',
+                              left: '21rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
                         </div>
                           <div className="row mt-3">
-                          <div className="col-6">
+                            <div className="col-4">
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                  <Form.Label style={{ fontSize: '20px' }}>Reference code: </Form.Label>
+                                  <Form.Control readOnly type="text" value={referenceCode}  style={{height: '40px', fontSize: '15px'}}/>
+                                </Form.Group>
+                            </div>
+                              <div className="col-4">
+                                  <Form.Group controlId="exampleForm.ControlInput2">
+                                  <Form.Label style={{ fontSize: '20px' }}>Source: </Form.Label>   
+                                      <Form.Control 
+                                          aria-label=""
+                                          required
+                                          style={{fontSize: '15px' }}
+                                          defaultValue=''
+                                          value={source} 
+                                          readOnly
+                                        />
+                                  </Form.Group>
+                              </div>
+                            <div className="col-4">
                               <Form.Group controlId="exampleForm.ControlInput2">
-                              <Form.Label style={{ fontSize: '20px' }}>Source: </Form.Label>   
-                                  <Form.Select 
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      defaultValue=''
-                                      value={source} 
-                                    >
-                                        <option disabled value=''>
-                                          Select Site
-                                        </option>
-                                        {subwarehouse.map((name, index) => (
-                                        <option key={index} value={name}>
-                                            {name}
-                                        </option>
-                                        ))}
-                                    </Form.Select>
-                              </Form.Group>
-                                </div>
-                            <div className="col-3">
-                            <Form.Group controlId="exampleForm.ControlInput2">
-                              <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
-                                  <Form.Select 
-                                      aria-label=""
-                                      required
-                                      style={{ height: '40px', fontSize: '15px' }}
-                                      value={destination} 
-                                      defaultValue=''
-                                    >
-                                        <option disabled value=''>
-                                          Select Site
-                                        </option>
-                                        {subwarehouse.map((name, index) => (
-                                        <option key={index} value={name}>
-                                            {name}
-                                        </option>
-                                        ))}
-                                    </Form.Select>
-                              </Form.Group>
+                                <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
+                                    <Form.Control 
+                                        aria-label=""
+                                        required
+                                        style={{fontSize: '15px' }}
+                                        value={destination} 
+                                        defaultValue=''
+                                        readOnly
+                                      />
+                                </Form.Group>
                               </div>
                           </div>
                         <div className="row">
                             <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Reference code: </Form.Label>
-                                <Form.Control readOnly type="text" value={referenceCode}  style={{height: '40px', fontSize: '15px'}}/>
+                              <Form.Group controlId="exampleForm.ControlInput1">
+                                  <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
+                                  <Form.Control readOnly={!isReadOnly} 
+                                  onChange={e => setRemarks(e.target.value)} 
+                                  value={remarks} 
+                                  as="textarea"
+                                  rows={3}
+                                  style={{
+                                  fontFamily: 'Poppins, Source Sans Pro',
+                                  fontSize: "16px",
+                                  height: "150px",
+                                  maxHeight: "150px",
+                                  resize: "none",
+                                  overflowY: "auto",
+                                  }}/>
                               </Form.Group>
                             </div>
                             <div className="col-6">
-                            <Form.Group controlId="exampleForm.ControlInput1">
-                                <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                <Form.Control as="textarea" readOnly={!isReadOnly} onChange={e => setRemarks(e.target.value)}  value={remarks} placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/>
-                            </Form.Group>
+
                             </div>
                         </div>
-                        <div className="gen-info" style={{ fontSize: '20px', position: 'relative', paddingTop: '20px' }}>
+                        <div className="gen-info" style={{ 
+                          fontSize: '20px', 
+                          position: 'relative', 
+                          paddingTop: '20px',
+                          fontFamily: 'Poppins, Source Sans Pro' }}>
                           Order Items
                           <span
                             style={{
@@ -611,7 +633,7 @@ useEffect(() => {
                               width: '-webkit-fill-available',
                               background: '#FFA500',
                               top: '81%',
-                              left: '10.7rem',
+                              left: '12rem',
                               transform: 'translateY(-50%)',
                             }}
                           ></span>
@@ -620,8 +642,8 @@ useEffect(() => {
                         
                             <div className="table-containss">
                                 <div className="main-of-all-tables">
-                                    <table id=''>
-                                            <thead>
+                                    <table id='order-listing'>
+                                        <thead>
                                             <tr>
                                                 <th className='tableh'>Product Code</th>
                                                 <th className='tableh'>Quantity</th>
@@ -629,202 +651,17 @@ useEffect(() => {
                                                 <th className='tableh'>Product Name</th>
                                                 <th className='tableh'>Description</th>
                                             </tr>
-                                            </thead>
-                                            <tbody>
-
-                                            {!isReadOnly && (
-                                              productSelectedFetch.length > 0 ? (
-                                              productSelectedFetch.map((product) => (
-                                                <tr >
-                                                  <td>{product.product.product_code}</td>
-                                                  <td> 
-                                                    {product.quantity}
-                                                  </td>
-                                                  <td>{product.product.product_unitMeasurement}</td>                                           
-                                                  <td>{product.product.product_name}</td>  
-                                                  <td>
-                                                    {product.description}
-                                                  </td>
-                                                </tr>
-                                              ))
-                                            ) : (
+                                        </thead>
+                                          <tbody>
                                               <tr>
                                                 <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-
-                                            {!isReadOnly && (
-                                              assemblySelectedFetch.length > 0 ? (
-                                                assemblySelectedFetch.map((product) => (
-                                                <tr >
-                                                  <td>{product.assembly.assembly_code}</td>
-                                                  <td> {product.quantity}</td>
-                                                  <td> -- </td>                                           
-                                                  <td>{product.assembly.assembly_name}</td>  
-                                                  <td>{product.description}</td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                                 <td></td>
                                               </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-                                          {!isReadOnly && (
-                                              spareSelectedFetch.length > 0 ? (
-                                                spareSelectedFetch.map((spare) => (
-                                                <tr >
-                                                  <td >{spare.sparePart.spareParts_code}</td>
-                                                  <td > {spare.quantity}</td>
-                                                  <td > -- </td>                                           
-                                                  <td >{spare.sparePart.spareParts_name}</td>  
-                                                  <td >{spare.description}</td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-                                            {!isReadOnly && (
-                                              subPartSelectedFetch.length > 0 ? (
-                                                subPartSelectedFetch.map((subpart) => (
-                                                <tr >
-                                                  <td >{subpart.subPart.subPart_code}</td>
-                                                  <td > {subpart.quantity}</td>
-                                                  <td > -- </td>                                           
-                                                  <td >{subpart.subPart.subPart_name}</td>  
-                                                  <td >{subpart.description}</td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-
-                                          )} {/* end ng !isReadOnly*/}
-
-
-                                            {isReadOnly && (
-                                              product.length > 0 ? (
-                                              product.map((product) => (
-                                                <tr key={product.value}>
-                                                  <td >{product.code}</td>
-                                                  <td > 
-                                                    <div className='d-flex flex-direction-row align-items-center'>
-                                                      <input
-                                                        type="number"
-                                                        value={inputValues[product.value]?.quantity || ''}
-                                                        onChange={(e) => handleInputChange(e.target.value, product.value, 'quantity')}
-                                                        required
-                                                        placeholder="Input quantity"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                      />
-                                                      
-                                                    </div>
-                                                  </td>
-                                                  <td >{product.um}</td>                                           
-                                                  <td >{product.name}</td>  
-                                                  <td >
-                                                    <div className='d-flex flex-direction-row align-items-center'>
-                                                      <input                                              
-                                                        as="textarea"
-                                                        value={inputValues[product.value]?.desc || ''}
-                                                        onChange={(e) => handleInputChange(e.target.value, product.value, 'desc')}
-                                                        placeholder="Input description"
-                                                        style={{ height: '40px', width: '120px', fontSize: '15px' }}
-                                                      />
-                                                      
-                                                    </div>
-                                                  </td>
-                                                </tr>
-                                              ))
-                                            ) : (
-                                              <tr>
-                                                <td></td>
-                                              </tr>
-                                            )
-                                          )} {/* end ng isReadOnly*/}
-                                            </tbody>
-                                        {showDropdown && (
-                                        <div className="dropdown mt-3">
-                                              <Select
-                                                  isMulti
-                                                  options={fetchProduct.map(prod => ({
-                                                    value: `${prod.product_id}_${prod.product_code}_Product`, 
-                                                    label: <div>
-                                                      Product Code: <strong>{prod.product_code}</strong> / 
-                                                      Product Name: <strong>{prod.product_name}</strong> / 
-                                                    </div>,
-                                                    type: 'Product',
-                                                    values: prod.product_id,
-                                                    code: prod.product_code,
-                                                    name: prod.product_name,
-                                                    created: prod.createdAt
-                                                  }))
-                                                  .concat(fetchAssembly.map(assembly => ({
-                                                    value: `${assembly.id}_${assembly.assembly_code}_Assembly`, 
-                                                    label: <div>
-                                                      Assembly Code: <strong>{assembly.assembly_code}</strong> / 
-                                                      Assembly Name: <strong>{assembly.assembly_name}</strong> / 
-                                                    </div>,
-                                                    type: 'Assembly',
-                                                    values: assembly.id,
-                                                    code: assembly.assembly_code,
-                                                    name: assembly.assembly_name,
-                                                    created: assembly.createdAt
-                                                  })))
-                                                  .concat(fetchSpare.map(spare => ({
-                                                    value: `${spare.id}_${spare.spareParts_code}_Spare`,
-                                                    label: <div>
-                                                      Product Part Code: <strong>{spare.spareParts_code}</strong> / 
-                                                      Product Part Name: <strong>{spare.spareParts_name}</strong> / 
-                                                    </div>,
-                                                    type: 'Spare',
-                                                    values: spare.id,
-                                                    code: spare.spareParts_code,
-                                                    name: spare.spareParts_name,
-                                                    created: spare.createdAt
-                                                  })))
-                                                  .concat(fetchSubPart.map(subPart => ({
-                                                    value: `${subPart.id}_${subPart.subPart_code}_SubPart`, // Indicate that it's an assembly
-                                                    label: <div>
-                                                      Product Sub-Part Code: <strong>{subPart.subPart_code}</strong> / 
-                                                      Product Sub-Part Name: <strong>{subPart.subPart_name}</strong> / 
-                                                    </div>,
-                                                    type: 'SubPart',
-                                                    values: subPart.id,
-                                                    code: subPart.subPart_code,
-                                                    name: subPart.subPart_name,
-                                                    created: subPart.createdAt
-                                                  })))
-                                                }
-                                                  onChange={selectProduct}
-                                                  value={[...valuePRproduct, ...valuePRassembly, ...valuePRspare, ...valuePRsub]}
-                                                />
-                                        </div>
-                                      )}
-                                      {isReadOnly && (
-                                            <div className="item">
-                                                <div className="new_item">
-                                                    <button type="button" onClick={displayDropdown}>
-                                                      <span style={{marginRight: '4px'}}>
-                                                      </span>
-                                                      <Plus size={20} /> New Item
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            )}
-                                    </table>
+                                          </tbody>
+                                   </table>
                                 </div>
                             </div>
                         

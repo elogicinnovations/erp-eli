@@ -8,11 +8,11 @@ const StockTransfer_assembly = sequelize.define('stockTransfer_assembly', {
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id:{
+  stockTransfer_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  assembly_id:{
+  inventory_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },

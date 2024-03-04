@@ -8,11 +8,11 @@ const StockTransfer_spare = sequelize.define('stockTransfer_spare', {
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id:{
+  stockTransfer_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  spare_id:{
+  inventory_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },

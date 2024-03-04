@@ -9,9 +9,10 @@ const StockTransfer = sequelize.define('stock_transfer', {
     autoIncrement: true
   },
   source: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
-  warehouse_id: {
+  destination: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },

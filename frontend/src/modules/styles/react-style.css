@@ -682,6 +682,7 @@ padding: 10px; /* Adjust the padding as needed */
   padding: 10px 0px 4px 40px;
   border-bottom: 1px solid #DDDDDD;
   font-family: Poppins, 'Source Sans Pro';
+  font-size: 13px;
 }
 
 .pagination-contains {

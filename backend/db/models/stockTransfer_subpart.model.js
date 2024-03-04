@@ -8,11 +8,11 @@ const StockTransfer_subpart = sequelize.define('stockTransfer_subpart', {
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id:{
+  stockTransfer_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  subPart_id:{
+  inventory_id:{
     type: DataTypes.INTEGER,
     allowNull: false,
   },

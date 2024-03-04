@@ -162,8 +162,11 @@ PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id" });
 
 // Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
 // Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
-Warehouses.hasMany(StockTransfer, { foreignKey: "warehouse_id" });
-StockTransfer.belongsTo(Warehouses, { foreignKey: "warehouse_id" });
+Warehouses.hasMany(StockTransfer, { foreignKey: "destination", as: "DestinationWarehouse" });
+StockTransfer.belongsTo(Warehouses, { foreignKey: "destination", as: "DestinationWarehouse" });
+
+Warehouses.hasMany(StockTransfer, { foreignKey: "source", as: "SourceWarehouse" });
+StockTransfer.belongsTo(Warehouses, { foreignKey: "source", as: "SourceWarehouse" });
 
 // product_spareparts` table
 Product.hasMany(Product_Spareparts, { foreignKey: "product_id" });
@@ -399,35 +402,35 @@ MasterList.hasMany(StockTransfer, { foreignKey: "col_id" });
 StockTransfer.belongsTo(MasterList, { foreignKey: "col_id" });
 
 //--------------Stock Transfer Product table
-StockTransfer.hasMany(StockTransfer_prod, { foreignKey: "pr_id" });
-StockTransfer_prod.belongsTo(StockTransfer, { foreignKey: "pr_id" });
+StockTransfer.hasMany(StockTransfer_prod, { foreignKey: "stockTransfer_id" });
+StockTransfer_prod.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-Product.hasMany(StockTransfer_prod, { foreignKey: "product_id" });
-StockTransfer_prod.belongsTo(Product, { foreignKey: "product_id" });
+Inventory.hasMany(StockTransfer_prod, { foreignKey: "inventory_id" });
+StockTransfer_prod.belongsTo(Inventory, { foreignKey: "inventory_id" });
 
 //-------------Stock Transfer Assembly table
-StockTransfer.hasMany(StockTransfer_assembly, { foreignKey: "pr_id" });
-StockTransfer_assembly.belongsTo(StockTransfer, { foreignKey: "pr_id" });
+StockTransfer.hasMany(StockTransfer_assembly, { foreignKey: "stockTransfer_id" });
+StockTransfer_assembly.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-Assembly.hasMany(StockTransfer_assembly, { foreignKey: "assembly_id" });
-StockTransfer_assembly.belongsTo(Assembly, { foreignKey: "assembly_id" });
+Inventory_Assembly.hasMany(StockTransfer_assembly, { foreignKey: "inventory_id" });
+StockTransfer_assembly.belongsTo(Inventory_Assembly, { foreignKey: "inventory_id" });
 
-Assembly_Supplier.hasMany(StockTransfer_assembly, { foreignKey: "pr_id" });
-StockTransfer_assembly.belongsTo(Assembly_Supplier, { foreignKey: "pr_id" });
+// Assembly_Supplier.hasMany(StockTransfer_assembly, { foreignKey: "stockTransfer_id" });
+// StockTransfer_assembly.belongsTo(Assembly_Supplier, { foreignKey: "stockTransfer_id" });
 
 //-------------Stock Transfer Spare table
-StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "pr_id" });
-StockTransfer_spare.belongsTo(StockTransfer, { foreignKey: "pr_id" });
+StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "stockTransfer_id" });
+StockTransfer_spare.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-SparePart.hasMany(StockTransfer_spare, { foreignKey: "spare_id" });
-StockTransfer_spare.belongsTo(SparePart, { foreignKey: "spare_id" });
+Inventory_Spare.hasMany(StockTransfer_spare, { foreignKey: "inventory_id" });
+StockTransfer_spare.belongsTo(Inventory_Spare, { foreignKey: "inventory_id" });
 
 //-------------Stock Transfer Subpart table
-StockTransfer.hasMany(StockTransfer_subpart, { foreignKey: "pr_id" });
-StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "pr_id" });
+StockTransfer.hasMany(StockTransfer_subpart, { foreignKey: "stockTransfer_id" });
+StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-SubPart.hasMany(StockTransfer_subpart, { foreignKey: "subPart_id" });
-StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "subPart_id" });
+Inventory_Subpart.hasMany(StockTransfer_subpart, { foreignKey: "inventory_id" });
+StockTransfer_subpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_id" });
 
 //------------ Warehouse Product Inventory
 Warehouses.hasMany(Inventory, { foreignKey: "warehouse_id" });
