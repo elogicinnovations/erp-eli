@@ -47,7 +47,7 @@ function ReceivingStockTransfer({authrztn}) {
 const reloadTable = () => {
   const delay = setTimeout(() => {
   axios
-    .get(BASE_URL + '/StockTransfer/fetchTable')
+    .get(BASE_URL + '/StockTransfer/fetchTableReceiving')
     .then((res) => {
       setStockTransfer(res.data)
       setFilteredPR(res.data)
@@ -297,7 +297,7 @@ const handleGoButtonClick = () => {
                         <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
-                                    <th className='tableh'>Stock ID</th>
+                                    <th className='tableh'>Transfer ID</th>
                                     <th className='tableh'>Source</th>
                                     <th className='tableh'>Destination</th>
                                     <th className='tableh'>Reference #</th>
@@ -308,8 +308,8 @@ const handleGoButtonClick = () => {
                                 {filteredPR.map((data, i) => (
                                         <tr key={i}>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.stock_id}</td>
-                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.source}</td>
-                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.destination}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.SourceWarehouse.warehouse_name}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.DestinationWarehouse.warehouse_name}</td>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.reference_code}</td>
                                         </tr>
                                       ))}

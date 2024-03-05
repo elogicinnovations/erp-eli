@@ -1,98 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import Sidebar from '../../Sidebar/sidebar';
-import '../../../assets/global/style.css';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import '../../styles/react-style.css';
-import Form from 'react-bootstrap/Form';
-import Select from 'react-select';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import ReactLoading from 'react-loading';
-import NoData from '../../../assets/image/NoData.png';
-import NoAccess from '../../../assets/image/NoAccess.png';
-import Col from 'react-bootstrap/Col';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useEffect, useState } from "react";
+import Sidebar from "../../Sidebar/sidebar";
+import "../../../assets/global/style.css";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import "../../styles/react-style.css";
+import Form from "react-bootstrap/Form";
+import Select from "react-select";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import ReactLoading from "react-loading";
+import NoData from "../../../assets/image/NoData.png";
+import NoAccess from "../../../assets/image/NoAccess.png";
+import Col from "react-bootstrap/Col";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import subwarehouse from "../../../assets/global/subwarehouse";
-
+import * as $ from "jquery";
 
 import {
-    ArrowCircleLeft,
-    Plus,
-    Paperclip,
-    NotePencil,
-    DotsThreeCircle,
-    CalendarBlank,
-  } from "@phosphor-icons/react";
-import axios from 'axios';
-import BASE_URL from '../../../assets/global/url';
-import swal from 'sweetalert';
+  ArrowCircleLeft,
+  Plus,
+  Paperclip,
+  NotePencil,
+  DotsThreeCircle,
+  CalendarBlank,
+} from "@phosphor-icons/react";
+import axios from "axios";
+import BASE_URL from "../../../assets/global/url";
+import swal from "sweetalert";
 
-function StockTransferPreview({authrztn}) {
+function StockTransferPreview({ authrztn }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [prNum, setPrNum] = useState('');
-  const [status, setStatus] = useState('');
-  const [dateCreated, setDateCreated] = useState('');
-  const [dateNeed, setDateNeed] = useState(null);
-  const [useFor, setUseFor] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const [source, setSource] = useState([]);
   const [destination, setDestination] = useState([]);
   const [referenceCode, setReferenceCode] = useState();
+  const [status, setStatus] = useState();
   const [receivedBy, setReceivedBy] = useState();
   const [remarks, setRemarks] = useState();
-  const [product, setProduct] = useState([]); //para pag fetch ng mga registered products 
+  const [product, setProduct] = useState([]); //para pag fetch ng mga registered products
 
- 
   const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
 
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create patungong table
-  const [fetchProduct, setFetchProduct] = useState([]); // para sa pag fetch nang lahat na product sa select dropdown
-  const [valuePRproduct, setvaluePRproduct] = useState([]); //para mafetch yung specific product data sa dropdown
-
-  const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa assembly na selected sa pag create patungong table
-  const [fetchAssembly, setFetchAssembly] = useState([]); // para sa pag fetch nang lahat assembly sa select dropdown
-  const [valuePRassembly, setvaluePRassembly] = useState([]); //para mafetch yung specific assembly data sa dropdown
-
-  const [spareSelectedFetch, setSpareSelectedFetch] = useState([]); //para pag display sa spare na selected sa pag create
-  const [fetchSpare, setFetchSpare] = useState([]); // para sa pag fetch nang lahat na spare sa select dropdown
-  const [valuePRspare, setvalueSpare] = useState([]); //para mafetch yung specific spare data sa dropdown
-
-  const [subPartSelectedFetch, setSubPartSelectedFetch] = useState([]); //para pag display sa subpart na selected sa pag create patungong table
-  const [fetchSubPart, setFetchSubPart] = useState([]); // para sa pag fetch nang lahat na subpart sa select dropdown
-  const [valuePRsub, setvaluePRsub] = useState([]); //para mafetch yung specific subpart data sa dropdown
-
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
 
-
   const [files, setFiles] = useState([]);
-  const [rejustifyRemarks, setRejustifyRemarks] = useState('');
+  const [rejustifyRemarks, setRejustifyRemarks] = useState("");
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
   };
 
-
-  const handleEditClick = () => {
-    // for clicking the button can be editted not readonly
-    setReadOnly(true);
-  };
-  
-  const handleCancelEdit = () => {
-    // for clicking the button can be editted not readonly
-    setReadOnly(false);
-  };
-
   const handleApproveClick = () => {
-
     swal({
       title: "Are you sure?",
       text: "You are attempting to approve this request",
@@ -102,34 +68,31 @@ function StockTransferPreview({authrztn}) {
     }).then(async (approve) => {
       if (approve) {
         try {
-          axios.post(`${BASE_URL}/PR/approve`, null, {
-            params:{
-              id: id,
-            }
-             
-          })
-          .then((res) => {
-            console.log(res);
-            if (res.status === 200) {
-              swal({
-                title: 'The Purchase sucessfully approved!',
-                text: 'The Purchase been approved successfully.',
-                icon: 'success',
-                button: 'OK'
-              }).then(() => {
-                navigate('/purchaseRequest')
-                
-              });
-            } else {
-              swal({
-                icon: 'error',
-                title: 'Something went wrong',
-                text: 'Please contact our support'
-              });
-            }
-          })
-
-
+          axios
+            .post(`${BASE_URL}/StockTransfer/approve`, null, {
+              params: {
+                id: id,
+              },
+            })
+            .then((res) => {
+              console.log(res);
+              if (res.status === 200) {
+                swal({
+                  title: "The Purchase sucessfully approved!",
+                  text: "The Purchase been approved successfully.",
+                  icon: "success",
+                  button: "OK",
+                }).then(() => {
+                  navigate("/stockManagement");
+                });
+              } else {
+                swal({
+                  icon: "error",
+                  title: "Something went wrong",
+                  text: "Please contact our support",
+                });
+              }
+            });
         } catch (err) {
           console.log(err);
         }
@@ -140,698 +103,619 @@ function StockTransferPreview({authrztn}) {
         });
       }
     });
-
   };
 
-
   
-  const handleUploadRejustify = async () => {
-    try {
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
-       
-      }
-      formData.append('remarks', rejustifyRemarks);
-      formData.append('id', id);
-
-
-      // Adjust the URL based on your backend server
-      const response = await axios.post(BASE_URL + `/PR_rejustify/rejustify`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 200){
-        swal({
-          title: 'Request rejustify!',
-          text: 'The Request has been successfully rejustified',
-          icon: 'success',
-          button: 'OK'
-        }).then(() => {
-          navigate('/purchaseRequest')
-          
-        });
+  const handleRejectClick = () => {
+    swal({
+      title: "Are you sure?",
+      text: "You are attempting to reject this request",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          axios
+            .post(`${BASE_URL}/StockTransfer/reject`, null, {
+              params: {
+                id: id,
+              },
+            })
+            .then((res) => {
+              console.log(res);
+              if (res.status === 200) {
+                swal({
+                  title: "The Purchase sucessfully approved!",
+                  text: "The Purchase been approved successfully.",
+                  icon: "success",
+                  button: "OK",
+                }).then(() => {
+                  navigate("/stockManagement");
+                });
+              } else {
+                swal({
+                  icon: "error",
+                  title: "Something went wrong",
+                  text: "Please contact our support",
+                });
+              }
+            });
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         swal({
-          icon: 'error',
-          title: 'Something went wrong',
-          text: 'Please contact our support'
+          title: "Cancelled Successfully",
+          icon: "warning",
         });
       }
-
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error uploading files:', error);
-    }
-  };
-  
-
-  {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/product/fetchTable')
-      .then(res => {
-        setFetchProduct(res.data)
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching master list:', error);
-        setIsLoading(false);
-      });
-    }, 1000);
-
-return () => clearTimeout(delay);
-}, []);
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/assembly/fetchTable')
-      .then(res => {
-        setFetchAssembly(res.data)
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching master list:', error);
-        setIsLoading(false);
-      });
-    }, 1000);
-
-return () => clearTimeout(delay);
-}, []);
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/sparePart/fetchTable')
-      .then(res => {
-        setFetchSpare(res.data)
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching master list:', error);
-        setIsLoading(false);
-      });
-    }, 1000);
-
-return () => clearTimeout(delay);
-}, []);
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/subpart/fetchTable')
-      .then(res => {
-        setFetchSubPart(res.data)
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching master list:', error);
-        setIsLoading(false);
-      });
-    }, 1000);
-
-return () => clearTimeout(delay);
-}, []);
-  {/* use effect sa pagdisplay ng mga product, assembly, subparts at spareparts sa dropdown */}
-
-
-
-  //Where clause sa product PR
-  useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer_prod/fetchStockTransferProduct', {
-      params: {
-        id: id
-      }
-    })
-      .then(res => {
-        const data = res.data;
-        setProductSelectedFetch(data);
-        const selectedPRproduct = data.map((row) => ({
-          value: row.product_id,
-          label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
-        }));
-        setvaluePRproduct(selectedPRproduct);
-      })
-      .catch(err => console.log(err));
-  }, [id]);
-
-  //Where clause ng assembly
-  useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer_assembly/fetchStockTransferAssembly', {
-      params: {
-        id: id
-      }
-    })
-      .then(res => {
-        const data = res.data;
-        setAssemblySelectedFetch(data);
-        const selectedPRAssembly = data.map((row) => ({
-          value: row.id,
-          label: `Assembly Code: ${row.assembly.assembly_code} / Name: ${row.assembly.assembly_name}`,
-        }));
-        setvaluePRassembly(selectedPRAssembly);
-      })
-      .catch(err => console.log(err));
-  }, [id]);
-
-
-  //Where clause sa spare parts
-  useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer_spare/fetchStockTransferSpare', {
-      params: {
-        id: id
-      }
-    })
-      .then(res => {
-        const data = res.data;
-        setSpareSelectedFetch(data);
-        const selectedPRspare = data.map((row) => ({
-          value: row.id,
-          label: `Spare Code: ${row.sparePart.spareParts_code} / Name: ${row.sparePart.spareParts_name}`,
-        }));
-        setvalueSpare(selectedPRspare);
-      })
-      .catch(err => console.log(err));
-  }, [id]);
-
-
-  
-  //Where clause sa sub parts
-  useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer_subpart/fetchStockTransferSubpart', {
-      params: {
-        id: id
-      }
-    })
-      .then(res => {
-        const data = res.data;
-        setSubPartSelectedFetch(data);
-        const selectedPRsub = data.map((row) => ({
-          value: row.id,
-          label: `SubPart Code: ${row.subPart.subPart_code} / Name: ${row.subPart.subPart_name}`,
-        }));
-        setvaluePRsub(selectedPRsub);
-      })
-      .catch(err => console.log(err));
-  }, [id]);
-
-
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/PR/fetchView', {
-      params: {
-        id: id
-      }
-    })
-    .then(res => {
-      setPrNum(res.data.pr_num);
-      setStatus(res.data.status);
-      setDateCreated(res.data.createdAt);
-      const parsedDate = new Date(res.data.date_needed);
-      setDateNeed(parsedDate);
-      setUseFor(res.data.used_for);
-      setRemarks(res.data.remarks);
-      setProduct(res.date.product_id);
-    })
-    .catch(err => {
-      console.error(err);
     });
+  };
+
+
+  const [prodFetch, setProdFetch] = useState([]);
+  const [asmFetch, setAsmFetch] = useState([]);
+  const [spareFetch, setSpareFetch] = useState([]);
+  const [subpartFetch, setSubpartFetch] = useState([]);
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/StockTransfer/fetchProdutsPreview", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const data = res.data;
+        setProdFetch(data.product_db);
+        setAsmFetch(data.asm_db);
+        setSpareFetch(data.spare_db);
+        setSubpartFetch(data.subpart_db);
+
+        // console.log(`ss ${data}`);
+        // setvaluePRassembly(selectedPRAssembly);
+      })
+      .catch((err) => console.log(err));
   }, [id]);
-  
-  const selectProduct = (selectedOptions) => {
-    setProduct(selectedOptions);
-};
 
-const displayDropdown = () => {
-  setShowDropdown(true);
-};
+  // //Where clause sa product PR
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/StockTransfer_prod/fetchStockTransferProduct', {
+  //     params: {
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => {
+  //       const data = res.data;
+  //       setProductSelectedFetch(data);
+  //       const selectedPRproduct = data.map((row) => ({
+  //         value: row.product_id,
+  //         label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
+  //       }));
+  //       setvaluePRproduct(selectedPRproduct);
+  //     })
+  //     .catch(err => console.log(err));
+  // }, [id]);
 
- 
-const handleInputChange = (value, productValue, inputType) => {
-  setInputValues((prevInputs) => ({
-    ...prevInputs,
-    [productValue]: {
-      ...prevInputs[productValue],
-      [inputType]: value,
-    },
-  }));
-};
+  // //Where clause ng assembly
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/StockTransfer_assembly/fetchStockTransferAssembly', {
+  //     params: {
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => {
+  //       const data = res.data;
+  //       setAssemblySelectedFetch(data);
+  //       const selectedPRAssembly = data.map((row) => ({
+  //         value: row.id,
+  //         label: `Assembly Code: ${row.assembly.assembly_code} / Name: ${row.assembly.assembly_name}`,
+  //       }));
+  //       setvaluePRassembly(selectedPRAssembly);
+  //     })
+  //     .catch(err => console.log(err));
+  // }, [id]);
 
+  // //Where clause sa spare parts
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/StockTransfer_spare/fetchStockTransferSpare', {
+  //     params: {
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => {
+  //       const data = res.data;
+  //       setSpareSelectedFetch(data);
+  //       const selectedPRspare = data.map((row) => ({
+  //         value: row.id,
+  //         label: `Spare Code: ${row.sparePart.spareParts_code} / Name: ${row.sparePart.spareParts_name}`,
+  //       }));
+  //       setvalueSpare(selectedPRspare);
+  //     })
+  //     .catch(err => console.log(err));
+  // }, [id]);
 
-useEffect(() => {
-  const serializedProducts = product.map((product) => ({
-    type: product.type,
-    value: product.values,
-    quantity: inputValues[product.value]?.quantity || '',
-    desc: inputValues[product.value]?.desc || '',
-  }));
+  // //Where clause sa sub parts
+  // useEffect(() => {
+  //   axios.get(BASE_URL + '/StockTransfer_subpart/fetchStockTransferSubpart', {
+  //     params: {
+  //       id: id
+  //     }
+  //   })
+  //     .then(res => {
+  //       const data = res.data;
+  //       setSubPartSelectedFetch(data);
+  //       const selectedPRsub = data.map((row) => ({
+  //         value: row.id,
+  //         label: `SubPart Code: ${row.subPart.subPart_code} / Name: ${row.subPart.subPart_name}`,
+  //       }));
+  //       setvaluePRsub(selectedPRsub);
+  //     })
+  //     .catch(err => console.log(err));
+  // }, [id]);
 
-  setAddProductbackend(serializedProducts);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/PR/fetchView", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setPrNum(res.data.pr_num);
+  //       setStatus(res.data.status);
+  //       setDateCreated(res.data.createdAt);
+  //       const parsedDate = new Date(res.data.date_needed);
+  //       setDateNeed(parsedDate);
+  //       setUseFor(res.data.used_for);
+  //       setRemarks(res.data.remarks);
+  //       setProduct(res.date.product_id);
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }, [id]);
 
-  console.log("Selected Products:", serializedProducts);
-  
-}, [inputValues, product]);
+  useEffect(() => {
+    const serializedProducts = product.map((product) => ({
+      type: product.type,
+      value: product.values,
+      quantity: inputValues[product.value]?.quantity || "",
+      desc: inputValues[product.value]?.desc || "",
+    }));
 
+    setAddProductbackend(serializedProducts);
+
+    // console.log("Selected Products:", serializedProducts);
+  }, [inputValues, product]);
 
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
-  
+
   const handleClose = () => {
     setShowModal(false);
   };
 
-      //date format
-      function formatDatetime(datetime) {
-        const options = {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-        };
-        return new Date(datetime).toLocaleString('en-US', options);
-      }
+  //date format
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
 
-       //date format
-    function formatDatetime(datetime) {
-      const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      };
-      return new Date(datetime).toLocaleString('en-US', options);
+  //date format
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
+
+  // const update = async (e) => {
+  //   e.preventDefault();
+
+  //   const form = e.currentTarget;
+  //   if (form.checkValidity() === false) {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //     // if required fields has NO value
+  //     //    console.log('requried')
+  //     swal({
+  //       icon: "error",
+  //       title: "Fields are required",
+  //       text: "Please fill the red text fields",
+  //     });
+  //   } else {
+  //     axios
+  //       .post(`${BASE_URL}/PR/update`, null, {
+  //         params: {
+  //           id: id,
+  //           prNum,
+  //           dateNeed,
+  //           useFor,
+  //           remarks,
+  //           addProductbackend,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         console.log(res);
+  //         if (res.status === 200) {
+  //           swal({
+  //             title: "The Request sucessfully submitted!",
+  //             text: "The Purchase Request has been added successfully.",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             navigate("/purchaseRequest");
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       });
+  //   }
+  //   setValidated(true); //for validations
+  // };
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/StockTransfer/fetchView", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        setReferenceCode(res.data[0].reference_code);
+        setReceivedBy(res.data[0].col_id);
+        setRemarks(res.data[0].remarks);
+        setStatus(res.data[0].status);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/StockTransfer/fetchWarehouseData", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const { sourceWarehouses, destinationWarehouses } = res.data;
+
+        // Use sourceWarehouses and destinationWarehouses in your application logic
+        setSource(sourceWarehouses);
+        setDestination(destinationWarehouses);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    if (
+      $("#order-listing").length > 0 &&
+      prodFetch.length > 0 &&
+      asmFetch.length > 0 &&
+      spareFetch.length > 0 &&
+      subpartFetch.length > 0
+    ) {
+      $("#order-listing").DataTable();
     }
-
-
-    
-  
-const update = async e => {
-  e.preventDefault();
-
-  const form = e.currentTarget;
-  if (form.checkValidity() === false) {
-    e.preventDefault();
-    e.stopPropagation();
-  // if required fields has NO value
-  //    console.log('requried')
-      swal({
-          icon: 'error',
-          title: 'Fields are required',
-          text: 'Please fill the red text fields'
-        });
-  }
-  else{
-
-    axios.post(`${BASE_URL}/PR/update`, null, {
-      params:{
-        id: id,
-        prNum, 
-        dateNeed, 
-        useFor, 
-        remarks, 
-        addProductbackend
-      }
-       
-    })
-    .then((res) => {
-      console.log(res);
-      if (res.status === 200) {
-        swal({
-          title: 'The Request sucessfully submitted!',
-          text: 'The Purchase Request has been added successfully.',
-          icon: 'success',
-          button: 'OK'
-        }).then(() => {
-          navigate('/purchaseRequest')
-          
-        });
-      } else {
-        swal({
-          icon: 'error',
-          title: 'Something went wrong',
-          text: 'Please contact our support'
-        });
-      }
-    })
-  }
-  setValidated(true); //for validations
-};
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer/fetchView', {
-      params: {
-        id: id
-      }
-    })
-    .then(res => {
-      setReferenceCode(res.data[0].reference_code);
-      setReceivedBy(res.data[0].col_id);
-      setRemarks(res.data[0].remarks);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  }, [id]);
-
-
-  useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer/fetchWarehouseData', {
-      params: {
-        id: id,
-      },
-    })
-    .then(res => {
-      const { sourceWarehouses, destinationWarehouses } = res.data;
-  
-      // Use sourceWarehouses and destinationWarehouses in your application logic
-      setSource(sourceWarehouses);
-      setDestination(destinationWarehouses);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-  }, [id]);
-  
+  }, [prodFetch]);
 
   return (
     <div className="main-of-containers">
-        {/* <div className="left-of-main-containers">
+      {/* <div className="left-of-main-containers">
             <Sidebar/>
         </div> */}
-        <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-        authrztn.includes('Stock Management - View') ? (
-            <div className="right-body-contents-a">
+      <div className="right-of-main-containers">
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Stock Management - View") ? (
+          <div className="right-body-contents-a">
             <Row>
-                
-            <Col>
-                <div className='create-head-back' style={{display: 'flex', alignItems: 'center'}}>
-                    <Link style={{ fontSize: '1.5rem' }} to="/stockManagement">
-                        <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
-                    </Link>
-                    <h1>
-                    Stock Management Preview
-                    </h1>
+              <Col>
+                <div
+                  className="create-head-back"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Link style={{ fontSize: "1.5rem" }} to="/stockManagement">
+                    <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+                  </Link>
+                  <h1>Stock Management Preview</h1>
                 </div>
-                    
-                </Col>
+              </Col>
             </Row>
-            <Form noValidate validated={validated} onSubmit={update}>
-                <div className="gen-info" style={{ 
-                  fontSize: '20px', 
-                  position: 'relative', 
-                  paddingTop: '20px',
-                  fontFamily: 'Poppins, Source Sans Pro' }}>
-                        General Information 
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '81%',
-                              left: '21rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-                          <div className="row mt-3">
-                            <div className="col-4">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                  <Form.Label style={{ fontSize: '20px' }}>Reference code: </Form.Label>
-                                  <Form.Control readOnly type="text" value={referenceCode}  style={{height: '40px', fontSize: '15px'}}/>
-                                </Form.Group>
-                            </div>
-                              <div className="col-4">
-                                  <Form.Group controlId="exampleForm.ControlInput2">
-                                  <Form.Label style={{ fontSize: '20px' }}>Source: </Form.Label>   
-                                      <Form.Control 
-                                          aria-label=""
-                                          required
-                                          style={{fontSize: '15px' }}
-                                          defaultValue=''
-                                          value={source} 
-                                          readOnly
-                                        />
-                                  </Form.Group>
-                              </div>
-                            <div className="col-4">
-                              <Form.Group controlId="exampleForm.ControlInput2">
-                                <Form.Label style={{ fontSize: '20px' }}>Destination: </Form.Label>   
-                                    <Form.Control 
-                                        aria-label=""
-                                        required
-                                        style={{fontSize: '15px' }}
-                                        value={destination} 
-                                        defaultValue=''
-                                        readOnly
-                                      />
-                                </Form.Group>
-                              </div>
-                          </div>
-                        <div className="row">
-                            <div className="col-6">
-                              <Form.Group controlId="exampleForm.ControlInput1">
-                                  <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                  <Form.Control readOnly={!isReadOnly} 
-                                  onChange={e => setRemarks(e.target.value)} 
-                                  value={remarks} 
-                                  as="textarea"
-                                  rows={3}
-                                  style={{
-                                  fontFamily: 'Poppins, Source Sans Pro',
-                                  fontSize: "16px",
-                                  height: "150px",
-                                  maxHeight: "150px",
-                                  resize: "none",
-                                  overflowY: "auto",
-                                  }}/>
-                              </Form.Group>
-                            </div>
-                            <div className="col-6">
 
-                            </div>
-                        </div>
-                        <div className="gen-info" style={{ 
-                          fontSize: '20px', 
-                          position: 'relative', 
-                          paddingTop: '20px',
-                          fontFamily: 'Poppins, Source Sans Pro' }}>
-                          Order Items
-                          <span
-                            style={{
-                              position: 'absolute',
-                              height: '0.5px',
-                              width: '-webkit-fill-available',
-                              background: '#FFA500',
-                              top: '81%',
-                              left: '12rem',
-                              transform: 'translateY(-50%)',
-                            }}
-                          ></span>
-                        </div>
-                        
-                        
-                            <div className="table-containss">
-                                <div className="main-of-all-tables">
-                                    <table id='order-listing'>
-                                        <thead>
-                                            <tr>
-                                                <th className='tableh'>Product Code</th>
-                                                <th className='tableh'>Quantity</th>
-                                                <th className='tableh'>U/M</th>
-                                                <th className='tableh'>Product Name</th>
-                                                <th className='tableh'>Description</th>
-                                            </tr>
-                                        </thead>
-                                          <tbody>
-                                              <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                              </tr>
-                                          </tbody>
-                                   </table>
-                                </div>
-                            </div>
-                        
-                        {/* <div className='save-cancel'>
-                              {isReadOnly && (
-                                <Button type='submit' className='btn btn-success' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Save</Button>
-                              )}
-                               {isReadOnly && (
-                                <Button type='button' onClick={handleCancelEdit} className='btn btn-danger' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Cancel Edit</Button>
-                              )}
-
-
-
-                              {status === 'For-Approval' ? (
-                                <>
-                                  {!isReadOnly && (
-                                    <Button
-                                    
-                                      type='button'
-                                      onClick={handleApproveClick}
-                                      className='btn btn-warning'
-                                      size="md"
-                                      style={{ fontSize: '20px', margin: '0px 5px' }}
-                                    >
-                                      Approve
-                                    </Button>
-
-                                  )}
-
-                                    {!isReadOnly && (
-                                      <Button
-                                        type='button'
-                                        onClick={handleEditClick}
-                                        className='btn btn-success'
-                                        size="s"
-                                        style={{ fontSize: '20px', margin: '0px 5px' }}
-                                      >
-                                        <NotePencil /> Edit
-                                      </Button>
-                                    )}
-
-                                  {!isReadOnly && (
-
-                                    <Button 
-                                        onClick={handleShow} 
-                                        className='btn btn-secondary btn-md' 
-                                        size="md" 
-                                        style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                                      Rejustify
-                                    </Button> 
-                                  )}
-                                </>
-                                
-                              ):
-                              status === 'For-Rejustify' ? (
-                                <>
-                                  {!isReadOnly && (
-                                    <Button
-                                    
-                                      type='button'
-                                      onClick={handleApproveClick}
-                                      className='btn btn-warning'
-                                      size="md"
-                                      style={{ fontSize: '20px', margin: '0px 5px' }}
-                                    >
-                                      Approve
-                                    </Button>
-
-                                  )}
-
-                                    {!isReadOnly && (
-                                      <Button
-                                        type='button'
-                                        onClick={handleEditClick}
-                                        className='btn btn-success'
-                                        size="s"
-                                        style={{ fontSize: '20px', margin: '0px 5px' }}
-                                      >
-                                        <NotePencil /> Edit
-                                      </Button>
-                                    )}
-
-                                  {!isReadOnly && (
-
-                                    <Button 
-                                        onClick={handleShow} 
-                                        className='btn btn-secondary btn-md' 
-                                        size="md" 
-                                        style={{ fontSize: '20px', margin: '0px 5px'  }}>
-                                      Rejustify
-                                    </Button> 
-                                  )}
-
-                              </>
-                              ):
-                             
-                              (
-                               <></>
-                              )
-                              
-                              }                                         
-                        </div> */}
-                        </Form>
-              {/* <Modal show={showModal} onHide={handleClose}>
-                <Form>
-                  <Modal.Header closeButton>
-                    <Modal.Title style={{ fontSize: '24px' }}>For Rejustification</Modal.Title>     
-                  </Modal.Header>
-                    <Modal.Body>
-                    <div className="row mt-3">
-                                  <div className="col-6">
-                                    <Form.Group controlId="exampleForm.ControlInput1">
-                                      <Form.Label style={{ fontSize: '20px' }}>PR No.: </Form.Label>
-                                      <Form.Control type="text" value={prNum} readOnly style={{height: '40px', fontSize: '15px'}}/>
-                                    </Form.Group>
-                                  </div>
-                                  <div className="col-6">
-                                  <Form.Group controlId="exampleForm.ControlInput2" className='datepick'>
-                                      <Form.Label style={{ fontSize: '20px' }}>Date Needed: </Form.Label>
-                                        <DatePicker
-                                          readOnly
-                                          selected={dateNeed}
-                                          onChange={(date) => setDateNeed(date)}
-                                          dateFormat="MM/dd/yyyy"
-                                          placeholderText="Start Date"
-                                          className="form-control"
-                                        />
-                                  </Form.Group>
-                                    </div>
-                                </div>
-                                
-                              <div className="row">
-                                  <Form.Group controlId="exampleForm.ControlInput1">
-                                      <Form.Label style={{ fontSize: '20px' }}>Remarks: </Form.Label>
-                                      <Form.Control as="textarea"  onChange={e => setRejustifyRemarks(e.target.value)}  placeholder="Enter details" style={{height: '100px', fontSize: '15px'}}/>
-                                  </Form.Group>
-                                <div className="col-6">
-                                  <Form.Group controlId="exampleForm.ControlInput1">
-                                      <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
-                                      <input type="file" onChange={handleFileChange} />
-                                  </Form.Group>
-
-                                  </div>
-                              </div>
-                      </Modal.Body>
-                      <Modal.Footer>
-                          <Button variant="secondary" size="md" onClick={handleClose} style={{ fontSize: '20px' }}>
-                              Cancel
-                          </Button>
-                          <Button type="button" onClick={handleUploadRejustify} variant="warning" size="md" style={{ fontSize: '20px' }}>
-                              Save
-                          </Button>
-                      </Modal.Footer>
-                  </Form>
-                </Modal>
-                        */}
-                       
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              General Information
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "21rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
             </div>
+            <div className="row mt-3">
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Reference code:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    readOnly
+                    type="text"
+                    value={referenceCode}
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>Source: </Form.Label>
+                  <Form.Control
+                    aria-label=""
+                    required
+                    style={{ fontSize: "15px" }}
+                    defaultValue=""
+                    value={source}
+                    readOnly
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Destination:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    aria-label=""
+                    required
+                    style={{ fontSize: "15px" }}
+                    value={destination}
+                    defaultValue=""
+                    readOnly
+                  />
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Remarks:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    readOnly={!isReadOnly}
+                    onChange={(e) => setRemarks(e.target.value)}
+                    value={remarks}
+                    as="textarea"
+                    rows={3}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "150px",
+                      maxHeight: "150px",
+                      resize: "none",
+                      overflowY: "auto",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6"></div>
+            </div>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              Order Items
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "12rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <table id="order-listing">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Product Code</th>
+                      <th className="tableh">Product Name</th>
+                      <th className="tableh">Quantity</th>
+                      <th className="tableh">U/M</th>
+                    </tr>
+                  </thead>
+                  {prodFetch.length > 0 ||
+                  asmFetch.length > 0 ||
+                  spareFetch.length > 0 ||
+                  subpartFetch.length > 0 ? (
+                    <tbody>
+                      {prodFetch.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_unitMeasurement
+                            }
+                          </td>
+                        </tr>
+                      ))}
+                      {asmFetch.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .assembly_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .assembly_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .assembly_unitMeasurement
+                            }
+                          </td>
+                        </tr>
+                      ))}
+                      {spareFetch.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .spareParts_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .spareParts_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .spareParts_unitMeasurement
+                            }
+                          </td>
+                        </tr>
+                      ))}
+                      {subpartFetch.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .subPart_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .subPart_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .subPart_unitMeasurement
+                            }
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>No Data Found</h3>
+                    </div>
+                  )}
+                </table>
+              </div>
+            </div>
+
+            <div className="save-cancel">
+              {status === "Pending" ? (
+                <>
+                  <Button
+                    type="button"
+                    onClick={handleApproveClick}
+                    className="btn btn-warning"
+                    size="md"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                  >
+                    Approve
+                  </Button>
+
+                  <Button
+                    type="button"
+                    onClick={handleRejectClick}
+                    className="btn btn-danger"
+                    size="md"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                  >
+                    Reject
+                  </Button>
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
-        </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
-export default StockTransferPreview
+export default StockTransferPreview;

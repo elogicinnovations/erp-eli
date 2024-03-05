@@ -383,6 +383,7 @@ function StockManagement({ authrztn }) {
                                     <th className='tableh'>Date Transfered</th>
                                     <th className='tableh'>Source Warehouse</th>
                                     <th className='tableh'>Destination</th>
+                                    <th className='tableh'>Status</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
@@ -393,8 +394,9 @@ function StockManagement({ authrztn }) {
                                         <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.stock_id}</td>
                                         <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.remarks}</td>
                                         <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{formatDatetime(data.createdAt)}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.source}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.destination}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.SourceWarehouse.warehouse_name}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.DestinationWarehouse.warehouse_name}</td>
+                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.status}</td>
                                         <td>
                                           <DotsThreeCircle
                                               size={32}

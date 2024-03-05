@@ -25,6 +25,10 @@ const StockTransfer = sequelize.define('stock_transfer', {
   },
   remarks: {
     type: DataTypes.STRING,
+  },
+  status:{
+    type: DataTypes.STRING,
+    
   }
 });
 

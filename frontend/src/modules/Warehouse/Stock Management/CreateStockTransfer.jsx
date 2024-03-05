@@ -351,7 +351,7 @@ const handleQuantityChange = (
     }));
 
     setAddProductbackend(serializedProducts);
-    // console.log("Selected Products:", addProductbackend);
+    console.log("Selected Products:", addProductbackend);
 
     // Return the updatedInputs to be used as the new state
     return updatedInputs;
