@@ -3645,3 +3645,617 @@ div#ordered-listing_length label {
   color: #000000;
   font-family: Poppins, "Source Sans Pro";
 }
+
+.receipt-main-container{
+  width: 100%;
+  height: 100%;
+}
+
+.receipt-content{
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.receipt-header{
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  width: 100%;
+}
+
+.sbflogoes{
+  width: 10%;
+  display: flex;
+  border: 1px solid #000000;
+}
+
+.sbflogoes img{
+  width: 100%;
+  height: 100%;
+}
+
+.sbftexts{
+  width: 42.7%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+}
+
+.sbftexts span:nth-child(1){
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.sbftexts span:nth-child(2){
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.sbftexts span:nth-child(3),
+span:nth-child(4),
+span:nth-child(5){
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.spacesbf{
+  width: 42.3%;
+}
+
+.po-number-container{
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+}
+
+.shippedto{
+  border: 1px solid black;
+  width: 20%;
+  height: 70px;
+}
+
+.shippedto span{
+  font-size: 14px;
+  font-weight: 500;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.blank{
+  border-bottom: 1px solid black;
+  width: 60%;
+}
+
+.po-content{
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+}
+
+.po-content span:nth-child(1) {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: Poppins, "Source Sans Pro";
+  text-align: center;
+  border-bottom: 1px solid black;
+  padding-top: 3px;
+}
+
+.po-content span:nth-child(2) {
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.secondrowes{
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.leftsecondrows{
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.leftsecondrows span:nth-child(1){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  border-bottom: 1px solid black;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: 500;
+}
+
+.leftsecondrows span:nth-child(2){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: 500;
+}
+
+.midsecondrows{
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid black;
+}
+
+.midsecondrows span:nth-child(1){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: 500;
+  border-bottom: 1px solid black;
+}
+
+.midsecondrows span:nth-child(2){
+  font-size: 14px;
+  font-family: Poppins, "Source Sans Pro";
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+.rightsecondrows{
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.rightsecondrows span:nth-child(1){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: 500;
+  border-bottom: 1px solid black;
+}
+
+.rightsecondrows span:nth-child(2){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+.thirdrowes{
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.thirdleftrows{
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  border-left: 1px solid black;
+  text-align: center;
+  border-bottom: 1px solid black;
+}
+
+.thirdleftrows span:nth-child(1){
+  border-right: 1px solid black;
+  height: 30px;
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+  width: 33.4%;
+}
+
+.thirdleftrows span:nth-child(2){
+  border-right: 1px solid black;
+  height: 30px;
+
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+  width: 33.4%;
+}
+
+.thirdleftrows span:nth-child(3){
+  height: 30px;
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+  border-right: 1px solid black;
+  width: 33.4%;
+}
+
+
+.thirdmidrows{
+  width: 60%;
+  text-align: center;
+  border-bottom: 1px solid black;
+}
+
+.thirdmidrows span{
+  height: 30px;
+  padding: 5px;
+  font-size: 14px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+}
+
+.thirdrightrows{
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.thirdrightrows span:nth-child(1){
+  width: 50%;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  height: 30px;
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+}
+
+.thirdrightrows span:nth-child(2){
+  width: 50%;
+  height: 30px;
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+}
+
+.fourthrowes{
+  height: 300px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.leftfourthrows{
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  width: 20%;
+}
+
+.leftfourthrows span:nth-child(1){
+  width: 33.2%;
+  border-right: 1px solid black;
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.leftfourthrows span:nth-child(2){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  border-right: 1px solid black;
+  width: 33.2%;
+  font-weight: 500;
+}
+
+.leftfourthrows span:nth-child(3){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  border-right: 1px solid black;
+  width: 33.4%;
+  font-weight: 500;
+}
+
+.midfourthrows{
+  width: 60%;
+  text-align: center;
+}
+
+.midfourthrows span{
+  font-size: 14px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+
+}
+
+.rightfourthrows{
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  
+}
+
+.rightfourthrows span:nth-child(1){
+  width: 50%;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 1px;
+}
+
+.rightfourthrows span:nth-child(2){
+  width: 50%;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  font-weight: 500;
+  
+}
+
+.fifthrowes{
+  height: 250px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.fifthleftrows{
+  width: 19.9%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid black;
+}
+
+.received-section{
+  border-bottom: 1px solid black;
+  height: 20%;
+  display: flex;
+  flex-direction: column; 
+  padding-left: 2px;
+}
+
+.received-section span:nth-child(1){
+  font-weight: bold;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.received-section span:nth-child(2){
+  font-weight: 500;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+}
+
+.deliverydate{
+  border-bottom: 1px solid black;
+  height: 20%;
+  display: flex;
+  flex-direction: column; 
+  padding-left: 2px;
+}
+
+.deliverydate span:nth-child(1){
+  font-weight: bold;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.deliverydate span:nth-child(2){
+  font-weight: 500;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+}
+
+.terms{
+  border-bottom: 1px solid black;
+  height: 20%;
+  display: flex;
+  flex-direction: column; 
+  padding-left: 2px;
+}
+
+.terms span:nth-child(1){
+  font-weight: bold;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.terms span:nth-child(2){
+  font-weight: 500;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+}
+
+.preparedby{
+  height: 40%;
+  display: flex;
+  flex-direction: column; 
+  padding-left: 2px;
+}
+
+.preparedby span:nth-child(1){
+  font-weight: bold;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.preparedby span:nth-child(2){
+  font-weight: 500;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+}
+
+.fifthmidrows{
+  width: 60.1%;
+  display: flex;
+  flex-direction: column;
+}
+
+.conditionsection {
+  height: 60%;
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  padding-left: 2px;
+}
+
+.conditionsection span:nth-child(1){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.conditionsection span:nth-child(2){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.conditionsection span:nth-child(3){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.conditionsection span:nth-child(4){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.conditionsection span:nth-child(5){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.conditionsection span:nth-child(6){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.conditionsection span:nth-child(7){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 10px;
+}
+
+.checkedsection{
+  height: 40%;
+  display: flex;
+  flex-direction: row;
+}
+
+.notedby{
+  width: 50%;
+  border-right: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  padding-left: 2px;
+}
+
+.notedby span:nth-child(1){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.notedby span:nth-child(2){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.recommending{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 2px;
+}
+
+.recommending span:nth-child(1){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.recommending span:nth-child(2){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 14px;
+}
+
+
+.fifthrightrows{
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid black;
+}
+
+.totalamount {
+  height: 20%;
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  padding-left: 2px;
+}
+
+.totalamount span:nth-child(1){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.totalamount span:nth-child(2){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.codesection{
+  height: 40%;
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  padding-left: 2px;
+}
+
+.codesection span:nth-child(1){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.codesection span:nth-child(2){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.approvedsby{
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  padding-left: 2px;
+}
+
+.approvedsby span:nth-child(1){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.approvedsby span:nth-child(2){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 14px;
+}

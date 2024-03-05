@@ -23,6 +23,8 @@ import {
   CalendarBlank,
   XCircle,
 } from "@phosphor-icons/react";
+import NoData from '../../../../src/assets/image/NoData.png';
+
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -561,11 +563,12 @@ function PurchaseRequest({ authrztn }) {
                     ))}
                   </tbody>
                 ) : (
-                    <tr>
-                      <td colSpan="7" style={{ textAlign: "center" }}>
-                        No Data found
-                      </td>
-                    </tr>
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
                 )}
               </table>
               {/* <Stack spacing={2} style={{float: 'right'}}>

@@ -15,9 +15,10 @@ import { ArrowCircleLeft, CalendarBlank } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
-
+import SBFLOGO from "../../../assets/image/sbflogo-noback.png";
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
+import html2canvas from 'html2canvas';
 
 function POApprovalRejustify() {
   const { id } = useParams();
@@ -40,7 +41,6 @@ function POApprovalRejustify() {
 
   const [showModal, setShowModal] = useState(false);
   const [showModalPreview, setShowModalPreview] = useState(false);
-
   const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
@@ -294,6 +294,32 @@ function POApprovalRejustify() {
     .then((res) => setPOPreview(res.data))
     .catch((err) => console.log(err));
   }
+
+  const generateAndSubmitPDF = async () => {
+    try {
+      // Assuming you have a div with some content you want to capture
+      const contentToCapture = document.getElementById('content-to-capture');
+
+      // Use html2canvas to capture the content as an image
+      const canvas = await html2canvas(contentToCapture);
+
+      // Convert the canvas to a data URL
+      const imageDataUrl = canvas.toDataURL('image/png');
+
+      // Send the data URL to the server using Axios
+      await axios.post('http://your-node-server/upload-pdf', { pdfContent: imageDataUrl });
+
+      console.log('PDF sent successfully!');
+    } catch (error) {
+      console.error('Error sending PDF:', error);
+    }
+  };
+
+
+  const [showes, setShow] = useState(false);
+
+  const handleCloseses = () => setShow(false);
+  const handleShowses = () => setShow(true);
 
   return (
     <div className="main-of-containers">
@@ -608,11 +634,183 @@ function POApprovalRejustify() {
               className="btn btn-success"
               size="md"
               style={{ fontSize: "20px", margin: "0px 5px" }}
-              onClick={() => handleApprove(id)}
+              // onClick={() => handleApprove(id)}
+              onClick={handleShowses}
             >
               Approve
             </Button>
           </div>
+
+          <Modal
+              show={showes}
+              onHide={handleCloseses}
+              backdrop="static"
+              keyboard={false}
+              size="xl"
+            > 
+              <Modal.Header closeButton>
+                <Modal.Title></Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                  <div className="receipt-main-container">
+                      <div className="receipt-content">
+                          <div className="receipt-header">
+                              <div className="sbflogoes">
+                                  <img src={SBFLOGO} alt="" />
+                              </div>
+                              <div className="sbftexts">
+                                 <span>SBF PHILIPPINES DRILLING </span> 
+                                 <span>RESOURCES CORPORATION</span>
+                                 <span>Padigusan, Sta.Cruz, Rosario, Agusan del sur</span>
+                                 <span>Landline No. 0920-949-3373</span>
+                                 <span>Email Address: sbfpdrc@gmail.com</span>
+                              </div>
+                              <div className="spacesbf">
+                                 
+                              </div>
+                          </div>
+
+                          <div className="po-number-container">
+                              <div className="shippedto">
+                                  <span>SHIPPED TO:</span>
+                              </div>
+                              <div className="blank">
+                                  
+                              </div>
+                              <div className="po-content">
+                                  <span>PURCHASE ORDER</span>
+                                  <span>P.O-NO.</span>
+                              </div>
+                          </div>
+
+                          <div className="secondrowes">
+                                <div className="leftsecondrows">
+                                    <span>FOB</span>
+                                    <span>VIA</span>
+                                </div>
+
+                                <div className="midsecondrows">
+                                    <span>VENDOR</span>
+                                    <span>UNIGLOBAL INDUSTRIAL TRADING, INC.</span>
+                                </div>
+
+                                <div className="rightsecondrows">
+                                    <span>PR NO.</span>
+                                    <span>DATE PREPARED</span>
+                                </div>
+                          </div>
+
+                          <div className="thirdrowes">
+                                <div className="thirdleftrows">
+                                    <span>ITEM NO.</span>
+                                    <span>QUANTITY</span>
+                                    <span>UNIT</span>
+                                </div>
+
+                                <div className="thirdmidrows">
+                                    <span>DESCRIPTION</span>
+                                </div>
+
+                                <div className="thirdrightrows">
+                                    <span>UNIT PRICE</span>
+                                    <span>TOTAL</span>
+                                </div>
+                          </div>
+
+                          <div className="fourthrowes">
+                                <div className="leftfourthrows">
+                                    <span>2016</span>
+                                    <span>60.00</span>
+                                    <span>PAIRS</span>
+                                </div>
+
+                                <div className="midfourthrows">
+                                    <span>RUBBER BOOTS STEEL</span>
+                                </div>
+
+                                <div className="rightfourthrows">
+                                    <span>1,740.00</span>
+                                    <span>88,00</span>
+                                </div>
+                          </div>
+
+                          <div className="fifthrowes">
+                                <div className="fifthleftrows">
+                                    <div className="received-section">
+                                        <span>P.O RECEIVED BY: </span>
+                                        <span>Christian Ron Bumanlag</span>
+                                    </div>
+                                    <div className="deliverydate">
+                                        <span>DELIVERY DATE: </span>
+                                        <span>March 5, 2024</span>
+                                    </div>
+                                    <div className="terms">
+                                        <span>TERMS: </span>
+                                        <span>30 days</span>
+                                    </div>
+                                    <div className="preparedby">
+                                        <span>PREPARED BY: </span>
+                                        <span>Genikka Rose Bautista</span>
+                                    </div>
+                                </div>
+
+                                <div className="fifthmidrows">
+                                      <div className="conditionsection">
+                                          <span>TERMS AND CONDITIONS: </span>
+                                          <span>1. 30 days of terms</span>
+                                          <span>2. No return after 30 days</span>
+                                          <span>3. Please be careful on the item</span>
+                                          <span>4. 30 days of terms</span>
+                                          <span>5. No return after 30 days</span>
+                                          <span>6. Please be careful on the item</span>
+                                      </div>
+                                      <div className="checkedsection">
+                                          <div className="notedby">
+                                              <span>NOTED BY: </span>
+                                              <span>Checked by: </span>
+                                          </div>
+                                          <div className="recommending">
+                                              <span>RECOMMENDING APPROVAL</span>
+                                              <span>Chester Clenn Minoza</span>
+                                          </div>
+                                      </div>
+                                </div>
+
+                                <div className="fifthrightrows">
+                                        <div className="totalamount">
+                                            <span>Total Amount: </span>
+                                            <span>PHP 100,000.00</span>
+                                        </div>
+                                        <div className="codesection">
+                                            <span>Sample Code:</span>
+                                            <span>#01164122KDJAS</span>
+                                        </div>
+                                        <div className="approvedsby">
+                                            <span>Approved By: </span>
+                                            <span></span>
+                                        </div>
+                                </div>
+                          </div>
+
+                      </div>
+                  </div>
+              </Modal.Body>
+            </Modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           <Modal show={showModal} onHide={handleClose}>
             <Form>

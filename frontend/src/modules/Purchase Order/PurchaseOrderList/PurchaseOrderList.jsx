@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import Sidebar from "../../Sidebar/sidebar";
+import NoData from '../../../../src/assets/image/NoData.png';
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
 import axios from "axios";
@@ -406,13 +407,12 @@ function PurchaseOrderList() {
                     ))}
                   </tbody>
                 ) : (
-                  <tbody>
-                    <tr>
-                      <td colSpan="6" style={{ textAlign: "center" }}>
+                  <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
                         No Data Found
-                      </td>
-                    </tr>
-                  </tbody>
+                      </h3>
+                  </div>
                 )}
               </table>
             </div>

@@ -12,6 +12,7 @@ const nodemailer = require('nodemailer');
 const pdf = require('html-pdf');
 const fs = require('fs');
 
+
 router.route('/lastPONumber').get(async (req, res) => {
   try {
     const latestPR = await PR_PO.findOne({
@@ -435,92 +436,49 @@ router.route('/save').post(async (req, res) => {
   
       // Iterate through each supplier and send an email with the consolidated PDF attachment
       for (const supplierEmail in itemsBySupplier) {
-        // Create PDF content
-        let htmlContent = `
-        <style>
-            /* Bootstrap styles */
-            .table {
-                width: 100%;
-                margin-bottom: 1rem;
-                color: #212529;
-                background-color: transparent;
-                border-collapse: collapse;
-            }
-    
-            .table th,
-            .table td {
-                padding: 0.75rem;
-                vertical-align: top;
-                border-top: 1px solid #dee2e6;
-            }
-    
-            .table thead th {
-                vertical-align: bottom;
-                border-bottom: 2px solid #dee2e6;
-            }
-    
-            .table tbody + tbody {
-                border-top: 2px solid #dee2e6;
-            }
-    
-            .table .table {
-                background-color: #fff;
-            }
-        </style>
-        <h2>SBF PHILIPPINES DRILLING \n RESOURCES CORPORATION</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                </tr>
-            </thead>`;
-    
+
     itemsBySupplier[supplierEmail].forEach(item => {
-        htmlContent += `<tr><td>${item.code}</td><td>${item.name}</td><td>${item.quantity}</td></tr>`;
     });
-    
-    htmlContent += '</table>';
+
   
         // Generate PDF from HTML
-        pdf.create(htmlContent).toFile('./orders.pdf', async function(err, res) {
-          if (err) return console.log(err);
+        // pdf.create(htmlContent).toFile('./orders.pdf', async function(err, res) {
+        //   if (err) return console.log(err);
   
-          // Create a nodemailer transporter
-          const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: gmailEmail,
-              pass: gmailPassword,
-            },
-          });
+        //   // Create a nodemailer transporter
+        //   const transporter = nodemailer.createTransport({
+        //     service: "gmail",
+        //     auth: {
+        //       user: gmailEmail,
+        //       pass: gmailPassword,
+        //     },
+        //   });
   
-          // Define email options
-          const mailOptions = {
-            from: gmailEmail,
-            to: supplierEmail,
-            subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
-            text: 'Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:',
-            attachments: [
-              {
-                filename: 'orders.pdf',
-                path: './orders.pdf',
-                contentType: 'application/pdf'
-              },
-            ],
-          };
+        //   // Define email options
+        //   const mailOptions = {
+        //     from: gmailEmail,
+        //     to: supplierEmail,
+        //     subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+        //     text: 'Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:',
+        //     attachments: [
+        //       {
+        //         filename: 'orders.pdf',
+        //         path: './orders.pdf',
+        //         contentType: 'application/pdf'
+        //       },
+        //     ],
+        //   };
   
-          // Send the email
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.log('Error sending email:', error);
-            }
-            else{
-              console.log('Email Sent:', info);
-            }
-          });
-        });
+        //   // Send the email
+        //   transporter.sendMail(mailOptions, (error, info) => {
+        //     if (error) {
+        //       console.log('Error sending email:', error);
+        //     }
+        //     else{
+        //       console.log('Email Sent:', info);
+        //     }
+        //   });
+        // });
       }
   
       // const PR_newData = await PR.update({
