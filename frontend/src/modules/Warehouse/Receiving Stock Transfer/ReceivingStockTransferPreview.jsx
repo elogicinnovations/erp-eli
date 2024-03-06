@@ -649,6 +649,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = prodFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
+        prodsuppId: product.inventory_prd.product_tag_supplier.id,
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -656,7 +657,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
         // quantity_available: product.quantity_available,
         // desc: product.desc,
       }));
-  
+
       setAddProductbackend(serializedProducts);
       console.log("Selected Products:", serializedProducts);
   
@@ -664,7 +665,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
       return updatedInputs;
     });
   };
-
+    // console.log("PRODUCTS" + prodFetch);
 
 
   
@@ -707,6 +708,8 @@ function ReceivingStockTransferPreview({ authrztn }) {
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = asmFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
+        assemblysuppId: product.inventory_assembly.assembly_supplier.id,
+
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -763,6 +766,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = spareFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
+        sparesuppId: product.inventory_spare.sparepart_supplier.id,
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -819,6 +823,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = subpartFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
+        subsuppId: product.inventory_subpart.subpart_supplier.id,
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -873,6 +878,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                   fontSize: "20px",
                   position: "relative",
                   paddingTop: "20px",
+                  fontFamily: "Poppins, Source Sans Pro"
                 }}
               >
                 Stock Transfer Details
@@ -888,48 +894,63 @@ function ReceivingStockTransferPreview({ authrztn }) {
                   }}
                 ></span>
               </div>
-              <div className="receivingbox mt-3">
-                <div className="row" style={{ padding: "20px" }}>
-                  <div className="col-6">
-                    <div className="ware">Stock Transfer</div>
-                    {/* <div className="pr-no">
-                                        PR #: <p1>{prNumber}</p1>
-                                    </div> */}
-                    <div className="res-warehouse">
-                      From: {source} ---------------- To: {destination}
-                    </div>
-                  </div>
-                  <div className="col-4">
-                    <div className="created">
-                      Created date: <p1>{formatDatetime(dateCreated)}</p1>
-                    </div>
-                    <div className="created mt-3">
-                      Transfer By: <p1>{users}</p1>
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="status">
-                      <Circle
-                        weight="fill"
-                        size={17}
-                        color="green"
-                        style={{ margin: "10px" }}
-                      />
-                      {status}
-                    </div>
+              <div className="row">
+                <div className="col-6">
+                  <div className="stockmain-section">
+                      <div className="locationandtransferby">
+                        <div className="locationtransfer">
+                            <span>Transfer Location</span>
+                            <span>
+                              From: {source} --------- To: {destination}
+                            </span>
+                        </div>
+
+                        <div className="transferby">
+                            <span>Transfer By</span>
+                            <span>"{users}"</span>
+                        </div>
+                      </div>
+
+                      <div className="dateandtoreceive">
+                          <div className="datefields">
+                              <span>Date</span>
+                              <span>{formatDatetime(dateCreated)}</span>
+                          </div>
+                          <div className="toreceive">
+                              <span>Status</span>
+                              <span>
+                              <Circle
+                                weight="fill"
+                                size={17}
+                                color="green"
+                              />
+                              {status}
+                              </span>
+                          </div>
+                      </div>
+
                   </div>
                 </div>
+
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Control
+                      onChange={(e) => setRemarks(e.target.value)}
+                      value={remarks}
+                        as="textarea"
+                        rows={3}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                          fontSize: "16px",
+                          height: "150px",
+                          maxHeight: "150px",
+                          resize: "none",
+                          overflowY: "auto",
+                        }}
+                    />
+                  </Form.Group>
+                </div>
               </div>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>Remarks: </Form.Label>
-                <Form.Control
-                  onChange={(e) => setRemarks(e.target.value)}
-                  as="textarea"
-                  placeholder="Enter details name"
-                  value={remarks}
-                  style={{ height: "100px", fontSize: "15px" }}
-                />
-              </Form.Group>
 
             
             
@@ -940,6 +961,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro"
               }}
             >
               Item List
@@ -950,7 +972,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "8rem",
+                  left: "9rem",
                   transform: "translateY(-50%)",
                 }}
               ></span>
@@ -965,7 +987,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                       <th className="tableh">Product Name</th>
                       <th className="tableh">UOM</th>
                       <th className="tableh">Quantity Transfer</th>
-                      <th className="tableh">Delivered</th>
+                      <th className="tableh">Quantity Received</th>
                       {/* <th className="tableh">Quality</th> */}
                     </tr>
                   </thead>
@@ -1005,7 +1027,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                             required
                             placeholder="Input quantity"
                             style={{
-                              height: "40px",
+                              height: "30px",
                               width: "120px",
                               fontSize: "15px",
                             }}
@@ -1200,22 +1222,12 @@ function ReceivingStockTransferPreview({ authrztn }) {
                 <Button
                   type="submit"
                   // onClick={() => navigate(`/receivingManagement`)}
-                  className="btn btn-success"
+                  variant="warning"
                   size="md"
                   style={{ fontSize: "20px", margin: "0px 5px" }}
                 >
                   Done
                 </Button>
-{/* 
-                <Button
-                  type="button"
-                  onClick={() => handleDoneReceived()}
-                  className="btn btn-success"
-                  size="md"
-                  style={{ fontSize: "20px", margin: "0px 5px" }}
-                >
-                  Delivered
-                </Button> */}
               </div>
             </Form>
           </div>

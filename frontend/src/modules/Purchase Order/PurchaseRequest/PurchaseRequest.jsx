@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import ReactLoading from 'react-loading';
+import NoAccess from '../../../assets/image/NoAccess.png';
 // import Sidebar from "../../Sidebar/sidebar";
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
@@ -44,6 +46,7 @@ import { jwtDecode } from "jwt-decode";
 
 function PurchaseRequest({ authrztn }) {
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -115,19 +118,42 @@ function PurchaseRequest({ authrztn }) {
 
   const [PR, setPR] = useState([]);
 
+  // const reloadTable = () => {
+  //   axios
+  //     .get(BASE_URL + "/PR/fetchTable")
+  //     .then((res) => {
+  //       setAllPR(res.data);
+  //       setFilteredPR(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  // useEffect(() => {
+  //   reloadTable();
+  // }, []);
+
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/PR/fetchTable")
       .then((res) => {
         setAllPR(res.data);
         setFilteredPR(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+        setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err)
+        setIsLoading(false);
+    });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+};
 
   useEffect(() => {
     reloadTable();
   }, []);
+  
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -289,6 +315,13 @@ function PurchaseRequest({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+      {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+        authrztn.includes('PR - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">
@@ -631,6 +664,15 @@ function PurchaseRequest({ authrztn }) {
             </div>
           </div>
         </div>
+        ) : (
+            <div className="no-access">
+              <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+              <h3>
+                You don't have access to this function.
+              </h3>
+            </div>
+          )
+        )}
       </div>
     </div>
   );

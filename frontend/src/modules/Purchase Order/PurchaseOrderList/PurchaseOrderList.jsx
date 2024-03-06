@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import Sidebar from "../../Sidebar/sidebar";
 import NoData from '../../../../src/assets/image/NoData.png';
+import ReactLoading from 'react-loading';
+import NoAccess from '../../../assets/image/NoAccess.png';
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
 import axios from "axios";
@@ -8,14 +10,10 @@ import BASE_URL from "../../../assets/global/url";
 import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import { Link, useNavigate } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
-  Gear,
-  Bell,
-  UserCircle,
   CalendarBlank,
   XCircle,
 } from "@phosphor-icons/react";
@@ -33,8 +31,9 @@ import "../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../partials/header";
 
-function PurchaseOrderList() {
+function PurchaseOrderList({ authrztn }) {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -55,16 +54,39 @@ function PurchaseOrderList() {
 
   const [pr_req, setPr_req] = useState([]);
 
+  // const reloadTable = () => {
+  //   axios
+  //     .get(BASE_URL + "/PR/fetchTable_PO")
+  //     .then((res) => {
+  //       setPr_req(res.data);
+  //       setAllPR(res.data);
+  //       setFilteredPR(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  // useEffect(() => {
+  //   reloadTable();
+  // }, []);
+
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/PR/fetchTable_PO")
       .then((res) => {
         setPr_req(res.data);
         setAllPR(res.data);
         setFilteredPR(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+        setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err)
+        setIsLoading(false);
+    });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+};
 
   useEffect(() => {
     reloadTable();
@@ -156,30 +178,13 @@ function PurchaseOrderList() {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
-        <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
+      {isLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
                 </div>
-
-                </div> */}
-
+              ) : (
+        <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -418,6 +423,7 @@ function PurchaseOrderList() {
             </div>
           </div>
         </div>
+          )}
       </div>
     </div>
   );
