@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
 const {
+  Receiving_PO,
   Receiving_Prd,
   Receiving_Asm,
   Receiving_Spare,
@@ -56,7 +57,10 @@ router.route("/insertReceived").post(async (req, res) => {
   const formattedDate = formattedDateTime.replace(/[/:,]/g, '').replace(/\s/g, '');
 
 // Output the formatted current date and time in Manila time zone
-    console.log(formattedDate);
+    // console.log(formattedDate);
+
+
+    
 
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
@@ -67,6 +71,19 @@ router.route("/insertReceived").post(async (req, res) => {
   }
 
   freighCost = (shippingFee / totalReceived).toFixed(2);
+
+
+  const received_PO = await Receiving_PO.create({
+    pr_id: pr_id,
+    freight_cost: freighCost,
+    totalReceived: totalReceived,
+    ref_code: formattedDate,
+    status: status,
+  });
+
+console.log('dwadwa' + received_PO.id)
+  
+
 
   
 
@@ -91,13 +108,14 @@ router.route("/insertReceived").post(async (req, res) => {
 
         if (update) {
           Receiving_Prd.create({
+            receiving_po_id: received_PO.id,
             canvassed_id: child.canvassed_ID,
             set_quantity: child.set_quantity || 0,
-            freight_cost: freighCost,
+            // freight_cost: freighCost,
             received_quantity: child.Received_quantity,
             remaining_quantity: child.Remaining_quantity,
-            ref_code: `PRD-${formattedDate}`,
-            status: status,
+            // ref_code: `PRD-${formattedDate}`,
+            // status: status,
           });
 
           const getProdName = await Receiving_Prd.findAll({
@@ -118,7 +136,7 @@ router.route("/insertReceived").post(async (req, res) => {
             ],
           })
 
-          productName = getProdName[0].purchase_req_canvassed_prd.product_tag_supplier.product.product_name;
+          // productName = getProdName[0].purchase_req_canvassed_prd.product_tag_supplier.product.product_name;
 
  
         }
@@ -134,13 +152,14 @@ router.route("/insertReceived").post(async (req, res) => {
 
         if (update) {
           Receiving_Asm.create({
+            receiving_po_id: received_PO.id,
             canvassed_id: child.canvassed_ID,
             set_quantity: child.set_quantity || 0,
-            freight_cost: freighCost,
+            // freight_cost: freighCost,
             received_quantity: child.Received_quantity,
             remaining_quantity: child.Remaining_quantity,
-            ref_code: `ASM-${formattedDate}`,
-            status: status,
+            // ref_code: `ASM-${formattedDate}`,
+            // status: status,
           });
 
           const getAssemblyName = await Receiving_Asm.findAll({
@@ -161,7 +180,7 @@ router.route("/insertReceived").post(async (req, res) => {
             ],
           })
 
-          productName = getAssemblyName[0].purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name;
+          // productName = getAssemblyName[0].purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name;
 
         }
       } else if (child.type === "Product Part") {
@@ -176,13 +195,14 @@ router.route("/insertReceived").post(async (req, res) => {
 
         if (update) {
           Receiving_Spare.create({
+            receiving_po_id: received_PO.id,
             canvassed_id: child.canvassed_ID,
             set_quantity: child.set_quantity || 0,
-            freight_cost: freighCost,
+            // freight_cost: freighCost,
             received_quantity: child.Received_quantity,
             remaining_quantity: child.Remaining_quantity,
-            ref_code: `SPR-${formattedDate}`,
-            status: status,
+            // ref_code: `SPR-${formattedDate}`,
+            // status: status,
           });
 
           const getSpareName = await Receiving_Spare.findAll({
@@ -203,7 +223,7 @@ router.route("/insertReceived").post(async (req, res) => {
             ],
           })
 
-          productName = getSpareName[0].purchase_req_canvassed_spare.sparepart_supplier.spareParts.spareParts_name;
+          // productName = getSpareName[0].purchase_req_canvassed_spare.sparepart_supplier.spareParts.spareParts_name;
         }
       } else if (child.type === "Product Subpart") {
         // console.log(`Subpart ${freighCost}`)
@@ -219,13 +239,14 @@ router.route("/insertReceived").post(async (req, res) => {
 
         if (update) {
             Receiving_Subpart.create({
+              receiving_po_id: received_PO.id,
               canvassed_id: child.canvassed_ID,
               set_quantity: child.set_quantity || 0,
-              freight_cost: freighCost,
+              // freight_cost: freighCost,
               received_quantity: child.Received_quantity,
               remaining_quantity: child.Remaining_quantity,
-              ref_code: `SBP-${formattedDate}`,
-              status: status,
+              // ref_code: `SBP-${formattedDate}`,
+              // status: status,
             });
 
             const getSubName = await Receiving_Subpart.findAll({
@@ -246,16 +267,16 @@ router.route("/insertReceived").post(async (req, res) => {
               ],
             })
 
-            productName = getSubName[0].purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name;
+            // productName = getSubName[0].purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name;
           }
         } else {
           console.log(`Not a Product`);
         }
 
-        await Activity_Log.create({
-          masterlist_id: userId,
-          action_taken: `Received ${productName} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-        });
+        // await Activity_Log.create({
+        //   masterlist_id: userId,
+        //   action_taken: `Received ${productName} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+        // });
       }
 
     }

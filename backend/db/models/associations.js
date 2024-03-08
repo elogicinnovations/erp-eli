@@ -63,6 +63,8 @@ const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
 const PO_Received = require("./po_received.model");
 
+
+const Receiving_PO = require("./receiving.model");
 const Receiving_Prd = require("./receiving_prd.model");
 const Receiving_Asm = require("./receiving_asm.model");
 const Receiving_Spare = require("./receiving_spare.model");
@@ -494,6 +496,21 @@ Receiving_Spare.belongsTo(PR_PO_spare, { foreignKey: "canvassed_id" });
 PR_PO_subpart.hasMany(Receiving_Subpart, { foreignKey: "canvassed_id" });
 Receiving_Subpart.belongsTo(PR_PO_subpart, { foreignKey: "canvassed_id" });
 
+Receiving_PO.hasMany(Receiving_Prd, { foreignKey: "receiving_po_id" });
+Receiving_Prd.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+Receiving_PO.hasMany(Receiving_Asm, { foreignKey: "receiving_po_id" });
+Receiving_Asm.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+Receiving_PO.hasMany(Receiving_Spare, { foreignKey: "receiving_po_id" });
+Receiving_Spare.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+Receiving_PO.hasMany(Receiving_Subpart, { foreignKey: "receiving_po_id" });
+Receiving_Subpart.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+PR.hasMany(Receiving_PO, { foreignKey: "pr_id" });
+Receiving_PO.belongsTo(PR, { foreignKey: "pr_id" });
+
 PR.hasMany(Receiving_Image, { foreignKey: "pr_id" });
 Receiving_Image.belongsTo(PR, { foreignKey: "pr_id" });
 
@@ -563,6 +580,7 @@ module.exports = {
   PR_PO_subpart,
   PO_Received,
 
+  Receiving_PO,
   Receiving_Prd,
   Receiving_Asm,
   Receiving_Spare,

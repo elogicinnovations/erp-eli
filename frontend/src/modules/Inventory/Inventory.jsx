@@ -54,7 +54,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
 
   const reloadTable_inventory = () => {
     const delay = setTimeout(() => {
-      axios.get(BASE_URL + '/inventory/fetchInventory')
+      axios.get(BASE_URL + '/inventory/fetchInventory_group')
         .then(res => {
           setInventory(res.data.product);
           setAssembly(res.data.assembly);
@@ -242,68 +242,64 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             <tr>
                               <th className='tableh'>Product Code</th>
                               <th className='tableh'>Product Name</th>
-                              <th className='tableh'>Supplier</th>
+                              {/* <th className='tableh'>Supplier</th> */}
                               <th className='tableh'>Manufacturer</th>
                               <th className='tableh'>Quantity</th>
-                              <th className='tableh'>Warehouse</th>
-                              <th className='tableh'>Cost Item</th>
-                              <th className='tableh'>Total Cost</th>
+                              {/* <th className='tableh'>Warehouse</th> */}
+                              <th className='tableh'>Price</th>
+                              <th className='tableh'>Total Price</th>
                             </tr>
                           </thead>
                           {inventory.length > 0 || assembly.length > 0 || spare.length > 0 || subpart.length > 0 ? (
                             <tbody>
-                              {inventory.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.inventory_id}`)}>
-                                  <td>{data.product_tag_supplier.product.product_code}</td>
-                                  <td>{data.product_tag_supplier.product.product_name}</td>
-                                  <td>{data.product_tag_supplier.supplier.supplier_name}</td>
-                                  <td>{data.product_tag_supplier.product.manufacturer.manufacturer_name}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{data.warehouse.warehouse_name}</td>
-                                  <td>{data.product_tag_supplier.product_price}</td>
-                                  <td>{data.product_tag_supplier.product_price * data.quantity}</td>
+                               {inventory.map((data, i) => (
+                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.productID}`)}>
+                                  <td>{data.product_code}</td>
+                                  <td>{data.product_name}</td>
+                                  <td>{data.manufacturer}</td>
+                                  <td>{data.totalQuantity}</td>
+                                  {/* <td>{data.warehouse_name}</td> */}
+                                  <td>{data.price}</td>
+                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
 
                               {assembly.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewAssembly/${data.inventory_id}`)}>
-                                  <td>{data.assembly_supplier.assembly.assembly_code}</td>
-                                  <td>{data.assembly_supplier.assembly.assembly_name}</td>
-                                  <td>{data.assembly_supplier.supplier.supplier_name}</td>
-                                  <td>{data.assembly_supplier.assembly.manufacturer.manufacturer_name}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{data.warehouse.warehouse_name}</td>
-                                  <td>{data.assembly_supplier.supplier_price}</td>
-                                  <td>{data.assembly_supplier.supplier_price * data.quantity}</td>
+                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewAssembly/${data.productID}`)}>
+                                  <td>{data.product_code}</td>
+                                  <td>{data.product_name}</td>
+                                  <td>{data.manufacturer}</td>
+                                  <td>{data.totalQuantity}</td>
+                                  {/* <td>{data.warehouse_name}</td> */}
+                                  <td>{data.price}</td>
+                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
 
                               {spare.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSpare/${data.inventory_id}`)}>
-                                  <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
-                                  <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
-                                  <td>{data.sparepart_supplier.supplier.supplier_name}</td>
-                                  <td>{data.sparepart_supplier.sparePart.manufacturer.manufacturer_name}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{data.warehouse.warehouse_name}</td>
-                                  <td>{data.sparepart_supplier.supplier_price}</td>
-                                  <td>{data.sparepart_supplier.supplier_price * data.quantity}</td>
+                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSpare/${data.productID}`)}>
+                                  <td>{data.product_code}</td>
+                                  <td>{data.product_name}</td>
+                                  <td>{data.manufacturer}</td>
+                                  <td>{data.totalQuantity}</td>
+                                  {/* <td>{data.warehouse_name}</td> */}
+                                  <td>{data.price}</td>
+                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
 
                               {subpart.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSubpart/${data.inventory_id}`)}>
-                                  <td>{data.subpart_supplier.subPart.subPart_code}</td>
-                                  <td>{data.subpart_supplier.subPart.subPart_name}</td>
-                                  <td>{data.subpart_supplier.supplier.supplier_name}</td>
-                                  <td>{data.subpart_supplier.subPart.manufacturer.manufacturer_name}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{data.warehouse.warehouse_name}</td>
-                                  <td>{data.subpart_supplier.supplier_price}</td>
-                                  <td>{data.subpart_supplier.supplier_price * data.quantity}</td>
+                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSubpart/${data.productID}`)}>
+                                  <td>{data.product_code}</td>
+                                  <td>{data.product_name}</td>
+                                  <td>{data.manufacturer}</td>
+                                  <td>{data.totalQuantity}</td>
+                                  {/* <td>{data.warehouse_name}</td> */}
+                                  <td>{data.price}</td>
+                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
