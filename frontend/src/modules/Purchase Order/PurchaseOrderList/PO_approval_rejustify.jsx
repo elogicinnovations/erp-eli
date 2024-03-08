@@ -74,6 +74,7 @@ function POApprovalRejustify() {
       .catch((err) => console.log(err));
   }, []);
 
+
   useEffect(() => {
     console.log("arrayss", JSON.stringify(POarray, null, 2));
   }, [POarray]);
@@ -186,8 +187,7 @@ function POApprovalRejustify() {
       }
     });
   };
-
-  const handleApprove = async (id) => {
+  const handleApprove = async () => {
     swal({
       title: "Are you sure want to approve this purchase Order?",
       text: "This action cannot be undone.",
@@ -197,13 +197,39 @@ function POApprovalRejustify() {
     }).then(async (approve) => {
       if (approve) {
         try {
+          // Initialize an array to store updated POarray with image data
+          const updatedPOarray = [];
+  
+          // Iterate over each purchase order in POarray
+          for (const group of POarray) {
+
+            let supp_code = group.items[0].suppliers.supplier_code;
+            let supp_name = group.items[0].suppliers.supplier_name;
+            // Capture the content of each purchase order div individually
+            const div = document.getElementById(`content-to-capture-${group.title}-${supp_code}-${supp_name}`);
+            const canvas = await html2canvas(div);
+            const imageData = canvas.toDataURL('image/png');
+  
+            // Add the captured image data to the corresponding purchase order
+            const updatedGroup = {
+              ...group,
+              imageData: imageData
+            };
+  
+            // Push the updated purchase order to the array
+            updatedPOarray.push(updatedGroup);
+
+            console.log(`content-to-capture-${group.title}-${supp_code}-${supp_name}`)
+          }
+  
+          // Proceed with approval process and send updated POarray to the backend
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             id,
-            POarray,
+            POarray: updatedPOarray,
             prNum,
             userId,
           });
-
+  
           if (response.status === 200) {
             swal({
               title: "Approved Successfully",
@@ -232,6 +258,64 @@ function POApprovalRejustify() {
       }
     });
   };
+  
+  // Define generateAndSubmitPDF function
+// const generateAndSubmitPDF = async (contentToCapture) => {
+//   try {
+//     // Use html2canvas to capture the content as an image
+//     const canvas = await html2canvas(contentToCapture);
+
+//     // Convert the canvas to a data URL
+//     const imageDataUrl = canvas.toDataURL('image/png');
+//     return imageDataUrl;
+//   } catch (error) {
+//     console.error('Error generating PDF:', error);
+//     throw error;
+//   }
+// };
+
+
+  // // Function to generate PDFs and add them to POarray
+  // const generateAndAddPDFsToPOarray = async () => {
+  //   try {
+  //     const updatedPOarray = await Promise.all(POarray.map(async (group) => {
+  //       // let totalSum = 0;
+  //       // let currency = group.items[0].suppliers.supplier_currency;
+  //       // let vat = group.items[0].suppliers.supplier_vat;
+        
+  //       // Capture content of the div associated with the group
+  //       const contentToCapture = document.getElementById(`content-to-capture-${group.title}`);
+        
+  //       // Generate PDF for the captured content
+  //       const pdfDataUrl = await generateAndSubmitPDF(contentToCapture);
+
+  //       // Add PDF data to each item in the group
+  //       const updatedItems = group.items.map((item) => ({
+  //         ...item,
+  //         pdfDataUrl: pdfDataUrl // Add PDF data URL to each item
+  //       }));
+
+
+  //       console.log('dwadwadw' + updatedItems)
+
+  //       // // Calculate totalSum
+  //       // updatedItems.forEach((item) => {
+  //       //   totalSum += (((vat / 100) * item.suppPrice.price) +  item.suppPrice.price) * item.item.quantity;
+  //       // });
+  //       // totalSum = totalSum.toFixed(2);
+
+  //       return {
+  //         ...group,
+  //         items: updatedItems
+  //       };
+  //     }));
+
+  //     setPOarray(updatedPOarray);
+  //     console.log('PDFs generated and added to POarray successfully!');
+  //   } catch (error) {
+  //     console.error('Error generating and adding PDFs to POarray:', error);
+  //   }
+  // };
 
   const handleUploadRejustify = async () => {
     try {
@@ -294,26 +378,25 @@ function POApprovalRejustify() {
     .then((res) => setPOPreview(res.data))
     .catch((err) => console.log(err));
   }
+//   const generateAndSubmitPDF = async () => {
+//     try {
+//       // Assuming you have a div with some content you want to capture
+//       const contentToCapture = document.getElementById('content-to-capture');
 
-  const generateAndSubmitPDF = async () => {
-    try {
-      // Assuming you have a div with some content you want to capture
-      const contentToCapture = document.getElementById('content-to-capture');
+//       // Use html2canvas to capture the content as an image
+//       const canvas = await html2canvas(contentToCapture);
 
-      // Use html2canvas to capture the content as an image
-      const canvas = await html2canvas(contentToCapture);
+//       // Convert the canvas to a data URL
+//       const imageDataUrl = canvas.toDataURL('image/png');
 
-      // Convert the canvas to a data URL
-      const imageDataUrl = canvas.toDataURL('image/png');
+//       // Send the data URL to the server using Axios
+//       await axios.post(BASE_URL + "/invoice/fetchPOPreview", { pdfContent: imageDataUrl });
 
-      // Send the data URL to the server using Axios
-      await axios.post('http://your-node-server/upload-pdf', { pdfContent: imageDataUrl });
-
-      console.log('PDF sent successfully!');
-    } catch (error) {
-      console.error('Error sending PDF:', error);
-    }
-  };
+//       console.log('PDF sent successfully!');
+//     } catch (error) {
+//       console.error('Error sending PDF:', error);
+//     }
+// };
 
 
   const [showes, setShow] = useState(false);
@@ -558,7 +641,7 @@ function POApprovalRejustify() {
                     {group.items.length > 0 && (
                       <div className="canvass-title">
                         <div className="supplier-info">
-                          <p>{`Supplier: ${group.items[0].suppliers.supplier_code}`}</p>
+                          <p>{`Supplier: ${group.items[0].suppliers.supplier_code} - ${group.items[0].suppliers.supplier_name}`}</p>
                         </div>
                       </div>
                     )}
@@ -611,15 +694,26 @@ function POApprovalRejustify() {
           <div className="save-cancel">
             <Button
               type="button"
+              className="btn btn-warning"
+              size="md"
+              style={{ fontSize: "20px", margin: "0px 5px" }}
+              // onClick={() => handleCancel(id)}
+              onClick={handleShowses}
+            >
+              Preview
+            </Button>
+            <Button
+              type="button"
               className="btn btn-danger"
               size="md"
               style={{ fontSize: "20px", margin: "0px 5px" }}
               onClick={() => handleCancel(id)}
+
             >
               Re-Canvass
             </Button>
 
-            <Button
+            {/* <Button
               onClick={handleShow}
               className="btn btn-secondary btn-md"
               size="md"
@@ -634,12 +728,15 @@ function POApprovalRejustify() {
               className="btn btn-success"
               size="md"
               style={{ fontSize: "20px", margin: "0px 5px" }}
-              // onClick={() => handleApprove(id)}
-              onClick={handleShowses}
+              onClick={() => handleApprove(id)}
+              // onClick={handleShowses}
             >
               Approve
-            </Button>
+            </Button> */}
           </div>
+
+        
+
 
           <Modal
               show={showes}
@@ -651,8 +748,25 @@ function POApprovalRejustify() {
               <Modal.Header closeButton>
                 <Modal.Title></Modal.Title>
               </Modal.Header>
-              <Modal.Body>
-                  <div className="receipt-main-container">
+              {POarray.map((group) => {
+                 let totalSum = 0;
+                 let currency = group.items[0].suppliers.supplier_currency;
+                 let supp_code = group.items[0].suppliers.supplier_code;
+                 let supp_name = group.items[0].suppliers.supplier_name;
+                 let vat = group.items[0].suppliers.supplier_vat;
+                 
+                 group.items.forEach((item, index) => {
+                     totalSum += (((vat / 100) * item.suppPrice.price) +  item.suppPrice.price) * item.item.quantity;
+                 });
+
+                 totalSum = totalSum.toFixed(2);
+
+                 return (
+                  <Modal.Body id={`content-to-capture-${group.title}-${supp_code}-${supp_name}`}>
+              
+
+                 
+                  <div key={group.title}   className="receipt-main-container">
                       <div className="receipt-content">
                           <div className="receipt-header">
                               <div className="sbflogoes">
@@ -679,7 +793,7 @@ function POApprovalRejustify() {
                               </div>
                               <div className="po-content">
                                   <span>PURCHASE ORDER</span>
-                                  <span>P.O-NO.</span>
+                                  <span>P.O-NO. <label style={{fontSize: 14, color: 'red'}}>{group.title}</label></span>
                               </div>
                           </div>
 
@@ -691,11 +805,11 @@ function POApprovalRejustify() {
 
                                 <div className="midsecondrows">
                                     <span>VENDOR</span>
-                                    <span>UNIGLOBAL INDUSTRIAL TRADING, INC.</span>
+                                    <span>{group.items[0].suppliers.supplier_name}</span>
                                 </div>
 
                                 <div className="rightsecondrows">
-                                    <span>PR NO.</span>
+                                    <span>PR NO. <label style={{fontSize: 14, color: 'red'}}>{prNum}</label></span>
                                     <span>DATE PREPARED</span>
                                 </div>
                           </div>
@@ -712,25 +826,64 @@ function POApprovalRejustify() {
                                 </div>
 
                                 <div className="thirdrightrows">
-                                    <span>UNIT PRICE</span>
+                                    <span>{`UNIT PRICE (${vat}%)`}</span>
                                     <span>TOTAL</span>
                                 </div>
                           </div>
 
                           <div className="fourthrowes">
                                 <div className="leftfourthrows">
-                                    <span>2016</span>
-                                    <span>60.00</span>
-                                    <span>PAIRS</span>
+                                  {/* for product code */}
+                                    <span>{group.items.map((item, index) => (
+                                        <div key={index}>
+                                            <label>{`${item.supp_tag.code}`}</label>
+                                            <br />
+                                        </div>
+                                    ))}</span>
+                                    {/* for product quantity */}
+                                    <span> {group.items.map((item, index) => (
+                                        <div key={index}>
+                                            <label>{`${item.item.quantity}`}</label>
+                                            <br />
+                                        </div>
+                                    ))}</span>
+
+                                    {/* for product unit of measurement */}
+                                    <span>{group.items.map((item, index) => (
+                                        <div key={index}>
+                                            <label>{`${item.supp_tag.uom}`}</label>
+                                            <br />
+                                        </div>
+                                    ))}</span>
                                 </div>
 
                                 <div className="midfourthrows">
-                                    <span>RUBBER BOOTS STEEL</span>
+                                  {/* for product name */}
+                                    {group.items.map((item, index) => (
+                                        <div key={index}>
+                                            <span>{`${item.supp_tag.name}`}</span>
+                                            <br />
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <div className="rightfourthrows">
-                                    <span>1,740.00</span>
-                                    <span>88,00</span>
+                                      {/* for unit price */}
+                                    <span> {group.items.map((item, index) => (
+                                        <div key={index}>
+                                            <label>{`${((vat / 100) * item.suppPrice.price) +  item.suppPrice.price}`}</label>
+                                            {/* <label>{`${item.suppPrice.price}`}</label> */}
+                                            <br />
+                                        </div>
+                                    ))}</span>
+
+                                    {/* for unit price total */}
+                                    <span> {group.items.map((item, index) => (
+                                        <div key={index}>
+                                            <label>{`${(((vat / 100) * item.suppPrice.price) +  item.suppPrice.price) * item.item.quantity}`}</label>
+                                            <br />
+                                        </div>
+                                    ))}</span>
                                 </div>
                           </div>
 
@@ -738,31 +891,30 @@ function POApprovalRejustify() {
                                 <div className="fifthleftrows">
                                     <div className="received-section">
                                         <span>P.O RECEIVED BY: </span>
-                                        <span>Christian Ron Bumanlag</span>
+                                        <span></span>
                                     </div>
                                     <div className="deliverydate">
                                         <span>DELIVERY DATE: </span>
-                                        <span>March 5, 2024</span>
+                                        <span></span>
                                     </div>
                                     <div className="terms">
                                         <span>TERMS: </span>
-                                        <span>30 days</span>
+                                        <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
                                     </div>
                                     <div className="preparedby">
                                         <span>PREPARED BY: </span>
-                                        <span>Genikka Rose Bautista</span>
+                                        <span></span>
                                     </div>
                                 </div>
 
                                 <div className="fifthmidrows">
                                       <div className="conditionsection">
                                           <span>TERMS AND CONDITIONS: </span>
-                                          <span>1. 30 days of terms</span>
-                                          <span>2. No return after 30 days</span>
-                                          <span>3. Please be careful on the item</span>
-                                          <span>4. 30 days of terms</span>
-                                          <span>5. No return after 30 days</span>
-                                          <span>6. Please be careful on the item</span>
+                                          <span>1. Acceptance of this order is an acceptance of all conditions herein.</span>
+                                          <span>2. Make all deliveries to receiving, However subject to count, weight and specification approval of SBF Philippines Drilling Resources Corporation.</span>
+                                          <span>3. The original purchase order copy and suppliers original invoice must accompany delivery.</span>
+                                          <span>4. In case the supplier fails to deliver goods on delivery date specified herein, SBF Philippines Drilling Resources Corporation has the right to cancel this order or demand penalty charged as stated.</span>
+                                          <span>5. Problems encountered related to your supply should immediately brought to the attention of the purchasing manager.</span>
                                       </div>
                                       <div className="checkedsection">
                                           <div className="notedby">
@@ -770,8 +922,8 @@ function POApprovalRejustify() {
                                               <span>Checked by: </span>
                                           </div>
                                           <div className="recommending">
-                                              <span>RECOMMENDING APPROVAL</span>
-                                              <span>Chester Clenn Minoza</span>
+                                              <span>RECOMMENDING APPROVAL</span> 
+                                              <span></span>
                                           </div>
                                       </div>
                                 </div>
@@ -779,22 +931,53 @@ function POApprovalRejustify() {
                                 <div className="fifthrightrows">
                                         <div className="totalamount">
                                             <span>Total Amount: </span>
-                                            <span>PHP 100,000.00</span>
+                                            <span>{`${currency} ${totalSum}`}</span>
                                         </div>
                                         <div className="codesection">
-                                            <span>Sample Code:</span>
-                                            <span>#01164122KDJAS</span>
+                                            <span>Code:</span>
+                                            <span></span>
                                         </div>
                                         <div className="approvedsby">
                                             <span>Approved By: </span>
-                                            <span></span>
+                                            <span>Daniel Byron S. Afdal</span>
                                         </div>
                                 </div>
                           </div>
 
                       </div>
                   </div>
+                  
+
               </Modal.Body>
+              )
+            })}
+
+            <Modal.Footer>
+            <div className="save-cancel">
+            
+
+            <Button
+              onClick={handleShow}
+              className="btn btn-secondary btn-md"
+              size="md"
+              style={{ fontSize: "20px", margin: "0px 5px" }}
+            >
+              Rejustify
+            </Button>
+
+            
+            <Button
+              type="button"
+              className="btn btn-success"
+              size="md"
+              style={{ fontSize: "20px", margin: "0px 5px" }}
+              onClick={() => handleApprove()}
+              // onClick={handleShowses}
+            >
+              Approve
+            </Button>
+          </div>
+            </Modal.Footer>
             </Modal>
 
 

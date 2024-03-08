@@ -12,6 +12,10 @@ const Receiving_Asm = sequelize.define("receiving_asm", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  receiving_po_id:{
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   received_quantity: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -24,14 +28,6 @@ const Receiving_Asm = sequelize.define("receiving_asm", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  freight_cost: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  ref_code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   picture: {
     type: DataTypes.BLOB("long"),
     allowNull: true,
@@ -42,11 +38,7 @@ const Receiving_Asm = sequelize.define("receiving_asm", {
     set(value) {
       this.setDataValue("product_image", Buffer.from(value, "base64"));
     },
-  },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  }
 });
 
 module.exports = Receiving_Asm;
