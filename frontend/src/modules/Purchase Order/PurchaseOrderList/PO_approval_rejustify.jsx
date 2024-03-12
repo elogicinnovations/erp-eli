@@ -18,9 +18,11 @@ import swal from "sweetalert";
 import SBFLOGO from "../../../assets/image/sbflogo-noback.png";
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
-import html2canvas from 'html2canvas';
+import html2canvas from "html2canvas";
+import ReactLoading from 'react-loading';
+import NoAccess from '../../../assets/image/NoAccess.png';
 
-function POApprovalRejustify() {
+function POApprovalRejustify({ authrztn }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -42,7 +44,8 @@ function POApprovalRejustify() {
   const [showModal, setShowModal] = useState(false);
   const [showModalPreview, setShowModalPreview] = useState(false);
   const [userId, setuserId] = useState("");
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadAprrove, setLoadAprrove] = useState(false);
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
     if (typeof token === "string") {
@@ -70,10 +73,12 @@ function POApprovalRejustify() {
           id: id,
         },
       })
-      .then((res) => setPOarray(res.data))
+      .then((res) => {
+        setPOarray(res.data)
+        setIsLoading(false)
+      })
       .catch((err) => console.log(err));
   }, []);
-
 
   useEffect(() => {
     console.log("arrayss", JSON.stringify(POarray, null, 2));
@@ -196,32 +201,39 @@ function POApprovalRejustify() {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
+        setLoadAprrove(true)
         try {
+          
           // Initialize an array to store updated POarray with image data
           const updatedPOarray = [];
-  
+
           // Iterate over each purchase order in POarray
           for (const group of POarray) {
-
             let supp_code = group.items[0].suppliers.supplier_code;
             let supp_name = group.items[0].suppliers.supplier_name;
             // Capture the content of each purchase order div individually
-            const div = document.getElementById(`content-to-capture-${group.title}-${supp_code}-${supp_name}`);
+            const div = document.getElementById(
+              `content-to-capture-${group.title}-${supp_code}-${supp_name}`
+            );
             const canvas = await html2canvas(div);
-            const imageData = canvas.toDataURL('image/png');
-  
+            const imageData = canvas.toDataURL("image/png");
+
             // Add the captured image data to the corresponding purchase order
             const updatedGroup = {
               ...group,
-              imageData: imageData
+              imageData: imageData,
             };
-  
+
             // Push the updated purchase order to the array
             updatedPOarray.push(updatedGroup);
 
-            console.log(`content-to-capture-${group.title}-${supp_code}-${supp_name}`)
+            console.log(
+              // `content-to-capture-${group.title}-${supp_code}-${supp_name}`
+            );
           }
-  
+
+          
+
           // Proceed with approval process and send updated POarray to the backend
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             id,
@@ -229,7 +241,7 @@ function POApprovalRejustify() {
             prNum,
             userId,
           });
-  
+
           if (response.status === 200) {
             swal({
               title: "Approved Successfully",
@@ -238,6 +250,8 @@ function POApprovalRejustify() {
               button: "OK",
             }).then(() => {
               navigate("/purchaseOrderList");
+              // setIsLoading(false)
+              setLoadAprrove(false)
             });
           } else {
             swal({
@@ -258,64 +272,6 @@ function POApprovalRejustify() {
       }
     });
   };
-  
-  // Define generateAndSubmitPDF function
-// const generateAndSubmitPDF = async (contentToCapture) => {
-//   try {
-//     // Use html2canvas to capture the content as an image
-//     const canvas = await html2canvas(contentToCapture);
-
-//     // Convert the canvas to a data URL
-//     const imageDataUrl = canvas.toDataURL('image/png');
-//     return imageDataUrl;
-//   } catch (error) {
-//     console.error('Error generating PDF:', error);
-//     throw error;
-//   }
-// };
-
-
-  // // Function to generate PDFs and add them to POarray
-  // const generateAndAddPDFsToPOarray = async () => {
-  //   try {
-  //     const updatedPOarray = await Promise.all(POarray.map(async (group) => {
-  //       // let totalSum = 0;
-  //       // let currency = group.items[0].suppliers.supplier_currency;
-  //       // let vat = group.items[0].suppliers.supplier_vat;
-        
-  //       // Capture content of the div associated with the group
-  //       const contentToCapture = document.getElementById(`content-to-capture-${group.title}`);
-        
-  //       // Generate PDF for the captured content
-  //       const pdfDataUrl = await generateAndSubmitPDF(contentToCapture);
-
-  //       // Add PDF data to each item in the group
-  //       const updatedItems = group.items.map((item) => ({
-  //         ...item,
-  //         pdfDataUrl: pdfDataUrl // Add PDF data URL to each item
-  //       }));
-
-
-  //       console.log('dwadwadw' + updatedItems)
-
-  //       // // Calculate totalSum
-  //       // updatedItems.forEach((item) => {
-  //       //   totalSum += (((vat / 100) * item.suppPrice.price) +  item.suppPrice.price) * item.item.quantity;
-  //       // });
-  //       // totalSum = totalSum.toFixed(2);
-
-  //       return {
-  //         ...group,
-  //         items: updatedItems
-  //       };
-  //     }));
-
-  //     setPOarray(updatedPOarray);
-  //     console.log('PDFs generated and added to POarray successfully!');
-  //   } catch (error) {
-  //     console.error('Error generating and adding PDFs to POarray:', error);
-  //   }
-  // };
 
   const handleUploadRejustify = async () => {
     try {
@@ -365,39 +321,18 @@ function POApprovalRejustify() {
 
   const [POPreview, setPOPreview] = useState([]);
   const handlePreview = async (po_num) => {
-
-    const po_number = po_num
-    setShowModalPreview(true)
+    const po_number = po_num;
+    setShowModalPreview(true);
     axios
-    .get(BASE_URL + "/invoice/fetchPOPreview", {
-      params: {
-        id: id,
-        po_number
-      },
-    })
-    .then((res) => setPOPreview(res.data))
-    .catch((err) => console.log(err));
-  }
-//   const generateAndSubmitPDF = async () => {
-//     try {
-//       // Assuming you have a div with some content you want to capture
-//       const contentToCapture = document.getElementById('content-to-capture');
-
-//       // Use html2canvas to capture the content as an image
-//       const canvas = await html2canvas(contentToCapture);
-
-//       // Convert the canvas to a data URL
-//       const imageDataUrl = canvas.toDataURL('image/png');
-
-//       // Send the data URL to the server using Axios
-//       await axios.post(BASE_URL + "/invoice/fetchPOPreview", { pdfContent: imageDataUrl });
-
-//       console.log('PDF sent successfully!');
-//     } catch (error) {
-//       console.error('Error sending PDF:', error);
-//     }
-// };
-
+      .get(BASE_URL + "/invoice/fetchPOPreview", {
+        params: {
+          id: id,
+          po_number,
+        },
+      })
+      .then((res) => setPOPreview(res.data))
+      .catch((err) => console.log(err));
+  };
 
   const [showes, setShow] = useState(false);
 
@@ -407,313 +342,308 @@ function POApprovalRejustify() {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-        <div className="right-body-contents-a">
-          <Row>
-            <Col>
-              <div
-                className="create-head-back"
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <Link style={{ fontSize: "1.5rem" }} to="/purchaseOrderList">
-                  <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
-                </Link>
-                <h1>Purchase Order List Approval</h1>
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Please Wait...
+          </div>
+        ) : authrztn.includes("PO - View") ? (
+          <div className="right-body-contents-a">
+            <Row>
+              <Col>
+                <div
+                  className="create-head-back"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Link style={{ fontSize: "1.5rem" }} to="/purchaseOrderList">
+                    <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
+                  </Link>
+                  <h1>Purchase Order List Approval</h1>
+                </div>
+              </Col>
+            </Row>
+
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              Purchase Request Details
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "26rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+            <div className="row mt-3">
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>PR #: </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={prNum}
+                    readOnly
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
               </div>
-            </Col>
-          </Row>
+              <div className="col-4">
+                <Form.Group
+                  controlId="exampleForm.ControlInput2"
+                  className="datepick"
+                >
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Date Needed:{" "}
+                  </Form.Label>
+                  <DatePicker
+                    readOnly
+                    selected={dateNeeded}
+                    onChange={(date) => setDateNeeded(date)}
+                    dateFormat="MM/dd/yyyy"
+                    placeholderText="Start Date"
+                    className="form-control"
+                  />
+                  <CalendarBlank
+                    size={20}
+                    style={{
+                      position: "absolute",
+                      left: "440px",
+                      top: "73%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    To be used for:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    readOnly
+                    value={useFor}
+                    type="text"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Remarks:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    readOnly
+                    value={remarks}
+                    as="textarea"
+                    rows={3}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "150px",
+                      maxHeight: "150px",
+                      resize: "none",
+                      overflowY: "auto",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-6"></div>
+            </div>
 
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "20px",
-              fontFamily: "Poppins, Source Sans Pro",
-            }}
-          >
-            Purchase Request Details
-            <span
+            <div
+              className="gen-info"
               style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "81%",
-                left: "26rem",
-                transform: "translateY(-50%)",
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
               }}
-            ></span>
-          </div>
-          <div className="row mt-3">
-            <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>PR #: </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={prNum}
-                  readOnly
-                  style={{ height: "40px", fontSize: "15px" }}
-                />
-              </Form.Group>
+            >
+              Requested Product
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "20rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
             </div>
-            <div className="col-4">
-              <Form.Group
-                controlId="exampleForm.ControlInput2"
-                className="datepick"
-              >
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Date Needed:{" "}
-                </Form.Label>
-                <DatePicker
-                  readOnly
-                  selected={dateNeeded}
-                  onChange={(date) => setDateNeeded(date)}
-                  dateFormat="MM/dd/yyyy"
-                  placeholderText="Start Date"
-                  className="form-control"
-                />
-                <CalendarBlank
-                  size={20}
-                  style={{
-                    position: "absolute",
-                    left: "440px",
-                    top: "73%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                  }}
-                />
-              </Form.Group>
-            </div>
-            <div className="col-4">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  To be used for:{" "}
-                </Form.Label>
-                <Form.Control
-                  readOnly
-                  value={useFor}
-                  type="text"
-                  style={{ height: "40px", fontSize: "15px" }}
-                />
-              </Form.Group>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>Remarks: </Form.Label>
-                <Form.Control
-                  readOnly
-                  value={remarks}
-                  as="textarea"
-                  rows={3}
-                  style={{
-                    fontFamily: "Poppins, Source Sans Pro",
-                    fontSize: "16px",
-                    height: "150px",
-                    maxHeight: "150px",
-                    resize: "none",
-                    overflowY: "auto",
-                  }}
-                />
-              </Form.Group>
-            </div>
-            <div className="col-6"></div>
-          </div>
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <table id="">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Product Code</th>
+                      <th className="tableh">Needed Quantity</th>
+                      <th className="tableh">Product Name</th>
+                      <th className="tableh">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.product.product_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.product.product_name}</td>
+                        <td>{data.description}</td>
+                      </tr>
+                    ))}
 
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "20px",
-              fontFamily: "Poppins, Source Sans Pro",
-            }}
-          >
-            Requested Product
-            <span
+                    {assembly.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.assembly.assembly_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.assembly.assembly_name}</td>
+                        <td>{data.description}</td>
+                      </tr>
+                    ))}
+
+                    {spare.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.sparePart.spareParts_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.sparePart.spareParts_name}</td>
+                        <td>{data.description}</td>
+                      </tr>
+                    ))}
+
+                    {subpart.map((data, i) => (
+                      <tr key={i}>
+                        <td>{data.subPart.subPart_code}</td>
+                        <td>{data.quantity}</td>
+                        <td>{data.subPart.subPart_name}</td>
+                        <td>{data.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              className="gen-info"
               style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "81%",
-                left: "20rem",
-                transform: "translateY(-50%)",
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
               }}
-            ></span>
-          </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-              <table id="">
-                <thead>
-                  <tr>
-                    <th className="tableh">Product Code</th>
-                    <th className="tableh">Needed Quantity</th>
-                    <th className="tableh">Product Name</th>
-                    <th className="tableh">Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.product.product_code}</td>
-                      <td>{data.quantity}</td>
-                      <td>{data.product.product_name}</td>
-                      <td>{data.description}</td>
-                    </tr>
-                  ))}
-
-                  {assembly.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.assembly.assembly_code}</td>
-                      <td>{data.quantity}</td>
-                      <td>{data.assembly.assembly_name}</td>
-                      <td>{data.description}</td>
-                    </tr>
-                  ))}
-
-                  {spare.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.sparePart.spareParts_code}</td>
-                      <td>{data.quantity}</td>
-                      <td>{data.sparePart.spareParts_name}</td>
-                      <td>{data.description}</td>
-                    </tr>
-                  ))}
-
-                  {subpart.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.subPart.subPart_code}</td>
-                      <td>{data.quantity}</td>
-                      <td>{data.subPart.subPart_name}</td>
-                      <td>{data.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            >
+              Canvassed Item
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "17rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
             </div>
-          </div>
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "20px",
-              fontFamily: "Poppins, Source Sans Pro",
-            }}
-          >
-            Canvassed Item
-            <span
-              style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "81%",
-                left: "17rem",
-                transform: "translateY(-50%)",
-              }}
-            ></span>
-          </div>
 
-          <div className="table-contains">
-            <div className="canvass-main-container">
-              {POarray.map((group) => (
-                <div key={group.title} className="canvass-supplier-container">
-                  <div className="canvass-supplier-content">
-                    {/* <h3>{`PO Number: ${group.title}`}</h3> */}
-                    <div className="PO-num">
-                      <p>{`PO #: ${group.title}`}</p>
-                      <div className="">
-                        <Button
-                          type="button"
-                          className="btn btn-warning"
-                          size="md"
-                          style={{ fontSize: "20px", margin: "0px 5px" }}
-                          onClick={() => handlePreview(group.title)}
-                        >
-                          Preview
-                        </Button>
+            <div className="table-contains">
+              <div className="canvass-main-container">
+                {POarray.map((group) => (
+                  <div key={group.title} className="canvass-supplier-container">
+                    <div className="canvass-supplier-content">
+                      {/* <h3>{`PO Number: ${group.title}`}</h3> */}
+                      <div className="PO-num">
+                        <p>{`PO #: ${group.title}`}</p>
                       </div>
-                     
-                    </div>
-                    {group.items.length > 0 && (
-                      <div className="canvass-title">
-                        <div className="supplier-info">
-                          <p>{`Supplier: ${group.items[0].suppliers.supplier_code} - ${group.items[0].suppliers.supplier_name}`}</p>
+                      {group.items.length > 0 && (
+                        <div className="canvass-title">
+                          <div className="supplier-info">
+                            <p>{`Supplier: ${group.items[0].suppliers.supplier_code} - ${group.items[0].suppliers.supplier_name}`}</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    {group.items.map((item, index) => (
-                      <div className="canvass-data-container" key={index}>
-                        <div
-                          className="col-4"
-                          style={{
-                            fontFamily: "Poppins, Source Sans Pro",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {`Product Code: `}
-                          <strong>{`${item.supp_tag.code}`}</strong>
-                        </div>
-                        <div
-                          className="col-4"
-                          style={{
-                            fontFamily: "Poppins, Source Sans Pro",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {`Product Name: `}
-                          <strong>{`${item.supp_tag.name}`}</strong>
-                        </div>
-                        <div
-                          className="col-4"
-                          style={{
-                            fontFamily: "Poppins, Source Sans Pro",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {`Quantity: `}
-                          <strong>{`${item.item.quantity}`}</strong>
-                        </div>
-                        {/* <p className='fs-5 fw-bold'>
+                      )}
+                      {group.items.map((item, index) => (
+                        <div className="canvass-data-container" key={index}>
+                          <div
+                            className="col-4"
+                            style={{
+                              fontFamily: "Poppins, Source Sans Pro",
+                              fontSize: "14px",
+                            }}
+                          >
+                            {`Product Code: `}
+                            <strong>{`${item.supp_tag.code}`}</strong>
+                          </div>
+                          <div
+                            className="col-4"
+                            style={{
+                              fontFamily: "Poppins, Source Sans Pro",
+                              fontSize: "14px",
+                            }}
+                          >
+                            {`Product Name: `}
+                            <strong>{`${item.supp_tag.name}`}</strong>
+                          </div>
+                          <div
+                            className="col-4"
+                            style={{
+                              fontFamily: "Poppins, Source Sans Pro",
+                              fontSize: "14px",
+                            }}
+                          >
+                            {`Quantity: `}
+                            <strong>{`${item.item.quantity}`}</strong>
+                          </div>
+                          {/* <p className='fs-5 fw-bold'>
                                           {`Product Code: ${item.supp_tag.code} Product Name: ${item.supp_tag.name}`}
                                         </p>
                                         <p className='fs-5 fw-bold'>
                                           {`Quantity: ${item.item.quantity}`}
                                         </p>                                */}
-                      </div>
-                    ))}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="save-cancel">
-            <Button
-              type="button"
-              className="btn btn-warning"
-              size="md"
-              style={{ fontSize: "20px", margin: "0px 5px" }}
-              // onClick={() => handleCancel(id)}
-              onClick={handleShowses}
-            >
-              Preview
-            </Button>
-            <Button
-              type="button"
-              className="btn btn-danger"
-              size="md"
-              style={{ fontSize: "20px", margin: "0px 5px" }}
-              onClick={() => handleCancel(id)}
+            <div className="save-cancel">
+              <Button
+                type="button"
+                className="btn btn-warning"
+                size="md"
+                style={{ fontSize: "20px", margin: "0px 5px" }}
+                // onClick={() => handleCancel(id)}
+                onClick={handleShowses}
+              >
+                Preview
+              </Button>
+              <Button
+                type="button"
+                className="btn btn-danger"
+                size="md"
+                style={{ fontSize: "20px", margin: "0px 5px" }}
+                onClick={() => handleCancel(id)}
+              >
+                Re-Canvass
+              </Button>
 
-            >
-              Re-Canvass
-            </Button>
-
-            {/* <Button
+              {/* <Button
               onClick={handleShow}
               className="btn btn-secondary btn-md"
               size="md"
@@ -733,447 +663,409 @@ function POApprovalRejustify() {
             >
               Approve
             </Button> */}
-          </div>
+            </div>
 
-        
-
-
-          <Modal
+            <Modal
               show={showes}
               onHide={handleCloseses}
               backdrop="static"
               keyboard={false}
               size="xl"
-            > 
+            >
               <Modal.Header closeButton>
                 <Modal.Title></Modal.Title>
               </Modal.Header>
               {POarray.map((group) => {
-                 let totalSum = 0;
-                 let currency = group.items[0].suppliers.supplier_currency;
-                 let supp_code = group.items[0].suppliers.supplier_code;
-                 let supp_name = group.items[0].suppliers.supplier_name;
-                 let vat = group.items[0].suppliers.supplier_vat;
-                 
-                 group.items.forEach((item, index) => {
-                     totalSum += (((vat / 100) * item.suppPrice.price) +  item.suppPrice.price) * item.item.quantity;
-                 });
+                let totalSum = 0;
+                let currency = group.items[0].suppliers.supplier_currency;
+                let supp_code = group.items[0].suppliers.supplier_code;
+                let supp_name = group.items[0].suppliers.supplier_name;
+                let vat = group.items[0].suppliers.supplier_vat;
 
-                 totalSum = totalSum.toFixed(2);
+                group.items.forEach((item, index) => {
+                  totalSum +=
+                    ((vat / 100) * item.suppPrice.price +
+                      item.suppPrice.price) *
+                    item.item.quantity;
+                });
 
-                 return (
-                  <Modal.Body id={`content-to-capture-${group.title}-${supp_code}-${supp_name}`}>
-              
+                totalSum = totalSum.toFixed(2);
 
-                 
-                  <div key={group.title}   className="receipt-main-container">
+                return (
+                  <Modal.Body
+                    id={`content-to-capture-${group.title}-${supp_code}-${supp_name}`}
+                  >
+                    <div key={group.title} className="receipt-main-container">
                       <div className="receipt-content">
-                          <div className="receipt-header">
-                              <div className="sbflogoes">
-                                  <img src={SBFLOGO} alt="" />
-                              </div>
-                              <div className="sbftexts">
-                                 <span>SBF PHILIPPINES DRILLING </span> 
-                                 <span>RESOURCES CORPORATION</span>
-                                 <span>Padigusan, Sta.Cruz, Rosario, Agusan del sur</span>
-                                 <span>Landline No. 0920-949-3373</span>
-                                 <span>Email Address: sbfpdrc@gmail.com</span>
-                              </div>
-                              <div className="spacesbf">
-                                 
-                              </div>
+                        <div className="receipt-header">
+                          <div className="sbflogoes">
+                            <img src={SBFLOGO} alt="" />
+                          </div>
+                          <div className="sbftexts">
+                            <span>SBF PHILIPPINES DRILLING </span>
+                            <span>RESOURCES CORPORATION</span>
+                            <span>
+                              Padigusan, Sta.Cruz, Rosario, Agusan del sur
+                            </span>
+                            <span>Landline No. 0920-949-3373</span>
+                            <span>Email Address: sbfpdrc@gmail.com</span>
+                          </div>
+                          <div className="spacesbf"></div>
+                        </div>
+
+                        <div className="po-number-container">
+                          <div className="shippedto">
+                            <span>SHIPPED TO:</span>
+                          </div>
+                          <div className="blank"></div>
+                          <div className="po-content">
+                            <span>PURCHASE ORDER</span>
+                            <span>
+                              P.O-NO.{" "}
+                              <label style={{ fontSize: 14, color: "red" }}>
+                                {group.title}
+                              </label>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="secondrowes">
+                          <div className="leftsecondrows">
+                            <span>FOB</span>
+                            <span>VIA</span>
                           </div>
 
-                          <div className="po-number-container">
-                              <div className="shippedto">
-                                  <span>SHIPPED TO:</span>
+                          <div className="midsecondrows">
+                            <span>VENDOR</span>
+                            <span>
+                              {group.items[0].suppliers.supplier_name}
+                            </span>
+                          </div>
+
+                          <div className="rightsecondrows">
+                            <span>
+                              PR NO.{" "}
+                              <label style={{ fontSize: 14, color: "red" }}>
+                                {prNum}
+                              </label>
+                            </span>
+                            <span>DATE PREPARED</span>
+                          </div>
+                        </div>
+
+                        <div className="thirdrowes">
+                          <div className="thirdleftrows">
+                            <span>ITEM NO.</span>
+                            <span>QUANTITY</span>
+                            <span>UNIT</span>
+                          </div>
+
+                          <div className="thirdmidrows">
+                            <span>DESCRIPTION</span>
+                          </div>
+
+                          <div className="thirdrightrows">
+                            <span>{`UNIT PRICE (${vat}%)`}</span>
+                            <span>TOTAL</span>
+                          </div>
+                        </div>
+
+                        <div className="fourthrowes">
+                          <div className="leftfourthrows">
+                            {/* for product code */}
+                            <span>
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.supp_tag.code}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+                            {/* for product quantity */}
+                            <span>
+                              {" "}
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.item.quantity}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+
+                            {/* for product unit of measurement */}
+                            <span>
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.supp_tag.uom}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+                          </div>
+
+                          <div className="midfourthrows">
+                            {/* for product name */}
+                            {group.items.map((item, index) => (
+                              <div key={index}>
+                                <span>{`${item.supp_tag.name}`}</span>
+                                <br />
                               </div>
-                              <div className="blank">
-                                  
+                            ))}
+                          </div>
+
+                          <div className="rightfourthrows">
+                            {/* for unit price */}
+                            <span>
+                              {" "}
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${
+                                    (vat / 100) * item.suppPrice.price +
+                                    item.suppPrice.price
+                                  }`}</label>
+                                  {/* <label>{`${item.suppPrice.price}`}</label> */}
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+
+                            {/* for unit price total */}
+                            <span>
+                              {" "}
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${
+                                    ((vat / 100) * item.suppPrice.price +
+                                      item.suppPrice.price) *
+                                    item.item.quantity
+                                  }`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="fifthrowes">
+                          <div className="fifthleftrows">
+                            <div className="received-section">
+                              <span>P.O RECEIVED BY: </span>
+                              <span></span>
+                            </div>
+                            <div className="deliverydate">
+                              <span>DELIVERY DATE: </span>
+                              <span></span>
+                            </div>
+                            <div className="terms">
+                              <span>TERMS: </span>
+                              <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
+                            </div>
+                            <div className="preparedby">
+                              <span>PREPARED BY: </span>
+                              <span></span>
+                            </div>
+                          </div>
+
+                          <div className="fifthmidrows">
+                            <div className="conditionsection">
+                              <span>TERMS AND CONDITIONS: </span>
+                              <span>
+                                1. Acceptance of this order is an acceptance of
+                                all conditions herein.
+                              </span>
+                              <span>
+                                2. Make all deliveries to receiving, However
+                                subject to count, weight and specification
+                                approval of SBF Philippines Drilling Resources
+                                Corporation.
+                              </span>
+                              <span>
+                                3. The original purchase order copy and
+                                suppliers original invoice must accompany
+                                delivery.
+                              </span>
+                              <span>
+                                4. In case the supplier fails to deliver goods
+                                on delivery date specified herein, SBF
+                                Philippines Drilling Resources Corporation has
+                                the right to cancel this order or demand penalty
+                                charged as stated.
+                              </span>
+                              <span>
+                                5. Problems encountered related to your supply
+                                should immediately brought to the attention of
+                                the purchasing manager.
+                              </span>
+                            </div>
+                            <div className="checkedsection">
+                              <div className="notedby">
+                                <span>NOTED BY: </span>
+                                <span>Checked by: </span>
                               </div>
-                              <div className="po-content">
-                                  <span>PURCHASE ORDER</span>
-                                  <span>P.O-NO. <label style={{fontSize: 14, color: 'red'}}>{group.title}</label></span>
+                              <div className="recommending">
+                                <span>RECOMMENDING APPROVAL</span>
+                                <span></span>
                               </div>
+                            </div>
                           </div>
 
-                          <div className="secondrowes">
-                                <div className="leftsecondrows">
-                                    <span>FOB</span>
-                                    <span>VIA</span>
-                                </div>
-
-                                <div className="midsecondrows">
-                                    <span>VENDOR</span>
-                                    <span>{group.items[0].suppliers.supplier_name}</span>
-                                </div>
-
-                                <div className="rightsecondrows">
-                                    <span>PR NO. <label style={{fontSize: 14, color: 'red'}}>{prNum}</label></span>
-                                    <span>DATE PREPARED</span>
-                                </div>
+                          <div className="fifthrightrows">
+                            <div className="totalamount">
+                              <span>Total Amount: </span>
+                              <span>{`${currency} ${totalSum}`}</span>
+                            </div>
+                            <div className="codesection">
+                              <span>Code:</span>
+                              <span></span>
+                            </div>
+                            <div className="approvedsby">
+                              <span>Approved By: </span>
+                              <span>Daniel Byron S. Afdal</span>
+                            </div>
                           </div>
-
-                          <div className="thirdrowes">
-                                <div className="thirdleftrows">
-                                    <span>ITEM NO.</span>
-                                    <span>QUANTITY</span>
-                                    <span>UNIT</span>
-                                </div>
-
-                                <div className="thirdmidrows">
-                                    <span>DESCRIPTION</span>
-                                </div>
-
-                                <div className="thirdrightrows">
-                                    <span>{`UNIT PRICE (${vat}%)`}</span>
-                                    <span>TOTAL</span>
-                                </div>
-                          </div>
-
-                          <div className="fourthrowes">
-                                <div className="leftfourthrows">
-                                  {/* for product code */}
-                                    <span>{group.items.map((item, index) => (
-                                        <div key={index}>
-                                            <label>{`${item.supp_tag.code}`}</label>
-                                            <br />
-                                        </div>
-                                    ))}</span>
-                                    {/* for product quantity */}
-                                    <span> {group.items.map((item, index) => (
-                                        <div key={index}>
-                                            <label>{`${item.item.quantity}`}</label>
-                                            <br />
-                                        </div>
-                                    ))}</span>
-
-                                    {/* for product unit of measurement */}
-                                    <span>{group.items.map((item, index) => (
-                                        <div key={index}>
-                                            <label>{`${item.supp_tag.uom}`}</label>
-                                            <br />
-                                        </div>
-                                    ))}</span>
-                                </div>
-
-                                <div className="midfourthrows">
-                                  {/* for product name */}
-                                    {group.items.map((item, index) => (
-                                        <div key={index}>
-                                            <span>{`${item.supp_tag.name}`}</span>
-                                            <br />
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="rightfourthrows">
-                                      {/* for unit price */}
-                                    <span> {group.items.map((item, index) => (
-                                        <div key={index}>
-                                            <label>{`${((vat / 100) * item.suppPrice.price) +  item.suppPrice.price}`}</label>
-                                            {/* <label>{`${item.suppPrice.price}`}</label> */}
-                                            <br />
-                                        </div>
-                                    ))}</span>
-
-                                    {/* for unit price total */}
-                                    <span> {group.items.map((item, index) => (
-                                        <div key={index}>
-                                            <label>{`${(((vat / 100) * item.suppPrice.price) +  item.suppPrice.price) * item.item.quantity}`}</label>
-                                            <br />
-                                        </div>
-                                    ))}</span>
-                                </div>
-                          </div>
-
-                          <div className="fifthrowes">
-                                <div className="fifthleftrows">
-                                    <div className="received-section">
-                                        <span>P.O RECEIVED BY: </span>
-                                        <span></span>
-                                    </div>
-                                    <div className="deliverydate">
-                                        <span>DELIVERY DATE: </span>
-                                        <span></span>
-                                    </div>
-                                    <div className="terms">
-                                        <span>TERMS: </span>
-                                        <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
-                                    </div>
-                                    <div className="preparedby">
-                                        <span>PREPARED BY: </span>
-                                        <span></span>
-                                    </div>
-                                </div>
-
-                                <div className="fifthmidrows">
-                                      <div className="conditionsection">
-                                          <span>TERMS AND CONDITIONS: </span>
-                                          <span>1. Acceptance of this order is an acceptance of all conditions herein.</span>
-                                          <span>2. Make all deliveries to receiving, However subject to count, weight and specification approval of SBF Philippines Drilling Resources Corporation.</span>
-                                          <span>3. The original purchase order copy and suppliers original invoice must accompany delivery.</span>
-                                          <span>4. In case the supplier fails to deliver goods on delivery date specified herein, SBF Philippines Drilling Resources Corporation has the right to cancel this order or demand penalty charged as stated.</span>
-                                          <span>5. Problems encountered related to your supply should immediately brought to the attention of the purchasing manager.</span>
-                                      </div>
-                                      <div className="checkedsection">
-                                          <div className="notedby">
-                                              <span>NOTED BY: </span>
-                                              <span>Checked by: </span>
-                                          </div>
-                                          <div className="recommending">
-                                              <span>RECOMMENDING APPROVAL</span> 
-                                              <span></span>
-                                          </div>
-                                      </div>
-                                </div>
-
-                                <div className="fifthrightrows">
-                                        <div className="totalamount">
-                                            <span>Total Amount: </span>
-                                            <span>{`${currency} ${totalSum}`}</span>
-                                        </div>
-                                        <div className="codesection">
-                                            <span>Code:</span>
-                                            <span></span>
-                                        </div>
-                                        <div className="approvedsby">
-                                            <span>Approved By: </span>
-                                            <span>Daniel Byron S. Afdal</span>
-                                        </div>
-                                </div>
-                          </div>
-
+                        </div>
                       </div>
-                  </div>
-                  
+                    </div>
+                  </Modal.Body>
+                );
+              })}
 
-              </Modal.Body>
-              )
-            })}
-
-            <Modal.Footer>
-            <div className="save-cancel">
-            
-
-            <Button
-              onClick={handleShow}
-              className="btn btn-secondary btn-md"
-              size="md"
-              style={{ fontSize: "20px", margin: "0px 5px" }}
-            >
-              Rejustify
-            </Button>
-
-            
-            <Button
-              type="button"
-              className="btn btn-success"
-              size="md"
-              style={{ fontSize: "20px", margin: "0px 5px" }}
-              onClick={() => handleApprove()}
-              // onClick={handleShowses}
-            >
-              Approve
-            </Button>
-          </div>
-            </Modal.Footer>
+              <Modal.Footer>
+                <>
+                  {!loadAprrove ? (
+                     <div className="save-cancel">
+                     <Button
+                       onClick={handleShow}
+                       className="btn btn-secondary btn-md"
+                       size="md"
+                       style={{ fontSize: "20px", margin: "0px 5px" }}
+                     >
+                       Rejustify
+                     </Button>
+   
+                     <Button
+                       type="button"
+                       className="btn btn-success"
+                       size="md"
+                       style={{ fontSize: "20px", margin: "0px 5px" }}
+                       onClick={() => handleApprove()}
+                       // onClick={handleShowses}
+                     >
+                       Approve
+                     </Button>
+                   </div>
+                  ) : (
+                    <>
+                      <div className="loading-container">
+                        <ReactLoading className="react-loading" type={"bubbles"} />
+                          Sending Email Invoice Please Wait...
+                      </div>
+                    </>
+                  )}
+                </>
+               
+              </Modal.Footer>
             </Modal>
 
+            <Modal show={showModal} onHide={handleClose}>
+              <Form>
+                <Modal.Header closeButton>
+                  <Modal.Title style={{ fontSize: "24px" }}>
+                    For Rejustification
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="row mt-3">
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          PR No.:{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={prNum}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                    </div>
+                    <div className="col-6">
+                      <Form.Group
+                        controlId="exampleForm.ControlInput2"
+                        className="datepick"
+                      >
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Date Needed:{" "}
+                        </Form.Label>
+                        <DatePicker
+                          readOnly
+                          selected={dateNeeded}
+                          onChange={(date) => setDateNeeded(date)}
+                          dateFormat="MM/dd/yyyy"
+                          placeholderText="Start Date"
+                          className="form-control"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <Modal show={showModal} onHide={handleClose}>
-            <Form>
-              <Modal.Header closeButton>
-                <Modal.Title style={{ fontSize: "24px" }}>
-                  For Rejustification
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="row mt-3">
-                  <div className="col-6">
+                  <div className="row">
                     <Form.Group controlId="exampleForm.ControlInput1">
                       <Form.Label style={{ fontSize: "20px" }}>
-                        PR No.:{" "}
+                        Remarks:{" "}
                       </Form.Label>
                       <Form.Control
-                        type="text"
-                        value={prNum}
-                        readOnly
-                        style={{ height: "40px", fontSize: "15px" }}
+                        as="textarea"
+                        onChange={(e) => setRejustifyRemarks(e.target.value)}
+                        placeholder="Enter details"
+                        style={{ height: "100px", fontSize: "15px" }}
                       />
                     </Form.Group>
-                  </div>
-                  <div className="col-6">
-                    <Form.Group
-                      controlId="exampleForm.ControlInput2"
-                      className="datepick"
-                    >
-                      <Form.Label style={{ fontSize: "20px" }}>
-                        Date Needed:{" "}
-                      </Form.Label>
-                      <DatePicker
-                        readOnly
-                        selected={dateNeeded}
-                        onChange={(date) => setDateNeeded(date)}
-                        dateFormat="MM/dd/yyyy"
-                        placeholderText="Start Date"
-                        className="form-control"
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Remarks:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      onChange={(e) => setRejustifyRemarks(e.target.value)}
-                      placeholder="Enter details"
-                      style={{ height: "100px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                  <div className="col-6">
-                    {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
+                    <div className="col-6">
+                      {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
                                                   <Paperclip size={20} />Upload Attachment
                                               </Link> */}
 
-                    <Form.Group controlId="exampleForm.ControlInput1">
-                      <Form.Label style={{ fontSize: "20px" }}>
-                        Attach File:{" "}
-                      </Form.Label>
-                      {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
-                      <input type="file" onChange={handleFileChange} />
-                    </Form.Group>
-                  </div>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={handleClose}
-                  style={{ fontSize: "20px" }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleUploadRejustify}
-                  variant="warning"
-                  size="md"
-                  style={{ fontSize: "20px" }}
-                >
-                  Save
-                </Button>
-              </Modal.Footer>
-            </Form>
-          </Modal>
-
-          <Modal size="xl" show={showModalPreview} onHide={handleClose}>
-            <Form>
-              <Modal.Header closeButton>
-                <Modal.Title style={{ fontSize: "24px" }}>
-                  Preview For Approval
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-              {POPreview.map((group) => (
-                <div key={group.title} className="canvass-supplier-container">
-                  <div className="canvass-supplier-content">
-                    {/* <h3>{`PO Number: ${group.title}`}</h3> */}
-                    <div className="PO-num">
-                      <p>{`PO #: ${group.title}`}</p>
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Attach File:{" "}
+                        </Form.Label>
+                        {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
+                        <input type="file" onChange={handleFileChange} />
+                      </Form.Group>
                     </div>
-                    {group.items.length > 0 && (
-                      <div className="canvass-title">
-                        <div className="supplier-info">
-                          <p>{`Supplier: ${group.items[0].suppliers.supplier_code}`}</p>
-                        </div>
-                      </div>
-                    )}
-                    {group.items.map((item, index) => (
-                      <div className="canvass-data-container" key={index}>
-                        <div
-                          className="col-4"
-                          style={{
-                            fontFamily: "Poppins, Source Sans Pro",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {`Product Code: `}
-                          <strong>{`${item.supp_tag.code}`}</strong>
-                        </div>
-                        <div
-                          className="col-4"
-                          style={{
-                            fontFamily: "Poppins, Source Sans Pro",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {`Product Name: `}
-                          <strong>{`${item.supp_tag.name}`}</strong>
-                        </div>
-                        <div
-                          className="col-4"
-                          style={{
-                            fontFamily: "Poppins, Source Sans Pro",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {`Quantity: `}
-                          <strong>{`${item.item.quantity}`}</strong>
-                        </div>
-                        {/* <p className='fs-5 fw-bold'>
-                                          {`Product Code: ${item.supp_tag.code} Product Name: ${item.supp_tag.name}`}
-                                        </p>
-                                        <p className='fs-5 fw-bold'>
-                                          {`Quantity: ${item.item.quantity}`}
-                                        </p>                                */}
-                      </div>
-                    ))}
                   </div>
-                </div>
-              ))}
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={handleClose}
-                  style={{ fontSize: "20px" }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleUploadRejustify}
-                  variant="warning"
-                  size="md"
-                  style={{ fontSize: "20px" }}
-                >
-                  Save
-                </Button>
-              </Modal.Footer>
-            </Form>
-          </Modal>
-        </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={handleClose}
+                    style={{ fontSize: "20px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleUploadRejustify}
+                    variant="warning"
+                    size="md"
+                    style={{ fontSize: "20px" }}
+                  >
+                    Save
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
+
+     
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -172,40 +172,34 @@ function ReceivingManagementPreview({ authrztn }) {
   const handleViewTransaction = (po_number) => {
     setIsLoading(true);
     setShowTransaction(true);
-    const po_num = po_number
+    const po_num = po_number;
 
-    
-    
-      axios
-        .get(BASE_URL + "/receiving/fetchTransaction", {
-          
-          params: {
-            po_num,
-            pr_id : id
-          },
-        })
-        .then((res) => {
-          setFilteredPRD(res.data.prd);
-          setTransaction_prd(res.data.prd)
+    axios
+      .get(BASE_URL + "/receiving/fetchTransaction", {
+        params: {
+          po_num,
+          pr_id: id,
+        },
+      })
+      .then((res) => {
+        setFilteredPRD(res.data.prd);
+        setTransaction_prd(res.data.prd);
 
-          setFilteredASM(res.data.asm);       
-          setTransaction_asm(res.data.asm)
+        setFilteredASM(res.data.asm);
+        setTransaction_asm(res.data.asm);
 
-          setFilteredSPR(res.data.spr);
-          setTransaction_spr(res.data.spr)
+        setFilteredSPR(res.data.spr);
+        setTransaction_spr(res.data.spr);
 
-          setFilteredSBP(res.data.sbp);       
-          setTransaction_sbp(res.data.sbp)
+        setFilteredSBP(res.data.sbp);
+        setTransaction_sbp(res.data.sbp);
 
-
-
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
-   
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
 
     // return () => clearTimeout(delay);
   };
@@ -407,7 +401,7 @@ function ReceivingManagementPreview({ authrztn }) {
             suppReceving,
             po_id,
             id,
-            userId
+            userId,
           }
         );
 
@@ -448,7 +442,7 @@ function ReceivingManagementPreview({ authrztn }) {
     fileInputRef.current.click();
   }
 
-  console.log(JSON.stringify(productImages));
+  // console.log(JSON.stringify(productImages));
 
   function onFileSelect(event) {
     const files = event.target.files;
@@ -568,7 +562,6 @@ function ReceivingManagementPreview({ authrztn }) {
     }
   }
 
-
   function formatDatetime(datetime) {
     const options = {
       year: "numeric",
@@ -580,17 +573,12 @@ function ReceivingManagementPreview({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-
-
-  
   useEffect(() => {
     // Initialize DataTable when role data is available
     if ($("#order-listing").length > 0 && Transaction_prd.length > 0) {
       $("#order-listing").DataTable();
     }
   }, [Transaction_prd]);
-
-
 
   return (
     <div className="main-of-containers">
@@ -1234,20 +1222,23 @@ function ReceivingManagementPreview({ authrztn }) {
           </Modal.Footer>
         </Form>
       </Modal>
-      <Modal show={showTransaction} onHide={handleClose} backdrop="static" size="xl">
+      <Modal
+        show={showTransaction}
+        onHide={handleClose}
+        backdrop="static"
+        size="xl"
+      >
         <Form noValidate validated={validated} onSubmit={add}>
           <Modal.Header closeButton>
-            <Modal.Title>
-                Receiving Transaction
-            </Modal.Title>
+            <Modal.Title>Receiving Transaction</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <div className="table-containss">
+            <div className="table-containss">
               <div className="main-of-all-tables">
                 <table className="table-hover" id="order-listing">
                   <thead>
                     <tr>
-                    <th className="tableh">Product Code</th>
+                      <th className="tableh">Product Code</th>
                       <th className="tableh">Product Name</th>
                       <th className="tableh">Received Quantity</th>
                       <th className="tableh">Set</th>
@@ -1256,57 +1247,98 @@ function ReceivingManagementPreview({ authrztn }) {
                       <th className="tableh">Date Received</th>
                     </tr>
                   </thead>
-                  {filteredPRD.length > 0 || filteredASM.length > 0 || filteredSPR.length > 0  || filteredSBP.length > 0  ? (
+                  {filteredPRD.length > 0 ||
+                  filteredASM.length > 0 ||
+                  filteredSPR.length > 0 ||
+                  filteredSBP.length > 0 ? (
                     <tbody>
                       {Transaction_prd.map((data, i) => (
                         <tr key={i}>
-                        <td>{data.purchase_req_canvassed_prd.product_tag_supplier.product.product_code}</td>
-                        <td>{data.purchase_req_canvassed_prd.product_tag_supplier.product.product_name}</td>
-                        <td>{data.received_quantity}</td>
-                        <td>{data.set_quantity}</td>
-                        <td>{data.freight_cost}</td>
-                        <td>{data.ref_code}</td>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                      </tr>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_prd
+                                .product_tag_supplier.product.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_prd
+                                .product_tag_supplier.product.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.freight_cost}</td>
+                          <td>{data.ref_code}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
                       ))}
 
                       {Transaction_asm.map((data, i) => (
                         <tr key={i}>
-                        <td>{data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.product_code}</td>
-                        <td>{data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.product_name}</td>
-                        <td>{data.received_quantity}</td>
-                        <td>{data.set_quantity}</td>
-                        <td>{data.freight_cost}</td>
-                        <td>{data.ref_code}</td>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                      </tr>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_asmbly
+                                .assembly_supplier.assembly.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_asmbly
+                                .assembly_supplier.assembly.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.freight_cost}</td>
+                          <td>{data.ref_code}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
                       ))}
-
 
                       {Transaction_spr.map((data, i) => (
                         <tr key={i}>
-                        <td>{data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.product_code}</td>
-                        <td>{data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.product_name}</td>
-                        <td>{data.received_quantity}</td>
-                        <td>{data.set_quantity}</td>
-                        <td>{data.freight_cost}</td>
-                        <td>{data.ref_code}</td>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                      </tr>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_spare
+                                .sparepart_supplier.sparePart.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_spare
+                                .sparepart_supplier.sparePart.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.freight_cost}</td>
+                          <td>{data.ref_code}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
                       ))}
 
                       {Transaction_sbp.map((data, i) => (
                         <tr key={i}>
-                        <td>{data.purchase_req_canvassed_subpart.subpart_supplier.subPart.product_code}</td>
-                        <td>{data.purchase_req_canvassed_subpart.subpart_supplier.subPart.product_name}</td>
-                        <td>{data.received_quantity}</td>
-                        <td>{data.set_quantity}</td>
-                        <td>{data.freight_cost}</td>
-                        <td>{data.ref_code}</td>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                      </tr>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_subpart
+                                .subpart_supplier.subPart.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_subpart
+                                .subpart_supplier.subPart.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.freight_cost}</td>
+                          <td>{data.ref_code}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
                       ))}
-                     
                     </tbody>
                   ) : (
                     <div className="no-data">
@@ -1327,7 +1359,6 @@ function ReceivingManagementPreview({ authrztn }) {
             >
               Close
             </Button>
-           
           </Modal.Footer>
         </Form>
       </Modal>

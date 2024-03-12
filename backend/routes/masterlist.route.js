@@ -65,7 +65,6 @@ router.route("/login").post(async (req, res) => {
 });
 
 router.route("/logout").post(async (req, res) => {
-  console.log("check if the request is being pass");
   const { userId } = req.body;
 
   try {
@@ -75,7 +74,6 @@ router.route("/logout").post(async (req, res) => {
     });
 
     if (createActivity) {
-      console.log("Yes");
       return res.status(200).json({ message: "Log out" });
     } else {
       return res

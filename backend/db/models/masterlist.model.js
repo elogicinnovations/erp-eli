@@ -60,6 +60,17 @@ const MasterList = sequelize.define("masterlist", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  image: {
+    type: DataTypes.BLOB("long"),
+    allowNull: true,
+    get() {
+      const value = this.getDataValue("image");
+      return value ? value.toString("base64") : null;
+    },
+    set(value) {
+      this.setDataValue("image", Buffer.from(value, "base64"));
+    },
+  },
 });
 
 module.exports = MasterList;

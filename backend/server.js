@@ -116,6 +116,8 @@ const StockTransfer_subpart = require("./routes/stockTransfer_subpart.route");
 const Dashboard = require("./routes/dashboard.route");
 const Setting = require("./routes/settings.route");
 
+const UserProfile = require("./routes/userProfile.route");
+
 const Report_inv = require("./routes/report_inventory.route");
 
 const Report_PO = require("./routes/report_PO.route");
@@ -194,6 +196,7 @@ app.use("/StockTransfer_spare", StockTransfer_spare);
 app.use("/StockTransfer_subpart", StockTransfer_subpart);
 
 app.use("/Setting", Setting);
+app.use("/userProfile", UserProfile);
 app.use("/Dashboard", Dashboard);
 app.use("/report_inv", Report_inv);
 app.use("/report_PO", Report_PO);

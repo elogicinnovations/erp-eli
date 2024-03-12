@@ -26,27 +26,29 @@ const fs = require("fs");
 
 router.route("/lastPONumber").get(async (req, res) => {
   try {
-    const latestPR = await PR_PO.findOne({
-      attributes: [
-        [sequelize.fn("max", sequelize.col("po_id")), "latestNumber"],
-      ],
-    });
-    let latestNumber = latestPR.getDataValue("latestNumber");
+    const maxValues = await Promise.all([
+      PR_PO.max('po_id'),
+      PR_PO_asmbly.max('po_id'),
+      PR_PO_spare.max('po_id'),
+      PR_PO_subpart.max('po_id')
+    ]);
 
-    // console.log('Latest Number:', latestNumber);
+    const maxNumber = Math.max(...maxValues);
 
-    // Increment the latestNumber by 1 for a new entry
-    latestNumber =
-      latestNumber !== null ? parseInt(latestNumber, 10).toString() : "0";
-    // console.log('string Number:', latestNumber.padStart(8, '0'));
+    // Increment the maxNumber by 1 for a new entry
+    const nextNumber = (maxNumber !== null ? parseInt(maxNumber, 10) : 0) + 1;
 
-    // Do not create a new entry, just return the incremented value
-    return res.json(latestNumber.padStart(8, "0"));
+    // Format the nextNumber to have leading zeros
+    const formattedNumber = nextNumber.toString().padStart(8, '0');
+
+    // Return the formatted nextNumber
+    return res.json(formattedNumber);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
   }
 });
+
 
 router.route("/save").post(async (req, res) => {
   try {
