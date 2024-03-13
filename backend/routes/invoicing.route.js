@@ -613,6 +613,7 @@ router.route("/approve_PO").post(async (req, res) => {
     const PR_historical = await PR_history.create({
       pr_id: id,
       status: 'To-Receive',
+      isRead: 1,
     });
 
     if (PR_newData) {
