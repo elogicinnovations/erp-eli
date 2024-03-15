@@ -44,6 +44,7 @@ import Inventory from "./modules/Inventory/Inventory";
 import CreateIssuance from "./modules/Inventory/CreateIssuance";
 import ApprovalIssuance from "./modules/Inventory/Approvalssuance";
 import ViewInventory from "./modules/Inventory/ViewInventory";
+import CloneViewInventory from "./modules/Inventory/CloneViewInventory.jsx"
 import ViewAssembly from "./modules/Inventory/ViewAssembly";
 import ViewSpare from "./modules/Inventory/ViewSpare";
 import ViewSubpart from "./modules/Inventory/ViewSubpart";
@@ -458,6 +459,14 @@ function App() {
                     element={
                       <Roles>
                         {(authrztn) => <ViewInventory authrztn={authrztn} />}
+                      </Roles>
+                    }
+                  />
+                <Route
+                    path="/cloneofviewInventory/:id"
+                    element={
+                      <Roles>
+                        {(authrztn) => <CloneViewInventory authrztn={authrztn} />}
                       </Roles>
                     }
                   />

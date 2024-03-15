@@ -28,6 +28,11 @@ const Inventory_Assembly = sequelize.define('inventory_assembly', {
     allowNull: true,
     defaultValue: null,
   },
+  isRead: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
 });
 
 module.exports = Inventory_Assembly;
