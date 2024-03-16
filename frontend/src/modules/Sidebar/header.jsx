@@ -249,29 +249,44 @@ const Header = () => {
   };
 
   const handleLowstockNotification = (invId, type) => {
-    const inventoryID = invId
-    const typeofProduct = type
-    axios
-      .put(BASE_URL + `/PR_history/markLowStockAsRead`, {
-        inventoryID,
-        typeofProduct
-      })
-      .then(() => {
-        // Update the local state to mark the notification as read
-        setlowStocknotif((prevNotifications) =>
-          prevNotifications.map((notification) =>
-            notification.invId === invId
-              ? { ...notification, isRead: true }
-              : notification
-          )
-        );
-        setunreadLowStockNotifications((prevUnreadNotifications) =>
-          Math.max(0, prevUnreadNotifications - 1)
-        );
-      })
-      .catch((err) => console.error(err));
-  };
+    const inventoryID = invId;
+    const typeofProduct = type;
+    // axios
+    //   .put(BASE_URL + `/PR_history/markLowStockAsRead/${inventoryID}`, { typeofProduct })
+    //   .then(() => {
+    //     // Update the local state to mark the notification as read
+    //     setlowStocknotif((prevNotifications) =>
+    //       prevNotifications.map((notification) =>
+    //         notification.invId === invId
+    //           ? { ...notification, isRead: true }
+    //           : notification
+    //       )
+    //     );
+    //     setunreadLowStockNotifications((prevUnreadNotifications) =>
+    //       Math.max(0, prevUnreadNotifications - 1)
+    //     );
 
+        // Navigate based on typeofProduct
+        switch (typeofProduct) {
+          case 'product':
+            navigate(`/viewInventory/${invId}`);
+            break;
+          case 'assembly':
+            navigate(`/viewAssembly/${invId}`);
+            break;
+          case 'spare':
+            navigate(`/viewSpare/${invId}`);
+            break;
+          case 'subpart':
+            navigate(`/viewSubpart/${invId}`);
+            break;
+          default:
+            break;
+        }
+      // })
+      // .catch((err) => console.error(err));
+  };
+  
   return (
     <div className="header-main">
       <div className="settings-search-master">
@@ -344,7 +359,6 @@ const Header = () => {
                             key={index}
                             className="notification-item"
                             onClick={() => {
-                              navigate(`/cloneofviewInventory/${item.invId}`);
                               handleLowstockNotification(item.invId, item.type);
                             }}
                             style={{ cursor: "pointer" }}>

@@ -118,11 +118,11 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       let invProductId;
 
       productData.forEach((item) => {
-        invProductId = item.inventory_id;
-        const productID = item.product_tag_supplier?.product?.product_id;
+        const InventoryProductId = item.inventory_id;
+        invProductId = item.product_tag_supplier?.product?.product_id;
         const productCode = item.product_tag_supplier?.product?.product_code;
         const productName = item.product_tag_supplier?.product?.product_name;
-        const productThreshold = item.product_tag_supplier?.product?.threshhold;
+        const productThreshold = item.product_tag_supplier?.product?.product_threshold;
         const Price = item.price;
         const quantity = item.quantity;
   
@@ -131,7 +131,7 @@ router.route('/fetchPRhistory').get(async (req, res) => {
   
           if (!groupedProductData[key]) {
             groupedProductData[key] = {
-              productID: productID,
+              // productID: productID,
               product_code: productCode,
               product_name: productName,
               productThreshold: productThreshold,
@@ -202,8 +202,8 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       let invAssemblyId;
 
       assemblyData.forEach((item) => {
-        invAssemblyId = item.inventory_id;
-        const productID = item.assembly_supplier?.assembly?.id;
+        const inventoryAssemblyId = item.inventory_id;
+        invAssemblyId = item.assembly_supplier?.assembly?.id;
         const productCode = item.assembly_supplier?.assembly?.assembly_code;
         const productName = item.assembly_supplier?.assembly?.assembly_name;
         const productThreshold = item.assembly_supplier?.assembly?.threshhold;
@@ -216,7 +216,7 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       
           if (!groupedAsmData[key]) {
             groupedAsmData[key] = {
-              productID: productID,
+              // productID: productID,
               product_code: productCode,
               product_name: productName,
               productThreshold: productThreshold,
@@ -288,8 +288,8 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       let invSpareId;
 
       spareData.forEach((item) => {
-        invSpareId = item.inventory_id;
-        const productID = item.sparepart_supplier?.sparePart?.id;
+         const inventorySpareId = item.inventory_id;
+        invSpareId = item.sparepart_supplier?.sparePart?.id;
         const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
         const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
         const productThreshold = item.sparepart_supplier?.sparePart?.threshhold;
@@ -302,7 +302,7 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       
           if (!groupedSpareData[key]) {
             groupedSpareData[key] = {
-              productID: productID,
+              // productID: productID,
               product_code: productCode,
               product_name: productName,
               productThreshold: productThreshold,
@@ -374,8 +374,8 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       let invSubpartId;
 
       subpartData.forEach((item) => {
-        invSubpartId = item.inventory_id;
-        const productID = item.subpart_supplier?.subPart?.id;
+        const inventorySubpartId = item.inventory_id;
+        invSubpartId = item.subpart_supplier?.subPart?.id;
         const productCode = item.subpart_supplier?.subPart?.subPart_code;
         const productName = item.subpart_supplier?.subPart?.subPart_name;
         const productThreshold = item.subpart_supplier?.subPart?.threshhold;
@@ -388,7 +388,7 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       
           if (!groupedSubpartData[key]) {
             groupedSubpartData[key] = {
-              productID: productID,
+              // productID: productID,
               product_code: productCode,
               product_name: productName,
               productThreshold: productThreshold,
@@ -482,18 +482,18 @@ router.route('/fetchPRhistory').get(async (req, res) => {
   });
 
 
-  router.route('/markLowStockAsRead/:inv_id').put(async (req, res) => {
+  router.route('/markLowStockAsRead/:invId').put(async (req, res) => {
     try {
-      const { inventoryID, typeofProduct } = req.body;
-      
+      const { invId } = req.params; // Extract inventory ID from URL params
+      const { typeofProduct } = req.body;
       if(typeofProduct === 'product'){
-        await Inventory.update({ isRead: true }, { where: { inventoryID } });
+        await Inventory.update({ isRead: true }, { where: { inventory_id: invId} });
       } else if (typeofProduct === 'assembly'){
-        await Inventory_Assembly.update({ isRead: true }, { where: { inventoryID } });
+        await Inventory_Assembly.update({ isRead: true }, { where: { inventory_id: invId} });
       } else if (typeofProduct === 'spare'){
-        await Inventory_Spare.update({ isRead: true }, { where: { inventoryID } });
+        await Inventory_Spare.update({ isRead: true }, { where: { inventory_id: invId} });
       } else if (typeofProduct === 'subpart'){
-        await Inventory_Subpart.update({ isRead: true }, { where: { inventoryID } });
+        await Inventory_Subpart.update({ isRead: true }, { where: { inventory_id: invId} });
       }
   
       res.status(200).json({ message: 'Low stock Notification marked as read' });

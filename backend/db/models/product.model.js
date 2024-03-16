@@ -38,7 +38,7 @@ const Product = sequelize.define('product', {
     allowNull: true,
     unique: false,
   },
-  threshhold: {
+  product_threshold: {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false,
