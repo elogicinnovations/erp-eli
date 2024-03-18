@@ -27,12 +27,7 @@ const Inventory_Subpart = sequelize.define('inventory_subpart', {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: null,
-  },
-  isRead: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  },
+  }
 });
 
 module.exports = Inventory_Subpart;

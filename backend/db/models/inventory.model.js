@@ -37,12 +37,7 @@ const Inventory = sequelize.define('inventory_prd', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW,
-  },
-  isRead: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  },
+  }
 });
 
 module.exports = Inventory;

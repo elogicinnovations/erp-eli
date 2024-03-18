@@ -27,12 +27,8 @@ const Inventory_Spare = sequelize.define('inventory_spare', {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: null,
-  },
-  isRead: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-  },
+  }
+
 });
 
 module.exports = Inventory_Spare;
