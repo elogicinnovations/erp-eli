@@ -43,6 +43,7 @@ function PurchaseRequest() {
   const [allPR, setAllPR] = useState([]); //for fetch the PR data
 
   const [redirectPR, setredirectPR] = useState([]); //to fetch the specific data when user click the notification
+
   useEffect(() => {
     axios.get(BASE_URL + '/PR_history/fetchSpecificPR', {
       params: {
@@ -312,7 +313,7 @@ function PurchaseRequest() {
                     <option value="Cancelled">Cancelled</option>
                   </Form.Select>
                   <button className="goesButton" onClick={handleGoButtonClick}>
-                    GO
+                    FILTER
                   </button>
                   <button className="Filterclear" onClick={clearFilters}>
                     Clear Filter

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Bell,
-  ChartLineDown,
+  WarningCircle,
   Files,
   Gear,
   SignOut,
@@ -28,7 +28,8 @@ const Header = () => {
   const profileRef = useRef(null);
   const [prhistory, setprhistory] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-
+  const [unreadLowStockNotifications, setunreadLowStockNotifications] = useState(0);
+  const [lowStocknotif, setlowStocknotif] = useState([]);
   //code for fetching the user login info
 
   const [Fname, setFname] = useState("");
@@ -129,15 +130,22 @@ const Header = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+  
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/PR_history/LowOnstockProduct")
+      .then((res) => {
+        setlowStocknotif(res.data);
+        const unreadCount = res.data.filter(
+          (notification) => !notification.isRead
+        ).length;
+        setunreadLowStockNotifications(unreadCount);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const getStatusNotification = (status) => {
     switch (status) {
-      case "Low Stock":
-        return {
-          icon: <ChartLineDown size={32} style={{ color: "blue" }} />,
-          notification: "Low Stock Level",
-          content: "The stock is low",
-        };
       case "For-Approval":
         return {
           icon: <ClipboardText size={32} style={{ color: "blue" }} />,
@@ -156,12 +164,6 @@ const Header = () => {
           notification: "New Purchase Order Request",
           content: "New Purchase Order Request has been requested",
         };
-      // case 'To-Receive':
-      //   return {
-      //     icon: <Moped size={32} style={{ color: 'blue' }} />,
-      //     notification: 'Product to be Received',
-      //     content: 'The Product is about to Receive',
-      //   };
       case "For-Rejustify":
         return {
           icon: <AlignLeft size={32} style={{ color: "blue" }} />,
@@ -246,6 +248,45 @@ const Header = () => {
       .catch((err) => console.error(err));
   };
 
+  const handleLowstockNotification = (invId, type) => {
+    const inventoryID = invId;
+    const typeofProduct = type;
+    // axios
+    //   .put(BASE_URL + `/PR_history/markLowStockAsRead/${inventoryID}`, { typeofProduct })
+    //   .then(() => {
+    //     // Update the local state to mark the notification as read
+    //     setlowStocknotif((prevNotifications) =>
+    //       prevNotifications.map((notification) =>
+    //         notification.invId === invId
+    //           ? { ...notification, isRead: true }
+    //           : notification
+    //       )
+    //     );
+    //     setunreadLowStockNotifications((prevUnreadNotifications) =>
+    //       Math.max(0, prevUnreadNotifications - 1)
+    //     );
+
+        // Navigate based on typeofProduct
+        switch (typeofProduct) {
+          case 'product':
+            navigate(`/viewInventory/${invId}`);
+            break;
+          case 'assembly':
+            navigate(`/viewAssembly/${invId}`);
+            break;
+          case 'spare':
+            navigate(`/viewSpare/${invId}`);
+            break;
+          case 'subpart':
+            navigate(`/viewSubpart/${invId}`);
+            break;
+          default:
+            break;
+        }
+      // })
+      // .catch((err) => console.error(err));
+  };
+  
   return (
     <div className="header-main">
       <div className="settings-search-master">
@@ -257,117 +298,82 @@ const Header = () => {
             >
               <Gear size={35} />
             </button>
-            {/* <div className="notification-wrapper" ref={notificationRef}>
-                      <button className="notification" onClick={toggleNotifications}>
-                        <Bell size={35} />
-                        {unreadNotifications > 0 && <div className="notification-indicator"></div>}
-                      </button>
-                      {showNotifications && (
-                        <div className="notification-drop-down">
-                          <div className="notification-triangle"></div>
-                          <div className="notification-header">Notifications</div>
-                          <div className="notification-content">
-
-                            {prhistory.map((item, index) => {
-                              const statusNotification = getStatusNotification(item.status);
-                              if (statusNotification) {
-                                return (
-                                  <div key={index} className="notification-item"  
-                                  onClick={() => {
-                                    navigate(`/PRredirect/${item.pr_id}`);
-                                    handleNotificationClick(item.pr_id);
-                                  }}
-                                  style={{cursor: 'pointer'}}>
-                                    <div className="notif-icon">
-                                      {statusNotification.icon}
-                                    </div>
-
-                                    <div className="notif-container">
-                                      <div className="notif" style={{ color: (statusNotification.notification === 'Request Rejustification' || statusNotification.notification === 'Request Rejected') ? 'red' : 'inherit' }}>
-                                        {statusNotification.notification}
-                                      </div>
-                                      <div className="notif-content">{statusNotification.content}</div>
-                                      <div className="notif-date">{formatDate(item.createdAt)}</div>
-                                    </div>
-                                    <div className="notif-close">
-                                    </div>
-                                  </div>
-                                );
-                              } else {
-                                return null;
-                              }
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </div> */}
             <div className="notification-wrapper" ref={notificationRef}>
-              <button className="notification" onClick={toggleNotifications}>
-                <Bell size={35} />
-                {unreadNotifications > 0 && (
-                  <div className="notification-indicator"></div>
-                )}
-              </button>
+            <button className="notification" onClick={toggleNotifications}>
+              <Bell size={35} />
+              {(unreadNotifications > 0 || unreadLowStockNotifications > 0) && (
+                <div className="notification-indicator">
+                </div>
+              )}
+            </button>
               {showNotifications && (
                 <div className="notification-drop-down">
                   <div className="notification-triangle"></div>
                   <div className="notification-header">Notifications</div>
                   <div className="notification-content">
-                    {prhistory.length === 0 ? (
-                      <div
-                        className="empty-notification"
-                        style={{ fontSize: "16px" }}
-                      >
+                    {prhistory.length === 0 && lowStocknotif.length === 0 ? (
+                      <div className="empty-notification" style={{ fontSize: "16px" }}>
                         No Notifications Yet
                       </div>
                     ) : (
-                      prhistory.map((item, index) => {
-                        const statusNotification = getStatusNotification(
-                          item.status
-                        );
-                        if (statusNotification) {
-                          return (
-                            <div
-                              key={index}
-                              className="notification-item"
-                              onClick={() => {
-                                navigate(`/PRredirect/${item.pr_id}`);
-                                handleNotificationClick(item.pr_id);
-                              }}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <div className="notif-icon">
-                                {statusNotification.icon}
+                      <>
+                        {prhistory.map((item, index) => {
+                          const statusNotification = getStatusNotification(item.status);
+                          if (statusNotification) {
+                            return (
+                              <div
+                                key={index}
+                                className="notification-item"
+                                onClick={() => {
+                                  navigate(`/PRredirect/${item.pr_id}`);
+                                  handleNotificationClick(item.pr_id);
+                                }}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <div className="notif-icon">{statusNotification.icon}</div>
+                                <div className="notif-container">
+                                  <div
+                                    className="notif"
+                                    style={{
+                                      color:
+                                        statusNotification.notification === "Request Rejustification" ||
+                                        statusNotification.notification === "Request Rejected"
+                                          ? "red"
+                                          : "inherit",
+                                    }}
+                                  >
+                                    {statusNotification.notification}
+                                  </div>
+                                  <div className="notif-content">{statusNotification.content}</div>
+                                  <div className="notif-date">{formatDate(item.createdAt)}</div>
+                                </div>
+                                <div className="notif-close"></div>
                               </div>
-                              <div className="notif-container">
-                                <div
-                                  className="notif"
-                                  style={{
-                                    color:
-                                      statusNotification.notification ===
-                                        "Request Rejustification" ||
-                                      statusNotification.notification ===
-                                        "Request Rejected"
-                                        ? "red"
-                                        : "inherit",
-                                  }}
-                                >
-                                  {statusNotification.notification}
-                                </div>
-                                <div className="notif-content">
-                                  {statusNotification.content}
-                                </div>
-                                <div className="notif-date">
-                                  {formatDate(item.createdAt)}
-                                </div>
-                              </div>
-                              <div className="notif-close"></div>
+                            );
+                          } else {
+                            return null;
+                          }
+                        })}
+                        {lowStocknotif.map((item, index) => (
+                          <div
+                            key={index}
+                            className="notification-item"
+                            onClick={() => {
+                              handleLowstockNotification(item.invId, item.type);
+                            }}
+                            style={{ cursor: "pointer" }}>
+                            <div className="notif-icon">
+                              <WarningCircle size={32} color="#ff0000" />
                             </div>
-                          );
-                        } else {
-                          return null;
-                        }
-                      })
+                            <div className="notif-container">
+                              <div className="notif">Low Stock Level</div>
+                              <div className="notif-content">{`The stock for ${item.name} is low`}</div>
+                              <div className="notif-date">{formatDate(new Date())}</div>
+                            </div>
+                            <div className="notif-close"></div>
+                          </div>
+                        ))}
+                      </>
                     )}
                   </div>
                 </div>
