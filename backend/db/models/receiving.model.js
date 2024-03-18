@@ -12,6 +12,10 @@ const Receiving = sequelize.define('receiving_po', {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    po_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     totalReceived:{
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -20,6 +24,10 @@ const Receiving = sequelize.define('receiving_po', {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
+    customFee:{
+      type: DataTypes.FLOAT,
+      allowNull: true,
+  },
     ref_code:{
         type: DataTypes.STRING,
         allowNull: true,
@@ -27,7 +35,11 @@ const Receiving = sequelize.define('receiving_po', {
     status:{
         type: DataTypes.STRING,
         allowNull: true,
-    }
+    },
+    initialReceive:{ //if the receiving site was in davao just for checking the quantity if complete or not
+      type: DataTypes.STRING,
+      allowNull: true,
+  }
   });
 
   module.exports = Receiving;

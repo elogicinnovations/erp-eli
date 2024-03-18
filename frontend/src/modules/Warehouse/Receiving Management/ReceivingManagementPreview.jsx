@@ -70,6 +70,9 @@ function ReceivingManagementPreview({ authrztn }) {
     setValidated(false);
     setShow(false);
     setShowTransaction(false);
+    setsuppReceving('')
+    setcustomFee('')
+    setShippingFee('')
   };
   // const handleShow = () => setShow(true);
 
@@ -398,6 +401,7 @@ function ReceivingManagementPreview({ authrztn }) {
           {
             addReceivebackend,
             productImages,
+            customFee,
             shippingFee,
             suppReceving,
             po_id,
@@ -414,6 +418,7 @@ function ReceivingManagementPreview({ authrztn }) {
             button: "OK",
           }).then(() => {
             handleClose();
+            
           });
         } else {
           swal({
@@ -876,14 +881,21 @@ function ReceivingManagementPreview({ authrztn }) {
                   {`Supplier: ${supplier_code} - ${supplier_name}`}
                 </h2>
               </div>
-              <div className="col-6 ">
+
+              {suppReceving === 'Davao City' ? (
+                  <div>
+                   
+                  </div>
+                ) : 
+                suppReceving === 'Agusan Del Sur' ? (
+                <div className="col-6 ">
                 <div className="d-flex flex-direction-column justify-content-center align-items-center">
                 <div
                   className="d-flex flex-direction-row justify-content-center align-items-center "
                   style={{ float: "right", marginTop: "-20px" }}
                 >
                   <Form.Label style={{ fontSize: "15px" }}>
-                    Custom Fee:
+                    Duties & Custom Fee:
                   </Form.Label>
                   <Form.Control
                     type="number"
@@ -928,6 +940,8 @@ function ReceivingManagementPreview({ authrztn }) {
                 </div>
                 </div>
               </div>
+              ) : <></>}
+             
             </div>
 
             <div className="row mb-5">
