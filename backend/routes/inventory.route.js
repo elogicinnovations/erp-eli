@@ -77,8 +77,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
         item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName && Price) {
-        const key = `${productCode}_${productName}_${Price}`;
+      if (productCode && productName) {
+        const key = `${productCode}_${productName}`;
 
         if (!groupedProductData[key]) {
           groupedProductData[key] = {
@@ -145,8 +145,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
         item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName && Price) {
-        const key = `${productCode}_${productName}_${Price}`;
+      if (productCode && productName) {
+        const key = `${productCode}_${productName}`;
 
         if (!groupedAsmData[key]) {
           groupedAsmData[key] = {
@@ -212,8 +212,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
         item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName && Price) {
-        const key = `${productCode}_${productName}_${Price}`;
+      if (productCode && productName) {
+        const key = `${productCode}_${productName}`;
 
         if (!groupedSpareData[key]) {
           groupedSpareData[key] = {
@@ -278,8 +278,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
         item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName && Price) {
-        const key = `${productCode}_${productName}_${Price}`;
+      if (productCode && productName) {
+        const key = `${productCode}_${productName}`;
 
         if (!groupedSubpartData[key]) {
           groupedSubpartData[key] = {
@@ -443,7 +443,7 @@ router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
       if (warehouseId && productCode && productName && Price) {
-        const key = `${warehouseId}_${warehouseId}_${productName}_${Price}`;
+        const key = `${warehouseId}_${productCode}_${productName}_${Price}`;
 
         if (!groupedAsmData[key]) {
           groupedAsmData[key] = {
@@ -1037,6 +1037,8 @@ router.route("/fetchInvetory_assembly_warehouse").get(async (req, res) => {
     const data = await Inventory_Assembly.findAll({
       where: {
         warehouse_id: warehouse,
+        
+        quantity: { [Op.ne]: 0 },
       },
       include: [
         {
@@ -1056,12 +1058,51 @@ router.route("/fetchInvetory_assembly_warehouse").get(async (req, res) => {
         },
       ],
     });
+// Grouping the product data by warehouse_id
+const groupedAsmData = {};
+data.forEach((item) => {
+  const warehouseId = item.warehouse_id;
+  const warehouse_name = item.warehouse?.warehouse_name;
+  const productID = item.assembly_supplier?.assembly?.id;
+  const productCode = item.assembly_supplier?.assembly?.assembly_code;
+  const productName = item.assembly_supplier?.assembly?.assembly_name;
+  const Manufacturer =
+    item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
+  const Price = item.price;
 
-    if (data) {
-      return res.json(data);
-    } else {
-      res.status(400);
+  const inventory_id = item.inventory_id;
+  const UOM = item.assembly_supplier?.assembly?.assembly_unitMeasurement;
+  const createdAtt = item.assembly_supplier?.assembly?.createdAt;
+  // Ensure that productCode and productName are truthy before using them
+  if (warehouseId && productCode && productName) {
+    const key = `${warehouseId}_${productCode}_${productName}`;
+
+    if (!groupedAsmData[key]) {
+      groupedAsmData[key] = {
+
+        createdAt: createdAtt,
+        UOM: UOM,
+        inventory_id: inventory_id,
+        productID: productID,
+        warehouseId: warehouseId,
+        product_code: productCode,
+        product_name: productName,
+        manufacturer: Manufacturer,
+        totalQuantity: 0,
+        warehouse_name: warehouse_name,
+        price: Price,
+        products: [],
+      };
     }
+
+    groupedAsmData[key].totalQuantity += item.quantity;
+    groupedAsmData[key].products.push(item);
+  }
+});
+
+const finalResult_asm = Object.values(groupedAsmData);
+
+return res.json(finalResult_asm);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
@@ -1074,6 +1115,8 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
     const data = await Inventory.findAll({
       where: {
         warehouse_id: warehouse,
+        
+        quantity: { [Op.ne]: 0 },
       },
       include: [
         {
@@ -1101,12 +1144,51 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
       ],
     });
 
-    if (data) {
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
+
+   // Grouping the product data by warehouse_id
+   const groupedProductData = {};
+   data.forEach((item) => {
+    const inventory_id = item.inventory_id;
+     const warehouseId = item.warehouse_id;
+     const warehouse_name = item.warehouse?.warehouse_name;
+     const productID = item.product_tag_supplier?.product?.product_id;
+     const productCode = item.product_tag_supplier?.product?.product_code;
+     const productName = item.product_tag_supplier?.product?.product_name;
+     const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
+     const createdAtt = item.product_tag_supplier?.product?.createdAt;
+     const Manufacturer =
+       item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
+     const Price = item.price;
+     // Ensure that productCode and productName are truthy before using them
+     if (warehouseId && productCode && productName) {
+       const key = `${warehouseId}_${productCode}_${productName}`;
+
+       if (!groupedProductData[key]) {
+         groupedProductData[key] = {
+           createdAt: createdAtt,
+           UOM: UOM,
+           inventory_id: inventory_id,
+           productID: productID,
+           warehouseId: warehouseId,
+           product_code: productCode,
+           product_name: productName,
+           manufacturer: Manufacturer,
+           totalQuantity: 0,
+           warehouse_name: warehouse_name,
+           price: Price,
+           products: [],
+         };
+       }
+
+       groupedProductData[key].totalQuantity += item.quantity;
+       groupedProductData[key].products.push(item);
+     }
+   });
+
+   const finalResult_PRD = Object.values(groupedProductData);
+   // console.log('Productdddfdsfd', JSON.stringify(finalResult, null, 2));
+
+   return res.json(finalResult_PRD);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
@@ -1119,6 +1201,7 @@ router.route("/fetchInvetory_spare_warehouse").get(async (req, res) => {
     const data = await Inventory_Spare.findAll({
       where: {
         warehouse_id: warehouse,
+        quantity: { [Op.ne]: 0 },
       },
       include: [
         {
@@ -1139,12 +1222,52 @@ router.route("/fetchInvetory_spare_warehouse").get(async (req, res) => {
       ],
     });
 
-    if (data) {
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
+
+     // Grouping the product data by warehouse_id
+     const groupedSpareData = {};
+     data.forEach((item) => {
+       const warehouseId = item.warehouse_id;
+       const warehouse_name = item.warehouse?.warehouse_name;
+       const productID = item.sparepart_supplier?.sparePart?.id;
+       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
+       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
+       const Manufacturer =
+         item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
+       const Price = item.price;
+       const inventory_id = item.inventory_id;
+  const UOM = item.sparepart_supplier?.sparePart?.spareParts_unitMeasurement;
+  const createdAtt = item.sparepart_supplier?.sparePart?.createdAt;
+       // Ensure that productCode and productName are truthy before using them
+       if (warehouseId && productCode && productName) {
+         const key = `${warehouseId}_${productCode}_${productName}`;
+ 
+         if (!groupedSpareData[key]) {
+           groupedSpareData[key] = {
+            createdAt: createdAtt,
+            UOM: UOM,
+            inventory_id: inventory_id,
+             productID: productID,
+             warehouseId: warehouseId,
+             product_code: productCode,
+             product_name: productName,
+             manufacturer: Manufacturer,
+             totalQuantity: 0,
+             warehouse_name: warehouse_name,
+             price: Price,
+             products: [],
+           };
+         }
+ 
+         groupedSpareData[key].totalQuantity += item.quantity;
+         groupedSpareData[key].products.push(item);
+       }
+     });
+ 
+     const finalResult_spare = Object.values(groupedSpareData);
+ 
+     return res.json(finalResult_spare);
+
+    
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
@@ -1157,6 +1280,7 @@ router.route("/fetchInvetory_subpart_warehouse").get(async (req, res) => {
     const data = await Inventory_Subpart.findAll({
       where: {
         warehouse_id: warehouse,
+        quantity: { [Op.ne]: 0 },
       },
       include: [
         {
@@ -1177,12 +1301,49 @@ router.route("/fetchInvetory_subpart_warehouse").get(async (req, res) => {
       ],
     });
 
-    if (data) {
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
+    const groupedSubpartData = {};
+    data.forEach((item) => {
+      
+      const warehouseId = item.warehouse_id;
+      const warehouse_name = item.warehouse?.warehouse_name;
+      const productID = item.subpart_supplier?.subPart?.id;
+      const productCode = item.subpart_supplier?.subPart?.subPart_code;
+      const productName = item.subpart_supplier?.subPart?.subPart_name;
+      const Manufacturer =
+        item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
+      const Price = item.price;
+
+      const inventory_id = item.inventory_id;
+  const UOM = item.subpart_supplier?.subPart?.subPart_unitMeasurement;
+  const createdAtt = item.subpart_supplier?.subPart?.createdAt;
+      // Ensure that productCode and productName are truthy before using them
+      if (warehouseId && productCode && productName) {
+        const key = `${warehouseId}_${productCode}_${productName}`;
+
+        if (!groupedSubpartData[key]) {
+          groupedSubpartData[key] = {
+            createdAt: createdAtt,
+            UOM: UOM,
+            inventory_id: inventory_id,
+            productID: productID,
+            warehouseId: warehouseId,
+            product_code: productCode,
+            product_name: productName,
+            manufacturer: Manufacturer,
+            totalQuantity: 0,
+            warehouse_name: warehouse_name,
+            price: Price,
+            products: [],
+          };
+        }
+
+        groupedSubpartData[key].totalQuantity += item.quantity;
+        groupedSubpartData[key].products.push(item);
+      }
+    });
+
+    const finalResult_subpart = Object.values(groupedSubpartData);
+    return res.json(finalResult_subpart);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");

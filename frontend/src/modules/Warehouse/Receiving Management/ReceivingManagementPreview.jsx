@@ -248,6 +248,7 @@ function ReceivingManagementPreview({ authrztn }) {
   // };
 
   const [shippingFee, setShippingFee] = useState("");
+  const [customFee, setcustomFee] = useState("");
   const handleInputChangeShipping = (value) => {
     setShippingFee(value);
   };
@@ -876,8 +877,33 @@ function ReceivingManagementPreview({ authrztn }) {
                 </h2>
               </div>
               <div className="col-6 ">
+                <div className="d-flex flex-direction-column justify-content-center align-items-center">
                 <div
-                  className="d-flex flex-direction-row justify-content-center align-items-center"
+                  className="d-flex flex-direction-row justify-content-center align-items-center "
+                  style={{ float: "right", marginTop: "-20px" }}
+                >
+                  <Form.Label style={{ fontSize: "15px" }}>
+                    Custom Fee:
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    
+                    style={{
+                      height: "35px",
+                      width: "100px",
+                      fontSize: "14px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                      marginLeft: "5px",
+                    }}
+                    onChange={(e) => setcustomFee(e.target.value)}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                  />
+                </div>
+                <div
+                  className="d-flex flex-direction-row justify-content-center align-items-center ml-5"
                   style={{ float: "right", marginTop: "-20px" }}
                 >
                   <Form.Label style={{ fontSize: "15px" }}>
@@ -885,7 +911,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   </Form.Label>
                   <Form.Control
                     type="number"
-                    required
+                    
                     style={{
                       height: "35px",
                       width: "100px",
@@ -899,6 +925,7 @@ function ReceivingManagementPreview({ authrztn }) {
                         e.preventDefault();
                     }}
                   />
+                </div>
                 </div>
               </div>
             </div>
@@ -957,7 +984,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   </div>
 
                   <div className="col-3 d-flex flex-direction-row">
-                    <div className="row" style={{ marginTop: "-40px" }}>
+                    <div className="row" style={{ marginTop: "-40px"}}>
                       <div className="col-4">
                         <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: "15px" }}>
@@ -1099,6 +1126,7 @@ function ReceivingManagementPreview({ authrztn }) {
                             width: "100px",
                             fontSize: "14px",
                             fontFamily: "Poppins, Source Sans Pro",
+                            pointerEvents: 'none'
                           }}
                           onChange={(e) =>
                             handleInputChange(

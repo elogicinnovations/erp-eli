@@ -12,9 +12,9 @@ const StockTransfer_subpart = sequelize.define('stockTransfer_subpart', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  inventory_id:{
+  product_id:{
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   quantity: {
     type: DataTypes.INTEGER,

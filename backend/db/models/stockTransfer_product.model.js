@@ -12,9 +12,9 @@ const StockTransfer_product = sequelize.define('stockTransfer_product', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  inventory_id:{
+  product_id:{
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   quantity: {
     type: DataTypes.INTEGER,

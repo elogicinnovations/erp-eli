@@ -101,90 +101,54 @@ router.route("/fetchTableReceiving").get(async (req, res) => {
 router.route("/fetchProdutsPreview").get(async (req, res) => {
   try {
     const prd = await StockTransfer_prod.findAll({
+      where: {
+        stockTransfer_id: req.query.id,
+      },
       include: [
         {
-          model: Inventory,
+          model: Product,
           required: true,
-          include: [
-            {
-              model: ProductTAGSupplier,
-              required: true,
-              include: [
-                {
-                  model: Product,
-                  required: true,
-                },
-              ],
-            },
-          ],
         },
       ],
     });
 
     const asm = await StockTransfer_assembly.findAll({
+      where: {
+        stockTransfer_id: req.query.id,
+      },
       include: [
         {
-          model: Inventory_Assembly,
+          model: Assembly,
           required: true,
-          include: [
-            {
-              model: Assembly_Supplier,
-              required: true,
-              include: [
-                {
-                  model: Assembly,
-                  required: true,
-                },
-              ],
-            },
-          ],
         },
       ],
     });
 
     const spare = await StockTransfer_spare.findAll({
+      where: {
+        stockTransfer_id: req.query.id,
+      },
       include: [
         {
-          model: Inventory_Spare,
+          model: SparePart,
           required: true,
-          include: [
-            {
-              model: SparePart_Supplier,
-              required: true,
-              include: [
-                {
-                  model: SparePart,
-                  required: true,
-                },
-              ],
-            },
-          ],
         },
       ],
     });
 
     const subpart = await StockTransfer_subpart.findAll({
+      where: {
+        stockTransfer_id: req.query.id,
+      },
       include: [
         {
-          model: Inventory_Subpart,
+          model: SubPart,
           required: true,
-          include: [
-            {
-              model: Subpart_supplier,
-              required: true,
-              include: [
-                {
-                  model: SubPart,
-                  required: true,
-                },
-              ],
-            },
-          ],
         },
       ],
     });
 
-    console.log(prd);
+    // console.log(prd);
 
     return res.json({
       product_db: prd,
@@ -238,7 +202,7 @@ router.route("/fetchWarehouseData").get(async (req, res) => {
   try {
     const stockTransfers = await StockTransfer.findAll({
       where: {
-        // Add any specific conditions if needed
+        stock_id: req.query.id,
       },
       include: [
         {
@@ -299,136 +263,137 @@ router.route("/create").post(async (req, res) => {
     const createdID = StockTransfer_newData.stock_id;
 
     for (const prod of addProductbackend) {
-      const prod_value = prod.value;
+      const prod_id = prod.product_id;
       const prod_quantity = prod.quantity;
       const prod_desc = prod.desc;
       const prod_type = prod.type;
 
       let productName;
 
+      console.log(`dddddksdkskd ${prod_id}`);
       if (prod_type === "Product") {
         await StockTransfer_prod.create({
           stockTransfer_id: createdID,
-          inventory_id: prod_value,
+          product_id: prod_id,
           quantity: prod_quantity,
           description: prod_desc,
         });
 
-        const getProdName = await StockTransfer_prod.findAll({
-          include: [
-            {
-              model: Inventory,
-              required: true,
-              include: [
-                {
-                  model: ProductTAGSupplier,
-                  required: true,
+        // const getProdName = await StockTransfer_prod.findAll({
+        //   include: [
+        //     {
+        //       model: Inventory,
+        //       required: true,
+        //       include: [
+        //         {
+        //           model: ProductTAGSupplier,
+        //           required: true,
 
-                  include: [
-                    {
-                      model: Product,
-                      required: true,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
+        //           include: [
+        //             {
+        //               model: Product,
+        //               required: true,
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // });
 
         // productName = getProdName[0].product.product_name;
       } else if (prod_type === "Assembly") {
         await StockTransfer_assembly.create({
           stockTransfer_id: createdID,
-          inventory_id: prod_value,
+          product_id: prod_id,
           quantity: prod_quantity,
           description: prod_desc,
         });
 
-        const getAssemblyName = await StockTransfer_assembly.findAll({
-          include: [
-            {
-              model: Inventory_Assembly,
-              required: true,
+        // const getAssemblyName = await StockTransfer_assembly.findAll({
+        //   include: [
+        //     {
+        //       model: Inventory_Assembly,
+        //       required: true,
 
-              include: [
-                {
-                  model: Assembly_Supplier,
-                  required: true,
+        //       include: [
+        //         {
+        //           model: Assembly_Supplier,
+        //           required: true,
 
-                  include: [
-                    {
-                      model: Assembly,
-                      required: true,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
+        //           include: [
+        //             {
+        //               model: Assembly,
+        //               required: true,
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // });
 
         // productName = getAssemblyName[0].assembly.assembly_name;
       } else if (prod_type === "Spare") {
         await StockTransfer_spare.create({
           stockTransfer_id: createdID,
-          inventory_id: prod_value,
+          product_id: prod_id,
           quantity: prod_quantity,
           description: prod_desc,
         });
 
-        const getSpareName = await StockTransfer_spare.findAll({
-          include: [
-            {
-              model: Inventory_Spare,
-              required: true,
-              include: [
-                {
-                  model: SparePart_Supplier,
-                  required: true,
+        // const getSpareName = await StockTransfer_spare.findAll({
+        //   include: [
+        //     {
+        //       model: Inventory_Spare,
+        //       required: true,
+        //       include: [
+        //         {
+        //           model: SparePart_Supplier,
+        //           required: true,
 
-                  include: [
-                    {
-                      model: SparePart,
-                      required: true,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
+        //           include: [
+        //             {
+        //               model: SparePart,
+        //               required: true,
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // });
 
         // productName = getSpareName[0].sparePart.spareParts_name;
       } else if (prod_type === "SubPart") {
         await StockTransfer_subpart.create({
           stockTransfer_id: createdID,
-          inventory_id: prod_value,
+          product_id: prod_id,
           quantity: prod_quantity,
           description: prod_desc,
         });
 
-        const getSubName = await StockTransfer_subpart.findAll({
-          include: [
-            {
-              model: Inventory_Subpart,
-              required: true,
-              include: [
-                {
-                  model: Subpart_supplier,
-                  required: true,
+        // const getSubName = await StockTransfer_subpart.findAll({
+        //   include: [
+        //     {
+        //       model: Inventory_Subpart,
+        //       required: true,
+        //       include: [
+        //         {
+        //           model: Subpart_supplier,
+        //           required: true,
 
-                  include: [
-                    {
-                      model: SubPart,
-                      required: true,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
+        //           include: [
+        //             {
+        //               model: SubPart,
+        //               required: true,
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // });
 
         // productName = getSubName[0].subPart.subPart_name;
       }
@@ -523,14 +488,16 @@ router.route("/viewToReceiveStockTransfer").get(async (req, res) => {
         {
           model: Warehouses,
           as: "SourceWarehouse", // alias for the source warehouse
-          attributes: ["warehouse_name"],
+          attributes: ["warehouse_name", "id"],
           foreignKey: "source",
+          required: true,
         },
         {
           model: Warehouses,
           as: "DestinationWarehouse", // alias for the destination warehouse
-          attributes: ["warehouse_name"],
+          attributes: ["warehouse_name", "id"],
           foreignKey: "destination",
+          required: true,
         },
       ],
     });
@@ -642,22 +609,693 @@ router.route("/reject").post(async (req, res) => {
   }
 });
 
-
-
-router.route("/receivingProducts").get(async (req, res) => {
+router.route("/receivingProducts").post(async (req, res) => {
   try {
-    const {id, addProductbackend, addAsmbackend, addSparebackend, addSubpartbackend} = req.query
+    const {
+      fromWarehouse_id,
+      toWarehouse_id,
+      id,
+      addProductbackend,
+      addAsmbackend,
+      addSparebackend,
+      addSubpartbackend,
+    } = req.query;
 
-    for (const prod of addProductbackend) {
-    
+    if (addProductbackend && addProductbackend.length > 0) {
+      for (const prod of addProductbackend) {
+        let remainingQuantity = prod.quantity;
+
+        const checkPrd = await Inventory.findAll({
+          where: {
+            warehouse_id: fromWarehouse_id,
+          },
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+
+              include: [
+                {
+                  model: Product,
+                  required: true,
+
+                  where: {
+                    product_id: prod.product_id,
+                  },
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+
+        for (const inventory of checkPrd) {
+          // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
+          if (remainingQuantity <= inventory.quantity) {
+            console.log(
+              `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+            );
+
+            const remaining = inventory.quantity - remainingQuantity; //output of the remaining
+
+            const inserting = await Inventory.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: ProductTAGSupplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: Product,
+                      required: true,
+
+                      where: {
+                        product_id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory.update(
+                { quantity: remainingQuantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory.create({
+                product_tag_supp_id: inventory.product_tag_supp_id,
+                quantity: remainingQuantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory.update(
+              { quantity: remaining },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+            remainingQuantity = 0;
+            break; // Break the loop since remainingQuantity is now 0
+          } else {
+            console.log(
+              `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+            );
+            remainingQuantity -= inventory.quantity;
+
+            const inserting = await Inventory.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: ProductTAGSupplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: Product,
+                      required: true,
+
+                      where: {
+                        product_id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory.update(
+                { quantity: inventory.quantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory.create({
+                product_tag_supp_id: inventory.product_tag_supp_id,
+                quantity: inventory.quantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory.update(
+              { quantity: 0 },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+          }
+        }
+
+        if (remainingQuantity > 0) {
+          console.log(
+            `Insufficient inventory to fulfill the order. Remaining quantity: ${remainingQuantity}`
+          );
+          // Handle the case where there's not enough inventory to fulfill the order
+        }
+      }
     }
 
+    if (addAsmbackend && addAsmbackend.length > 0) {
+      for (const prod of addAsmbackend) {
+        let remainingQuantity = prod.quantity;
 
+        const checkPrd = await Inventory_Assembly.findAll({
+          where: {
+            warehouse_id: fromWarehouse_id,
+          },
+          include: [
+            {
+              model: Assembly_Supplier,
+              required: true,
+
+              include: [
+                {
+                  model: Assembly,
+                  required: true,
+
+                  where: {
+                    id: prod.product_id,
+                  },
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+
+        for (const inventory of checkPrd) {
+          // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
+          if (remainingQuantity <= inventory.quantity) {
+            console.log(
+              `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+            );
+
+            const remaining = inventory.quantity - remainingQuantity; //output of the remaining
+
+            const inserting = await Inventory_Assembly.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: Assembly_Supplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: Assembly,
+                      required: true,
+
+                      where: {
+                        id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory_Assembly.update(
+                { quantity: remainingQuantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory_Assembly.create({
+                assembly_tag_supp_id: inventory.assembly_tag_supp_id,
+                quantity: remainingQuantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory_Assembly.update(
+              { quantity: remaining },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+            remainingQuantity = 0;
+            break; // Break the loop since remainingQuantity is now 0
+          } else {
+            console.log(
+              `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+            );
+            remainingQuantity -= inventory.quantity;
+
+            const inserting = await Inventory_Assembly.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: Assembly_Supplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: Assembly,
+                      required: true,
+
+                      where: {
+                        id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory_Assembly.update(
+                { quantity: inventory.quantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory_Assembly.create({
+                assembly_tag_supp_id: inventory.assembly_tag_supp_id,
+                quantity: inventory.quantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory_Assembly.update(
+              { quantity: 0 },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+          }
+        }
+
+        if (remainingQuantity > 0) {
+          console.log(
+            `Insufficient inventory to fulfill the order. Remaining quantity: ${remainingQuantity}`
+          );
+          // Handle the case where there's not enough inventory to fulfill the order
+        }
+      }
+    }
+
+    if (addSparebackend && addSparebackend.length > 0) {
+      for (const prod of addSparebackend) {
+        let remainingQuantity = prod.quantity;
+
+        const checkPrd = await Inventory_Spare.findAll({
+          where: {
+            warehouse_id: fromWarehouse_id,
+          },
+          include: [
+            {
+              model: SparePart_Supplier,
+              required: true,
+
+              include: [
+                {
+                  model: SparePart,
+                  required: true,
+
+                  where: {
+                    id: prod.product_id,
+                  },
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+
+        for (const inventory of checkPrd) {
+          // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
+          if (remainingQuantity <= inventory.quantity) {
+            console.log(
+              `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+            );
+
+            const remaining = inventory.quantity - remainingQuantity; //output of the remaining
+
+            const inserting = await Inventory_Spare.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: SparePart_Supplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: SparePart,
+                      required: true,
+
+                      where: {
+                        id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory_Spare.update(
+                { quantity: remainingQuantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory_Spare.create({
+                spare_tag_supp_id: inventory.spare_tag_supp_id,
+                quantity: remainingQuantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory_Spare.update(
+              { quantity: remaining },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+            remainingQuantity = 0;
+            break; // Break the loop since remainingQuantity is now 0
+          } else {
+            console.log(
+              `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+            );
+            remainingQuantity -= inventory.quantity;
+
+            const inserting = await Inventory_Spare.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: SparePart_Supplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: SparePart,
+                      required: true,
+
+                      where: {
+                        id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory_Spare.update(
+                { quantity: inventory.quantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory_Spare.create({
+                spare_tag_supp_id: inventory.spare_tag_supp_id,
+                quantity: inventory.quantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory_Spare.update(
+              { quantity: 0 },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+          }
+        }
+
+        if (remainingQuantity > 0) {
+          console.log(
+            `Insufficient inventory to fulfill the order. Remaining quantity: ${remainingQuantity}`
+          );
+          // Handle the case where there's not enough inventory to fulfill the order
+        }
+      }
+    }
+
+    if (addSubpartbackend && addSubpartbackend.length > 0) {
+      for (const prod of addSubpartbackend) {
+        let remainingQuantity = prod.quantity;
+
+        const checkPrd = await Inventory_Subpart.findAll({
+          where: {
+            warehouse_id: fromWarehouse_id,
+          },
+          include: [
+            {
+              model: Subpart_supplier,
+              required: true,
+
+              include: [
+                {
+                  model: SubPart,
+                  required: true,
+
+                  where: {
+                    id: prod.product_id,
+                  },
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+
+        for (const inventory of checkPrd) {
+          // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
+          if (remainingQuantity <= inventory.quantity) {
+            console.log(
+              `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+            );
+
+            const remaining = inventory.quantity - remainingQuantity; //output of the remaining
+
+            const inserting = await Inventory_Subpart.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: Subpart_supplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: SubPart,
+                      required: true,
+
+                      where: {
+                        id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory_Subpart.update(
+                { quantity: remainingQuantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory_Subpart.create({
+                subpart_tag_supp_id: inventory.subpart_tag_supp_id,
+                quantity: remainingQuantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory_Subpart.update(
+              { quantity: remaining },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+            remainingQuantity = 0;
+            break; // Break the loop since remainingQuantity is now 0
+          } else {
+            console.log(
+              `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+            );
+            remainingQuantity -= inventory.quantity;
+
+            const inserting = await Inventory_Subpart.findAll({
+              where: {
+                warehouse_id: toWarehouse_id,
+                price: inventory.price,
+              },
+              include: [
+                {
+                  model: Subpart_supplier,
+                  required: true,
+
+                  include: [
+                    {
+                      model: SubPart,
+                      required: true,
+
+                      where: {
+                        id: prod.product_id,
+                      },
+                    },
+                  ],
+                },
+                {
+                  model: Warehouses,
+                  required: true,
+                },
+              ],
+            });
+
+            if (inserting && inserting > 0) {
+              const inv_id = inserting.inventory_id;
+
+              await Inventory_Subpart.update(
+                { quantity: inventory.quantity },
+                {
+                  where: { inventory_id: inv_id },
+                }
+              );
+            } else {
+              await Inventory_Subpart.create({
+                subpart_tag_supp_id: inventory.subpart_tag_supp_id,
+                quantity: inventory.quantity,
+                price: inventory.price,
+                warehouse_id: toWarehouse_id,
+              });
+            }
+
+            await Inventory_Subpart.update(
+              { quantity: 0 },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+          }
+        }
+
+        if (remainingQuantity > 0) {
+          console.log(
+            `Insufficient inventory to fulfill the order. Remaining quantity: ${remainingQuantity}`
+          );
+          // Handle the case where there's not enough inventory to fulfill the order
+        }
+      }
+    }
+
+    const update = await StockTransfer.update(
+      {
+        status: "Delivered",
+      },
+      {
+        where: {
+          stock_id: id,
+        },
+      }
+    );
+
+
+    if (update){
+      res.status(200).json()
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
   }
 });
-
 
 module.exports = router;

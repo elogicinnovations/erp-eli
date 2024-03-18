@@ -55,19 +55,22 @@ function ProfileSettings() {
     }
   }, []);
 
-  const [productImages, setproductImages] = useState('');
+  const [productImages, setproductImages] = useState("");
   const fileInputRef = useRef(null);
-
 
   const onFileSelect = (event) => {
     const selectedFile = event.target.files[0];
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (selectedFile && allowedTypes.includes(selectedFile.type) && selectedFile.size <= maxSize) {
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    const maxSize = 5 * 1024 * 1024;
+    if (
+      selectedFile &&
+      allowedTypes.includes(selectedFile.type) &&
+      selectedFile.size <= maxSize
+    ) {
       const reader = new FileReader();
       reader.readAsDataURL(selectedFile);
       reader.onload = () => {
-        const base64String = reader.result.split(',')[1];
+        const base64String = reader.result.split(",")[1];
         setproductImages(base64String);
       };
     } else {
@@ -79,7 +82,6 @@ function ProfileSettings() {
     }
   };
 
-
   const handleUpdate = async () => {
     swal({
       title: "Are you sure?",
@@ -90,44 +92,97 @@ function ProfileSettings() {
     }).then(async (yes) => {
       if (yes) {
         try {
-          const passwordValidationRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\w{8,}$/;
+          const response = await axios.put(BASE_URL + `/userProfile/update`, {
+            // Set headers for multipart/form-data requests
+            productImages,
+            userID: userId,
+            name,
+            address,
+            username,
+            cnum,
+            email,
+          });
+
+          if (response.status === 200) {
+            swal({
+              title: "Information successfully updated",
+              text: "",
+              icon: "success",
+              button: "OK",
+            }).then(() => {});
+          } else if (response.status === 201) {
+            swal({
+              title: "Invalid Password",
+              text: "Please check your existing password",
+              icon: "error",
+              button: "OK",
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        } catch (err) {
+          console.error(err);
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
+        }
+      } else {
+        swal({
+          title: "Cancelled",
+          text: "Information was not updated",
+          icon: "warning",
+        });
+      }
+    });
+  };
+
+  const handleUpdatePassword = async () => {
+    swal({
+      title: "Are you sure?",
+      text: "You are about to update your information. You will be logged out after some changes",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (yes) => {
+      if (yes) {
+        try {
+          const passwordValidationRegex =
+            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\w{8,}$/;
 
           // Assuming newPass contains the password
           const isValidPassword = passwordValidationRegex.test(newPass);
-          
+
           if (!isValidPassword) {
             swal({
-              title: 'Weak Password',
-              text: 'Your password must be strong: 8+ characters, uppercase, lowercase, and at least one digit.',
-              icon: 'error',
+              title: "Weak Password",
+              text: "Your password must be strong: 8+ characters, uppercase, lowercase, and at least one digit.",
+              icon: "error",
               buttons: true,
               dangerMode: true,
             });
-          }
-          
-          else if (newPass != newPass2){
+          } else if (newPass != newPass2) {
             swal({
               title: "Password not matched",
               text: "",
               icon: "error",
               buttons: true,
               dangerMode: true,
-            })
-          }
-          else{
-            const response = await axios.put(BASE_URL + `/userProfile/update`, {
-              // Set headers for multipart/form-data requests
-              productImages,
-              userID: userId,
-              name,
-              address,
-              username,
-              cnum,
-              email,
-              currentPass,
-              newPass,
-              
             });
+          } else {
+            const response = await axios.put(
+              BASE_URL + `/userProfile/updatePassword`,
+              {
+                // Set headers for multipart/form-data requests
+                newPass,
+                userID: userId,
+              }
+            );
 
             if (response.status === 200) {
               swal({
@@ -136,44 +191,37 @@ function ProfileSettings() {
                 icon: "success",
                 button: "OK",
               }).then(() => {
-                localStorage.removeItem('accessToken');
-                axios.post(`${BASE_URL}/masterList/logout`, {
-                  userId
-                }).then((res) => {
-                  if(res.status === 200){
+                localStorage.removeItem("accessToken");
+                axios
+                  .post(`${BASE_URL}/masterList/logout`, {
+                    userId,
+                  })
+                  .then((res) => {
+                    if (res.status === 200) {
+                      swal({
+                        text: "Logged Out!",
+                        icon: "success",
+                        button: "OK",
+                      }).then(() => {});
+                      navigate("/");
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(error.response.data);
                     swal({
-                      text: 'Log out Success!',
-                      icon: 'success',
-                      button: 'OK',
-                    }).then(() => {
-                      navigate('/');
-                    });
-                  } else if(res.status === 201) {
-                    swal({
-                      title: 'Log out Denied',
-                      text: 'Try to log out again',
-                      icon: 'error',
-                      button: 'OK',
-                    });
-                  }
-                }).catch((error) => {
-                  console.error(error.response.data);
-                  swal({
-                    title: 'Something Went Wrong',
-                    text: 'Please contact our support team',
-                    icon: 'error',
-                  }).then(() => {
+                      title: "Something Went Wrong",
+                      text: "Please contact our support team",
+                      icon: "error",
+                    }).then(() => {});
                   });
-                });
               });
-            }
-            else if (response.status === 201) {
+            } else if (response.status === 201) {
               swal({
                 title: "Invalid Password",
                 text: "Please check your existing password",
                 icon: "error",
                 button: "OK",
-              })
+              });
             } else {
               swal({
                 icon: "error",
@@ -181,16 +229,13 @@ function ProfileSettings() {
                 text: "Please contact our support",
               });
             }
-  
           }
-         
-         
         } catch (err) {
           console.error(err);
           swal({
             icon: "error",
-            title: "Update Failed",
-            text: "An error occurred. Please try again later.",
+            title: "Something went wrong",
+            text: "Please contact our support",
           });
         }
       } else {
@@ -207,8 +252,50 @@ function ProfileSettings() {
     setIsEditMode(true);
   };
 
+  const [isValidPass, setIsValidPass] = useState(false);
+  const handleVerify = async () => {
+    if (currentPass === "") {
+      swal({
+        title: "Password missing",
+        text: "Please input your current password",
+        icon: "warning",
+      });
+    } else {
+      await axios
+        .post(`${BASE_URL}/userProfile/verifyPassword`, {
+          userId,
+          currentPass,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setIsValidPass(true);
+          } else if (res.status === 201) {
+            swal({
+              text: "Invalid Password",
+              icon: "error",
+              button: "OK",
+            }).then(() => {
+              // navigate('/');
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error.response.data);
+          swal({
+            title: "Something Went Wrong",
+            text: "Please contact our support team",
+            icon: "error",
+          }).then(() => {});
+        });
+    }
+  };
+
   const handleCancelClick = () => {
     setIsEditMode(false);
+    setIsValidPass(false);
+    setCurrentPass("");
+    setNewPass("");
+    setNewPass2("");
   };
 
   const togglePasswordVisibility = () => {
@@ -302,17 +389,22 @@ function ProfileSettings() {
                     width: "90%",
                     height: "90%",
                   }}
-                  src={`data:image/png;base64,${productImages}` }
+                  src={`data:image/png;base64,${productImages}`}
                   roundedCircle
                 />
               </div>
-              <input
-                name="file"
-                type="file"
-                className="file"
-                ref={fileInputRef}
-                onChange={(e) => onFileSelect(e)}
-              />
+
+              {isEditMode ? (
+                <input
+                  name="file"
+                  type="file"
+                  className="file"
+                  ref={fileInputRef}
+                  onChange={(e) => onFileSelect(e)}
+                />
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <div className="row mt-3">
@@ -327,12 +419,15 @@ function ProfileSettings() {
                   Contact Number:{" "}
                 </Form.Label>
                 <Form.Control
-                  type="text"
+                  type="number"
                   placeholder="Enter Contact Number..."
                   style={{ height: "40px", fontSize: "15px" }}
                   readOnly={!isEditMode}
                   value={cnum}
                   onChange={(e) => setCnum(e.target.value)}
+                  onKeyDown={(e) => {
+                    ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+                  }}
                 />
               </Form.Group>
             </div>
@@ -363,6 +458,54 @@ function ProfileSettings() {
                 />
               </Form.Group>
             </div>
+          </div>
+          <div className="save-cancel">
+            {!isEditMode ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  type="button"
+                  className="btn btn-secondary btn-md"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                >
+                  Cancel
+                </Link>
+                <Button
+                  type="button"
+                  className="btn btn-primary"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                  onClick={handleEditClick}
+                >
+                  Edit
+                </Button>
+              </>
+            ) : (
+              // need validation sa password, dapat maka update kahit d mag change n
+              <div className="up-container">
+                <div className="up-button">
+                  <Button
+                    type="button"
+                    className="btn btn-secondary btn-md"
+                    size="md"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                    onClick={handleCancelClick}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    className="btn btn-warning"
+                    size="md"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                    onClick={handleUpdate}
+                  >
+                    Update
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           <div
             className="gen-info"
@@ -397,8 +540,8 @@ function ProfileSettings() {
                   name="cpass"
                   placeholder="Enter your password"
                   style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  onChange={(e)  => setCurrentPass(e.target.value)}
+                  onChange={(e) => setCurrentPass(e.target.value)}
+                  value={currentPass}
                 />
                 <div className="show">
                   {showCurrentPassword ? (
@@ -415,87 +558,92 @@ function ProfileSettings() {
                 </div>
               </Form.Group>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-6">
-              <Form.Group>
-                <Form.Label style={{ fontSize: "20px" }}>Password: </Form.Label>
-                <Form.Control
-                  type={showPassword ? "text" : "password"}
-                  required
-                  name="cpass"
-                  placeholder="Enter your password"
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  onChange={(e)  => setNewPass(e.target.value)}
-                />
-                <div className="show">
-                  {showPassword ? (
-                    <FaEyeSlash
-                      className="eye"
-                      onClick={togglePasswordVisibility}
-                    />
-                  ) : (
-                    <FaEye className="eye" onClick={togglePasswordVisibility} />
-                  )}
-                </div>
-              </Form.Group>
-            </div>
-            <div className="col-6">
-              <Form.Group>
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Confirm Password:{" "}
-                </Form.Label>
-                <Form.Control
-                  type={showConfirmPassword ? "text" : "password"}
-                  required
-                  name="cpass2"
-                  placeholder="Confirm your password"
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  onChange={(e)  => setNewPass2(e.target.value)}
-                />
-                <div className="show">
-                  {showConfirmPassword ? (
-                    <FaEyeSlash
-                      className="eye"
-                      onClick={toggleConfirmPasswordVisibility}
-                    />
-                  ) : (
-                    <FaEye
-                      className="eye"
-                      onClick={toggleConfirmPasswordVisibility}
-                    />
-                  )}
-                </div>
-              </Form.Group>
-            </div>
-          </div>
-
-          <div className="save-cancel">
-            {!isEditMode ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  type="button"
-                  className="btn btn-secondary btn-md"
-                  size="md"
-                  style={{ fontSize: "20px", margin: "0px 5px" }}
-                >
-                  Cancel
-                </Link>
+            <div className="col-6 d-flex align-items-center">
+              {!isValidPass ? (
                 <Button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-warning btn-md"
                   size="md"
-                  style={{ fontSize: "20px", margin: "0px 5px" }}
-                  onClick={handleEditClick}
+                  style={{ fontSize: "20px" }}
+                  onClick={handleVerify}
                 >
-                  Edit
+                  Verify
                 </Button>
-              </>
-            ) : (
+              ) : (
+                <></>
+              )}
+            </div>
+          </div>
+          {isValidPass ? (
+            <div className="row">
+              <div className="col-6">
+                <Form.Group>
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Password:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type={showPassword ? "text" : "password"}
+                    required
+                    name="cpass"
+                    placeholder="Enter your password"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    onChange={(e) => setNewPass(e.target.value)}
+                    value={newPass}
+                  />
+                  <div className="show">
+                    {showPassword ? (
+                      <FaEyeSlash
+                        className="eye"
+                        onClick={togglePasswordVisibility}
+                      />
+                    ) : (
+                      <FaEye
+                        className="eye"
+                        onClick={togglePasswordVisibility}
+                      />
+                    )}
+                  </div>
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group>
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Confirm Password:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    name="cpass2"
+                    placeholder="Confirm your password"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    readOnly={!newPass}
+                    onChange={(e) => setNewPass2(e.target.value)}
+                    value={newPass2}
+                  />
+                  <div className="show">
+                    {showConfirmPassword ? (
+                      <FaEyeSlash
+                        className="eye"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    ) : (
+                      <FaEye
+                        className="eye"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    )}
+                  </div>
+                </Form.Group>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
 
+          <div className="save-cancel">
+            {!isValidPass ? (
+              <></>
+            ) : (
               // need validation sa password, dapat maka update kahit d mag change n
               <div className="up-container">
                 <div className="reminder">
@@ -517,9 +665,9 @@ function ProfileSettings() {
                     className="btn btn-warning"
                     size="md"
                     style={{ fontSize: "20px", margin: "0px 5px" }}
-                    onClick={handleUpdate}
+                    onClick={handleUpdatePassword}
                   >
-                    Update
+                    Update Password
                   </Button>
                 </div>
               </div>

@@ -298,6 +298,7 @@ const handleGoButtonClick = () => {
                                 <thead>
                                 <tr>
                                     <th className='tableh'>Transfer ID</th>
+                                    <th className='tableh'>Remarks</th>
                                     <th className='tableh'>Source</th>
                                     <th className='tableh'>Destination</th>
                                     <th className='tableh'>Reference #</th>
@@ -308,6 +309,7 @@ const handleGoButtonClick = () => {
                                 {filteredPR.map((data, i) => (
                                         <tr key={i}>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.stock_id}</td>
+                                        <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.remarks}</td>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.SourceWarehouse.warehouse_name}</td>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.DestinationWarehouse.warehouse_name}</td>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.reference_code}</td>

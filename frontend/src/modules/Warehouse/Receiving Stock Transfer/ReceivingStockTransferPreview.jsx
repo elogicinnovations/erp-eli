@@ -36,7 +36,9 @@ function ReceivingStockTransferPreview({ authrztn }) {
 
   const { id } = useParams();
   const [source, setSource] = useState();
+  const [source_id, setSource_id] = useState();
   const [destination, setDestination] = useState();
+  const [destination_id, setDestination_id] = useState();
   const [referenceCode, setReferenceCode] = useState();
   const [users, setUsers] = useState();
   const [remarks, setRemarks] = useState();
@@ -55,7 +57,9 @@ function ReceivingStockTransferPreview({ authrztn }) {
         })
         .then((res) => {
           setSource(res.data[0].SourceWarehouse.warehouse_name);
+          setSource_id(res.data[0].SourceWarehouse.id);
           setDestination(res.data[0].DestinationWarehouse.warehouse_name);
+          setDestination_id(res.data[0].DestinationWarehouse.id);
           setReferenceCode(res.data[0].reference_code);
           setUsers(res.data[0].masterlist.col_Fname);
           setRemarks(res.data[0].remarks);
@@ -210,6 +214,8 @@ function ReceivingStockTransferPreview({ authrztn }) {
       axios
         .post(`${BASE_URL}/stockTransfer/receivingProducts`, null, {
           params: {
+            toWarehouse_id: destination_id,
+            fromWarehouse_id: source_id,
             addProductbackend,
             addAsmbackend,
             addSparebackend,
@@ -221,12 +227,12 @@ function ReceivingStockTransferPreview({ authrztn }) {
           console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Purchase sucessfully request!",
-              text: "The Purchase been added successfully.",
+              title: "Stock Transfered Successfully",
+              text: "",
               icon: "success",
               button: "OK",
             }).then(() => {
-              navigate("/purchaseOrderList");
+              navigate("/receivingStockTransfer");
             });
           } else {
             swal({
@@ -608,8 +614,6 @@ function ReceivingStockTransferPreview({ authrztn }) {
       });
   };
 
-
-
   const [addProductbackend, setAddProductbackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [quantityInputs, setQuantityInputs] = useState({});
 
@@ -620,36 +624,36 @@ function ReceivingStockTransferPreview({ authrztn }) {
   ) => {
     // Remove non-numeric characters and limit length to 10
     const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
-  
+
     // Convert cleanedValue to a number
     const numericValue = parseInt(cleanedValue, 10);
-  
+
     // Create a variable to store the corrected value
     let correctedValue = cleanedValue;
-  
+
     // Check if the numericValue is greater than the available quantity
     if (numericValue > product_quantity_available) {
       // If greater, set the correctedValue to the maximum available quantity
       correctedValue = product_quantity_available.toString();
-      
+
       swal({
         icon: "error",
         title: "Input value exceed",
         text: "Please enter a quantity within the available limit.",
       });
-
     }
-  
+
     setQuantityInputs((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
         [productValue]: correctedValue,
       };
-  
+
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = prodFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
-        prodsuppId: product.inventory_prd.product_tag_supplier.id,
+        product_id: product.product_id,
+        // prodsuppId: product.inventory_prd.product_tag_supplier.id,
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -660,15 +664,13 @@ function ReceivingStockTransferPreview({ authrztn }) {
 
       setAddProductbackend(serializedProducts);
       console.log("Selected Products:", serializedProducts);
-  
+
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
-    // console.log("PRODUCTS" + prodFetch);
+  // console.log("PRODUCTS" + prodFetch);
 
-
-  
   const [addAsmbackend, setAddAsmbackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [quantityInputs_asm, setQuantityInputs_asm] = useState({});
 
@@ -679,36 +681,36 @@ function ReceivingStockTransferPreview({ authrztn }) {
   ) => {
     // Remove non-numeric characters and limit length to 10
     const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
-  
+
     // Convert cleanedValue to a number
     const numericValue = parseInt(cleanedValue, 10);
-  
+
     // Create a variable to store the corrected value
     let correctedValue = cleanedValue;
-  
+
     // Check if the numericValue is greater than the available quantity
     if (numericValue > product_quantity_available) {
       // If greater, set the correctedValue to the maximum available quantity
       correctedValue = product_quantity_available.toString();
-      
+
       swal({
         icon: "error",
         title: "Input value exceed",
         text: "Please enter a quantity within the available limit.",
       });
-
     }
-  
+
     setQuantityInputs_asm((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
         [productValue]: correctedValue,
       };
-  
+
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = asmFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
-        assemblysuppId: product.inventory_assembly.assembly_supplier.id,
+        product_id: product.product_id,
+        // assemblysuppId: product.inventory_assembly.assembly_supplier.id,
 
         // type: product.type,
         // inventory_id: product.inventory_id,
@@ -717,15 +719,14 @@ function ReceivingStockTransferPreview({ authrztn }) {
         // quantity_available: product.quantity_available,
         // desc: product.desc,
       }));
-  
+
       setAddAsmbackend(serializedProducts);
       console.log("Selected Assembly:", serializedProducts);
-  
+
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
-  
 
   const [addSparebackend, setAddSparebackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [quantityInputs_spare, setQuantityInputs_spare] = useState({});
@@ -737,36 +738,36 @@ function ReceivingStockTransferPreview({ authrztn }) {
   ) => {
     // Remove non-numeric characters and limit length to 10
     const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
-  
+
     // Convert cleanedValue to a number
     const numericValue = parseInt(cleanedValue, 10);
-  
+
     // Create a variable to store the corrected value
     let correctedValue = cleanedValue;
-  
+
     // Check if the numericValue is greater than the available quantity
     if (numericValue > product_quantity_available) {
       // If greater, set the correctedValue to the maximum available quantity
       correctedValue = product_quantity_available.toString();
-      
+
       swal({
         icon: "error",
         title: "Input value exceed",
         text: "Please enter a quantity within the available limit.",
       });
-
     }
-  
+
     setQuantityInputs_spare((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
         [productValue]: correctedValue,
       };
-  
+
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = spareFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
-        sparesuppId: product.inventory_spare.sparepart_supplier.id,
+        product_id: product.product_id,
+        // sparesuppId: product.inventory_spare.sparepart_supplier.id,
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -774,15 +775,14 @@ function ReceivingStockTransferPreview({ authrztn }) {
         // quantity_available: product.quantity_available,
         // desc: product.desc,
       }));
-  
+
       setAddSparebackend(serializedProducts);
       console.log("Selected Spare:", serializedProducts);
-  
+
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
-
 
   const [addSubpartbackend, setAddSubpartbackend] = useState([]); // para sa pag ng product na e issue sa backend
   const [quantityInputs_subpart, setQuantityInputs_subpart] = useState({});
@@ -794,36 +794,36 @@ function ReceivingStockTransferPreview({ authrztn }) {
   ) => {
     // Remove non-numeric characters and limit length to 10
     const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
-  
+
     // Convert cleanedValue to a number
     const numericValue = parseInt(cleanedValue, 10);
-  
+
     // Create a variable to store the corrected value
     let correctedValue = cleanedValue;
-  
+
     // Check if the numericValue is greater than the available quantity
     if (numericValue > product_quantity_available) {
       // If greater, set the correctedValue to the maximum available quantity
       correctedValue = product_quantity_available.toString();
-      
+
       swal({
         icon: "error",
         title: "Input value exceed",
         text: "Please enter a quantity within the available limit.",
       });
-
     }
-  
+
     setQuantityInputs_subpart((prevInputs) => {
       const updatedInputs = {
         ...prevInputs,
         [productValue]: correctedValue,
       };
-  
+
       // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = subpartFetch.map((product) => ({
         quantity: updatedInputs[product.id] || "",
-        subsuppId: product.inventory_subpart.subpart_supplier.id,
+        product_id: product.product_id,
+        // subsuppId: product.inventory_subpart.subpart_supplier.id,
         // type: product.type,
         // inventory_id: product.inventory_id,
         // code: product.code,
@@ -831,16 +831,14 @@ function ReceivingStockTransferPreview({ authrztn }) {
         // quantity_available: product.quantity_available,
         // desc: product.desc,
       }));
-  
+
       setAddSubpartbackend(serializedProducts);
       console.log("Selected Subpart:", serializedProducts);
-  
+
       // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
-  
-  
 
   return (
     <div className="main-of-containers">
@@ -878,7 +876,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                   fontSize: "20px",
                   position: "relative",
                   paddingTop: "20px",
-                  fontFamily: "Poppins, Source Sans Pro"
+                  fontFamily: "Poppins, Source Sans Pro",
                 }}
               >
                 Stock Transfer Details
@@ -897,38 +895,33 @@ function ReceivingStockTransferPreview({ authrztn }) {
               <div className="row">
                 <div className="col-6">
                   <div className="stockmain-section">
-                      <div className="locationandtransferby">
-                        <div className="locationtransfer">
-                            <span>Transfer Location</span>
-                            <span>
-                              From: {source} --------- To: {destination}
-                            </span>
-                        </div>
-
-                        <div className="transferby">
-                            <span>Transfer By</span>
-                            <span>"{users}"</span>
-                        </div>
+                    <div className="locationandtransferby">
+                      <div className="locationtransfer">
+                        <span>Transfer Location</span>
+                        <span>
+                          From: {source} --------- To: {destination}
+                        </span>
                       </div>
 
-                      <div className="dateandtoreceive">
-                          <div className="datefields">
-                              <span>Date</span>
-                              <span>{formatDatetime(dateCreated)}</span>
-                          </div>
-                          <div className="toreceive">
-                              <span>Status</span>
-                              <span>
-                              <Circle
-                                weight="fill"
-                                size={17}
-                                color="green"
-                              />
-                              {status}
-                              </span>
-                          </div>
+                      <div className="transferby">
+                        <span>Transfer By</span>
+                        <span>"{users}"</span>
                       </div>
+                    </div>
 
+                    <div className="dateandtoreceive">
+                      <div className="datefields">
+                        <span>Date</span>
+                        <span>{formatDatetime(dateCreated)}</span>
+                      </div>
+                      <div className="toreceive">
+                        <span>Status</span>
+                        <span>
+                          <Circle weight="fill" size={17} color="green" />
+                          {status}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -937,103 +930,85 @@ function ReceivingStockTransferPreview({ authrztn }) {
                     <Form.Control
                       onChange={(e) => setRemarks(e.target.value)}
                       value={remarks}
-                        as="textarea"
-                        rows={3}
-                        style={{
-                          fontFamily: "Poppins, Source Sans Pro",
-                          fontSize: "16px",
-                          height: "150px",
-                          maxHeight: "150px",
-                          resize: "none",
-                          overflowY: "auto",
-                        }}
+                      as="textarea"
+                      rows={3}
+                      style={{
+                        fontFamily: "Poppins, Source Sans Pro",
+                        fontSize: "16px",
+                        height: "150px",
+                        maxHeight: "150px",
+                        resize: "none",
+                        overflowY: "auto",
+                      }}
                     />
                   </Form.Group>
                 </div>
               </div>
 
-            
-            
-
-            <div
-              className="gen-info"
-              style={{
-                fontSize: "20px",
-                position: "relative",
-                paddingTop: "20px",
-                fontFamily: "Poppins, Source Sans Pro"
-              }}
-            >
-              Item List
-              <span
+              <div
+                className="gen-info"
                 style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "-webkit-fill-available",
-                  background: "#FFA500",
-                  top: "81%",
-                  left: "9rem",
-                  transform: "translateY(-50%)",
+                  fontSize: "20px",
+                  position: "relative",
+                  paddingTop: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
                 }}
-              ></span>
-            </div>
+              >
+                Item List
+                <span
+                  style={{
+                    position: "absolute",
+                    height: "0.5px",
+                    width: "-webkit-fill-available",
+                    background: "#FFA500",
+                    top: "81%",
+                    left: "9rem",
+                    transform: "translateY(-50%)",
+                  }}
+                ></span>
+              </div>
 
-            <div className="table-containss">
-              <div className="main-of-all-tables">
-                <table id="order-listing">
-                  <thead>
-                    <tr>
-                      <th className="tableh">Code</th>
-                      <th className="tableh">Product Name</th>
-                      <th className="tableh">UOM</th>
-                      <th className="tableh">Quantity Transfer</th>
-                      <th className="tableh">Quantity Received</th>
-                      {/* <th className="tableh">Quality</th> */}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {prodFetch.map((data, i) => (
-                      <tr key={data.id}>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .product_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .product_name
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .product_unitMeasurement
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          <Form.Control
-                            type="number"
-                            value={quantityInputs[data.id] || ""}
-                            onInput={(e) =>
-                              handleQuantityChange(
-                                e.target.value,
-                                data.id,
-                                data.quantity
-                              )
-                            }
-                            required
-                            placeholder="Input quantity"
-                            style={{
-                              height: "30px",
-                              width: "120px",
-                              fontSize: "15px",
-                            }}
-                          />
-                        </td>
-                        {/* <td>
+              <div className="table-containss">
+                <div className="main-of-all-tables">
+                  <table id="order-listing">
+                    <thead>
+                      <tr>
+                        <th className="tableh">Code</th>
+                        <th className="tableh">Product Name</th>
+                        <th className="tableh">UOM</th>
+                        <th className="tableh">Quantity Transfer</th>
+                        <th className="tableh">Quantity Received</th>
+                        {/* <th className="tableh">Quality</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {prodFetch.map((data, i) => (
+                        <tr key={data.id}>
+                          <td>{data.product.product_code}</td>
+                          <td>{data.product.product_name}</td>
+                          <td>{data.product.product_unitMeasurement}</td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={quantityInputs[data.id] || ""}
+                              onInput={(e) =>
+                                handleQuantityChange(
+                                  e.target.value,
+                                  data.id,
+                                  data.quantity
+                                )
+                              }
+                              required
+                              placeholder="Input quantity"
+                              style={{
+                                height: "30px",
+                                width: "120px",
+                                fontSize: "15px",
+                              }}
+                            />
+                          </td>
+                          {/* <td>
                           <div className="tab_checkbox">
                             <input
                               type="checkbox"
@@ -1044,51 +1019,36 @@ function ReceivingStockTransferPreview({ authrztn }) {
                             />
                           </div>
                         </td> */}
-                      </tr>
-                    ))}
+                        </tr>
+                      ))}
 
-                    {asmFetch.map((data, i) => (
-                      <tr key={data.id}>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .assembly_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .assembly_name
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .assembly_unitMeasurement
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          <Form.Control
-                            type="number"
-                            value={quantityInputs_asm[data.id] || ""}
-                            onInput={(e) =>
-                              handleQuantityChange_asm(
-                                e.target.value,
-                                data.id,
-                                data.quantity
-                              )
-                            }
-                            required
-                            placeholder="Input quantity"
-                            style={{
-                              height: "40px",
-                              width: "120px",
-                              fontSize: "15px",
-                            }}
-                          />
-                        </td>
-                        {/* <td>
+                      {asmFetch.map((data, i) => (
+                        <tr key={data.id}>
+                          <td>{data.assembly.assembly_code}</td>
+                          <td>{data.assembly.assembly_name}</td>
+                          <td>{data.assembly.assembly_unitMeasurement}</td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={quantityInputs_asm[data.id] || ""}
+                              onInput={(e) =>
+                                handleQuantityChange_asm(
+                                  e.target.value,
+                                  data.id,
+                                  data.quantity
+                                )
+                              }
+                              required
+                              placeholder="Input quantity"
+                              style={{
+                                height: "40px",
+                                width: "120px",
+                                fontSize: "15px",
+                              }}
+                            />
+                          </td>
+                          {/* <td>
                           <div className="tab_checkbox">
                             <input
                               type="checkbox"
@@ -1099,52 +1059,37 @@ function ReceivingStockTransferPreview({ authrztn }) {
                             />
                           </div>
                         </td> */}
-                      </tr>
-                    ))}
+                        </tr>
+                      ))}
 
-                    {spareFetch.map((data, i) => (
-                      <tr key={data.id}>
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .spareParts_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .spareParts_name
-                          }
-                        </td>
-                        
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .spareParts_unitMeasurement
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          <Form.Control
-                            type="number"
-                            value={quantityInputs_spare[data.id] || ""}
-                            onInput={(e) =>
-                              handleQuantityChange_spare(
-                                e.target.value,
-                                data.id,
-                                data.quantity
-                              )
-                            }
-                            required
-                            placeholder="Input quantity"
-                            style={{
-                              height: "40px",
-                              width: "120px",
-                              fontSize: "15px",
-                            }}
-                          />
-                        </td>
-                        {/* <td>
+                      {spareFetch.map((data, i) => (
+                        <tr key={data.id}>
+                          <td>{data.sparePart.spareParts_code}</td>
+                          <td>{data.sparePart.spareParts_name}</td>
+
+                          <td>{data.sparePart.spareParts_unitMeasurement}</td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={quantityInputs_spare[data.id] || ""}
+                              onInput={(e) =>
+                                handleQuantityChange_spare(
+                                  e.target.value,
+                                  data.id,
+                                  data.quantity
+                                )
+                              }
+                              required
+                              placeholder="Input quantity"
+                              style={{
+                                height: "40px",
+                                width: "120px",
+                                fontSize: "15px",
+                              }}
+                            />
+                          </td>
+                          {/* <td>
                           <div className="tab_checkbox">
                             <input
                               type="checkbox"
@@ -1155,52 +1100,37 @@ function ReceivingStockTransferPreview({ authrztn }) {
                             />
                           </div>
                         </td> */}
-                      </tr>
-                    ))}
+                        </tr>
+                      ))}
 
-                    {subpartFetch.map((data, i) => (
-                      <tr key={data.id}>
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .subPart_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .subPart_name
-                          }
-                        </td>
-                       
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .subPart_unitMeasurement
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          <Form.Control
-                            type="number"
-                            value={quantityInputs_subpart[data.id] || ""}
-                            onInput={(e) =>
-                              handleQuantityChange_subpart(
-                                e.target.value,
-                                data.id,
-                                data.quantity
-                              )
-                            }
-                            required
-                            placeholder="Input quantity"
-                            style={{
-                              height: "40px",
-                              width: "120px",
-                              fontSize: "15px",
-                            }}
-                          />
-                        </td>
-                        {/* <td>
+                      {subpartFetch.map((data, i) => (
+                        <tr key={data.id}>
+                          <td>{data.subPart.subPart_code}</td>
+                          <td>{data.subPart.subPart_name}</td>
+
+                          <td>{data.subPart.subPart_unitMeasurement}</td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={quantityInputs_subpart[data.id] || ""}
+                              onInput={(e) =>
+                                handleQuantityChange_subpart(
+                                  e.target.value,
+                                  data.id,
+                                  data.quantity
+                                )
+                              }
+                              required
+                              placeholder="Input quantity"
+                              style={{
+                                height: "40px",
+                                width: "120px",
+                                fontSize: "15px",
+                              }}
+                            />
+                          </td>
+                          {/* <td>
                           <div className="tab_checkbox">
                             <input
                               type="checkbox"
@@ -1211,14 +1141,14 @@ function ReceivingStockTransferPreview({ authrztn }) {
                             />
                           </div>
                         </td> */}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
 
-            <div className="save-cancel">
+              <div className="save-cancel">
                 <Button
                   type="submit"
                   // onClick={() => navigate(`/receivingManagement`)}
@@ -1231,18 +1161,14 @@ function ReceivingStockTransferPreview({ authrztn }) {
               </div>
             </Form>
           </div>
-         
         ) : (
           <div className="no-access">
             <img src={NoAccess} alt="NoAccess" className="no-access-img" />
             <h3>You don't have access to this function.</h3>
           </div>
         )}
-        
       </div>
-      
     </div>
-    
   );
 }
 

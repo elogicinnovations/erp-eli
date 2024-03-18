@@ -407,15 +407,15 @@ StockTransfer.belongsTo(MasterList, { foreignKey: "col_id" });
 StockTransfer.hasMany(StockTransfer_prod, { foreignKey: "stockTransfer_id" });
 StockTransfer_prod.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-Inventory.hasMany(StockTransfer_prod, { foreignKey: "inventory_id" });
-StockTransfer_prod.belongsTo(Inventory, { foreignKey: "inventory_id" });
+Product.hasMany(StockTransfer_prod, { foreignKey: "product_id" });
+StockTransfer_prod.belongsTo(Product, { foreignKey: "product_id" });
 
 //-------------Stock Transfer Assembly table
 StockTransfer.hasMany(StockTransfer_assembly, { foreignKey: "stockTransfer_id" });
 StockTransfer_assembly.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-Inventory_Assembly.hasMany(StockTransfer_assembly, { foreignKey: "inventory_id" });
-StockTransfer_assembly.belongsTo(Inventory_Assembly, { foreignKey: "inventory_id" });
+Assembly.hasMany(StockTransfer_assembly, { foreignKey: "product_id" });
+StockTransfer_assembly.belongsTo(Assembly, { foreignKey: "product_id" });
 
 // Assembly_Supplier.hasMany(StockTransfer_assembly, { foreignKey: "stockTransfer_id" });
 // StockTransfer_assembly.belongsTo(Assembly_Supplier, { foreignKey: "stockTransfer_id" });
@@ -424,15 +424,15 @@ StockTransfer_assembly.belongsTo(Inventory_Assembly, { foreignKey: "inventory_id
 StockTransfer.hasMany(StockTransfer_spare, { foreignKey: "stockTransfer_id" });
 StockTransfer_spare.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-Inventory_Spare.hasMany(StockTransfer_spare, { foreignKey: "inventory_id" });
-StockTransfer_spare.belongsTo(Inventory_Spare, { foreignKey: "inventory_id" });
+SparePart.hasMany(StockTransfer_spare, { foreignKey: "product_id" });
+StockTransfer_spare.belongsTo(SparePart, { foreignKey: "product_id" });
 
 //-------------Stock Transfer Subpart table
 StockTransfer.hasMany(StockTransfer_subpart, { foreignKey: "stockTransfer_id" });
 StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
 
-Inventory_Subpart.hasMany(StockTransfer_subpart, { foreignKey: "inventory_id" });
-StockTransfer_subpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_id" });
+SubPart.hasMany(StockTransfer_subpart, { foreignKey: "product_id" });
+StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "product_id" });
 
 //------------ Warehouse Product Inventory
 Warehouses.hasMany(Inventory, { foreignKey: "warehouse_id" });

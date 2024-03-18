@@ -63,36 +63,72 @@ router.route("/update").put(async (req, res) => {
       cnum,
       email,
       productImages,
-      currentPass,
-      newPass,
     } = req.body;
 
+    const updatedUser = await MasterList.update(
+      {
+        col_Fname: name,
+        col_address: address,
+        col_username: username,
+        col_phone: cnum,
+        col_email: email,
+        image: productImages,
+      },
+      {
+        where: { col_id: userID },
+      }
+    );
+
+    if (updatedUser) {
+      return res.status(200).json("User Updated Successfully");
+    } else {
+      return res.status(400).json("Failed to Update User");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error Updating User");
+  }
+});
+
+
+router.route("/updatePassword").put(async (req, res) => {
+  try {
+    const {
+      userID,
+      newPass
+    } = req.body;
+
+    const updatedUser = await MasterList.update(
+      {
+       col_Pass: newPass
+      },
+      {
+        where: { col_id: userID },
+      }
+    );
+
+    if (updatedUser) {
+      return res.status(200).json("User Updated Successfully");
+    } else {
+      return res.status(400).json("Failed to Update User");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error Updating User");
+  }
+});
+
+router.route("/verifyPassword").post(async (req, res) => {
+  try {
+    const { userId, currentPass } = req.body;
+
     const User = await MasterList.findAll({
-      where: { col_id: userID },
+      where: { col_id: userId },
     });
     if (currentPass != User[0].col_Pass) {
       return res.status(201).json("Invalid User");
     } else {
-      const updatedUser = await MasterList.update(
-        {
-          col_Fname: name,
-          col_address: address,
-          col_username: username,
-          col_phone: cnum,
-          col_email: email,
-          image: productImages,
-          col_Pass: newPass,
-        },
-        {
-          where: { col_id: userID },
-        }
-      );
-
-      if (updatedUser) {
-        // return res.status(200).json("User Updated Successfully");
-      } else {
-        return res.status(400).json("Failed to Update User");
-      }
+      return res.status(200).json();
     }
   } catch (err) {
     console.error(err);

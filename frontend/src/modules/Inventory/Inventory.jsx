@@ -242,12 +242,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             <tr>
                               <th className='tableh'>Product Code</th>
                               <th className='tableh'>Product Name</th>
-                              {/* <th className='tableh'>Supplier</th> */}
                               <th className='tableh'>Manufacturer</th>
                               <th className='tableh'>Quantity</th>
-                              {/* <th className='tableh'>Warehouse</th> */}
-                              <th className='tableh'>Price</th>
-                              <th className='tableh'>Total Price</th>
+                        
                             </tr>
                           </thead>
                           {inventory.length > 0 || assembly.length > 0 || spare.length > 0 || subpart.length > 0 ? (
@@ -258,9 +255,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                   <td>{data.product_name}</td>
                                   <td>{data.manufacturer}</td>
                                   <td>{data.totalQuantity}</td>
-                                  {/* <td>{data.warehouse_name}</td> */}
-                                  <td>{data.price}</td>
-                                  <td>{data.price * data.totalQuantity}</td>
+                                 
 
                                 </tr>
                               ))}
@@ -271,9 +266,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                   <td>{data.product_name}</td>
                                   <td>{data.manufacturer}</td>
                                   <td>{data.totalQuantity}</td>
-                                  {/* <td>{data.warehouse_name}</td> */}
-                                  <td>{data.price}</td>
-                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
@@ -284,9 +276,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                   <td>{data.product_name}</td>
                                   <td>{data.manufacturer}</td>
                                   <td>{data.totalQuantity}</td>
-                                  {/* <td>{data.warehouse_name}</td> */}
-                                  <td>{data.price}</td>
-                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
@@ -297,9 +286,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                   <td>{data.product_name}</td>
                                   <td>{data.manufacturer}</td>
                                   <td>{data.totalQuantity}</td>
-                                  {/* <td>{data.warehouse_name}</td> */}
-                                  <td>{data.price}</td>
-                                  <td>{data.price * data.totalQuantity}</td>
 
                                 </tr>
                               ))}
@@ -426,6 +412,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleMoveToInventory(data.id, data.inventory_prd.inventory_id, data.quantity, "product")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       move to inventory
                                     </button>
@@ -433,6 +420,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleRetain(data.id, "product")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       Retain
                                     </button>
@@ -454,6 +442,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleMoveToInventory(data.id, data.inventory_assembly.inventory_id, data.quantity, "assembly")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       move to inventory
                                     </button>
@@ -461,6 +450,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleRetain(data.id, "assembly")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       Retain
                                     </button>
@@ -483,6 +473,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleMoveToInventory(data.id, data.inventory_spare.inventory_id, data.quantity, "spare")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       move to inventory
                                     </button>
@@ -490,6 +481,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleRetain(data.id, "spare")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       Retain
                                     </button>
@@ -511,6 +503,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleMoveToInventory(data.id, data.inventory_subpart.inventory_id, data.quantity, "subpart")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       move to inventory
                                     </button>
@@ -518,6 +511,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       style={{ fontSize: '12px' }}
                                       className='btn'
                                       onClick={() => handleRetain(data.id, "subpart")}
+                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
                                     >
                                       Retain
                                     </button>

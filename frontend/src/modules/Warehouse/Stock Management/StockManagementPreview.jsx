@@ -580,21 +580,18 @@ function StockTransferPreview({ authrztn }) {
                         <tr key={i}>
                           <td>
                             {
-                              data.inventory_prd.product_tag_supplier.product
-                                .product_code
+                              data.product.product_code
                             }
                           </td>
                           <td>
                             {
-                              data.inventory_prd.product_tag_supplier.product
-                                .product_name
+                              data.product.product_name
                             }
                           </td>
                           <td>{data.quantity}</td>
                           <td>
                             {
-                              data.inventory_prd.product_tag_supplier.product
-                                .product_unitMeasurement
+                              data.product.product_unitMeasurement
                             }
                           </td>
                         </tr>
@@ -603,20 +600,20 @@ function StockTransferPreview({ authrztn }) {
                         <tr key={i}>
                           <td>
                             {
-                              data.inventory_assembly.assembly_supplier.assembly
+                              data.assembly
                                 .assembly_code
                             }
                           </td>
                           <td>
                             {
-                              data.inventory_assembly.assembly_supplier.assembly
+                              data.assembly
                                 .assembly_name
                             }
                           </td>
                           <td>{data.quantity}</td>
                           <td>
                             {
-                              data.inventory_assembly.assembly_supplier.assembly
+                              data.assembly
                                 .assembly_unitMeasurement
                             }
                           </td>
@@ -626,20 +623,20 @@ function StockTransferPreview({ authrztn }) {
                         <tr key={i}>
                           <td>
                             {
-                              data.inventory_spare.sparepart_supplier.sparePart
+                              data.sparePart
                                 .spareParts_code
                             }
                           </td>
                           <td>
                             {
-                              data.inventory_spare.sparepart_supplier.sparePart
+                              data.sparePart
                                 .spareParts_name
                             }
                           </td>
                           <td>{data.quantity}</td>
                           <td>
                             {
-                              data.inventory_spare.sparepart_supplier.sparePart
+                              data.sparePart
                                 .spareParts_unitMeasurement
                             }
                           </td>
@@ -649,20 +646,20 @@ function StockTransferPreview({ authrztn }) {
                         <tr key={i}>
                           <td>
                             {
-                              data.inventory_subpart.subpart_supplier.subPart
+                              data.subPart
                                 .subPart_code
                             }
                           </td>
                           <td>
                             {
-                              data.inventory_subpart.subpart_supplier.subPart
+                              data.subPart
                                 .subPart_name
                             }
                           </td>
                           <td>{data.quantity}</td>
                           <td>
                             {
-                              data.inventory_subpart.subpart_supplier.subPart
+                              data.subPart
                                 .subPart_unitMeasurement
                             }
                           </td>

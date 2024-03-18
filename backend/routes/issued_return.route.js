@@ -106,7 +106,10 @@ router.route('/fetchReturn').get(async (req, res) => {
                 }
             ],
             where: {
-                status: "To be Return"
+                [Op.or]: [
+                    { status: "To be Return" },
+                    { status: "Retained" }
+                ]
             }
         });
 
@@ -131,7 +134,10 @@ router.route('/fetchReturn').get(async (req, res) => {
                 }
             ],
             where: {
-                status: "To be Return"
+                [Op.or]: [
+                    { status: "To be Return" },
+                    { status: "Retained" }
+                ]
             }
         });
 
@@ -156,7 +162,10 @@ router.route('/fetchReturn').get(async (req, res) => {
                 }
             ],
             where: {
-                status: "To be Return"
+                [Op.or]: [
+                    { status: "To be Return" },
+                    { status: "Retained" }
+                ]
             }
         });
 
@@ -181,7 +190,10 @@ router.route('/fetchReturn').get(async (req, res) => {
                 }
             ],
             where: {
-                status: "To be Return"
+                [Op.or]: [
+                    { status: "To be Return" },
+                    { status: "Retained" }
+                ]
             }
         });
 
