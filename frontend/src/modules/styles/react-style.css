@@ -20,6 +20,9 @@ h1 {
   font-family: Poppins, "Source Sans Pro";
 }
 
+button.page-link:hover{
+  background-color: #2D2F39;
+}
 
 .carousel-image{
   max-width: 100%;
@@ -2066,6 +2069,10 @@ button.genbutton {
 }
 
 .export{
+  background-color: #0E5488;
+}
+
+.export:hover{
   background-color: #0091ff;
 }
 
@@ -3831,7 +3838,6 @@ span:nth-child(5){
   font-family: Poppins, "Source Sans Pro";
   padding-top: 5px;
   padding-bottom: 5px;
-  font-weight: bold;
 }
 
 .thirdrowes{
@@ -3904,7 +3910,7 @@ span:nth-child(5){
 
 .thirdrightrows span:nth-child(1){
   width: 50%;
-  border-right: 1px solid black;
+  /* border-right: 1px solid black; */
   border-left: 1px solid black;
   height: 30px;
   font-size: 12px;
@@ -3961,7 +3967,7 @@ span:nth-child(5){
 }
 
 .midfourthrows{
-  width: 60%;
+  width: 59.9%;
   text-align: center;
 }
 
@@ -4009,7 +4015,7 @@ span:nth-child(5){
 }
 
 .fifthleftrows{
-  width: 19.9%;
+  width: 20%;
   display: flex;
   flex-direction: column;
   border-right: 1px solid black;
@@ -4104,6 +4110,10 @@ span:nth-child(5){
   padding-left: 2px;
 }
 
+.tobeUsed{
+  height: 20%;
+
+}
 .conditionsection span:nth-child(1){
   font-family: Poppins, "Source Sans Pro";
   font-weight: 500;
@@ -4200,7 +4210,7 @@ span:nth-child(5){
 }
 
 .totalamount {
-  height: 20%;
+  height: 35%;
   border-bottom: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -4211,13 +4221,24 @@ span:nth-child(5){
   font-family: Poppins, "Source Sans Pro";
   font-weight: 500;
   font-size: 12px;
+  padding: 5px 0px;
 }
 
 .totalamount span:nth-child(2){
   font-family: Poppins, "Source Sans Pro";
   font-weight: 500;
-  font-size: 14px;
+  font-size: 12px;
+  padding: 5px 0px;
 }
+
+.totalamount span:nth-child(3){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 12px;
+  padding: 5px 0px;
+}
+
+
 
 .codesection{
   height: 40%;
@@ -4231,7 +4252,8 @@ span:nth-child(5){
 .codesection span:nth-child(1){
   font-family: Poppins, "Source Sans Pro";
   font-weight: 500;
-  font-size: 12px;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .codesection span:nth-child(2){
@@ -4254,12 +4276,17 @@ span:nth-child(5){
   font-size: 15px;
 }
 
-.approvedsby span:nth-child(2){
+.approvedsby span:nth-child(3){
   font-family: Poppins, "Source Sans Pro";
   font-weight: 500;
   font-size: 14px;
 }
-
+.signature-image {
+  max-width: 200px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+}
 .stockmain-section{
   border: 1px solid #DEE2E6;
   border-radius: 2px;
@@ -4378,6 +4405,62 @@ span:nth-child(5){
   /* ascii code for the ellipsis character */
   width: 0px;
 }
+
+.searchandexport {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  height: 55px;
+  position: relative;
+}
+
+.exportfield {
+  height: 100%;
+  margin-bottom: 2px;
+  position: relative; 
+}
+
+.exportfield button {
+  padding: 10px 30px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-family: Poppins, 'Source Sans Pro';
+}
+
+.export-options {
+  position: absolute;
+  bottom: -65px;
+  left: 150px; /* Align to the right side of the Export button */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  height: 100px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  justify-content: center;
+}
+
+.export-options button {
+  margin: 5px;
+}
+
+.export-options Button:nth-child(1){
+  font-size: 14px;
+}
+
+.export-options Button:nth-child(2){
+  font-size: 14px;
+}
+
+.searchfield {
+  margin-bottom: 20px;
+}
+
 
 @keyframes ellipsis {
   to {

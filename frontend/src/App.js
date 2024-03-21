@@ -520,7 +520,14 @@ function App() {
                     path="/purchaseRequestPreview/:id"
                     element={<PurchaseRequestPreview />}
                   />
-                  <Route path="/PRredirect/:id" element={<PRNotification />} />
+                  <Route 
+                    path="/PRredirect/:id" 
+                    element={
+                      <Roles>
+                        {(authrztn) => <PRNotification authrztn={authrztn} />}
+                      </Roles>
+                    } />
+
                   <Route
                     path="/forCanvass/:id"
                     element={<PurchaseReqForCanvass />}

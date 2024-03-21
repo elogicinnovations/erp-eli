@@ -544,7 +544,7 @@ router.route("/fetchPOarray").get(async (req, res) => {
 
 router.route("/approve_PO").post(async (req, res) => {
   try {
-    const { id, POarray, prNum, userId } = req.body;
+    const { id, POarray, prNum, userId, formattedDateApproved } = req.body;
     const gmailEmail = "sbfmailer@gmail.com";
     const gmailPassword = "uoetasnknsroxwnq";
 
@@ -604,7 +604,8 @@ router.route("/approve_PO").post(async (req, res) => {
     });
 
     const PR_newData = await PR.update({
-      status: 'To-Receive'
+      status: 'To-Receive',
+      date_approved: formattedDateApproved
     },
     {
       where: { id: id }
@@ -614,6 +615,7 @@ router.route("/approve_PO").post(async (req, res) => {
       pr_id: id,
       status: 'To-Receive',
       isRead: 1,
+      date_approved: formattedDateApproved
     });
 
     if (PR_newData) {

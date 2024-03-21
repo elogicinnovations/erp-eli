@@ -32,6 +32,10 @@ const PR = sequelize.define('purchase_req', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
+  }
 });
 
 module.exports = PR;

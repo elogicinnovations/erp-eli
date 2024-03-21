@@ -21,6 +21,7 @@ import { jwtDecode } from "jwt-decode";
 import html2canvas from "html2canvas";
 import ReactLoading from 'react-loading';
 import NoAccess from '../../../assets/image/NoAccess.png';
+import ESignature from '../../../assets/image/e-signature.png';
 
 function POApprovalRejustify({ authrztn }) {
   const { id } = useParams();
@@ -46,6 +47,39 @@ function POApprovalRejustify({ authrztn }) {
   const [userId, setuserId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [loadAprrove, setLoadAprrove] = useState(false);
+  const [POdepartmentUser, setDepartmentPO] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [dateApproved, setDateApproved] = useState(new Date());
+  const [approvalTriggered, setApprovalTriggered] = useState(false);
+  const [signatureTriggered, setsignatureTriggered] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const offset = 8 * 60;
+      // Adjust the time to Manila's time zone
+      const manilaTime = new Date(now.getTime() + offset * 60000); // add offset in milliseconds
+      // Update the state with Manila's time
+      setDate(manilaTime);
+    }, 1000); // update every second
+
+    // Cleanup function to clear the interval
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const offset = 8 * 60;
+      const manilaTime = new Date(now.getTime() + offset * 60000);
+      setDateApproved(manilaTime);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formattedDateApproved = dateApproved.toISOString().slice(0, 19).replace('T', ' ');
+
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
     if (typeof token === "string") {
@@ -132,9 +166,7 @@ function POApprovalRejustify({ authrztn }) {
         },
       })
       .then((res) => {
-        // console.log('Response data:', res.data); // Log the entire response data
         setPRnum(res.data.pr_num);
-        // Update this line to parse the date string correctly
         const parsedDate = new Date(res.data.date_needed);
         setDateNeeded(parsedDate);
 
@@ -144,11 +176,20 @@ function POApprovalRejustify({ authrztn }) {
       })
       .catch((err) => {
         console.error(err);
-        // Handle error state or show an error message to the user
       });
   }, [id]);
 
-  // const handleShow = () => setShowModal(true);
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/PR/fetchDepartment", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => setDepartmentPO(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
 
   const handleCancel = async (id) => {
     swal({
@@ -201,45 +242,42 @@ function POApprovalRejustify({ authrztn }) {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
+        setsignatureTriggered(true);
+        setApprovalTriggered(true);
         setLoadAprrove(true)
         try {
-          
-          // Initialize an array to store updated POarray with image data
           const updatedPOarray = [];
-
-          // Iterate over each purchase order in POarray
           for (const group of POarray) {
             let supp_code = group.items[0].suppliers.supplier_code;
             let supp_name = group.items[0].suppliers.supplier_name;
-            // Capture the content of each purchase order div individually
             const div = document.getElementById(
               `content-to-capture-${group.title}-${supp_code}-${supp_name}`
+
             );
+
+            const span = document.createElement('span');
+            span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
+            div.appendChild(span);
+            
             const canvas = await html2canvas(div);
             const imageData = canvas.toDataURL("image/png");
 
-            // Add the captured image data to the corresponding purchase order
             const updatedGroup = {
               ...group,
               imageData: imageData,
             };
 
-            // Push the updated purchase order to the array
             updatedPOarray.push(updatedGroup);
-
-            console.log(
-              // `content-to-capture-${group.title}-${supp_code}-${supp_name}`
-            );
+            // div.removeChild(span);
           }
 
           
-
-          // Proceed with approval process and send updated POarray to the backend
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             id,
             POarray: updatedPOarray,
             prNum,
             userId,
+            formattedDateApproved
           });
 
           if (response.status === 200) {
@@ -673,22 +711,27 @@ function POApprovalRejustify({ authrztn }) {
               size="xl"
             >
               <Modal.Header closeButton>
-                <Modal.Title></Modal.Title>
+                <Modal.Title 
+                style={{fontSize: '25px'}}>DEPARTMENT: <strong>{POdepartmentUser?.masterlist?.department?.department_name}</strong></Modal.Title>
               </Modal.Header>
               {POarray.map((group) => {
                 let totalSum = 0;
+                let TotalAmount = 0;
+                let vatTotal = 0;
+                let vatAmount = 0;
                 let currency = group.items[0].suppliers.supplier_currency;
                 let supp_code = group.items[0].suppliers.supplier_code;
                 let supp_name = group.items[0].suppliers.supplier_name;
                 let vat = group.items[0].suppliers.supplier_vat;
 
                 group.items.forEach((item, index) => {
-                  totalSum +=
-                    ((vat / 100) * item.suppPrice.price +
-                      item.suppPrice.price) *
-                    item.item.quantity;
-                });
+                  totalSum += item.suppPrice.price * item.item.quantity;
 
+                  vatTotal += (vat / 100);
+                  vatAmount += vatTotal * totalSum;
+                  TotalAmount += vatTotal * totalSum + totalSum;
+                });
+                vatAmount = vatAmount.toFixed(2)
                 totalSum = totalSum.toFixed(2);
 
                 return (
@@ -715,7 +758,7 @@ function POApprovalRejustify({ authrztn }) {
 
                         <div className="po-number-container">
                           <div className="shippedto">
-                            <span>SHIPPED TO:</span>
+                            {/* <span>SHIPPED TO:</span> */}
                           </div>
                           <div className="blank"></div>
                           <div className="po-content">
@@ -731,8 +774,8 @@ function POApprovalRejustify({ authrztn }) {
 
                         <div className="secondrowes">
                           <div className="leftsecondrows">
-                            <span>FOB</span>
-                            <span>VIA</span>
+                            {/* <span>FOB</span>
+                            <span>VIA</span> */}
                           </div>
 
                           <div className="midsecondrows">
@@ -744,12 +787,12 @@ function POApprovalRejustify({ authrztn }) {
 
                           <div className="rightsecondrows">
                             <span>
-                              PR NO.{" "}
+                              PR NO.
                               <label style={{ fontSize: 14, color: "red" }}>
                                 {prNum}
                               </label>
                             </span>
-                            <span>DATE PREPARED</span>
+                            <span>DATE PREPARED: <strong>{`${date.toLocaleDateString('en-PH')}`}</strong></span>
                           </div>
                         </div>
 
@@ -765,7 +808,7 @@ function POApprovalRejustify({ authrztn }) {
                           </div>
 
                           <div className="thirdrightrows">
-                            <span>{`UNIT PRICE (${vat}%)`}</span>
+                            <span>{`UNIT PRICE`}</span>
                             <span>TOTAL</span>
                           </div>
                         </div>
@@ -820,7 +863,6 @@ function POApprovalRejustify({ authrztn }) {
                               {group.items.map((item, index) => (
                                 <div key={index}>
                                   <label>{`${
-                                    (vat / 100) * item.suppPrice.price +
                                     item.suppPrice.price
                                   }`}</label>
                                   {/* <label>{`${item.suppPrice.price}`}</label> */}
@@ -835,9 +877,7 @@ function POApprovalRejustify({ authrztn }) {
                               {group.items.map((item, index) => (
                                 <div key={index}>
                                   <label>{`${
-                                    ((vat / 100) * item.suppPrice.price +
-                                      item.suppPrice.price) *
-                                    item.item.quantity
+                                  item.suppPrice.price * item.item.quantity
                                   }`}</label>
                                   <br />
                                 </div>
@@ -850,7 +890,7 @@ function POApprovalRejustify({ authrztn }) {
                           <div className="fifthleftrows">
                             <div className="received-section">
                               <span>P.O RECEIVED BY: </span>
-                              <span></span>
+                              <span><strong>{POdepartmentUser?.masterlist?.col_Fname}</strong></span>
                             </div>
                             <div className="deliverydate">
                               <span>DELIVERY DATE: </span>
@@ -868,6 +908,9 @@ function POApprovalRejustify({ authrztn }) {
 
                           <div className="fifthmidrows">
                             <div className="conditionsection">
+                              <div className="tobeUsed">
+                                <span>To be used for: <strong>{`${useFor}`}</strong></span>
+                              </div>
                               <span>TERMS AND CONDITIONS: </span>
                               <span>
                                 1. Acceptance of this order is an acceptance of
@@ -911,15 +954,20 @@ function POApprovalRejustify({ authrztn }) {
 
                           <div className="fifthrightrows">
                             <div className="totalamount">
-                              <span>Total Amount: </span>
-                              <span>{`${currency} ${totalSum}`}</span>
+                              <span>Total: <strong>{`${totalSum}`}</strong></span>
+
+                               <span>VAT ({`${vat}%`}): <strong>{`${vatAmount}`}</strong></span>
+
+                              <span>Total Amount: <strong>{`${currency} ${TotalAmount}`}</strong></span>
                             </div>
                             <div className="codesection">
-                              <span>Code:</span>
-                              <span></span>
+                              <span>Date Approved:</span>
+                              <span>{approvalTriggered && dateApproved.toLocaleDateString('en-PH')}</span>
                             </div>
                             <div className="approvedsby">
                               <span>Approved By: </span>
+                              {/* {approvalTriggered && } */}
+                              <img src={ESignature} alt="ESignature" className="signature-image" />
                               <span>Daniel Byron S. Afdal</span>
                             </div>
                           </div>

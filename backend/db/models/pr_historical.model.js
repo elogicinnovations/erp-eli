@@ -20,6 +20,10 @@ const PR_history = sequelize.define('purchase_req_history', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
   isRead: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,

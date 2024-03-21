@@ -14,9 +14,12 @@ const {PR,
        Assembly,
        SparePart,
        SubPart,
-       Product,} = require('../db/models/associations')
+       Product,
+       MasterList,
+      Department} = require('../db/models/associations')
 const session = require('express-session');
 const { route } = require('./masterlist.route');
+const moment = require('moment');
 
 router.use(session({
     secret: 'secret-key',
@@ -444,11 +447,128 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       res.status(500).json("Error");
     }
   });
+
+  router.route('/NomovementNotification').get(async (req, res) => {
+    try {
+      const prRecords = await PR.findAll();
   
+      const notifications = prRecords.filter(record => {
+        const DateCreated = new Date(record.createdAt);
+        const DateUpdated = new Date(record.updatedAt);
+        const status = record.status;
+  
+        const DateCreatedPlus2Months = new Date(DateCreated);
+        DateCreatedPlus2Months.setMonth(DateCreatedPlus2Months.getMonth() + 2);
+        const DateUpdatedPlus2Months = new Date(DateUpdated);
+        DateUpdatedPlus2Months.setMonth(DateUpdatedPlus2Months.getMonth() + 2);
+  
+        if (
+          DateCreated.getTime() === DateUpdated.getTime() &&
+          (status === 'For-Approval' ||
+            status === 'For-Canvassing' ||
+            status === 'On-Canvass' ||
+            status === 'For-Approval (PO)' ||
+            status === 'To-Receive' ||
+            status === 'For-Rejustify' ||
+            status === 'For-Rejustify (PO)') &&
+          Date.now() >= DateCreatedPlus2Months.getTime()
+        ) {
+          return true;
+        } else if (
+          DateCreated.getTime() !== DateUpdated.getTime() &&
+          (status === 'For-Approval' ||
+            status === 'For-Canvassing' ||
+            status === 'On-Canvass' ||
+            status === 'For-Approval (PO)' ||
+            status === 'To-Receive' ||
+            status === 'For-Rejustify' ||
+            status === 'For-Rejustify (PO)') &&
+          Date.now() >= DateUpdatedPlus2Months.getTime()
+        ) {
+          return true;
+        }
+        return false;
+      });
+  
+      res.status(200).json(notifications);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  // router.route('/NomovementNotification').get(async (req, res) => {
+  //   try {
+  //     const prRecords = await PR.findAll();
+
+  //     const DateCreated = prRecords.map(record => record.createdAt);
+  //     const DateUpdated = prRecords.map(record => record.updatedAt);
+  //     const status = prRecords.map(record => record.status);
+  
+  //     const DateCreatedPlus2Months = DateCreated.map(date => {
+  //       const newDate = new Date(date);
+  //       newDate.setMonth(newDate.getMonth() + 2);
+  //       return newDate;
+  //     });
+  
+  //     const DateUpdatedPlus2Months = DateUpdated.map(date => {
+  //       const newDate = new Date(date);
+  //       newDate.setMonth(newDate.getMonth() + 2);
+  //       return newDate;
+  //     });
+  
+  //     // for (let i = 0; i < prRecords.length; i++) {
+  //     //   const record = prRecords[i];
+  //     //   const createdAt = new Date(record.createdAt);
+  //     //   const updatedAt = new Date(record.updatedAt);
+  //     //   const status = record.status;
+  
+
+  //       if (
+  //         DateCreated === DateUpdated &&
+  //         (status === 'For-Approval' ||
+  //           status === 'For-Canvassing' ||
+  //           status === 'On-Canvass' ||
+  //           status === 'For-Approval (PO)' ||
+  //           status === 'To-Receive' ||
+  //           status === 'For-Rejustify' ||
+  //           status === 'For-Rejustify (PO)') &&
+  //           DateCreated >= DateCreatedPlus2Months
+  //       ) {
+  //         return res.status(200).json({ message: 'No movement in status for 2 months' });
+  //       } else if (
+  //         DateCreated !== DateUpdated &&
+  //         (status === 'For-Approval' ||
+  //           status === 'For-Canvassing' ||
+  //           status === 'On-Canvass' ||
+  //           status === 'For-Approval (PO)' ||
+  //           status === 'To-Receive' ||
+  //           status === 'For-Rejustify' ||
+  //           status === 'For-Rejustify (PO)') &&
+  //           DateUpdated >= DateUpdatedPlus2Months
+  //       ) {
+  //         return res.status(200).json({ message: 'No movement in status for 2 months' });
+  //       }
+
+  //     // }
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json({ error: 'Internal Server Error' });
+  //   }
+  // });
 
   router.route('/fetchSpecificPR').get(async (req, res) => {
     try {
       const data = await PR.findAll({
+        include: [{
+          model: MasterList,
+          required: true,
+
+            include: [{
+              model: Department,
+              required: true
+            }]
+        }],
           where: {
             id: req.query.id
           },
@@ -482,26 +602,26 @@ router.route('/fetchPRhistory').get(async (req, res) => {
   });
 
 
-  router.route('/markLowStockAsRead/:invId').put(async (req, res) => {
-    try {
-      const { invId } = req.params; // Extract inventory ID from URL params
-      const { typeofProduct } = req.body;
-      if(typeofProduct === 'product'){
-        await Inventory.update({ isRead: true }, { where: { inventory_id: invId} });
-      } else if (typeofProduct === 'assembly'){
-        await Inventory_Assembly.update({ isRead: true }, { where: { inventory_id: invId} });
-      } else if (typeofProduct === 'spare'){
-        await Inventory_Spare.update({ isRead: true }, { where: { inventory_id: invId} });
-      } else if (typeofProduct === 'subpart'){
-        await Inventory_Subpart.update({ isRead: true }, { where: { inventory_id: invId} });
-      }
+  // router.route('/markLowStockAsRead/:invId').put(async (req, res) => {
+  //   try {
+  //     const { invId } = req.params; // Extract inventory ID from URL params
+  //     const { typeofProduct } = req.body;
+  //     if(typeofProduct === 'product'){
+  //       await Inventory.update({ isRead: true }, { where: { inventory_id: invId} });
+  //     } else if (typeofProduct === 'assembly'){
+  //       await Inventory_Assembly.update({ isRead: true }, { where: { inventory_id: invId} });
+  //     } else if (typeofProduct === 'spare'){
+  //       await Inventory_Spare.update({ isRead: true }, { where: { inventory_id: invId} });
+  //     } else if (typeofProduct === 'subpart'){
+  //       await Inventory_Subpart.update({ isRead: true }, { where: { inventory_id: invId} });
+  //     }
   
-      res.status(200).json({ message: 'Low stock Notification marked as read' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
-    }
-  });
+  //     res.status(200).json({ message: 'Low stock Notification marked as read' });
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json("Error");
+  //   }
+  // });
 
 
   router.route("/fetchdropdownData").get(async (req, res) => {

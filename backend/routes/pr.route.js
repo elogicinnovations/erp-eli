@@ -187,6 +187,36 @@ router.route('/fetchTable_PO_view').get(async (req, res) => {
     }
   });
 
+  router.route('/fetchDepartment').get(async (req, res) => {
+    try {
+     
+      const data = await PR.findOne({
+        include : [{
+          model: MasterList,
+          required: true,
+            
+            include:[{
+              model: Department,
+              required: true
+            }]
+        }],
+          where: {
+            id: req.query.id
+          }
+      });
+  
+      if (data) {
+        // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
 
 router.route('/lastPRNumber').get(async (req, res) => {
     // try {

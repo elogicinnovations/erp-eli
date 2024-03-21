@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {where, Op, fn, col} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
-const {Activity_Log, MasterList} = require('../db/models/associations')
+const {Activity_Log, MasterList, Department} = require('../db/models/associations')
 const session = require('express-session')
 
 
@@ -16,12 +16,15 @@ router.route('/getlogged').get(async (req, res) => {
       const userIdtype = Notsuperadmin.map((item) => item.col_id);
   
       const actlog = await Activity_Log.findAll({
-        include: [
-          {
-            model: MasterList,
-            required: true,
-          },
-        ],
+        include: [{
+          model: MasterList,
+          required: true,
+
+            include: [{
+              model: Department,
+              required: true
+            }]
+        }],
         attributes: [
           'masterlist_id',
           [sequelize.fn('MAX', sequelize.col('Activity_Log.createdAt')), 'maxCreatedAt'],
@@ -41,26 +44,83 @@ router.route('/getlogged').get(async (req, res) => {
   });
 
 // activitylog.route.js file
-
 router.route("/fetchdropdownData").get(async (req, res) => {
   try {
     const data = await Activity_Log.findAll({
       where: { 
         masterlist_id: req.query.masterlist_id 
       },
-      order: [['createdAt', 'DESC']], // Add this line to order by createdAt in descending order
+      order: [['createdAt', 'DESC']],
+      include: [{
+        model: MasterList,
+        required: true,
+
+          include: [{
+            model: Department,
+            required: true
+          }]
+      }],
     });
 
     if (data) {
       return res.json(data);
     } else {
-      res.status(400);
+      res.status(400).json({ error: "No data found" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json("Error");
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.route("/fetchDataForExport").get(async (req, res) => {
+  try {
+    const data = await Activity_Log.findAll({
+      where: {
+        masterlist_id: { [Op.ne]: 1 },
+      },
+      include: [{
+        model: MasterList,
+        required: true,
+        include: [{
+          model: Department,
+          required: true
+        }]
+      }],
+      order: [['createdAt', 'DESC']]
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400).json({ error: "No data found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// router.route("/fetchdropdownData").get(async (req, res) => {
+//   try {
+//     const data = await Activity_Log.findAll({
+//       where: { 
+//         masterlist_id: req.query.masterlist_id 
+//       },
+//       order: [['createdAt', 'DESC']],
+//     });
+
+//     if (data) {
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
 router.route("/fetchmasterlist").get(async (req, res) => {
   try {

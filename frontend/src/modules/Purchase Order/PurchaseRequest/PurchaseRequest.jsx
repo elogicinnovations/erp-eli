@@ -56,6 +56,8 @@ function PurchaseRequest({ authrztn }) {
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
   const [userId, setuserId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
@@ -69,26 +71,11 @@ function PurchaseRequest({ authrztn }) {
     decodeToken();
   }, [])
 
-  const { items, ...pagination } = usePagination({
-    count: Math.ceil(filteredPR.length / 5),
-  });
+  const totalPages = Math.ceil(filteredPR.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
+  const currentItems = filteredPR.slice(startIndex, endIndex);
 
-  const List = styled('ul')({
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-    display: 'flex',
-    float: 'right'
-  });
-
-  // const [currentPage, setCurrentPage] = useState(1);
-
-  // const handleChange = (event, value) => {
-  //   setCurrentPage(value);
-  // };
-  
-  // const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  // const endIndex = startIndex + ITEMS_PER_PAGE;
 
   const handleRowToggle = async (id) => {
     try {
@@ -476,7 +463,7 @@ function PurchaseRequest({ authrztn }) {
                 </thead>
                 {filteredPR.length > 0 ? (
                   <tbody>
-                    {filteredPR.map((data, i) => (
+                    {currentItems.map((data, i) => (
                       <React.Fragment key={i}>
                         <tr>
                           <td>
@@ -604,63 +591,44 @@ function PurchaseRequest({ authrztn }) {
                     </div>
                 )}
               </table>
-              {/* <Stack spacing={2} style={{float: 'right'}}>
-                  <Pagination
-                    count={Math.ceil(filteredPR.length / ITEMS_PER_PAGE)}
-                    page={currentPage}
-                    onChange={handleChange}
-                    size="large"
-                    sx={{
-                      '& .MuiPaginationItem-icon': {
-                        fontSize: '30px',
-                      },
-                      '& .MuiPaginationItem-page': {
-                        fontSize: '13px',
-                      },
+
+               <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
                     }}
-                  />
-              </Stack> */}
-              <nav>
-                <List>
-                  {items.map(({ page, type, selected, ...item }, index) => {
-                    let children = null;
-                    if (type === 'start-ellipsis' || type === 'end-ellipsis') {
-                      children = '…';
-                    } else if (type === 'page') {
-                      children = (
-                        <button
-                          type="button"
-                          style={{
-                            fontWeight: selected ? 'bold' : undefined,
-                            fontSize: '14px',
-                            width: '25px',
-                            background: '#FFA500',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            height: '28px',
-
-                          }}
-                          {...item}
-                        >
-                          {page}
-                        </button>
-                      );
-                    } else {
-                      children = (
-                        <button type="button" {...item}
-                        style={{fontSize: '14px',
-                        cursor: 'pointer',
-                        color: '#000000',
-                        textTransform: 'capitalize'}}>
-                          {type}
-                        </button>
-                      );
-                    }
-
-                    return <li key={index}>{children}</li>;
-                  })}
-                </List>
-              </nav>
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
             </div>
           </div>
         </div>

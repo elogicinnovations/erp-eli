@@ -30,6 +30,7 @@ const Header = () => {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [unreadLowStockNotifications, setunreadLowStockNotifications] = useState(0);
   const [lowStocknotif, setlowStocknotif] = useState([]);
+  const [noMovementStatus, setNoMovementStatus] = useState([]);
   //code for fetching the user login info
 
   const [Fname, setFname] = useState("");
@@ -136,10 +137,19 @@ const Header = () => {
       .get(BASE_URL + "/PR_history/LowOnstockProduct")
       .then((res) => {
         setlowStocknotif(res.data);
-        const unreadCount = res.data.filter(
-          (notification) => !notification.isRead
-        ).length;
-        setunreadLowStockNotifications(unreadCount);
+        // const unreadCount = res.data.filter(
+        //   (notification) => !notification.isRead
+        // ).length;
+        // setunreadLowStockNotifications(unreadCount);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/PR_history/NomovementNotification")
+      .then((res) => {
+        setNoMovementStatus(res.data);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -301,17 +311,21 @@ const Header = () => {
             <div className="notification-wrapper" ref={notificationRef}>
             <button className="notification" onClick={toggleNotifications}>
               <Bell size={35} />
-              {(unreadNotifications > 0 || unreadLowStockNotifications > 0) && (
+              {/* {(unreadNotifications > 0 || unreadLowStockNotifications > 0) && (
                 <div className="notification-indicator">
                 </div>
-              )}
+              )} */}
+              {(unreadNotifications > 0 && (
+              <div className="notification-indicator">
+              </div>  
+            ))}
             </button>
               {showNotifications && (
                 <div className="notification-drop-down">
                   <div className="notification-triangle"></div>
                   <div className="notification-header">Notifications</div>
                   <div className="notification-content">
-                    {prhistory.length === 0 && lowStocknotif.length === 0 ? (
+                    {prhistory.length === 0 && lowStocknotif.length === 0 && noMovementStatus.length === 0 ? (
                       <div className="empty-notification" style={{ fontSize: "16px" }}>
                         No Notifications Yet
                       </div>
@@ -359,7 +373,7 @@ const Header = () => {
                             key={index}
                             className="notification-item"
                             onClick={() => {
-                              handleLowstockNotification(item.invId, item.type);
+                              handleLowstockNotification(item.id, item.type);
                             }}
                             style={{ cursor: "pointer" }}>
                             <div className="notif-icon">
@@ -369,6 +383,27 @@ const Header = () => {
                               <div className="notif">Low Stock Level</div>
                               <div className="notif-content">{`The stock for ${item.name} is low`}</div>
                               <div className="notif-date">{formatDate(new Date())}</div>
+                            </div>
+                            <div className="notif-close"></div>
+                          </div>
+                        ))}
+
+                          {noMovementStatus.map((item, index) => (
+                          <div
+                            key={index}
+                            className="notification-item"
+                            onClick={() => {
+                              handleLowstockNotification(item.id);
+                              navigate(`/PRredirect/${item.id}`);
+                            }}
+                            style={{ cursor: "pointer" }}>
+                            <div className="notif-icon">
+                              <WarningCircle size={32} color="#ff0000" />
+                            </div>
+                            <div className="notif-container">
+                              <div className="notif">This Purchase Request has no update</div>
+                              <div className="notif-content">{`The purchase request number ${item.pr_num} is no movement`}</div>
+                              <div className="notif-date">{formatDate(item.createdAt)}</div>
                             </div>
                             <div className="notif-close"></div>
                           </div>
