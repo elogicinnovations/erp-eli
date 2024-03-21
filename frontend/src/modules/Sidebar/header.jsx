@@ -373,7 +373,7 @@ const Header = () => {
                             key={index}
                             className="notification-item"
                             onClick={() => {
-                              handleLowstockNotification(item.id, item.type);
+                              handleLowstockNotification(item.invId, item.type);
                             }}
                             style={{ cursor: "pointer" }}>
                             <div className="notif-icon">
