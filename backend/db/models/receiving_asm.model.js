@@ -24,6 +24,10 @@ const Receiving_Asm = sequelize.define("receiving_asm", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  transfered_quantity:{
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   set_quantity: {
     type: DataTypes.INTEGER,
     allowNull: true,

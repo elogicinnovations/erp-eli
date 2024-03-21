@@ -20,6 +20,10 @@ const Receiving_Prd = sequelize.define('receiving_prd', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  transfered_quantity:{
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   remaining_quantity:{
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -28,17 +32,17 @@ const Receiving_Prd = sequelize.define('receiving_prd', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  picture: {
-    type: DataTypes.BLOB("long"),
-    allowNull: true,
-    get() {
-      const value = this.getDataValue("product_image");
-      return value ? value.toString("base64") : null;
-    },
-    set(value) {
-      this.setDataValue("product_image", Buffer.from(value, "base64"));
-    },
-  },
+  // picture: {
+  //   type: DataTypes.BLOB("long"),
+  //   allowNull: true,
+  //   get() {
+  //     const value = this.getDataValue("product_image");
+  //     return value ? value.toString("base64") : null;
+  //   },
+  //   set(value) {
+  //     this.setDataValue("product_image", Buffer.from(value, "base64"));
+  //   },
+  // },
 });
 
 module.exports = Receiving_Prd;

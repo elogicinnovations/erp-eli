@@ -62,6 +62,8 @@ import CreateStockTransfer from "./modules/Warehouse/Stock Management/CreateStoc
 import StockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
 import ReceivingManagement from "./modules/Warehouse/Receiving Management/ReceivingManagement";
 import ReceivingManagementPreview from "./modules/Warehouse/Receiving Management/ReceivingManagementPreview";
+import ReceivingIntransit from "./modules/Warehouse/Receiving Management/ReceivingIntransit.jsx";
+import ReceivingPreview from "./modules/Warehouse/Receiving Management/ReceivingPreview";
 import ReceivingStockTransferPreview from "./modules/Warehouse/Receiving Stock Transfer/ReceivingStockTransferPreview";
 import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
@@ -600,6 +602,26 @@ function App() {
                       <Roles>
                         {(authrztn) => (
                           <ReceivingManagementPreview authrztn={authrztn} />
+                        )}
+                      </Roles>
+                    }
+                  />
+                   <Route
+                    path="/receivingIntransit/:id"
+                    element={
+                      <Roles>
+                        {(authrztn) => (
+                          <ReceivingIntransit authrztn={authrztn} />
+                        )}
+                      </Roles>
+                    }
+                  />
+                    <Route
+                    path="/receivingPreview/:id"
+                    element={
+                      <Roles>
+                        {(authrztn) => (
+                          <ReceivingPreview authrztn={authrztn} />
                         )}
                       </Roles>
                     }

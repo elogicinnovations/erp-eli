@@ -24,6 +24,10 @@ const Receiving_Subpart = sequelize.define('receiving_subpart', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  transfered_quantity:{
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   set_quantity:{
     type: DataTypes.INTEGER,
     allowNull: true,
