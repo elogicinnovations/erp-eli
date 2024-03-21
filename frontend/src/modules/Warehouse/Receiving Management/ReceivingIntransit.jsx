@@ -32,7 +32,7 @@ import { fontStyle } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
 import { jwtDecode } from "jwt-decode";
 
-function ReceivingManagementPreview({ authrztn }) {
+function ReceivingIntransit({ authrztn }) {
   const label_qa = { inputProps: { "aria-label": "Checkbox demo" } };
   const navigate = useNavigate();
   const [validated, setValidated] = useState(false);
@@ -40,6 +40,8 @@ function ReceivingManagementPreview({ authrztn }) {
 
   const { id } = useParams();
   const [prNumber, setPrNumber] = useState();
+  const [poID, setpoID] = useState("");
+  const [prID, setprID] = useState("");
   const [dateNeeded, setDateNeeded] = useState();
   const [usedFor, setUsedFor] = useState();
   const [department, setDepartment] = useState();
@@ -70,9 +72,8 @@ function ReceivingManagementPreview({ authrztn }) {
     setValidated(false);
     setShow(false);
     setShowTransaction(false);
-    setsuppReceving('')
-    setcustomFee('')
-    setShippingFee('')
+    setcustomFee("");
+    setShippingFee("");
   };
   // const handleShow = () => setShow(true);
 
@@ -80,20 +81,25 @@ function ReceivingManagementPreview({ authrztn }) {
   useEffect(() => {
     const delay = setTimeout(() => {
       axios
-        .get(BASE_URL + "/PR/viewToReceive", {
+        .get(BASE_URL + "/receiving/viewToReceive", {
           params: {
             id: id,
           },
         })
         .then((res) => {
-          setPrNumber(res.data[0].pr_num);
-          setDateNeeded(res.data[0].date_needed);
-          setUsedFor(res.data[0].used_for);
-          setRemarks(res.data[0].remarks);
-          setDepartment(res.data[0].masterlist.department.department_name);
-          setRequestedBy(res.data[0].masterlist.col_Fname);
-          setStatus(res.data[0].status);
-          setDateCreated(res.data[0].createdAt);
+          setprID(res.data.primary.pr_id);
+          setpoID(res.data.primary.po_id);
+          setPrNumber(res.data.primary.purchase_req.pr_num);
+          setPrNumber(res.data.primary.purchase_req.pr_num);
+          setDateNeeded(res.data.primary.purchase_req.date_needed);
+          setUsedFor(res.data.primary.purchase_req.used_for);
+          setRemarks(res.data.primary.purchase_req.remarks);
+          setDepartment(
+            res.data.primary.purchase_req.masterlist.department.department_name
+          );
+          setRequestedBy(res.data.primary.purchase_req.masterlist.col_Fname);
+          setStatus(res.data.primary.status);
+          setDateCreated(res.data.primary.purchase_req.createdAt);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -108,10 +114,12 @@ function ReceivingManagementPreview({ authrztn }) {
 
   const [POarray, setPOarray] = useState([]);
   useEffect(() => {
+    const po_id = poID;
+    const pr_id = prID;
     axios
-      .get(BASE_URL + "/invoice/fetchPOarray", {
+      .post(BASE_URL + "/receiving/fetchPOarray", null, {
         params: {
-          id: id,
+          id,
         },
       })
       .then((res) => setPOarray(res.data))
@@ -140,10 +148,11 @@ function ReceivingManagementPreview({ authrztn }) {
     setIsLoading(true);
     setShow(true);
     axios
-      .get(BASE_URL + "/PO_Received/PO_products", {
+      .get(BASE_URL + "/receiving/PO_products", {
         params: {
-          pr_id: id,
-          po_number,
+          pr_id: prID,
+          po_number: poID,
+          id,
         },
       })
       .then((res) => {
@@ -333,10 +342,7 @@ function ReceivingManagementPreview({ authrztn }) {
     });
   };
 
-  const [suppReceving, setsuppReceving] = useState("");
-  const handleChangeReceiving = (event) => {
-    setsuppReceving(event.target.value);
-  };
+  const [suppReceving, setsuppReceving] = useState("Agusan Del Sur");
 
   const [addReceivebackend, setReceivebackend] = useState([]);
 
@@ -345,31 +351,22 @@ function ReceivingManagementPreview({ authrztn }) {
       return {
         title,
         serializedArray: items.map((child) => ({
-          canvassed_ID: child.item.id,
-          ordered_quantity: child.item.quantity,
+          initialTB_id: child.item.id,
+          canvassed_ID: child.item.canvassed_id,
+          ordered_quantity: child.item.received_quantity,
           type: child.type,
-          set_quantity:
-            inputValues[
-              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-            ]?.Squantity || "",
+          set_quantity: child.item.set_quantity,
           Received_quantity:
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
             ]?.Rquantity || "",
-          Remaining_quantity: inputValues[
-            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-          ]?.Squantity
-            ? inputValues[
-                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-              ]?.Squantity *
-                child.item.quantity -
+          Remaining_quantity: child.item.set_quantity
+            ? child.item.set_quantity * child.item.received_quantity -
               inputValues[
                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
               ]?.Rquantity *
-                inputValues[
-                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                ]?.Squantity
-            : child.item.quantity -
+                child.item.set_quantity
+            : child.item.received_quantity -
               inputValues[
                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
               ]?.Rquantity,
@@ -397,14 +394,15 @@ function ReceivingManagementPreview({ authrztn }) {
     } else {
       try {
         const response = await axios.post(
-          BASE_URL + "/receiving/insertReceived",
+          BASE_URL + "/receiving/insertReceived_Intransit",
           {
             addReceivebackend,
             productImages,
             customFee,
             shippingFee,
             suppReceving,
-            po_id,
+            poID,
+            prID,
             id,
             userId,
           }
@@ -418,7 +416,6 @@ function ReceivingManagementPreview({ authrztn }) {
             button: "OK",
           }).then(() => {
             handleClose();
-            
           });
         } else {
           swal({
@@ -611,7 +608,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   >
                     <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                   </Link>
-                  <h1>Receiving Management Preview</h1>
+                  <h1>Receiving (Davao)</h1>
                 </div>
               </Col>
             </Row>
@@ -738,6 +735,7 @@ function ReceivingManagementPreview({ authrztn }) {
                     Remarks{" "}
                   </Form.Label>
                   <Form.Control
+                    readOnly
                     onChange={(e) => setRemarks(e.target.value)}
                     placeholder="Enter details name"
                     value={remarks}
@@ -810,12 +808,12 @@ function ReceivingManagementPreview({ authrztn }) {
                             >
                               Receive
                             </button>
-                            <button
+                            {/* <button
                               className="btn btn-success"
                               onClick={() => handleViewTransaction(group.title)}
                             >
                               View
-                            </button>
+                            </button> */}
                           </div>
                         </div>
                       </div>
@@ -845,29 +843,19 @@ function ReceivingManagementPreview({ authrztn }) {
                     style={{ marginTop: "-20px" }}
                   >
                     <label className="" style={{ fontSize: 12 }}>
-                      Select a Receiving Area:{" "}
+                      Receiving Area:{" "}
                     </label>
                     <div class="">
-                      <Form.Select
-                        aria-label=""
+                      <Form.Control
                         required
                         style={{
                           fontSize: 13,
                           width: "200px",
                           marginRight: 10,
                         }}
-                        defaultValue=""
-                        onChange={handleChangeReceiving}
-                      >
-                        <option disabled value="">
-                          Select City ...
-                        </option>
-                        {warehouse.map((city, index) => (
-                          <option key={index} value={city}>
-                            {city}
-                          </option>
-                        ))}
-                      </Form.Select>
+                        value={suppReceving}
+                        readOnly
+                      ></Form.Control>
                     </div>
                   </div>
                 </div>
@@ -882,66 +870,64 @@ function ReceivingManagementPreview({ authrztn }) {
                 </h2>
               </div>
 
-              {suppReceving === 'Davao City' ? (
-                  <div>
-                   
-                  </div>
-                ) : 
-                suppReceving === 'Agusan Del Sur' ? (
+              {suppReceving === "Davao City" ? (
+                <div></div>
+              ) : suppReceving === "Agusan Del Sur" ? (
                 <div className="col-6 ">
-                <div className="d-flex flex-direction-column justify-content-center align-items-center">
-                <div
-                  className="d-flex flex-direction-row justify-content-center align-items-center "
-                  style={{ float: "right", marginTop: "-20px" }}
-                >
-                  <Form.Label style={{ fontSize: "15px" }}>
-                    Duties & Custom Fee:
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    
-                    style={{
-                      height: "35px",
-                      width: "100px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                      marginLeft: "5px",
-                    }}
-                    onChange={(e) => setcustomFee(e.target.value)}
-                    onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
-                        e.preventDefault();
-                    }}
-                  />
+                  <div className="d-flex flex-direction-column justify-content-center align-items-center">
+                    <div
+                      className="d-flex flex-direction-row justify-content-center align-items-center "
+                      style={{ float: "right", marginTop: "-20px" }}
+                    >
+                      <Form.Label style={{ fontSize: "15px" }}>
+                        Duties & Custom Fee:
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        style={{
+                          height: "35px",
+                          width: "100px",
+                          fontSize: "14px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                          marginLeft: "5px",
+                        }}
+                        onChange={(e) => setcustomFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                    <div
+                      className="d-flex flex-direction-row justify-content-center align-items-center ml-5"
+                      style={{ float: "right", marginTop: "-20px" }}
+                    >
+                      <Form.Label style={{ fontSize: "15px" }}>
+                        Shipping Fee:
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        style={{
+                          height: "35px",
+                          width: "100px",
+                          fontSize: "14px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                          marginLeft: "5px",
+                        }}
+                        onChange={(e) =>
+                          handleInputChangeShipping(e.target.value)
+                        }
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div
-                  className="d-flex flex-direction-row justify-content-center align-items-center ml-5"
-                  style={{ float: "right", marginTop: "-20px" }}
-                >
-                  <Form.Label style={{ fontSize: "15px" }}>
-                    Shipping Fee:
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    
-                    style={{
-                      height: "35px",
-                      width: "100px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                      marginLeft: "5px",
-                    }}
-                    onChange={(e) => handleInputChangeShipping(e.target.value)}
-                    onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
-                        e.preventDefault();
-                    }}
-                  />
-                </div>
-                </div>
-              </div>
-              ) : <></>}
-             
+              ) : (
+                <></>
+              )}
             </div>
 
             <div className="row mb-5">
@@ -998,14 +984,14 @@ function ReceivingManagementPreview({ authrztn }) {
                   </div>
 
                   <div className="col-3 d-flex flex-direction-row">
-                    <div className="row" style={{ marginTop: "-40px"}}>
+                    <div className="row" style={{ marginTop: "-40px" }}>
                       <div className="col-4">
                         <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: "15px" }}>
-                            PR :{" "}
+                            Received{" "}
                           </Form.Label>
                           <Form.Control
-                            value={child.item.quantity}
+                            value={child.item.received_quantity}
                             // readOnly={
                             //   checkedRows[parentIndex]?.[childIndex]
                             // }
@@ -1020,45 +1006,46 @@ function ReceivingManagementPreview({ authrztn }) {
                         </Form.Group>
                       </div>
                       <div className="col-4">
-                        {checkedRows[parentIndex]?.[childIndex] && (
-                          <Form.Group controlId="exampleForm.ControlInput2">
-                            <Form.Label style={{ fontSize: "15px" }}>
-                              /pcs:{" "}
-                            </Form.Label>
-                            <Form.Control
-                              type="number"
-                              readOnly={child.item.quantity === 0}
-                              placeholder="Quantity"
-                              required
-                              onKeyDown={(e) => {
-                                ["e", "E", "+", "-"].includes(e.key) &&
-                                  e.preventDefault();
-                              }}
-                              value={
-                                inputValues[
-                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                ]?.Squantity || ""
-                              }
-                              onChange={(e) =>
-                                handleInputChange(
-                                  e.target.value,
-                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                                  "Squantity",
-                                  child.item.quantity
-                                )
-                              }
-                              style={{
-                                height: "35px",
-                                width: "100px",
-                                fontSize: "14px",
-                                fontFamily: "Poppins, Source Sans Pro",
-                              }}
-                            />
-                          </Form.Group>
-                        )}
+                        {/* {checkedRows[parentIndex]?.[childIndex] && ( */}
+                        <Form.Group controlId="exampleForm.ControlInput2">
+                          <Form.Label style={{ fontSize: "15px" }}>
+                            /pcs:{" "}
+                          </Form.Label>
+                          <Form.Control
+                            type="number"
+                            readOnly
+                            placeholder="Quantity"
+                            required
+                            onKeyDown={(e) => {
+                              ["e", "E", "+", "-"].includes(e.key) &&
+                                e.preventDefault();
+                            }}
+                            value={
+                              inputValues[
+                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              ]?.Squantity || child.item.set_quantity
+                            }
+                            // value={child.item.set_quantity}
+                            onChange={(e) =>
+                              handleInputChange(
+                                e.target.value,
+                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                "Squantity",
+                                child.item.received_quantity
+                              )
+                            }
+                            style={{
+                              height: "35px",
+                              width: "100px",
+                              fontSize: "14px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                          />
+                        </Form.Group>
+                        {/* )}  */}
                       </div>
                       <div className="col-4">
-                        <label
+                        {/* <label
                           className="userstatus"
                           style={{
                             fontSize: 15,
@@ -1080,7 +1067,7 @@ function ReceivingManagementPreview({ authrztn }) {
                             handleCheckbox(e, parentIndex, childIndex)
                           }
                           // style={{ marginTop: "25px" }}
-                        />
+                        /> */}
                       </div>
                     </div>
                   </div>
@@ -1095,7 +1082,7 @@ function ReceivingManagementPreview({ authrztn }) {
                         controlId="exampleForm.ControlInput2"
                       >
                         <Form.Label style={{ fontSize: "15px" }}>
-                          Received :{" "}
+                          Delivered :{" "}
                         </Form.Label>
                         <Form.Control
                           type="number"
@@ -1111,8 +1098,12 @@ function ReceivingManagementPreview({ authrztn }) {
                               e.target.value,
                               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
                               "Rquantity",
-                              child.item.quantity
+                              child.item.received_quantity
                             )
+                          }
+                          onKeyDown={(e) =>
+                            ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault()
                           }
                           style={{
                             height: "35px",
@@ -1140,37 +1131,32 @@ function ReceivingManagementPreview({ authrztn }) {
                             width: "100px",
                             fontSize: "14px",
                             fontFamily: "Poppins, Source Sans Pro",
-                            pointerEvents: 'none'
+                            pointerEvents: "none",
                           }}
                           onChange={(e) =>
                             handleInputChange(
                               e.target.value,
                               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
                               "Tquantity",
-                              child.item.quantity
+                              child.item.received_quantity
                             )
                           }
                           value={
                             // inputValues[
                             //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                             // ]?.Tquantity || ""
-                            (inputValues[
-                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                            ]?.Squantity
-                              ? inputValues[
-                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                ]?.Squantity *
-                                  child.item.quantity -
+                            (child.item.set_quantity
+                              ? child.item.set_quantity *
+                                  child.item.received_quantity -
                                 inputValues[
                                   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                                 ]?.Rquantity *
-                                  inputValues[
-                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                  ]?.Squantity
-                              : child.item.quantity -
+                                child.item.set_quantity
+                              : 
+                              child.item.received_quantity -
                                 inputValues[
                                   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                ]?.Rquantity) || 0
+                                ]?.Rquantity) || child.item.received_quantity - child.item.received_quantity
                           }
                         />
                       </Form.Group>
@@ -1408,4 +1394,4 @@ function ReceivingManagementPreview({ authrztn }) {
   );
 }
 
-export default ReceivingManagementPreview;
+export default ReceivingIntransit;

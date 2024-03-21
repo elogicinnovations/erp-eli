@@ -36,10 +36,12 @@ import Header from "../../../partials/header";
 function ReceivingManagement({ authrztn }) {
   const navigate = useNavigate();
   const [PurchaseRequest, setPurchaseRequest] = useState([]);
+  const [receivingPO, setReceivingPO] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [filteredPR, setFilteredPR] = useState([]);
+  const [filteredRR, setFilteredRR] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch Data
@@ -49,8 +51,10 @@ function ReceivingManagement({ authrztn }) {
       axios
         .get(BASE_URL + "/PR/fetchTableToReceive")
         .then((res) => {
-          setPurchaseRequest(res.data);
-          setFilteredPR(res.data);
+          setPurchaseRequest(res.data.prData);
+          setReceivingPO(res.data.receiving_PO);
+          setFilteredPR(res.data.prData);
+          setFilteredRR(res.data.receivingPO);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -142,7 +146,11 @@ function ReceivingManagement({ authrztn }) {
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && PurchaseRequest.length > 0) {
+    if (
+      $("#order-listing").length > 0 &&
+      PurchaseRequest.length > 0 &&
+      receivingPO.length > 0
+    ) {
       $("#order-listing").DataTable();
     }
   }, [PurchaseRequest]);
@@ -310,9 +318,9 @@ function ReceivingManagement({ authrztn }) {
                       <th className="tableh">Remarks</th>
                     </tr>
                   </thead>
-                  {filteredPR.length > 0 ? (
+                  {PurchaseRequest.length > 0 || receivingPO > 0 ? (
                     <tbody>
-                      {filteredPR.map((data, i) => (
+                      {PurchaseRequest.map((data, i) => (
                         <tr key={i}>
                           <td
                             onClick={() =>
@@ -325,13 +333,17 @@ function ReceivingManagement({ authrztn }) {
                             onClick={() =>
                               navigate(`/viewToReceive/${data.id}`)
                             }
-                          >{data.masterlist.col_Fname}</td>
+                          >
+                            {data.masterlist.col_Fname}
+                          </td>
 
-<td
+                          <td
                             onClick={() =>
                               navigate(`/viewToReceive/${data.id}`)
                             }
-                          >{data.masterlist.department.department_name}</td>
+                          >
+                            {data.masterlist.department.department_name}
+                          </td>
                           <td
                             onClick={() =>
                               navigate(`/viewToReceive/${data.id}`)
@@ -352,6 +364,93 @@ function ReceivingManagement({ authrztn }) {
                             }
                           >
                             {data.remarks}
+                          </td>
+                        </tr>
+                      ))}
+
+                      {receivingPO.map((data, i) => (
+                        <tr key={i}>
+                          <td
+                            onClick={() =>
+                              data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            {data.purchase_req.pr_num}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            {data.purchase_req.masterlist.col_Fname}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            {
+                              data.purchase_req.masterlist.department
+                                .department_name
+                            }
+                          </td>
+
+                          <td
+                            onClick={() =>
+                              data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            {data.status}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            {formatDatetime(data.createdAt)}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            N/A
                           </td>
                         </tr>
                       ))}

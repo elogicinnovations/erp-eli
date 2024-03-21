@@ -71,6 +71,11 @@ const Receiving_Spare = require("./receiving_spare.model");
 const Receiving_Subpart = require("./receiving_subpart.model");
 const Receiving_Image = require("./receiving_picture.model");
 
+const Receiving_initial_prd = require("./receiving_initial_prd.model")
+const Receiving_initial_asm = require("./receiving_initial_asm.model")
+const Receiving_initial_spare = require("./receiving_initial_spare.model")
+const Receiving_initial_subpart = require("./receiving_initial_subpart.model")
+
 const StockTransfer = require("./stockTransfer.model");
 const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
@@ -508,6 +513,33 @@ Receiving_Spare.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
 Receiving_PO.hasMany(Receiving_Subpart, { foreignKey: "receiving_po_id" });
 Receiving_Subpart.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
 
+
+
+//for initial received (davao received)
+PR_PO.hasMany(Receiving_initial_prd, { foreignKey: "canvassed_id" });
+Receiving_initial_prd.belongsTo(PR_PO, { foreignKey: "canvassed_id" });
+
+PR_PO_asmbly.hasMany(Receiving_initial_asm, { foreignKey: "canvassed_id" });
+Receiving_initial_asm.belongsTo(PR_PO_asmbly, { foreignKey: "canvassed_id" });
+
+PR_PO_spare.hasMany(Receiving_initial_spare, { foreignKey: "canvassed_id" });
+Receiving_initial_spare.belongsTo(PR_PO_spare, { foreignKey: "canvassed_id" });
+
+PR_PO_subpart.hasMany(Receiving_initial_subpart, { foreignKey: "canvassed_id" });
+Receiving_initial_subpart.belongsTo(PR_PO_subpart, { foreignKey: "canvassed_id" });
+
+Receiving_PO.hasMany(Receiving_initial_prd, { foreignKey: "receiving_po_id" });
+Receiving_initial_prd.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+Receiving_PO.hasMany(Receiving_initial_asm, { foreignKey: "receiving_po_id" });
+Receiving_initial_asm.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+Receiving_PO.hasMany(Receiving_initial_spare, { foreignKey: "receiving_po_id" });
+Receiving_initial_spare.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+Receiving_PO.hasMany(Receiving_initial_subpart, { foreignKey: "receiving_po_id" });
+Receiving_initial_subpart.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
 PR.hasMany(Receiving_PO, { foreignKey: "pr_id" });
 Receiving_PO.belongsTo(PR, { foreignKey: "pr_id" });
 
@@ -586,6 +618,11 @@ module.exports = {
   Receiving_Spare,
   Receiving_Subpart,
   Receiving_Image,
+  Receiving_initial_prd,
+  Receiving_initial_asm,
+  Receiving_initial_spare,
+  Receiving_initial_subpart,
+
 
   StockTransfer,
   StockTransfer_prod,
