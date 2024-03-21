@@ -265,6 +265,7 @@ router.route("/lastPRNumber").get(async (req, res) => {
   }
 });
 
+
 router.route("/create").post(async (req, res) => {
   try {
     const { prNum, dateNeed, useFor, remarks, addProductbackend, userId } =
@@ -323,35 +324,49 @@ router.route("/create").post(async (req, res) => {
         console.log("SubPart insert");
       }
 
-  router.route('/fetchDepartment').get(async (req, res) => {
-    try {
-     
-      const data = await PR.findOne({
-        include : [{
-          model: MasterList,
-          required: true,
-            
-            include:[{
-              model: Department,
-              required: true
-            }]
-        }],
-          where: {
-            id: req.query.id
-          }
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Purchase Request: Created a new pr for ${prod_type} with number of ${prNum}`,
       });
-  
-      if (data) {
-        // console.log(data);
-        return res.json(data);
-      } else {
-        res.status(400);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
     }
-  });
+
+    res.status(200).json();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred");
+  }
+});
+
+router.route('/fetchDepartment').get(async (req, res) => {
+  try {
+   
+    const data = await PR.findOne({
+      include : [{
+        model: MasterList,
+        required: true,
+          
+          include:[{
+            model: Department,
+            required: true
+          }]
+      }],
+        where: {
+          id: req.query.id
+        }
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+  
 
 
 router.route('/lastPRNumber').get(async (req, res) => {
