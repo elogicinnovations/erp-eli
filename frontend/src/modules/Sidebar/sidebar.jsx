@@ -235,7 +235,7 @@ function Sidebar({ authrztn }) {
               onClick={toggleOff}
             >
               <SquaresFour size={20} />
-              <ListItemText primary="DASHBOARD" />
+              <ListItemText primary="Dashboard" />
             </ListItem>
           </NavLink>
 
@@ -252,7 +252,7 @@ function Sidebar({ authrztn }) {
             }}
           >
             <Users size={20} />
-            <ListItemText primary="ADMINISTRATOR" />
+            <ListItemText primary="Administrator" />
             {openAdministrator ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
 
@@ -609,7 +609,7 @@ function Sidebar({ authrztn }) {
                 onClick={toggleOff}
               >
                 <Archive size={20} />
-                <ListItemText primary="INVENTORY" />
+                <ListItemText primary="Inventory" />
               </ListItem>
             </NavLink>
           )}
@@ -628,7 +628,7 @@ function Sidebar({ authrztn }) {
               }}
             >
               <ClipboardText size={20} />
-              <ListItemText primary="PURCHASE ORDER" />
+              <ListItemText primary="Purchase Order" />
               {openPurchaseOrder ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
           )}
@@ -688,7 +688,7 @@ function Sidebar({ authrztn }) {
               }}
             >
               <Warehouse size={20} />
-              <ListItemText primary="WAREHOUSE" />
+              <ListItemText primary="Warehouse" />
               {openWarehouse ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
           )}
@@ -772,7 +772,7 @@ function Sidebar({ authrztn }) {
               }}
             >
               <ChartLineUp size={20} />
-              <ListItemText primary="REPORTS" />
+              <ListItemText primary="Reports" />
               {openReports ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
           )}
@@ -842,7 +842,7 @@ function Sidebar({ authrztn }) {
                 onClick={toggleOff}
               >
                 <Scroll size={20} />
-                <ListItemText primary="ACTIVITY LOGS" />
+                <ListItemText primary="Activity Logs" />
               </ListItem>
             </NavLink>
           )}

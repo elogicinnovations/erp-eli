@@ -3797,11 +3797,12 @@ span:nth-child(5){
 }
 
 .midsecondrows span:nth-child(1){
-  font-size: 12px;
+  font-size: 14px;
   font-family: Poppins, "Source Sans Pro";
   padding-top: 5px;
   padding-bottom: 5px;
-  font-weight: 500;
+  padding-left: 3px;
+  font-weight: bold;
   border-bottom: 1px solid black;
 }
 
@@ -3887,7 +3888,6 @@ span:nth-child(5){
 
 .thirdmidrows{
   width: 60%;
-  text-align: center;
   border-bottom: 1px solid black;
 }
 
@@ -4091,7 +4091,6 @@ span:nth-child(5){
 }
 
 .preparedby span:nth-child(2){
-  font-weight: 500;
   font-family: Poppins, "Source Sans Pro";
   font-size: 12px;
 }

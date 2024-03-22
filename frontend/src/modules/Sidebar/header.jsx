@@ -393,7 +393,7 @@ const Header = () => {
                             key={index}
                             className="notification-item"
                             onClick={() => {
-                              handleLowstockNotification(item.id);
+                              // handleLowstockNotification(item.id);
                               navigate(`/PRredirect/${item.id}`);
                             }}
                             style={{ cursor: "pointer" }}>

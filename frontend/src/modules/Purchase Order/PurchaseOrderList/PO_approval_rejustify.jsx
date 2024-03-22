@@ -224,15 +224,10 @@ function POApprovalRejustify({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Request not Approved!",
-          icon: "warning",
-        });
       }
     });
   };
+
   const handleApprove = async () => {
     swal({
       title: "Are you sure want to approve this purchase Order?",
@@ -242,7 +237,6 @@ function POApprovalRejustify({ authrztn }) {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
-        setsignatureTriggered(true);
         setApprovalTriggered(true);
         setLoadAprrove(true)
         try {
@@ -250,14 +244,13 @@ function POApprovalRejustify({ authrztn }) {
           for (const group of POarray) {
             let supp_code = group.items[0].suppliers.supplier_code;
             let supp_name = group.items[0].suppliers.supplier_name;
-            const div = document.getElementById(
-              `content-to-capture-${group.title}-${supp_code}-${supp_name}`
-
-            );
+            const div = document.getElementById(`content-to-capture-${group.title}-${supp_code}-${supp_name}`);
 
             const span = document.createElement('span');
             span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
             div.appendChild(span);
+            
+            console.log(div.appendChild(span))
             
             const canvas = await html2canvas(div);
             const imageData = canvas.toDataURL("image/png");
@@ -268,10 +261,8 @@ function POApprovalRejustify({ authrztn }) {
             };
 
             updatedPOarray.push(updatedGroup);
-            // div.removeChild(span);
           }
 
-          
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             id,
             POarray: updatedPOarray,
@@ -301,12 +292,6 @@ function POApprovalRejustify({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Request not Cancelled!",
-          icon: "warning",
-        });
       }
     });
   };
@@ -731,9 +716,14 @@ function POApprovalRejustify({ authrztn }) {
                   vatAmount += vatTotal * totalSum;
                   TotalAmount += vatTotal * totalSum + totalSum;
                 });
-                vatAmount = vatAmount.toFixed(2)
+                TotalAmount = TotalAmount.toFixed(2);
+                vatAmount = vatAmount.toFixed(2);
                 totalSum = totalSum.toFixed(2);
 
+                TotalAmount = parseFloat(TotalAmount).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                vatAmount = parseFloat(vatAmount).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                totalSum = parseFloat(totalSum).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            
                 return (
                   <Modal.Body
                     id={`content-to-capture-${group.title}-${supp_code}-${supp_name}`}
@@ -876,8 +866,8 @@ function POApprovalRejustify({ authrztn }) {
                               {" "}
                               {group.items.map((item, index) => (
                                 <div key={index}>
-                                  <label>{`${
-                                  item.suppPrice.price * item.item.quantity
+                                  <label>{`${totalSum
+                                  // item.suppPrice.price * item.item.quantity
                                   }`}</label>
                                   <br />
                                 </div>
@@ -890,7 +880,7 @@ function POApprovalRejustify({ authrztn }) {
                           <div className="fifthleftrows">
                             <div className="received-section">
                               <span>P.O RECEIVED BY: </span>
-                              <span><strong>{POdepartmentUser?.masterlist?.col_Fname}</strong></span>
+                              
                             </div>
                             <div className="deliverydate">
                               <span>DELIVERY DATE: </span>
@@ -902,7 +892,7 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="preparedby">
                               <span>PREPARED BY: </span>
-                              <span></span>
+                              <span><strong>{POdepartmentUser?.masterlist?.col_Fname}</strong></span>
                             </div>
                           </div>
 
@@ -942,11 +932,11 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="checkedsection">
                               <div className="notedby">
-                                <span>NOTED BY: </span>
-                                <span>Checked by: </span>
+                                {/* <span>NOTED BY: </span>
+                                <span>Checked by: </span> */}
                               </div>
                               <div className="recommending">
-                                <span>RECOMMENDING APPROVAL</span>
+                                {/* <span>RECOMMENDING APPROVAL</span> */}
                                 <span></span>
                               </div>
                             </div>
@@ -962,12 +952,16 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="codesection">
                               <span>Date Approved:</span>
-                              <span>{approvalTriggered && dateApproved.toLocaleDateString('en-PH')}</span>
+                                {approvalTriggered ? (
+                                  <span>{dateApproved.toLocaleDateString('en-PH')}</span>
+                                ) : (
+                                  <span style={{ display: 'none' }}>{dateApproved.toLocaleDateString('en-PH')}</span>
+                                )}
                             </div>
                             <div className="approvedsby">
                               <span>Approved By: </span>
-                              {/* {approvalTriggered && } */}
-                              <img src={ESignature} alt="ESignature" className="signature-image" />
+                              
+                              {/* <span>{signatureTriggered &&  <img src={ESignature} alt="ESignature" className="signature-image" /> }</span> */}
                               <span>Daniel Byron S. Afdal</span>
                             </div>
                           </div>

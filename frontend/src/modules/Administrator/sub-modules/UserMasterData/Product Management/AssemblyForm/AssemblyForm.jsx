@@ -450,7 +450,7 @@ function AssemblyForm({ authrztn }) {
                       />
                     </th>
                     <th className="tableh">Product Code</th>
-                    <th className="tableh">Assemble Name</th>
+                    <th className="tableh">Assembly Name</th>
                     <th className="tableh">Details</th>
                     <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
