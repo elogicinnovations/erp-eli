@@ -450,7 +450,11 @@ router.route('/fetchPRhistory').get(async (req, res) => {
 
   router.route('/NomovementNotification').get(async (req, res) => {
     try {
-      const prRecords = await PR.findAll();
+      const prRecords = await PR.findAll({
+        where: {
+          masterlist_id: {[Op.ne]: 1}
+        }
+      });
   
       const notifications = prRecords.filter(record => {
         const DateCreated = new Date(record.createdAt);

@@ -314,7 +314,7 @@ function ReceivingManagement({ authrztn }) {
                       <th className="tableh">Requestor</th>
                       <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
-                      <th className="tableh">Date Created</th>
+                      <th className="tableh">PR Approved Date</th>
                       <th className="tableh">Remarks</th>
                     </tr>
                   </thead>
@@ -356,7 +356,7 @@ function ReceivingManagement({ authrztn }) {
                               navigate(`/viewToReceive/${data.id}`)
                             }
                           >
-                            {formatDatetime(data.createdAt)}
+                            {formatDatetime(data.date_approved)}
                           </td>
                           <td
                             onClick={() =>

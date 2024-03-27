@@ -180,19 +180,18 @@ router.route("/create").post(async (req, res) => {
             });
           }
 
-          const findWarehouse = await Warehouses.findOne({
-            where: {
-              warehouse_name: "Main",
-              location: "Agusan",
-            },
-          });
+          // const findWarehouse = await Warehouses.findOne({
+          //   where: {
+          //     id: 1
+          //   },
+          // });
           
-          if (!findWarehouse) {
-            console.log("No warehouse found");
-          }
+          // if (!findWarehouse) {
+          //   console.log("No warehouse found");
+          // }
 
-          const ExistWarehouseId = findWarehouse.id;
-          console.log("Id ng warehouse: " + ExistWarehouseId);
+          // const ExistWarehouseId = findWarehouse.id;
+          // console.log("Id ng warehouse: " + ExistWarehouseId);
 
           //Supplier
           const selectedSuppliers = req.body.productTAGSuppliers;
@@ -211,13 +210,13 @@ router.route("/create").post(async (req, res) => {
               product_price: price
             });
 
-            const Inventories = InsertedSupp.id;
-            await Inventory.create({
-              product_tag_supp_id: Inventories,
-              quantity: 0,
-              price: price,
-              warehouse_id: ExistWarehouseId,
-            });
+            // const Inventories = InsertedSupp.id;
+            // await Inventory.create({
+            //   product_tag_supp_id: Inventories,
+            //   quantity: 0,
+            //   price: price,
+            //   warehouse_id: ExistWarehouseId,
+            // });
           };
 
           //Image
@@ -359,18 +358,18 @@ router.route("/update").post(
           }
         };
 
-        const findWarehouse = await Warehouses.findOne({
-          where: {
-            warehouse_name: "Main",
-            location: "Agusan",
-          },
-        });
+        // const findWarehouse = await Warehouses.findOne({
+        //   where: {
+        //     warehouse_name: "Main",
+        //     location: "Agusan",
+        //   },
+        // });
         
-        if (!findWarehouse) {
-          console.log("No warehouse found");
-        }
+        // if (!findWarehouse) {
+        //   console.log("No warehouse found");
+        // }
 
-        const ExistWarehouseId = findWarehouse.id;
+        // const ExistWarehouseId = findWarehouse.id;
         // console.log("Id ng warehouse: " + ExistWarehouseId);
         
         const prodsupprows = await ProductTAGSupplier.findAll({
@@ -385,11 +384,11 @@ router.route("/update").post(
 
         const ExistSuppId = prodsupprows.map(supprow => supprow.id);
 
-        await Inventory.destroy({
-          where: {
-            product_tag_supp_id: ExistSuppId,
-          },
-        });
+        // await Inventory.destroy({
+        //   where: {
+        //     product_tag_supp_id: ExistSuppId,
+        //   },
+        // });
 
         const deletesupplier = await ProductTAGSupplier.destroy({
           where: {
@@ -410,12 +409,12 @@ router.route("/update").post(
 
             const createdID = newProductsupp.id;
 
-            await Inventory.create({
-              product_tag_supp_id: createdID,
-              quantity: 0,
-              price: price,
-              warehouse_id: ExistWarehouseId,
-            });
+            // await Inventory.create({
+            //   product_tag_supp_id: createdID,
+            //   quantity: 0,
+            //   price: price,
+            //   warehouse_id: ExistWarehouseId,
+            // });
 
             const ExistingSupplier = await productTAGsupplierHistory.findOne({
               where: {

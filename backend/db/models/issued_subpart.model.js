@@ -8,7 +8,7 @@ const IssuedSubpart = sequelize.define('issued_subpart', {
     primaryKey: true,
     autoIncrement: true,
   },
-  inventory_Subpart_id: {
+  product_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false,
@@ -20,9 +20,6 @@ const IssuedSubpart = sequelize.define('issued_subpart', {
   },
   quantity: {
     type: DataTypes.INTEGER
-  },
-  status: {
-    type: DataTypes.STRING
   }
 
 });
