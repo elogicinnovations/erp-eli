@@ -237,7 +237,7 @@ function POApprovalRejustify({ authrztn }) {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
-        setApprovalTriggered(true);
+        // setsignatureTriggered(true);
         setLoadAprrove(true)
         try {
           const updatedPOarray = [];
@@ -246,11 +246,11 @@ function POApprovalRejustify({ authrztn }) {
             let supp_name = group.items[0].suppliers.supplier_name;
             const div = document.getElementById(`content-to-capture-${group.title}-${supp_code}-${supp_name}`);
 
-            const span = document.createElement('span');
-            span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
-            div.appendChild(span);
+            // const span = document.createElement('span');
+            // span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
+            // div.appendChild(span);
             
-            console.log(div.appendChild(span))
+            // console.log(div.appendChild(span))
             
             const canvas = await html2canvas(div);
             const imageData = canvas.toDataURL("image/png");
@@ -892,7 +892,7 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="preparedby">
                               <span>PREPARED BY: </span>
-                              <span><strong>{POdepartmentUser?.masterlist?.col_Fname}</strong></span>
+                              <span>{POdepartmentUser?.masterlist?.col_Fname}</span>
                             </div>
                           </div>
 
@@ -932,8 +932,8 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="checkedsection">
                               <div className="notedby">
-                                {/* <span>NOTED BY: </span>
-                                <span>Checked by: </span> */}
+                                <span>Checked by: </span>
+                                <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>
                               </div>
                               <div className="recommending">
                                 {/* <span>RECOMMENDING APPROVAL</span> */}
@@ -952,11 +952,7 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="codesection">
                               <span>Date Approved:</span>
-                                {approvalTriggered ? (
                                   <span>{dateApproved.toLocaleDateString('en-PH')}</span>
-                                ) : (
-                                  <span style={{ display: 'none' }}>{dateApproved.toLocaleDateString('en-PH')}</span>
-                                )}
                             </div>
                             <div className="approvedsby">
                               <span>Approved By: </span>

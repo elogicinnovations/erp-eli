@@ -20,6 +20,8 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import deleteAssembly from "../../../../../Archiving Delete/assembly_delete";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -36,8 +38,9 @@ import { jwtDecode } from "jwt-decode";
 
 function AssemblyForm({ authrztn }) {
   const [assembly, setAssembly] = useState([]);
+  const [cloneAssembly, setCloneAssembly] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [tableLoading, setTableLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(
@@ -51,13 +54,79 @@ function AssemblyForm({ authrztn }) {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  
   const [Fname, setFname] = useState('');
   const [username, setUsername] = useState('');
   const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
+  const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const reloadTable = () => {
+    const delay = setTimeout(() => {
+    axios
+      .get(BASE_URL + "/assembly/fetchTable")
+      .then((res) => {
+        setCloneAssembly(res.data)
+        setAssembly(res.data)
+        setIsLoading(false);
+        setTableLoading(false); 
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+        setTableLoading(false); 
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  };
+  useEffect(() => {
+    deleteAssembly();
+    reloadTable();
+  }, []);
+
+
+  const handledropdownstatus = (event) => {
+    const value = event.target.value;
+    setTableLoading(true);
+    if (value === 'All Status') {
+      setDropdownstatus(['Active', 'Inactive', 'Archive']);
+    } else {
+      setDropdownstatus([value]);
+    }
+    setClearFilterDisabled(value === '');
+    reloadTable()
+  }
+  
+
+  const clearFilter = () => {
+    setDropdownstatus(['Active', 'Inactive']);
+    setClearFilterDisabled(true);
+  }
+
+  const totalPages = Math.ceil(assembly.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, assembly.length);
+  const currentItems = assembly.slice(startIndex, endIndex);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = cloneAssembly.filter((data) => {
+      return (
+        data.assembly_code.toLowerCase().includes(searchTerm) ||
+        data.assembly_name.toLowerCase().includes(searchTerm) ||
+        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.assembly_status.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setAssembly(filteredData);
+  };
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
@@ -74,19 +143,6 @@ function AssemblyForm({ authrztn }) {
     decodeToken();
   }, [])
 
-  const handledropdownstatus = (event) => {
-    const value = event.target.value;
-    if (value === 'All Status') {
-      setDropdownstatus(['Active', 'Inactive', 'Archive']);
-    } else {
-      setDropdownstatus([value]);
-    }
-  }
-  
-
-  const clearFilter = () => {
-    setDropdownstatus(['Active', 'Inactive']);
-  }
 
   const navigate = useNavigate();
 
@@ -135,26 +191,7 @@ function AssemblyForm({ authrztn }) {
     .catch((err) => console.log(err));
   }
 
-  const reloadTable = () => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/assembly/fetchTable")
-      .then((res) => {
-        setAssembly(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err)
-        setIsLoading(false);
-      });
-    }, 1000);
 
-    return () => clearTimeout(delay);
-  };
-  useEffect(() => {
-    deleteAssembly();
-    reloadTable();
-  }, []);
 
 
   //Date format sa main table
@@ -365,29 +402,6 @@ function AssemblyForm({ authrztn }) {
               ) : (
                 authrztn.includes('Assembly - View') ? (
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
-
-                </div> */}
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
@@ -406,8 +420,9 @@ function AssemblyForm({ authrztn }) {
                       <option value="Inactive">Inactive</option>
                       <option value="Archive">Archive</option>
                     </Form.Select>  
-                  <button className='Filterclear'
+                  <button className={`Filterclear ${clearFilterDisabled ? 'Filterdisabled-button' : ''}`}
                   style={{ width: '150px'}}
+                  disabled={clearFilterDisabled}
                   onClick={clearFilter}>
                         Clear Filter
                   </button>
@@ -438,7 +453,26 @@ function AssemblyForm({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" title="View Information" id="order-listing">
+              <TextField
+                      label="Search"
+                      variant="outlined"
+                      style={{ marginBottom: '10px', 
+                      float: 'right',
+                      }}
+                      InputLabelProps={{
+                        style: { fontSize: '14px'},
+                      }}
+                      InputProps={{
+                        style: { fontSize: '14px', width: '250px', height: '50px' },
+                      }}
+                onChange={handleSearch}/>
+              {tableLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+              <table className="table-hover" title="View Information">
                 <thead>
                   <tr>
                     <th className="tableh">
@@ -605,8 +639,46 @@ function AssemblyForm({ authrztn }) {
                     </div>
                 )}
               </table>
+              )}
             </div>
           </div>
+          <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
         </div>
         ) : (
           <div className="no-access">

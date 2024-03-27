@@ -235,7 +235,7 @@ function ForgotPass() {
           <div className="right-fg-content">
 
              <div className="bglogo">
-                <img className='slashlogo' src={Slash}/>
+                {/* <img className='slashlogo' src={Slash}/> */}
             </div>
 
               <div className="forgot-text-question">

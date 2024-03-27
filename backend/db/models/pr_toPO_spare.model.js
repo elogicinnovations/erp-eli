@@ -24,6 +24,14 @@ const PR_PO_spare = sequelize.define('purchase_req_canvassed_spare', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  days_from: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  days_to: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   quantity_received: {
     type: DataTypes.INTEGER,
     allowNull: true,

@@ -170,6 +170,67 @@ function PurchaseOrderListPreview() {
   const [titleCounter, setTitleCounter] = useState(1);
   const [addPObackend, setAddPObackend] = useState([]);
   const [quantityInputs, setQuantityInputs] = useState({});
+  const [daysInputs, setDaysInputs] = useState({});
+
+  // const handleQuantityChange = (title, type, supplier_prod_id, value) => {
+  //   setQuantityInputs((prevInputs) => {
+  //     const updatedInputs = {
+  //       ...prevInputs,
+  //       [`${title}_${type}_${supplier_prod_id}`]: value,
+  //     };
+
+  //     // Use the updatedInputs directly to create the serializedParent array
+  //     const serializedParent = parentArray.map(
+  //       ({ title, supplierCode, array }) => {
+  //         return {
+  //           title,
+  //           supplierCode,
+  //           serializedArray: array.map((item) => ({
+  //             quantity:
+  //               updatedInputs[`${title}_${item.type}_${item.product.id}`] || "",
+  //             type: item.type,
+  //             prod_supplier: item.product.id,
+  //           })),
+  //         };
+  //       }
+  //     );
+  //     setAddPObackend(serializedParent);
+  //     // console.log(`supplier ${type}_${supplier_prod_id}`);
+  //     console.log("Selected Products:", serializedParent);
+
+  //     // Return the updatedInputs to be used as the new state
+  //     return updatedInputs;
+  //   });
+  // };
+
+  // const handleDaysChange = (title, value) => {
+  //   setDaysInputs((prevInputs) => {
+  //     const updatedInputs = {
+  //       ...prevInputs,
+  //       [`${title}`]: value,
+  //     };
+
+  //     // Use the updatedInputs directly to create the serializedParent array
+  //     const serializedParent = parentArray.map(
+  //       ({ title, supplierCode, array }) => {
+  //         return {
+  //           title,
+  //           supplierCode,
+  //           serializedArray: array.map((item) => ({
+  //             daysfrom:
+  //               updatedInputs[`${title}`]?.DaysFrom || "",
+  //           })),
+  //         };
+  //       }
+  //     );
+  //     // setAddPObackend(serializedParent);
+  //     // console.log(`supplier ${type}_${supplier_prod_id}`);
+  //     console.log("Selected DAYS:", serializedParent);
+
+  //     // Return the updatedInputs to be used as the new state
+  //     return updatedInputs;
+  //   });
+  // };
 
   const handleQuantityChange = (title, type, supplier_prod_id, value) => {
     setQuantityInputs((prevInputs) => {
@@ -177,30 +238,64 @@ function PurchaseOrderListPreview() {
         ...prevInputs,
         [`${title}_${type}_${supplier_prod_id}`]: value,
       };
-
-      // Use the updatedInputs directly to create the serializedParent array
-      const serializedParent = parentArray.map(
-        ({ title, supplierCode, array }) => {
-          return {
-            title,
-            supplierCode,
-            serializedArray: array.map((item) => ({
-              quantity:
-                updatedInputs[`${title}_${item.type}_${item.product.id}`] || "",
-              type: item.type,
-              prod_supplier: item.product.id,
-            })),
-          };
-        }
-      );
-      setAddPObackend(serializedParent);
-      // console.log(`supplier ${type}_${supplier_prod_id}`);
-      console.log("Selected Products:", serializedParent);
-
-      // Return the updatedInputs to be used as the new state
+      // console.log("Updated quantity inputs:", updatedInputs);
+      updateAddPOBackend(title);
       return updatedInputs;
     });
   };
+  
+
+  const handleDaysFromChange = (title, value) => {
+    setDaysInputs((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [`${title}`]: {
+          ...prevInputs[`${title}`],
+          DaysFrom: value,
+        },
+      };
+      updateAddPOBackend(title);
+      return updatedInputs;
+    });
+  };
+  
+  const handleDaysToChange = (title, value) => {
+    setDaysInputs((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [`${title}`]: {
+          ...prevInputs[`${title}`],
+          DaysTo: value,
+        },
+      };
+      updateAddPOBackend(title);
+      return updatedInputs;
+    });
+  };
+  
+  const updateAddPOBackend = (supplierTitle) => {
+    const serializedParent = parentArray.map(({ title, supplierCode, array }) => {
+      return {
+        title,
+        supplierCode,
+        serializedArray: array.map((item) => ({
+          quantity: quantityInputs[`${title}_${item.type}_${item.product.id}`] || "",
+          type: item.type,
+          prod_supplier: item.product.id,
+          daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
+          daysto: daysInputs[`${title}`]?.DaysTo || "",
+        })),
+      };
+    });
+    setAddPObackend(serializedParent);
+    console.log("Selected Products:", serializedParent);
+  };
+  
+  useEffect(() => {
+    updateAddPOBackend();
+  }, [quantityInputs, daysInputs]);
+
+
 
   const handleAddToTable = (product, type, code, name, supp_email) => {
     setProductArrays((prevArrays) => {
@@ -973,9 +1068,63 @@ function PurchaseOrderListPreview() {
                       key={supplierCode}
                     >
                       <div className="canvass-supplier-content">
-                        <div className="PO-num">
-                          <p>{`PO #: ${title}`}</p>
+                        <div className="POand-daysDeliver">
+                          <div className="PO-nums">
+                              <p>{`PO #: ${title}`}</p>
+                            </div>
+                            <div className="numberofday-deliver">
+                                <p>Estimated day(s) to deliver:</p>
+                                <div className="inputdays">
+                                  <Form.Control
+                                        type="number"
+                                        required
+                                        onKeyDown={(e) => {
+                                          ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+                                        }}
+                                        value={
+                                          daysInputs[`${title}`]?.DaysFrom || ""
+                                        }
+                                        onChange={(e) => {
+                                          handleDaysFromChange(title, e.target.value);
+                                        }}
+                                        style={{
+                                          height: "25px",
+                                          width: "50px",
+                                          fontSize: "14px",
+                                          fontFamily: "Poppins, Source Sans Pro",
+                                          marginTop: "2px",
+                                          fontSize: "12px"
+                                        }}
+                                      >
+                                      </Form.Control>
+                                    <p>To</p>
+                                    <Form.Control
+                                  type="number"
+                                  required
+                                  onKeyDown={(e) => {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }}
+                                  value={
+                                    daysInputs[`${title}`]?.DaysTo || ""
+                                  }
+                                  onChange={(e) => {
+                                    handleDaysToChange(title, e.target.value);
+                                  }}
+                                  style={{
+                                    height: "25px",
+                                    width: "50px",
+                                    fontSize: "14px",
+                                    fontFamily: "Poppins, Source Sans Pro",
+                                    marginTop: "2px",
+                                    fontSize: "12px"
+                                  }}
+                                >
+                                </Form.Control>
+                                </div>
+                            </div>
                         </div>
+
                         {array.length > 0 && (
                           <div className="canvass-title">
                             <div className="supplier-info">
@@ -985,25 +1134,16 @@ function PurchaseOrderListPreview() {
                         )}
                         {array.map((item, index) => (
                           <div className="canvass-data-container" key={index}>
-                            <div className="col-4">
-                              <ul className="canvass-data-list">
-                                <li>
-                                  {`Product Code: `}
-                                  <strong>{item.code}</strong>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="col-4">
-                              <ul className="canvass-data-list">
-                                <li>
+                            <div className="content-of-data-canvass">
+                                <div className="prodcode">
+                                      {`Product Code: `}
+                                      <strong>{item.code}</strong>
+                                </div>
+                                <div className="prodnames">
                                   {`Product Name: `}
                                   <strong>{item.name}</strong>
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="col-4">
-                              <ul>
-                                <li>
+                                </div>
+                                <div className="prodinputs">
                                   <Form.Control
                                     type="number"
                                     placeholder="Quantity"
@@ -1033,9 +1173,11 @@ function PurchaseOrderListPreview() {
                                       marginTop: "3%",
                                     }}
                                   />
-                                </li>
-                              </ul>
-                            </div>
+                                </div>
+                             </div> 
+
+
+
                           </div>
                         ))}
                       </div>

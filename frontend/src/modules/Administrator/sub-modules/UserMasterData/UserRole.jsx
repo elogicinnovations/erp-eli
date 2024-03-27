@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../../../assets/global/style.css";
 import NoData from '../../../../assets/image/NoData.png';
+import NoAccess from '../../../../assets/image/NoAccess.png';
 import axios from "axios";
 import { Link } from "react-router-dom";
 import swal from "sweetalert";
@@ -32,7 +33,7 @@ import "../../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../../partials/header";
 
-function UserRole() {
+function UserRole({ authrztn }) {
   function formatDate(isoDate) {
     const date = new Date(isoDate);
     return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
@@ -240,6 +241,7 @@ function UserRole() {
                   Loading Data...
                 </div>
               ) : (
+                authrztn.includes('User Access Role - View') ? (
         <div className="right-body-contents">
           {/*Setting search*/}
           <div className="Employeetext-button">
@@ -248,6 +250,7 @@ function UserRole() {
                 <p>User Role</p>
               </div>
 
+              { authrztn.includes('User Access Role - Add') && (
               <div className="button-create-side">
                 <div className="Buttonmodal-new">
                   <Link to="/createRole" className="button">
@@ -258,6 +261,7 @@ function UserRole() {
                   </Link>
                 </div>
               </div>
+              )}
             </div>
           </div>{" "}
           {/*Employeetext-button*/}
@@ -299,6 +303,7 @@ function UserRole() {
                             {setButtonVisibles(data.col_id) && (
                               <div className="choices">
                                   <button>
+                                  { authrztn.includes('User Access Role - Edit') && (
                                   <Link
                                     to={`/editRole/${data.col_id}`}
                                     style={{
@@ -307,8 +312,9 @@ function UserRole() {
                                     }}>
                                     Update
                                   </Link>
+                                   )}
                                   </button>
-
+                                  { authrztn?.includes('User Access Role - Delete') && (
                                   <button
                                     className="btn"
                                     onClick={() => {
@@ -317,6 +323,7 @@ function UserRole() {
                                     }}>
                                     Delete
                                   </button>
+                                  )}
                               </div>
                             )}
                           </div>
@@ -334,6 +341,7 @@ function UserRole() {
                             {setButtonVisibles(data.col_id) && (
                               <div className="choices">
                                   <button>
+                                  { authrztn.includes('User Access Role - Edit') && (
                                   <Link
                                     to={`/editRole/${data.col_id}`}
                                     style={{
@@ -342,8 +350,9 @@ function UserRole() {
                                     }}>
                                     Update
                                   </Link>
+                                   )}
                                   </button>
-
+                                  {authrztn.includes('User Access Role - Delete') && (
                                   <button
                                   className="btn"
                                   onClick={() => {
@@ -352,6 +361,7 @@ function UserRole() {
                                   }}>
                                     Delete
                                   </button>
+                                   )}
                               </div>
                             )}
                           </div>
@@ -374,7 +384,15 @@ function UserRole() {
           </div>
           <div className="pagination-contains"></div>
         </div>
-              )}
+            ) : (
+              <div className="no-access">
+                <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+                <h3>
+                  You don't have access to this function.
+                </h3>
+              </div>
+            )
+          )}
       </div>
     </div>
   );

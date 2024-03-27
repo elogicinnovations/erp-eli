@@ -15,6 +15,8 @@ import {
   DotsThreeCircleVertical,
   ArrowsClockwise,
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -36,8 +38,9 @@ import deleteSpare from "../../../../../Archiving Delete/spare_delete";
 
 function SpareParts({ authrztn }) {
   const [sparePart, setSparePart] = useState([]);
+  const [cloneSpareParts, setCloneSpareParts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [tableLoading, setTableLoading] = useState(false);
   const [historypricemodal, sethistorypricemodal] = useState([]);
   const [showhistorical, setshowhistorical] = useState(false);
   const [Fname, setFname] = useState('');
@@ -61,22 +64,74 @@ function SpareParts({ authrztn }) {
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+  const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const reloadTable = () => {
+    const delay = setTimeout(() => {
+    axios
+      .get(BASE_URL + "/sparePart/fetchTable")
+      .then((res) => {
+        setSparePart(res.data)
+        setCloneSpareParts(res.data)
+        setIsLoading(false);
+        setTableLoading(false); 
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+        setTableLoading(false); 
+      });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  };
+  useEffect(() => {
+    deleteSpare();
+    reloadTable();
+  }, []);
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handledropdownstatus = (event) => {
     const value = event.target.value;
+    setTableLoading(true);
     if (value === 'All Status') {
       setDropdownstatus(['Active', 'Inactive', 'Archive']);
     } else {
       setDropdownstatus([value]);
     }
+    setClearFilterDisabled(value === '');
+    reloadTable()
   }
   
 
   const clearFilter = () => {
     setDropdownstatus(['Active', 'Inactive']);
+    setClearFilterDisabled(true);
   }
+
+  const totalPages = Math.ceil(sparePart.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, sparePart.length);
+  const currentItems = sparePart.slice(startIndex, endIndex);
+
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = cloneSpareParts.filter((data) => {
+      return (
+        data.spareParts_code.toLowerCase().includes(searchTerm) ||
+        data.spareParts_name.toLowerCase().includes(searchTerm) ||
+        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.spareParts_status.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setSparePart(filteredData);
+  };
 
 
   const decodeToken = () => {
@@ -137,26 +192,7 @@ function SpareParts({ authrztn }) {
   }
 
 
-  const reloadTable = () => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/sparePart/fetchTable")
-      .then((res) => {
-        setSparePart(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err)
-        setIsLoading(false);
-      });
-    }, 1000);
 
-    return () => clearTimeout(delay);
-  };
-  useEffect(() => {
-    deleteSpare();
-    reloadTable();
-  }, []);
 
   //Date format sa main table
   function formatDate(datetime) {
@@ -283,6 +319,7 @@ function SpareParts({ authrztn }) {
       $("#order-listing").DataTable();
     }
   }, [sparePart]);
+
   const navigate = useNavigate();
 
 
@@ -386,8 +423,9 @@ function SpareParts({ authrztn }) {
                       <option value="Inactive">Inactive</option>
                       <option value="Archive">Archive</option>
                     </Form.Select>  
-                    <button className='Filterclear'
+                    <button className={`Filterclear ${clearFilterDisabled ? 'Filterdisabled-button' : ''}`}
                     style={{ width: '150px'}}
+                    disabled={clearFilterDisabled}
                     onClick={clearFilter}>
                           Clear Filter
                     </button>
@@ -418,7 +456,26 @@ function SpareParts({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" title="View Information" id="order-listing">
+              <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
+                onChange={handleSearch}/>
+              {tableLoading ? (
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={'bubbles'}/>
+                  Loading Data...
+                </div>
+              ) : (
+              <table className="table-hover" title="View Information">
                 <thead>
                   <tr>
                     <th className="tableh">
@@ -440,7 +497,7 @@ function SpareParts({ authrztn }) {
                 </thead>
                 {sparePart.length > 0 ? (
                 <tbody>
-                  {sparePart
+                  {currentItems
                   .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.spareParts_status))
                   .map((data, i) => (
                     <tr key={i}>
@@ -593,8 +650,46 @@ function SpareParts({ authrztn }) {
                     </div>
                 )}
               </table>
+              )} 
             </div>
           </div>
+             <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+              </nav>
         </div>
         ) : (
           <div className="no-access">

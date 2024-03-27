@@ -121,24 +121,24 @@ function App() {
                   showSidebar ? "show-sidebar" : ""
                 }`}
               >
-                <div className="sidebar-button">
+                {/* <div className="sidebar-button">
                   <button
                     className="sidebar-back-button"
                     onClick={handleToggleSidebar}
                   >
                     <CaretCircleLeft size={50} weight="bold" />
                   </button>
-                </div>
+                </div> */}
                 <Roles>{(authrztn) => <Sidebar authrztn={authrztn} />}</Roles>
               </div>
-              <div className="sidebar-button">
+              {/* <div className="sidebar-button">
                 <button
                   className="sidebar-menu-button"
                   onClick={handleToggleSidebar}
                 >
                   <List size={50} weight="bold" />
                 </button>
-              </div>
+              </div> */}
 
               <div className="mid-of-main-containers"></div>
 
@@ -163,11 +163,23 @@ function App() {
 
                   {/* User Master Data */}
 
-                  <Route path="/userRole" element={<Rbac />} />
+                  <Route path="/userRole" element={
+                      <Roles>
+                        {(authrztn) => <Rbac authrztn={authrztn} />}
+                      </Roles>
+                    }/>
 
-                  <Route path="/createRole" element={<CreateRole />} />
+                  <Route path="/createRole" element={
+                      <Roles>
+                        {(authrztn) => <CreateRole authrztn={authrztn} />}
+                      </Roles>
+                    } />
 
-                  <Route path="/editRole/:id" element={<EditRole />} />
+                  <Route path="/editRole/:id" element={
+                      <Roles>
+                        {(authrztn) => <EditRole authrztn={authrztn} />}
+                      </Roles>
+                    } />
 
                   <Route
                     path="/masterList"

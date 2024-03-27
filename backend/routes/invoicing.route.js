@@ -62,8 +62,8 @@ router.route("/save").post(async (req, res) => {
         const quantity = child.quantity;
         const type = child.type;
         const prod_supp_id = child.prod_supplier;
-
-        // console.log(`quantity${quantity} type ${type}`)
+        const FromDays = child.daysfrom;
+        const ToDays = child.daysto;
 
         if (type === "product") {
           PR_PO.create({
@@ -71,6 +71,8 @@ router.route("/save").post(async (req, res) => {
             po_id: po_number,
             quantity: quantity,
             product_tag_supplier_ID: prod_supp_id,
+            days_from: FromDays,
+            days_to: ToDays,
           });
         } else if (type === "assembly") {
           PR_PO_asmbly.create({
@@ -78,6 +80,8 @@ router.route("/save").post(async (req, res) => {
             po_id: po_number,
             quantity: quantity,
             assembly_suppliers_ID: prod_supp_id,
+            days_from: FromDays,
+            days_to: ToDays,
           });
         } else if (type === "spare") {
           PR_PO_spare.create({
@@ -85,6 +89,8 @@ router.route("/save").post(async (req, res) => {
             po_id: po_number,
             quantity: quantity,
             spare_suppliers_ID: prod_supp_id,
+            days_from: FromDays,
+            days_to: ToDays,
           });
         } else if (type === "subpart") {
           PR_PO_subpart.create({
@@ -92,6 +98,8 @@ router.route("/save").post(async (req, res) => {
             po_id: po_number,
             quantity: quantity,
             subpart_suppliers_ID: prod_supp_id,
+            days_from: FromDays,
+            days_to: ToDays,
           });
         }
       }

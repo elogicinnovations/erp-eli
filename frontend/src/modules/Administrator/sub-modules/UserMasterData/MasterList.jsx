@@ -13,7 +13,11 @@ import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
 // import 'bootstrap/dist/css/bootstrap.min.css'
 import Form from "react-bootstrap/Form";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+// import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  Eye,
+  EyeSlash
+} from "@phosphor-icons/react";
 
 import {
   Plus,
@@ -36,6 +40,7 @@ import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
 
 function MasterList({ authrztn }) {
+  const [validated, setValidated] = useState(false);
   const [masterListt, setmasterListt] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
@@ -114,12 +119,6 @@ function MasterList({ authrztn }) {
   });
 
   const [updateFormData, setUpdateFormData] = useState({
-    // uarole: '',
-    // uaname: '',
-    // uaemail: '',
-    // uapass: '',
-    // ustatus: false,
-
     uaname: "",
     uaaddress: "",
     uanum: "",
@@ -238,6 +237,13 @@ function MasterList({ authrztn }) {
     }
   };
 
+  const passwordsMatch = formData.cpass === formData.cpass2 && formData.cpass !== '' && formData.cpass2 !== '';
+  
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -260,7 +266,7 @@ function MasterList({ authrztn }) {
       // Check if the value contains invalid characters
       const isValid = /^[a-zA-Z\s',.\-]*$/.test(value);
 
-      if (name === "cpass" || name === "cpass2") {
+      if (name === "cpass" || name === "cpass2") {  
         // For password and confirm password fields
         setFormData((prevData) => ({
           ...prevData,
@@ -294,41 +300,57 @@ function MasterList({ authrztn }) {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const UpdatepasswordsMatch = updateFormData.uapass === updateFormData.confirmPassword && updateFormData.uapass !== '' && updateFormData.confirmPassword !== '';
 
-  const handleUpdateFormChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    // Define regex patterns
-    const nameRegex = /^[a-zA-Z\s',.\-]*$/;
-    const contactRegex = /^[0-9+\\-]*$/;
-
-    // Validate input based on type
-    let isValidInput = true;
-    if (type === "text" && name === "uaname") {
-      isValidInput = nameRegex.test(value);
-    } else if (type === "text" && name === "uanum") {
-      isValidInput = contactRegex.test(value);
-    }
-
-    // Update form data only if the input is valid
-    if (isValidInput) {
-      if (type === "checkbox") {
-        setUpdateFormData((prevData) => ({
-          ...prevData,
-          [name]: checked,
-        }));
-      } else {
-        setUpdateFormData((prevData) => ({
-          ...prevData,
-          [name]: value,
-        }));
-      }
-    }
+  
+  const UpdatevalidatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    return regex.test(password);
   };
 
-    const handleUpdateSubmit = async (e) => {
+    const handleUpdateFormChange = (e) => {
+      const { name, value, type, checked } = e.target;
+
+      // Define regex patterns
+      const nameRegex = /^[a-zA-Z\s',.\-]*$/;
+      const contactRegex = /^[0-9+\\-]*$/;
+
+      // Validate input based on type
+      let isValidInput = true;
+      if (type === "text" && name === "uaname") {
+        isValidInput = nameRegex.test(value);
+      } else if (type === "text" && name === "uanum") {
+        isValidInput = contactRegex.test(value);
+      }
+
+      // Update form data only if the input is valid
+      if (isValidInput) {
+        if (type === "checkbox") {
+          setUpdateFormData((prevData) => ({
+            ...prevData,
+            [name]: checked,
+          }));
+        } else {
+          setUpdateFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+          }));
+        }
+      }
+    };
+
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-    try {
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the Required text fields",
+      });
+    } else {
       const updaemasterID = updateFormData.updateId;
       const response = await axios.put(
         BASE_URL + `/masterList/updateMaster/${updateFormData.updateId}?userId=${userId}`,
@@ -400,10 +422,88 @@ function MasterList({ authrztn }) {
           text: "Please contact our support",
         });
       }
-    } catch (err) {
-      console.log(err);
     }
+    setValidated(true);
   };
+
+  //   const handleUpdateSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const updaemasterID = updateFormData.updateId;
+  //     const response = await axios.put(
+  //       BASE_URL + `/masterList/updateMaster/${updateFormData.updateId}?userId=${userId}`,
+  //       {
+  //         col_Fname: updateFormData.uaname,
+  //         col_address: updateFormData.uaaddress,
+  //         col_phone: updateFormData.uanum,
+  //         col_email: updateFormData.uaemail,
+  //         col_username: updateFormData.uauname,
+  //         col_roleID: updateFormData.uarole,
+  //         department_id: updateFormData.uadept,
+  //         col_Pass: updateFormData.uapass,
+  //         col_status: updateFormData.ustatus ? "Active" : "Inactive",
+  //       }
+  //     );
+
+  //     if (response.status === 200) {
+  //       swal({
+  //         title: "User Update Successful!",
+  //         text: "The User has been Updated Successfully.",
+  //         icon: "success",
+  //         button: "OK",
+  //       }).then(() => {
+  //         window.location.reload();
+  //         handleModalToggle();
+  //         setmasterListt((prevStudent) =>
+  //           prevStudent.map((data) =>
+  //             data.col_ID === updateFormData.updateId
+  //               ? {
+  //                   ...data,
+  //                   col_Fname: updateFormData.uaname,
+  //                   col_address: updateFormData.uaaddress,
+  //                   col_phone: updateFormData.uanum,
+  //                   col_email: updateFormData.uaemail,
+  //                   col_username: updateFormData.uauname,
+  //                   col_roleID: updateFormData.uarole,
+  //                   department_id: updateFormData.uadept,
+  //                   col_Pass: updateFormData.uapass,
+  //                   col_status: updateFormData.ustatus ? "Active" : "Inactive",
+  //                 }
+  //               : data
+  //           )
+  //         );
+
+  //         // Reset the form fields
+  //         setUpdateFormData({
+  //           uaname: "",
+  //           uaaddress: "",
+  //           uanum: "",
+  //           uaemail: "",
+  //           uauname: "",
+  //           uarole: "",
+  //           uadept: "",
+  //           uapass: "",
+  //           ustatus: false,
+  //           updateId: null,
+  //         });
+  //       });
+  //     } else if (response.status === 202) {
+  //       swal({
+  //         icon: "error",
+  //         title: "Email already exists",
+  //         text: "Please input another Email",
+  //       });
+  //     } else {
+  //       swal({
+  //         icon: "error",
+  //         title: "Something went wrong",
+  //         text: "Please contact our support",
+  //       });
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   // Validation for PhoneNumber and Email
   function isValidPhoneNumber(phone) {
@@ -418,161 +518,220 @@ function MasterList({ authrztn }) {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (formData.cname === "") {
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the Required text fields",
+      });
+    } else {
+      formData.userId = userId;
+      const status = formData.cstatus ? "Active" : "Inactive";
+      const response = await axios.post(
+        BASE_URL + "/masterList/createMaster",
+        formData
+      );
+      setShowModal(false);
+
+      if (response.status === 200) {
         swal({
-          title: "Required Field",
-          text: "Name is Required",
-          icon: "error",
+          title: "User Add Successful!",
+          text: "The User has been Added Successfully.",
+          icon: "success",
           button: "OK",
+        }).then(() => {
+          reloadTable();
+          setFormData({
+            cname: "",
+            caddress: "",
+            cnum: "",
+            cemail: "",
+            cuname: "",
+            crole: "",
+            cdept: "",
+            cpass: "",
+            cpass2: "",
+            cstatus: false,
+          });
         });
-      }
-      if (formData.caddress === "") {
+      } else if (response.status === 202) {
         swal({
-          title: "Required Field",
-          text: "Address is Required",
           icon: "error",
-          button: "OK",
-        });
-      }
-      if (formData.cnum === "") {
-        swal({
-          title: "Required Field",
-          text: "Contact is Required",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (!isValidPhoneNumber(formData.cnum)) {
-        swal({
-          title: "Invalid Phone Number Format",
-          text: "Please enter a valid number",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (formData.cemail === "") {
-        swal({
-          title: "Required Field",
-          text: "Email is Required",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (!isValidEmail(formData.cemail)) {
-        swal({
-          title: "Invalid Email Format",
-          text: "Please enter a valid email address",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (formData.cuname === "") {
-        swal({
-          title: "Required Field",
-          text: "Username is Required",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (formData.crole === "") {
-        swal({
-          title: "Required Field",
-          text: "Access Role is Required",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (formData.cpass === "") {
-        swal({
-          title: "Required Field",
-          text: "Password is Required",
-          icon: "error",
-          button: "OK",
-        });
-      } else if (!/[A-Z]/.test(formData.cpass)) {
-        swal({
-          title: "Password Validation",
-          text: "Add at least one capital letter",
-          icon: "error",
-          button: "OK",
-        });
-      } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(formData.cpass)) {
-        swal({
-          title: "Password Validation",
-          text: "Add at least one special character",
-          icon: "error",
-          button: "OK",
-        });
-      } else if (!/\d/.test(formData.cpass)) {
-        swal({
-          title: "Password Validation",
-          text: "Add at least one number",
-          icon: "error",
-          button: "OK",
-        });
-      } else if (formData.cpass.length < 8) {
-        swal({
-          title: "Password Validation",
-          text: "Password must be at least 8 characters",
-          icon: "error",
-          button: "OK",
-        });
-      }
-      if (formData.cpass != formData.cpass2) {
-        swal({
-          title: "Password error",
-          text: "Please confirm your password",
-          icon: "error",
-          button: "OK",
+          title: "Email already exists",
+          text: "Please input another Email",
         });
       } else {
-        formData.userId = userId;
-        const status = formData.cstatus ? "Active" : "Inactive";
-        const response = await axios.post(
-          BASE_URL + "/masterList/createMaster",
-          formData
-        );
-        setShowModal(false);
-
-        if (response.status === 200) {
-          swal({
-            title: "User Add Successful!",
-            text: "The User has been Added Successfully.",
-            icon: "success",
-            button: "OK",
-          }).then(() => {
-            reloadTable();
-            setFormData({
-              cname: "",
-              caddress: "",
-              cnum: "",
-              cemail: "",
-              cuname: "",
-              crole: "",
-              cdept: "",
-              cpass: "",
-              cpass2: "",
-              cstatus: false,
-            });
-          });
-        } else if (response.status === 202) {
-          swal({
-            icon: "error",
-            title: "Email already exists",
-            text: "Please input another Email",
-          });
-        } else {
-          swal({
-            icon: "error",
-            title: "Something went wrong",
-            text: "Please contact our support",
-          });
-        }
+        swal({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
+        });
       }
-    } catch (err) {
     }
+    setValidated(true);
   };
+
+
+  // const handleFormSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     if (formData.cname === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Name is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.caddress === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Address is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.cnum === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Contact is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (!isValidPhoneNumber(formData.cnum)) {
+  //       swal({
+  //         title: "Invalid Phone Number Format",
+  //         text: "Please enter a valid number",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.cemail === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Email is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (!isValidEmail(formData.cemail)) {
+  //       swal({
+  //         title: "Invalid Email Format",
+  //         text: "Please enter a valid email address",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.cuname === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Username is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.crole === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Access Role is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.cpass === "") {
+  //       swal({
+  //         title: "Required Field",
+  //         text: "Password is Required",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     } else if (!/[A-Z]/.test(formData.cpass)) {
+  //       swal({
+  //         title: "Password Validation",
+  //         text: "Add at least one capital letter",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(formData.cpass)) {
+  //       swal({
+  //         title: "Password Validation",
+  //         text: "Add at least one special character",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     } else if (!/\d/.test(formData.cpass)) {
+  //       swal({
+  //         title: "Password Validation",
+  //         text: "Add at least one number",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     } else if (formData.cpass.length < 8) {
+  //       swal({
+  //         title: "Password Validation",
+  //         text: "Password must be at least 8 characters",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     }
+  //     if (formData.cpass != formData.cpass2) {
+  //       swal({
+  //         title: "Password error",
+  //         text: "Please confirm your password",
+  //         icon: "error",
+  //         button: "OK",
+  //       });
+  //     } else {
+  //       formData.userId = userId;
+  //       const status = formData.cstatus ? "Active" : "Inactive";
+  //       const response = await axios.post(
+  //         BASE_URL + "/masterList/createMaster",
+  //         formData
+  //       );
+  //       setShowModal(false);
+
+  //       if (response.status === 200) {
+  //         swal({
+  //           title: "User Add Successful!",
+  //           text: "The User has been Added Successfully.",
+  //           icon: "success",
+  //           button: "OK",
+  //         }).then(() => {
+  //           reloadTable();
+  //           setFormData({
+  //             cname: "",
+  //             caddress: "",
+  //             cnum: "",
+  //             cemail: "",
+  //             cuname: "",
+  //             crole: "",
+  //             cdept: "",
+  //             cpass: "",
+  //             cpass2: "",
+  //             cstatus: false,
+  //           });
+  //         });
+  //       } else if (response.status === 202) {
+  //         swal({
+  //           icon: "error",
+  //           title: "Email already exists",
+  //           text: "Please input another Email",
+  //         });
+  //       } else {
+  //         swal({
+  //           icon: "error",
+  //           title: "Something went wrong",
+  //           text: "Please contact our support",
+  //         });
+  //       }
+  //     }
+  //   } catch (err) {
+  //   }
+  // };
 
 
 
@@ -923,7 +1082,7 @@ function MasterList({ authrztn }) {
             </React.Fragment>
           </div>
         </Modal.Header>
-        <form onSubmit={handleFormSubmit}>
+        <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
           <Modal.Body>
             <div
               className="gen-info"
@@ -940,7 +1099,6 @@ function MasterList({ authrztn }) {
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
-            <Form>
               <div className="row mt-3">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -974,9 +1132,7 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
               </div>
-            </Form>
-
-            <Form>
+            
               <div className="row">
                 <div className="col-4">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -1036,7 +1192,7 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
               </div>
-            </Form>
+            
 
             <div
               className="gen-info"
@@ -1053,7 +1209,7 @@ function MasterList({ authrztn }) {
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
-            <Form>
+
               <div className="row mt-3">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -1097,9 +1253,7 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
               </div>
-            </Form>
-
-            <Form>
+            
               <div className="row">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -1117,13 +1271,13 @@ function MasterList({ authrztn }) {
                     />
                     <div className="show">
                       {showPassword ? (
-                        <FaEyeSlash
-                          className="eye"
+                        <EyeSlash size={32} color="#1a1a1a" weight="light"
+                          // className="eye"
                           onClick={togglePasswordVisibility}
                         />
                       ) : (
-                        <FaEye
-                          className="eye"
+                        <Eye size={32} color="#1a1a1a" weight="light"
+                          // className="eye"
                           onClick={togglePasswordVisibility}
                         />
                       )}
@@ -1146,28 +1300,54 @@ function MasterList({ authrztn }) {
                     />
                     <div className="show">
                       {showConfirmPassword ? (
-                        <FaEyeSlash
-                          className="eye"
+                        <EyeSlash size={32} color="#1a1a1a" weight="light"
+                          // className="eye"
                           onClick={toggleConfirmPasswordVisibility}
                         />
                       ) : (
-                        <FaEye
-                          className="eye"
+                        <Eye size={32} color="#1a1a1a" weight="light"
+                          // className="eye"
                           onClick={toggleConfirmPasswordVisibility}
                         />
                       )}
                     </div>
                   </Form.Group>
                 </div>
+                
+                {formData.cpass !== '' && (
+                <>
+                  {!validatePassword(formData.cpass) && (
+                    <ul style={{ color: "red", fontSize: "12px", marginTop: "5px", listStyleType: "disc",}}>
+                      <li>Password must contain at least 8 length.</li>
+                      <li>Password must contain at least one capital letter.</li>
+                      <li>Password must contain at least one small letter.</li>
+                      <li>Password must contain at least one number.</li>
+                      <li>Password must contain at least one special character [!@#$%^&*()_+]</li>
+                  </ul>
+                  )}
+                </>
+              )}
+              {formData.cpass !== '' && formData.cpass2 !== '' && (
+                <>
+                  {passwordsMatch ? (
+                    <p style={{ color: "green", fontSize: "12px", marginTop: "5px" }}>Passwords match!</p>
+                  ) : (
+                    <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>Passwords do not match!</p>
+                  )}
+                  </>
+              )}
+        
               </div>
-            </Form>
+            
           </Modal.Body>
           <Modal.Footer>
             <Button
               type="submit"
               variant="warning"
               size="md"
-              style={{ fontSize: "20px" }}>
+              style={{ fontSize: "20px" }}
+              disabled={!passwordsMatch}
+              >
               Add
             </Button>
             <Button
@@ -1178,14 +1358,14 @@ function MasterList({ authrztn }) {
               Cancel
             </Button>
           </Modal.Footer>
-        </form>
+        </Form>
       </Modal>
 
       <Modal
         show={updateModalShow}
         onHide={() => handleModalToggle()}
         size="xl">
-        <form onSubmit={handleUpdateSubmit}>
+        <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
             <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
               Update User
@@ -1220,7 +1400,7 @@ function MasterList({ authrztn }) {
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
-            <Form>
+            
               <div className="row mt-3">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -1231,6 +1411,7 @@ function MasterList({ authrztn }) {
                       onChange={handleUpdateFormChange}
                       maxLength={50}
                       name="uaname"
+                      required
                       placeholder="Enter your name"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
@@ -1246,15 +1427,15 @@ function MasterList({ authrztn }) {
                       value={updateFormData.uaaddress}
                       onChange={handleUpdateFormChange}
                       name="uaaddress"
+                      required
                       placeholder="Slashtech, Valenzuela City 164"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                   </Form.Group>
                 </div>
               </div>
-            </Form>
+            
 
-            <Form>
               <div className="row">
                 <div className="col-4">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -1267,6 +1448,7 @@ function MasterList({ authrztn }) {
                       maxLength={15}
                       onChange={handleUpdateFormChange}
                       name="uanum"
+                      required
                       placeholder="Enter your contact number"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
@@ -1283,6 +1465,7 @@ function MasterList({ authrztn }) {
                       value={updateFormData.uaemail}
                       onChange={handleUpdateFormChange}
                       name="uaemail"
+                      required
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                   </Form.Group>
@@ -1312,7 +1495,6 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
               </div>
-            </Form>
 
             <div
               className="gen-info"
@@ -1329,7 +1511,7 @@ function MasterList({ authrztn }) {
                   transform: "translateY(-50%)",
                 }}></span>
             </div>
-            <Form>
+            
               <div className="row mt-3">
                 <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
@@ -1341,6 +1523,7 @@ function MasterList({ authrztn }) {
                       value={updateFormData.uauname}
                       onChange={handleUpdateFormChange}
                       name="uauname"
+                      required
                       placeholder="Enter your name"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
@@ -1370,7 +1553,7 @@ function MasterList({ authrztn }) {
                   </Form.Group>
                 </div>
               </div>
-            </Form>
+            
 
           {!changePass && (
             <div className="change-pass">
@@ -1381,33 +1564,8 @@ function MasterList({ authrztn }) {
           )}
 
           {changePass && (
-            <Form>
               <div className="row">
                 <div className="col-6">
-                  {/* <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Current Password:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={updateFormData.uapass}
-                      disabled
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                    <div className="show">
-                      {showCurrentPassword ? (
-                        <FaEyeSlash
-                          className="eye"
-                          onClick={toggleCurrentPasswordVisibility}
-                        />
-                      ) : (
-                        <FaEye
-                          className="eye"
-                          onClick={toggleCurrentPasswordVisibility}
-                        />
-                      )}
-                    </div>
-                  </Form.Group> */}
                 </div>
 
                 <div className="col-6"></div>
@@ -1420,19 +1578,17 @@ function MasterList({ authrztn }) {
                     <Form.Control
                       type={showPassword ? "text" : "password"}
                       onChange={handleUpdateFormChange}
-                      required
                       placeholder="Enter your password"
+                      name="uapass"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                     <div className="show">
                       {showPassword ? (
-                        <FaEyeSlash
-                          className="eye"
+                        <EyeSlash size={32} color="#1a1a1a" weight="light"
                           onClick={togglePasswordVisibility}
                         />
                       ) : (
-                        <FaEye
-                          className="eye"
+                        <Eye size={32} color="#1a1a1a" weight="light"
                           onClick={togglePasswordVisibility}
                         />
                       )}
@@ -1447,28 +1603,47 @@ function MasterList({ authrztn }) {
                     <Form.Control
                       type={showConfirmPassword ? "text" : "password"}
                       onChange={handleUpdateFormChange}
-                      required
-                      name="uapass"
+                      name="confirmPassword"
                       placeholder="Confirm your password"
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                     <div className="show">
                       {showConfirmPassword ? (
-                        <FaEyeSlash
-                          className="eye"
+                        <EyeSlash size={32} color="#1a1a1a" weight="light"
                           onClick={toggleConfirmPasswordVisibility}
                         />
                       ) : (
-                        <FaEye
-                          className="eye"
+                        <Eye size={32} color="#1a1a1a" weight="light"
                           onClick={toggleConfirmPasswordVisibility}
                         />
                       )}
                     </div>
                   </Form.Group>
                 </div>
+                {updateFormData.uapass !== '' && (
+                <>
+                  {!UpdatevalidatePassword(updateFormData.uapass) && (
+                    <ul style={{ color: "red", fontSize: "12px", marginTop: "5px", listStyleType: "disc",}}>
+                      <li>Password must contain at least 8 length.</li>
+                      <li>Password must contain at least one capital letter.</li>
+                      <li>Password must contain at least one small letter.</li>
+                      <li>Password must contain at least one number.</li>
+                      <li>Password must contain at least one special character [!@#$%^&*()_+]</li>
+                  </ul>
+                  )}
+                </>
+               )}
+                {updateFormData.uapass === '' && updateFormData.confirmPassword === '' && (
+                <>
+                  {UpdatepasswordsMatch ? (
+                    <p style={{ color: "green", fontSize: "12px", marginTop: "5px" }}>Passwords match!</p>
+                  ) : (
+                    <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>Passwords do not match!</p>
+                  )}
+                  </>
+              )}
               </div>
-            </Form>
+            
           )}
           </Modal.Body>
           <Modal.Footer>
@@ -1476,7 +1651,8 @@ function MasterList({ authrztn }) {
               type="submit"
               variant="warning"
               className=""
-              style={{ fontSize: "20px" }}>
+              style={{ fontSize: "20px" }}
+              disabled={!UpdatepasswordsMatch && changePass}>
               Update
             </Button>
             <Button
@@ -1486,7 +1662,7 @@ function MasterList({ authrztn }) {
               Close
             </Button>
           </Modal.Footer>
-        </form>
+        </Form>
       </Modal>
     </div>
   );
