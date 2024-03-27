@@ -8,7 +8,7 @@ const IssuedAssembly = sequelize.define('issued_assembly', {
     primaryKey: true,
     autoIncrement: true,
   },
-  inventory_Assembly_id: {
+  product_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false,
@@ -20,9 +20,6 @@ const IssuedAssembly = sequelize.define('issued_assembly', {
   },
   quantity: {
     type: DataTypes.INTEGER
-  },
-  status: {
-    type: DataTypes.STRING
   }
 
 });

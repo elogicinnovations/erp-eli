@@ -19,9 +19,21 @@ const Inventory = sequelize.define('inventory_prd', {
     unique: false
   },
   price: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.FLOAT,
     allowNull: true,
-    unique: false
+
+  },
+  freight_cost: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  custom_cost: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  reference_number: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   warehouse_id: {
     type: DataTypes.INTEGER,

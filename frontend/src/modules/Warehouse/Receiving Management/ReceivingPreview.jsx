@@ -17,8 +17,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import warehouse from "../../../assets/global/warehouse";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import {
   ArrowCircleLeft,
   Upload,
@@ -48,12 +48,13 @@ function ReceivingPreview({ authrztn }) {
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
   const [poNum, setPoNum] = useState();
-  const [supplierName, setSupplierName] = useState()
-  const [supplierCode, setSupplierCode] = useState()
-  const [supplierTerms, setSupplierTerms] = useState()
-  const [requestPr, setRequestPr] = useState()
+  const [supplierName, setSupplierName] = useState();
+  const [supplierCode, setSupplierCode] = useState();
+  const [supplierTerms, setSupplierTerms] = useState();
+  const [requestPr, setRequestPr] = useState();
 
-  
+  const [approvedPRDate, setApproveddate] = useState();
+
   const [products, setproducts] = useState([]);
   const [assembly, setassembly] = useState([]);
   const [spare, setspare] = useState([]);
@@ -79,29 +80,28 @@ function ReceivingPreview({ authrztn }) {
   }, []);
 
   const exportToPDF = () => {
-    const input = document.getElementById('modal-body'); // Assuming you give an id to your Modal.Body container
-    html2canvas(input)
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        const imgWidth = 210;
-        const pageHeight = 295;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
-  
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    const input = document.getElementById("modal-body"); // Assuming you give an id to your Modal.Body container
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      const imgWidth = 210;
+      const pageHeight = 295;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
-  
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-  
-        pdf.save('modal_content.pdf');
-      });
+      }
+
+      pdf.save("receivingReport.pdf");
+    });
   };
 
   // -------------------- fetch data value --------------------- //
@@ -124,10 +124,21 @@ function ReceivingPreview({ authrztn }) {
           setStatus(res.data.primary.status);
           setDateCreated(res.data.primary.createdAt);
           setPoNum(res.data.primary.po_id);
-          setRequestPr(res.data.primary.purchase_req.createdAt)
-          setSupplierCode(res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier.supplier.supplier_code)
-          setSupplierName(res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier.supplier.supplier_name)
-          setSupplierTerms(res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier.supplier.supplier_terms)
+          setRequestPr(res.data.primary.purchase_req.createdAt);
+          setSupplierCode(
+            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+              .supplier.supplier_code
+          );
+          setSupplierName(
+            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+              .supplier.supplier_name
+          );
+          setSupplierTerms(
+            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+              .supplier.supplier_terms
+          );
+          setApproveddate(res.data.primary.purchase_req.date_approved);
+
           setproducts(res.data.product);
           setassembly(res.data.assembly);
           setspare(res.data.spare);
@@ -142,6 +153,87 @@ function ReceivingPreview({ authrztn }) {
 
     return () => clearTimeout(delay);
   }, []);
+
+  const handleApprove = () => {
+    swal({
+      title: "Are you sure?",
+      text: "You are attempting to approve this data",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        const response = await axios.post(BASE_URL + "/receiving/approval", null, {
+          params: {
+            id: id,
+            prod: products.map((data) => ({
+              product_tag_id:
+                data.purchase_req_canvassed_prd.product_tag_supplier.id,
+              Base_quantity: data.received_quantity,
+              set_quantity: data.set_quantity,
+              price:
+                data.purchase_req_canvassed_prd.product_tag_supplier
+                  .product_price,
+              freight_cost: data.receiving_po.freight_cost,
+              customFee: data.receiving_po.customFee === null
+              ? 0
+              : data.receiving_po.customFee,
+            })),
+            asm: assembly.map((data) => ({
+              product_tag_id:
+                data.purchase_req_canvassed_asmbly.assembly_supplier.id,
+              Base_quantity: data.received_quantity,
+              set_quantity: data.set_quantity,
+              price:
+                data.purchase_req_canvassed_asmbly.assembly_supplier
+                  .supplier_price,
+              freight_cost: data.receiving_po.freight_cost,
+              customFee: data.receiving_po.customFee === null
+              ? 0
+              : data.receiving_po.customFee,
+            })),
+            spr: spare.map((data) => ({
+              product_tag_id:
+                data.purchase_req_canvassed_spare.sparepart_supplier.id,
+              Base_quantity: data.received_quantity,
+              set_quantity: data.set_quantity,
+              price:
+                data.purchase_req_canvassed_spare.sparepart_supplier
+                  .supplier_price,
+              freight_cost: data.receiving_po.freight_cost,
+              customFee: data.receiving_po.customFee === null
+              ? 0
+              : data.receiving_po.customFee,
+            })),
+            sbp: subpart.map((data) => ({
+              product_tag_id:
+                data.purchase_req_canvassed_subpart.subpart_supplier.id,
+              Base_quantity: data.received_quantity,
+              set_quantity: data.set_quantity,
+              price:
+                data.purchase_req_canvassed_subpart.subpart_supplier
+                  .supplier_price,
+              freight_cost: data.receiving_po.freight_cost,
+              customFee: data.receiving_po.customFee === null
+              ? 0
+              : data.receiving_po.customFee,
+            })),
+          },
+        });
+
+        if (response.status === 200) {
+          swal({
+            title: "Approved Successfully",
+            text: "",
+            icon: "success",
+          
+          }).then(() => {
+            navigate('/receivingManagement')
+          })
+        }
+      }
+    });
+  };
 
   //date format
   function formatDatetime(datetime) {
@@ -165,21 +257,20 @@ function ReceivingPreview({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-
   // currentDAte
   const currentDate = new Date();
-  
+
   // Options for formatting the date and time
   const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'Asia/Manila' // Set time zone to Manila, Philippines
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "Asia/Manila", // Set time zone to Manila, Philippines
   };
-  
+
   // Format the date and time according to the options
-  const formattedDate = currentDate.toLocaleDateString('en-PH', options);
+  const formattedDate = currentDate.toLocaleDateString("en-PH", options);
 
   // useEffect(() => {
   //   // Initialize DataTable when role data is available
@@ -187,6 +278,204 @@ function ReceivingPreview({ authrztn }) {
   //     $("#order-listing").DataTable();
   //   }
   // }, [Transaction_prd]);
+  // For Total initial Received in agusan del sur
+  const totalTransferProducts = products.reduce(
+    (total, data) => total + data.transfered_quantity,
+    0
+  );
+  const totalTransferAssembly = assembly.reduce(
+    (total, data) => total + data.transfered_quantity,
+    0
+  );
+  const totalTransferSpare = spare.reduce(
+    (total, data) => total + data.transfered_quantity,
+    0
+  );
+  const totalTransferSubpart = subpart.reduce(
+    (total, data) => total + data.transfered_quantity,
+    0
+  );
+  const totalTransfer =
+    totalTransferProducts +
+    totalTransferAssembly +
+    totalTransferSpare +
+    totalTransferSubpart;
+
+  // For Total Price
+  const totalPriceProducts = products.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_prd.product_tag_supplier.product_price,
+    0
+  );
+  const totalPriceAssembly = assembly.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price,
+    0
+  );
+  const totalPriceSpare = spare.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price,
+    0
+  );
+  const totalPriceSubpart = subpart.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price,
+    0
+  );
+  const totalPrice =
+    totalPriceProducts +
+    totalPriceAssembly +
+    totalPriceSpare +
+    totalPriceSubpart;
+
+  // For Total Received in agusan del sur
+  const totalReceivedProducts = products.reduce(
+    (total, data) => total + data.received_quantity,
+    0
+  );
+  const totalReceivedAssembly = assembly.reduce(
+    (total, data) => total + data.received_quantity,
+    0
+  );
+  const totalReceivedSpare = spare.reduce(
+    (total, data) => total + data.received_quantity,
+    0
+  );
+  const totalReceivedSubpart = subpart.reduce(
+    (total, data) => total + data.received_quantity,
+    0
+  );
+  // Calculate total received for products + assembly
+  const totalReceived =
+    totalReceivedProducts +
+    totalReceivedAssembly +
+    totalReceivedSpare +
+    totalReceivedSubpart;
+
+  // FOr Total Freight Cost
+
+  const totalFRProducts = products.reduce(
+    (total, data) => total + data.receiving_po.freight_cost,
+    0
+  );
+  const totalFRAssembly = assembly.reduce(
+    (total, data) => total + data.receiving_po.freight_cost,
+    0
+  );
+  const totalFRSpare = spare.reduce(
+    (total, data) => total + data.receiving_po.freight_cost,
+    0
+  );
+  const totalFRSubpart = subpart.reduce(
+    (total, data) => total + data.receiving_po.freight_cost,
+    0
+  );
+  // Calculate total received for products + assembly
+  const totalFR =
+    totalFRProducts + totalFRAssembly + totalFRSpare + totalFRSubpart;
+
+  // FOr Total Duties Cost
+
+  const totalDCProducts = products.reduce(
+    (total, data) =>
+      total +
+      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
+    0
+  );
+  const totalDCAssembly = assembly.reduce(
+    (total, data) =>
+      total +
+      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
+    0
+  );
+  const totalDCSpare = spare.reduce(
+    (total, data) =>
+      total +
+      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
+    0
+  );
+  const totalDCSubpart = subpart.reduce(
+    (total, data) =>
+      total +
+      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
+    0
+  );
+  // Calculate total received for products + assembly
+  const totalDC =
+    totalDCProducts + totalDCAssembly + totalDCSpare + totalDCSubpart;
+
+  const totalSetProducts = products.reduce(
+    (total, data) => total + data.set_quantity,
+    0
+  );
+  const totalSetAssembly = assembly.reduce(
+    (total, data) => total + data.set_quantity,
+    0
+  );
+  const totalSetSpare = spare.reduce(
+    (total, data) => total + data.set_quantity,
+    0
+  );
+  const totalSetSubpart = subpart.reduce(
+    (total, data) => total + data.set_quantity,
+    0
+  );
+  // Calculate total received for products + assembly
+  const Settotal =
+    totalSetProducts + totalSetAssembly + totalSetSpare + totalSetSubpart;
+
+  // FOr Total total quantity andprice
+
+  const totalProducts = products.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_prd.product_tag_supplier.product_price *
+        data.received_quantity +
+      ((data.receiving_po.customFee === null
+        ? 0
+        : data.receiving_po.customFee) +
+        data.receiving_po.freight_cost),
+    0
+  );
+  const totalAssembly = assembly.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price *
+        data.received_quantity +
+      ((data.receiving_po.customFee === null
+        ? 0
+        : data.receiving_po.customFee) +
+        data.receiving_po.freight_cost),
+    0
+  );
+  const totalSpare = spare.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price *
+        data.received_quantity +
+      ((data.receiving_po.customFee === null
+        ? 0
+        : data.receiving_po.customFee) +
+        data.receiving_po.freight_cost),
+    0
+  );
+  const totalSubpart = subpart.reduce(
+    (total, data) =>
+      total +
+      data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price *
+        data.received_quantity +
+      ((data.receiving_po.customFee === null
+        ? 0
+        : data.receiving_po.customFee) +
+        data.receiving_po.freight_cost),
+    0
+  );
+  // Calculate total received for products + assembly
+  const total = totalProducts + totalAssembly + totalSpare + totalSubpart;
 
   return (
     <div className="main-of-containers">
@@ -362,10 +651,10 @@ function ReceivingPreview({ authrztn }) {
                       <th className="tableh">Duties & Customs Cost </th>
                     </tr>
                   </thead>
-                  {products.length > 0 ||
-                  assembly > 0 ||
-                  spare > 0 ||
-                  subpart > 0 ? (
+                  {/* {products.length > 0 ||
+                  assembly.length > 0 ||
+                  spare.length > 0 ||
+                  subpart.length > 0 ? ( */}
                     <tbody>
                       {products.map((data, i) => (
                         <tr key={i}>
@@ -518,12 +807,12 @@ function ReceivingPreview({ authrztn }) {
                         </tr>
                       ))}
                     </tbody>
-                  ) : (
+                  {/* ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
                       <h3>No Data Found</h3>
                     </div>
-                  )}
+                  )} */}
                 </table>
               </div>
 
@@ -571,7 +860,9 @@ function ReceivingPreview({ authrztn }) {
 
               <div className="col-3">
                 <li className="fs-3">{`Date: ${formattedDate}`} </li>
-                <li className="fs-3">{`Request Date: ${ formatDatetime(requestPr)}`} </li>
+                <li className="fs-3">
+                  {`Request Date: ${formatDatetime(requestPr)}`}{" "}
+                </li>
               </div>
             </div>
 
@@ -614,7 +905,7 @@ function ReceivingPreview({ authrztn }) {
                 >
                   <div className="right" style={{ float: "right" }}>
                     <li>{`PR Number: ${prNumber}`}</li>
-                    <li>PO Date: </li>
+                    <li>{`PO Date: ${formatDatetime(approvedPRDate)}`} </li>
                   </div>
                 </div>
               </div>
@@ -630,15 +921,17 @@ function ReceivingPreview({ authrztn }) {
                           <th className="tableh">UOM</th>
                           <th className="tableh">Initial Received</th>
                           <th className="tableh">Received</th>
-                          <th className="tableh">Price</th>
+                          <th className="tableh">Set</th>
+                          <th className="tableh">Unit Price</th>
                           <th className="tableh">Freight Cost</th>
                           <th className="tableh">Duties & Customs Cost </th>
+                          <th className="tableh">Total</th>
                         </tr>
                       </thead>
-                      {products.length > 0 ||
-                      assembly > 0 ||
-                      spare > 0 ||
-                      subpart > 0 ? (
+                      {/* {products.length > 0 &&
+                      assembly.length > 0 &&
+                      spare.length > 0 &&
+                      subpart.length > 0 ? ( */}
                         <tbody>
                           {products.map((data, i) => (
                             <tr key={i}>
@@ -661,8 +954,17 @@ function ReceivingPreview({ authrztn }) {
                                     .product_unitMeasurement
                                 }
                               </td>
-                              <td>{data.transfered_quantity}</td>
+                              <td>
+                                {data.transfered_quantity === null
+                                  ? "N/A"
+                                  : data.transfered_quantity}
+                              </td>
                               <td>{data.received_quantity}</td>
+                              <td>
+                                {data.set_quantity === 0
+                                  ? "N/A"
+                                  : data.set_quantity}
+                              </td>
                               <td>
                                 {
                                   data.purchase_req_canvassed_prd
@@ -674,6 +976,15 @@ function ReceivingPreview({ authrztn }) {
                                 {data.receiving_po.customFee === null
                                   ? 0
                                   : data.receiving_po.customFee}
+                              </td>
+                              <td>
+                                {data.purchase_req_canvassed_prd
+                                  .product_tag_supplier.product_price *
+                                  data.received_quantity +
+                                  ((data.receiving_po.customFee === null
+                                    ? 0
+                                    : data.receiving_po.customFee) +
+                                    data.receiving_po.freight_cost)}
                               </td>
                             </tr>
                           ))}
@@ -699,8 +1010,17 @@ function ReceivingPreview({ authrztn }) {
                                     .assembly_unitMeasurement
                                 }
                               </td>
-                              <td>{data.transfered_quantity}</td>
+                              <td>
+                                {data.transfered_quantity === null
+                                  ? "N/A"
+                                  : data.transfered_quantity}
+                              </td>
                               <td>{data.received_quantity}</td>
+                              <td>
+                                {data.set_quantity === 0
+                                  ? "N/A"
+                                  : data.set_quantity}
+                              </td>
                               <td>
                                 {
                                   data.purchase_req_canvassed_asmbly
@@ -712,6 +1032,15 @@ function ReceivingPreview({ authrztn }) {
                                 {data.receiving_po.customFee === null
                                   ? 0
                                   : data.receiving_po.customFee}
+                              </td>
+                              <td>
+                                {data.purchase_req_canvassed_asmbly
+                                  .assembly_supplier.supplier_price *
+                                  data.received_quantity +
+                                  ((data.receiving_po.customFee === null
+                                    ? 0
+                                    : data.receiving_po.customFee) +
+                                    data.receiving_po.freight_cost)}
                               </td>
                             </tr>
                           ))}
@@ -738,8 +1067,17 @@ function ReceivingPreview({ authrztn }) {
                                     .spareParts_unitMeasurement
                                 }
                               </td>
-                              <td>{data.transfered_quantity}</td>
+                              <td>
+                                {data.transfered_quantity === null
+                                  ? "N/A"
+                                  : data.transfered_quantity}
+                              </td>
                               <td>{data.received_quantity}</td>
+                              <td>
+                                {data.set_quantity === 0
+                                  ? "N/A"
+                                  : data.set_quantity}
+                              </td>
                               <td>
                                 {
                                   data.purchase_req_canvassed_spare
@@ -751,6 +1089,15 @@ function ReceivingPreview({ authrztn }) {
                                 {data.receiving_po.customFee === null
                                   ? 0
                                   : data.receiving_po.customFee}
+                              </td>
+                              <td>
+                                {data.purchase_req_canvassed_spare
+                                  .sparepart_supplier.supplier_price *
+                                  data.received_quantity +
+                                  ((data.receiving_po.customFee === null
+                                    ? 0
+                                    : data.receiving_po.customFee) +
+                                    data.receiving_po.freight_cost)}
                               </td>
                             </tr>
                           ))}
@@ -776,8 +1123,17 @@ function ReceivingPreview({ authrztn }) {
                                     .subPart_unitMeasurement
                                 }
                               </td>
-                              <td>{data.transfered_quantity}</td>
+                              <td>
+                                {data.transfered_quantity === null
+                                  ? "N/A"
+                                  : data.transfered_quantity}
+                              </td>
                               <td>{data.received_quantity}</td>
+                              <td>
+                                {data.set_quantity === 0
+                                  ? "N/A"
+                                  : data.set_quantity}
+                              </td>
                               <td>
                                 {
                                   data.purchase_req_canvassed_subpart
@@ -790,19 +1146,39 @@ function ReceivingPreview({ authrztn }) {
                                   ? 0
                                   : data.receiving_po.customFee}
                               </td>
+                              <td>
+                                {data.purchase_req_canvassed_subpart
+                                  .subpart_supplier.supplier_price *
+                                  data.received_quantity +
+                                  ((data.receiving_po.customFee === null
+                                    ? 0
+                                    : data.receiving_po.customFee) +
+                                    data.receiving_po.freight_cost)}
+                              </td>
                             </tr>
                           ))}
+
+                          <tr className="bg-body-secondary">
+                            <td colSpan="3">Overall Total:</td>
+                            <td>{totalTransfer}</td>
+                            <td>{totalReceived}</td>
+                            <td>{Settotal}</td>
+                            <td>{totalPrice}</td>
+                            <td>{totalFR}</td>
+                            <td>{totalDC}</td>
+                            <td>{total}</td>
+                          </tr>
                         </tbody>
-                      ) : (
-                        <div className="no-data">
-                          <img
-                            src={NoData}
-                            alt="NoData"
-                            className="no-data-img"
-                          />
-                          <h3>No Data Found</h3>
-                        </div>
-                      )}
+                      {/* // ) : (
+                      //   <div className="no-data">
+                      //     <img
+                      //       src={NoData}
+                      //       alt="NoData"
+                      //       className="no-data-img"
+                      //     />
+                      //     <h3>No Data Found</h3>
+                      //   </div>
+                      // )} */}
                     </table>
                   </div>
                 </div>
@@ -811,7 +1187,10 @@ function ReceivingPreview({ authrztn }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-        <Button onClick={exportToPDF}>Export to PDF</Button>
+          <Button onClick={handleApprove} className="button bg-warning">
+            Approve
+          </Button>
+          <Button onClick={exportToPDF}>Export to PDF</Button>
         </Modal.Footer>
       </Modal>
     </div>

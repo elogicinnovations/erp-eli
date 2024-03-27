@@ -8,7 +8,7 @@ const IssuedProduct = sequelize.define('issued_product', {
     primaryKey: true,
     autoIncrement: true,
   },
-  inventory_id: {
+  product_id: {
     type: DataTypes.INTEGER,
     allowNull: true,
     unique: false,
@@ -20,9 +20,6 @@ const IssuedProduct = sequelize.define('issued_product', {
   },
   quantity: {
     type: DataTypes.INTEGER
-  },
-  status: {
-    type: DataTypes.STRING
   }
 
 });

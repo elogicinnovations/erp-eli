@@ -109,19 +109,18 @@ router.route('/create').post(async (req, res) => {
           });
           const createdID = spare_newData.id;
 
-          const findWarehouse = await Warehouses.findOne({
-            where: {
-              warehouse_name: "Main",
-              location: "Agusan",
-            },
-          });
+          // const findWarehouse = await Warehouses.findOne({
+          //   where: {
+          //    id: 1
+          //   },
+          // });
           
-          if (!findWarehouse) {
-            console.log("No warehouse found");
-          }
+          // if (!findWarehouse) {
+          //   console.log("No warehouse found");
+          // }
   
-          const ExistWarehouseId = findWarehouse.id;
-          console.log("Id ng warehouse: " + ExistWarehouseId);
+          // const ExistWarehouseId = findWarehouse.id;
+          // console.log("Id ng warehouse: " + ExistWarehouseId);
 
 
           for (const supplier of SpareaddPriceInput) {
@@ -141,12 +140,12 @@ router.route('/create').post(async (req, res) => {
             })
 
             
-            await Inventory_Spare.create({
-              spare_tag_supp_id: SupplierSpare_ID.id,
-              quantity: 0,
-              price: supplierPrices,
-              warehouse_id: ExistWarehouseId,
-            });
+            // await Inventory_Spare.create({
+            //   spare_tag_supp_id: SupplierSpare_ID.id,
+            //   quantity: 0,
+            //   price: supplierPrices,
+            //   warehouse_id: ExistWarehouseId,
+            // });
           }
 
 
@@ -263,18 +262,17 @@ router.route("/update").post(
           }
         }
 
-        const findWarehouse = await Warehouses.findOne({
-          where: {
-            warehouse_name: "Main",
-            location: "Agusan",
-          },
-        });
+        // const findWarehouse = await Warehouses.findOne({
+        //   where: {
+        //     id: 1
+        //   },
+        // });
         
-        if (!findWarehouse) {
-          console.log("No warehouse found");
-        }
+        // if (!findWarehouse) {
+        //   console.log("No warehouse found");
+        // }
 
-        const ExistWarehouseId = findWarehouse.id;
+        // const ExistWarehouseId = findWarehouse.id;
         // console.log("Id ng warehouse: " + ExistWarehouseId);
 
 
@@ -291,11 +289,11 @@ router.route("/update").post(
 
         const ExistSuppId = sparesupprows.map(supprow => supprow.id);
 
-        await Inventory_Spare.destroy({
-          where: {
-            spare_tag_supp_id: ExistSuppId,
-          },
-        });
+        // await Inventory_Spare.destroy({
+        //   where: {
+        //     spare_tag_supp_id: ExistSuppId,
+        //   },
+        // });
 
         const deletesupplier = await SparePart_Supplier.destroy({
           where: {
@@ -317,12 +315,12 @@ router.route("/update").post(
               const createdID = newSparesupp.id;
 
 
-              await Inventory_Spare.create({
-                spare_tag_supp_id: createdID,
-                quantity: 0,
-                price: price,
-                warehouse_id: ExistWarehouseId,
-              });
+              // await Inventory_Spare.create({
+              //   spare_tag_supp_id: createdID,
+              //   quantity: 0,
+              //   price: price,
+              //   warehouse_id: ExistWarehouseId,
+              // });
 
               const ExistingSupplier = await SparePartPrice_history.findOne({
                 where: {

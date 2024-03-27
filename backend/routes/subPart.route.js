@@ -101,19 +101,18 @@ router.route('/fetchTable').get(async (req, res) => {
           });
           const createdID = subpart_newData.id;
 
-          const findWarehouse = await Warehouses.findOne({
-            where: {
-              warehouse_name: "Main",
-              location: "Agusan",
-            },
-          });
+          // const findWarehouse = await Warehouses.findOne({
+          //   where: {
+          //    id: 1
+          //   },
+          // });
           
-          if (!findWarehouse) {
-            console.log("No warehouse found");
-          }
+          // if (!findWarehouse) {
+          //   console.log("No warehouse found");
+          // }
   
-          const ExistWarehouseId = findWarehouse.id;
-          console.log("Id ng warehouse: " + ExistWarehouseId);
+          // const ExistWarehouseId = findWarehouse.id;
+          // console.log("Id ng warehouse: " + ExistWarehouseId);
 
           for (const supplier of SubaddPriceInput) {
             const supplierValue = supplier.code;
@@ -131,21 +130,13 @@ router.route('/fetchTable').get(async (req, res) => {
                 supplier_price: supplierPrices
             })
 
-            await Inventory_Subpart.create({
-              subpart_tag_supp_id: SupplierSubpart_ID.id,
-              quantity: 0,
-              price: supplierPrices,
-              warehouse_id: ExistWarehouseId,
-            });
-
-            // const findwarehouse = await Warehouses.findOne({
-            //   where: {
-            //     warehouse_name: "Main",
-            //     location: "Agusan",
-            //   },
+            // await Inventory_Subpart.create({
+            //   subpart_tag_supp_id: SupplierSubpart_ID.id,
+            //   quantity: 0,
+            //   price: supplierPrices,
+            //   warehouse_id: ExistWarehouseId,
             // });
 
-            // const warehouseId = findwarehouse.id;
           }
 
           if(images.length > 0){
@@ -232,18 +223,17 @@ router.route("/update").post(
           }
         }
 
-          const findWarehouse = await Warehouses.findOne({
-            where: {
-              warehouse_name: "Main",
-              location: "Agusan",
-            },
-          });
+          // const findWarehouse = await Warehouses.findOne({
+          //   where: {
+          //     id: 1
+          //   },
+          // });
           
-          if (!findWarehouse) {
-            console.log("No warehouse found");
-          }
+          // if (!findWarehouse) {
+          //   console.log("No warehouse found");
+          // }
 
-          const ExistWarehouseId = findWarehouse.id;
+          // const ExistWarehouseId = findWarehouse.id;
           // console.log("Id ng warehouse: " + ExistWarehouseId);
 
           const subsupprows = await Subpart_supplier.findAll({
@@ -265,11 +255,11 @@ router.route("/update").post(
             },
           });
 
-         const deletesupplier = await Subpart_supplier.destroy({
-            where: {
-              subpart_id: id,
-            },
-          });
+        //  const deletesupplier = await Subpart_supplier.destroy({
+        //     where: {
+        //       subpart_id: id,
+        //     },
+        //   });
 
           // if(deletesupplier) {
             const selectedSuppliers = subpartTAGSuppliers;
@@ -284,12 +274,12 @@ router.route("/update").post(
 
                   const createdID = newSubpartsupp.id;
 
-                  await Inventory_Subpart.create({
-                    subpart_tag_supp_id: createdID,
-                    quantity: 0,
-                    price: price,
-                    warehouse_id: ExistWarehouseId,
-                  });
+                  // await Inventory_Subpart.create({
+                  //   subpart_tag_supp_id: createdID,
+                  //   quantity: 0,
+                  //   price: price,
+                  //   warehouse_id: ExistWarehouseId,
+                  // });
 
                   const ExistingSupplier = await Subpart_Price_History.findOne({
                     where: {

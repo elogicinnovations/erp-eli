@@ -84,7 +84,7 @@ function CreateStockTransfer({ authrztn }) {
   const handleFormDestinationWarehouse = (event) => {
     setDestination(event.target.value);
   };
-  console.log("HAHAHAHAHA" + destination);
+  // console.log("HAHAHAHAHA" + destination);
 
   useEffect(() => {
     const generateReferenceCode = () => {
@@ -136,7 +136,7 @@ function CreateStockTransfer({ authrztn }) {
       .get(BASE_URL + "/warehouses/fetchtableWarehouses")
       .then((response) => {
         setWarehouse(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((error) => {
         console.error("Error fetching roles:", error);
@@ -721,6 +721,7 @@ function CreateStockTransfer({ authrztn }) {
               </div>
 
               <div className="save-cancel">
+              {product && product.length > 0 ? (
                 <Button
                   type="submit"
                   className="btn btn-warning"
@@ -729,6 +730,10 @@ function CreateStockTransfer({ authrztn }) {
                 >
                   Save
                 </Button>
+              ):(
+                <></>
+              )}
+                
                 <Link
                   to="/stockManagement"
                   className="btn btn-secondary btn-md"

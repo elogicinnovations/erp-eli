@@ -53,7 +53,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
     .then(res => {
       setFromSite(res.data[0].from_site);
       setIssuedTo(res.data[0].cost_center.name);
-      // setWithAccountability(res.data[0].)
+      setWithAccountability(res.data[0].with_accountability)
       setAccountabilityRefcode(res.data[0].accountability_refcode)
       setSerialNumber(res.data[0].serial_number)
       setJobOrderRefcode(res.data[0].job_order_refcode)
@@ -113,7 +113,12 @@ return () => clearTimeout(delay);
       if (confirmed) {
         axios.post(BASE_URL + '/issuance/approval', null,{
          params:{
-            id
+            id,
+            fromSite,
+            fetchProduct,
+            fetchAssembly,
+            fetchSpare,
+            fetchSubpart
          }
         })
           .then(() => {
@@ -233,7 +238,9 @@ return () => clearTimeout(delay);
                   type="checkbox"
                   label="With Accountability"
                   style={{ fontSize: "15px" }}
-                  onChange={(e) => setWithAccountability(e.target.value)}
+                  checked={withAccountability === 'true'}
+                  disabled
+                  // onChange={(e) => setWithAccountability(e.target.value)}
                 />
               </div>
             </div>
@@ -375,6 +382,7 @@ return () => clearTimeout(delay);
                       <tr>
                         <th className="tableh">Product Code</th>
                         <th className="tableh">Product Name</th>
+                        <th className="tableh">UOM</th>
                         <th className="tableh">Quantity</th>
                       </tr>
                     </thead>
@@ -382,32 +390,36 @@ return () => clearTimeout(delay);
 
                       {fetchProduct.map((data, i) => (
                         <tr key={i}>
-                            <td>{data.inventory_prd.product_tag_supplier.product.product_code }</td>
-                            <td>{data.inventory_prd.product_tag_supplier.product.product_name }</td>
+                            <td>{data.product.product_code }</td>
+                            <td>{data.product.product_name }</td>
+                            <td>{data.product.product_unitMeasurement }</td>
                             <td>{data.quantity}</td>                         
                         </tr>
                         ))}
 
                       {fetchAssembly.map((data, i) => (
                         <tr key={i}>
-                            <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_code}</td>
-                            <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_name}</td>
+                            <td>{data.assembly.assembly_code}</td>
+                            <td>{data.assembly.assembly_name}</td>
+                            <td>{data.assembly.assembly_unitMeasurement}</td>
                             <td>{data.quantity}</td>                         
                         </tr>
                         ))}
 
                         {fetchSpare.map((data, i) => (
                           <tr key={i}>
-                              <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}</td>
-                              <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}</td>
+                              <td>{data.sparePart.spareParts_code}</td>
+                              <td>{data.sparePart.spareParts_name}</td>
+                              <td>{data.sparePart.spareParts_unitMeasurement}</td>
                               <td>{data.quantity}</td>                         
                           </tr>
                         ))}
 
                         {fetchSubpart.map((data, i) => (
                           <tr key={i}>
-                              <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_code}</td>
-                              <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_name}</td>
+                              <td>{data.subPart.subPart_code}</td>
+                              <td>{data.subPart.subPart_name}</td>
+                              <td>{data.subPart.subPart_unitMeasurement}</td>
                               <td>{data.quantity}</td>                         
                           </tr>
                         ))}

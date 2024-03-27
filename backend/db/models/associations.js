@@ -45,6 +45,11 @@ const IssuedAssembly = require("./issued_assembly.model");
 const IssuedSpare = require("./issued_spare.model");
 const IssuedSubpart = require("./issued_subpart.model");
 
+const IssuedApproveProduct = require("./issued_approve_prd.model");
+const IssuedApproveAssembly = require("./issued_approve_asm.model");
+const IssuedApproveSpare = require("./issued_approve_spare.model");
+const IssuedApproveSubpart = require("./issued_approve_subpart.model");
+
 const IssuedReturn = require("./issued_return.model"); // for product
 const IssuedReturn_asm = require("./issued_return_asm.model");
 const IssuedReturn_spare = require("./issued_return_spare.model");
@@ -240,37 +245,60 @@ Issuance.belongsTo(CostCenter, { foreignKey: "issued_to" });
 Issuance.hasMany(IssuedProduct, { foreignKey: "issuance_id" });
 IssuedProduct.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-Inventory.hasMany(IssuedProduct, { foreignKey: "inventory_id" });
-IssuedProduct.belongsTo(Inventory, { foreignKey: "inventory_id" });
+Product.hasMany(IssuedProduct, { foreignKey: "product_id" });
+IssuedProduct.belongsTo(Product, { foreignKey: "product_id" });
 
 //issuance assembly table
 Issuance.hasMany(IssuedAssembly, { foreignKey: "issuance_id" });
 IssuedAssembly.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-Inventory_Assembly.hasMany(IssuedAssembly, {
-  foreignKey: "inventory_Assembly_id",
-});
-IssuedAssembly.belongsTo(Inventory_Assembly, {
-  foreignKey: "inventory_Assembly_id",
-});
+Assembly.hasMany(IssuedAssembly, {foreignKey: "product_id",});
+IssuedAssembly.belongsTo(Assembly, {foreignKey: "product_id"});
 
 //issuance spare table
 Issuance.hasMany(IssuedSpare, { foreignKey: "issuance_id" });
 IssuedSpare.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-Inventory_Spare.hasMany(IssuedSpare, { foreignKey: "inventory_Spare_id" });
-IssuedSpare.belongsTo(Inventory_Spare, { foreignKey: "inventory_Spare_id" });
+SparePart.hasMany(IssuedSpare, { foreignKey: "product_id" });
+IssuedSpare.belongsTo(SparePart, { foreignKey: "product_id" });
 
 //issuance subpart table
 Issuance.hasMany(IssuedSubpart, { foreignKey: "issuance_id" });
 IssuedSubpart.belongsTo(Issuance, { foreignKey: "issuance_id" });
 
-Inventory_Subpart.hasMany(IssuedSubpart, {
-  foreignKey: "inventory_Subpart_id",
-});
-IssuedSubpart.belongsTo(Inventory_Subpart, {
-  foreignKey: "inventory_Subpart_id",
-});
+SubPart.hasMany(IssuedSubpart, {foreignKey: "product_id",});
+IssuedSubpart.belongsTo(SubPart, {foreignKey: "product_id",});
+
+
+// IF iSSUANCE is approved prd
+Issuance.hasMany(IssuedApproveProduct, { foreignKey: "issuance_id" });
+IssuedApproveProduct.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory.hasMany(IssuedApproveProduct, { foreignKey: "inventory_id" });
+IssuedApproveProduct.belongsTo(Inventory, { foreignKey: "inventory_id" });
+
+// IF iSSUANCE is approved asm
+Issuance.hasMany(IssuedApproveAssembly, { foreignKey: "issuance_id" });
+IssuedApproveAssembly.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory_Assembly.hasMany(IssuedApproveAssembly, { foreignKey: "inventory_id" });
+IssuedApproveAssembly.belongsTo(Inventory_Assembly, { foreignKey: "inventory_id" });
+
+
+// IF iSSUANCE is approved spare
+Issuance.hasMany(IssuedApproveSpare, { foreignKey: "issuance_id" });
+IssuedApproveSpare.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory_Spare.hasMany(IssuedApproveSpare, { foreignKey: "inventory_id" });
+IssuedApproveSpare.belongsTo(Inventory_Spare, { foreignKey: "inventory_id" });
+
+// IF iSSUANCE is approved spare
+Issuance.hasMany(IssuedApproveSubpart, { foreignKey: "issuance_id" });
+IssuedApproveSubpart.belongsTo(Issuance, { foreignKey: "issuance_id" });
+
+Inventory_Subpart.hasMany(IssuedApproveSubpart, { foreignKey: "inventory_id" });
+IssuedApproveSubpart.belongsTo(Inventory_Subpart, { foreignKey: "inventory_id" });
+
 
 //Issuance Return tab for product
 Inventory.hasMany(IssuedReturn, { foreignKey: "inventory_id" });
@@ -593,6 +621,10 @@ module.exports = {
   IssuedAssembly,
   IssuedSpare,
   IssuedSubpart,
+  IssuedApproveProduct,
+  IssuedApproveAssembly,
+  IssuedApproveSpare,
+  IssuedApproveSubpart,
 
   IssuedReturn,
   IssuedReturn_asm,

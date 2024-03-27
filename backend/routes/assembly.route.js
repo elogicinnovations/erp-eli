@@ -126,19 +126,19 @@ router.route("/create").post(async (req, res) => {
     });
       const createdID = spare_newData.id;
 
-      const findWarehouse = await Warehouses.findOne({
-        where: {
-          warehouse_name: "Main",
-          location: "Agusan",
-        },
-      });
+      // const findWarehouse = await Warehouses.findOne({
+      //   where: {
+      //     id: 1
+      //     
+      //   },
+      // });
       
-      if (!findWarehouse) {
-        console.log("No warehouse found");
-      }
+      // if (!findWarehouse) {
+      //   console.log("No warehouse found");
+      // }
 
-      const ExistWarehouseId = findWarehouse.id;
-      console.log("Id ng warehouse: " + ExistWarehouseId);
+      // const ExistWarehouseId = findWarehouse.id;
+      // console.log("Id ng warehouse: " + ExistWarehouseId);
 
       for (const supplier of addPriceInput) {
         const supplierValue = supplier.code;
@@ -156,12 +156,12 @@ router.route("/create").post(async (req, res) => {
           supplier_price: supplierPrice,
         })
 
-        await Inventory_Assembly.create({
-          assembly_tag_supp_id: SupplierAssembly_ID.id,
-          quantity: 0,
-          price: supplierPrice,
-          warehouse_id: ExistWarehouseId,
-        });
+        // await Inventory_Assembly.create({
+        //   assembly_tag_supp_id: SupplierAssembly_ID.id,
+        //   quantity: 0,
+        //   price: supplierPrice,
+        //   warehouse_id: ExistWarehouseId,
+        // });
       }
 
       for (const sparePart of spareParts) {
@@ -307,18 +307,18 @@ router.route("/update").post(
           }
         }
 
-        const findWarehouse = await Warehouses.findOne({
-          where: {
-            warehouse_name: "Main",
-            location: "Agusan",
-          },
-        });
+        // const findWarehouse = await Warehouses.findOne({
+        //   where: {
+        //     warehouse_name: "Main",
+        //     location: "Agusan",
+        //   },
+        // });
         
-        if (!findWarehouse) {
-          console.log("No warehouse found");
-        }
+        // if (!findWarehouse) {
+        //   console.log("No warehouse found");
+        // }
   
-        const ExistWarehouseId = findWarehouse.id;
+        // const ExistWarehouseId = findWarehouse.id;
         // console.log("Id ng warehouse: " + ExistWarehouseId);
 
         
@@ -335,11 +335,11 @@ router.route("/update").post(
 
        const ExistSuppId = assemblysupprows.map(supprow => supprow.id);
 
-       await Inventory_Assembly.destroy({
-          where: {
-            assembly_tag_supp_id: ExistSuppId,
-          },
-       });
+      //  await Inventory_Assembly.destroy({
+      //     where: {
+      //       assembly_tag_supp_id: ExistSuppId,
+      //     },
+      //  });
 
        const deletesupplier = await Assembly_Supplier.destroy({
           where: {
@@ -360,12 +360,12 @@ router.route("/update").post(
 
             const createdID = newAssemblysupp.id;
 
-            await Inventory_Assembly.create({
-              assembly_tag_supp_id: createdID,
-              quantity: 0,
-              price: price,
-              warehouse_id: ExistWarehouseId,
-            });
+            // await Inventory_Assembly.create({
+            //   assembly_tag_supp_id: createdID,
+            //   quantity: 0,
+            //   price: price,
+            //   warehouse_id: ExistWarehouseId,
+            // });
 
             const ExistingSupplier = await AssemblyPrice_History.findOne({
               where: {
