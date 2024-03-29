@@ -516,9 +516,20 @@ function PurchaseRequest({ authrztn }) {
                                 navigate(`/purchaseRequestPreview/${data.id}`)
                               }
                           >
-                            <p className="" style={{ fontSize: "12px" }}>
+                            <div
+                              style={{
+                                backgroundColor: "#5C636A",
+                                fontSize: "10px",
+                                color: "white",
+                                padding: "5px",
+                                borderRadius: "5px",
+                                textAlign: "center",
+                                width: "105px"
+                              }}
+                            >
                               {data.status}
-                            </p>
+                            </div>
+
                           </td>
                           <td onClick={() => 
                           data.status === 'For-Canvassing' ?

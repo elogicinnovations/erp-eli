@@ -384,8 +384,8 @@ function CreateSupplier({ authrztn }) {
                       <option disabled value="">
                         Select currency...
                       </option>
-                      <option value="₱">PHP (₱)</option>
-                      <option value="$">USD ($)</option>
+                      <option value="PHP">PHP (₱)</option>
+                      <option value="USD">USD ($)</option>
                     </Form.Select>
                   </Col>
                   <Col></Col>

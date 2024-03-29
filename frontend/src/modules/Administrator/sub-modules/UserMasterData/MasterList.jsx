@@ -127,6 +127,7 @@ function MasterList({ authrztn }) {
     uarole: "",
     uadept: "",
     uapass: "",
+    confirmPassword: "",
     ustatus: false,
     updateId: null,
   });
@@ -231,6 +232,7 @@ function MasterList({ authrztn }) {
         uarole: "",
         uadept: "",
         uapass: "",
+        confirmPassword: "",
         ustatus: false,
         updateId: null,
       });
@@ -1620,28 +1622,28 @@ function MasterList({ authrztn }) {
                     </div>
                   </Form.Group>
                 </div>
-                {updateFormData.uapass !== '' && (
-                <>
-                  {!UpdatevalidatePassword(updateFormData.uapass) && (
-                    <ul style={{ color: "red", fontSize: "12px", marginTop: "5px", listStyleType: "disc",}}>
-                      <li>Password must contain at least 8 length.</li>
-                      <li>Password must contain at least one capital letter.</li>
-                      <li>Password must contain at least one small letter.</li>
-                      <li>Password must contain at least one number.</li>
-                      <li>Password must contain at least one special character [!@#$%^&*()_+]</li>
-                  </ul>
-                  )}
-                </>
-               )}
-                {updateFormData.uapass === '' && updateFormData.confirmPassword === '' && (
-                <>
-                  {UpdatepasswordsMatch ? (
-                    <p style={{ color: "green", fontSize: "12px", marginTop: "5px" }}>Passwords match!</p>
-                  ) : (
-                    <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>Passwords do not match!</p>
-                  )}
+                {updateFormData.uapass !== '' && updateFormData.confirmPassword !== '' && (
+                  <>
+                    {UpdatevalidatePassword(updateFormData.uapass) ? (
+                      <>
+                        {UpdatepasswordsMatch ? (
+                          <p style={{ color: "green", fontSize: "12px", marginTop: "5px" }}>Passwords match!</p>
+                        ) : (
+                          <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>Passwords do not match!</p>
+                        )}
+                      </>
+                    ) : (
+                      <ul style={{ color: "red", fontSize: "12px", marginTop: "5px", listStyleType: "disc" }}>
+                        <li>Password must contain at least 8 characters.</li>
+                        <li>Password must contain at least one capital letter.</li>
+                        <li>Password must contain at least one small letter.</li>
+                        <li>Password must contain at least one number.</li>
+                        <li>Password must contain at least one special character [!@#$%^&*()_+]</li>
+                      </ul>
+                    )}
                   </>
-              )}
+                )}
+
               </div>
             
           )}

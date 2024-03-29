@@ -934,6 +934,7 @@ function POApprovalRejustify({ authrztn }) {
                               <div className="notedby">
                                 <span>Checked by: </span>
                                 <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>
+                                <span>ALLAN JUEN</span>
                               </div>
                               <div className="recommending">
                                 {/* <span>RECOMMENDING APPROVAL</span> */}
@@ -944,12 +945,23 @@ function POApprovalRejustify({ authrztn }) {
 
                           <div className="fifthrightrows">
                             <div className="totalamount">
-                              <span>Total: <strong>{`${totalSum}`}</strong></span>
+                              <div className="vatandAmounttotal">
+                                  <div className="vatamounts">
+                                    <span>VAT ({`${vat}%`})</span>
+                                    <span><strong>{`${vatAmount}`}</strong></span>
+                                  </div>
+                                  <div className="totalAmounts">
+                                    <span>Total Amount</span>
+                                    <span><strong>{`${totalSum}`}</strong></span>
+                                  </div>
+                              </div>
+                              
+                                <div className="overallTotal">
+                                   <span>Overall Total: <strong>{`${currency} ${TotalAmount}`}</strong></span>
+                                </div>
 
-                               <span>VAT ({`${vat}%`}): <strong>{`${vatAmount}`}</strong></span>
-
-                              <span>Total Amount: <strong>{`${currency} ${TotalAmount}`}</strong></span>
                             </div>
+
                             <div className="codesection">
                               <span>Date Approved:</span>
                                   <span>{dateApproved.toLocaleDateString('en-PH')}</span>
@@ -957,7 +969,7 @@ function POApprovalRejustify({ authrztn }) {
                             <div className="approvedsby">
                               <span>Approved By: </span>
                               
-                              {/* <span>{signatureTriggered &&  <img src={ESignature} alt="ESignature" className="signature-image" /> }</span> */}
+                              <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>
                               <span>Daniel Byron S. Afdal</span>
                             </div>
                           </div>

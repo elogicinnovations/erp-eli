@@ -88,6 +88,13 @@ function Warehouse({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
+  const handleDescriptionChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue.length <= 1000) {
+      setDescription(inputValue);
+    }
+  };
+
   const add = async (e) => {
     e.preventDefault();
 
@@ -574,9 +581,14 @@ function Warehouse({ authrztn }) {
                       overflowY: "auto",
                     }}
                     value={updateFormData.description}
-                    onChange={handleUpdateFormChange}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 1000) {
+                        handleUpdateFormChange(e);
+                      }
+                    }}
                     name="description"
                   />
+                  <small>{updateFormData.description.length}/1000</small>
                 </Form.Group>
               </div>
             </div>
@@ -672,8 +684,10 @@ function Warehouse({ authrztn }) {
                     resize: "none",
                     overflowY: "auto",
                   }}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={handleDescriptionChange}
+                  maxLength={1000}
                 />
+                 <small>{description.length}/1000</small>
               </Form.Group>
             </div>
             <div className="save-cancel">

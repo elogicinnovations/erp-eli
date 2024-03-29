@@ -3824,6 +3824,7 @@ span:nth-child(5){
 .po-content span:nth-child(2) {
   font-size: 12px;
   font-family: Poppins, "Source Sans Pro";
+  padding-left: 3px;
 }
 
 .secondrowes{
@@ -3902,6 +3903,7 @@ span:nth-child(5){
   padding-bottom: 5px;
   font-weight: 500;
   border-bottom: 1px solid black;
+  padding-left: 3px;
 }
 
 .rightsecondrows span:nth-child(2){
@@ -3909,6 +3911,7 @@ span:nth-child(5){
   font-family: Poppins, "Source Sans Pro";
   padding-top: 5px;
   padding-bottom: 5px;
+  padding-left: 3px;
 }
 
 .thirdrowes{
@@ -4255,6 +4258,12 @@ span:nth-child(5){
   font-size: 14px;
 }
 
+.notedby span:nth-child(3){
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  font-size: 14px;
+}
+
 .recommending{
   width: 50%;
   display: flex;
@@ -4287,31 +4296,40 @@ span:nth-child(5){
   border-bottom: 1px solid black;
   display: flex;
   flex-direction: column;
-  padding-left: 2px;
 }
 
-.totalamount span:nth-child(1){
-  font-family: Poppins, "Source Sans Pro";
-  font-weight: 500;
+.vatandAmounttotal{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 3px;
+}
+
+.vatamounts {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
   font-size: 12px;
-  padding: 5px 0px;
-}
-
-.totalamount span:nth-child(2){
   font-family: Poppins, "Source Sans Pro";
-  font-weight: 500;
-  font-size: 12px;
-  padding: 5px 0px;
+  border-bottom: 1px solid black;
 }
 
-.totalamount span:nth-child(3){
+.totalAmounts {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  font-size: 12px;
   font-family: Poppins, "Source Sans Pro";
-  font-weight: 500;
-  font-size: 12px;
-  padding: 5px 0px;
+  border-bottom: 1px solid black;
 }
 
-
+.overallTotal{
+  width: 100%;
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  text-align: center;
+}
 
 .codesection{
   height: 40%;
@@ -4532,6 +4550,234 @@ span:nth-child(5){
 
 .searchfield {
   margin-bottom: 20px;
+}
+
+.canvassing-templates-container{
+  width: 100%;
+  height: 100%;
+}
+
+.canvassing-content-templates {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.templates-header{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.template-logoes{
+  width: 10%;
+  display: flex;
+  border: 1px solid #000000;
+}
+
+.template-logoes img{
+  width: 100%;
+  height: 100%;
+}
+
+.SBFtextslogo{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  padding-left: 15px;
+}
+
+.SBFtextslogo span:nth-child(1){
+  font-size: 24px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+}
+
+.SBFtextslogo span:nth-child(2){
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.SBFtextslogo span:nth-child(3){
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.templates-middle{
+  text-align: center;
+  width: 100%;
+  padding-top: 40px;  
+}
+
+.Quotationdiv{
+  width: 100%;
+  align-items: center;
+}
+
+.Quotationdiv span{
+  font-size: 26px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+}
+
+.templates-prname-section{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.templates-labels{
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.templates-labels span{
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+}
+
+.template-label-value{
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.template-label-value span{
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  color: red;
+}
+
+.templates-table-section{
+  width: 100%;
+  height: 300px;
+}
+
+.templatestable-content{
+  padding: 10px;
+  overflow-y: auto;
+} 
+
+.templatestable-content table {
+  border-collapse: collapse;
+}
+
+.templatestable-content table thead{
+  border-top: 1px solid black;
+
+}
+
+
+.templatestable-content table th {
+  font-size: 16px !important;
+  font-family: Poppins, "Source Sans Pro";
+  border: 1px solid black;
+  padding: 10px;
+  background-color: #ECECEC ;
+}
+
+.templatestable-content table td {
+  font-size: 14px !important;
+  font-family: Poppins, "Source Sans Pro";
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.terms-container{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.terms-section-label{
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.terms-section-label span{
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+}
+
+.terms-value-label{
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.terms-value-label span{
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  color: red;
+}
+
+.authenticatedsection{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.text-authentic{
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.text-authentic span{
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+}
+
+.value-authentic{
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.value-authentic span{
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  color: red;
+}
+
+.printed-signature-container{
+  width: 100%;
+  padding-top: 30px;
+}
+
+.name-signature-section{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.name-signature-section span:nth-child(1){
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
+  border-bottom: 1px solid black;
+  width: 50%;
+}
+
+.name-signature-section span:nth-child(2){
+  font-size: 16px;
+  font-family: Poppins, "Source Sans Pro";
+  font-weight: 500;
 }
 
 

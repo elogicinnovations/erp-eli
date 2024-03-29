@@ -13,7 +13,7 @@ const Department = sequelize.define('department', {
       allowNull: false,
     },
     description: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(1000),
         allowNull: false,
     }
   });

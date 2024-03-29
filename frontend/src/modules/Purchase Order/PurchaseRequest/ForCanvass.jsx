@@ -4,7 +4,7 @@ import '../../../assets/global/style.css';
 import { Link, useNavigate, useParams} from 'react-router-dom';
 import '../../styles/react-style.css';
 import Form from 'react-bootstrap/Form';
-import Select from 'react-select';
+import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
@@ -20,7 +20,7 @@ import {
 import axios from 'axios';
 import BASE_URL from '../../../assets/global/url';
 import swal from 'sweetalert';
-
+import SBFLOGO from "../../../assets/image/SBF.png";
 import * as $ from 'jquery';
 import { jwtDecode } from "jwt-decode";
 
@@ -459,9 +459,12 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     }
   
     setValidated(true); //for validations
-  
-    
   };
+
+  const [showPreview, setPreviewShow] = useState(false);
+
+  const handleClosePreview = () => setPreviewShow(false);
+  const handlePreviewShow = () => setPreviewShow(true);
 
   return (
     <div className="main-of-containers">
@@ -695,19 +698,143 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
 
                         <div className='save-cancel'>
                         <Button 
-                              type='submit' 
+                              onClick={handlePreviewShow}
                               className='btn btn-warning' 
                               size="md" 
-                              style={{ fontSize: '20px', margin: '0px 5px' }}
+                              style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
                         >
-                          Send Email
+                          Preview
                         </Button>
-                        {/* <Button type='button'  
-                          className='btn btn-danger' 
-                          size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
-                          onClick={() => handleCancel(status, id)}
-                          >Cancel Purchase Order
-                        </Button>                         */}
+
+                        <Modal
+                          show={showPreview}
+                          onHide={handleClosePreview}
+                          backdrop="static"
+                          keyboard={false}
+                          size="xl"
+                        >
+                          <Modal.Header closeButton>
+                            <Modal.Title></Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                              <div className="canvassing-templates-container">
+                                  <div className="canvassing-content-templates">
+                                        <div className="templates-header">
+                                            <div className="template-logoes">
+                                              <img src={SBFLOGO} alt="" />
+                                            </div>
+                                            <div className="SBFtextslogo">
+                                                <span>SBF PHILIPPINES DRILLING RESOURCES CORP.</span>
+                                                <span>Padiguan, Sta. Cruz, Rosario, Agusan Del Sur</span>
+                                                <span>Email Address: <strong>purchasing@sbfdrilling.com</strong></span>
+                                            </div>
+                                        </div>
+
+                                        <div className="templates-middle">
+                                              <div className="Quotationdiv">
+                                                  <span>QUOTATION</span>
+                                              </div>
+                                        </div>
+
+                                        <div className="templates-prname-section">
+                                              <div className="templates-labels">
+                                                  <span>PURCHASE REQUISITION NO.</span>
+                                                  <span>SUPPLIER'S NAME</span>
+                                                  <span>DATE</span>
+                                              </div>
+                                              <div className="template-label-value">
+                                                  <span>000001</span>
+                                                  <span>SAMPLE SUPPLIER'S NAME</span>
+                                                  <span>APRIL 14, 2000</span>
+                                              </div>
+                                        </div>
+
+                                        <div className="templates-table-section">
+                                            <div className="templatestable-content">
+                                              <Table>
+                                                <thead>
+                                                  <tr>
+                                                    <th className='canvassth'>ITEM</th>
+                                                    <th>QUANTITY</th>
+                                                    <th>UOM</th>
+                                                    <th>DESCRIPTION</th>
+                                                    <th>PRICE</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr>
+                                                    <td>1</td>
+                                                    <td>5</td>
+                                                    <td>PCS</td>
+                                                    <td>SAMPLE ONLY</td>
+                                                    <td>1,000.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>1</td>
+                                                    <td>5</td>
+                                                    <td>PCS</td>
+                                                    <td>SAMPLE ONLY</td>
+                                                    <td>1,000.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>1</td>
+                                                    <td>5</td>
+                                                    <td>PCS</td>
+                                                    <td>SAMPLE ONLY</td>
+                                                    <td>1,000.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td>1</td>
+                                                    <td>5</td>
+                                                    <td>PCS</td>
+                                                    <td>SAMPLE ONLY</td>
+                                                    <td>1,000.00</td>
+                                                  </tr>
+                                                </tbody>
+                                              </Table>
+                                            </div>
+                                        </div>
+
+                                        <div className="terms-container">
+                                            <div className="terms-section-label">
+                                                  <span>TERMS OF PAYMENT</span>
+                                                  <span>DELIVERY</span>
+                                                  <span>PRICE VALIDITY</span>
+                                            </div>
+                                            <div className="terms-value-label">
+                                                  <span>CASH ON DELIVERY</span>
+                                                  <span>IDK</span>
+                                                  <span>APRIL 14, 2000</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="authenticatedsection">
+                                              <div className="text-authentic">
+                                                <span>AUTHENTICATED BY:</span>
+                                              </div>
+                                              <div className="value-authentic">
+                                                <span>GERALD JUMADAY</span>
+                                              </div>
+                                        </div>
+
+                                        <div className="printed-signature-container">
+                                            <div className="name-signature-section">
+                                              <span></span>
+                                              <span>PRINTED NAME AND SIGNATURE</span>
+                                            </div>
+                                        </div>
+                                  </div>
+                              </div>
+                          </Modal.Body>
+                          <Modal.Footer>
+                          <Button variant="warning"
+                            style={{fontSize: '16px', fontFamily: 'Poppins, Source Sans Pro'}}>Send Email</Button>
+                            <Button variant="secondary" onClick={handleClosePreview}
+                            style={{fontSize: '16px', fontFamily: 'Poppins, Source Sans Pro'}}>
+                              Close
+                            </Button>
+                          </Modal.Footer>
+                        </Modal>
                         </div>
                 </Form>
                       <Modal show={showModal} onHide={handleClose} size="xl">
