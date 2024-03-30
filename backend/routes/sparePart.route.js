@@ -148,17 +148,14 @@ router.route('/create').post(async (req, res) => {
             // });
           }
 
-
-          const selectedSubpart = req.body.SubParts
-          for (const subpartDropdown of selectedSubpart) {
-            const subPartValue = subpartDropdown.value;
-
-    
-            await SparePart_SubPart.create({
+          const selectedSubpartIds = req.body.SubParts;
+          for (const subPartId of selectedSubpartIds) {
+              await SparePart_SubPart.create({
                 sparePart_id: createdID,
-                subPart_id: subPartValue,
+                subPart_id: subPartId,
             });
           }
+
 
           if(images.length > 0){
             images.forEach(async (i) => {
@@ -255,6 +252,7 @@ router.route("/update").post(
           const selectedSubpart = SubParts;
           for(const subpartDropdown of selectedSubpart) {
             const subpartValue = subpartDropdown.value;
+            console.log("HAHAHAH SANA ID TO" + subpartValue)
             await SparePart_SubPart.create({
               sparePart_id: id,
               subPart_id: subpartValue

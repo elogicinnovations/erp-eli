@@ -3,6 +3,137 @@
   padding: 0;
 }
 
+
+/* .dropdown-heading-value span {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.disabled-dropdown {
+  opacity: 0.5;
+  pointer-events: none;
+} */
+
+
+.w-full {
+  width: 100% !important;
+}
+
+.p-multiselect{
+  width: 100%;
+  height: auto;
+  border: 1px solid #DEE2E6;
+  padding: 7px;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 6px;
+  outline-color: transparent;
+}
+
+.p-component, .p-component * {
+  box-sizing: border-box;
+}
+
+.p-multiselect-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: red;
+}
+
+.p-multiselect-panel .p-multiselect-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  background: #f9fafb;
+  margin: 0;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+
+.p-checkbox-input{
+  border: 2px solid #d1d5db;
+  background: #ffffff;
+  width: 22px;
+  height: 22px;
+  color: #4b5563;
+  border-radius: 6px;
+  /* transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s; */
+  outline-color: transparent;
+}
+
+.p-multiselect-panel {
+    background: #ffffff;
+    color: #4b5563;
+    border: 0 none;
+    border-radius: 6px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.p-multiselect-panel .p-multiselect-items {
+  padding: 0.75rem 0;
+  padding-left: 13px;
+}
+
+.p-multiselect-items {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.p-multiselect-item span{
+  padding-left: 5px;
+  padding-bottom: 5px;
+}
+
+.p-multiselect-items-wrapper {
+  overflow: auto;
+}
+
+.p-component {
+  font-family: Poppins, "Source Sans Pro";
+  font-feature-settings: var(--font-feature-settings, normal);
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.p-multiselect-filter-container{
+  padding-left: 10px;
+  padding-right: 10px;
+  height: auto;
+}
+
+.p-multiselect-panel .p-multiselect-header .p-multiselect-filter-container .p-multiselect-filter-icon {
+    right: 15px;
+    top: 8px;
+}
+
+.p-multiselect-filter{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+
+.p-inputtext {
+  height: 30px;
+}
+
+.p-multiselect .p-checkbox .p-checkbox-box {
+  width: 22px;
+  height: 22px;
+}
+
+.p-multiselect .p-checkbox-label {
+  padding-left: 5px;
+}
+
+.p-checkbox-icon{
+  display: none;
+}
+
+
 #order-listing tbody td {
   height: 45px; /* Adjust the padding as needed */
 }

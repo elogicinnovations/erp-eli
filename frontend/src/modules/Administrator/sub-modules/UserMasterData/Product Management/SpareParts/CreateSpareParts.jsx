@@ -15,6 +15,8 @@ import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import { ArrowCircleLeft} from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
+// import { MultiSelect } from "react-multi-select-component";
+import { MultiSelect } from 'primereact/multiselect';
 
 function CreateSpareParts({authrztn}) {
   const [validated, setValidated] = useState(false);
@@ -150,9 +152,15 @@ useEffect(() => {
     setSupp(selectedOptions);
   };
 
-  const handleSelectChange_SubPart = (selectedOptions) => {
-    setSubParts(selectedOptions);
-  };
+  
+  // const handleSelectChange_SubPart = (selectedOptions) => {
+  //   setSubParts(selectedOptions);
+  // };
+
+  // const subPartoptions = fetchSubPart.map(subPart => ({
+  //   label: subPart.subPart_name,
+  //   value: subPart.id 
+  // }));
 
   const handleAddSupp = () => {
     setShowDropdown(true);
@@ -340,6 +348,7 @@ useEffect(() => {
         text: "Please fill the red text fields",
       });
     } else {
+      console.log(SubParts)
       axios
         .post(`${BASE_URL}/sparePart/create`, {
           code,
@@ -454,8 +463,6 @@ useEffect(() => {
   //   processImages();
   // }, [selectedimage]);
 
- 
-
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -526,9 +533,21 @@ useEffect(() => {
               <div className="col-4">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Subpart:{" "}
+                    Subpart
                   </Form.Label>
-                  <Select
+                  <MultiSelect
+                    value={SubParts}
+                    options={fetchSubPart.map(subPart => ({
+                      label: subPart.subPart_name,
+                      value: subPart.id 
+                    }))}
+                    onChange={(e) => setSubParts(e.value)}
+                    placeholder="Select SubParts"
+                    maxSelectedLabels={3}
+                    className="w-full md:w-20rem"
+                    filter 
+                  />
+                  {/* <Select
                     isMulti
                     options={fetchSubPart.map((subPart) => ({
                       value: subPart.id,
@@ -548,7 +567,7 @@ useEffect(() => {
                         fontSize: '15px', 
                       }),
                     }}
-                  />
+                  /> */}
                 </Form.Group>
               </div>
             </div>
@@ -664,7 +683,7 @@ useEffect(() => {
                       const sanitizedValue = inputValue.replace(/\D/g, "");
                       setThresholds(sanitizedValue);
                     }}
-                    type="text"
+                    type="number"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
                     maxLength={10}

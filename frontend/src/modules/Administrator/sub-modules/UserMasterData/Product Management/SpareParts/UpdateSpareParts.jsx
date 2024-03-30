@@ -19,6 +19,7 @@ import {
   ArrowCircleLeft
 } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
+import { MultiSelect } from 'primereact/multiselect';
 
 function UpdateSpareParts({authrztn}) {
 
@@ -172,7 +173,6 @@ useEffect(() => {
   })
     .then(res => {
       const data = res.data;
-      // setFetchSubPart(data);
       const selectedSubparts = data.map((row) => ({
         value: row.subPart_id,
         label: row.subPart.subPart_name,
@@ -264,10 +264,10 @@ const handlesparethreshold = (event) => {
   setIsSaveButtonDisabled(false);
 };
 
-const handleSelectChange_SubPart = (selectedOptions) => {
-  setSubParts(selectedOptions);
-  setIsSaveButtonDisabled(false);
-};
+// const handleSelectChange_SubPart = (selectedOptions) => {
+//   setSubParts(selectedOptions);
+//   setIsSaveButtonDisabled(false);
+// };
 
 const handleFormChangeBinLocation = (event) => {
   setslct_binLocation(event.target.value);
@@ -540,7 +540,7 @@ const update = async (e) => {
 
 
 
-
+console.log(SubParts)
 
   return (
     <div className="main-of-containers">
@@ -628,7 +628,19 @@ const update = async (e) => {
                             <div className="col-4">
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Sub-Part: </Form.Label>
-                                  <Select
+                                  <MultiSelect
+                                    disabled={!isReadOnly}
+                                    value={SubParts.map(item => item.value)}
+                                    options={fetchSubPart.map(subPart => ({
+                                      label: subPart.subPart_name,
+                                      value: subPart.id 
+                                    }))}
+                                    onChange={(e) => setSubParts(e.value.map(value => ({ value, label: "" })))}
+                                    maxSelectedLabels={3}
+                                    className="w-full md:w-20rem"
+                                    filter 
+                                  />
+                                  {/* <Select
                                     isMulti
                                     isDisabled={!isReadOnly}
                                     options={fetchSubPart.map((subPart) => ({
@@ -650,8 +662,7 @@ const update = async (e) => {
                                     }}
                                     onChange={handleSelectChange_SubPart}
                                     value={SubParts}
-                                  />
-
+                                  /> */}
                                 </Form.Group>
                               </div>
                           </div>
