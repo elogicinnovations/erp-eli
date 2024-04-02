@@ -132,7 +132,7 @@ return () => clearTimeout(delay);
 
 useEffect(() => {
   const delay = setTimeout(() => {
-  axios.get(BASE_URL + '/report_inv/inventoryAssmbly')
+  axios.get(BASE_URL + '/report_inv/inventoryASM')
     .then(res => {
       setInvetory_assmbly(res.data)
       setIsLoading(false);
@@ -306,67 +306,39 @@ const convertTableToCSV = () => {
                                     <th className='tableh'>Product Code</th>
                                     <th className='tableh'>Product Name</th>
                                     <th className='tableh'>UOM</th>
-                                    <th className='tableh'>Description</th>
                                     <th className='tableh'>Location</th>
                                     <th className='tableh'>Unit Price</th>
-                                    <th className='tableh'>Quantity</th>
+                                    <th className='tableh'>Quantity</th>                              
                                     <th className='tableh'>Total</th>
+                                    <th className='tableh'>To Receive (quantity)</th>
                                 </tr>
                                 </thead>
-                                {invetory_prd.length > 0 ? (
+                                {invetory_prd.length > 0 || invetory_assmbly.length > 0 ? (
                                 <tbody>
                                       {invetory_prd.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.product_tag_supplier.product.product_code}</td>
-                                        <td>{data.product_tag_supplier.product.product_name}</td>
-                                        <td>{data.product_tag_supplier.product.product_unitMeasurement}</td>
-                                        <td>{data.product_tag_supplier.product.product_details}</td>
-                                        <td>--</td>
+                                        <td>{data.product_code}</td>
+                                        <td>{data.product_name}</td>
+                                        <td>{data.UOM}</td>
+                                        <td>{data.warehouse_name}</td>
                                         <td>{data.price}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.price * data.quantity}</td>
+                                        <td>{data.totalQuantity}</td>                                      
+                                        <td>{data.price * data.totalQuantity}</td>
+                                        <td>{data.warehouse_name === 'Main' ? data.totalPRQuantity : '--'}</td>
                                         </tr>
-                                      ))}
-
-                                      {/* {invetory_assmbly.map((data,i) =>(
+                                      ))}      
+                                      {invetory_assmbly.map((data,i) =>(
                                         <tr key={i}>
-                                        <td>{data.assembly_supplier.assembly.assembly_code}</td>
-                                        <td>{data.assembly_supplier.assembly.assembly_name}</td>
-                                        <td>--</td>
-                                        <td>{data.assembly_supplier.assembly.assembly_desc}</td>
-                                        <td>--</td>
+                                        <td>{data.product_code}</td>
+                                        <td>{data.product_name}</td>
+                                        <td>{data.UOM}</td>
+                                        <td>{data.warehouse_name}</td>
                                         <td>{data.price}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.price * data.quantity}</td>
+                                        <td>{data.totalQuantity}</td>                                      
+                                        <td>{data.price * data.totalQuantity}</td>
+                                        <td>{data.warehouse_name === 'Main' ? data.totalPRQuantity_asm : '--'}</td>
                                         </tr>
-                                      ))}
-
-                                      {invetory_spare.map((data,i) =>(
-                                        <tr key={i}>
-                                        <td>{data.sparepart_supplier.sparePart.spareParts_code}</td>
-                                        <td>{data.sparepart_supplier.sparePart.spareParts_name}</td>
-                                        <td>--</td>
-                                        <td>{data.sparepart_supplier.sparePart.spareParts_desc}</td>
-                                        <td>--</td>
-                                        <td>{data.price}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.price * data.quantity}</td>
-                                        </tr>
-                                      ))}
-
-                                      
-                                      {invetory_subpart.map((data,i) =>(
-                                        <tr key={i}>
-                                          <td>{data.subpart_supplier.subPart.subPart_code}</td>
-                                          <td>{data.subpart_supplier.subPart.subPart_name}</td>
-                                          <td>--</td>
-                                          <td>{data.subpart_supplier.subPart.subPart_desc}</td>
-                                          <td>--</td>
-                                          <td>{data.price}</td>
-                                          <td>{data.quantity}</td>
-                                          <td>{data.price * data.quantity}</td>
-                                        </tr>
-                                      ))} */}
+                                      ))}                               
                                 </tbody>
                                   ) : (
                                     <div className="no-data">

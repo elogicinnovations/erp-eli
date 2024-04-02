@@ -679,6 +679,10 @@ useEffect(() => {
                   </Form.Label>
                   <Form.Control
                   value={thresholds}
+                  onKeyDown={(e) => {
+                    ["e", "E", "+", "-"].includes(e.key) &&
+                      e.preventDefault();
+                  }}
                    onChange={(e) => {
                       if(e.target.value > 100){
                         setThresholds(100)

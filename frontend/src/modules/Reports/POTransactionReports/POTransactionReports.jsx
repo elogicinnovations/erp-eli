@@ -13,7 +13,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-
 import {
   MagnifyingGlass,
   Gear,
@@ -43,137 +42,109 @@ import Header from "../../../partials/header";
 
 function POTransactionReports() {
   const tableRef = useRef();
-
-  // good but not in proper format
-  // const exportToPdf = () => {
-  //   const input = tableRef.current;
-
-  //   if (input) {
-  //     const pdf = new jsPDF('p', 'mm', 'a4');
-
-  //     // Set the width and height of the PDF page
-  //     const pdfWidth = pdf.internal.pageSize.width;
-
-  //     // Use autoTable to directly add the table content to the PDF
-  //     pdf.autoTable({
-  //       html: '#' + input.id, // Use the original table ID
-  //       startY: 0, // You can adjust the starting Y position as needed
-  //     });
-
-  //     // Save the PDF
-  //     pdf.save('exported-table.pdf');
-  //   }
-  // };
-
-  const exportToPdf = () => {
-    const input = tableRef.current;
-
-    if (input) {
-      const pdf = new jsPDF({
-        orientation: "landscape", // Change the orientation to landscape
-        unit: "mm",
-        format: "a4",
-        margin: { left: 0, right: 0 }, // Set left and right margins to zero
-      });
-
-      // Use autoTable to directly add the table content to the PDF
-      pdf.autoTable({
-        html: "#" + input.id, // Use the original table ID
-        startY: 10, // You can adjust the starting Y position as needed
-        columnStyles: {
-          0: { cellWidth: 25 },
-          1: { cellWidth: 25 },
-          2: { cellWidth: 30 },
-          3: { cellWidth: 40 },
-          4: { cellWidth: 20 },
-          5: { cellWidth: 40 },
-          6: { cellWidth: 30 },
-          7: { cellWidth: 20 },
-          8: { cellWidth: 30 },
-        },
-      });
-
-      // Save the PDF
-      pdf.save("PurchaseOrder Report.pdf");
-    }
-  };
-  const exportToCSV = () => {
-    const input = tableRef.current;
-
-    if (input) {
-      const rows = [];
-      const columnStyles = [
-        { cellWidth: 25 },
-        { cellWidth: 25 },
-        { cellWidth: 30 },
-        { cellWidth: 40 },
-        { cellWidth: 20 },
-        { cellWidth: 40 },
-        { cellWidth: 30 },
-        { cellWidth: 20 },
-        { cellWidth: 30 },
-      ];
-
-      // Add the column styles as the first row in CSV
-      rows.push(columnStyles.map((style) => "").join(","));
-
-      // Iterate over the header row
-      const headerRow = input
-        .getElementsByTagName("thead")[0]
-        .getElementsByTagName("tr")[0];
-      const headerData = [];
-      for (let i = 0; i < headerRow.cells.length; i++) {
-        headerData.push(headerRow.cells[i].innerText);
-      }
-      rows.push(headerData.join(","));
-
-      // Iterate over each row in the tbody
-      for (const row of input
-        .getElementsByTagName("tbody")[0]
-        .getElementsByTagName("tr")) {
-        const rowData = [];
-
-        // Iterate over each cell in the row
-        for (let i = 0; i < row.cells.length; i++) {
-          rowData.push(row.cells[i].innerText); // Use innerText to get the text content of the cell
-        }
-
-        rows.push(rowData.join(",")); // Join cell values with commas and add to the rows array
-      }
-
-      // Create a CSV string
-      const csvContent = rows.join("\n");
-
-      // Create a Blob containing the CSV data
-      const blob = new Blob([csvContent], { type: "text/csv" });
-
-      // Create a link element to trigger the download
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "PurchaseOrder Report.csv";
-
-      // Trigger the download
-      link.click();
-    }
-  };
-
   const navigate = useNavigate();
+  const [department, setDepartment] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
-  const [PO_prd, setPO_prd] = useState([]);
-  const [PO_assmbly, setPO_assmbly] = useState([]);
-  const [PO_spare, setPO_spare] = useState([]);
-  const [PO_subpart, setPO_subpart] = useState([]);
+  const [requestsPR, setRequestsPR] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
-    //fetch product for inventory
     axios
-      .get(BASE_URL + "/report_PO/PO_PRD")
-      .then((res) => setPO_prd(res.data))
-      .catch((err) => console.log(err));
+      .get(BASE_URL + "/department/fetchtableDepartment")
+      .then((res) => {
+        setDepartment(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
+  const handleGenerate = () => {
+    axios
+      .get(BASE_URL + "/report_PO/requestPRFiltered", {
+        params: {
+          selectedDepartment,
+          selectedStatus,
+          startDate,
+          endDate,
+        },
+      })
+      .then((res) => {
+        setRequestsPR(res.data); // Update requestsPR state with filtered data
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const reloadTable = () => {
+    axios
+      .get(BASE_URL + "/report_PO/requestPR")
+      .then((res) => setRequestsPR(res.data))
+      .catch((err) => console.log(err));
+  };
+
+  const exportToCSV = () => {
+    const rows = [];
+    const columnStyles = [
+      { cellWidth: 25 },
+      { cellWidth: 25 },
+      { cellWidth: 30 },
+      { cellWidth: 40 },
+      { cellWidth: 20 },
+      { cellWidth: 40 },
+      { cellWidth: 30 },
+      { cellWidth: 20 },
+      { cellWidth: 30 },
+    ];
+
+    // Add the column styles as the first row in CSV
+    rows.push(columnStyles.map((style) => "").join(","));
+
+    // Add the header row
+    const headerData = [
+      "PR Number",
+      "Requested Date",
+      "Date Needed",
+      "Used For",
+      "Requested by",
+      "Requested Department",
+      "Status",
+    ];
+    rows.push(headerData.join(","));
+
+    // Add data rows
+    requestsPR.forEach((data) => {
+      const rowData = [
+        `"${data.pr_num}"`,
+        `"${formatDatetime(data.createdAt)}"`,
+        `"${data.date_needed}"`,
+        `"${data.used_for}"`,
+        `"${data.masterlist.col_Fname}"`,
+        `"${data.masterlist.department.department_name}"`,
+        `"${data.status}"`,
+      ];
+      rows.push(rowData.join(","));
+    });
+
+    // Create a CSV string
+    const csvContent = rows.join("\n");
+
+    // Create a Blob containing the CSV data
+    const blob = new Blob([csvContent], { type: "text/csv" });
+
+    // Create a link element to trigger the download
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "PurchaseOrder Report.csv";
+
+    // Trigger the download
+    link.click();
+  };
+
+  useEffect(() => {
+    reloadTable();
+  }, []);
 
   //date format
   function formatDatetime(datetime) {
@@ -189,10 +160,10 @@ function POTransactionReports() {
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && PO_prd.length > 0) {
+    if ($("#order-listing").length > 0 && requestsPR.length > 0) {
       $("#order-listing").DataTable();
     }
-  }, [PO_prd]);
+  }, [requestsPR]);
 
   return (
     <div className="main-of-containers">
@@ -201,7 +172,7 @@ function POTransactionReports() {
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
-                <p>Purchase Order Reports</p>
+                <p>Purchase Requests Report</p>
               </div>
               <div className="button-create-side">
                 <div className="filter">
@@ -209,39 +180,71 @@ function POTransactionReports() {
                     <div className="warehouse-filter">
                       <Form.Select
                         aria-label="item status"
+                        onChange={(e) => setSelectedDepartment(e.target.value)}
                         style={{
                           width: "250px",
                           height: "40px",
                           fontSize: "15px",
                           marginBottom: "15px",
                           fontFamily: "Poppins, Source Sans Pro",
-                        }}>
-                        <option value="" disabled selected>
-                          Location
+                        }}
+                      >
+                        <option disabled value="" selected>
+                          Select Department ...
                         </option>
+                        <option value={'All'}>
+                            All
+                          </option>
+                        {department.map((dept) => (
+                          <option key={dept.id} value={dept.id}>
+                            {dept.department_name}
+                          </option>
+                        ))}
                       </Form.Select>
                     </div>
                     <div className="product-filter">
                       <Form.Select
                         aria-label="item status"
+                        onChange={(e) => setSelectedStatus(e.target.value)}
                         style={{
                           width: "250px",
                           height: "40px",
                           fontSize: "15px",
                           marginBottom: "15px",
                           fontFamily: "Poppins, Source Sans Pro",
-                        }}>
+                        }}
+                      >
                         <option value="" disabled selected>
-                          Product
+                          Select Status
+                        </option>
+                        <option value={'All'}>
+                            All
+                          </option>
+                        <option value="For-Approval">For-Approval</option>
+
+                        <option value="For-Rejustify">For-Rejustify</option>
+
+                        <option value="For-Canvassing">For-Canvassing</option>
+
+                        <option value="On-Canvass">On-Canvass</option>
+
+                        <option value="For-Approval (PO)">
+                          For-Approval (PO)
+                        </option>
+                        <option value="For-Rejustify (PO)">
+                          For-Rejustify (PO)
                         </option>
                       </Form.Select>
                     </div>
                   </div>
                   <div className="date-filter">
-                    <div style={{width: '50%', zIndex: "3", padding: '0 10px'}}>
+                    <div
+                      style={{ width: "50%", zIndex: "3", padding: "0 10px" }}
+                    >
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
-                        className="date">
+                        className="date"
+                      >
                         <DatePicker
                           selected={startDate}
                           onChange={(date) => setStartDate(date)}
@@ -250,12 +253,24 @@ function POTransactionReports() {
                           className="form-control"
                         />
                       </Form.Group>
-                        <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', position: 'relative', left: '220px', bottom: '30px'}}/>
+                      <CalendarBlank
+                        size={20}
+                        style={{
+                          position: "relative",
+                          color: "#9a9a9a",
+                          position: "relative",
+                          left: "220px",
+                          bottom: "30px",
+                        }}
+                      />
                     </div>
-                    <div style={{width: '50%', zIndex: "3", padding: '0 10px' }}>
+                    <div
+                      style={{ width: "50%", zIndex: "3", padding: "0 10px" }}
+                    >
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
-                        className="date">
+                        className="date"
+                      >
                         <DatePicker
                           selected={endDate}
                           onChange={(date) => setEndDate(date)}
@@ -264,12 +279,23 @@ function POTransactionReports() {
                           className="form-control"
                         />
                       </Form.Group>
-                        <CalendarBlank size={20} style={{position: 'relative', color: '#9a9a9a', position: 'relative', left: '220px', bottom: '30px'}}/>
+                      <CalendarBlank
+                        size={20}
+                        style={{
+                          position: "relative",
+                          color: "#9a9a9a",
+                          position: "relative",
+                          left: "220px",
+                          bottom: "30px",
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
                 <div className="genbutton">
-                  <button className='genbutton'>Generate</button>
+                  <button onClick={handleGenerate} className="genbutton">
+                    Generate
+                  </button>
                 </div>
                 <div className="export-refresh">
                   {/* <button className='export'>
@@ -288,43 +314,125 @@ function POTransactionReports() {
               <table ref={tableRef} id="order-listing">
                 <thead>
                   <tr>
-                    <th className="tableh">PO Number</th>
-                    <th className="tableh">PO Date</th>
-                    <th className="tableh">Product Code</th>
-                    <th className="tableh">Product</th>
-                    <th className="tableh">UOM</th>
-                    <th className="tableh">Supplier</th>
-                    <th className="tableh">Unit Cost</th>
-                    <th className="tableh">Quantity</th>
-                    <th className="tableh">Total</th>
+                    <th className="tableh">PR Number</th>
+                    <th className="tableh">Requested Date</th>
+                    <th className="tableh">Date Needed</th>
+                    <th className="tableh">Used For</th>
+                    <th className="tableh">Requested by</th>
+                    <th className="tableh">Requested Department</th>
+                    <th className="tableh">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {PO_prd.map((data, i) => (
+                  {requestsPR.map((data, i) => (
                     <tr key={i}>
-                      <td>{data.pr_id}</td>
-                      <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
-                      <td>{data.product_tag_supplier.product.product_code}</td>
-                      <td>{data.product_tag_supplier.product.product_name}</td>
-                      <td>
-                        {
-                          data.product_tag_supplier.product
-                            .product_unitMeasurement
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
                         }
+                      >
+                        {data.pr_num}
                       </td>
-                      <td>
-                        {data.product_tag_supplier.supplier.supplier_name}
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
+                      >
+                        {formatDatetime(data.createdAt)}
                       </td>
-                      <td>{data.product_tag_supplier.product_price}</td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {data.product_tag_supplier.product_price *
-                          data.quantity}
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
+                      >
+                        {data.date_needed}
+                      </td>
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
+                      >
+                        {data.used_for}
+                      </td>
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
+                      >
+                        {data.masterlist.col_Fname}
+                      </td>
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
+                      >
+                        {data.masterlist.department.department_name}
+                      </td>
+                      <td
+                        onClick={() =>
+                          data.status === "For-Canvassing"
+                            ? navigate(`/forCanvass/${data.id}`)
+                            : data.status === "On-Canvass"
+                            ? navigate(`/onCanvass/${data.id}`)
+                            : data.status === "For-Approval (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : data.status === "For-Rejustify (PO)"
+                            ? navigate(`/PO_approvalRejustify/${data.id}`)
+                            : navigate(`/purchaseRequestPreview/${data.id}`)
+                        }
+                      >
+                        {data.status}
                       </td>
                     </tr>
                   ))}
-
-               
                 </tbody>
               </table>
             </div>
