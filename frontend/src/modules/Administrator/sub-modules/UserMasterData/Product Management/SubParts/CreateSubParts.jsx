@@ -182,12 +182,12 @@ function CreateSubParts({authrztn}) {
       });
   }, []);
 
-  const handleKeyPress = (e) => {
-    if (e.key === "e" || isNaN(e.key)) {
-      e.preventDefault();
-    }
-    e.target.value = e.target.value.replace(/[^0-9.]/);
-  };
+  // const handleKeyPress = (e) => {
+  //   if (e.key === "e" || isNaN(e.key)) {
+  //     e.preventDefault();
+  //   }
+  //   e.target.value = e.target.value.replace(/[^0-9.]/);
+  // };
 
 
 const [images, setImages] = useState([]);
@@ -565,14 +565,23 @@ function onDropImages(event) {
                         </Form.Label>
                         <Form.Control
                           required
+                          value={thresholds}
                           onChange={(e) => {
-                            const inputValue = e.target.value;
-                            const sanitizedValue = inputValue
-                            .replace(/\D/g, "")
-                            .substring(0, 10);
-                            setThresholds(sanitizedValue);
+                            if(e.target.value > 100){
+                              setThresholds(100)
+                            }
+                            else if(e.target.value === '0'){
+                              setThresholds(1)
+                            }
+                            else{
+                              setThresholds(e.target.value)
+                            }                  
                           }}
-                          onInput={handleKeyPress}
+                          // onInput={handleKeyPress}
+                          onKeyDown={(e) => {
+                            ["e", "E", "+", "-"].includes(e.key) &&
+                              e.preventDefault();
+                          }}
                           type="number"
                           placeholder="Minimum Stocking"
                           style={{ height: "40px", fontSize: "15px" }}

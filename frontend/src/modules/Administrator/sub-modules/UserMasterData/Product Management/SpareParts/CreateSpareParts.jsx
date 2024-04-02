@@ -659,12 +659,23 @@ useEffect(() => {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      const sanitizedValue = inputValue.replace(/\D/g, "");
-                      setThresholds(sanitizedValue);
+                  value={thresholds}
+                   onChange={(e) => {
+                      if(e.target.value > 100){
+                        setThresholds(100)
+                      }
+                      else if(e.target.value === '0'){
+                        setThresholds(1)
+                      }
+                      else{
+                        setThresholds(e.target.value)
+                      }                  
                     }}
-                    type="text"
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                    type="number"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
                     maxLength={10}

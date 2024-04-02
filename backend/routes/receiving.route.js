@@ -61,6 +61,7 @@ router.route("/insertReceived").post(async (req, res) => {
   const pr_id = req.body.id;
   const po_id = req.body.po_id;
   const userId = req.body.userId;
+  const refCode = req.body.refCode;
 
   let status = "";
   let totalReceived = 0;
@@ -105,7 +106,7 @@ router.route("/insertReceived").post(async (req, res) => {
     freight_cost: freighCost === 0 ? null : freighCost,
     customFee: customFee,
     totalReceived: totalReceived,
-    ref_code: formattedDate,
+    ref_code: refCode,
     status: status,
     initialReceive:
       receving_site === "Davao City" ? initialReceiveStatus : null,
@@ -884,6 +885,8 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
 
 router.route("/fetchTransaction").get(async (req, res) => {
   try {
+
+    
     const PRD = await Receiving_Prd.findAll({
       include: [
         {
@@ -907,11 +910,51 @@ router.route("/fetchTransaction").get(async (req, res) => {
             },
           ],
 
+         
+        },{
+          model: Receiving_PO,
+          required: true,
           where: {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        },
+        }
+      ],
+    });
+
+
+    const PRD_dv = await Receiving_initial_prd.findAll({
+      include: [
+        {
+          model: PR_PO,
+          required: true,
+
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+              include: [
+                {
+                  model: Product,
+                  required: true,
+                  attributes: [
+                    ["product_code", "product_code"],
+                    ["product_name", "product_name"],
+                  ],
+                },
+              ],
+            },
+          ],
+
+         
+        },{
+          model: Receiving_PO,
+          required: true,
+          where: {
+            pr_id: req.query.pr_id,
+            po_id: req.query.po_num,
+          },
+        }
       ],
     });
 
@@ -938,11 +981,53 @@ router.route("/fetchTransaction").get(async (req, res) => {
             },
           ],
 
+         
+        },
+        {
+          model: Receiving_PO,
+          required: true,
           where: {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
+        }
+      ],
+    });
+
+
+    const ASM_dv = await Receiving_initial_asm.findAll({
+      include: [
+        {
+          model: PR_PO_asmbly,
+          required: true,
+
+          include: [
+            {
+              model: Assembly_Supplier,
+              required: true,
+              include: [
+                {
+                  model: Assembly,
+                  required: true,
+                  attributes: [
+                    ["assembly_code", "product_code"],
+                    ["assembly_name", "product_name"],
+                  ],
+                },
+              ],
+            },
+          ],
+
+         
         },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            pr_id: req.query.pr_id,
+            po_id: req.query.po_num,
+          },
+        }
       ],
     });
 
@@ -969,11 +1054,52 @@ router.route("/fetchTransaction").get(async (req, res) => {
             },
           ],
 
+        
+        },
+        {
+          model: Receiving_PO,
+          required: true,
           where: {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
+        }
+      ],
+    });
+
+    const SPR_dv = await Receiving_initial_spare.findAll({
+      include: [
+        {
+          model: PR_PO_spare,
+          required: true,
+
+          include: [
+            {
+              model: SparePart_Supplier,
+              required: true,
+              include: [
+                {
+                  model: SparePart,
+                  required: true,
+                  attributes: [
+                    ["spareParts_code", "product_code"],
+                    ["spareParts_name", "product_name"],
+                  ],
+                },
+              ],
+            },
+          ],
+
+        
         },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            pr_id: req.query.pr_id,
+            po_id: req.query.po_num,
+          },
+        }
       ],
     });
 
@@ -1000,11 +1126,52 @@ router.route("/fetchTransaction").get(async (req, res) => {
             },
           ],
 
+        
+        },
+        {
+          model: Receiving_PO,
+          required: true,
           where: {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
+        }
+      ],
+    });
+
+    const SBP_dv = await Receiving_initial_subpart.findAll({
+      include: [
+        {
+          model: PR_PO_subpart,
+          required: true,
+
+          include: [
+            {
+              model: Subpart_supplier,
+              required: true,
+              include: [
+                {
+                  model: SubPart,
+                  required: true,
+                  attributes: [
+                    ["subPart_code", "product_code"],
+                    ["subPart_name", "product_name"],
+                  ],
+                },
+              ],
+            },
+          ],
+
+        
         },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            pr_id: req.query.pr_id,
+            po_id: req.query.po_num,
+          },
+        }
       ],
     });
 
@@ -1013,6 +1180,10 @@ router.route("/fetchTransaction").get(async (req, res) => {
       asm: ASM,
       spr: SPR,
       sbp: SBP,
+      prd_dv: PRD_dv,
+      asm_dv: ASM_dv,
+      spr_dv: SPR_dv,
+      sbp_dv: SBP_dv,
     });
   } catch (error) {
     console.error(error);

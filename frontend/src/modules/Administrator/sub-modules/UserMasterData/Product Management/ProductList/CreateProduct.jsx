@@ -93,12 +93,12 @@ function CreateProduct({authrztn}) {
     setproductStatus(e.target.checked); // Update the status Active or Inactive
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "e" || isNaN(e.key)) {
-      e.preventDefault();
-    }
-    e.target.value = e.target.value.replace(/[^0-9.]/);
-  };
+  // const handleKeyPress = (e) => {
+  //   if (e.key === "e" || isNaN(e.key)) {
+  //     e.preventDefault();
+  //   }
+  //   e.target.value = e.target.value.replace(/[^0-9.]/);
+  // };
 
   useEffect(() => {
     axios
@@ -791,20 +791,27 @@ function onDropImages(event) {
                   </Form.Label>
                   <Form.Control
                     required
+                    value={thresholds}
                     onChange={(e) => {
-                      const inputValue = e.target.value;
-                      const sanitizedValue = inputValue
-                        .replace(/\D/g, "")
-                        .substring(0, 10);
-                      setThresholds(sanitizedValue);
+                      if(e.target.value > 100){
+                        setThresholds(100)
+                      } 
+                      else if(e.target.value === '0'){
+                        setThresholds(1)
+                      }
+                      else{
+                        setThresholds(e.target.value)
+                      }                  
                     }}
-                    onInput={handleKeyPress}
-                    type="number" // Change type to "text"
+                    // onInput={handleKeyPress}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                    type="number"
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
                     title="Please enter a valid number"
-                    min="0"
-                    max="9999999999"
                   />
                 </Form.Group>
               </div>

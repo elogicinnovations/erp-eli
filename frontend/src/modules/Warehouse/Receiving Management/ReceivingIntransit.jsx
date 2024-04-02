@@ -50,6 +50,63 @@ function ReceivingIntransit({ authrztn }) {
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
 
+  const [Transaction_prd, setTransaction_prd] = useState([]);
+  const [Transaction_asm, setTransaction_asm] = useState([]);
+  const [Transaction_spr, setTransaction_spr] = useState([]);
+  const [Transaction_sbp, setTransaction_sbp] = useState([]);
+
+  const [Transaction_prd_dv, setTransaction_prd_dv] = useState([]);
+  const [Transaction_asm_dv, setTransaction_asm_dv] = useState([]);
+  const [Transaction_spr_dv, setTransaction_spr_dv] = useState([]);
+  const [Transaction_sbp_dv, setTransaction_sbp_dv] = useState([]);
+
+  const [filteredPRD, setFilteredPRD] = useState([]);
+  const [filteredASM, setFilteredASM] = useState([]);
+  const [filteredSPR, setFilteredSPR] = useState([]);
+  const [filteredSBP, setFilteredSBP] = useState([]);
+
+
+  const handleViewTransaction = (po_number) => {
+    setIsLoading(true);
+    setShowTransaction(true);
+    const po_num = po_number;
+
+    axios
+      .get(BASE_URL + "/receiving/fetchTransaction", {
+        params: {
+          po_num,
+          pr_id: prID,
+        },
+      })
+      .then((res) => {
+        setFilteredPRD(res.data.prd);
+        setTransaction_prd(res.data.prd);
+        setTransaction_prd_dv(res.data.prd_dv);
+
+        setFilteredASM(res.data.asm);
+        setTransaction_asm(res.data.asm);
+        setTransaction_asm_dv(res.data.asm_dv);
+
+        setFilteredSPR(res.data.spr);
+        setTransaction_spr(res.data.spr);
+        setTransaction_spr_dv(res.data.spr_dv);
+
+        setFilteredSBP(res.data.sbp);
+        setTransaction_sbp(res.data.sbp);
+        setTransaction_sbp_dv(res.data.sbp_dv);
+
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+
+    // return () => clearTimeout(delay);
+  };
+
+  console.log(Transaction_prd_dv)
+
   const [show, setShow] = useState(false);
   const [showTransaction, setShowTransaction] = useState(false);
   const [userId, setuserId] = useState("");
@@ -143,6 +200,7 @@ function ReceivingIntransit({ authrztn }) {
   const [supplier_name, setSupplier_name] = useState("");
   const [supplier_code, setSupplier_code] = useState("");
   const [prod_name, setProd_name] = useState([]);
+  const [refCodes, setRefCodes] = useState("");
 
   const handleReceived = (po_number) => {
     setIsLoading(true);
@@ -159,12 +217,16 @@ function ReceivingIntransit({ authrztn }) {
         const firstItem = res.data.consolidatedArray[0].items[0];
         //  const prodNames = res.data.map(item => item.supp_tag.name);
 
+        // console.log(`dsadas ${res.data.consolidatedArray[0].items[0].item.receiving_po.ref_code}`)
+        setRefCodes(firstItem.item.receiving_po.ref_code);
         setProducts_receive(res.data.consolidatedArray);
         setproductImages(res.data.image_receiving);
         setPo_id(res.data.consolidatedArray[0].title);
         setSupplier_code(firstItem.suppliers.supplier_code);
         setSupplier_name(firstItem.suppliers.supplier_name);
         setProd_name(res.data.consolidatedArray.items.supp_tag.name);
+        
+        
         setIsLoading(false);
       })
       .catch((err) => {
@@ -173,48 +235,10 @@ function ReceivingIntransit({ authrztn }) {
       });
   };
 
-  const [Transaction_prd, setTransaction_prd] = useState([]);
-  const [Transaction_asm, setTransaction_asm] = useState([]);
-  const [Transaction_spr, setTransaction_spr] = useState([]);
-  const [Transaction_sbp, setTransaction_sbp] = useState([]);
-  const [filteredPRD, setFilteredPRD] = useState([]);
-  const [filteredASM, setFilteredASM] = useState([]);
-  const [filteredSPR, setFilteredSPR] = useState([]);
-  const [filteredSBP, setFilteredSBP] = useState([]);
-  const handleViewTransaction = (po_number) => {
-    setIsLoading(true);
-    setShowTransaction(true);
-    const po_num = po_number;
+//   useEffect(() => {
+//     console.log(`refCodes ${refCodes}`);
+// }, [refCodes]);
 
-    axios
-      .get(BASE_URL + "/receiving/fetchTransaction", {
-        params: {
-          po_num,
-          pr_id: id,
-        },
-      })
-      .then((res) => {
-        setFilteredPRD(res.data.prd);
-        setTransaction_prd(res.data.prd);
-
-        setFilteredASM(res.data.asm);
-        setTransaction_asm(res.data.asm);
-
-        setFilteredSPR(res.data.spr);
-        setTransaction_spr(res.data.spr);
-
-        setFilteredSBP(res.data.sbp);
-        setTransaction_sbp(res.data.sbp);
-
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-
-    // return () => clearTimeout(delay);
-  };
   const [checkedRows, setCheckedRows] = useState({});
 
   // const handleCheckbox = (event, parentIndex, childIndex) => {
@@ -608,7 +632,7 @@ function ReceivingIntransit({ authrztn }) {
                   >
                     <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                   </Link>
-                  <h1>Receiving (Davao)</h1>
+                  <h1>Receiving (From Davao)</h1>
                 </div>
               </Col>
             </Row>
@@ -808,12 +832,12 @@ function ReceivingIntransit({ authrztn }) {
                             >
                               Receive
                             </button>
-                            {/* <button
+                            <button
                               className="btn btn-success"
                               onClick={() => handleViewTransaction(group.title)}
                             >
                               View
-                            </button> */}
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -868,6 +892,23 @@ function ReceivingIntransit({ authrztn }) {
                 <h2 className="mb-5">
                   {`Supplier: ${supplier_code} - ${supplier_name}`}
                 </h2>
+
+                <div style={{ width: "100%" }}>
+                  <Form.Label style={{ fontSize: "15px" }}>
+                    Reference Code: 
+                  </Form.Label>
+                  <Form.Control
+                    readOnly
+                    style={{
+                      height: "35px",
+                      width: "200px",
+                      fontSize: "14px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                      marginLeft: "5px",
+                    }}
+                    value={refCodes}
+                  />
+                </div>
               </div>
 
               {suppReceving === "Davao City" ? (
@@ -1268,17 +1309,23 @@ function ReceivingIntransit({ authrztn }) {
                     <tr>
                       <th className="tableh">Product Code</th>
                       <th className="tableh">Product Name</th>
-                      <th className="tableh">Received Quantity</th>
+                      <th className="tableh">Received Quantityyy</th>
                       <th className="tableh">Set</th>
                       <th className="tableh">Freight Cost</th>
+                      <th className="tableh">Duties & Custom Cost</th>
                       <th className="tableh">Reference Code</th>
+                      <th className="tableh">Receiving Site</th>
                       <th className="tableh">Date Received</th>
                     </tr>
                   </thead>
                   {filteredPRD.length > 0 ||
                   filteredASM.length > 0 ||
                   filteredSPR.length > 0 ||
-                  filteredSBP.length > 0 ? (
+                  filteredSBP.length > 0 ||
+                  Transaction_prd_dv.length > 0 ||
+                  Transaction_asm_dv.length > 0 ||
+                  Transaction_spr_dv.length > 0 ||
+                  Transaction_sbp_dv.length > 0 ? (
                     <tbody>
                       {Transaction_prd.map((data, i) => (
                         <tr key={i}>
@@ -1296,8 +1343,42 @@ function ReceivingIntransit({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_prd_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_prd
+                                .product_tag_supplier.product.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_prd
+                                .product_tag_supplier.product.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1318,8 +1399,42 @@ function ReceivingIntransit({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_asm_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_asmbly
+                                .assembly_supplier.assembly.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_asmbly
+                                .assembly_supplier.assembly.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1340,8 +1455,42 @@ function ReceivingIntransit({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_spr_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_spare
+                                .sparepart_supplier.sparePart.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_spare
+                                .sparepart_supplier.sparePart.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1362,8 +1511,42 @@ function ReceivingIntransit({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_sbp_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_subpart
+                                .subpart_supplier.subPart.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_subpart
+                                .subpart_supplier.subPart.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}

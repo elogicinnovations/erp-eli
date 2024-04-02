@@ -369,7 +369,16 @@ useEffect(() => {
 
   // for threshold input
   const handlethreshold = (event) => {
-    setThresholds(event.target.value);
+    if(event.target.value > 100){
+      setThresholds(100)
+    }
+    else if(event.target.value === '0'){
+      setThresholds(1)
+    }
+    else{
+      setThresholds(event.target.value)
+    }
+    
     setIsSaveButtonDisabled(false);
   }
 
@@ -397,12 +406,12 @@ useEffect(() => {
     setIsSaveButtonDisabled(false);
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "e" || isNaN(e.key)) {
-      e.preventDefault();
-    }
-    e.target.value = e.target.value.replace(/[^0-9.]/);
-  };
+  // const handleKeyPress = (e) => {
+  //   if (e.key === "e" || isNaN(e.key)) {
+  //     e.preventDefault();
+  //   }
+  //   e.target.value = e.target.value.replace(/[^0-9.]/);
+  // };
 
   useEffect(() => {
     axios
@@ -1006,11 +1015,13 @@ useEffect(() => {
                     required
                     value={thresholds}
                     onChange={(e) => {
-                      const inputValue = e.target.value;
-                      const sanitizedValue = inputValue.replace(/\D/g, "").substring(0, 10);
                       handlethreshold(e);
                     }}
-                    onInput={handleKeyPress}
+                    // onInput={handleKeyPress}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
                     type="number"
                     style={{ height: "40px", fontSize: "15px" }}
                   />

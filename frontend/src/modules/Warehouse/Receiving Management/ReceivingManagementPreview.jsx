@@ -28,7 +28,7 @@ import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
 import { pink } from "@mui/material/colors";
 import Checkbox from "@mui/material/Checkbox";
-import { fontStyle } from "@mui/system";
+import { fontStyle, width } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
 import { jwtDecode } from "jwt-decode";
 
@@ -48,6 +48,8 @@ function ReceivingManagementPreview({ authrztn }) {
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
 
+  const [refCode, setRefCode] = useState("");
+
   const [show, setShow] = useState(false);
   const [showTransaction, setShowTransaction] = useState(false);
   const [userId, setuserId] = useState("");
@@ -60,8 +62,25 @@ function ReceivingManagementPreview({ authrztn }) {
     }
   };
 
+  const generateRandomCode = () => {
+    const randomLetters = Math.random()
+      .toString(36)
+      .substring(2, 6)
+      .toUpperCase(); // Generate random 4-character letters
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
+    const referenceCode = `${year}-${month}-${randomLetters}-${day}${hours}${minutes}${seconds}`;
+    setRefCode(referenceCode);
+  };
+
   useEffect(() => {
     decodeToken();
+    generateRandomCode();
   }, []);
 
   const handleClose = () => {
@@ -70,9 +89,9 @@ function ReceivingManagementPreview({ authrztn }) {
     setValidated(false);
     setShow(false);
     setShowTransaction(false);
-    setsuppReceving('')
-    setcustomFee('')
-    setShippingFee('')
+    setsuppReceving("");
+    setcustomFee("");
+    setShippingFee("");
   };
   // const handleShow = () => setShow(true);
 
@@ -168,6 +187,12 @@ function ReceivingManagementPreview({ authrztn }) {
   const [Transaction_asm, setTransaction_asm] = useState([]);
   const [Transaction_spr, setTransaction_spr] = useState([]);
   const [Transaction_sbp, setTransaction_sbp] = useState([]);
+
+  const [Transaction_prd_dv, setTransaction_prd_dv] = useState([]);
+  const [Transaction_asm_dv, setTransaction_asm_dv] = useState([]);
+  const [Transaction_spr_dv, setTransaction_spr_dv] = useState([]);
+  const [Transaction_sbp_dv, setTransaction_sbp_dv] = useState([]);
+
   const [filteredPRD, setFilteredPRD] = useState([]);
   const [filteredASM, setFilteredASM] = useState([]);
   const [filteredSPR, setFilteredSPR] = useState([]);
@@ -187,15 +212,19 @@ function ReceivingManagementPreview({ authrztn }) {
       .then((res) => {
         setFilteredPRD(res.data.prd);
         setTransaction_prd(res.data.prd);
+        setTransaction_prd_dv(res.data.prd_dv);
 
         setFilteredASM(res.data.asm);
         setTransaction_asm(res.data.asm);
+        setTransaction_asm_dv(res.data.asm_dv);
 
         setFilteredSPR(res.data.spr);
         setTransaction_spr(res.data.spr);
+        setTransaction_spr_dv(res.data.spr_dv);
 
         setFilteredSBP(res.data.sbp);
         setTransaction_sbp(res.data.sbp);
+        setTransaction_sbp_dv(res.data.sbp_dv);
 
         setIsLoading(false);
       })
@@ -407,6 +436,7 @@ function ReceivingManagementPreview({ authrztn }) {
             po_id,
             id,
             userId,
+            refCode,
           }
         );
 
@@ -418,7 +448,6 @@ function ReceivingManagementPreview({ authrztn }) {
             button: "OK",
           }).then(() => {
             handleClose();
-            
           });
         } else {
           swal({
@@ -880,68 +909,84 @@ function ReceivingManagementPreview({ authrztn }) {
                 <h2 className="mb-5">
                   {`Supplier: ${supplier_code} - ${supplier_name}`}
                 </h2>
+
+                <div style={{ width: "100%" }}>
+                  <Form.Label style={{ fontSize: "15px" }}>
+                    Reference Code:
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    readOnly
+                    style={{
+                      height: "35px",
+                      width: "200px",
+                      fontSize: "14px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                      marginLeft: "5px",
+                    }}
+                    value={refCode}
+                  />
+                </div>
               </div>
 
-              {suppReceving === 'Davao City' ? (
-                  <div>
-                   
-                  </div>
-                ) : 
-                suppReceving === 'Agusan Del Sur' ? (
+              {suppReceving === "Davao City" ? (
+                <div></div>
+              ) : suppReceving === "Agusan Del Sur" ? (
                 <div className="col-6 ">
-                <div className="d-flex flex-direction-column justify-content-center align-items-center">
-                <div
-                  className="d-flex flex-direction-row justify-content-center align-items-center "
-                  style={{ float: "right", marginTop: "-20px" }}
-                >
-                  <Form.Label style={{ fontSize: "15px" }}>
-                    Duties & Custom Fee:
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    
-                    style={{
-                      height: "35px",
-                      width: "100px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                      marginLeft: "5px",
-                    }}
-                    onChange={(e) => setcustomFee(e.target.value)}
-                    onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
-                        e.preventDefault();
-                    }}
-                  />
+                  <div className="d-flex flex-direction-column justify-content-center align-items-center">
+                    <div
+                      className="d-flex flex-direction-row justify-content-center align-items-center "
+                      style={{ float: "right", marginTop: "-20px" }}
+                    >
+                      <Form.Label style={{ fontSize: "15px" }}>
+                        Duties & Custom Fee:
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        style={{
+                          height: "35px",
+                          width: "100px",
+                          fontSize: "14px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                          marginLeft: "5px",
+                        }}
+                        onChange={(e) => setcustomFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                    <div
+                      className="d-flex flex-direction-row justify-content-center align-items-center ml-5"
+                      style={{ float: "right", marginTop: "-20px" }}
+                    >
+                      <Form.Label style={{ fontSize: "15px" }}>
+                        Shipping Fee:
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        style={{
+                          height: "35px",
+                          width: "100px",
+                          fontSize: "14px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                          marginLeft: "5px",
+                        }}
+                        onChange={(e) =>
+                          handleInputChangeShipping(e.target.value)
+                        }
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div
-                  className="d-flex flex-direction-row justify-content-center align-items-center ml-5"
-                  style={{ float: "right", marginTop: "-20px" }}
-                >
-                  <Form.Label style={{ fontSize: "15px" }}>
-                    Shipping Fee:
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    
-                    style={{
-                      height: "35px",
-                      width: "100px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                      marginLeft: "5px",
-                    }}
-                    onChange={(e) => handleInputChangeShipping(e.target.value)}
-                    onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
-                        e.preventDefault();
-                    }}
-                  />
-                </div>
-                </div>
-              </div>
-              ) : <></>}
-             
+              ) : (
+                <></>
+              )}
             </div>
 
             <div className="row mb-5">
@@ -998,7 +1043,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   </div>
 
                   <div className="col-3 d-flex flex-direction-row">
-                    <div className="row" style={{ marginTop: "-40px"}}>
+                    <div className="row" style={{ marginTop: "-40px" }}>
                       <div className="col-4">
                         <Form.Group controlId="exampleForm.ControlInput2">
                           <Form.Label style={{ fontSize: "15px" }}>
@@ -1140,7 +1185,7 @@ function ReceivingManagementPreview({ authrztn }) {
                             width: "100px",
                             fontSize: "14px",
                             fontFamily: "Poppins, Source Sans Pro",
-                            pointerEvents: 'none'
+                            pointerEvents: "none",
                           }}
                           onChange={(e) =>
                             handleInputChange(
@@ -1285,14 +1330,20 @@ function ReceivingManagementPreview({ authrztn }) {
                       <th className="tableh">Received Quantity</th>
                       <th className="tableh">Set</th>
                       <th className="tableh">Freight Cost</th>
+                      <th className="tableh">Duties & Custom Cost</th>
                       <th className="tableh">Reference Code</th>
+                      <th className="tableh">Receiving Site</th>
                       <th className="tableh">Date Received</th>
                     </tr>
                   </thead>
                   {filteredPRD.length > 0 ||
                   filteredASM.length > 0 ||
                   filteredSPR.length > 0 ||
-                  filteredSBP.length > 0 ? (
+                  filteredSBP.length > 0 ||
+                  Transaction_prd_dv.length > 0 ||
+                  Transaction_asm_dv.length > 0 ||
+                  Transaction_spr_dv.length > 0 ||
+                  Transaction_sbp_dv.length > 0 ? (
                     <tbody>
                       {Transaction_prd.map((data, i) => (
                         <tr key={i}>
@@ -1310,8 +1361,42 @@ function ReceivingManagementPreview({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_prd_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_prd
+                                .product_tag_supplier.product.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_prd
+                                .product_tag_supplier.product.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1332,8 +1417,42 @@ function ReceivingManagementPreview({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_asm_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_asmbly
+                                .assembly_supplier.assembly.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_asmbly
+                                .assembly_supplier.assembly.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1354,8 +1473,42 @@ function ReceivingManagementPreview({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_spr_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_spare
+                                .sparepart_supplier.sparePart.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_spare
+                                .sparepart_supplier.sparePart.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1376,8 +1529,42 @@ function ReceivingManagementPreview({ authrztn }) {
                           </td>
                           <td>{data.received_quantity}</td>
                           <td>{data.set_quantity}</td>
-                          <td>{data.freight_cost}</td>
-                          <td>{data.ref_code}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                        </tr>
+                      ))}
+
+                      {Transaction_sbp_dv.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_subpart
+                                .subpart_supplier.subPart.product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.purchase_req_canvassed_subpart
+                                .subpart_supplier.subPart.product_name
+                            }
+                          </td>
+                          <td>{data.received_quantity}</td>
+                          <td>{data.set_quantity}</td>
+                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.customFee === null
+                              ? "0"
+                              : data.receiving_po.customFee}
+                          </td>
+                          <td>{data.receiving_po.ref_code}</td>
+                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}

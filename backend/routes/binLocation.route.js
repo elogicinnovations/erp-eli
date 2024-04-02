@@ -41,10 +41,12 @@ router.route('/create').post(async (req, res) => {
       // Check if the supplier code is already exists in the table
       const existingDataCode = await BinLocation.findAll({
         where: {
-          [Op.or] : [
-            { bin_name: { [Op.eq] : req.body.binLocationName } },
-            { bin_subname: { [Op.eq] : req.body.binLocationSubName } },
-          ]
+          bin_name: req.body.binLocationName,
+          bin_subname:  req.body.binLocationSubName 
+          // [Op.or] : [
+          //   { bin_name: { [Op.eq] : req.body.binLocationName } },
+          //   { bin_subname: { [Op.eq] : req.body.binLocationSubName } },
+          // ]
         },
       });
   
@@ -86,6 +88,7 @@ router.route('/update/:param_id').put(async (req, res) => {
       const existingData = await BinLocation.findOne({
         where: {
             bin_name: name,
+            bin_subname: req.body.bin_subname,
             bin_id: { [Op.ne]: id }, // Exclude the current record
         },
       });
