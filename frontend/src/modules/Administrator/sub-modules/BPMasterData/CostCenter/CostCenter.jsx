@@ -146,7 +146,7 @@ function CostCenter({ authrztn }) {
 
   const handleShow = () => setShowModal(true);
 
-  const handleModalToggle = (updateData = null) => {
+  const handleModalToggle = (updateData) => {
     setUpdateModalShow(!updateModalShow);
     if(updateData) {
       setUpdateFormData({
@@ -154,7 +154,7 @@ function CostCenter({ authrztn }) {
         uname: updateData.name,
         ucol_id: updateData.col_id,
         udescription: updateData.description,
-        ustatus: updateData.status === "Active",
+        ustatus: updateData.status
       });
     } else {
       setUpdateFormData({
@@ -168,12 +168,24 @@ function CostCenter({ authrztn }) {
   };
 
   const handleUpdateFormChange = (e) => {
-    const { name, value } = e.target;
+    // const { name, value,  } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    setUpdateFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    // setUpdateFormData((prevData) => ({
+    //   ...prevData,
+    //   [name]: value,
+    // }));
+    if (type === "checkbox") {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        [name]: checked,
+      }));
+    } else {
+      setUpdateFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleUpdateSubmit = async (e) => {
@@ -708,8 +720,8 @@ function CostCenter({ authrztn }) {
                         type="checkbox"
                         name="ustatus"
                         className="toggle-switch" // Add the custom class
-                        onChange={handleUpdateFormChange}
-                        defaultChecked={updateFormData.ustatus}
+                        onClick={handleUpdateFormChange}
+                        defaultChecked={updateFormData.ustatus === 'Active'}
                       />
                 </div>
                </div>

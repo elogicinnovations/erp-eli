@@ -19,6 +19,7 @@ import warehouse from "../../../assets/global/warehouse";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { CSVLink } from "react-csv";
 import {
   ArrowCircleLeft,
   Upload,
@@ -103,6 +104,138 @@ function ReceivingPreview({ authrztn }) {
       pdf.save("receivingReport.pdf");
     });
   };
+
+  const prepareCsvData = () => {
+    // Add JSX content data
+    const jsxContentData = [
+        ["SBF PHILIPPINES DRILLING RESOURCES CORPORATION"],
+        ["Padigusan, Sta.Cruz, Rosario, Agusan del sur"],
+        [`Date: ${formattedDate}`],
+        [`Request Date: ${formatDatetime(requestPr)}`],
+        [`PR Number: ${prNumber} => PO Number: ${poNum}`],
+        [`PO Date: ${formatDatetime(approvedPRDate)}`],
+        [`Vendor Code: ${supplierCode} `],
+        [`Vendor: ${supplierName} `],
+        [`Terms: ${supplierTerms}`],
+        [""],
+        [""],
+        [""],
+    ];
+
+    // Initialize CSV data with header row
+    const formattedData = [
+        [
+            "Code",
+            "Product",
+            "UOM",
+            "Initial Received",
+            "Received",
+            "Set",
+            "Unit Price",
+            "Freight Cost",
+            "Duties & Customs Cost",
+            "Total"
+        ]
+    ];
+
+    // Populate data rows for products
+    products.forEach((data) => {
+        formattedData.push([
+            data.purchase_req_canvassed_prd.product_tag_supplier.product.product_code,
+            data.purchase_req_canvassed_prd.product_tag_supplier.product.product_name,
+            data.purchase_req_canvassed_prd.product_tag_supplier.product.product_unitMeasurement,
+            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
+            data.received_quantity,
+            data.set_quantity === 0 ? "N/A" : data.set_quantity,
+            data.purchase_req_canvassed_prd.product_tag_supplier.product_price,
+            data.receiving_po.freight_cost,
+            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
+            (data.purchase_req_canvassed_prd.product_tag_supplier.product_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
+        ]);
+    });
+
+    // Populate data rows for assembly
+    assembly.forEach((data) => {
+        formattedData.push([
+            data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_code,
+            data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name,
+            data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_unitMeasurement,
+            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
+            data.received_quantity,
+            data.set_quantity === 0 ? "N/A" : data.set_quantity,
+            data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price,
+            data.receiving_po.freight_cost,
+            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
+            (data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
+        ]);
+    });
+
+    // Populate data rows for spare
+    spare.forEach((data) => {
+        formattedData.push([
+            data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_code,
+            data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_name,
+            data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement,
+            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
+            data.received_quantity,
+            data.set_quantity === 0 ? "N/A" : data.set_quantity,
+            data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price,
+            data.receiving_po.freight_cost,
+            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
+            (data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
+        ]);
+    });
+
+    // Populate data rows for subpart
+    subpart.forEach((data) => {
+        formattedData.push([
+            data.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_code,
+            data.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name,
+            data.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_unitMeasurement,
+            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
+            data.received_quantity,
+            data.set_quantity === 0 ? "N/A" : data.set_quantity,
+            data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price,
+            data.receiving_po.freight_cost,
+            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
+            (data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
+        ]);
+    });
+
+      // Add totals row after processing all data
+      const totalsRow = [
+        "Overall Total:",
+        "",
+        "",
+        totalTransferProducts + totalTransferAssembly + totalTransferSpare + totalTransferSubpart,
+        totalReceivedProducts + totalReceivedAssembly + totalReceivedSpare + totalReceivedSubpart,
+        Settotal,
+        totalPriceProducts + totalPriceAssembly + totalPriceSpare + totalPriceSubpart,
+        totalFRProducts + totalFRAssembly + totalFRSpare + totalFRSubpart,
+        totalDCProducts + totalDCAssembly + totalDCSpare + totalDCSubpart,
+        total
+    ];
+    formattedData.push(totalsRow);
+
+    // Merge JSX content data with formatted data
+    const mergedData = jsxContentData.concat(formattedData);
+
+    // Convert data to CSV format
+    const csvContent = mergedData.map(row => row.join(",")).join("\n");
+
+    // Create a Blob object with CSV data
+    const blob = new Blob([csvContent], { type: "text/csv" });
+
+    // Create a temporary link element
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `Receiving Report (PR: ${prNumber} / PO: ${poNum})`;
+
+    // Trigger the download
+    link.click();
+};
+
+
 
   // -------------------- fetch data value --------------------- //
   useEffect(() => {
@@ -1191,6 +1324,7 @@ function ReceivingPreview({ authrztn }) {
             Approve
           </Button>
           <Button onClick={exportToPDF}>Export to PDF</Button>
+          <Button onClick={prepareCsvData}>Download CSV</Button>
         </Modal.Footer>
       </Modal>
     </div>

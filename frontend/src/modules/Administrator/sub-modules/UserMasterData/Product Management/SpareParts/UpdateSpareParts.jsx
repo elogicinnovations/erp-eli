@@ -260,7 +260,15 @@ const handlesparedescription = (event) => {
 
 //input for spare part threshold
 const handlesparethreshold = (event) => {
-  setThresholds(event.target.value);
+  if(event.target.value > 100){
+    setThresholds(100)
+  }
+  else if(event.target.value === '0'){
+    setThresholds(1)
+  }
+  else{
+    setThresholds(event.target.value)
+  }
   setIsSaveButtonDisabled(false);
 };
 
@@ -747,6 +755,10 @@ console.log(SubParts)
                                 value={thresholds} 
                                 onChange={(e) => handlesparethreshold(e)}
                                 type="number" 
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
                                 style={{height: '40px', fontSize: '15px'}}
                                 required/>
                                 </Form.Group>

@@ -246,7 +246,16 @@ function UpdateSubparts({authrztn}) {
 
   //input for threshold 
   const handlethreshold = (event) => {
-    setprodthreshold(event.target.value);
+    
+    if(event.target.value > 100){
+      setprodthreshold(100)
+    }
+    else if(event.target.value === '0'){
+      setprodthreshold(1)
+    }
+    else{
+      setprodthreshold(event.target.value)
+    }
     setIsSaveButtonDisabled(false);
   };
 
@@ -663,10 +672,13 @@ function selectFiles() {
                   <Form.Control
                     disabled={!isReadOnly}
                     onChange={(e) => {
-                      const sanitizedValue = e.target.value.replace(/\D/g, "");
-                      handlethreshold({ target: { value: sanitizedValue } });
+                      handlethreshold({ target: { value: e.target.value } });
                     }}
                     type="text"
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
                     placeholder="Minimum Stocking"
                     style={{ height: "40px", fontSize: "15px" }}
                     maxLength={10}

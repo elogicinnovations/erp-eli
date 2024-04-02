@@ -174,29 +174,6 @@ function POTransactionReports() {
       .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    //fetch product for inventory
-    axios
-      .get(BASE_URL + "/report_PO/PO_asmbly")
-      .then((res) => setPO_assmbly(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    //fetch product for inventory
-    axios
-      .get(BASE_URL + "/report_PO/PO_spare")
-      .then((res) => setPO_spare(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    //fetch product for inventory
-    axios
-      .get(BASE_URL + "/report_PO/PO_subpart")
-      .then((res) => setPO_subpart(res.data))
-      .catch((err) => console.log(err));
-  }, []);
 
   //date format
   function formatDatetime(datetime) {
@@ -347,57 +324,7 @@ function POTransactionReports() {
                     </tr>
                   ))}
 
-                  {PO_assmbly.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.pr_id}</td>
-                      <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
-                      <td>{data.assembly_supplier.assembly.assembly_code}</td>
-                      <td>{data.assembly_supplier.assembly.assembly_name}</td>
-                      <td>--</td>
-                      <td>{data.assembly_supplier.supplier.supplier_name}</td>
-                      <td>{data.assembly_supplier.supplier_price}</td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {data.assembly_supplier.supplier_price * data.quantity}
-                      </td>
-                    </tr>
-                  ))}
-
-                  {PO_spare.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.pr_id}</td>
-                      <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
-                      <td>
-                        {data.sparepart_supplier.sparePart.spareParts_code}
-                      </td>
-                      <td>
-                        {data.sparepart_supplier.sparePart.spareParts_name}
-                      </td>
-                      <td>--</td>
-                      <td>{data.sparepart_supplier.supplier.supplier_name}</td>
-                      <td>{data.sparepart_supplier.supplier_price}</td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {data.sparepart_supplier.supplier_price * data.quantity}
-                      </td>
-                    </tr>
-                  ))}
-
-                  {PO_subpart.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.pr_id}</td>
-                      <td>{formatDatetime(data.purchase_req.updatedAt)}</td>
-                      <td>{data.subpart_supplier.subPart.subPart_code}</td>
-                      <td>{data.subpart_supplier.subPart.subPart_name}</td>
-                      <td>--</td>
-                      <td>{data.subpart_supplier.supplier.supplier_name}</td>
-                      <td>{data.subpart_supplier.supplier_price}</td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {data.subpart_supplier.supplier_price * data.quantity}
-                      </td>
-                    </tr>
-                  ))}
+               
                 </tbody>
               </table>
             </div>

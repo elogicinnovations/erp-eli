@@ -232,7 +232,7 @@ return () => clearTimeout(delay);
           } else if (response.status === 201) {
             swal({
               title: "Bin Location is Already Exist",
-              text: "Please Input a New Bin Location",
+              text: "Please Input New Bin Location",
               icon: "error",
             });
           }
@@ -276,7 +276,7 @@ return () => clearTimeout(delay);
 
       if (response.status === 200) {
         swal({
-          title: "Bin Location Update Successful!",
+          title: "Bin Location Update Successfully!",
           text: "The Bin Location has been Updated Successfully.",
           icon: "success",
           button: "OK",

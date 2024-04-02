@@ -308,7 +308,15 @@ const handleassemblydescription = (event) => {
 
 //input for assembly threshold
 const handleassemblythreshold = (event) => {
-  setThresholds(event.target.value);
+  if(event.target.value > 100){
+    setThresholds(100)
+  }
+  else if(event.target.value === '0'){
+    setThresholds(1)
+  }
+  else{
+    setThresholds(event.target.value)
+  }
   setIsSaveButtonDisabled(false);
 };
 
@@ -878,6 +886,10 @@ const update = async (e) => {
                                 <Form.Control  disabled={!isReadOnly} 
                                 value={thresholds} 
                                 onChange={(e) => handleassemblythreshold(e)} 
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
                                 type="number" 
                                 style={{height: '40px', fontSize: '15px'}}/>
                                 </Form.Group>
