@@ -599,7 +599,7 @@ useEffect(() => {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in the required text fields.",
       });
     } else {
       axios
@@ -626,7 +626,7 @@ useEffect(() => {
           if (res.status === 200) {
             swal({
               title: "Product List Update Successful!",
-              text: "The Product List has been Update Successfully.",
+              text: "The product list has been updated successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -636,8 +636,8 @@ useEffect(() => {
           } else if (res.status === 201) {
             swal({
               icon: "error",
-              title: "Product code Already Exist",
-              text: "Please input another code",
+              title: "Product List Already Exists",
+              text: "Please input a new product list",
             });
           } else {
             swal({

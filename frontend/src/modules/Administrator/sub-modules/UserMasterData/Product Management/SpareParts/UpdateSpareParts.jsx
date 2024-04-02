@@ -447,7 +447,7 @@ const update = async (e) => {
     swal({
       icon: "error",
       title: "Fields are required",
-      text: "Please fill the red text fields",
+      text: "Please fill in the required text fields.",
     });
   } else {
     axios.post(`${BASE_URL}/sparePart/update`, {
@@ -468,8 +468,8 @@ const update = async (e) => {
       .then((res) => {
         if (res.status === 200) {
           swal({
-            title: "The Spare Part sucessfully updated!",
-            text: "The Spare Part has been updated successfully.",
+            title: "Product Spare Part Update Successful!",
+            text: "The product spare part has been updated successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {
@@ -479,8 +479,8 @@ const update = async (e) => {
         } else if (res.status === 201) {
           swal({
             icon: "error",
-            title: "Spare Part Already Exist",
-            text: "Please input another code",
+            title: "Product Spare-Part Already Exists",
+            text: "Please input a new product spare-part",
           });
         } else {
           swal({

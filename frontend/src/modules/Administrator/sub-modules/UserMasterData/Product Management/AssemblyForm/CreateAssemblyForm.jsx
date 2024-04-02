@@ -382,7 +382,7 @@ function onDropImages(event) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in the red text fields.",
       });
     } else {
       axios
@@ -404,8 +404,8 @@ function onDropImages(event) {
         .then((res) => {
           if (res.status === 200) {
             swal({
-              title: "The Product Assembly Add Successful!",
-              text: "The Product Assembly has been Added successfully.",
+              title: "Product Assembly Added Successfully!",
+              text: "The new product assembly has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -413,8 +413,8 @@ function onDropImages(event) {
             });
           } else if (res.status === 201) {
             swal({
-              title: "Product Assembly is Already Exist",
-              text: "Please Input a New Product Assembly ",
+              title: "Product Assembly is Already Exists",
+              text: "Please  enter a new product assembly",
               icon: "error",
             });
           } else {

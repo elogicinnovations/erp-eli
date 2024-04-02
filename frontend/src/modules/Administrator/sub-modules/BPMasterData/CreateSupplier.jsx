@@ -232,8 +232,8 @@ function CreateSupplier({ authrztn }) {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Suppliers Add Successful!",
-              text: "The Suppliers has been Added Successfully.",
+              title: "Supplier Add Successful!",
+              text: "The New Supplier has been Added Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -241,8 +241,8 @@ function CreateSupplier({ authrztn }) {
             });
           } else if (response.status === 201) {
             swal({
-              title: "Suppliers is Already Exist",
-              text: "Please Input a New Suppliers ",
+              title: "Supplier is Already Exist",
+              text: "Please Input a New Supplier ",
               icon: "error",
             });
           }

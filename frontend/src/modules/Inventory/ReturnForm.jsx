@@ -413,7 +413,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
             } else if (res.status === 201) {
               swal({
                 icon: 'error',
-                title: 'Code Already Exist',
+                title: 'Code Already Exists',
                 text: 'Please input another code',
               });
             } else {

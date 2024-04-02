@@ -431,7 +431,7 @@ function selectFiles() {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in the required text fields.",
       });
     } else {
       axios
@@ -453,8 +453,8 @@ function selectFiles() {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "The Product Sub Part Update Successful!",
-              text: "The Product Part has been Updated Successfully.",
+              title: "Product Sub-Part Update Successful!",
+              text: "The Product Sub-Part has been updated successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -464,14 +464,14 @@ function selectFiles() {
           } else if (res.status === 201) {
             swal({
               icon: "error",
-              title: "Product Sub Part Already Exist",
-              text: "Please input another Product Sub Part",
+              title: "Product Sub-Part Already Exists",
+              text: "Please input a new product sub-part.",
             });
           } else {
             swal({
               icon: "error",
               title: "Something went wrong",
-              text: "Please contact our support",
+              text: "Please contact our support team for assistance.",
             });
           }
         });

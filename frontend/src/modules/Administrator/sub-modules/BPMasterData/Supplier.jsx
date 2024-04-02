@@ -134,8 +134,8 @@ function Supplier({ authrztn }) {
 
           if (response.status === 200) {
             swal({
-              title: "Suppliers Delete Successful!",
-              text: "The Suppliers has been Deleted Successfully.",
+              title: "Supplier Delete Successful!",
+              text: "The Supplier has been Deleted Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {

@@ -335,8 +335,8 @@ function SpareParts({ authrztn }) {
       .then((res) => {
         if (res.status === 200) {
           swal({
-            title: "Status Updating!",
-            text: "The status has been updated successfully.",
+            title: "Product Spare-Part Status Update!",
+            text: "The product spare part status has been updated successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {

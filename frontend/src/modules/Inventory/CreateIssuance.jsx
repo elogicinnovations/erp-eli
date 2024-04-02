@@ -14,6 +14,7 @@ import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import { ArrowCircleLeft, Warehouse } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const handleTabClick = (tabKey) => {
@@ -50,15 +51,22 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const [transportedBy, setTransportedBy] = useState();
   const [mrs, setMrs] = useState();
   const [remarks, setRemarks] = useState();
+  const [userId, setuserId] = useState('');
 
-  // React.useEffect(() => {
-  //     $(document).ready(function () {
-  //         $('#order-listing').DataTable();
-  //     });
-  //     }, []);
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const handleAddProdClick = () => {
-    // para pag display ng drop down for add product
     setShowDropdown(true);
   };
 
@@ -116,23 +124,6 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
     });
   };
 
-  //get supplier product
-  //   useEffect(() => {
-  //     const delay = setTimeout(() => {
-  //     axios
-  //       .get(BASE_URL + "/inventory/fetchToIssueProduct")
-  //       .then((res) => {
-  //         setFetchProduct(res.data)
-  //         setIsLoading(false);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //         setIsLoading(false);
-  //       });
-  //     }, 1000);
-
-  // return () => clearTimeout(delay);
-  // }, []);
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -243,6 +234,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   //     .catch((err) => console.log(err));
   // }, []);
 
+  console.log(userId)
   //get warehouse
   useEffect(() => {
     axios
@@ -347,6 +339,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
           mrs,
           remarks,
           addProductbackend: addProductbackend,
+          userId,
         }),
       }).then((res) => {
         console.log(res);
@@ -366,8 +359,8 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   // ----------------------------------Validation------------------------------//
   const SuccessInserted = (res) => {
     swal({
-      title: "Issuance Created",
-      text: "The Issuance has been added successfully",
+      title: "Issuance Add Successful",
+      text: "The New Issued Product has been created successfully",
       icon: "success",
       button: "OK",
     }).then(() => {

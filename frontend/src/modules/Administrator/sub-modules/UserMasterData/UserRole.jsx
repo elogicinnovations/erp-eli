@@ -133,10 +133,9 @@ function UserRole({ authrztn }) {
   console.log(role);
 
   const handleDelete = async (param_id) => {
-    console.log("Deleting role with ID:", param_id);
     swal({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this role!",
+      text: "Once deleted, you will not be able to recover this data.",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -149,8 +148,8 @@ function UserRole({ authrztn }) {
 
           if (response.status === 200) {
             swal({
-              title: "User Role Delete Successful!",
-              text: "The User Role has been Deleted Successfully.",
+              title: "User Access Role Deleted Successfully!",
+            text: "The user access role has been deleted successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -172,12 +171,6 @@ function UserRole({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Role is Safe",
-          icon: "success",
-        });
       }
     });
   };

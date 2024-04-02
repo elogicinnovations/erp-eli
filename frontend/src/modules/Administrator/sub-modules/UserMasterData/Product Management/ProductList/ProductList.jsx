@@ -360,8 +360,8 @@ function ProductList({ authrztn }) {
       .then((res) => {
         if (res.status === 200) {
           swal({
-            title: "Status Updating!",
-            text: "The status has been updated successfully.",
+            title: "Product Status Update!",
+            text: "The product status has been updated successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {

@@ -167,8 +167,8 @@ function CreatePurchaseRequest() {
 
         if (response.status === 200) {
           swal({
-            title: "Purchase Request Add Succesful!",
-            text: "The Purchase Request has been Added Successfully.",
+            title: "Purchase Request Successfully Added!",
+            text: "Your request for purchase has been successfully processed.",
             icon: "success",
             button: "OK",
           }).then(() => {

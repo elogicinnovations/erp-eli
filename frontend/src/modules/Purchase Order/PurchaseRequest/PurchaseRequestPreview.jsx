@@ -93,8 +93,8 @@ function PurchaseRequestPreview() {
   const handleApproveClick = () => {
 
     swal({
-      title: "Are you sure?",
-      text: "You are attempting to approve this request",
+      title: "Confirm Approval",
+      text: "Are you sure you want to approve this purchase request?",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -112,8 +112,8 @@ function PurchaseRequestPreview() {
             console.log(res);
             if (res.status === 200) {
               swal({
-                title: 'The Purchase sucessfully approved!',
-                text: 'The Purchase been approved successfully.',
+                title: "Purchase Request Approved",
+                text: "The purchase request has been successfully approved.",
                 icon: 'success',
                 button: 'OK'
               }).then(() => {
@@ -166,8 +166,8 @@ function PurchaseRequestPreview() {
 
       if (response.status === 200){
         swal({
-          title: 'Request rejustify!',
-          text: 'The Request has been successfully rejustified',
+          title: "Rejustification Successful",
+          text: "The purchase request has been successfully rejustified.",
           icon: 'success',
           button: 'OK'
         }).then(() => {

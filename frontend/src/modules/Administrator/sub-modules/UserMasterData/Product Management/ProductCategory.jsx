@@ -151,8 +151,8 @@ return () => clearTimeout(delay);
       e.stopPropagation();
       swal({
         icon: "error",
-        title: "Fields are required",
-        text: "Please fill the Required text fields",
+        title: "Fields Required",
+        text: "Please fill in all the required fields.",
       });
     } else {
       axios
@@ -165,8 +165,8 @@ return () => clearTimeout(delay);
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Product Category Add Successful!",
-              text: "The Product has been Added Successfully.",
+              title: "Product Category Added Successfully!",
+              text: "The new product category has been added successfully.",
               icon: "success",
               button: "OK",
               
@@ -192,8 +192,8 @@ return () => clearTimeout(delay);
             });
           } else if (response.status === 201) {
             swal({
-              title: "Product Category is Already Exist",
-              text: "Please Input a New Product Category",
+              title: "Product Category Already Exists",
+              text: "Please enter a different product category.",
               icon: "error",
             });
           }
@@ -205,8 +205,8 @@ return () => clearTimeout(delay);
 
   const handleDelete = async (table_id) => {
     swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      title: "Confirm Deletion",
+      text: "Are you sure you want to delete? This action cannot be undone!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -219,8 +219,8 @@ return () => clearTimeout(delay);
 
           if (response.status === 200) {
             swal({
-              title: "Product Category Delete Succesful!",
-              text: "The Product has been Deleted Successfully.",
+              title: "Product Category Deleted Successfully!",
+              text: "The product category has been deleted successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -229,26 +229,20 @@ return () => clearTimeout(delay);
           } else if (response.status === 202) {
             swal({
               icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete Category that is used",
+              title: "Deletion Prohibited",
+              text: "You cannot delete a category that is currently in use.",
             });
           } else {
             swal({
               icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
+              title: "Oops! Something Went Wrong",
+              text: "Please contact our support team for assistance.",
             });
           }
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Category not Deleted!",
-          icon: "warning",
-        });
-      }
+      } 
     });
   };
 
@@ -300,8 +294,8 @@ return () => clearTimeout(delay);
       // Display an error message or take any other action you want when the category name is empty
       swal({
         icon: "error",
-        title: "Category Name is required",
-        text: "Please enter a Category Name before updating.",
+        title: "Category Name Required",
+        text: "Please enter a category name before updating.",
       });
       return;
     }
@@ -318,8 +312,8 @@ return () => clearTimeout(delay);
 
       if (response.status === 200) {
         swal({
-          title: "Product Category Update Successful!",
-          text: "The Product has been Updated Successfully.",
+          title: "Product Category Updated Successfully!",
+          text: "The product category has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -329,14 +323,14 @@ return () => clearTimeout(delay);
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Category already exists",
-          text: "Please input another Category",
+          title: "Category Already Exists",
+          text: "Please enter a different category name.",
         });
       } else {
         swal({
           icon: "error",
-          title: "Something went wrong",
-          text: "Please contact our support",
+          title: "Oops! Something Went Wrong",
+          text: "Please contact our support team for assistance.",
         });
       }
     } catch (err) {

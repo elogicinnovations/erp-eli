@@ -86,7 +86,7 @@ function CostCenter({ authrztn }) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in the Required fields",
       });
     } else {
       axios
@@ -101,8 +101,8 @@ function CostCenter({ authrztn }) {
         .then((res) => {
           if (res.status === 200) {
             swal({
-              title: "Cost Center Add Successful!",
-              text: "The Cost Center has been Added Successfully.",
+              title: "Cost Center Added Successfully!",
+              text: "The new cost center has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -111,8 +111,8 @@ function CostCenter({ authrztn }) {
             });
           } else if (res.status === 201) {
             swal({
-              title: "Cost Center is Already Exist",
-              text: "Please Input a New Cost Center ",
+              title: "Cost Center is Already Exists",
+              text: "Please enter a different cost center ",
               icon: "error",
             });
           } else {
@@ -205,7 +205,7 @@ function CostCenter({ authrztn }) {
       if (response.status === 200) {
         swal({
           title: "Cost Center Update Successful!",
-          text: "The Cost Center has been Updated Successfully.",
+          text: "The Cost Center has been successfully updated.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -221,14 +221,14 @@ function CostCenter({ authrztn }) {
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Email already exists",
-          text: "Please input another Email",
+          title: "Cost Center Already Exists",
+          text: "Please input a new Cost Center.",
         });
       } else {
         swal({
           icon: "error",
           title: "Something went wrong",
-          text: "Please contact our support",
+          text: "Please contact our support team.",
         });
       }
     } catch (err) {
@@ -240,7 +240,7 @@ function CostCenter({ authrztn }) {
   const handleDelete = async (id) => {
     swal({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -254,7 +254,7 @@ function CostCenter({ authrztn }) {
           if (response.status === 200) {
             swal({
               title: "Cost Center Delete Successful!",
-              text: "The Cost Center has been Deleted Successfully.",
+              text: "The Cost Center has been successfully deleted.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -264,13 +264,13 @@ function CostCenter({ authrztn }) {
             swal({
               icon: "error",
               title: "Delete Prohibited",
-              text: "You cannot delete Cost Center that is used",
+              text: "You cannot delete a Cost Center that is in use.",
             });
           } else {
             swal({
               icon: "error",
               title: "Something went wrong",
-              text: "Please contact our support",
+              text: "Please contact our support team.",
             });
           }
         } catch (err) {

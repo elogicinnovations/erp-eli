@@ -170,8 +170,8 @@ function Productvariants({ authrztn }) {
       e.stopPropagation();
       swal({
         icon: "error",
-        title: "Fields are required",
-        text: "Please fill the Required text fields",
+        title: "Fields are Required",
+        text: "Please fill in all required fields.",
       });
     } else {
       axios
@@ -185,8 +185,8 @@ function Productvariants({ authrztn }) {
           console.log(res);
           if (res.status === 200) {
             swal({
-              title: "Manufacturer Add Successful!",
-              text: "The Manufacturer has been Added Successfully.",
+              title: "Manufacturer Added Successfully!",
+              text: "The new manufacturer has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -196,14 +196,14 @@ function Productvariants({ authrztn }) {
             });
           } else if (res.status === 201) {
             swal({
-              title: "Manufacturer is Already Exist",
-              text: "Please Input a New Manufacturer ",
+              title: "Manufacturer Already Exists",
+              text: "Please enter a different manufacturer.",
               icon: "error",
             });;
           } else {
             swal({
-              title: "Something went wrong",
-              text: "Please Contact our Support",
+              title: "Oops! Something Went Wrong",
+              text: "Please contact our support team for assistance.",
               icon: "error",
               button: "OK",
             });
@@ -217,7 +217,7 @@ function Productvariants({ authrztn }) {
   const handleDelete = async (table_id) => {
     swal({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -230,8 +230,8 @@ function Productvariants({ authrztn }) {
 
           if (response.status === 200) {
             swal({
-              title: "Product Manufacturer Delete Successful!",
-              text: "The Product Manufacturer has been Deleted Successfully.",
+              title: "Product Manufacturer Deleted Successfully!",
+              text: "The product manufacturer has been deleted successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -240,8 +240,8 @@ function Productvariants({ authrztn }) {
           } else if (response.status === 202) {
             swal({
               icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete Manufacturer that is used",
+              title: "Deletion Prohibited",
+              text: "You cannot delete a manufacturer that is currently in use.",
             });
           } else {
             swal({
@@ -255,8 +255,8 @@ function Productvariants({ authrztn }) {
         }
       } else {
         swal({
-          title: "Cancelled Successfully",
-          text: "Manufacturer not Deleted!",
+          title: "Oops! Something Went Wrong",
+          text: "Please contact our support team for assistance.",
           icon: "warning",
         });
       }
@@ -320,8 +320,8 @@ function Productvariants({ authrztn }) {
 
       if (response.status === 200) {
         swal({
-          title: "Product Manufacturer Update Successful!",
-          text: "The Product Manufacturer has been Updated Successfully.",
+          title: "Product Manufacturer Updated Successfully!",
+          text: "The product manufacturer has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -330,15 +330,15 @@ function Productvariants({ authrztn }) {
         });
       } else if (response.status === 202) {
         swal({
-          title: "Product Manufacturer is Already Exist",
-          text: "Please Input a New Product Manufacturer ",
+          title: "Product Manufacturer Already Exists",
+          text: "Please enter a different product manufacturer.",
           icon: "error",
         });
       } else {
         swal({
           icon: "error",
-          title: "Something went wrong",
-          text: "Please contact our support",
+          title: "Oops! Something Went Wrong",
+          text: "Please contact our support team for assistance.",
         });
       }
     } catch (err) {

@@ -330,7 +330,7 @@ function AssemblyForm({ authrztn }) {
       .then((res) => {
         if (res.status === 200) {
           swal({
-            title: "Status Updating!",
+            title: "Product Assembly Status Update!",
             text: "The status has been updated successfully.",
             icon: "success",
             button: "OK",

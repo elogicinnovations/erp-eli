@@ -94,8 +94,8 @@ function Create_role() {
 
         if (response.status === 200) {
           swal({
-            title: "User Role Add Successful!",
-            text: "The User Role has been Added Successfully.",
+            title: "User Role Added Successfully!",
+            text: "The new user role has been added successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {
@@ -103,8 +103,8 @@ function Create_role() {
           });
         } else if (response.status === 202) {
           swal({
-            title: "User Role is Already Exist",
-            text: "Please Input a New User Role",
+            title: "User Role Already Exists",
+            text: "Please enter a new user role.",
             icon: "error",
           });
         }

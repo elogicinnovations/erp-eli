@@ -118,8 +118,8 @@ function EditRole() {
       // Handle the response as needed
       if (response.status === 200) {
         swal({
-          title: "User Role Update Successful!",
-          text: "The User Role has been Updated Successfully.",
+          title: "User Role Updated Successfully!",
+          text: "The user role has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -128,8 +128,8 @@ function EditRole() {
         });
       } else if (response.status === 202) {
         swal({
-          title: "User Role is Already Exist",
-          text: "Please Input a New User Role",
+          title: "User Role Already Exists",
+          text: "Please enter a new user role.",
           icon: "error",
         });
       } else {

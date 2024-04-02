@@ -332,7 +332,7 @@ function onDropImages(event) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill in the required fields marked in red.",
       });
     } else {
 
@@ -354,8 +354,8 @@ function onDropImages(event) {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "Product Sub-Parts Add Successful!",
-              text: "The Product Sub-Parts has been Added Successfully.",
+              title: "Product Sub-Part Added Successfully!",
+              text: "The new product sub-part has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -364,14 +364,14 @@ function onDropImages(event) {
           } else if (res.status === 201) {
             swal({
               icon: "error",
-              title: "Code Already Exist",
-              text: "Please input another code",
+              title: "Sub-Part Code Already Exists",
+              text: "Please enter a new product sub-part.",
             });
           } else {
             swal({
               icon: "error",
               title: "Something went wrong",
-              text: "Please contact our support",
+              text: "Please contact our support team.",
             });
           }
         });

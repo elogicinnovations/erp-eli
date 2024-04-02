@@ -345,7 +345,7 @@ useEffect(() => {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the red text fields",
+        text: "Please fill in the red text fields.",
       });
     } else {
       console.log(SubParts)
@@ -368,8 +368,8 @@ useEffect(() => {
           // console.log(res);
           if (res.status === 200) {
             swal({
-              title: "Product Spare-Part Add Successful!",
-              text: "The Product Spare-Part has been Added Successfully.",
+              title: "Product Spare-Part Added Successfully!",
+              text: "The new product spare-part has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -377,15 +377,15 @@ useEffect(() => {
             });
           } else if (res.status === 201) {
             swal({
-              title: "Product Spare-Part is Already Exist",
-              text: "Please Input a New Product Spare-Part ",
+              title: "Product Spare-Part Already Exists",
+              text: "Please enter a new product spare-part",
               icon: "error",
             });
           } else {
             swal({
               icon: "error",
               title: "Something went wrong",
-              text: "Please contact our support",
+              text: "Please contact our support team.",
             });
           }
         });

@@ -123,7 +123,7 @@ function Warehouse({ authrztn }) {
           if (res.status === 200) {
             swal({
               title: "Warehouse Add Successful!",
-              text: "The Warehouse has been Added Successfully.",
+              text: "The New Warehouse has been Added Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -255,7 +255,7 @@ function Warehouse({ authrztn }) {
       if (response.status === 200) {
         swal({
           title: "Warehouse Update Successful!",
-          text: "The Warehouse has been Updated Successfully.",
+          text: "The Warehouse Information has been Updated Successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -285,7 +285,7 @@ function Warehouse({ authrztn }) {
   const handleDelete = async (table_id) => {
     swal({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       buttons: true,
       dangerMode: true,

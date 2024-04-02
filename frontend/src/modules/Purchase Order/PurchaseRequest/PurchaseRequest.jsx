@@ -224,7 +224,7 @@ function PurchaseRequest({ authrztn }) {
             if (response.status === 200) {
               swal({
                 title: "Purchase Request Cancel Successful",
-                text: "The Purchase Request is Cancelled successfully",
+                text: "The Purchase Request is cancelled successfully",
                 icon: "success",
                 button: "OK",
               }).then(() => {
@@ -241,12 +241,6 @@ function PurchaseRequest({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "PO not Deleted!",
-          icon: "warning",
-        });
       }
     });
   };

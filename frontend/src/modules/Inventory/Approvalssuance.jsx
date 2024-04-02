@@ -105,7 +105,7 @@ return () => clearTimeout(delay);
   const handleApprove = () => {
     swal({
       title: 'Are you sure?',
-      text: 'This will move as approved request',
+      text: 'This action will mark the request as approved.',
       icon: 'warning',
       buttons: true,
       dangerMode: true,
@@ -138,7 +138,7 @@ return () => clearTimeout(delay);
   const handleReject = () => {
     swal({
       title: 'Are you sure?',
-      text: 'This will move as reject this request',
+      text: 'This action will mark the request as rejected.',
       icon: 'warning',
       buttons: true,
       dangerMode: true,
@@ -150,7 +150,7 @@ return () => clearTimeout(delay);
          }
         })
           .then(() => {
-            swal('Success!', 'You successfully rejected this request', 'success')
+            swal('Success!', 'You have successfully rejected this request.', 'success')
               .then(() => {
                 navigate('/inventory')
               });

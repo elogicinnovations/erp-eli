@@ -183,17 +183,12 @@ return () => clearTimeout(delay);
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-      // if required fields has NO value
-      //    console.log('requried')
       swal({
         icon: "error",
-        title: "Fields are required",
-        text: "Please fill the Required text fields",
-      });
+        title: "Required Fields",
+        text: "Please fill in all required fields.",
+      });      
     } else {
-      // if required fields has value (GOOD)
-      // console.log(suppCperson)
-
       axios
         .post(BASE_URL + "/binLocation/create", {
           binLocationName,
@@ -204,8 +199,8 @@ return () => clearTimeout(delay);
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Bin Location Add Succesful!",
-              text: "The Bin Location has been Added Successfully.",
+              title: "Bin Location Added Successfully!",
+              text: "The new bin location has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -231,8 +226,8 @@ return () => clearTimeout(delay);
             });
           } else if (response.status === 201) {
             swal({
-              title: "Bin Location is Already Exist",
-              text: "Please Input New Bin Location",
+              title: "Bin Location Already Exists",
+              text: "Please input a new bin location.",
               icon: "error",
             });
           }
@@ -249,9 +244,9 @@ return () => clearTimeout(delay);
     if (updateFormData.bin_name.trim() === "") {
       swal({
         icon: "error",
-        title: "Bin Location Name is required",
-        text: "Please fill Bin Location Name field",
-      });
+        title: "Bin Location Name Required",
+        text: "Please fill in the Bin Location Name field.",
+      });      
       return;
     }
     // if (updateFormData.bin_subname.trim() === "") {
@@ -276,8 +271,8 @@ return () => clearTimeout(delay);
 
       if (response.status === 200) {
         swal({
-          title: "Bin Location Update Successfully!",
-          text: "The Bin Location has been Updated Successfully.",
+          title: "Bin Location Update Successful!",
+          text: "The bin location has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -308,14 +303,14 @@ return () => clearTimeout(delay);
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Bin Location is already exists",
-          text: "Please input another Bin Location",
+          title: "Bin Location Already Exists",
+          text: "Please enter a different bin location.",
         });
       } else {
         swal({
           icon: "error",
           title: "Something went wrong",
-          text: "Please contact our support",
+          text: "Please contact our support for assistance.",
         });
       }
     } catch (err) {
@@ -325,8 +320,8 @@ return () => clearTimeout(delay);
 
   const handleDelete = async (table_id) => {
     swal({
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      title: "Confirm Deletion",
+      text: "Are you sure you want to delete? This action cannot be undone!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -338,8 +333,8 @@ return () => clearTimeout(delay);
           );
           if (response.status === 200) {
             swal({
-              title: "Bin Location Delete Successful!",
-              text: "The Bin Location has been Deleted Successfully.",
+              title: "Bin Location Deleted Successfully!",
+              text: "The bin location has been successfully deleted.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -350,25 +345,19 @@ return () => clearTimeout(delay);
           } else if (response.status === 202) {
             swal({
               icon: "error",
-              title: "Delete Prohibited",
-              text: "You cannot delete Bin Location that is used",
+              title: "Deletion Prohibited",
+              text: "You cannot delete a bin location that is in use.",
             });
           } else {
             swal({
               icon: "error",
               title: "Something went wrong",
-              text: "Please contact our support",
+              text: "Please contact our support team for assistance.",
             });
           }
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          text: "Bin Location not Deleted!",
-          icon: "warning",
-        });
       }
     });
   };

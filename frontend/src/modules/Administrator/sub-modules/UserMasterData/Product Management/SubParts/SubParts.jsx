@@ -386,7 +386,7 @@ function SubParts({ authrztn }) {
       .then((res) => {
         if (res.status === 200) {
           swal({
-            title: "Status Updating!",
+            title: "Product Sub-Part Status Update",
             text: "The status has been updated successfully.",
             icon: "success",
             button: "OK",

@@ -26,6 +26,7 @@ const {
   Subpart_supplier,
   SubPart,
   Warehouses,
+  Activity_Log,
 } = require("../db/models/associations");
 // const Issued_Product = require('../db/models/issued_product.model')
 // const Inventory = require('../db/models/issued_product.model')
@@ -516,10 +517,8 @@ router.route("/returnForm").get(async (req, res) => {
 
 //Create Issuance
 router.route("/create").post(async (req, res) => {
-  const { addProductbackend } = req.body;
+  const { addProductbackend, userId } = req.body;
 
-  // console.log('addProductbackend'+ reqaddProduct)
-  console.log("fromSite" + req.body);
   try {
     const Issue_newData = await Issuance.create({
       from_site: req.body.fromSite,
@@ -576,6 +575,19 @@ router.route("/create").post(async (req, res) => {
           status: "",
         });
       }
+
+      const CostCentername = await CostCenter.findOne({
+        where: {
+          id: req.body.issuedTo
+        }
+      })
+
+      const nameCostcenter = CostCentername.name;
+      
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Issuance: Issued a product ${Name} to ${nameCostcenter}`,
+      });
     }
 
     res.status(200).json(Issue_newData);

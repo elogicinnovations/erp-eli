@@ -350,7 +350,7 @@ function MasterList({ authrztn }) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in all required fields.",
       });
     } else {
       const updaemasterID = updateFormData.updateId;
@@ -372,7 +372,7 @@ function MasterList({ authrztn }) {
       if (response.status === 200) {
         swal({
           title: "User Update Successful!",
-          text: "The User has been Updated Successfully.",
+          text: "The user information has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -414,14 +414,14 @@ function MasterList({ authrztn }) {
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Email already exists",
-          text: "Please input another Email",
+          title: "Email Already Exists",
+          text: "Please use a different email address.",
         });
       } else {
         swal({
           icon: "error",
           title: "Something went wrong",
-          text: "Please contact our support",
+          text: "Please try again or contact our support team.",
         });
       }
     }
@@ -527,7 +527,7 @@ function MasterList({ authrztn }) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in all required fields",
       });
     } else {
       formData.userId = userId;
@@ -540,8 +540,8 @@ function MasterList({ authrztn }) {
 
       if (response.status === 200) {
         swal({
-          title: "User Add Successful!",
-          text: "The User has been Added Successfully.",
+          title: "User Added Successfully!",
+          text: "The new user has been added successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -562,14 +562,14 @@ function MasterList({ authrztn }) {
       } else if (response.status === 202) {
         swal({
           icon: "error",
-          title: "Email already exists",
-          text: "Please input another Email",
+          title: "Email Already Exists",
+          text: "Please use a different email address.",
         });
       } else {
         swal({
           icon: "error",
           title: "Something went wrong",
-          text: "Please contact our support",
+          text: "Please contact our support team.",
         });
       }
     }
@@ -740,7 +740,7 @@ function MasterList({ authrztn }) {
   const handleDelete = async (param_id) => {
     swal({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      text: "Once deleted, you will not be able to recover this user's account!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -752,8 +752,8 @@ function MasterList({ authrztn }) {
           );
           if (response.data.success) {
             swal({
-              title: "User Delete Successful!",
-              text: "The User has been Deleted Successfully.",
+              title: "User Deleted Successfully!",
+              text: "The user's account has been successfully deleted.",
               icon: "success",
               button: "OK",
             }).then(() => {

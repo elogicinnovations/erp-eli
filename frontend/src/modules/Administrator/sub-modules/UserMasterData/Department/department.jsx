@@ -103,7 +103,7 @@ function Warehouse({ authrztn }) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in Required fields",
       });
       setValidated(true);
       return;
@@ -128,7 +128,7 @@ function Warehouse({ authrztn }) {
           if (res.status === 200) {
             swal({
               title: "Department Add Successful!",
-              text: "The Department has been Added Successfully.",
+              text: "The Department has been added successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -139,13 +139,13 @@ function Warehouse({ authrztn }) {
           } else if (res.status === 201) {
             swal({
               title: "Department is Already Exist",
-              text: "Please Input a New Department ",
+              text: "Please enter a different department ",
               icon: "error",
             });
           } else {
             swal({
               title: "Something went wrong",
-              text: "Please Contact our Support",
+              text: "Please contact our support team.",
               icon: "error",
               button: "OK",
             });
@@ -256,7 +256,7 @@ function Warehouse({ authrztn }) {
       if (response.status === 200) {
         swal({
           title: "Department Update Successful!",
-          text: "The Department has been Updated Successfully.",
+          text: "The Department has been updated successfully.",
           icon: "success",
           button: "OK",
         }).then(() => {
@@ -268,13 +268,13 @@ function Warehouse({ authrztn }) {
         swal({
           icon: "error",
           title: "Department already exists",
-          text: "Please input another Department",
+          text: "Please enter a different Department",
         });
       } else {
         swal({
           icon: "error",
           title: "Something went wrong",
-          text: "Please contact our support",
+          text: "Please contact our support team.",
         });
       }
     } catch (err) {
@@ -286,7 +286,7 @@ function Warehouse({ authrztn }) {
   const handleDelete = async (table_id) => {
     swal({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this user file!",
+      text: "Once deleted, you will not be able to recover this data!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
@@ -300,8 +300,8 @@ function Warehouse({ authrztn }) {
 
           if (response.status === 200) {
             swal({
-              title: "Department Delete Succesful!",
-              text: "The Department has been Deleted Successfully.",
+              title: "Department Deleted Succesfully!",
+              text: "The Department has been deleted successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -310,7 +310,7 @@ function Warehouse({ authrztn }) {
           } else if (response.status === 202) {
             swal({
               icon: "error",
-              title: "Delete Prohibited",
+              title: "Deletion Prohibited",
               text: "You cannot delete Department that is used",
             });
           } else {

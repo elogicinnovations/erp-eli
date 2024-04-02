@@ -188,8 +188,8 @@ function EditSupplier({ authrztn }) {
         .then((response) => {
           if (response.status === 200) {
             swal({
-              title: "Suppliers Update Successful!",
-              text: "The Suppliers has been Updated Successfully.",
+              title: "Supplier Update Successful!",
+              text: "The Supplier has been Updated Successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -197,8 +197,8 @@ function EditSupplier({ authrztn }) {
             });
           } else if (response.status === 201) {
             swal({
-              title: "Suppliers is Already Exist",
-              text: "Please Input a New Suppliers ",
+              title: "Supplier is Already Exist",
+              text: "Please Input a New Supplier",
               icon: "error",
             });
           }

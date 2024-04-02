@@ -24,6 +24,7 @@ import SBFLOGO from "../../../assets/image/SBF.png";
 import * as $ from 'jquery';
 import { jwtDecode } from "jwt-decode";
 import html2canvas from "html2canvas";
+import ReactLoading from 'react-loading';
 
 function PurchaseOrderListPreview() {
   const { id } = useParams();
@@ -34,9 +35,9 @@ function PurchaseOrderListPreview() {
   const [useFor, setUseFor] = useState('');
   const [remarks, setRemarks] = useState('');
   const [status, setStatus] = useState('');
-
+  const [sendEmail, setsendEmail] = useState(false);
   const [validated, setValidated] = useState(false);
-
+  const [showPreviewButton, setShowPreviewButton] = useState(false);
 
 
   //para sa subpart data na e canvass
@@ -231,7 +232,7 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id, qu
       // Trigger SweetAlert for duplicate
       swal({
         title: 'Duplicate Product',
-        text: 'This product is already in the array for this supplier.',
+        text: 'This product is already in the cart for this supplier.',
         icon: 'error',
       });
 
@@ -426,6 +427,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
           });
     }
     else{
+      setsendEmail(true);
       const updatedPOarray = [];
   
       for (const supplierProducts of Object.values(productArrays)) {
@@ -443,18 +445,6 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
 
               updatedPOarray.push(updatedGroup);
         }
-          // updatedPOarray.push({ ...supplierProducts, imageData: imageData });
-
-        // for (const product of supplierProducts) {
-        //   const supplierCode = product[0].supplier.supplier_code;
-        //   const div = document.getElementById(`content-to-pdf-${supplierCode}`);
-        //   const canvas = await html2canvas(div);
-        //   const imageData = canvas.toDataURL('image/png');
-  
-        //   updatedPOarray.push({ ...product, imageData: imageData });
-
- 
-        // }
       }
 
       axios.post(`${BASE_URL}/PR_PO/save` , {
@@ -467,12 +457,13 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
         console.log(res);
         if (res.status === 200) {
           swal({
-            title: 'The Purchase successfully requested!',
-            text: 'The Purchase Request has been added successfully.',
+            title: "Product For-Canvassed",
+            text: "You have successfully marked this product for canvassing.",
             icon: 'success',
             button: 'OK'
           }).then(() => {
             navigate('/purchaseRequest')
+            setsendEmail(false);
           });
         } else {
           swal({
@@ -898,7 +889,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                               
                                               <div className="template-label-value">
                                                   <span>{prNum}</span>
-                                                  <span>${supplierCode} - ${products[0].supplierName}</span>
+                                                  <span>{supplierCode} - {products[0].supplierName}</span>
                                                   <span>{dateNeeded.toLocaleDateString()}</span>
                                               </div>
                                                
@@ -966,19 +957,39 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                           </Modal.Body>
                           ))}
                           <Modal.Footer>
-                            <Button 
-                              type='button'
-                              onClick={add}
-                              className='btn btn-warning' 
-                              size="md" 
-                              style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
-                              >
-                                Send Email
-                              </Button>
+                            <>
+                            {!sendEmail ? (
+                            <div>
+                              <Button 
+                                type='button'
+                                onClick={add}
+                                className='btn btn-warning' 
+                                size="md" 
+                                style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
+                                >
+                                  Send Email
+                                </Button>
+                                <Button 
+                                variant='seconday' 
+                                size="md" 
+                                style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
+                                >
+                                  Close
+                                </Button>
+                            </div>
+                            ) : (
+                              <>
+                                  <div className="loading-container">
+                                    <ReactLoading className="react-loading" type={"bubbles"} />
+                                      Sending Email Please Wait...
+                                  </div>
+                                </>
+                              )}
+                            </>
                           </Modal.Footer>
 
                         </Modal>
-
+                        {showPreviewButton && (
                         <Button 
                               onClick={handlePreviewShow}
                               className='btn btn-warning' 
@@ -987,6 +998,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                         >
                           Preview
                         </Button>
+                        )}
                         </div>
                 </Form>
 
@@ -1022,7 +1034,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                                                     <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.product_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email, quantity)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => {handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email, quantity); setShowPreviewButton(true)}}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
@@ -1075,7 +1087,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                                                     <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email, quantity)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => {handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email, quantity); setShowPreviewButton(true)}}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
@@ -1127,7 +1139,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                                                     <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email, quantity)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => {handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email, quantity); setShowPreviewButton(true)}}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
@@ -1180,7 +1192,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                                             <td>{data.supplier.supplier_email}</td>
                                                             <td>{data.supplier_price}</td>
                                                             <td>                                                
-                                                              <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email, quantity)}>
+                                                              <button type='button' className='btn canvas' onClick={() => {handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email, quantity); setShowPreviewButton(true)}}>
                                                                 <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                               </button>
                                                             </td>

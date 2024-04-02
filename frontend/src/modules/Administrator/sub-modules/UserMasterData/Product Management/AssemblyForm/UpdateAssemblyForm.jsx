@@ -498,7 +498,7 @@ const update = async (e) => {
     swal({
       icon: "error",
       title: "Fields are required",
-      text: "Please fill the Required text fields",
+      text: "Please fill in the required text fields.",
     });
   } else {
     axios
@@ -521,8 +521,8 @@ const update = async (e) => {
         // console.log(res);
         if (res.status === 200) {
           swal({
-            title: "The Assembly Update Succesful!",
-            text: "The Assembly has been Updated Successfully.",
+            title: "Product Assembly Update Succesful!",
+            text: "The product assembly has been updated successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {
@@ -531,8 +531,8 @@ const update = async (e) => {
           });
         } else if (res.status === 201) {
           swal({
-            title: "Assembly is Already Exist",
-            text: "Please Input a New Product Assembly ",
+            title: "Product Assembly is Already Exists",
+            text: "Please input a new product assembly",
             icon: "error",
           });
         } else {

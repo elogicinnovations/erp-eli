@@ -421,7 +421,7 @@ function onDropImages(event) {
       swal({
         icon: "error",
         title: "Fields are required",
-        text: "Please fill the Required text fields",
+        text: "Please fill in the red text fields.",
       });
     } else {
       axios
@@ -457,8 +457,8 @@ function onDropImages(event) {
 
   const SuccessInserted = (res) => {
     swal({
-      title: "Product List Add Successful!",
-      text: "The Product List has been Added Successfully.",
+      title: "Product List Added Successfully!",
+      text: "The new product list has been added successfully.",
       icon: "success",
       button: "OK",
     }).then(() => {
@@ -467,8 +467,8 @@ function onDropImages(event) {
   };
   const Duplicate_Message = () => {
     swal({
-      title: "Product List is Already Exist",
-      text: "Please Input a New Product List ",
+      title: "Product List is Already Exists",
+      text: "Please enter a new product list ",
       icon: "error",
     });
   };
@@ -476,7 +476,7 @@ function onDropImages(event) {
   const ErrorInserted = () => {
     swal({
       title: "Something went wrong",
-      text: "Please Contact our Support",
+      text: "Please contact our support team.",
       icon: "error",
       button: "OK",
     });
