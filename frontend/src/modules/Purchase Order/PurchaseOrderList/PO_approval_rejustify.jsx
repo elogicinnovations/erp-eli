@@ -50,8 +50,7 @@ function POApprovalRejustify({ authrztn }) {
   const [POdepartmentUser, setDepartmentPO] = useState("");
   const [date, setDate] = useState(new Date());
   const [dateApproved, setDateApproved] = useState(new Date());
-  const [approvalTriggered, setApprovalTriggered] = useState(false);
-  const [signatureTriggered, setsignatureTriggered] = useState(false);
+  const [showSignature, setShowSignature] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -866,9 +865,9 @@ function POApprovalRejustify({ authrztn }) {
                               {" "}
                               {group.items.map((item, index) => (
                                 <div key={index}>
-                                  <label>{`${totalSum
-                                  // item.suppPrice.price * item.item.quantity
-                                  }`}</label>
+                                  {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
+                                  <label>{(item.suppPrice.price * item.item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}</label>
+
                                   <br />
                                 </div>
                               ))}
@@ -968,8 +967,7 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                             <div className="approvedsby">
                               <span>Approved By: </span>
-                              
-                              <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>
+                              {showSignature && <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>}
                               <span>Daniel Byron S. Afdal</span>
                             </div>
                           </div>
@@ -998,8 +996,8 @@ function POApprovalRejustify({ authrztn }) {
                        className="btn btn-success"
                        size="md"
                        style={{ fontSize: "20px", margin: "0px 5px" }}
-                       onClick={() => handleApprove()}
-                       // onClick={handleShowses}
+                      //  onClick={() => handleApprove()}
+                      onClick={() => {handleApprove(); setShowSignature(true)}}
                      >
                        Approve
                      </Button>

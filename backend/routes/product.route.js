@@ -120,7 +120,6 @@ router.route("/create").post(async (req, res) => {
         images,
         userId,
       } = req.body;
-      console.log(name)
         const existingDataCode = await Product.findOne({
           where: {
             product_code: code, 
@@ -151,32 +150,30 @@ router.route("/create").post(async (req, res) => {
 
           const selectedAssemblies = req.body.assembly;
           for (const assemblyDropdown of selectedAssemblies) {
-            const assemblyValue = assemblyDropdown.value;
 
             await Product_Assembly.create({
               product_id: IdData,
-              assembly_id: assemblyValue
+              assembly_id: assemblyDropdown
             });
           }
+
           //Spareparts
           const selectedSpare = req.body.spareParts;
           for (const spareDropdown of selectedSpare) {
-            const spareValue = spareDropdown.value;
 
             await Product_Spareparts.create({
               product_id: IdData,
-              sparePart_id: spareValue
+              sparePart_id: spareDropdown
             });
           }
 
           //Subparts
           const selectedSubparting = req.body.subparting;
           for (const subpartDropdown of selectedSubparting) {
-            const subpartValue = subpartDropdown.value;
   
             await Product_Subparts.create({
               product_id: IdData,
-              subPart_id: subpartValue
+              subPart_id: subpartDropdown
             });
           }
 

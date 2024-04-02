@@ -164,23 +164,39 @@ router.route("/create").post(async (req, res) => {
         // });
       }
 
-      for (const sparePart of spareParts) {
-        const sparePartval = sparePart.value;
-
+      const selectedSpareIds = req.body.spareParts;
+      for (const sparePart of selectedSpareIds) {
         await Assembly_SparePart.create({
           assembly_id: createdID,
-          sparePart_id: sparePartval,
+          sparePart_id: sparePart,
         });
       }
 
-      for (const subPart of subparting) {
-        const subparting = subPart.value;
-
+      const selectedSubpartIds = req.body.subparting;
+      for (const subPart of selectedSubpartIds) {
+        
         await Assembly_SubPart.create({
           assembly_id: createdID,
-          subPart_id: subparting,
+          subPart_id: subPart,
         });
       }
+      // for (const sparePart of spareParts) {
+      //   const sparePartval = sparePart.value;
+
+      //   await Assembly_SparePart.create({
+      //     assembly_id: createdID,
+      //     sparePart_id: sparePartval,
+      //   });
+      // }
+
+      // for (const subPart of subparting) {
+      //   const subparting = subPart.value;
+
+      //   await Assembly_SubPart.create({
+      //     assembly_id: createdID,
+      //     subPart_id: subparting,
+      //   });
+      // }
 
       if(images.length > 0){
         images.forEach(async (i) => {

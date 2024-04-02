@@ -23,6 +23,7 @@ import swal from 'sweetalert';
 import SBFLOGO from "../../../assets/image/SBF.png";
 import * as $ from 'jquery';
 import { jwtDecode } from "jwt-decode";
+import html2canvas from "html2canvas";
 
 function PurchaseOrderListPreview() {
   const { id } = useParams();
@@ -195,7 +196,7 @@ useEffect(() => {
   const [isArray, setIsArray] = useState(false);
 
 // Function to handle adding a product to the array
-const handleAddToTable = (product, type, code, name, supp_email, supplier_id) => {
+const handleAddToTable = (product, type, code, name, supp_email, supplier_id, quantity) => {
   setProductArrays((prevArrays) => {
     const supplierCode = product.supplier.supplier_code;
     const supplierName = product.supplier.supplier_name;
@@ -217,11 +218,12 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id) =>
         name: name,
         supp_email: supp_email,
         suppTAG_id: supplier_id,
-        supplierName: supplierName
+        supplierName: supplierName,
+        quantity: quantity
       });
 
       // Log the array to the console
-      console.log('Product Arrays:', { ...prevArrays, [supplierCode]: newArray });
+      // console.log('Product Arrays:', { ...prevArrays, [supplierCode]: newArray });
 
       // Update the state with the new array for the supplier
       return { ...prevArrays, [supplierCode]: newArray };
@@ -239,15 +241,15 @@ const handleAddToTable = (product, type, code, name, supp_email, supplier_id) =>
 };
 
 
-
+const [quantity, setQuantity] = useState(0);
 
 
 //------------------------------------------------Product rendering data ------------------------------------------------//
 
 
-const handleCanvass = (product_id) => {
+const handleCanvass = (product_id, quantity) => {
+  setQuantity(quantity); 
   setShowModal(true);
-
 
   axios.get(BASE_URL + '/productTAGsupplier/fetchCanvass',{
     params:{
@@ -265,16 +267,16 @@ const handleCanvass = (product_id) => {
   // console.log(product_id)
 
 };
-const handleAddToTablePO = (productId, code, name, supp_email) => {
+const handleAddToTablePO = (productId, code, name, supp_email, quantity) => {
   const product = suppProducts.find((data) => data.id === productId);
-  handleAddToTable(product, 'product', code, name, supp_email, productId);
+  handleAddToTable(product, 'product', code, name, supp_email, productId, quantity);
 };
 
 
 //------------------------------------------------Assembly rendering data ------------------------------------------------//
 
-
-const handleCanvassAssembly = (id) => {
+const handleCanvassAssembly = (id, quantity) => {
+  setQuantity(quantity); 
   setShowModalAS(true);
 
 
@@ -295,16 +297,17 @@ const handleCanvassAssembly = (id) => {
 
 };
 
-const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
+const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email, quantity) => {
   const assembly = suppAssembly.find((data) => data.id === assemblyId);
-  handleAddToTable(assembly, 'assembly', code, name, supp_email, assemblyId);
+  handleAddToTable(assembly, 'assembly', code, name, supp_email, assemblyId, quantity);
 };
   //------------------------------------------------Spare rendering data ------------------------------------------------//
 
 
 
 
-  const handleCanvassSpare = (id) => {
+  const handleCanvassSpare = (id, quantity) => {
+    setQuantity(quantity); 
     setShowModalspare(true);
   
     // console.log(id)
@@ -320,14 +323,15 @@ const handleAddToTablePO_Assembly = (assemblyId, code, name, supp_email) => {
       .catch(err => console.log(err));
   };
   
-  const handleAddToTablePO_Spare = (spareId, code, name, supp_email) => {
+  const handleAddToTablePO_Spare = (spareId, code, name, supp_email, quantity) => {
     const spare = suppSpare.find((data) => data.id === spareId);
-    handleAddToTable(spare, 'spare', code, name, supp_email, spareId);
+    handleAddToTable(spare, 'spare', code, name, supp_email, spareId, quantity);
   };
 
 //------------------------------------------------SubPart rendering data ------------------------------------------------//
 
-const handleCanvassSubpart = (sub_partID) => {
+const handleCanvassSubpart = (sub_partID, quantity) => {
+  setQuantity(quantity); 
   setShowModalSubpart(true);
 
 
@@ -348,9 +352,10 @@ const handleCanvassSubpart = (sub_partID) => {
   // console.log(product_id)
 
 };
-const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
+
+const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity) => {
   const subpart = suppSubpart.find((data) => data.id === subpartId);
-  handleAddToTable(subpart, 'subpart', code, name, supp_email, subpartId);
+  handleAddToTable(subpart, 'subpart', code, name, supp_email, subpartId, quantity);
 };
 
 
@@ -407,11 +412,6 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     });
   };
 
-
- 
-
-
-
   const add = async e => {
     e.preventDefault();
   
@@ -419,8 +419,6 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     if (form.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
-    // if required fields has NO value
-    //    console.log('requried')
         swal({
             icon: 'error',
             title: 'Fields are required',
@@ -428,24 +426,53 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
           });
     }
     else{
+      const updatedPOarray = [];
+  
+      for (const supplierProducts of Object.values(productArrays)) {
+          for (const product of supplierProducts) {
 
-      axios.post(`${BASE_URL}/PR_PO/save`, {
+            const supplierCode = product.product.supplier.supplier_code;
+              const div = document.getElementById(`content-to-pdf-${supplierCode}`);
+              const canvas = await html2canvas(div);
+              const imageData = canvas.toDataURL('image/png');
+
+              const updatedGroup = {
+                ...product,
+                imageData: imageData,
+              };
+
+              updatedPOarray.push(updatedGroup);
+        }
+          // updatedPOarray.push({ ...supplierProducts, imageData: imageData });
+
+        // for (const product of supplierProducts) {
+        //   const supplierCode = product[0].supplier.supplier_code;
+        //   const div = document.getElementById(`content-to-pdf-${supplierCode}`);
+        //   const canvas = await html2canvas(div);
+        //   const imageData = canvas.toDataURL('image/png');
+  
+        //   updatedPOarray.push({ ...product, imageData: imageData });
+
+ 
+        // }
+      }
+
+      axios.post(`${BASE_URL}/PR_PO/save` , {
         prNum,
-        productArrays,   
-        id: id, 
+        productArrays: updatedPOarray,   
+        id, 
         userId,
       })
       .then((res) => {
         console.log(res);
         if (res.status === 200) {
           swal({
-            title: 'The Purchase sucessfully request!',
+            title: 'The Purchase successfully requested!',
             text: 'The Purchase Request has been added successfully.',
             icon: 'success',
             button: 'OK'
           }).then(() => {
             navigate('/purchaseRequest')
-            
           });
         } else {
           swal({
@@ -459,7 +486,137 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
     }
   
     setValidated(true); //for validations
-  };
+};
+
+
+//  const add = async e => {
+//     e.preventDefault();
+  
+//     const form = e.currentTarget;
+//     if (form.checkValidity() === false) {
+//       e.preventDefault();
+//       e.stopPropagation();
+//         swal({
+//             icon: 'error',
+//             title: 'Fields are required',
+//             text: 'Please fill the red text fields'
+//           });
+//     }
+//     else{
+//       const updatedPOarray = [];
+  
+//       for (const supplierProducts of Object.values(productArrays)) {
+//         for (const product of supplierProducts) {
+//           if (product && product.supplier && product.supplier.supplier_code) {
+//             const supplierCode = product.supplier.supplier_code;
+//             const div = document.getElementById(`content-to-pdf-${supplierCode}`);
+//             const canvas = await html2canvas(div);
+//             const imageData = canvas.toDataURL('image/png');
+  
+//             updatedPOarray.push({ ...product, imageData: imageData });
+
+// console.log(supplierCode)
+//           }
+//         }
+//       }
+
+//       axios.post(`${BASE_URL}/PR_PO/save` , {
+//         prNum,
+//         productArrays: updatedPOarray,   
+//         id, 
+//         userId,
+//       })
+//       .then((res) => {
+//         console.log(res);
+//         if (res.status === 200) {
+//           swal({
+//             title: 'The Purchase successfully requested!',
+//             text: 'The Purchase Request has been added successfully.',
+//             icon: 'success',
+//             button: 'OK'
+//           }).then(() => {
+//             navigate('/purchaseRequest')
+//           });
+//         } else {
+//           swal({
+//             icon: 'error',
+//             title: 'Something went wrong',
+//             text: 'Please contact our support'
+//           });
+//         }
+//       });
+  
+//     }
+  
+//     setValidated(true); //for validations
+// };
+
+
+
+
+  // const add = async e => {
+  //   e.preventDefault();
+  
+  //   const form = e.currentTarget;
+  //   if (form.checkValidity() === false) {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //       swal({
+  //           icon: 'error',
+  //           title: 'Fields are required',
+  //           text: 'Please fill the red text fields'
+  //         });
+  //   }
+  //   else{
+
+  //     const updatedPOarray = [];
+  
+  //     // Assuming productArrays is defined elsewhere in your code
+  //     for (const product of productArrays) {
+  //       const supplierCode = product.supplier.supplier_code;
+  //       const div = document.getElementById(`content-to-pdf-${supplierCode}`);
+  //       const canvas = await html2canvas(div);
+  //       const imageData = canvas.toDataURL('image/png');
+  
+  //       updatedPOarray.push({ ...product, imageData: imageData });
+  //     }
+
+  //         console.log("Sending request .....");
+  //   console.log("PR Number:", prNum);
+  //   console.log("Product Arrays:", productArrays);
+  //   console.log("User ID:", userId);
+
+  //     axios.post(`${BASE_URL}/PR_PO/save`, {
+  //       prNum,
+  //       productArrays,   
+  //       id: id, 
+  //       userId,
+  //     })
+  //     .then((res) => {
+  //       console.log(res);
+  //       if (res.status === 200) {
+  //         swal({
+  //           title: 'The Purchase sucessfully request!',
+  //           text: 'The Purchase Request has been added successfully.',
+  //           icon: 'success',
+  //           button: 'OK'
+  //         }).then(() => {
+  //           navigate('/purchaseRequest')
+            
+  //         });
+  //       } else {
+  //         swal({
+  //           icon: 'error',
+  //           title: 'Something went wrong',
+  //           text: 'Please contact our support'
+  //         });
+  //       }
+  //     });
+  
+  //   }
+  
+  //   setValidated(true); //for validations
+  // };
 
   const [showPreview, setPreviewShow] = useState(false);
 
@@ -483,7 +640,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                 </div>
                 </Col>
             </Row>
-            <Form noValidate validated={validated} onSubmit={add}>
+            <Form noValidate validated={validated}>
                 <div className="gen-info" 
                   style={{ fontSize: '20px', 
                   position: 'relative', 
@@ -599,7 +756,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                     <td>{data.description}</td>
                                                     <td>
                                                         <button type='button' 
-                                                          onClick={() => handleCanvass(data.product_id)}
+                                                          onClick={() => handleCanvass(data.product_id, data.quantity)}
                                                           className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
                                                     </td>
                                                   </tr>
@@ -613,7 +770,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                   <td>{data.description}</td>
                                                   <td>
                                                       <button type='button' 
-                                                        onClick={() => handleCanvassAssembly(data.assembly_id)}
+                                                        onClick={() => handleCanvassAssembly(data.assembly_id, data.quantity)}
                                                         className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
                                                   </td>
                                                 </tr>
@@ -627,7 +784,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                   <td>{data.description}</td>
                                                   <td>
                                                       <button type='button' 
-                                                        onClick={() => handleCanvassSpare(data.spare_id)}
+                                                        onClick={() => handleCanvassSpare(data.spare_id, data.quantity)}
                                                         className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
                                                   </td>
                                                 </tr>
@@ -641,7 +798,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                   <td>{data.description}</td>
                                                   <td>
                                                       <button type='button' 
-                                                        onClick={() => handleCanvassSubpart(data.subPart.id)}
+                                                        onClick={() => handleCanvassSubpart(data.subPart.id, data.quantity)}
                                                         className='btn canvas'><ShoppingCart size={20}/>Canvas</button>
                                                   </td>
                                                 </tr>
@@ -697,14 +854,8 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
 
 
                         <div className='save-cancel'>
-                        <Button 
-                              onClick={handlePreviewShow}
-                              className='btn btn-warning' 
-                              size="md" 
-                              style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
-                        >
-                          Preview
-                        </Button>
+
+
 
                         <Modal
                           show={showPreview}
@@ -716,8 +867,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                           <Modal.Header closeButton>
                             <Modal.Title></Modal.Title>
                           </Modal.Header>
-                          <Modal.Body>
-                              <div className="canvassing-templates-container">
+                          {Object.entries(productArrays).map(([supplierCode, products]) => (
+
+                          <Modal.Body id={`content-to-pdf-${supplierCode}`}>
+                              <div className="canvassing-templates-container" key={supplierCode}>
                                   <div className="canvassing-content-templates">
                                         <div className="templates-header">
                                             <div className="template-logoes">
@@ -742,15 +895,18 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                   <span>SUPPLIER'S NAME</span>
                                                   <span>DATE</span>
                                               </div>
+                                              
                                               <div className="template-label-value">
-                                                  <span>000001</span>
-                                                  <span>SAMPLE SUPPLIER'S NAME</span>
-                                                  <span>APRIL 14, 2000</span>
+                                                  <span>{prNum}</span>
+                                                  <span>${supplierCode} - ${products[0].supplierName}</span>
+                                                  <span>{dateNeeded.toLocaleDateString()}</span>
                                               </div>
+                                               
                                         </div>
 
                                         <div className="templates-table-section">
                                             <div className="templatestable-content">
+                                              
                                               <Table>
                                                 <thead>
                                                   <tr>
@@ -761,36 +917,17 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                     <th>PRICE</th>
                                                   </tr>
                                                 </thead>
+                                                {products.map((item, index) => (
                                                 <tbody>
-                                                  <tr>
-                                                    <td>1</td>
-                                                    <td>5</td>
+                                                  <tr key={index}>
+                                                    <td>{item.code}</td>
+                                                    <td>{item.quantity}</td>
                                                     <td>PCS</td>
-                                                    <td>SAMPLE ONLY</td>
-                                                    <td>1,000.00</td>
-                                                  </tr>
-                                                  <tr>
-                                                    <td>1</td>
-                                                    <td>5</td>
-                                                    <td>PCS</td>
-                                                    <td>SAMPLE ONLY</td>
-                                                    <td>1,000.00</td>
-                                                  </tr>
-                                                  <tr>
-                                                    <td>1</td>
-                                                    <td>5</td>
-                                                    <td>PCS</td>
-                                                    <td>SAMPLE ONLY</td>
-                                                    <td>1,000.00</td>
-                                                  </tr>
-                                                  <tr>
-                                                    <td>1</td>
-                                                    <td>5</td>
-                                                    <td>PCS</td>
-                                                    <td>SAMPLE ONLY</td>
-                                                    <td>1,000.00</td>
+                                                    <td>{item.name}</td>
+                                                    <td></td>
                                                   </tr>
                                                 </tbody>
+                                                ))}
                                               </Table>
                                             </div>
                                         </div>
@@ -802,9 +939,9 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                   <span>PRICE VALIDITY</span>
                                             </div>
                                             <div className="terms-value-label">
-                                                  <span>CASH ON DELIVERY</span>
-                                                  <span>IDK</span>
-                                                  <span>APRIL 14, 2000</span>
+                                                  <span></span>
+                                                  <span></span>
+                                                  <span></span>
                                             </div>
                                         </div>
 
@@ -813,7 +950,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                 <span>AUTHENTICATED BY:</span>
                                               </div>
                                               <div className="value-authentic">
-                                                <span>GERALD JUMADAY</span>
+                                                <span></span>
                                               </div>
                                         </div>
 
@@ -825,18 +962,35 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                         </div>
                                   </div>
                               </div>
+
                           </Modal.Body>
+                          ))}
                           <Modal.Footer>
-                          <Button variant="warning"
-                            style={{fontSize: '16px', fontFamily: 'Poppins, Source Sans Pro'}}>Send Email</Button>
-                            <Button variant="secondary" onClick={handleClosePreview}
-                            style={{fontSize: '16px', fontFamily: 'Poppins, Source Sans Pro'}}>
-                              Close
-                            </Button>
+                            <Button 
+                              type='button'
+                              onClick={add}
+                              className='btn btn-warning' 
+                              size="md" 
+                              style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
+                              >
+                                Send Email
+                              </Button>
                           </Modal.Footer>
+
                         </Modal>
+
+                        <Button 
+                              onClick={handlePreviewShow}
+                              className='btn btn-warning' 
+                              size="md" 
+                              style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
+                        >
+                          Preview
+                        </Button>
                         </div>
                 </Form>
+
+
                       <Modal show={showModal} onHide={handleClose} size="xl">
                           <Modal.Header closeButton>
                             <Modal.Title style={{ fontSize: '24px' }}>Product List</Modal.Title>     
@@ -856,6 +1010,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                       </tr>
                                                       </thead>
                                                       <tbody>
+                                                        <tr className='d-none'>
+                                                            <td>{quantity}</td>
+                                                            <td colSpan="6"></td>
+                                                          </tr>
                                                               {suppProducts.map((data,i) =>(
                                                                 <tr key={i}>
                                                                     <td>{data.supplier.supplier_code}</td>
@@ -864,7 +1022,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                                     <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.product_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO(data.id, data.product.product_code, data.product.product_name, data.supplier.supplier_email, quantity)}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
@@ -905,7 +1063,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                       </tr>
                                                       </thead>
                                                       <tbody>
-                                                             
+                                                      <tr className='d-none'>
+                                                            <td>{quantity}</td>
+                                                            <td colSpan="6"></td>
+                                                          </tr>
                                                               {suppAssembly.map((data,i) =>(
                                                                 <tr key={i}>
                                                                     <td>{data.supplier.supplier_code}</td>
@@ -914,7 +1075,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                                     <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Assembly(data.id, data.assembly.assembly_code, data.assembly.assembly_name, data.supplier.supplier_email, quantity)}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
@@ -954,7 +1115,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                       </tr>
                                                       </thead>
                                                       <tbody>
-                                                             
+                                                      <tr className='d-none'>
+                                                            <td>{quantity}</td>
+                                                            <td colSpan="6"></td>
+                                                          </tr>
                                                               {suppSpare.map((data,i) =>(
                                                                 <tr key={i}>
                                                                     <td>{data.supplier.supplier_code}</td>
@@ -963,7 +1127,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                                     <td>{data.supplier.supplier_email}</td>
                                                                     <td>{data.supplier_price}</td>
                                                                     <td>                                                
-                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email)}>
+                                                                      <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Spare(data.id, data.sparePart.spareParts_code, data.sparePart.spareParts_name, data.supplier.supplier_email, quantity)}>
                                                                         <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                                       </button>
                                                                     </td>
@@ -1004,7 +1168,10 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                         </tr>
                                                       </thead>
                                                       <tbody>
-                                                             
+                                                      <tr className='d-none'>
+                                                            <td>{quantity}</td>
+                                                            <td colSpan="6"></td>
+                                                          </tr> 
                                                       {suppSubpart.map((data,i) =>(
                                                         <tr key={i}>
                                                             <td>{data.supplier.supplier_code}</td>
@@ -1013,7 +1180,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email) => {
                                                             <td>{data.supplier.supplier_email}</td>
                                                             <td>{data.supplier_price}</td>
                                                             <td>                                                
-                                                              <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email)}>
+                                                              <button type='button' className='btn canvas' onClick={() => handleAddToTablePO_Subpart(data.id, data.subPart.subPart_code, data.subPart.subPart_name, data.supplier.supplier_email, quantity)}>
                                                                 <PlusCircle size={22} color="#0d0d0d" weight="light"/>
                                                               </button>
                                                             </td>

@@ -26,6 +26,7 @@ const { PR, PR_PO,
         Activity_Log,
       } = require('../db/models/associations')
 const session = require('express-session');
+const PDFDocument = require("pdfkit");
 
 router.use(session({
     secret: 'secret-key',
@@ -289,58 +290,111 @@ router.route('/fetchView_product').get(async (req, res) => {
 
   //save
 router.route('/save').post(async (req, res) => {
- 
-
   try {
-    const { id, productArrays, userId, prNum } = req.body;
-    // const { id, productArrays,  } = req.body;
-  
-    // Loop through the productArrays
-    Object.entries(productArrays).forEach(([supplierCode, products]) => {
-      // console.log(`Supplier ${supplierCode}:`);
-  
-      // Customize fields and header names
-      const fields = ['code', 'name', 'price'];
-      const header = ['Product Code', 'Product Name', 'Price'];
-  
-      // Convert products to CSV with customized header
-      const json2csvParser = new Parser({ fields, header });
-      const csvContent = json2csvParser.parse(products);
-  
-      // Create a nodemailer transporter
-      const gmailEmail = "sbfmailer@gmail.com";
-      const gmailPassword = "uoetasnknsroxwnq";
-  
+    const { id, productArrays, userId, prNum} = req.body;
+    const gmailEmail = 'sbfmailer@gmail.com';
+    const gmailPassword = 'uoetasnknsroxwnq';
+
+    // Loop through each supplier's products
+      productArrays.forEach(async (products, index) => {
+      
+      const toSendEmail = products.product.supplier.supplier_email;
+      // // Loop through each product
+
+        // Check if imageData exists and is valid
+        const imageData = products.imageData.split(";base64,").pop();
+        const imageBuffer = Buffer.from(imageData, "base64");
+
+        const doc = new PDFDocument();
+        const pdfBuffers = [];
+
+        doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
+        doc.on("data", (chunk) => pdfBuffers.push(chunk));
+
+
+      doc.on('end', () => {
+      // Create Nodemailer transporter
       const transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: 'gmail',
         auth: {
           user: gmailEmail,
           pass: gmailPassword,
         },
       });
-  
-      // Define email options
+
+      // Create email options
       const mailOptions = {
         from: gmailEmail,
-        to: products[0].supp_email, // Use the email of the first product's supplier
+        to: toSendEmail, // Use the email of the first product's supplier
         subject: `PR number: ${prNum}. Price Inquiry`,
-        text: 'I trust this email finds you well. We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached CSV file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.',
+        text: `We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached PDF file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.`,
         attachments: [
           {
-            filename: 'canvassing.csv',
-            content: csvContent,
+            filename: 'canvassing.pdf',
+            content: Buffer.concat(pdfBuffers),
           },
         ],
       };
-  
+
       // Send the email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          return console.log('Error sending email:', error);
-        }     
-        // console.log('Email sent:', info.response);
+          console.log('Error sending email:', error);
+        } else {
+          console.log('Email Sent:', info);
+        }
       });
+
     });
+      doc.end();
+    });
+
+    // Loop through the productArrays
+    // Object.entries(productArrays).forEach(([supplierCode, products]) => {
+    //   // console.log(`Supplier ${supplierCode}:`);
+  
+    //   // Customize fields and header names
+    //   const fields = ['code', 'name', 'price'];
+    //   const header = ['Product Code', 'Product Name', 'Price'];
+  
+    //   // Convert products to CSV with customized header
+    //   const json2csvParser = new Parser({ fields, header });
+    //   const csvContent = json2csvParser.parse(products);
+  
+    //   // Create a nodemailer transporter
+    //   const gmailEmail = "sbfmailer@gmail.com";
+    //   const gmailPassword = "uoetasnknsroxwnq";
+  
+    //   const transporter = nodemailer.createTransport({
+    //     service: "gmail",
+    //     auth: {
+    //       user: gmailEmail,
+    //       pass: gmailPassword,
+    //     },
+    //   });
+  
+    //   // Define email options
+    //   const mailOptions = {
+    //     from: gmailEmail,
+    //     to: products[0].supp_email, // Use the email of the first product's supplier
+    //     subject: `PR number: ${prNum}. Price Inquiry`,
+    //     text: 'I trust this email finds you well. We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached CSV file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.',
+    //     attachments: [
+    //       {
+    //         filename: 'canvassing.csv',
+    //         content: csvContent,
+    //       },
+    //     ],
+    //   };
+  
+    //   // Send the email
+    //   transporter.sendMail(mailOptions, (error, info) => {
+    //     if (error) {
+    //       return console.log('Error sending email:', error);
+    //     }     
+    //     // console.log('Email sent:', info.response);
+    //   });
+    // });
 
     const PR_update = PR.update({
       status: 'On-Canvass'

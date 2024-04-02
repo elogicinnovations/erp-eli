@@ -14,8 +14,10 @@ import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Select from "react-select";
 import Carousel from 'react-bootstrap/Carousel';
-import { ArrowCircleLeft } from "@phosphor-icons/react";
+import { ArrowCircleLeft,
+  NotePencil } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
+import { MultiSelect } from 'primereact/multiselect';
 
 function UpdateProduct({authrztn}) {
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ function UpdateProduct({authrztn}) {
   const [category, setcategory] = useState([]); // for fetching category data
   const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
+  const [isReadOnly, setReadOnly] = useState(false);
 
   const [code, setCode] = useState("");
   const [prod_id, setProd_id] = useState("");
@@ -106,7 +109,6 @@ function UpdateProduct({authrztn}) {
       })
       .then((res) => {
         const data = res.data;
-        setAssembly(data);
         const selectedAssembly = data.map((row) => ({
           value: row.assembly_id,
           label: row.assembly.assembly_name,
@@ -134,7 +136,6 @@ function UpdateProduct({authrztn}) {
       })
       .then((res) => {
         const data = res.data;
-        setFetchsub(data);
         const selectedSubparts = data.map((row) => ({
           value: row.subPart_id,
           label: row.subPart.subPart_name,
@@ -162,7 +163,6 @@ function UpdateProduct({authrztn}) {
       })
       .then((res) => {
         const data = res.data;
-        setFetchPart(data);
         const selectedSpareparts = data.map((row) => ({
           value: row.sparePart_id,
           label: row.sparePart.spareParts_name,
@@ -180,22 +180,34 @@ function UpdateProduct({authrztn}) {
   }, [id]);
 
   //for onchange dropdown of spareparts
-  const handleSparepartChange = (selectedSpareOptions) => {
-    setSparePart(selectedSpareOptions);
+  const handleMultiSparePartsSelectChange = (e) => {
+    setSparePart(e.value.map(value => ({ value, label: "" })));
     setIsSaveButtonDisabled(false);
   };
+  // const handleSparepartChange = (selectedSpareOptions) => {
+  //   setSparePart(selectedSpareOptions);
+  //   setIsSaveButtonDisabled(false);
+  // };
 
-  //for onchange dropdown of subparts
-  const handleSubpartChange = (selectedSubOption) => {
-    setsubparting(selectedSubOption);
+  // //for onchange dropdown of subparts
+  const handleMultiSubPartSelectChange = (e) => {
+    setsubparting(e.value.map(value => ({ value, label: "" })));
     setIsSaveButtonDisabled(false);
   };
+  // const handleSubpartChange = (selectedSubOption) => {
+  //   setsubparting(selectedSubOption);
+  //   setIsSaveButtonDisabled(false);
+  // };
 
-  //for onchange dropdown of assembly
-  const handleAssemblyChange = (selectedAssemblyOptions) => {
-    setassemblies(selectedAssemblyOptions);
+  // //for onchange dropdown of assembly
+  const handleMultiAssemblySelectChange = (e) => {
+    setassemblies(e.value.map(value => ({ value, label: "" })));
     setIsSaveButtonDisabled(false);
   };
+  // const handleAssemblyChange = (selectedAssemblyOptions) => {
+  //   setassemblies(selectedAssemblyOptions);
+  //   setIsSaveButtonDisabled(false);
+  // };
 
   //add supplier button dropdown
   const handleSelectChange = (selectedOptions) => {
@@ -341,6 +353,10 @@ useEffect(() => {
   //when user click the Add supplier button
   const handleAddSupp = () => {
     setShowDropdown(true);
+  };
+
+  const handleEditClick = () => {
+    setReadOnly(true);
   };
 
   // for Item code input
@@ -753,6 +769,7 @@ useEffect(() => {
                     Product Code:{" "}
                   </Form.Label>
                   <Form.Control
+                    disabled={!isReadOnly}
                     required
                     type="text"
                     value={code}
@@ -768,6 +785,7 @@ useEffect(() => {
                     Item Name:{" "}
                   </Form.Label>
                   <Form.Control
+                    disabled={!isReadOnly}
                     required
                     type="text"
                     value={name}
@@ -785,7 +803,20 @@ useEffect(() => {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Assembly:{" "}
                   </Form.Label>
-                  <Select
+                  <MultiSelect
+                      disabled={!isReadOnly}
+                      value={assembly.map(item => item.value)}
+                      options={fetchAssembly.map((assembly) => ({
+                        value: assembly.id,
+                        label: assembly.assembly_name,
+                      }))}
+                      onChange={handleMultiAssemblySelectChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                  {/* <Select
+                    disabled={!isReadOnly}
                     isMulti
                     options={fetchAssembly.map((assembly) => ({
                       value: assembly.id,
@@ -806,7 +837,7 @@ useEffect(() => {
                         fontSize: '15px', 
                       }),
                     }}
-                  />
+                  /> */}
                 </Form.Group>
               </div>
 
@@ -815,7 +846,20 @@ useEffect(() => {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Spare Parts:{" "}
                   </Form.Label>
-                  <Select
+                  <MultiSelect
+                      disabled={!isReadOnly}
+                      value={spareParts.map(item => item.value)}
+                      options={fetchSparePart.map((sparePart) => ({
+                        value: sparePart.id,
+                        label: sparePart.spareParts_name,
+                      }))}
+                      onChange={handleMultiSparePartsSelectChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                  {/* <Select
+                    disabled={!isReadOnly}
                     isMulti
                     options={fetchSparePart.map((sparePart) => ({
                       value: sparePart.id,
@@ -836,7 +880,7 @@ useEffect(() => {
                         fontSize: '15px', 
                       }),
                     }}
-                  />
+                  /> */}
                 </Form.Group>
               </div>
               <div className="col-4">
@@ -844,7 +888,20 @@ useEffect(() => {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Sub Parts:{" "}
                   </Form.Label>
-                  <Select
+                  <MultiSelect
+                      disabled={!isReadOnly}
+                      value={subparting.map(item => item.value)}
+                      options={fetchSubPart.map((subpart) => ({
+                          value: subpart.id,
+                          label: subpart.subPart_name,
+                      }))}
+                      onChange={handleMultiSubPartSelectChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                  {/* <Select
+                    disabled={!isReadOnly}
                     isMulti
                     options={fetchSubPart.map((subpart) => ({
                       value: subpart.id,
@@ -865,7 +922,7 @@ useEffect(() => {
                         fontSize: '15px', 
                       }),
                     }}
-                  />
+                  /> */}
                 </Form.Group>
               </div>
             </div>
@@ -878,6 +935,7 @@ useEffect(() => {
                   </Form.Label>
 
                   <Form.Select
+                   disabled={!isReadOnly}
                     aria-label=""
                     onChange={handleFormChangeCategory}
                     required
@@ -903,6 +961,7 @@ useEffect(() => {
                     Bin Location:{" "}
                   </Form.Label>
                   <Form.Select
+                  disabled={!isReadOnly}
                     aria-label=""
                     onChange={handleFormChangeBinLocation}
                     required
@@ -931,6 +990,7 @@ useEffect(() => {
                     Unit of Measurment:{" "}
                   </Form.Label>
                   <Form.Select
+                  disabled={!isReadOnly}
                     aria-label=""
                     required
                     style={{ height: "40px", fontSize: "15px" }}
@@ -953,6 +1013,7 @@ useEffect(() => {
                     Manufacturer:{" "}
                   </Form.Label>
                   <Form.Select
+                  disabled={!isReadOnly}
                     aria-label=""
                     onChange={handleFormChangeManufacturer}
                     
@@ -1003,6 +1064,7 @@ useEffect(() => {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
+                  disabled={!isReadOnly}
                     required
                     value={thresholds}
                     onChange={(e) => {
@@ -1028,6 +1090,7 @@ useEffect(() => {
                   Details Here:{" "}
                 </Form.Label>
                 <Form.Control
+                disabled={!isReadOnly}
                   value={details}
                   onChange={(e) => handledetails(e)}
                   as="textarea"
@@ -1054,12 +1117,14 @@ useEffect(() => {
                         <p>Drag & Drop Image Upload</p>
                       </div>
                       <div className="drag-area" 
+                      disabled={!isReadOnly}
                       onDragOver={onDragOver} 
                       onDragLeave={onDragLeave} 
                       onDrop={onDropImages}>
                           <>
                           Drag & Drop image here or {" "}
                           <span  
+                          disabled={!isReadOnly}
                           className="select" role="button" onClick={selectFiles}>
                             Browse
                           </span>
@@ -1133,6 +1198,7 @@ useEffect(() => {
                             ₱
                           </span>
                           <Form.Control
+                            disabled={!isReadOnly}
                             type="number"
                             style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
                             value={prod.product_price || ""}
@@ -1180,6 +1246,8 @@ useEffect(() => {
                     />
                   </div>
                 )}
+
+                {isReadOnly && (
                 <Button
                   variant="outline-warning"
                   onClick={handleAddSupp}
@@ -1187,10 +1255,12 @@ useEffect(() => {
                   style={{ fontSize: "15px", marginTop: "10px" }}>
                   Add Supplier
                 </Button>
+                )}
               </table>
             </div>
 
             <div className="save-cancel">
+              {isReadOnly && (
               <Button
                 type="submit"
                 variant="warning"
@@ -1199,6 +1269,11 @@ useEffect(() => {
                 disabled={isSaveButtonDisabled}>
                 Update
               </Button>
+              )}
+
+              {!isReadOnly && (
+                <Button type='Button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
+              )}
               <Link
                 to="/productList"
                 className="btn btn-secondary btn-md"

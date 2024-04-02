@@ -14,16 +14,17 @@ import Select from "react-select";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import { Trash, NotePencil, X, ArrowCircleLeft } from "@phosphor-icons/react";
-import "../../../../../../assets/skydash/vendors/feather/feather.css";
-import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
-import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
-import "../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
-import "../../../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css";
-import "../../../../../../assets/skydash/css/vertical-layout-light/style.css";
-import "../../../../../../assets/skydash/vendors/js/vendor.bundle.base";
-import "../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
-import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4";
-import "../../../../../../assets/skydash/js/off-canvas";
+// import "../../../../../../assets/skydash/vendors/feather/feather.css";
+// import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
+// import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
+// import "../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
+// import "../../../../../../assets/skydash/vendors/ti-icons/css/themify-icons.css";
+// import "../../../../../../assets/skydash/css/vertical-layout-light/style.css";
+// import "../../../../../../assets/skydash/vendors/js/vendor.bundle.base";
+// import "../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
+// import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4";
+// import "../../../../../../assets/skydash/js/off-canvas";
+import { MultiSelect } from 'primereact/multiselect';
 
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
@@ -185,13 +186,13 @@ return () => clearTimeout(delay);
   }, []);
 
   //for supplier selection values
-  const handleSelectChange = (selectedOptions) => {
-    setSparePart(selectedOptions);
-  };
+  // const handleSelectChange = (selectedOptions) => {
+  //   setSparePart(selectedOptions);
+  // };
 
-  const handleSubpartChange = (selectedOption) => {
-    setsubparting(selectedOption);
-  };
+  // const handleSubpartChange = (selectedOption) => {
+  //   setsubparting(selectedOption);
+  // };
 
   const handleSelectChange_Supp = (selectedOptions) => {
     setSupp(selectedOptions);
@@ -543,7 +544,19 @@ function onDropImages(event) {
                     <Form.Label style={{ fontSize: "20px" }}>
                       Spare Parts:{" "}
                     </Form.Label>
-                    <Select
+                    <MultiSelect
+                    value={spareParts}
+                    options={fetchSparePart.map((sparePart) => ({
+                      value: sparePart.id,
+                      label: sparePart.spareParts_name,
+                    }))}
+                    onChange={(e) => setSparePart(e.value)}
+                    placeholder="Select Spare Parts"
+                    maxSelectedLabels={3}
+                    className="w-full md:w-20rem"
+                    filter 
+                  />
+                    {/* <Select
                       isMulti
                       options={fetchSparePart.map((sparePart) => ({
                         value: sparePart.id,
@@ -563,7 +576,7 @@ function onDropImages(event) {
                           fontSize: '15px', 
                         }),
                       }}
-                    />
+                    /> */}
                   </Form.Group>
                 </div>
                 <div className="col-6">
@@ -571,7 +584,19 @@ function onDropImages(event) {
                     <Form.Label style={{ fontSize: "20px" }}>
                       Sub Parts:{" "}
                     </Form.Label>
-                    <Select
+                    <MultiSelect
+                    value={subparting}
+                    options={fetchSubPart.map((subpart) => ({
+                      value: subpart.id,
+                      label: subpart.subPart_name,
+                    }))}
+                    onChange={(e) => setsubparting(e.value)}
+                    placeholder="Select SubParts"
+                    maxSelectedLabels={3}
+                    className="w-full md:w-20rem"
+                    filter 
+                  />
+                    {/* <Select
                       isMulti
                       options={fetchSubPart.map((subpart) => ({
                         value: subpart.id,
@@ -591,7 +616,7 @@ function onDropImages(event) {
                           fontSize: '15px', 
                         }),
                       }}
-                    />
+                    /> */}
                   </Form.Group>
                 </div>
             </div>

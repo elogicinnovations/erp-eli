@@ -25,6 +25,7 @@ import "../../../../../../assets/skydash/vendors/js/vendor.bundle.base";
 import "../../../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
 import "../../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4";
 import "../../../../../../assets/skydash/js/off-canvas";
+import { MultiSelect } from 'primereact/multiselect';
 
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
@@ -87,7 +88,7 @@ function UpdateAssemblyForm({authrztn}) {
         }
       })
     .then(res => {
-      console.log("DATA ASSEMBLY" + res.data)
+      // console.log("DATA ASSEMBLY" + res.data)
       setCode(res.data[0].assembly_code);
       setName(res.data[0].assembly_name);
       setDesc(res.data[0].assembly_desc);
@@ -312,15 +313,25 @@ const handleassemblythreshold = (event) => {
 };
 
   //for onchange dropdown of spareparts
-  const handleSparepartChange = (selectedSpareOptions) => {
-    setSpareParts(selectedSpareOptions);
+  const handleMultiSelectChange = (e) => {
+    setSpareParts(e.value.map(value => ({ value, label: "" })));
     setIsSaveButtonDisabled(false);
   };
 
-  const handleSubpartChange = (selectedSubOptions) => {
-    setSubParts(selectedSubOptions);
+  const handleMultiSelectSubpartChange = (e) => {
+    setSubParts(e.value.map(value => ({ value, label: "" })));
     setIsSaveButtonDisabled(false);
   };
+  
+  // const handleSparepartChange = (selectedSpareOptions) => {
+  //   setSpareParts(selectedSpareOptions);
+  //   setIsSaveButtonDisabled(false);
+  // };
+
+  // const handleSubpartChange = (selectedSubOptions) => {
+  //   setSubParts(selectedSubOptions);
+  //   setIsSaveButtonDisabled(false);
+  // };
   
   const handleFormChangeBinLocation = (event) => {
     setslct_binLocation(event.target.value);
@@ -714,7 +725,19 @@ const update = async (e) => {
                       <Form.Label style={{ fontSize: "20px" }}>
                         Spare Parts:{" "}
                       </Form.Label>
-                      <Select
+                      <MultiSelect
+                          disabled={!isReadOnly}
+                          value={spareParts.map(item => item.value)}
+                          options={fetchSparePart.map(sparePart => ({
+                              value: sparePart.id,
+                              label: sparePart.spareParts_name,
+                          }))}
+                          onChange={handleMultiSelectChange}
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                      />
+                      {/* <Select
                         isMulti
                         options={fetchSparePart.map((sparePart) => ({
                           value: sparePart.id,
@@ -736,20 +759,32 @@ const update = async (e) => {
                             fontSize: '15px', 
                           }),
                         }}
-                      />
+                      /> */}
                   </Form.Group>
                 </div>
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: '20px' }}>Sub-Part: </Form.Label>
-                    <Select
+                    <MultiSelect
+                      disabled={!isReadOnly}
+                      value={Subparts.map(item => item.value)}
+                      options={fetchSub.map((subPart) => ({
+                          value: subPart.id,
+                          label: subPart.subPart_name ,
+                      }))}
+                      onChange={handleMultiSelectSubpartChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                    {/* <Select
                       isMulti
                       isDisabled={!isReadOnly}
                       options={fetchSub.map((subPart) => ({
                         value: subPart.id,
                         label: subPart.subPart_name ,
                       }))}
-                      onChange={handleSubpartChange}
+                      // onChange={handleSubpartChange}
                       value={Subparts}
                       styles={{
                         control: (provided) => ({
@@ -764,7 +799,7 @@ const update = async (e) => {
                           fontSize: '15px', 
                         }),
                       }}
-                    />
+                    /> */}
                   </Form.Group>
               </div>
             </div>

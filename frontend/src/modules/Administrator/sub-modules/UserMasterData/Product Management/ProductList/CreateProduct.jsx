@@ -18,6 +18,7 @@ import { green } from "@mui/material/colors";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import { jwtDecode } from "jwt-decode";
+import { MultiSelect } from 'primereact/multiselect';
 
 function CreateProduct({authrztn}) {
   const navigate = useNavigate();
@@ -185,17 +186,17 @@ return () => clearTimeout(delay);
   return () => clearTimeout(delay);
   }, []);
 
-  const handleSparepartChange = (selectedOptions) => {
-    setSparePart(selectedOptions);
-  };
+  // const handleSparepartChange = (selectedOptions) => {
+  //   setSparePart(selectedOptions);
+  // };
 
-  const handleSubpartChange = (selectedOption) => {
-    setsubparting(selectedOption);
-  };
+  // const handleSubpartChange = (selectedOption) => {
+  //   setsubparting(selectedOption);
+  // };
 
-  const handleAssemblyChange = (selectedOptions) => {
-    setassemblies(selectedOptions);
-  };
+  // const handleAssemblyChange = (selectedOptions) => {
+  //   setassemblies(selectedOptions);
+  // };
 
 
   // for Unit Measurement on change function
@@ -574,7 +575,19 @@ function onDropImages(event) {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Assembly:{" "}
                   </Form.Label>
-                  <Select
+                    <MultiSelect
+                      value={assembly}
+                      options={fetchAssembly.map((assembly) => ({
+                        value: assembly.id,
+                        label: assembly.assembly_name,
+                      }))}
+                      onChange={(e) => setassemblies(e.value)}
+                      placeholder="Select Assembly"
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter 
+                    />
+                  {/* <Select
                     isMulti
                     options={fetchAssembly.map((assembly) => ({
                       value: assembly.id,
@@ -595,7 +608,7 @@ function onDropImages(event) {
                       }),
                     }}
                     
-                  />
+                  /> */}
                 </Form.Group>
               </div>
 
@@ -604,7 +617,19 @@ function onDropImages(event) {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Spare Parts:{" "}
                   </Form.Label>
-                  <Select
+                  <MultiSelect
+                      value={spareParts}
+                      options={fetchSparePart.map((sparePart) => ({
+                        value: sparePart.id,
+                        label: sparePart.spareParts_name,
+                      }))}
+                      onChange={(e) => setSparePart(e.value)}
+                      placeholder="Select Spare Parts"
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter 
+                    />
+                  {/* <Select
                     isMulti
                     options={fetchSparePart.map((sparePart) => ({
                       value: sparePart.id,
@@ -624,7 +649,7 @@ function onDropImages(event) {
                         fontSize: '15px', 
                       }),
                     }}
-                  />
+                  /> */}
                 </Form.Group>
               </div>
               <div className="col-4">
@@ -632,7 +657,19 @@ function onDropImages(event) {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Sub Parts:{" "}
                   </Form.Label>
-                  <Select
+                  <MultiSelect
+                      value={subparting}
+                      options={fetchSubPart.map((subpart) => ({
+                        value: subpart.id,
+                        label: subpart.subPart_name,
+                      }))}
+                      onChange={(e) => setsubparting(e.value)}
+                      placeholder="Select SubPart"
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter 
+                    />
+                  {/* <Select
                     isMulti
                     options={fetchSubPart.map((subpart) => ({
                       value: subpart.id,
@@ -652,7 +689,7 @@ function onDropImages(event) {
                         fontSize: '15px', 
                       }),
                     }}
-                  />
+                  /> */}
                 </Form.Group>
               </div>
             </div>

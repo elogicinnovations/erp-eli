@@ -264,6 +264,11 @@ const handlesparethreshold = (event) => {
   setIsSaveButtonDisabled(false);
 };
 
+const handleMultiSelectChange = (e) => {
+  setSubParts(e.value.map(value => ({ value, label: "" })));
+  setIsSaveButtonDisabled(false);
+};
+
 // const handleSelectChange_SubPart = (selectedOptions) => {
 //   setSubParts(selectedOptions);
 //   setIsSaveButtonDisabled(false);
@@ -629,16 +634,16 @@ console.log(SubParts)
                                 <Form.Group controlId="exampleForm.ControlInput2">
                                   <Form.Label style={{ fontSize: '20px' }}>Sub-Part: </Form.Label>
                                   <MultiSelect
-                                    disabled={!isReadOnly}
-                                    value={SubParts.map(item => item.value)}
-                                    options={fetchSubPart.map(subPart => ({
-                                      label: subPart.subPart_name,
-                                      value: subPart.id 
-                                    }))}
-                                    onChange={(e) => setSubParts(e.value.map(value => ({ value, label: "" })))}
-                                    maxSelectedLabels={3}
-                                    className="w-full md:w-20rem"
-                                    filter 
+                                      disabled={!isReadOnly}
+                                      value={SubParts.map(item => item.value)}
+                                      options={fetchSubPart.map(subPart => ({
+                                          label: subPart.subPart_name,
+                                          value: subPart.id
+                                      }))}
+                                      onChange={handleMultiSelectChange}
+                                      maxSelectedLabels={3}
+                                      className="w-full md:w-20rem"
+                                      filter
                                   />
                                   {/* <Select
                                     isMulti
@@ -937,9 +942,7 @@ console.log(SubParts)
                         <div className='save-cancel'>
                         {isReadOnly && (
                           <Button type='submit' disabled={isSaveButtonDisabled} className='btn btn-warning' size="md" style={{ fontSize: '20px', margin: '0px 5px' }}>Update</Button>
-                        )    
-                      
-                        }
+                        )}
                         {!isReadOnly && (
                           <Button type='Button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
                         )}

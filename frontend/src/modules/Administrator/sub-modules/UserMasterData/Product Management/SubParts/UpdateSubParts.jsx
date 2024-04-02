@@ -12,7 +12,8 @@ import swal from "sweetalert";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
 import {
-  ArrowCircleLeft
+  ArrowCircleLeft,
+  NotePencil
 } from "@phosphor-icons/react";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Carousel from 'react-bootstrap/Carousel';
@@ -28,6 +29,7 @@ function UpdateSubparts({authrztn}) {
   const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier
   const [category, setcategory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isReadOnly, setReadOnly] = useState(false);
 
   const [prodcode, setprodcode] = useState("");
   const [prodname, setprodname] = useState("");
@@ -91,6 +93,8 @@ function UpdateSubparts({authrztn}) {
   
   return () => clearTimeout(delay);
   }, [id]);
+
+  
 
   const handleSelectChange = (selectedOptions) => {
     setsubpartTAGSuppliers(selectedOptions);
@@ -223,6 +227,10 @@ function UpdateSubparts({authrztn}) {
         console.error("Error fetching roles:", error);
       });
   }, []);
+
+  const handleEditClick = () => {
+    setReadOnly(true);
+  };
 
   //input for subpart code
   const handleSubpartCode = (event) => {
@@ -493,7 +501,6 @@ function selectFiles() {
                           src={`data:image/png;base64,${image.subpart_image || image.base64Data}`}
                           alt={`subpart-img-${image.subpart_id || image.subpart_id}`}
                         />
-                        <Carousel.Caption></Carousel.Caption>
                       </Carousel.Item>
                     ))}
                   </Carousel>
@@ -528,6 +535,7 @@ function selectFiles() {
                     SubParts Code{" "}
                   </Form.Label>
                   <Form.Control
+                    disabled={!isReadOnly}
                     value={prodcode}
                     required
                     onChange={(e) => handleSubpartCode(e)}
@@ -543,6 +551,7 @@ function selectFiles() {
                     SubParts Name{" "}
                   </Form.Label>
                   <Form.Control
+                    disabled={!isReadOnly}
                     required
                     value={prodname}
                     onChange={(e) => handleSubpartname(e)}
@@ -561,6 +570,7 @@ function selectFiles() {
                       Bin Location:{" "}
                     </Form.Label>
                     <Form.Select
+                      disabled={!isReadOnly}
                       aria-label=""
                       onChange={handleFormChangeBinLocation}
                       value={prodlocation}
@@ -582,6 +592,7 @@ function selectFiles() {
                       Category:{" "}
                     </Form.Label>
                     <Form.Select
+                      disabled={!isReadOnly}
                       aria-label=""
                       onChange={handleFormChangeCategory}
                       required
@@ -606,6 +617,7 @@ function selectFiles() {
                     Unit of Measurement:{" "}
                   </Form.Label>
                   <Form.Select
+                    disabled={!isReadOnly}
                     aria-label=""
                     value={prodmeasurement}
                     style={{ height: "40px", fontSize: "15px" }}
@@ -624,6 +636,7 @@ function selectFiles() {
                     Manufacturer:{" "}
                   </Form.Label>
                   <Form.Select
+                    disabled={!isReadOnly}
                     aria-label=""
                     onChange={handleFormChangeManufacturer}
                     required
@@ -648,6 +661,7 @@ function selectFiles() {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
+                    disabled={!isReadOnly}
                     onChange={(e) => {
                       const sanitizedValue = e.target.value.replace(/\D/g, "");
                       handlethreshold({ target: { value: sanitizedValue } });
@@ -672,6 +686,7 @@ function selectFiles() {
               <Form.Group controlId="exampleForm.ControlInput1">
                 <Form.Label style={{ fontSize: "20px" }}>Details</Form.Label>
                 <Form.Control
+                  disabled={!isReadOnly}
                   onChange={(e) => handledetails(e)}
                   as="textarea"
                   rows={3}
@@ -697,13 +712,15 @@ function selectFiles() {
                     <p>Drag & Drop Image Upload</p>
                   </div>
                   <div className="drag-area" 
+                  disabled={!isReadOnly}
                   onDragOver={onDragOver} 
                   onDragLeave={onDragLeave} 
                   onDrop={onDropImages}>
                       <>
                       Drag & Drop image here or {" "}
                       <span  
-                      className="select" role="button" onClick={selectFiles}>
+                      className="select" role="button" onClick={selectFiles}
+                      disabled={!isReadOnly}>
                         Browse
                       </span>
                       </>
@@ -780,6 +797,7 @@ function selectFiles() {
                                 ₱
                               </span>
                               <Form.Control
+                                disabled={!isReadOnly}
                                 type="number"
                                 style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
                                 value={supp.supplier_price || ""}
@@ -831,7 +849,7 @@ function selectFiles() {
                         />
                       </div>
                     )}
-
+                      {isReadOnly && (
                     <Button
                       variant="outline-warning"
                       onClick={handleAddSupp}
@@ -839,12 +857,14 @@ function selectFiles() {
                       style={{ fontSize: "15px", marginTop: "10px" }}>
                       Add Supplier
                     </Button>
+                    )} 
                   </table>
                 </div>
               </div>
             </div>
 
             <div className="save-cancel">
+            {isReadOnly && (
               <Button
                 type="submit"
                 className="btn btn-warning"
@@ -853,6 +873,10 @@ function selectFiles() {
                 disabled={isSaveButtonDisabled}>
                 Update
               </Button>
+               )}  
+                {!isReadOnly && (
+                  <Button type='Button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
+                )}
               <Link
                 to="/subParts"
                 className="btn btn-secondary btn-md"
