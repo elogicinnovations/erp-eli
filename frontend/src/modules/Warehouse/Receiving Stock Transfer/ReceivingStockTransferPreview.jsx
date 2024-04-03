@@ -29,6 +29,7 @@ import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
 
 import * as $ from "jquery";
+import { jwtDecode } from "jwt-decode";
 
 function ReceivingStockTransferPreview({ authrztn }) {
   const navigate = useNavigate();
@@ -45,6 +46,18 @@ function ReceivingStockTransferPreview({ authrztn }) {
   const [status, setStatus] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [dateCreated, setDateCreated] = useState();
+  const [userId, setuserId] = useState("");
+  const decodeToken = () => {
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
+    }
+  };
+
+  useEffect(() => {
+    decodeToken();
+  }, []);
 
   // -------------------- fetch data value --------------------- //
   useEffect(() => {
@@ -221,6 +234,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
             addSparebackend,
             addSubpartbackend,
             id,
+            userId
           },
         })
         .then((res) => {
@@ -228,7 +242,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
           if (res.status === 200) {
             swal({
               title: "Stock Transfered Successfully",
-              text: "",
+              text: "The stock has been transferred",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -905,7 +919,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
 
                       <div className="transferby">
                         <span>Transfer By</span>
-                        <span>"{users}"</span>
+                        <span><strong>{users}</strong></span>
                       </div>
                     </div>
 

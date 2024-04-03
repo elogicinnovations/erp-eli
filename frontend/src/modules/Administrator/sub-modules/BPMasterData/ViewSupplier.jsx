@@ -48,6 +48,7 @@ function ViewSupplier({authrztn}) {
     const [suppTerms, setsuppTerms] = useState('');
     const [suppVat, setsuppVat] = useState('');
     const [suppReceving, setsuppReceving] = useState('');
+    const [suppCurrency, setsuppCurrency] = useState('')
     const [isLoading, setIsLoading] = useState(true);
     // const [suppStatus, setsuppStatus] = useState('Active');
     // const [checkedStatus, setcheckedStatus] = useState();
@@ -103,6 +104,7 @@ function ViewSupplier({authrztn}) {
             setsuppTerms(res.data[0].supplier_terms);
             setsuppVat(res.data[0].supplier_vat);
             setsuppReceving(res.data[0].supplier_receiving);
+            setsuppCurrency(res.data[0].supplier_currency);
             setIsLoading(false);
 
         })
@@ -220,20 +222,28 @@ function ViewSupplier({authrztn}) {
                                             </Form.Group>
                                             </div>
                                         </div>
+                                        
                                         <div className="row">
-                                            <div className="col-6">
+                                            <div className="col-4">
+                                            <Form.Group controlId="exampleForm.ControlInput2">
+                                                <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Currency</Form.Label>
+                                                <Form.Control value={suppCurrency} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly/>
+                                            </Form.Group>
+                                            </div>
+                                            <div className="col-4">
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>TIN: </Form.Label>
                                                 <Form.Control value={suppTin}  style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly />
                                             </Form.Group>
                                             </div>
-                                            <div className="col-6">
+                                            <div className="col-4">
                                             <Form.Group controlId="exampleForm.ControlInput2">
                                                 <Form.Label style={{ fontSize: '20px', marginBottom: '10px' }}>Terms: (no. of days) </Form.Label>
                                                 <Form.Control value={suppTerms} style={{height: '50px', fontSize: '16px', width: '97.5%'}} readOnly/>
                                             </Form.Group>
                                             </div>
                                         </div>
+
                                     </Form>
 
                                     <Form style={{paddingLeft: '15px'}}>
@@ -380,22 +390,22 @@ function ViewSupplier({authrztn}) {
                                 <Tab eventKey="ordered list" title={<span style={{...tabStyle, fontSize: '20px' }}>Ordered List</span>}>
                                     <div className="orderhistory-side">
                                         <h1>Order History</h1>
-                                        <div className="printersbtn">
+                                        {/* <div className="printersbtn">
                                             <button>
                                                 <span style={{marginRight: '4px'}}>
                                                     <Printer size={20} />
                                                 </span>
                                                 Print
                                             </button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="main-of-all-tables">
                                         <table id="ordered-listing">
                                             <thead>
                                                 <tr>
-                                                    <th>UNA</th>
-                                                    <th>PANGALAWA</th>
-                                                    <th>PANGATLO</th>
+                                                    <th>Product Code</th>
+                                                    <th>Product Name</th>
+                                                    <th>Date Received</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

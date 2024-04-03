@@ -146,6 +146,7 @@ router.route("/approval").post(async (req, res) => {
   const assembly = req.query.fetchAssembly;
   const spare = req.query.fetchSpare;
   const subpart = req.query.fetchSubpart;
+  const userId = req.query.userId;
 
 
   const approve = await Issuance.update(
@@ -164,7 +165,7 @@ router.route("/approval").post(async (req, res) => {
   if (product && product.length > 0) {
     for (const prod of product) {
       let remainingQuantity = prod.quantity;
-      console.log(`prodduct ${prod.product_id}`);
+      const productName = prod.product.product_name;
       const checkPrd = await Inventory.findAll({
         where: {
           warehouse_id: warehouseId,
@@ -227,13 +228,31 @@ router.route("/approval").post(async (req, res) => {
           })
         }
       })
+
+      const findIssuance = await Issuance.findOne({
+        where: {
+          issuance_id: id
+        },
+        include: [{
+          model: CostCenter,
+          required: true
+        }]
+      })
+      
+      const nameCostcenter = findIssuance.cost_center.name;
+      
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Issuance: Approved the requested issued product ${productName} to ${nameCostcenter}`,
+      });
     }
   }
 
   if (assembly && assembly.length > 0) {
     for (const prod of assembly) {
       let remainingQuantity = prod.quantity;
-      // console.log(`prodduct ${prod.product_id}`);
+      const AssemblyName = prod.assembly.assembly_name;
+      // console.log(`Assembly ${prod.assembly.assembly_name}`);
       const checkPrd = await Inventory_Assembly.findAll({
         where: {
           warehouse_id: warehouseId,
@@ -296,13 +315,30 @@ router.route("/approval").post(async (req, res) => {
           })
         }
       })
+      const findIssuance = await Issuance.findOne({
+        where: {
+          issuance_id: id
+        },
+        include: [{
+          model: CostCenter,
+          required: true
+        }]
+      })
+      
+      const nameCostcenter = findIssuance.cost_center.name;
+      
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Issuance: Approved the request issued product ${AssemblyName} to ${nameCostcenter}`,
+      });
     }
   }
 
   if (spare && spare.length > 0) {
     for (const prod of spare) {
       let remainingQuantity = prod.quantity;
-      console.log(`prodduct ${prod.product_id}`);
+      const spareName = prod.sparePart.spareParts_name
+      // console.log(`Spare part ${prod.sparePart.spareParts_name}`);
       const checkPrd = await Inventory_Spare.findAll({
         where: {
           warehouse_id: warehouseId,
@@ -365,13 +401,30 @@ router.route("/approval").post(async (req, res) => {
           })
         }
       })
+      const findIssuance = await Issuance.findOne({
+        where: {
+          issuance_id: id
+        },
+        include: [{
+          model: CostCenter,
+          required: true
+        }]
+      })
+      
+      const nameCostcenter = findIssuance.cost_center.name;
+      
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Issuance: Approved the requested issued product ${spareName} to ${nameCostcenter}`,
+      });
     }
   }
 
   if (subpart && subpart.length > 0) {
     for (const prod of subpart) {
       let remainingQuantity = prod.quantity;
-      console.log(`prodduct ${prod.product_id}`);
+      const subpartName = prod.subPart.subPart_name;
+      // console.log(`Subpart ${prod.subPart.subPart_name}`);
       const checkPrd = await Inventory_Subpart.findAll({
         where: {
           warehouse_id: warehouseId,
@@ -434,13 +487,28 @@ router.route("/approval").post(async (req, res) => {
           })
         }
       })
+
+      const findIssuance = await Issuance.findOne({
+        where: {
+          issuance_id: id
+        },
+        include: [{
+          model: CostCenter,
+          required: true
+        }]
+      })
+      
+      const nameCostcenter = findIssuance.cost_center.name;
+      
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Issuance: Approved the requested issued product ${subpartName} to ${nameCostcenter}`,
+      });
     }
   }
 
-  res.status(200).json();
+   res.status(200).json();
   }
-
- 
 });
 
 router.route("/reject").post(async (req, res) => {
@@ -454,6 +522,24 @@ router.route("/reject").post(async (req, res) => {
       },
     }
   );
+
+  const findIssuance = await Issuance.findOne({
+    where: {
+      issuance_id: req.query.id
+    },
+    include: [{
+      model: CostCenter,
+      required: true
+    }]
+  })
+  
+  const nameCostcenter = findIssuance.cost_center.name;
+  
+  await Activity_Log.create({
+    masterlist_id: req.query.userId,
+    action_taken: `Issuance: Rejected the requested issued product to ${nameCostcenter}`,
+  });
+
   res.status(200).json();
 });
 

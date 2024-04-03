@@ -202,6 +202,7 @@ function POApprovalRejustify({ authrztn }) {
         try {
           const response = await axios.put(BASE_URL + `/PR/cancel_PO`, {
             row_id: id,
+            userId
           });
 
           if (response.status === 200) {
@@ -273,7 +274,7 @@ function POApprovalRejustify({ authrztn }) {
           if (response.status === 200) {
             swal({
               title: "Approved Successfully",
-              text: "The Request is approved successfully",
+              text: "The Requested P.O has been approved successfully",
               icon: "success",
               button: "OK",
             }).then(() => {

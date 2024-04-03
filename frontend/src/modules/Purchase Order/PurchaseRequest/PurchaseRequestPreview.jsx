@@ -64,9 +64,6 @@ function PurchaseRequestPreview() {
     var token = localStorage.getItem('accessToken');
     if(typeof token === 'string'){
     var decoded = jwtDecode(token);
-    // setUsername(decoded.username);
-    // setFname(decoded.Fname);
-    // setUserRole(decoded.userrole);
     setuserId(decoded.id);
     }
   }

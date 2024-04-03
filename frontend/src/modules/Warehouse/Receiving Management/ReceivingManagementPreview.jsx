@@ -442,8 +442,8 @@ function ReceivingManagementPreview({ authrztn }) {
 
         if (response.status === 200) {
           swal({
-            title: "Purchase Request Add Succesful!",
-            text: "The Purchase Request has been Added Successfully.",
+            title: "Product Received Succesful!",
+            text: "The Product has been received successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {
@@ -679,41 +679,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   Information{" "}
                 </Form.Label>
                 <div className="receive-container">
-                  {/* <div className="PR-num">
-                          <p>{`PR #: ${prNumber}`}</p>
-                        </div>
 
-                        <div className="createdNdate-container">
-                          <div className="statusanddate-content">
-                            <div className="status-receive">
-                              <div style={{ display: "flex", alignItems: "center" }}>
-                                  <Circle
-                                    weight="fill"
-                                    size={17}
-                                    color="green"
-                                    style={{ margin: "10px" }}
-                                  />
-                                  <p style={{ margin: "10px" }}>{status}</p>
-                                </div>
-                              </div>
-                              <div className="request-date">
-                                <p>{`Requested date: ${formatDatetime(dateCreated)}`}</p>
-                              </div>
-                          </div>
-                        </div>
-
-                      <div className="destination-container">
-                        <div className="contentof-request">
-                          <div className="destination-content">
-                            <p>{`To be used for: ${usedFor}`}</p>
-                            </div>
-
-                            <div className="requestdiv">
-                              <p>{`Requested by: ${requestedBy}`}</p>
-                            </div>
-                        </div>
-                      </div>
-                       */}
                   <div className="row">
                     <div className="col-6">
                       <div className="receiving_list d-flex flex-direction-column">

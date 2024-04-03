@@ -9,7 +9,8 @@ const { Inventory, ProductTAGSupplier, Product, IssuedReturn,
         IssuedReturn_spare, IssuedReturn_subpart,
         IssuedSpare, IssuedSubpart, Issuance, 
         Inventory_Assembly, Assembly_Supplier, Inventory_Spare,
-        Assembly, SparePart, SubPart, SparePart_Supplier, Subpart_supplier, Inventory_Subpart
+        Assembly, SparePart, SubPart, SparePart_Supplier, Subpart_supplier, Inventory_Subpart,
+        Activity_Log, CostCenter
         } = require("../db/models/associations"); 
 const session = require('express-session')
 
@@ -218,7 +219,8 @@ router.route('/issueReturn').post(async (req, res) => {
         const{ 
                 issuance_id, return_remarks, status, 
                 arrayDataProdBackend, arrayDataAsmBackend, 
-                arrayDataSpareBackend, arrayDataSubpartBackend
+                arrayDataSpareBackend, arrayDataSubpartBackend,
+                userId
             } = req.body;
 
         for (const product of arrayDataProdBackend) {       
@@ -229,7 +231,9 @@ router.route('/issueReturn').post(async (req, res) => {
                 status: status,
                 remarks: return_remarks,
             });
+                // const productName = product.product.product_name; 
 
+                // console.log("Product" + productName);
                 const updateRecord = await IssuedProduct.findOne({
                     where: {
                         inventory_id: product.inventory_id,
@@ -249,6 +253,23 @@ router.route('/issueReturn').post(async (req, res) => {
                         }
                     )
                 };
+
+                // const findIssuance = await Issuance.findOne({
+                //     where: {
+                //       issuance_id: issuance_id
+                //     },
+                //     include: [{
+                //       model: CostCenter,
+                //       required: true
+                //     }]
+                //   })
+                  
+                //   const nameCostcenter = findIssuance.cost_center.name;
+                  
+                //   await Activity_Log.create({
+                //     masterlist_id: userId,
+                //     action_taken: `Issuance: The product is being returned from ${nameCostcenter}`,
+                //   });
             }
 // ----------------------------------   assembly --------------------------------
                 for (const product of arrayDataAsmBackend) {        
@@ -260,6 +281,8 @@ router.route('/issueReturn').post(async (req, res) => {
                         remarks: return_remarks,
                     });
 
+                    // const AssemblyName = product.assembly.assembly_name;
+                    // console.log(`Assembly ${AssemblyName}`);
                         const updateRecord = await IssuedAssembly.findOne({
                             where: {
                                 inventory_Assembly_id: product.inventory_id,
@@ -279,6 +302,23 @@ router.route('/issueReturn').post(async (req, res) => {
                                 }
                             )
                         };
+
+                        // const findIssuance = await Issuance.findOne({
+                        //     where: {
+                        //       issuance_id: issuance_id
+                        //     },
+                        //     include: [{
+                        //       model: CostCenter,
+                        //       required: true
+                        //     }]
+                        //   })
+                          
+                        //   const nameCostcenter = findIssuance.cost_center.name;
+                          
+                        //   await Activity_Log.create({
+                        //     masterlist_id: userId,
+                        //     action_taken: `Issuance: The product is being returned from ${nameCostcenter}`,
+                        //   });
                     };
 // ----------------------------------   Spare part --------------------------------
                 for (const product of arrayDataSpareBackend) {        
@@ -290,6 +330,8 @@ router.route('/issueReturn').post(async (req, res) => {
                         remarks: return_remarks,
                     });
 
+                    // const spareName = product.sparePart.spareParts_name
+                    // console.log(`Spare part ${spareName}`);
                 const updateRecord = await IssuedSpare.findOne({
                     where: {
                         inventory_Spare_id: product.inventory_id,
@@ -309,6 +351,22 @@ router.route('/issueReturn').post(async (req, res) => {
                         }
                     )
                 };
+                // const findIssuance = await Issuance.findOne({
+                //     where: {
+                //       issuance_id: issuance_id
+                //     },
+                //     include: [{
+                //       model: CostCenter,
+                //       required: true
+                //     }]
+                //   })
+                  
+                //   const nameCostcenter = findIssuance.cost_center.name;
+                  
+                //   await Activity_Log.create({
+                //     masterlist_id: userId,
+                //     action_taken: `Issuance: The product is being returned from ${nameCostcenter}`,
+                //   });
             };
 
 // ----------------------------------   Subpart part --------------------------------
@@ -321,6 +379,8 @@ router.route('/issueReturn').post(async (req, res) => {
                 remarks: return_remarks,
             });
 
+            // const subpartName = product.subPart.subPart_name;
+            // console.log(`Subpart ${subpartName}`);
             const updateRecord = await IssuedSubpart.findOne({
                 where: {
                     inventory_Subpart_id: product.inventory_id,
@@ -340,6 +400,23 @@ router.route('/issueReturn').post(async (req, res) => {
                         }
                     )
                 };
+
+                // const findIssuance = await Issuance.findOne({
+                //     where: {
+                //       issuance_id: issuance_id
+                //     },
+                //     include: [{
+                //       model: CostCenter,
+                //       required: true
+                //     }]
+                //   })
+                  
+                //   const nameCostcenter = findIssuance.cost_center.name;
+                  
+                //   await Activity_Log.create({
+                //     masterlist_id: userId,
+                //     action_taken: `Issuance: The product is being returned from ${nameCostcenter}`,
+                //   });
             };
 
         res.status(200).json({ message: 'Data saved successfully'});

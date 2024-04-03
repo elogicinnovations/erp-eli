@@ -144,30 +144,23 @@ router.route("/insertReceived").post(async (req, res) => {
                 // status: status,
               });
 
-              const getProdName = await Receiving_Prd.findAll({
-                include: [
-                  {
-                    model: PR_PO,
+              const getProdName = await PR_PO.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: ProductTAGSupplier,
                     required: true,
 
-                    include: [
-                      {
-                        model: ProductTAGSupplier,
-                        required: true,
-
-                        include: [
-                          {
-                            model: Product,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                      include: [{
+                        model: Product,
+                        required: true
+                      }]
+                  }],
               });
 
-              // productName = getProdName[0].purchase_req_canvassed_prd.product_tag_supplier.product.product_name;
+              productName = getProdName.product_tag_supplier.product.product_name;
+              // console.log("PRODUCT NAME AGUSAN" + productName)
             }
           } else if (child.type === "Product Assembly") {
             const update = PR_PO_asmbly.update(
@@ -191,30 +184,22 @@ router.route("/insertReceived").post(async (req, res) => {
                 // status: status,
               });
 
-              const getAssemblyName = await Receiving_Asm.findAll({
-                include: [
-                  {
-                    model: PR_PO_asmbly,
+              const getAssemblyName = await PR_PO_asmbly.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: Assembly_Supplier,
                     required: true,
-
-                    include: [
-                      {
-                        model: Assembly_Supplier,
-                        required: true,
-
-                        include: [
-                          {
-                            model: Assembly,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                       include:[{
+                          model: Assembly,
+                          required: true
+                       }]
+                  }],
               });
 
-              // productName = getAssemblyName[0].purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name;
+              productName = getAssemblyName.assembly_supplier.assembly.assembly_name;
+              // console.log("ASSEMBLY NAME AGUSAN" + productName)
             }
           } else if (child.type === "Product Part") {
             const update = PR_PO_spare.update(
@@ -238,30 +223,22 @@ router.route("/insertReceived").post(async (req, res) => {
                 // status: status,
               });
 
-              const getSpareName = await Receiving_Spare.findAll({
-                include: [
-                  {
-                    model: PR_PO_spare,
+              const getSpareName = await PR_PO_spare.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: SparePart_Supplier,
                     required: true,
-
-                    include: [
-                      {
-                        model: SparePart_Supplier,
-                        required: true,
-
-                        include: [
-                          {
-                            model: SparePart,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                      include: [{
+                        model: SparePart,
+                        required: true
+                      }]
+                  }],
               });
 
-              // productName = getSpareName[0].purchase_req_canvassed_spare.sparepart_supplier.spareParts.spareParts_name;
+              productName = getSpareName.sparepart_supplier.sparePart.spareParts_name;
+              // console.log("SPARE NAME AGUSAN" + productName)
             }
           } else if (child.type === "Product Subpart") {
             // console.log(`Subpart ${freighCost}`)
@@ -287,39 +264,31 @@ router.route("/insertReceived").post(async (req, res) => {
                 // status: status,
               });
 
-              const getSubName = await Receiving_Subpart.findAll({
-                include: [
-                  {
-                    model: PR_PO_subpart,
+              const getSubName = await PR_PO_subpart.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: Subpart_supplier,
                     required: true,
-
-                    include: [
-                      {
-                        model: Subpart_supplier,
+                      include: [{
+                        model: SubPart,
                         required: true,
-
-                        include: [
-                          {
-                            model: SubPart,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                      }]
+                  }],
               });
 
-              // productName = getSubName[0].purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name;
+              productName = getSubName.subpart_supplier.subPart.subPart_name;
+              // console.log("SUBPART NAME AGUSAN" + productName)
             }
           } else {
             console.log(`Not a Product`);
           }
 
-          // await Activity_Log.create({
-          //   masterlist_id: userId,
-          //   action_taken: `Received ${productName} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-          // });
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+          });
         }
       }
     }
@@ -350,30 +319,23 @@ router.route("/insertReceived").post(async (req, res) => {
                 remaining_quantity: child.Remaining_quantity,
               });
 
-              // const getProdName = await Receiving_Prd.findAll({
-              //   include: [
-              //     {
-              //       model: PR_PO,
-              //       required: true,
+              const getProdName = await PR_PO.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: ProductTAGSupplier,
+                    required: true,
 
-              //       include: [
-              //         {
-              //           model: ProductTAGSupplier,
-              //           required: true,
+                      include: [{
+                        model: Product,
+                        required: true
+                      }]
+                  }],
+              });
 
-              //           include: [
-              //             {
-              //               model: Product,
-              //               required: true,
-              //             },
-              //           ],
-              //         },
-              //       ],
-              //     },
-              //   ],
-              // });
-
-              // productName = getProdName[0].purchase_req_canvassed_prd.product_tag_supplier.product.product_name;
+              productName = getProdName.product_tag_supplier.product.product_name;
+              // console.log("PRODUCT NAME DAVAO" + productName)
             }
           } else if (child.type === "Product Assembly") {
             const update = PR_PO_asmbly.update(
@@ -394,30 +356,22 @@ router.route("/insertReceived").post(async (req, res) => {
                 remaining_quantity: child.Remaining_quantity,
               });
 
-              // const getAssemblyName = await Receiving_Asm.findAll({
-              //   include: [
-              //     {
-              //       model: PR_PO_asmbly,
-              //       required: true,
+              const getAssemblyName = await PR_PO_asmbly.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: Assembly_Supplier,
+                    required: true,
+                       include:[{
+                          model: Assembly,
+                          required: true
+                       }]
+                  }],
+              });
 
-              //       include: [
-              //         {
-              //           model: Assembly_Supplier,
-              //           required: true,
-
-              //           include: [
-              //             {
-              //               model: Assembly,
-              //               required: true,
-              //             },
-              //           ],
-              //         },
-              //       ],
-              //     },
-              //   ],
-              // });
-
-              // productName = getAssemblyName[0].purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name;
+              productName = getAssemblyName.assembly_supplier.assembly.assembly_name;
+              // console.log("ASSEMBLY NAME DAVAO" + productName)
             }
           } else if (child.type === "Product Part") {
             const update = PR_PO_spare.update(
@@ -438,30 +392,22 @@ router.route("/insertReceived").post(async (req, res) => {
                 remaining_quantity: child.Remaining_quantity,
               });
 
-              // const getSpareName = await Receiving_Spare.findAll({
-              //   include: [
-              //     {
-              //       model: PR_PO_spare,
-              //       required: true,
+              const getSpareName = await PR_PO_spare.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: SparePart_Supplier,
+                    required: true,
+                      include: [{
+                        model: SparePart,
+                        required: true
+                      }]
+                  }],
+              });
 
-              //       include: [
-              //         {
-              //           model: SparePart_Supplier,
-              //           required: true,
-
-              //           include: [
-              //             {
-              //               model: SparePart,
-              //               required: true,
-              //             },
-              //           ],
-              //         },
-              //       ],
-              //     },
-              //   ],
-              // });
-
-              // productName = getSpareName[0].purchase_req_canvassed_spare.sparepart_supplier.spareParts.spareParts_name;
+              productName = getSpareName.sparepart_supplier.sparePart.spareParts_name;
+              // console.log("SPARE NAME DAVAO" + productName)
             }
           } else if (child.type === "Product Subpart") {
             // console.log(`Subpart ${freighCost}`)
@@ -484,39 +430,31 @@ router.route("/insertReceived").post(async (req, res) => {
                 remaining_quantity: child.Remaining_quantity,
               });
 
-              // const getSubName = await Receiving_Subpart.findAll({
-              //   include: [
-              //     {
-              //       model: PR_PO_subpart,
-              //       required: true,
+              const getSubName = await PR_PO_subpart.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: Subpart_supplier,
+                    required: true,
+                      include: [{
+                        model: SubPart,
+                        required: true,
+                      }]
+                  }],
+              });
 
-              //       include: [
-              //         {
-              //           model: Subpart_supplier,
-              //           required: true,
-
-              //           include: [
-              //             {
-              //               model: SubPart,
-              //               required: true,
-              //             },
-              //           ],
-              //         },
-              //       ],
-              //     },
-              //   ],
-              // });
-
-              // productName = getSubName[0].purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name;
+              productName = getSubName.subpart_supplier.subPart.subPart_name;
+              // console.log("SUBPART NAME DAVAO" + productName)
             }
           } else {
             console.log(`Not a Product`);
           }
 
-          // await Activity_Log.create({
-          //   masterlist_id: userId,
-          //   action_taken: `Received ${productName} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-          // });
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+            });
         }
       }
     }
@@ -543,8 +481,8 @@ router.route("/insertReceived").post(async (req, res) => {
     console.log("adwjkd");
   }
 
-  console.log(`Total Received: ${totalReceived}`);
-  console.log(`Fr ${freighCost}`);
+  // console.log(`Total Received: ${totalReceived}`);
+  // console.log(`Fr ${freighCost}`);
 
   return res.status(200).json();
 });
@@ -667,30 +605,23 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
                 // status: status,
               });
 
-              const getProdName = await Receiving_Prd.findAll({
-                include: [
-                  {
-                    model: PR_PO,
+              const getProdName = await PR_PO.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: ProductTAGSupplier,
                     required: true,
 
-                    include: [
-                      {
-                        model: ProductTAGSupplier,
-                        required: true,
-
-                        include: [
-                          {
-                            model: Product,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                      include: [{
+                        model: Product,
+                        required: true
+                      }]
+                  }],
               });
 
-              // productName = getProdName[0].purchase_req_canvassed_prd.product_tag_supplier.product.product_name;
+              productName = getProdName.product_tag_supplier.product.product_name;
+              // console.log("PRODUCT NAME AGUSAN" + productName)
             }
           } else if (child.type === "Product Assembly") {
             const update = Receiving_initial_asm.update(
@@ -716,30 +647,22 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
                 // status: status,
               });
 
-              const getAssemblyName = await Receiving_Asm.findAll({
-                include: [
-                  {
-                    model: PR_PO_asmbly,
+              const getAssemblyName = await PR_PO_asmbly.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: Assembly_Supplier,
                     required: true,
-
-                    include: [
-                      {
-                        model: Assembly_Supplier,
-                        required: true,
-
-                        include: [
-                          {
-                            model: Assembly,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                       include:[{
+                          model: Assembly,
+                          required: true
+                       }]
+                  }],
               });
 
-              // productName = getAssemblyName[0].purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name;
+              productName = getAssemblyName.assembly_supplier.assembly.assembly_name;
+              // console.log("ASSEMBLY NAME AGUSAN" + productName)
             }
           } else if (child.type === "Product Part") {
             const update = Receiving_initial_spare.update(
@@ -765,34 +688,24 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
                 // status: status,
               });
 
-              const getSpareName = await Receiving_Spare.findAll({
-                include: [
-                  {
-                    model: PR_PO_spare,
+              const getSpareName = await PR_PO_spare.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: SparePart_Supplier,
                     required: true,
-
-                    include: [
-                      {
-                        model: SparePart_Supplier,
-                        required: true,
-
-                        include: [
-                          {
-                            model: SparePart,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                      include: [{
+                        model: SparePart,
+                        required: true
+                      }]
+                  }],
               });
 
-              // productName = getSpareName[0].purchase_req_canvassed_spare.sparepart_supplier.spareParts.spareParts_name;
+              productName = getSpareName.sparepart_supplier.sparePart.spareParts_name;
+              // console.log("SPARE NAME AGUSAN" + productName)
             }
           } else if (child.type === "Product Subpart") {
-            // console.log(`Subpart ${freighCost}`)
-
             const update = Receiving_initial_subpart.update(
               {
                 received_quantity:
@@ -816,45 +729,35 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
                 // status: status,
               });
 
-              const getSubName = await Receiving_Subpart.findAll({
-                include: [
-                  {
-                    model: PR_PO_subpart,
+              const getSubName = await PR_PO_subpart.findOne({
+                where: {
+                  id: child.canvassed_ID
+                },
+                include: [{
+                    model: Subpart_supplier,
                     required: true,
-
-                    include: [
-                      {
-                        model: Subpart_supplier,
+                      include: [{
+                        model: SubPart,
                         required: true,
-
-                        include: [
-                          {
-                            model: SubPart,
-                            required: true,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                      }]
+                  }],
               });
 
-              // productName = getSubName[0].purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name;
+              productName = getSubName.subpart_supplier.subPart.subPart_name;
+              // console.log("SUBPART NAME AGUSAN" + productName)
             }
           } else {
             console.log(`Not a Product`);
           }
 
-          // await Activity_Log.create({
-          //   masterlist_id: userId,
-          //   action_taken: `Received ${productName} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-          // });
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+          });
         }
       }
     }
   }
-
-  // console.log('dwadwa' + received_PO.id)
 
   const deleteproductImage = Receiving_Image.destroy({
     where: {
@@ -877,8 +780,8 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
     console.log("adwjkd");
   }
 
-  console.log(`Total Received: ${totalReceived}`);
-  console.log(`Fr ${freighCost}`);
+  // console.log(`Total Received: ${totalReceived}`);
+  // console.log(`Fr ${freighCost}`);
 
   return res.status(200).json();
 });

@@ -614,7 +614,7 @@ router.route("/cancel").put(async (req, res) => {
 
 router.route("/cancel_PO").put(async (req, res) => {
   try {
-    const { row_id } = req.body;
+    const { row_id, userId } = req.body;
 
     const [affectedRows] = await PR.update(
       {
@@ -624,6 +624,19 @@ router.route("/cancel_PO").put(async (req, res) => {
         where: { id: row_id },
       }
     );
+
+    const findPr = await PR.findOne({
+      where: {
+        id: row_id
+      }
+    })
+
+    const prnumber = findPr.pr_num;
+
+    await Activity_Log.create({
+      masterlist_id: userId,
+      action_taken: `Purchase Order has been re-canvassed with pr number ${prnumber}`,
+    });
 
     const PR_historical = await PR_history.create({
       pr_id: row_id,

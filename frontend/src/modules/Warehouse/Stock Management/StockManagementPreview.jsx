@@ -28,6 +28,7 @@ import {
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
+import { jwtDecode } from "jwt-decode";
 
 function StockTransferPreview({ authrztn }) {
   const { id } = useParams();
@@ -54,6 +55,19 @@ function StockTransferPreview({ authrztn }) {
   const [files, setFiles] = useState([]);
   const [rejustifyRemarks, setRejustifyRemarks] = useState("");
 
+  const [userId, setuserId] = useState("");
+  const decodeToken = () => {
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
+    }
+  };
+
+  useEffect(() => {
+    decodeToken();
+  }, []);
+
   const handleFileChange = (e) => {
     setFiles(e.target.files);
   };
@@ -72,14 +86,15 @@ function StockTransferPreview({ authrztn }) {
             .post(`${BASE_URL}/StockTransfer/approve`, null, {
               params: {
                 id: id,
+                userId: userId
               },
             })
             .then((res) => {
               console.log(res);
               if (res.status === 200) {
                 swal({
-                  title: "The Purchase sucessfully approved!",
-                  text: "The Purchase been approved successfully.",
+                  title: "Stock Transfer Approved Successfully!",
+                  text: "The request for transferring stock has been approved.",
                   icon: "success",
                   button: "OK",
                 }).then(() => {
@@ -96,12 +111,7 @@ function StockTransferPreview({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          icon: "warning",
-        });
-      }
+      } 
     });
   };
 
@@ -120,14 +130,15 @@ function StockTransferPreview({ authrztn }) {
             .post(`${BASE_URL}/StockTransfer/reject`, null, {
               params: {
                 id: id,
+                userId: userId
               },
             })
             .then((res) => {
               console.log(res);
               if (res.status === 200) {
                 swal({
-                  title: "The Purchase sucessfully approved!",
-                  text: "The Purchase been approved successfully.",
+                  title: "The Stock Transfer Rejected Successful!",
+                  text: "The request for transferring stock has been rejected.",
                   icon: "success",
                   button: "OK",
                 }).then(() => {
@@ -144,11 +155,6 @@ function StockTransferPreview({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
-      } else {
-        swal({
-          title: "Cancelled Successfully",
-          icon: "warning",
-        });
       }
     });
   };

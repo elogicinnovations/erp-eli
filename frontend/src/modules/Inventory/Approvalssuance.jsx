@@ -14,6 +14,7 @@ import Button from "react-bootstrap/Button";
 import {
   ArrowCircleLeft
 } from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
 
 const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
 
@@ -39,6 +40,20 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
   const [mrs, setMrs] = useState();
   const [remarks, setRemarks] = useState();
   const [IssueStatus, setIssueStatus] = useState();
+  const [userId, setuserId] = useState('');
+
+  const decodeToken = () => {
+    var token = localStorage.getItem('accessToken');
+    if(typeof token === 'string'){
+    var decoded = jwtDecode(token);
+
+    setuserId(decoded.id);
+    }
+  }
+
+  useEffect(() => {
+    decodeToken();
+  }, [])
 
   const navigate = useNavigate()
 
@@ -118,7 +133,8 @@ return () => clearTimeout(delay);
             fetchProduct,
             fetchAssembly,
             fetchSpare,
-            fetchSubpart
+            fetchSubpart,
+            userId
          }
         })
           .then(() => {
@@ -146,7 +162,8 @@ return () => clearTimeout(delay);
       if (confirmed) {
         axios.post(BASE_URL + '/issuance/reject', null,{
          params:{
-            id
+            id,
+            userId: userId
          }
         })
           .then(() => {

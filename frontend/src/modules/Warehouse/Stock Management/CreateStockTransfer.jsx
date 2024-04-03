@@ -255,8 +255,8 @@ function CreateStockTransfer({ authrztn }) {
 
         if (response.status === 200) {
           swal({
-            title: "The Stock Transfer request was successful!",
-            text: "The Stock Transfer has been added successfully.",
+            title: "Stock Transfer Request Add Successful!",
+            text: "Request on stock transferring has been added successfully.",
             icon: "success",
             button: "OK",
           }).then(() => {

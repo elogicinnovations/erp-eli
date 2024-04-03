@@ -262,155 +262,112 @@ router.route("/create").post(async (req, res) => {
     // console.log("Warehouse IDdsadsadasdsa" + destination);
     const createdID = StockTransfer_newData.stock_id;
 
-    for (const prod of addProductbackend) {
-      const prod_id = prod.product_id;
-      const prod_quantity = prod.quantity;
-      const prod_desc = prod.desc;
-      const prod_type = prod.type;
-
-      let productName;
-
-      console.log(`dddddksdkskd ${prod_id}`);
-      if (prod_type === "Product") {
-        await StockTransfer_prod.create({
-          stockTransfer_id: createdID,
-          product_id: prod_id,
-          quantity: prod_quantity,
-          description: prod_desc,
+    
+      for (const prod of addProductbackend) {
+        const prod_id = prod.product_id;
+        const prod_quantity = prod.quantity;
+        const prod_desc = prod.desc;
+        const prod_type = prod.type;
+  
+        let productName;
+  
+        // console.log(`dddddksdkskd ${prod_id}`);
+        if (prod_type === "Product") {
+          await StockTransfer_prod.create({
+            stockTransfer_id: createdID,
+            product_id: prod_id,
+            quantity: prod_quantity,
+            description: prod_desc,
+          });
+  
+          const getProdName = await StockTransfer_prod.findOne({
+            where: {
+              stockTransfer_id: createdID
+            },
+            include: [{
+                  model: Product,
+                  required: true
+              }],
+          });
+  
+          productName = getProdName.product.product_name;
+  
+          console.log("Product name" + productName);
+  
+        } else if (prod_type === "Assembly") {
+          await StockTransfer_assembly.create({
+            stockTransfer_id: createdID,
+            product_id: prod_id,
+            quantity: prod_quantity,
+            description: prod_desc,
+          });
+  
+          const getAssemblyName = await StockTransfer_assembly.findOne({
+            where: {
+              stockTransfer_id: createdID
+            },
+            include: [{
+                model: Assembly,
+                required: true
+              }],
+          });
+  
+          productName = getAssemblyName.assembly.assembly_name;
+  
+        } else if (prod_type === "Spare") {
+          await StockTransfer_spare.create({
+            stockTransfer_id: createdID,
+            product_id: prod_id,
+            quantity: prod_quantity,
+            description: prod_desc,
+          });
+  
+          const getSpareName = await StockTransfer_spare.findOne({
+            where: {
+              stockTransfer_id: createdID
+            },
+            include: [{
+                model: SparePart
+              }],
+          });
+  
+          productName = getSpareName.sparePart.spareParts_name;
+  
+        } else if (prod_type === "SubPart") {
+          await StockTransfer_subpart.create({
+            stockTransfer_id: createdID,
+            product_id: prod_id,
+            quantity: prod_quantity,
+            description: prod_desc,
+          });
+  
+          const getSubName = await StockTransfer_subpart.findOne({
+            where: {
+              stockTransfer_id: createdID
+            },
+            include: [{
+                model: SubPart,
+                required: true
+              }],
+          });
+  
+          productName = getSubName.subPart.subPart_name;
+        }
+  
+        const Warehousename = await Warehouses.findOne({
+          where: {
+            id: destination,
+          },
         });
-
-        // const getProdName = await StockTransfer_prod.findAll({
-        //   include: [
-        //     {
-        //       model: Inventory,
-        //       required: true,
-        //       include: [
-        //         {
-        //           model: ProductTAGSupplier,
-        //           required: true,
-
-        //           include: [
-        //             {
-        //               model: Product,
-        //               required: true,
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // });
-
-        // productName = getProdName[0].product.product_name;
-      } else if (prod_type === "Assembly") {
-        await StockTransfer_assembly.create({
-          stockTransfer_id: createdID,
-          product_id: prod_id,
-          quantity: prod_quantity,
-          description: prod_desc,
+  
+        const warename = Warehousename.warehouse_name;
+  
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Stock Transfer: Product ${productName} with quantity ${prod_quantity} is being transfer on ${warename} with reference code ${referenceCode}`,
         });
-
-        // const getAssemblyName = await StockTransfer_assembly.findAll({
-        //   include: [
-        //     {
-        //       model: Inventory_Assembly,
-        //       required: true,
-
-        //       include: [
-        //         {
-        //           model: Assembly_Supplier,
-        //           required: true,
-
-        //           include: [
-        //             {
-        //               model: Assembly,
-        //               required: true,
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // });
-
-        // productName = getAssemblyName[0].assembly.assembly_name;
-      } else if (prod_type === "Spare") {
-        await StockTransfer_spare.create({
-          stockTransfer_id: createdID,
-          product_id: prod_id,
-          quantity: prod_quantity,
-          description: prod_desc,
-        });
-
-        // const getSpareName = await StockTransfer_spare.findAll({
-        //   include: [
-        //     {
-        //       model: Inventory_Spare,
-        //       required: true,
-        //       include: [
-        //         {
-        //           model: SparePart_Supplier,
-        //           required: true,
-
-        //           include: [
-        //             {
-        //               model: SparePart,
-        //               required: true,
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // });
-
-        // productName = getSpareName[0].sparePart.spareParts_name;
-      } else if (prod_type === "SubPart") {
-        await StockTransfer_subpart.create({
-          stockTransfer_id: createdID,
-          product_id: prod_id,
-          quantity: prod_quantity,
-          description: prod_desc,
-        });
-
-        // const getSubName = await StockTransfer_subpart.findAll({
-        //   include: [
-        //     {
-        //       model: Inventory_Subpart,
-        //       required: true,
-        //       include: [
-        //         {
-        //           model: Subpart_supplier,
-        //           required: true,
-
-        //           include: [
-        //             {
-        //               model: SubPart,
-        //               required: true,
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     },
-        //   ],
-        // });
-
-        // productName = getSubName[0].subPart.subPart_name;
       }
-
-      const Warehousename = await Warehouses.findOne({
-        where: {
-          id: destination,
-        },
-      });
-
-      const warename = Warehousename.warehouse_name;
-
-      // await Activity_Log.create({
-      //   masterlist_id: userId,
-      //   action_taken: `Product ${productName} with quantity ${prod_quantity} is being transfer on ${warename} with reference code ${referenceCode}`,
-      // });
-    }
+    
 
     res.status(200).json();
   } catch (err) {
@@ -584,6 +541,21 @@ router.route("/approve").post(async (req, res) => {
       }
     );
 
+    const findStock = await StockTransfer.findOne({
+      where: {
+        stock_id: req.query.id,
+      },
+    })
+
+    const stockRefcode = findStock.reference_code;
+
+  
+    await Activity_Log.create({
+      masterlist_id: req.query.userId,
+      action_taken: `Stock transfer: Approved the stock transfer requested with the reference code of ${stockRefcode}`
+    });
+
+
     res.status(200).json();
   } catch (err) {
     console.error(err);
@@ -593,7 +565,7 @@ router.route("/approve").post(async (req, res) => {
 
 router.route("/reject").post(async (req, res) => {
   try {
-    const approve = await StockTransfer.update(
+    const reject = await StockTransfer.update(
       {
         status: "Rejected",
       },
@@ -602,6 +574,19 @@ router.route("/reject").post(async (req, res) => {
       }
     );
 
+    const findStock = await StockTransfer.findOne({
+      where: {
+        stock_id: req.query.id,
+      },
+    })
+
+    const stockRefcode = findStock.reference_code;
+
+  
+    await Activity_Log.create({
+      masterlist_id: req.query.userId,
+      action_taken: `Stock transfer: Rejected the stock transfer requested with the reference code of ${stockRefcode}`
+    });
     res.status(200).json();
   } catch (err) {
     console.error(err);
@@ -619,6 +604,7 @@ router.route("/receivingProducts").post(async (req, res) => {
       addAsmbackend,
       addSparebackend,
       addSubpartbackend,
+      userId
     } = req.query;
 
     if (addProductbackend && addProductbackend.length > 0) {
@@ -652,12 +638,14 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
+
+
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
-            console.log(
-              `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-            );
+            // console.log(
+            //   `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+            // );
 
             const remaining = inventory.quantity - remainingQuantity; //output of the remaining
 
@@ -689,6 +677,24 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+            const productName = inventory.product_tag_supplier.product.product_name;
+            
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -714,7 +720,14 @@ router.route("/receivingProducts").post(async (req, res) => {
               }
             );
             remainingQuantity = 0;
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${productName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
             break; // Break the loop since remainingQuantity is now 0
+
+
           } else {
             console.log(
               `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
@@ -749,6 +762,25 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+            const productName = inventory.product_tag_supplier.product.product_name;
+            console.log("PRODUCT NAME checkPrd" + productName)
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -773,6 +805,11 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${productName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
           }
         }
 
@@ -816,6 +853,9 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
+
+        
+
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
@@ -853,6 +893,25 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+
+            const AssemblyName = inventory.assembly_supplier.assembly.assembly_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -877,7 +936,13 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
             remainingQuantity = 0;
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${AssemblyName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
             break; // Break the loop since remainingQuantity is now 0
           } else {
             console.log(
@@ -913,6 +978,25 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+
+            const AssemblyName = inventory.assembly_supplier.assembly.assembly_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -937,6 +1021,11 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${AssemblyName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
           }
         }
 
@@ -980,6 +1069,9 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
+
+
+
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
@@ -1017,6 +1109,24 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+            const Sparename = inventory.sparepart_supplier.sparePart.spareParts_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -1041,7 +1151,12 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
             remainingQuantity = 0;
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${Sparename} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
             break; // Break the loop since remainingQuantity is now 0
           } else {
             console.log(
@@ -1077,6 +1192,24 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+            const Sparename = inventory.sparepart_supplier.sparePart.spareParts_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -1101,6 +1234,11 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${Sparename} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
           }
         }
 
@@ -1144,6 +1282,9 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
+
+
+
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
@@ -1181,6 +1322,24 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+            const subpartName = inventory.subpart_supplier.subPart.subPart_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -1205,7 +1364,12 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
             remainingQuantity = 0;
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${subpartName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
             break; // Break the loop since remainingQuantity is now 0
           } else {
             console.log(
@@ -1241,6 +1405,25 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
+
+            const findWarehousefrom = await Warehouses.findOne({
+              where: {
+                id: fromWarehouse_id
+              },
+            });
+
+            const fromWarehouseName = findWarehousefrom.warehouse_name;
+
+            const findWarehouseto = await Warehouses.findOne({
+              where: {
+                id: toWarehouse_id
+              },
+            });
+
+            const toWarehouseName = findWarehouseto.warehouse_name;
+
+            const subpartName = inventory.subpart_supplier.subPart.subPart_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -1265,6 +1448,11 @@ router.route("/receivingProducts").post(async (req, res) => {
                 where: { inventory_id: inventory.inventory_id },
               }
             );
+
+            await Activity_Log.create({
+              masterlist_id: userId,
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${subpartName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+            });
           }
         }
 

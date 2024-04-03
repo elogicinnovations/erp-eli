@@ -27,15 +27,15 @@ import {
 import axios from 'axios';
 import BASE_URL from '../../assets/global/url';
 import swal from 'sweetalert';
-
+import { jwtDecode } from "jwt-decode";
 import * as $ from 'jquery';
 
-  const ReturnForm = ({ setActiveTab, authrztn }) => {
+const ReturnForm = ({ setActiveTab, authrztn }) => {
 
 
-    const handleTabClick = (tabKey) => {
-      setActiveTab(tabKey);
-    };
+const handleTabClick = (tabKey) => {
+  setActiveTab(tabKey);
+};
 const navigate = useNavigate()
 const { id } = useParams();
 const [validated, setValidated] = useState(false);
@@ -67,7 +67,20 @@ const [arrayDataSpareBackend, setarrayDataSpareBackend] = useState([]);
 const [issuedSubpart, setIssuedSubpart] = useState([]);
 const [quantityInputs_subpart, setQuantityInputs_subpart] = useState({});
 const [arrayDataSubpartBackend, setarrayDataSubpartBackend] = useState([]); 
+const [userId, setuserId] = useState('');
 
+const decodeToken = () => {
+  var token = localStorage.getItem('accessToken');
+  if(typeof token === 'string'){
+  var decoded = jwtDecode(token);
+
+  setuserId(decoded.id);
+  }
+}
+
+useEffect(() => {
+  decodeToken();
+}, [])
 
 
 
@@ -398,6 +411,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
             arrayDataSpareBackend,
             arrayDataSubpartBackend,
             status: 'To be Return',
+            userId,
          })
           .then((res) => {
             console.log(res);

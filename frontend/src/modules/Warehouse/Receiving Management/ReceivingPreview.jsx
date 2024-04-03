@@ -290,7 +290,7 @@ function ReceivingPreview({ authrztn }) {
   const handleApprove = () => {
     swal({
       title: "Are you sure?",
-      text: "You are attempting to approve this data",
+      text: "You are attempting to approve this receiving report",
       icon: "warning",
       buttons: true,
       dangerMode: true,

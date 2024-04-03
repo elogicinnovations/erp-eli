@@ -457,8 +457,8 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
         console.log(res);
         if (res.status === 200) {
           swal({
-            title: "Product For-Canvassed",
-            text: "You have successfully marked this product for canvassing.",
+            title: "Product On-Canvassed",
+            text: "You have successfully marked this product on canvassing.",
             icon: 'success',
             button: 'OK'
           }).then(() => {
