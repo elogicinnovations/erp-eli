@@ -76,13 +76,30 @@ function CreateSpareParts({authrztn}) {
   //     .catch((err) => console.log(err));
   // }, []);
 
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/sparePart/lastCode")
+  //     .then((res) => {
+  //       const codes =
+  //         res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+  //       setCode(codes);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
+
   useEffect(() => {
     axios
-      .get(BASE_URL + "/sparePart/lastCode")
+      .get(BASE_URL + "/product/lastCode")
       .then((res) => {
+        // const codes =
+        //   res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+
+        // // Increment the value by 1
+        // setCode(codes);
+
         const codes =
-          res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
-        setCode(codes);
+          res.data !== null ? res.data.toString().padStart(6, "0") : "000000";
+          setCode(codes);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -679,6 +696,10 @@ useEffect(() => {
                   </Form.Label>
                   <Form.Control
                   value={thresholds}
+                  onKeyDown={(e) => {
+                    ["e", "E", "+", "-"].includes(e.key) &&
+                      e.preventDefault();
+                  }}
                    onChange={(e) => {
                       if(e.target.value > 100){
                         setThresholds(100)

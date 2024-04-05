@@ -36,6 +36,7 @@ function EditSupplier({ authrztn }) {
   const [suppReceving, setsuppReceving] = useState("");
   const [suppStatus, setsuppStatus] = useState("Active");
   const [checkedStatus, setcheckedStatus] = useState();
+  const [suppCurr, setsuppCurr] = useState("");
 
   const [isChecked, setIsChecked] = useState(false);
   const [Fname, setFname] = useState("");
@@ -111,6 +112,7 @@ function EditSupplier({ authrztn }) {
         .then((res) => {
           setsuppName(res.data[0].supplier_name);
           setsuppCode(res.data[0].supplier_code);
+          setsuppCurr(res.data[0].supplier_currency);
           setsuppTin(res.data[0].supplier_tin);
           setSelectedCountry(res.data[0].supplier_country);
           setsuppEmail(res.data[0].supplier_email);
@@ -170,6 +172,7 @@ function EditSupplier({ authrztn }) {
             suppName,
             suppTin,
             suppEmail,
+            suppCurr,
             suppCode,
             suppAdd,
             suppCity,
@@ -315,6 +318,32 @@ function EditSupplier({ authrztn }) {
                   </Col>
                 </Row>
 
+
+                <Row>
+                  <Col>
+                    <label
+                      htmlFor=""
+                      className="label-head"
+                      style={{ fontSize: 20 }}
+                    >
+                      Currency:{" "}
+                    </label>
+                    <Form.Select
+                      style={{ fontSize: 15, padding: 8 }}
+                      onChange={(e) => setsuppCurr(e.target.value)}
+                      required
+                      defaultValue={suppCurr}
+                    >
+                      <option disabled value="">
+                        Select currency...
+                      </option>
+                      <option value="PHP">PHP (₱)</option>
+                      <option value="USD">USD ($)</option>
+                    </Form.Select>
+                  </Col>
+                  <Col></Col>
+                </Row>
+
                 <Row>
                   <Col>
                     <label
@@ -350,6 +379,7 @@ function EditSupplier({ authrztn }) {
                       onInput={(e) =>
                         (e.target.value = e.target.value.replace(/\D/, ""))
                       }
+                      required
                       maxLength={4}
                       onChange={(e) => setsuppTerms(e.target.value)}
                       value={suppTerms}

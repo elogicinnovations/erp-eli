@@ -20,6 +20,99 @@ router.use(
   })
 );
 
+const activeSessions = {};
+
+
+// router.route("/login").post(async (req, res) => {
+//   const { username, password } = req.body;
+
+//   try {
+//     const user = await MasterList.findOne({
+//       where: {
+//         col_email: username,
+//         col_status: "Active",
+//       },
+//       include: {
+//         model: UserRole,
+//       },
+//     });
+
+//     if (user && user.col_Pass === password) {
+//       const userData = {
+//         username: user.col_username,
+//         id: user.col_id,
+//         Fname: user.col_Fname,
+//         userrole: user.userRole.col_rolename,
+//       };
+
+//       // Check if user already has an active session
+//       if (activeSessions[user.col_id]) {
+//         // Invalidate existing session
+//         delete activeSessions[user.col_id];
+//       }
+
+//       // Generate JWT token
+//       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN, { expiresIn: '1h' });
+
+//       // Store the new session in the activeSessions object
+//       activeSessions[user.col_id] = { accessToken, username: userData.username };
+
+//       // Set JWT token as a cookie
+//       res.cookie("access-token", accessToken, {
+//         // You can configure cookie options here
+//         // httpOnly: true // Enable this if you want to prevent client-side access to the cookie
+//       });
+
+//       await Activity_Log.create({
+//         masterlist_id: userData.id,
+//         action_taken: "User logged in",
+//       });
+
+//       return res.status(200).json({ message: "Login Success", accessToken: accessToken });
+//     } else {
+//       return res.status(202).json({ message: "Incorrect credentials" });
+//     }
+//   } catch (e) {
+//     console.error(e);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+// router.route("/logout").post(async (req, res) => {
+//   const { accessToken } = req.cookies;
+
+//   try {
+//     // Decode the token to extract user information
+//     const decodedToken = jwt.verify(accessToken, process.env.ACCESS_SECRET_TOKEN);
+
+//     // Invalidate the session by removing it from the activeSessions object
+//     if (decodedToken && decodedToken.id) {
+//       delete activeSessions[decodedToken.id];
+      
+//       // Create activity log for user logout
+//       await Activity_Log.create({
+//         masterlist_id: decodedToken.id,
+//         action_taken: "User logged out",
+//       });
+
+//       // Clear the cookie to fully log out the user
+//       res.clearCookie('access-token');
+
+//       return res.status(200).json({ message: "Logout successful" });
+//     } else {
+//       return res.status(401).json({ message: "Invalid or expired token" });
+//     }
+//   } catch (error) {
+//     if (error instanceof jwt.JsonWebTokenError || error instanceof jwt.TokenExpiredError) {
+//       // If token is invalid or expired, still log out the user but don't consider it an error
+//       return res.status(200).json({ message: "Logout successful" });
+//     } else {
+//       console.error(error);
+//       return res.status(500).json({ error: "Internal server error" });
+//     }
+//   }
+// });
+
 router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
 

@@ -13,6 +13,9 @@ const {
   IssuedProduct,
   Warehouses,
   Activity_Log,
+  Assembly,
+  SparePart,
+  SubPart,
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer");
@@ -625,18 +628,36 @@ router.route('/statusupdate').put(async (req, res) => {
 
 router.route('/lastCode').get(async (req, res) => {
   try {
-    const latestPR = await Product.findOne({
-      attributes: [[sequelize.fn('max', sequelize.col('product_code')), 'latestNumber']],
-    });
-    let latestNumber = latestPR.getDataValue('latestNumber');
+    // const latestPR = await Product.findOne({
+    //   attributes: [[sequelize.fn('max', sequelize.col('product_code')), 'latestNumber']],
+    // });
+    // let latestNumber = latestPR.getDataValue('latestNumber');
 
-    console.log('Latest Number:', latestNumber);
+    // console.log('Latest Number:', latestNumber);
 
-    // Increment the latestNumber by 1 for a new entry
-    latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+    // // Increment the latestNumber by 1 for a new entry
+    // latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
 
-    // Do not create a new entry, just return the incremented value
-    return res.json(latestNumber.padStart(6, '0'));
+    // // Do not create a new entry, just return the incremented value
+    // return res.json(latestNumber.padStart(6, '0'));
+
+    const maxValues = await Promise.all([
+      Product.max('product_code'),
+      Assembly.max('assembly_code'),
+      SparePart.max('spareParts_code'),
+      SubPart.max('subPart_code')
+    ]);
+
+    const maxNumber = Math.max(...maxValues);
+
+    // Increment the maxNumber by 1 for a new entry
+    const nextNumber = (maxNumber !== null ? parseInt(maxNumber, 10) : 0) + 1;
+
+    // Format the nextNumber to have leading zeros
+    const formattedNumber = nextNumber.toString().padStart(6, '0');
+
+    // Return the formatted nextNumber
+    return res.json(formattedNumber);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");

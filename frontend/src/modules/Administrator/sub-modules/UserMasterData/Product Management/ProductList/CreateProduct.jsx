@@ -105,11 +105,15 @@ function CreateProduct({authrztn}) {
     axios
       .get(BASE_URL + "/product/lastCode")
       .then((res) => {
-        const codes =
-          res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
+        // const codes =
+        //   res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
 
-        // Increment the value by 1
-        setCode(codes);
+        // // Increment the value by 1
+        // setCode(codes);
+
+        const codes =
+          res.data !== null ? res.data.toString().padStart(6, "0") : "000000";
+          setCode(codes);
       })
       .catch((err) => console.log(err));
   }, []);
