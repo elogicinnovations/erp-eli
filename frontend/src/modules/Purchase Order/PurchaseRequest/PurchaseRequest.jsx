@@ -103,7 +103,8 @@ function PurchaseRequest({ authrztn }) {
     }
   };
 
-  console.log(RejustifyFile)
+
+
   const handleRowToggle = async (id) => {
     try {
       const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
@@ -718,7 +719,7 @@ function PurchaseRequest({ authrztn }) {
 
                               <div className="file-sec">
                                   <div className="file-content">
-                                      {/* {RejustifyFile} */}
+                                      
                                   </div>
                               </div>
                           </div>
