@@ -362,9 +362,16 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
       const Manufacturer =
         item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
       const Price = item.price;
+      const freight_cost = item.freight_cost;
+      const custom_cost = item.custom_cost;
+
+
+      const totalPrice = Price + freight_cost + custom_cost
+
+
       // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && Price) {
-        const key = `${warehouseId}_${productCode}_${productName}_${Price}`;
+      if (warehouseId && productCode && productName && totalPrice) {
+        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
 
         if (!groupedProductData[key]) {
           groupedProductData[key] = {
@@ -376,6 +383,9 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
+            freight_cost: freight_cost,
+            custom_cost: custom_cost,
+            totalPrice: totalPrice,
             products: [],
           };
         }
@@ -441,9 +451,14 @@ router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
       const Manufacturer =
         item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
       const Price = item.price;
+      const freight_cost = item.freight_cost;
+      const custom_cost = item.custom_cost;
+
+
+      const totalPrice = Price + freight_cost + custom_cost
       // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && Price) {
-        const key = `${warehouseId}_${productCode}_${productName}_${Price}`;
+      if (warehouseId && productCode && productName && totalPrice) {
+        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
 
         if (!groupedAsmData[key]) {
           groupedAsmData[key] = {
@@ -455,6 +470,9 @@ router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
+            freight_cost: freight_cost,
+            custom_cost: custom_cost,
+            totalPrice: totalPrice,
             products: [],
           };
         }
@@ -521,9 +539,15 @@ router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
       const Manufacturer =
         item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
       const Price = item.price;
+
+      const freight_cost = item.freight_cost;
+      const custom_cost = item.custom_cost;
+
+
+      const totalPrice = Price + freight_cost + custom_cost
       // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && Price) {
-        const key = `${warehouseId}_${productCode}_${productName}_${Price}`;
+      if (warehouseId && productCode && productName && totalPrice) {
+        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
 
         if (!groupedSpareData[key]) {
           groupedSpareData[key] = {
@@ -535,6 +559,9 @@ router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
+            freight_cost: freight_cost,
+            custom_cost: custom_cost,
+            totalPrice: totalPrice,
             products: [],
           };
         }
@@ -598,9 +625,14 @@ router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
       const Manufacturer =
         item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
       const Price = item.price;
+      const freight_cost = item.freight_cost;
+      const custom_cost = item.custom_cost;
+
+
+      const totalPrice = Price + freight_cost + custom_cost
       // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && Price) {
-        const key = `${warehouseId}_${productCode}_${productName}_${Price}`;
+      if (warehouseId && productCode && productName && totalPrice) {
+        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
 
         if (!groupedSubpartData[key]) {
           groupedSubpartData[key] = {
@@ -612,6 +644,9 @@ router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
+            freight_cost: freight_cost,
+            custom_cost: custom_cost,
+            totalPrice: totalPrice,
             products: [],
           };
         }
