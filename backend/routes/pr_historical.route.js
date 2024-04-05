@@ -3,6 +3,7 @@ const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 const {PR, 
        PR_history,
+       PR_Rejustify,
        Inventory,
        Inventory_Assembly,
        Inventory_Spare,
@@ -649,6 +650,21 @@ router.route('/fetchPRhistory').get(async (req, res) => {
     } catch (err) {
       console.error(err);
       res.status(500).json("Error");
+    }
+  });
+
+  router.route('/fetchRejustifyRemarks').get(async (req, res) => {
+    try {
+      const { pr_id } = req.query;
+      const data = await PR_Rejustify.findOne({
+        where: {
+          pr_id: pr_id 
+        },
+      });
+  
+     res.json(data)
+    } catch (err) {
+      console.error(err);
     }
   });
 

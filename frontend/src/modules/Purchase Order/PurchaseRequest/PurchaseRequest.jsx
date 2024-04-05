@@ -25,6 +25,10 @@ import {
   CalendarBlank,
   XCircle,
 } from "@phosphor-icons/react";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+
+
 import NoData from '../../../../src/assets/image/NoData.png';
 
 import "../../../assets/skydash/vendors/feather/feather.css";
@@ -57,6 +61,12 @@ function PurchaseRequest({ authrztn }) {
   const [specificPR, setSpecificPR] = useState([]);
   const [userId, setuserId] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showRejustify, setshowRejustify] = useState(false);
+  const [Rejustifyremarks, setRejustifyremarks] = useState("")
+  const [RejustifyFile, setRejustifyFile] = useState("")
+  const handleCloseRejustify = () => setshowRejustify(false);
+
+  
   const pageSize = 10;
 
   const decodeToken = () => {
@@ -71,12 +81,29 @@ function PurchaseRequest({ authrztn }) {
     decodeToken();
   }, [])
 
+
+
   const totalPages = Math.ceil(filteredPR.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
   const currentItems = filteredPR.slice(startIndex, endIndex);
 
+  const handleRejustify = async (pr_id) => {
+    try {
+      setshowRejustify(true);
+      const res = await axios
+      .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
+        params: { pr_id: pr_id },
+      });
+      setRejustifyremarks(res.data.remarks)
+      setRejustifyFile(res.data.file);
 
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  console.log(RejustifyFile)
   const handleRowToggle = async (id) => {
     try {
       const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
@@ -575,7 +602,17 @@ function PurchaseRequest({ authrztn }) {
                                       <tbody>
                                         {specificPR.map((history, i) => (
                                         <tr key={i}>
-                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{history.status}</td>
+                                          {history.status === 'For-Rejustify' ? (
+                                          <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
+                                            handleRejustify(history.pr_id);
+                                          }}>
+                                            {history.status}                                            
+                                          </td>
+                                          ) : (
+                                            <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>
+                                               {history.status}                                            
+                                            </td>
+                                            )}
                                           <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{formatDatetime(history.createdAt)}</td>
                                         </tr>
                                         ))}
@@ -646,6 +683,51 @@ function PurchaseRequest({ authrztn }) {
             </div>
           )
         )}
+
+          <Modal
+            show={showRejustify}
+            onHide={handleCloseRejustify}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+          >
+              <Modal.Header closeButton>
+                <Modal.Title style={{fontSize: '24px', fontFamily: 'Poppins, Source Sans Pro'}}>For-Rejustify</Modal.Title>
+                  
+              </Modal.Header>
+              <Modal.Body>
+                  <div className="rejustify-modal-container">
+                      <div className="rejustify-modal-content">
+                          <div className="remarks-file-section">
+                              <div className="remarks-sec">
+                              <Form.Control
+                                  as="textarea"
+                                  rows={3}
+                                  style={{
+                                  fontFamily: 'Poppins, Source Sans Pro',
+                                  fontSize: "16px",
+                                  height: "200px",
+                                  maxHeight: "200px",
+                                  resize: "none",
+                                  overflowY: "auto",
+                                  }}
+                                  disabled
+                                  value={Rejustifyremarks}
+                                />
+                              </div>
+
+                              <div className="file-sec">
+                                  <div className="file-content">
+                                      {/* {RejustifyFile} */}
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </Modal.Body>
+            <Modal.Footer>
+            </Modal.Footer>
+          </Modal>
       </div>
     </div>
   );

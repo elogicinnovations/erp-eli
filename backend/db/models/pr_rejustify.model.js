@@ -1,7 +1,7 @@
 const sequelize = require('../config/sequelize.config');
 const { DataTypes } = require('sequelize');
 
-const PR_history = sequelize.define('purchase_req_rejustify', {
+const PR_Rejustify = sequelize.define('purchase_req_rejustify', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -15,6 +15,13 @@ const PR_history = sequelize.define('purchase_req_rejustify', {
   file: {
     type: DataTypes.BLOB('long'),
     allowNull: true,
+    get() {
+      const value = this.getDataValue('file')
+      return value ? value.toString('base64') : null
+    },
+    set(value){
+      this.setDataValue('file', Buffer.from(value, 'base64'));
+    }
   },
   remarks: {
     type: DataTypes.STRING,
@@ -22,4 +29,4 @@ const PR_history = sequelize.define('purchase_req_rejustify', {
   }
 });
 
-module.exports = PR_history;
+module.exports = PR_Rejustify;

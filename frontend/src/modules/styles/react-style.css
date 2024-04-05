@@ -4969,7 +4969,51 @@ span:nth-child(5){
   font-weight: 500;
 }
 
+.rejustify-modal-container{
+  width: 100%;
+  height: auto;
+  padding: 10px;
+}
 
+.rejustify-modal-content{
+  width: 100%;
+  height: 300px;
+  /* border: 1px solid #DEE2E6; */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remarks-file-section{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.remarks-sec{
+  width: 50%;
+  margin-right: 5px;
+}
+
+.file-sec{
+  border: 1px solid #dddcdc;
+  width: 50%;
+  height: 200px;
+  max-height: 200px;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.file-content{
+  border: 1px solid #007BFF;
+  border-style: dashed;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  text-align: center;
+}
 @keyframes ellipsis {
   to {
     width: 40px;

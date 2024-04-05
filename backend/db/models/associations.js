@@ -574,6 +574,9 @@ Receiving_PO.belongsTo(PR, { foreignKey: "pr_id" });
 PR.hasMany(Receiving_Image, { foreignKey: "pr_id" });
 Receiving_Image.belongsTo(PR, { foreignKey: "pr_id" });
 
+PR.hasMany(PR_Rejustify, { foreignKey: "pr_id" });
+PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id" });
+
 module.exports = {
   MasterList,
   UserRole,
