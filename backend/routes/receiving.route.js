@@ -1910,13 +1910,13 @@ router.route("/approval").post(async (req, res) => {
       let set_quantity;
   
       if(product.freight_cost === '0' && product.customFee === '0'){
-        final_status = 'Deliverd (Lack of Cost)'
+        final_status = 'Delivered (Lack of Cost)'
       }
       else if (product.freight_cost === '0' ){
-        final_status = 'Deliverd (Lack of FreightCost)'
+        final_status = 'Delivered (Lack of FreightCost)'
       }
       else if (product.customFee === '0'){
-        final_status = 'Deliverd (Lack of CustomCost)'
+        final_status = 'Delivered (Lack of CustomCost)'
       }
       else{
         final_status = 'Delivered'

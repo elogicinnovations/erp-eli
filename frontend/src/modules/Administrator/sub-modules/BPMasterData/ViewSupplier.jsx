@@ -11,11 +11,14 @@ import warehouse from "../../../../assets/global/warehouse";
 import ReactLoading from 'react-loading';
 import NoData from '../../../../assets/image/NoData.png';
 import NoAccess from '../../../../assets/image/NoAccess.png';
+import "../../../styles/react-style.css";
 import {
-Printer,
 ArrowCircleLeft,
+CalendarBlank,
+XCircle,
 } from "@phosphor-icons/react";
-
+import DatePicker from "react-datepicker";
+import moment from "moment";
 
 import '../../../../assets/skydash/vendors/feather/feather.css';
 import '../../../../assets/skydash/vendors/css/vendor.bundle.base.css';
@@ -50,14 +53,17 @@ function ViewSupplier({authrztn}) {
     const [suppReceving, setsuppReceving] = useState('');
     const [suppCurrency, setsuppCurrency] = useState('')
     const [isLoading, setIsLoading] = useState(true);
-    // const [suppStatus, setsuppStatus] = useState('Active');
-    // const [checkedStatus, setcheckedStatus] = useState();
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('PH');
 
-    const [product, setproduct] = useState([]); // fetching product
-
+    const [product, setproduct] = useState([])
+    const [dataProduct, setDataProduct] = useState([]);
+    const [dataAssembly, setDataAssembly] = useState([]);
+    const [dataSpare, setDataSpare] = useState([]);
+    const [dataSub, setDataSub] = useState([]);
 
     useEffect(() => {
         // Fetch the list of countries from the API
@@ -127,11 +133,66 @@ function ViewSupplier({authrztn}) {
           .then(res => setproduct(res.data))
           .catch(err => console.log(err));
       }, []);
+
+    function formatDate(datetime) {
+        const options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        };
+        return new Date(datetime).toLocaleString("en-US", options);
+      }
+
+      const handleXCircleClick = () => {
+        setStartDate(null);
+      };
+    
+      const handleXClick = () => {
+        setEndDate(null);
+      };
+
+      const clearFilters = () => {
+        setStartDate(null);
+        setEndDate(null);
+        reloadTable();
+      };
       
+      const reloadTable = (startDate, endDate) => {
+        axios
+            .get(BASE_URL + "/supplier/fetchPRprocess", {
+                params: {
+                    id: id,
+                    startDate: startDate ? startDate.toISOString() : null,
+                    endDate: endDate ? endDate.toISOString() : null,
+                },
+            })
+            .then((res) => {
+                setDataProduct(res.data.dataProduct);
+                setDataAssembly(res.data.dataAssembly);
+                setDataSpare(res.data.dataSpare);
+                setDataSub(res.data.dataSub);
+            })
+            .catch((err) => console.log(err));
+    };
 
+    useEffect(() => {
+        reloadTable(startDate, endDate); // Load table with default dates on initial render
+    }, []);
 
-
-
+    const handleGoButtonClick = () => {
+        if (!startDate || !endDate) {
+            swal({
+                icon: "error",
+                title: "Oops...",
+                text: "Please fill in both filter sections!",
+            });
+            return;
+        }
+        reloadTable(startDate, endDate); // Reload table with selected dates
+    };
+      
 // styless
  useEffect(() => {
       // Initialize DataTable when role data is available
@@ -139,23 +200,6 @@ function ViewSupplier({authrztn}) {
         $('#order-listing').DataTable();
       }
     }, [product]);
-
-
-// try {
-//     $(document).ready(function() {
-//         $('#order-listing').DataTable();
-//     });
-// } catch (error) {
-//     console.error("DataTables Error:", error);
-// }
-
-
-// React.useEffect(() => {
-//     $(document).ready(function () {
-//       $('#order-listing').DataTable();
-//       $('#ordered-listing').DataTable();
-//     });
-//   }, []);
 
 
     const tabStyle = {
@@ -166,9 +210,6 @@ function ViewSupplier({authrztn}) {
     };
     return (
         <div className="main-of-containers">
-            {/* <div className="left-of-main-containers">
-            <Sidebar />
-            </div> */}
                 <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -176,27 +217,17 @@ function ViewSupplier({authrztn}) {
                   Loading Data...
                 </div>
               ) : (
-        authrztn.includes('Supplier - View') ? (
+                authrztn.includes('Supplier - View') ? (
                     <div className="right-body-contentss">
                         <div className="headers-text">
                             <div className="arrowandtitle">
                                 <Link to='/supplier'><ArrowCircleLeft size={50} color="#60646c" weight="fill" /></Link>
                                 <div className="titletext">
                                     <h1>Supplier Summary</h1>
-                                        {/* <div className="home-supplier-tag">
-                                            <p>Home</p>
-                                            <p>•</p>
-                                            <p>Supplier</p>
-                                            <p>•</p>
-                                            <p>Kingkong Inco</p>
-                                        </div> */}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="searches-sidebars">
- 
-                        </div>
 
                         <div className="tabbutton-sides">
                             <Tabs
@@ -352,14 +383,6 @@ function ViewSupplier({authrztn}) {
                                 <Tab eventKey="product list" title={<span style={{...tabStyle, fontSize: '20px' }}>Product List</span>}>
                                         <div className="productandprint">
                                             <h1>Products</h1>
-                                            <div className="printbtns">
-                                                <button>
-                                                <span style={{marginRight: '4px'}}>
-                                                    <Printer size={20} />
-                                                </span>
-                                                    Print
-                                                </button>
-                                            </div>
                                         </div>
                                         <div className="main-of-all-tables">
                                             <table id='order-listing'>
@@ -390,32 +413,144 @@ function ViewSupplier({authrztn}) {
                                 <Tab eventKey="ordered list" title={<span style={{...tabStyle, fontSize: '20px' }}>Ordered List</span>}>
                                     <div className="orderhistory-side">
                                         <h1>Order History</h1>
-                                        {/* <div className="printersbtn">
-                                            <button>
-                                                <span style={{marginRight: '4px'}}>
-                                                    <Printer size={20} />
-                                                </span>
-                                                Print
-                                            </button>
-                                        </div> */}
                                     </div>
-                                    <div className="main-of-all-tables">
-                                        <table id="ordered-listing">
-                                            <thead>
-                                                <tr>
-                                                    <th>Product Code</th>
-                                                    <th>Product Name</th>
-                                                    <th>Date Received</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>first</td>
-                                                    <td>second</td>
-                                                    <td>third</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div className="filterOrder-container">
+                                        <div className="filter-order-content">
+                                            <div className="firstDate-filter">
+                                                <div style={{ position: "relative", marginBottom: "15px" }}>
+                                                <DatePicker
+                                                    selected={startDate}
+                                                    onChange={(date) => setStartDate(date)}
+                                                    placeholderText="Choose Date From"
+                                                    dateFormat="yyyy-MM-dd"
+                                                    wrapperClassName="custom-datepicker-wrapper"
+                                                    popperClassName="custom-popper"
+                                                    style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                                                />
+                                                <CalendarBlank
+                                                    size={20}
+                                                    weight="thin"
+                                                    style={{
+                                                    position: "absolute",
+                                                    left: "8px",
+                                                    top: "50%",
+                                                    transform: "translateY(-50%)",
+                                                    cursor: "pointer",
+                                                    }}
+                                                />
+                                                {startDate && (
+                                                    <XCircle
+                                                    size={16}
+                                                    weight="thin"
+                                                    style={{
+                                                        position: "absolute",
+                                                        right: "19px",
+                                                        top: "50%",
+                                                        transform: "translateY(-50%)",
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={handleXCircleClick}
+                                                    />
+                                                )}
+                                                </div>
+                                            </div>
+                                           
+
+
+                                            <div className="secondDate-filter">
+                                                <div style={{ position: "relative", marginBottom: "15px" }}>
+                                                    <DatePicker
+                                                        selected={endDate}
+                                                        onChange={(date) => setEndDate(date)}
+                                                        placeholderText="Choose Date To"
+                                                        dateFormat="yyyy-MM-dd"
+                                                        wrapperClassName="custom-datepicker-wrapper"
+                                                        popperClassName="custom-popper"
+                                                        style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                                                    />
+                                                    <CalendarBlank
+                                                        size={20}
+                                                        weight="thin"
+                                                        selected={endDate}
+                                                        onChange={(date) => setEndDate(date)}
+                                                        style={{
+                                                        position: "absolute",
+                                                        left: "8px",
+                                                        top: "50%",
+                                                        transform: "translateY(-50%)",
+                                                        cursor: "pointer",
+                                                        }}
+                                                    />
+                                                    {endDate && (
+                                                        <XCircle
+                                                        size={16}
+                                                        weight="thin"
+                                                        style={{
+                                                            position: "absolute",
+                                                            right: "19px",
+                                                            top: "50%",
+                                                            transform: "translateY(-50%)",
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={handleXClick}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                            
+                                         <div className="button-section-content">
+                                                
+                                                <button onClick={handleGoButtonClick}>
+                                                    FILTER
+                                                </button>
+                                                <button onClick={clearFilters}>
+                                                    Clear Filter
+                                                </button>
+                                         </div>
+
+                                        </div>
+                                    </div>
+                                   
+                                <div className="main-of-all-tables">
+                                    <table id="ordered-listing">
+                                        <thead>
+                                        <tr>
+                                            <th>Product Code</th>
+                                            <th>Product Name</th>
+                                            <th>Date Received</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {dataProduct.map((item, i) => (
+                                            <tr key={i}>
+                                            <td>{item.purchase_req_canvassed_prd.product_tag_supplier.product.product_code}</td>
+                                            <td>{item.purchase_req_canvassed_prd.product_tag_supplier.product.product_name}</td>
+                                            <td>{formatDate(item.createdAt)}</td>
+                                            </tr>
+                                        ))}
+                                        {dataAssembly.map((item, i) => (
+                                            <tr key={i}>
+                                            <td>{item.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_code}</td>
+                                            <td>{item.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name}</td>
+                                            <td>{formatDate(item.createdAt)}</td>
+                                            </tr>
+                                        ))}
+                                        {dataSpare.map((item, i) => (
+                                            <tr key={i}>
+                                            <td>{item.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_code}</td>
+                                            <td>{item.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_name}</td>
+                                            <td>{formatDate(item.createdAt)}</td>
+                                            </tr>
+                                        ))}
+                                        {dataSub.map((item, i) => (
+                                            <tr key={i}>
+                                            <td>{item.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_code}</td>
+                                            <td>{item.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name}</td>
+                                            <td>{formatDate(item.createdAt)}</td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
                                     </div>
                                 </Tab>
                             </Tabs>

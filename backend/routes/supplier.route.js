@@ -2,9 +2,27 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const Supplier = require('../db/models/supplier.model')
-const { ProductTAGSupplier, Supplier, Activity_Log } = require("../db/models/associations"); 
+const { ProductTAGSupplier, 
+        Assembly_Supplier,
+        SparePart_Supplier,
+        Subpart_supplier,
+        Supplier, 
+        Activity_Log,
+        Receiving_PO,
+        Receiving_Prd,
+        Receiving_Asm,
+        Receiving_Spare,
+        Receiving_Subpart,
+        PR_PO,
+        PR_PO_asmbly,
+        PR_PO_spare,
+        PR_PO_subpart,
+        Product,
+        Assembly,
+        SparePart,
+        SubPart,} = require("../db/models/associations"); 
 const session = require('express-session')
-
+const moment = require('moment-timezone');
 router.use(session({
     secret: 'secret-key',
     resave: false,
@@ -345,6 +363,315 @@ router.route('/delete/:table_id').delete(async (req, res) => {
 // });
 
 
+// router.route('/fetchPRprocess').get(async (req, res) => {
+//   try {
+//     const manilaTime = moment.tz(new Date(), 'Asia/Manila');
+//     const startOfMonth = manilaTime.clone().startOf('month').toDate();
+//     const endOfMonth = manilaTime.clone().endOf('month').toDate();
+    
+//     const dataProduct = await Receiving_Prd.findAll({
+//       include: [{
+//           model: Receiving_PO,
+//           required: true,
+//           where: {
+//             status: {
+//               [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+//             },
+//           }
+//         },
+//         {
+//           model: PR_PO,
+//           required: true,
+//           include: [{
+//             model: ProductTAGSupplier,
+//             required: true,
+//             where: {
+//               supplier_code: req.query.id,
+//             },
+//             include: [{
+//               model: Product,
+//               required: true
+//             }]
+//           }]
+//         }
+//       ],
+//       where: {
+//         createdAt: {
+//           [Op.between]: [startOfMonth, endOfMonth],
+//         }
+//       }
+//     });
+
+//     const dataAssembly = await Receiving_Asm.findAll({
+//       include: [{
+//           model: Receiving_PO,
+//           required: true,
+//           where: {
+//             status: {
+//               [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+//             }
+//           }
+//         },
+//         {
+//           model: PR_PO_asmbly,
+//           required: true,
+//           include: [{
+//             model: Assembly_Supplier,
+//             required: true,
+//             where: {
+//               supplier_code: req.query.id,
+//             },
+//             include: [{
+//               model: Assembly,
+//               required: true
+//             }]
+//           }]
+//         }
+//       ],
+//       where: {
+//         createdAt: {
+//           [Op.between]: [startOfMonth, endOfMonth],
+//         }
+//       }
+//     });
+
+//     const dataSpare = await Receiving_Spare.findAll({
+//       include: [{
+//           model: Receiving_PO,
+//           required: true,
+//           where: {
+//             status: {
+//               [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+//             }
+//           }
+//         },
+//         {
+//           model: PR_PO_spare,
+//           required: true,
+//           include: [{
+//             model: SparePart_Supplier,
+//             required: true,
+//             where: {
+//               supplier_code: req.query.id,
+//             },
+//             include: [{
+//               model: SparePart,
+//               required: true
+//             }]
+//           }]
+//         }
+//       ],
+//       where: {
+//         createdAt: {
+//           [Op.between]: [startOfMonth, endOfMonth],
+//         }
+//       }
+//     });
+
+//     const dataSub = await Receiving_Subpart.findAll({
+//       include: [{
+//           model: Receiving_PO,
+//           required: true,
+//           where: {
+//             status: {
+//               [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+//             }
+//           }
+//         },
+//         {
+//           model: PR_PO_subpart,
+//           required: true,
+//           include: [{
+//             model: Subpart_supplier,
+//             required: true,
+//             where: {
+//               supplier_code: req.query.id,
+//             },
+//             include: [{
+//               model: SubPart,
+//               required: true
+//             }]
+//           }]
+//         }
+//       ],
+//       where: {
+//         createdAt: {
+//           [Op.between]: [startOfMonth, endOfMonth],
+//         }
+//       }
+//     });
+
+//   res.json({
+//     dataProduct: dataProduct,
+//     dataAssembly: dataAssembly,
+//     dataSpare: dataSpare,
+//     dataSub: dataSub
+//   });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
+
+router.route('/fetchPRprocess').get(async (req, res) => {
+  try {
+    const manilaTime = moment.tz(new Date(), 'Asia/Manila');
+    const startOfMonth = manilaTime.clone().startOf('month').toDate();
+    const endOfMonth = manilaTime.clone().endOf('month').toDate();
+    
+    let startDate = startOfMonth;
+    let endDate = endOfMonth;
+
+    if (req.query.startDate && req.query.endDate) {
+      startDate = moment(req.query.startDate).startOf('day').toDate();
+      endDate = moment(req.query.endDate).endOf('day').toDate();
+    }
+
+    const dataProduct = await Receiving_Prd.findAll({
+      include: [{
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+            },
+          }
+        },
+        {
+          model: PR_PO,
+          required: true,
+          include: [{
+            model: ProductTAGSupplier,
+            required: true,
+            where: {
+              supplier_code: req.query.id,
+            },
+            include: [{
+              model: Product,
+              required: true
+            }]
+          }]
+        }
+      ],
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        }
+      }
+    });
+
+    const dataAssembly = await Receiving_Asm.findAll({
+      include: [{
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+            }
+          }
+        },
+        {
+          model: PR_PO_asmbly,
+          required: true,
+          include: [{
+            model: Assembly_Supplier,
+            required: true,
+            where: {
+              supplier_code: req.query.id,
+            },
+            include: [{
+              model: Assembly,
+              required: true
+            }]
+          }]
+        }
+      ],
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        }
+      }
+    });
+
+    const dataSpare = await Receiving_Spare.findAll({
+      include: [{
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+            }
+          }
+        },
+        {
+          model: PR_PO_spare,
+          required: true,
+          include: [{
+            model: SparePart_Supplier,
+            required: true,
+            where: {
+              supplier_code: req.query.id,
+            },
+            include: [{
+              model: SparePart,
+              required: true
+            }]
+          }]
+        }
+      ],
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        }
+      }
+    });
+
+    const dataSub = await Receiving_Subpart.findAll({
+      include: [{
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: ['In-transit', 'In-transit (Complete)', 'For Approval']
+            }
+          }
+        },
+        {
+          model: PR_PO_subpart,
+          required: true,
+          include: [{
+            model: Subpart_supplier,
+            required: true,
+            where: {
+              supplier_code: req.query.id,
+            },
+            include: [{
+              model: SubPart,
+              required: true
+            }]
+          }]
+        }
+      ],
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        }
+      }
+    });
+
+    res.json({
+      dataProduct: dataProduct,
+      dataAssembly: dataAssembly,
+      dataSpare: dataSpare,
+      dataSub: dataSub
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
 
 
 module.exports = router;

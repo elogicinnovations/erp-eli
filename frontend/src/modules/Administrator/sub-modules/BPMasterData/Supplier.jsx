@@ -105,17 +105,15 @@ function Supplier({ authrztn }) {
   }, []);
 
 
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
-  }
-
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
   const handleDelete = async (table_id) => {

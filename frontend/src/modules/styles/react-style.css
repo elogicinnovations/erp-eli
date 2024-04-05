@@ -3854,6 +3854,64 @@ div#ordered-listing_length label {
   font-family: Poppins, "Source Sans Pro";
 }
 
+.filterOrder-container{
+  width: 100%;
+  height: auto;
+}
+
+.filter-order-content{
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+  padding: 15px;
+}
+
+.firstDate-filter{
+  width: 20%;
+  padding-right: 5px;
+}
+
+.secondDate-filter{
+  width: 20%;
+  padding-right: 5px;
+}
+
+.button-section-content{
+  display: flex;
+  width: 50%;
+}
+
+.button-section-content button:nth-child(1) {
+  border: none;
+  border-radius: 4px;
+  height: 40px;
+  width: 80px;
+  background-color: #CFD2D6;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+.button-section-content button:nth-child(1):hover{
+  background-color: gray;
+}
+
+.button-section-content button:nth-child(2) {
+  border: none;
+  border-radius: 4px;
+  height: 40px;
+  width: 120px;
+  background-color: #ff5050;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 14px;
+  color: white;
+  padding: 5px;
+}
+
+.button-section-content button:nth-child(2):hover{
+  background-color: red;
+}
+
 .receipt-main-container{
   width: 100%;
   height: 100%;
