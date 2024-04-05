@@ -180,6 +180,7 @@ router.route('/update').put(async (req, res) => {
     const updatemasterID = req.body.suppCode;
     const tin = req.body.suppTin;
     const terms = req.body.suppTerms;
+    const currency = req.body.suppCurr;
     const telNum = req.body.suppTelNum;
     const Vat = req.body.suppVat;
     const userId = req.body.userId;
@@ -236,6 +237,7 @@ router.route('/update').put(async (req, res) => {
           supplier_city: req.body.suppCity,
           supplier_postcode: req.body.suppPcode,
           supplier_contactPerson: req.body.suppCperson,
+          supplier_currency: currency,
           supplier_number: req.body.suppCnum,
           supplier_Telnumber: finalTelNum,
           supplier_terms: finalTerms,

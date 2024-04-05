@@ -98,20 +98,9 @@ function ProductCategory({authrztn}) {
   };
 
 
-
-// Fetch next category code when the component mounts
-useEffect(() => {
-    axios.get(BASE_URL + '/category/getNextCategoryCode')
-        .then(response => {
-            setNextCategoryCode(response.data.nextCategoryCode);
-        })
-        .catch(error => {
-            console.error('Error fetching next category code:', error);
-        });
-}, []);
-
-
 const reloadTable = () => {
+  
+
   const delay = setTimeout(() => {
   axios
   .get(BASE_URL + "/category/fetchTable")
@@ -123,6 +112,16 @@ const reloadTable = () => {
     console.log(err)
     setIsLoading(false);
   });
+
+
+  // Fetch next category code when the component mounts
+  axios.get(BASE_URL + '/category/getNextCategoryCode')
+        .then(response => {
+            setNextCategoryCode(response.data.nextCategoryCode);
+        })
+        .catch(error => {
+            console.error('Error fetching next category code:', error);
+        });
 }, 1000);
 
 return () => clearTimeout(delay);

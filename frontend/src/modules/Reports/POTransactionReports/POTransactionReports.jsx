@@ -62,6 +62,16 @@ function POTransactionReports() {
   }, []);
 
   const handleGenerate = () => {
+    if (!startDate || !endDate || !selectedDepartment || !selectedStatus) {
+      swal({
+        icon: "error",
+        title: "Oops...",
+        text: "Please fill in all filter sections!",
+      });
+      return;
+    }
+
+
     axios
       .get(BASE_URL + "/report_PO/requestPRFiltered", {
         params: {

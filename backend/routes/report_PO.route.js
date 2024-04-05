@@ -34,10 +34,21 @@ router.route("/requestPRFiltered").get(async (req, res) => {
   try {
     const { selectedDepartment, selectedStatus, startDate, endDate } = req.query;
 
+    const startDates = new Date(startDate);
+    startDates.setDate(startDates.getDate() + 1);
+    const startDateds = startDates.toISOString().slice(0, 10) + ' 00:00:00';
+
+    const endDates = new Date(endDate);
+    endDates.setDate(endDates.getDate() + 1);
+    const endDateds = endDates.toISOString().slice(0, 10) + ' 23:59:59';
+
+
     let whereClause = {
       createdAt: {
-        [Op.between]: [startDate, endDate] 
-      }
+        [Op.between]: [startDateds, endDateds] 
+      },
+      status: { [Op.ne]: "To-Receive" },
+
     };
     
     if (selectedStatus !== 'All') {

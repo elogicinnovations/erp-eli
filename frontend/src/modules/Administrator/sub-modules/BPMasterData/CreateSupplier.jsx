@@ -421,6 +421,7 @@ function CreateSupplier({ authrztn }) {
                     <Form.Control
                       className="p-3 fs-3"
                       type="text"
+                      required
                       pattern="[0-9.]*"
                       onInput={(e) =>
                         (e.target.value = e.target.value.replace(/[^\d.]/g, ""))

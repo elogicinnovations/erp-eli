@@ -811,19 +811,19 @@ function Sidebar({ authrztn }) {
               </ListItem>
             </NavLink>
             <NavLink
-              to="/historicalData"
+              to="/BIS"
               style={{ textDecoration: "none", color: "inherit" }}
               activeClassName="active"
             >
               <ListItem
                 button
                 className={`adminsub-menu ${
-                  location.pathname.startsWith("/historicalData")
+                  location.pathname.startsWith("/BIS")
                     ? "active"
                     : ""
                 }`}
               >
-                <ListItemText primary="Historical Data" />
+                <ListItemText primary="BIS" />
               </ListItem>
             </NavLink>
           </Collapse>
