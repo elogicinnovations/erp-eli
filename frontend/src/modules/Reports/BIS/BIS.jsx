@@ -39,40 +39,27 @@ import "../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../partials/header";
 
-function HistoricalData() {
+function BIS() {
   const tableRef = useRef();
-
-  // Artifitial data
-
-  const data = [
-    {
-      samA: "asd",
-      samB: "asd",
-      samC: "asd",
-      samD: "asd",
-      samE: "asd",
-    },
-    {
-      samA: "asd",
-      samB: "asd",
-      samC: "asd",
-      samD: "asd",
-      samE: "asd",
-    },
-    {
-      samA: "asd",
-      samB: "asd",
-      samC: "asd",
-      samD: "asd",
-      samE: "asd",
-    },
-  ];
-
-  // Artifitial data
 
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [bisContent, setBisContent] = useState([]);
+
+
+  const reloadTable = () => {
+    axios
+      .get(BASE_URL + "/report_BIS/content_fetch")
+      .then((res) => setBisContent(res.data))
+      .catch((err) => console.log(err));
+  };
+
+
+  useEffect(() => {
+    reloadTable();
+  }, []);
+
 
   useEffect(() => {
     if ($("#order-listing").length > 0) {
@@ -143,32 +130,10 @@ function HistoricalData() {
     <div className="main-of-containers">
       <div className="right-of-main-containers">
         <div className="right-body-contents">
-          {/* <div className="settings-search-master">
-
-                <div className="dropdown-and-iconics">
-                    <div className="dropdown-side">
-                    </div>
-                    <div className="iconic-side">
-                        <div className="gearsides">
-                            <Gear size={35}/>
-                        </div>
-                        <div className="bellsides">
-                            <Bell size={35}/>
-                        </div>
-                        <div className="usersides">
-                            <UserCircle size={35}/>
-                        </div>
-                        <div className="username">
-                          <h3>User Name</h3>
-                        </div>
-                    </div>
-                </div>
-
-                </div> */}
           <div className="Employeetext-button">
             <div className="employee-and-button">
               <div className="emp-text-side">
-                <p>Historical Data</p>
+                <p>BIS REPORT</p>
               </div>
               <div className="button-create-side">
                 <div className="filter">
@@ -253,22 +218,29 @@ function HistoricalData() {
                   <tr>
                     <th className="tableh">Product Code</th>
                     <th className="tableh">Product Name</th>
-                    <th className="tableh">UOM</th>
-                    <th className="tableh">Supplier</th>
-                    <th className="tableh">Recent Price</th>
-                    <th className="tableh">Current Price</th>
-                    <th className="tableh">Action</th>
+                    <th className="tableh">UOM</th> 
+                    <th className="tableh">Category</th> 
+                    <th className="tableh">Unit Price</th>
+                    <th className="tableh">Freight Cost</th>
+                    <th className="tableh">Duties & Custom Cost</th>
+                    <th className="tableh">Total Price</th>
+                    <th className="tableh">Issued Quantity</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((data, i) => (
+                  {bisContent.map((data, i) => (
                     <tr key={i}>
-                      <td>{data.samA}</td>
-                      <td>{data.samB}</td>
-                      <td>{data.samE}</td>
-                      <td>{data.samE}</td>
-                      <td>{data.samE}</td>
-                      <td>{data.samE}</td>
+                      <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
+                      <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
+                      <td>{data.inventory_prd.product_tag_supplier.product.product_unitMeasurement}</td>
+                      <td>{data.inventory_prd.product_tag_supplier.product.category.category_name}</td>
+                      <td>{data.inventory_prd.product_price}</td>
+                      <td>{data.inventory_prd.freight_cost}</td>
+                      <td>{data.inventory_prd.custom_cost}</td>
+                      <td>{data.inventory_prd.product_price + data.inventory_prd.freight_cost + data.inventory_prd.custom_cost}</td>
+                      <td>{data.quantity}</td>
+                     
                       <td>
                         <button className="viewmore">View More</button>
                       </td>
@@ -284,4 +256,4 @@ function HistoricalData() {
   );
 }
 
-export default HistoricalData;
+export default BIS;

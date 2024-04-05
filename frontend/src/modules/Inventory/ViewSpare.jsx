@@ -273,8 +273,10 @@ function ViewSpare({ authrztn }) {
                     <tr>
                       <th className="tableh">Satellite Warehouse</th>
                       <th className="tableh">Quantity</th>
-                      <th className="tableh">Price</th>
-                      <th className="tableh">Total Price</th>
+                      <th className="tableh">Unit Price</th>
+                      <th className="tableh">Freight Cost </th>
+                      <th className="tableh">Duties & Custom Cost </th>
+                      <th className="tableh">Total Price</th>  
                     </tr>
                   </thead>
                   {invetoryWarehouse.length > 0 ? (
@@ -284,7 +286,9 @@ function ViewSpare({ authrztn }) {
                           <td>{data.warehouse_name}</td>
                           <td>{data.totalQuantity}</td>
                           <td>{data.price}</td>
-                          <td>{data.price * data.totalQuantity}</td>
+                          <td>{data.freight_cost}</td>
+                          <td>{data.custom_cost}</td>
+                          <td>{data.totalPrice}</td>
                         </tr>
                       ))}
                     </tbody>
