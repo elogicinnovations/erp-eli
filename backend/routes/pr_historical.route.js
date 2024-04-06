@@ -659,7 +659,7 @@ router.route('/fetchPRhistory').get(async (req, res) => {
       const data = await PR_Rejustify.findOne({
         where: {
           pr_id: pr_id 
-        },
+        },  
       });
   
      res.json(data)
@@ -668,5 +668,82 @@ router.route('/fetchPRhistory').get(async (req, res) => {
     }
   });
 
+  
+  // router.get('/fetchRejustifyFile/:pr_id', async (req, res) => {
+  //   try {
+  //     const { pr_id } = req.params;
+  //     const data = await PR_Rejustify.findOne({
+  //       where: { pr_id: pr_id }
+  //     });
+  
+  //     if (!data) {
+  //       return res.status(404).json({ message: 'File not found' });
+  //     }
+  
+  //     // Determine content type based on file extension
+  //     let contentType;
+  //     if (data.fileType === 'pdf') {
+  //       contentType = 'application/pdf';
+  //     } else if (data.fileType === 'png') {
+  //       contentType = 'image/png';
+  //     } else if (data.fileType === 'jpg' || data.fileType === 'jpeg') {
+  //       contentType = 'image/jpeg';
+  //     } else {
+  //       contentType = 'application/octet-stream'; // Default to binary data
+  //     }
+  
+  //     const fileBuffer = data.file; 
+
+  //     res.setHeader('Content-Disposition', 'attachment; filename="Rejustify-File-Attached"');
+  //     res.setHeader('Content-Type', 'application/pdf'); 
+      
+  //     res.send(fileBuffer);
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json({ error: 'Internal Server Error' });
+  //   }
+  // });
+
+  router.get('/fetchRejustifyFile/:pr_id', async (req, res) => {
+    try {
+      const { pr_id } = req.params;
+      const data = await PR_Rejustify.findOne({
+        where: { pr_id: pr_id }
+      });
+  
+      if (!data) {
+        return res.status(404).json({ message: 'File not found' });
+      }
+  
+      // Determine content type based on file extension
+      let contentType;
+      if (data.fileType === 'pdf') {
+        contentType = 'application/pdf';
+      } else if (data.fileType === 'png') {
+        contentType = 'image/png';
+      } else if (data.fileType === 'jpg' || data.fileType === 'jpeg') {
+        contentType = 'image/jpeg';
+      } else if (data.fileType === 'xlsx') {
+        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      } else if (data.fileType === 'csv') {
+        contentType = 'text/csv';
+      } else {
+        contentType = 'application/octet-stream'; // Default to binary data
+      }
+
+      const fileBuffer = data.file; 
+  
+      // Set the appropriate content type
+      res.setHeader('Content-Disposition', 'attachment; filename="Rejustify-File-Attached"');
+      res.setHeader('Content-Type', contentType); 
+  
+      // Send the file data
+      res.send(data.file);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
 
 module.exports = router;

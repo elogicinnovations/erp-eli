@@ -51,7 +51,8 @@ function PurchaseRequestPreview() {
   const [isReadOnly, setReadOnly] = useState(false);
 
 
-  const [files, setFiles] = useState([]);
+  // const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [rejustifyRemarks, setRejustifyRemarks] = useState('');
 
   const [ProductQuant, setProductQuant] = useState([]);
@@ -72,8 +73,11 @@ function PurchaseRequestPreview() {
     decodeToken();
   }, [])
 
+  // const handleFileChange = (e) => {
+  //   setFiles(e.target.files);
+  // };
   const handleFileChange = (e) => {
-    setFiles(e.target.files);
+    setFile(e.target.files[0]);
   };
 
 
@@ -141,14 +145,16 @@ function PurchaseRequestPreview() {
   };
 
 
+  console.log(file)
   
   const handleUploadRejustify = async () => {
     try {
       const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
+      // for (let i = 0; i < files.length; i++) {
+      //   formData.append('files', files[i]);
        
-      }
+      // }
+      formData.append('file', file);
       formData.append('remarks', rejustifyRemarks);
       formData.append('id', id);
 
@@ -641,7 +647,7 @@ function PurchaseRequestPreview() {
                                 <div className="col-6">
                                   <Form.Group controlId="exampleForm.ControlInput1">
                                       <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
-                                      <input type="file" onChange={handleFileChange} />
+                                      <Form.Control type="file" onChange={handleFileChange} />
                                   </Form.Group>
 
                                   </div>

@@ -18,15 +18,15 @@ router.use(session({
 
 
 
-router.post('/rejustify', upload.array('files'), async (req, res) => {
+router.post('/rejustify', upload.single('file'), async (req, res) => {
     try {
       const { id, remarks } = req.body;
       const { userId } = req.query;
   
-      const fileData = req.files.map((file) => file.buffer);
+      const file = req.file;
   
       const result = await PR_Rejustify.create({
-        file: Buffer.concat(fileData),
+        file: file.buffer,
         pr_id: id,  
         remarks: remarks, 
       });

@@ -63,7 +63,7 @@ function PurchaseRequest({ authrztn }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [showRejustify, setshowRejustify] = useState(false);
   const [Rejustifyremarks, setRejustifyremarks] = useState("")
-  const [RejustifyFile, setRejustifyFile] = useState("")
+  const [rejustifyFileURL, setRejustifyFileURL] = useState('');
   const handleCloseRejustify = () => setshowRejustify(false);
 
   
@@ -88,21 +88,40 @@ function PurchaseRequest({ authrztn }) {
   const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
   const currentItems = filteredPR.slice(startIndex, endIndex);
 
+  // const handleRejustify = async (pr_id) => {
+  //   try {
+  //     setshowRejustify(true);
+  //     const res = await axios
+  //     .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
+  //       params: { pr_id: pr_id },
+  //     });
+  //     setRejustifyremarks(res.data.remarks)
+  //     setRejustifyFile(res.data.file);
+
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
   const handleRejustify = async (pr_id) => {
     try {
       setshowRejustify(true);
       const res = await axios
-      .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
-        params: { pr_id: pr_id },
-      });
-      setRejustifyremarks(res.data.remarks)
-      setRejustifyFile(res.data.file);
+      .get(BASE_URL + `/PR_history/fetchRejustifyRemarks?pr_id=${pr_id}`);
+      setRejustifyremarks(res.data.remarks);
 
+      // Fetch file URL
+      const fileRes = await axios.get(BASE_URL + `/PR_history/fetchRejustifyFile/${pr_id}`, {
+        responseType: 'blob' // Set response type to blob
+      });
+      
+      // Create a Blob URL for the file
+      const fileURL = URL.createObjectURL(fileRes.data);
+      setRejustifyFileURL(fileURL);
     } catch (err) {
       console.error(err);
     }
   };
-
 
 
   const handleRowToggle = async (id) => {
@@ -701,6 +720,9 @@ function PurchaseRequest({ authrztn }) {
                       <div className="rejustify-modal-content">
                           <div className="remarks-file-section">
                               <div className="remarks-sec">
+                              <p>
+                                Remarks
+                              </p>
                               <Form.Control
                                   as="textarea"
                                   rows={3}
@@ -717,11 +739,20 @@ function PurchaseRequest({ authrztn }) {
                                 />
                               </div>
 
+                             <div className="file-sec-container">
+                                  <p>
+                                    File Attached
+                                  </p>
                               <div className="file-sec">
+
                                   <div className="file-content">
-                                      
+                                      {rejustifyFileURL && (
+                                        <a href={rejustifyFileURL} download="rejustify_file">Download File</a>
+                                      )}
                                   </div>
                               </div>
+                              </div>     
+
                           </div>
                       </div>
                   </div>
