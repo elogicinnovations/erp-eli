@@ -145,18 +145,19 @@ function PurchaseRequestPreview() {
   };
 
 
-  console.log(file)
   
   const handleUploadRejustify = async () => {
     try {
       const formData = new FormData();
-      // for (let i = 0; i < files.length; i++) {
-      //   formData.append('files', files[i]);
-       
-      // }
       formData.append('file', file);
       formData.append('remarks', rejustifyRemarks);
       formData.append('id', id);
+
+      const mimeType = file.type;
+      const fileExtension = file.name.split('.').pop();
+
+      formData.append('mimeType', mimeType);
+      formData.append('fileExtension', fileExtension);
 
       const response = await axios.post(BASE_URL + `/PR_rejustify/rejustify`, formData, {
         headers: {

@@ -24,11 +24,16 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
       const { userId } = req.query;
   
       const file = req.file;
+
+      const mimeType = file.mimetype;
+      const fileExtension = file.originalname.split('.').pop();
   
       const result = await PR_Rejustify.create({
         file: file.buffer,
         pr_id: id,  
         remarks: remarks, 
+        mimeType: mimeType,
+        fileExtension: fileExtension,
       });
 
       
@@ -70,15 +75,20 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
   });
   
 
-  router.post('/rejustify_for_PO', upload.array('files'), async (req, res) => {
+  router.post('/rejustify_for_PO', upload.single('file'), async (req, res) => {
     try {
       const { id, remarks, userId } = req.body;
-      const fileData = req.files.map((file) => file.buffer);
+      const file = req.file;
+
+      const mimeType = file.mimetype;
+      const fileExtension = file.originalname.split('.').pop();
 
       const result = await PR_Rejustify.create({
-        file: Buffer.concat(fileData),
+        file: file.buffer,
         pr_id: id,
         remarks: remarks,
+        mimeType: mimeType,
+        fileExtension: fileExtension,
       });
 
       

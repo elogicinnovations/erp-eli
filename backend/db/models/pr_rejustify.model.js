@@ -26,7 +26,15 @@ const PR_Rejustify = sequelize.define('purchase_req_rejustify', {
   remarks: {
     type: DataTypes.STRING,
     allowNull: true,
-  }
+  },
+  mimeType: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  fileExtension: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = PR_Rejustify;

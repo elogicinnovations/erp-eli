@@ -39,7 +39,7 @@ function POApprovalRejustify({ authrztn }) {
   const [spare, setSpare] = useState([]);
   const [subpart, setSubpart] = useState([]);
   // for remarks
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [rejustifyRemarks, setRejustifyRemarks] = useState("");
 
   const [showModal, setShowModal] = useState(false);
@@ -296,15 +296,23 @@ function POApprovalRejustify({ authrztn }) {
     });
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleUploadRejustify = async () => {
     try {
       const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append("files", files[i]);
-      }
+      formData.append('file', file);
       formData.append("remarks", rejustifyRemarks);
       formData.append("id", id);
       formData.append("userId", userId);
+
+      const mimeType = file.type;
+      const fileExtension = file.name.split('.').pop();
+
+      formData.append('mimeType', mimeType);
+      formData.append('fileExtension', fileExtension);
 
       const response = await axios.post(
         BASE_URL + `/PR_rejustify/rejustify_for_PO`,
@@ -338,9 +346,8 @@ function POApprovalRejustify({ authrztn }) {
       console.error("Error uploading files:", error);
     }
   };
-  const handleFileChange = (e) => {
-    setFiles(e.target.files);
-  };
+
+
 
   const [POPreview, setPOPreview] = useState([]);
   const handlePreview = async (po_num) => {
@@ -1080,7 +1087,7 @@ function POApprovalRejustify({ authrztn }) {
                           Attach File:{" "}
                         </Form.Label>
                         {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
-                        <input type="file" onChange={handleFileChange} />
+                        <Form.Control type="file" onChange={handleFileChange} />
                       </Form.Group>
                     </div>
                   </div>

@@ -13,9 +13,20 @@ import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Collapse from '@mui/material/Collapse';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+import usePagination from '@mui/material/usePagination';
+import Modal from 'react-bootstrap/Modal';
 import {
   CalendarBlank,
   XCircle,
+  FilePdf,
+  FileCsv,
+  FileXls,
+  FileJpg,
+  FilePng,  
 } from "@phosphor-icons/react";
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -33,12 +44,19 @@ import Header from "../../../partials/header";
 
 function PurchaseOrderList({ authrztn }) {
   const navigate = useNavigate();
+  const [openRows, setOpenRows] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [filteredPR, setFilteredPR] = useState([]);
   const [allPR, setAllPR] = useState([]);
+  const [specificPR, setSpecificPR] = useState([]);
+  const [pr_req, setPr_req] = useState([]);
+  const [showRejustify, setshowRejustify] = useState(false);
+  const [Rejustifyremarks, setRejustifyremarks] = useState("")
+  const [RejustifyFile, setRejustifyFile] = useState([])
+  const handleCloseRejustify = () => setshowRejustify(false);
 
   const handleXCircleClick = () => {
     setStartDate(null);
@@ -52,7 +70,88 @@ function PurchaseOrderList({ authrztn }) {
     setSelectedStatus(e.target.value);
   };
 
-  const [pr_req, setPr_req] = useState([]);
+  const handleRowToggle = async (id) => {
+    try {
+      const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
+        params: { id: id },
+      });
+
+      setSpecificPR(res.data);
+
+      setOpenRows((prevOpenRow) => (prevOpenRow === id ? null : id)); // Toggle openRow
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRejustify = async (pr_id) => {
+    try {
+      setshowRejustify(true);
+      const res = await axios
+      .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
+        params: { pr_id: pr_id },
+      });
+      setRejustifyremarks(res.data.remarks)
+      setRejustifyFile(res.data)
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDownloadFile = async () => {
+    try {
+      if (!RejustifyFile) {
+        console.error('No file available for download');
+        return;
+      }
+
+      const { file, mimeType, fileExtension } = RejustifyFile;
+
+      // Convert the array data into a Uint8Array
+      const uint8Array = new Uint8Array(file.data);
+
+      // Create a Blob object from the Uint8Array with the determined MIME type
+      const blob = new Blob([uint8Array], { type: mimeType });
+
+      // Create a URL for the Blob object
+      const url = window.URL.createObjectURL(blob);
+
+      // Set a default file name with the correct file extension
+      const fileName = `RejustifyFile.${fileExtension}`;
+
+      // Create a link element to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+
+      // Trigger the download
+      a.click();
+
+      // Clean up resources
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = allPR.filter((data) => {
+      return (
+        data.pr_num.toLowerCase().includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.remarks.toLowerCase().includes(searchTerm) ||
+        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+        data.masterlist.department.department_name.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setFilteredPR(filteredData);
+    
+  };
 
   // const reloadTable = () => {
   //   axios
@@ -302,9 +401,23 @@ function PurchaseOrderList({ authrztn }) {
 
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+              <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
+                  onChange={handleSearch}/>
+              <table className="table-hover">
                 <thead>
                   <tr>
+                    <th className="tableh"></th>
                     <th className="tableh">PR No.</th>
                     <th className="tableh">Requestor</th>
                     <th className="tableh">Department</th>
@@ -316,7 +429,20 @@ function PurchaseOrderList({ authrztn }) {
                 {filteredPR.length > 0 ? (
                   <tbody>
                     {filteredPR.map((data, i) => (
-                      <tr key={i}>
+                       <React.Fragment key={i}>
+                      <tr >
+                        <td>
+                            <IconButton
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => handleRowToggle(data.id)}>
+                               {openRows === data.id ? (
+                                  <KeyboardArrowUpIcon style={{ fontSize: 25 }}/>
+                                ) : (
+                                  <KeyboardArrowDownIcon style={{ fontSize: 25 }}/>
+                                )}
+                              </IconButton>
+                          </td>
                         <td
                           onClick={() =>
                             data.status === "For-Approval (PO)"
@@ -409,6 +535,39 @@ function PurchaseOrderList({ authrztn }) {
                           {data.remarks}
                         </td>
                       </tr>
+                      <tr>
+                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="8">
+                              <Collapse in={openRows === data.id} timeout="auto" unmountOnExit>
+                                <div style={{width: '95%'}}>
+                                    <thead style={{borderBottom: '1px solid #CECECE'}}>
+                                      <tr>
+                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Status</th>
+                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Date</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                        {specificPR.map((history, i) => (
+                                        <tr key={i}>
+                                          {history.status === 'For-Rejustify (PO)' ? (
+                                          <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
+                                            handleRejustify(history.pr_id);
+                                          }}>
+                                            {history.status}                                            
+                                          </td>
+                                          ) : (
+                                            <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>
+                                               {history.status}                                            
+                                            </td>
+                                            )}
+                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{formatDatetime(history.createdAt)}</td>
+                                        </tr>
+                                        ))}
+                                  </tbody>
+                                  </div>
+                              </Collapse>
+                            </td>
+                          </tr>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 ) : (
@@ -425,6 +584,71 @@ function PurchaseOrderList({ authrztn }) {
         </div>
           )}
       </div>
+
+      <Modal
+            show={showRejustify}
+            onHide={handleCloseRejustify}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+          >
+              <Modal.Header closeButton>
+                <Modal.Title style={{fontSize: '24px', fontFamily: 'Poppins, Source Sans Pro'}}>For-Rejustify</Modal.Title>
+                  
+              </Modal.Header>
+              <Modal.Body>
+                  <div className="rejustify-modal-container">
+                      <div className="rejustify-modal-content">
+                          <div className="remarks-file-section">
+                              <div className="remarks-sec">
+                              <p>
+                                Remarks
+                              </p>
+                              <Form.Control
+                                  as="textarea"
+                                  rows={3}
+                                  style={{
+                                  fontFamily: 'Poppins, Source Sans Pro',
+                                  fontSize: "16px",
+                                  height: "200px",
+                                  maxHeight: "200px",
+                                  resize: "none",
+                                  overflowY: "auto",
+                                  }}
+                                  disabled
+                                  value={Rejustifyremarks}
+                                />
+                              </div>
+
+                             <div className="file-sec-container">
+                                  <p>
+                                    File Attached
+                                  </p>
+                              <div className="file-sec">
+                                  <div className="file-content" >
+                                    <Button onClick={handleDownloadFile}>
+                                          Download File
+                                          {RejustifyFile && RejustifyFile.fileExtension && (
+                                            <>
+                                              {RejustifyFile.fileExtension === 'pdf' && <FilePdf size={32} color="#ef6262" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'csv' && <FileCsv size={32} color="#8fffa2" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'xls' && <FileXls size={32} color="#8fffa2" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'jpg' && <FileJpg size={32} color="#757575" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'png' && <FilePng size={32} color="#757575" weight="fill" />}
+                                            </>
+                                          )}
+                                        </Button>
+                                  </div>
+                              </div>
+                            </div>     
+
+                          </div>
+                      </div>
+                  </div>
+              </Modal.Body>
+            <Modal.Footer>
+            </Modal.Footer>
+          </Modal>
     </div>
   );
 }

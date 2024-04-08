@@ -16,6 +16,7 @@ import Collapse from '@mui/material/Collapse';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { IconButton, TextField, TablePagination, } from '@mui/material';
+
 import usePagination from '@mui/material/usePagination';
 import { styled } from '@mui/material/styles';
 import Pagination from '@mui/material/Pagination';
@@ -24,10 +25,14 @@ import {
   Plus,
   CalendarBlank,
   XCircle,
+  FilePdf,
+  FileCsv,
+  FileXls,
+  FileJpg,
+  FilePng,    
 } from "@phosphor-icons/react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
 
 import NoData from '../../../../src/assets/image/NoData.png';
 
@@ -64,6 +69,7 @@ function PurchaseRequest({ authrztn }) {
   const [showRejustify, setshowRejustify] = useState(false);
   const [Rejustifyremarks, setRejustifyremarks] = useState("")
   const [rejustifyFileURL, setRejustifyFileURL] = useState('');
+  const [RejustifyFile, setRejustifyFile] = useState([])
   const handleCloseRejustify = () => setshowRejustify(false);
 
   
@@ -88,41 +94,87 @@ function PurchaseRequest({ authrztn }) {
   const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
   const currentItems = filteredPR.slice(startIndex, endIndex);
 
-  // const handleRejustify = async (pr_id) => {
-  //   try {
-  //     setshowRejustify(true);
-  //     const res = await axios
-  //     .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
-  //       params: { pr_id: pr_id },
-  //     });
-  //     setRejustifyremarks(res.data.remarks)
-  //     setRejustifyFile(res.data.file);
-
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
   const handleRejustify = async (pr_id) => {
     try {
       setshowRejustify(true);
       const res = await axios
-      .get(BASE_URL + `/PR_history/fetchRejustifyRemarks?pr_id=${pr_id}`);
-      setRejustifyremarks(res.data.remarks);
-
-      // Fetch file URL
-      const fileRes = await axios.get(BASE_URL + `/PR_history/fetchRejustifyFile/${pr_id}`, {
-        responseType: 'blob' // Set response type to blob
+      .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
+        params: { pr_id: pr_id },
       });
-      
-      // Create a Blob URL for the file
-      const fileURL = URL.createObjectURL(fileRes.data);
-      setRejustifyFileURL(fileURL);
+      setRejustifyremarks(res.data.remarks)
+      setRejustifyFile(res.data)
     } catch (err) {
       console.error(err);
     }
   };
 
+  const handleDownloadFile = async () => {
+    try {
+      if (!RejustifyFile) {
+        console.error('No file available for download');
+        return;
+      }
+
+      const { file, mimeType, fileExtension } = RejustifyFile;
+
+      // Convert the array data into a Uint8Array
+      const uint8Array = new Uint8Array(file.data);
+
+      // Create a Blob object from the Uint8Array with the determined MIME type
+      const blob = new Blob([uint8Array], { type: mimeType });
+
+      // Create a URL for the Blob object
+      const url = window.URL.createObjectURL(blob);
+
+      // Set a default file name with the correct file extension
+      const fileName = `RejustifyFile.${fileExtension}`;
+
+      // Create a link element to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+
+      // Trigger the download
+      a.click();
+
+      // Clean up resources
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
+  
+  // const handleDownloadFile = async () => {
+  //   try {
+  //     // Convert the array data into a Uint8Array
+  //     const uint8Array = new Uint8Array(RejustifyFile.data);
+  
+  //     // Create a Blob object from the Uint8Array with MIME type 'application/pdf'
+  //     const blob = new Blob([uint8Array], { type: 'application/pdf' });
+  
+  //     // Create a URL for the Blob object
+  //     const url = window.URL.createObjectURL(blob);
+      
+  //     // Create a link element to trigger the download
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = 'RejustifyFile.pdf'; // Set a default name with '.pdf' extension
+  //     document.body.appendChild(a);
+      
+  //     // Trigger the download
+  //     a.click();
+  
+  //     // Clean up resources
+  //     document.body.removeChild(a);
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+  
 
   const handleRowToggle = async (id) => {
     try {
@@ -744,14 +796,22 @@ function PurchaseRequest({ authrztn }) {
                                     File Attached
                                   </p>
                               <div className="file-sec">
-
-                                  <div className="file-content">
-                                      {rejustifyFileURL && (
-                                        <a href={rejustifyFileURL} download="rejustify_file">Download File</a>
-                                      )}
+                                  <div className="file-content" >
+                                    <Button onClick={handleDownloadFile}>
+                                          Download File
+                                          {RejustifyFile && RejustifyFile.fileExtension && (
+                                            <>
+                                              {RejustifyFile.fileExtension === 'pdf' && <FilePdf size={32} color="#ef6262" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'csv' && <FileCsv size={32} color="#8fffa2" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'xls' && <FileXls size={32} color="#8fffa2" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'jpg' && <FileJpg size={32} color="#757575" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'png' && <FilePng size={32} color="#757575" weight="fill" />}
+                                            </>
+                                          )}
+                                        </Button>
                                   </div>
                               </div>
-                              </div>     
+                            </div>     
 
                           </div>
                       </div>

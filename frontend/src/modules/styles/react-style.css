@@ -5035,6 +5035,14 @@ span:nth-child(5){
   align-items: center;
   text-align: center;
 }
+
+.file-content Button {
+  margin-top: 60px;
+  justify-content: center;
+  background-color: black;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 15px;
+}
 @keyframes ellipsis {
   to {
     width: 40px;
