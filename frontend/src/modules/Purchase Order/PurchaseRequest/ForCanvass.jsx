@@ -884,7 +884,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                               <div className="templates-labels">
                                                   <span>PURCHASE REQUISITION NO.</span>
                                                   <span>SUPPLIER'S NAME</span>
-                                                  <span>DATE</span>
+                                                  <span>DATE NEEDED</span>
                                               </div>
                                               
                                               <div className="template-label-value">

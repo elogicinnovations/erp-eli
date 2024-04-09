@@ -1933,6 +1933,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory.create({
         product_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -1956,6 +1958,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory_Assembly.create({
         assembly_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -1981,6 +1985,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory_Spare.create({
         spare_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -2007,6 +2013,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory_Subpart.create({
         subpart_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,

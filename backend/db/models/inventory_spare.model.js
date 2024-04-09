@@ -18,6 +18,10 @@ const Inventory_Spare = sequelize.define('inventory_spare', {
     allowNull: true,
     unique: false
   },
+  static_quantity: { // for dashboard count
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   price: {
     type: DataTypes.FLOAT,
     allowNull: true,
