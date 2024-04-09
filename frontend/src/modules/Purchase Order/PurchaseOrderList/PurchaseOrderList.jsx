@@ -55,7 +55,13 @@ function PurchaseOrderList({ authrztn }) {
   const [pr_req, setPr_req] = useState([]);
   const [showRejustify, setshowRejustify] = useState(false);
   const [Rejustifyremarks, setRejustifyremarks] = useState("")
-  const [RejustifyFile, setRejustifyFile] = useState([])
+  const [RejustifyFile, setRejustifyFile] = useState([])  
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(filteredPR.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
+  const currentItems = filteredPR.slice(startIndex, endIndex);
   const handleCloseRejustify = () => setshowRejustify(false);
 
   const handleXCircleClick = () => {
@@ -428,7 +434,7 @@ function PurchaseOrderList({ authrztn }) {
                 </thead>
                 {filteredPR.length > 0 ? (
                   <tbody>
-                    {filteredPR.map((data, i) => (
+                    {currentItems.map((data, i) => (
                        <React.Fragment key={i}>
                       <tr >
                         <td>
@@ -536,7 +542,7 @@ function PurchaseOrderList({ authrztn }) {
                         </td>
                       </tr>
                       <tr>
-                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="8">
+                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="7">
                               <Collapse in={openRows === data.id} timeout="auto" unmountOnExit>
                                 <div style={{width: '95%'}}>
                                     <thead style={{borderBottom: '1px solid #CECECE'}}>
@@ -552,7 +558,16 @@ function PurchaseOrderList({ authrztn }) {
                                           <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
                                             handleRejustify(history.pr_id);
                                           }}>
-                                            {history.status}                                            
+                                            <div className="for-rejustify"
+                                            style={{
+                                              color: "white",
+                                              padding: "5px",
+                                              borderRadius: "5px",
+                                              textAlign: "center",
+                                              width: "130px",
+                                              backgroundColor: "red"}}>
+                                              {history.status}  
+                                            </div>                                           
                                           </td>
                                           ) : (
                                             <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>
@@ -579,6 +594,44 @@ function PurchaseOrderList({ authrztn }) {
                   </div>
                 )}
               </table>
+
+              <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
             </div>
           </div>
         </div>

@@ -1084,10 +1084,10 @@ function POApprovalRejustify({ authrztn }) {
 
                       <Form.Group controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ fontSize: "20px" }}>
-                          Attach File:{" "}
+                          Attach File:
                         </Form.Label>
                         {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
-                        <Form.Control type="file" onChange={handleFileChange} />
+                        <Form.Control type="file" onChange={handleFileChange} style={{width: '405px', height: '33px'}}/>
                       </Form.Group>
                     </div>
                   </div>

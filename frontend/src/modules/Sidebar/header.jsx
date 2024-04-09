@@ -12,6 +12,8 @@ import {
   ClipboardText,
   Moped,
   AlignLeft,
+  ShoppingCart,
+  Scales  
 } from "@phosphor-icons/react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -168,11 +170,23 @@ const Header = () => {
           notification: "New For Canvassing",
           content: "The Purchase Request is Moved into For-Canvassing",
         };
+      case "On-Canvass":
+      return {
+        icon: <ShoppingCart size={32} style={{ color: "blue" }} />,
+        notification: "Product On-Canvass",
+        content: "The Purchase Request is Moved into On-Canvass",
+      };
       case "For-Approval (PO)":
         return {
           icon: <UserList size={32} style={{ color: "blue" }} />,
-          notification: "New Purchase Order Request",
+          notification: "New Purchase Order",
           content: "New Purchase Order Request has been requested",
+        };
+      case "For-Rejustify (PO)":
+        return {
+          icon: <Scales size={32} style={{ color: "blue" }} />,
+          notification: "Purchase Order For-Rejustify",
+          content: "The Purchase Order is about to Rejustify",
         };
       case "For-Rejustify":
         return {

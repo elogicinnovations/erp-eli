@@ -128,6 +128,11 @@ router.route("/login").post(async (req, res) => {
     });
 
     if (user && user.col_Pass === password) {
+      // Check if user already has an active session
+      if (activeSessions[user.col_id]) {
+        return res.status(409).json({ error: "User already logged in on another device" });
+      }
+
       const userData = {
         username: user.col_username,
         id: user.col_id,
@@ -135,12 +140,11 @@ router.route("/login").post(async (req, res) => {
         userrole: user.userRole.col_rolename,
       };
       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
-      // localStorage.setItem('access-token', accessToken);
+      res.cookie("access-token", accessToken, {});
 
-      // localStorage.removeItem('access-token');
-      res.cookie("access-token", accessToken, {
-        // httpOnly : true
-      });
+      // Store user's session in activeSessions
+      activeSessions[user.col_id] = { accessToken };
+
       await Activity_Log.create({
         masterlist_id: userData.id,
         action_taken: "User logged in",
@@ -157,6 +161,7 @@ router.route("/login").post(async (req, res) => {
   }
 });
 
+// Modify logout route to handle session removal
 router.route("/logout").post(async (req, res) => {
   const { userId } = req.body;
 
@@ -167,6 +172,8 @@ router.route("/logout").post(async (req, res) => {
     });
 
     if (createActivity) {
+      // Remove user's session from activeSessions
+      delete activeSessions[userId];
       return res.status(200).json({ message: "Log out" });
     } else {
       return res
@@ -178,6 +185,72 @@ router.route("/logout").post(async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// router.route("/login").post(async (req, res) => { this section ang logged in na gagamitin kapag nagkaerror yung new login
+//   const { username, password } = req.body;
+
+//   try {
+//     const user = await MasterList.findOne({
+//       where: {
+//         col_email: username,
+//         col_status: "Active",
+//       },
+//       include: {
+//         model: UserRole,
+//       },
+//     });
+
+//     if (user && user.col_Pass === password) {
+//       const userData = {
+//         username: user.col_username,
+//         id: user.col_id,
+//         Fname: user.col_Fname,
+//         userrole: user.userRole.col_rolename,
+//       };
+//       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
+//       // localStorage.setItem('access-token', accessToken);
+
+//       // localStorage.removeItem('access-token');
+//       res.cookie("access-token", accessToken, {
+//         // httpOnly : true
+//       });
+//       await Activity_Log.create({
+//         masterlist_id: userData.id,
+//         action_taken: "User logged in",
+//       });
+//       return res
+//         .status(200)
+//         .json({ message: "Login Success", accessToken: accessToken });
+//     } else {
+//       return res.status(202).json({ message: "Incorrect credentials" });
+//     }
+//   } catch (e) {
+//     console.error(e);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
+
+// router.route("/logout").post(async (req, res) => {
+//   const { userId } = req.body;
+
+//   try {
+//     const createActivity = await Activity_Log.create({
+//       masterlist_id: userId,
+//       action_taken: "User logged out",
+//     });
+
+//     if (createActivity) {
+//       return res.status(200).json({ message: "Log out" });
+//     } else {
+//       return res
+//         .status(202)
+//         .json({ message: "Cannot Log out, There's a problem" });
+//     }
+//   } catch (e) {
+//     console.error(e);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 //--------------------Forgot Password------------------//
 // Replace these with your Gmail credentials

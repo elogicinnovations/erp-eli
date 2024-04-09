@@ -27,8 +27,9 @@ const Login = () => {
     axios
       .post(BASE_URL + "/masterList/login", { username, password })
       .then((response) => {
+        console.log("RESPONSE STATUS" + response.status)
         if (response.status === 200) {
-          console.log(response.data.accessToken);
+          // console.log(response.data.accessToken);
           localStorage.setItem("accessToken", response.data.accessToken);
           swal({
             text: "Login Success!",
@@ -47,15 +48,32 @@ const Login = () => {
             button: "OK",
           });
         }
-      })
-      .catch((error) => {
-        console.error(error.response.data);
-        swal({
-          title: "Something Went Wrong",
-          text: "Please contact our support team",
-          icon: "error",
-        }).then(() => {});
+      }) .catch((error) => {
+        if (error.response && error.response.status === 409) {
+          swal({
+            title: "Login Denied",
+            text: error.response.data.error,
+            icon: "error",
+            button: "OK",
+          });
+        } else {
+          console.error(error);
+          swal({
+            title: "Something Went Wrong",
+            text: "Please contact our support team",
+            icon: "error",
+            button: "OK",
+          });
+        }
       });
+      // .catch((error) => {
+      //   console.error(error.response.data);
+      //   swal({
+      //     title: "Something Went Wrong",
+      //     text: "Please contact our support team",
+      //     icon: "error",
+      //   }).then(() => {});
+      // });
   };
 
   // Function to toggle password visibility

@@ -678,7 +678,17 @@ function PurchaseRequest({ authrztn }) {
                                           <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
                                             handleRejustify(history.pr_id);
                                           }}>
-                                            {history.status}                                            
+                                            <div className="for-rejustify"
+                                            style={{
+                                              color: "white",
+                                              padding: "5px",
+                                              borderRadius: "5px",
+                                              textAlign: "center",
+                                              width: "100px",
+                                              backgroundColor: "red"}}>
+                                              {history.status}  
+                                            </div>
+                                                                                      
                                           </td>
                                           ) : (
                                             <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>

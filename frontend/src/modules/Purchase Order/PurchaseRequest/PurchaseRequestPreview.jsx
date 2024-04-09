@@ -648,7 +648,7 @@ function PurchaseRequestPreview() {
                                 <div className="col-6">
                                   <Form.Group controlId="exampleForm.ControlInput1">
                                       <Form.Label style={{ fontSize: '20px' }}>Attach File: </Form.Label>
-                                      <Form.Control type="file" onChange={handleFileChange} />
+                                      <Form.Control type="file" onChange={handleFileChange} style={{width: '405px', height: '33px'}}/>
                                   </Form.Group>
 
                                   </div>

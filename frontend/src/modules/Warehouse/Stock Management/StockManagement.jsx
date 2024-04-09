@@ -14,6 +14,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Collapse from '@mui/material/Collapse';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+import usePagination from '@mui/material/usePagination';
+import { styled } from '@mui/material/styles';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import {
+  FilePdf,
+  FileCsv,
+  FileXls,
+  FileJpg,
+  FilePng,    
+} from "@phosphor-icons/react";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 import {
     Plus,
     DotsThreeCircle,
@@ -38,7 +55,6 @@ function StockManagement({ authrztn }) {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
   const [stockMgnt, setStockMgnt] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +62,22 @@ function StockManagement({ authrztn }) {
   const [rotatedIcons, setRotatedIcons] = useState(Array(stockMgnt.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
   const [userId, setuserId] = useState('');
+  
+  const [stockTransfer, setStockTransfer] = useState([]);
+  const [searchStock, setSearchStock] = useState([]);
+  const [specificStock, setSpecificStock] = useState([])
+  const [openRows, setOpenRows] = useState(null);
+  const [showRejustify, setshowRejustify] = useState(false);
+  const [Rejustifyremarks, setRejustifyremarks] = useState("")
+  const [RejustifyFile, setRejustifyFile] = useState([])
+  const handleCloseRejustify = () => setshowRejustify(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(stockTransfer.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, stockTransfer.length);
+  const currentItems = stockTransfer.slice(startIndex, endIndex);
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
@@ -58,6 +90,74 @@ function StockManagement({ authrztn }) {
   useEffect(() => {
     decodeToken();
   }, [])
+
+  const handleRejustify = async (stock_id) => {
+    try {
+      setshowRejustify(true);
+      const res = await axios
+      .get(BASE_URL + '/StockTransfer/fetchRejustifyRemarks', {
+        params: { stock_id: stock_id },
+      });
+      setRejustifyremarks(res.data.remarks)
+      setRejustifyFile(res.data)
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDownloadFile = async () => {
+    try {
+      if (!RejustifyFile) {
+        console.error('No file available for download');
+        return;
+      }
+
+      const { file, mimeType, fileExtension } = RejustifyFile;
+
+      // Convert the array data into a Uint8Array
+      const uint8Array = new Uint8Array(file.data);
+
+      // Create a Blob object from the Uint8Array with the determined MIME type
+      const blob = new Blob([uint8Array], { type: mimeType });
+
+      // Create a URL for the Blob object
+      const url = window.URL.createObjectURL(blob);
+
+      // Set a default file name with the correct file extension
+      const fileName = `RejustifyFile.${fileExtension}`;
+
+      // Create a link element to trigger the download
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+
+      // Trigger the download
+      a.click();
+
+      // Clean up resources
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRowToggle = async (stock_id) => {
+    try {
+      const res = await axios.get(BASE_URL + '/StockTransfer/fetchdropdownData', {
+        params: { stock_id: stock_id },
+      });
+
+      setSpecificStock(res.data);
+
+      setOpenRows((prevOpenRow) => (prevOpenRow === stock_id ? null : stock_id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -101,27 +201,44 @@ function StockManagement({ authrztn }) {
     }
 
 
-    const [stockTransfer, setStockTransfer] = useState([]);
 
+    
     // Fetch Data
+    // useEffect(() => {
+    // axios.get(BASE_URL + '/StockTransfer/fetchTable')
+    // .then(res => setStockTransfer(res.data))
+    // .catch(err => console.log(err));
+    // }, []);
+
     useEffect(() => {
-    axios.get(BASE_URL + '/StockTransfer/fetchTable')
-    .then(res => setStockTransfer(res.data))
-    .catch(err => console.log(err));
-    }, []);
-
-
+      axios.get(BASE_URL + '/StockTransfer/fetchTable')
+          .then(res => {
+              setStockTransfer(res.data);
+              setSearchStock(res.data);
+          })
+          .catch(err => console.log(err));
+  }, []);
+  
     const [updateModalShow, setUpdateModalShow] = useState(false);
     const handleModalToggle = () => {
       setUpdateModalShow(!updateModalShow);
     };
 
-    useEffect(() => {
-      if ($('#order-listing').length > 0  && stockTransfer.length > 0) {
-        $('#order-listing').DataTable();
-      }
-    }, [stockTransfer]);
-
+    const handleSearch = (event) => {
+      const searchTerm = event.target.value.toLowerCase();
+      const filteredData = searchStock.filter((data) => {
+        return (
+          data.status.toLowerCase().includes(searchTerm) ||
+          formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+          data.remarks.toLowerCase().includes(searchTerm) ||
+          data.SourceWarehouse.warehouse_name.toLowerCase().includes(searchTerm) ||
+          data.DestinationWarehouse.warehouse_name.toLowerCase().includes(searchTerm)
+        );
+      });
+    
+      setStockTransfer(filteredData);
+      
+    };
     
     const handleDelete = async id => {
       swal({
@@ -375,29 +492,56 @@ function StockManagement({ authrztn }) {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
-                        <table className='table-hover' id='order-listing'>
+                      <TextField
+                          label="Search"
+                          variant="outlined"
+                          style={{ marginBottom: '10px', 
+                          float: 'right',
+                          }}
+                          InputLabelProps={{
+                            style: { fontSize: '14px'},
+                          }}
+                          InputProps={{
+                            style: { fontSize: '14px', width: '250px', height: '50px' },
+                          }}
+                          onChange={handleSearch}/>
+                        <table aria-label="collapsible table" className='table-hover'>
                               <thead>
                                 <tr>
-                                    <th className='tableh'>Transfer ID</th>
+                                    <th className="tableh"></th>
+                                    {/* <th className='tableh'>Transfer ID</th> */}
                                     <th className='tableh'>Description</th>
-                                    <th className='tableh'>Date Transfered</th>
                                     <th className='tableh'>Source Warehouse</th>
                                     <th className='tableh'>Destination</th>
                                     <th className='tableh'>Status</th>
+                                    <th className='tableh'>Date Transfered</th>
                                     <th className='tableh'>Action</th>
                                 </tr>
                                 </thead>
                                 {stockTransfer.length > 0 ? (
                                 <tbody>
-                                      {stockTransfer.map((data,i) =>(
-                                        <tr key={i}>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.stock_id}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.remarks}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{formatDatetime(data.createdAt)}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.SourceWarehouse.warehouse_name}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.DestinationWarehouse.warehouse_name}</td>
-                                        <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.status}</td>
+                                      {currentItems.map((data,i) =>(
+                                        <React.Fragment key={i}>
+                                        <tr>
                                         <td>
+                                            <IconButton
+                                                aria-label="expand row"
+                                                size="small"
+                                                onClick={() => handleRowToggle(data.stock_id)}>
+                                              {openRows === data.stock_id ? (
+                                                  <KeyboardArrowUpIcon style={{ fontSize: 25 }}/>
+                                                ) : (
+                                                  <KeyboardArrowDownIcon style={{ fontSize: 25 }}/>
+                                                )}
+                                              </IconButton>
+                                          </td>
+                                          {/* <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.stock_id}</td> */}
+                                          <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.remarks}</td>
+                                          <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.SourceWarehouse.warehouse_name}</td>
+                                          <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.DestinationWarehouse.warehouse_name}</td>
+                                          <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{data.status}</td>
+                                          <td onClick={() => navigate(`/stockManagementPreview/${data.stock_id}`)}>{formatDatetime(data.createdAt)}</td>
+                                          <td>
                                           <DotsThreeCircle
                                               size={32}
                                               className="dots-icon"
@@ -425,6 +569,49 @@ function StockManagement({ authrztn }) {
                                           </div>
                                           </td>
                                         </tr>
+                                        <tr>
+                                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="7">
+                                              <Collapse in={openRows === data.stock_id} timeout="auto" unmountOnExit>
+                                                <div style={{width: '95%'}}>
+                                                    <thead style={{borderBottom: '1px solid #CECECE'}}>
+                                                      <tr>
+                                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Status</th>
+                                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Date</th>
+                                                      </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {specificStock.map((history, i) => (
+                                                        <tr key={i}>
+                                                          {history.status === 'For-Rejustify (Stock Transfer)' ? (
+                                                          <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
+                                                            handleRejustify(history.stockTransfer_id);
+                                                          }}>
+                                                            <div className="for-rejustify"
+                                                            style={{
+                                                              color: "white",
+                                                              padding: "5px",
+                                                              borderRadius: "5px",
+                                                              textAlign: "center",
+                                                              width: "210px",
+                                                              backgroundColor: "red"}}>
+                                                              {history.status}  
+                                                            </div>
+                                                                                                      
+                                                          </td>
+                                                          ) : (
+                                                            <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>
+                                                              {history.status}                                            
+                                                            </td>
+                                                            )}
+                                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{formatDatetime(history.createdAt)}</td>
+                                                        </tr>
+                                                        ))}
+                                                  </tbody>
+                                                  </div>
+                                              </Collapse>
+                                            </td>
+                                          </tr>
+                                        </React.Fragment>
                                       ))}
                             </tbody>
                               ) : (
@@ -436,6 +623,44 @@ function StockManagement({ authrztn }) {
                                 </div>
                             )}
                         </table>
+
+                          <nav>
+                              <ul className="pagination" style={{ float: "right" }}>
+                                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                                  <button
+                                  type="button"
+                                  style={{fontSize: '14px',
+                                  cursor: 'pointer',
+                                  color: '#000000',
+                                  textTransform: 'capitalize',
+                                }}
+                                  className="page-link" 
+                                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                                </li>
+                                {[...Array(totalPages).keys()].map((num) => (
+                                  <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                                    <button 
+                                    style={{
+                                      fontSize: '14px',
+                                      width: '25px',
+                                      background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                                      color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                                      border: 'none',
+                                      height: '28px',
+                                    }}
+                                    className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                                  </li>
+                                ))}
+                                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                  <button
+                                  style={{fontSize: '14px',
+                                  cursor: 'pointer',
+                                  color: '#000000',
+                                  textTransform: 'capitalize'}}
+                                  className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                                </li>
+                              </ul>
+                            </nav>
                     </div>
                 </div>
             </div>
@@ -450,6 +675,70 @@ function StockManagement({ authrztn }) {
               )}
 
         </div>
+        <Modal
+            show={showRejustify}
+            onHide={handleCloseRejustify}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+          >
+              <Modal.Header closeButton>
+                <Modal.Title style={{fontSize: '24px', fontFamily: 'Poppins, Source Sans Pro'}}>For-Rejustify</Modal.Title>
+                  
+              </Modal.Header>
+              <Modal.Body>
+                  <div className="rejustify-modal-container">
+                      <div className="rejustify-modal-content">
+                          <div className="remarks-file-section">
+                              <div className="remarks-sec">
+                              <p>
+                                Remarks
+                              </p>
+                              <Form.Control
+                                  as="textarea"
+                                  rows={3}
+                                  style={{
+                                  fontFamily: 'Poppins, Source Sans Pro',
+                                  fontSize: "16px",
+                                  height: "200px",
+                                  maxHeight: "200px",
+                                  resize: "none",
+                                  overflowY: "auto",
+                                  }}
+                                  disabled
+                                  value={Rejustifyremarks}
+                                />
+                              </div>
+
+                             <div className="file-sec-container">
+                                  <p>
+                                    File Attached
+                                  </p>
+                              <div className="file-sec">
+                                  <div className="file-content" >
+                                    <Button onClick={handleDownloadFile}>
+                                          Download File
+                                          {RejustifyFile && RejustifyFile.fileExtension && (
+                                            <>
+                                              {RejustifyFile.fileExtension === 'pdf' && <FilePdf size={32} color="#ef6262" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'csv' && <FileCsv size={32} color="#8fffa2" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'xls' && <FileXls size={32} color="#8fffa2" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'jpg' && <FileJpg size={32} color="#757575" weight="fill" />}
+                                              {RejustifyFile.fileExtension === 'png' && <FilePng size={32} color="#757575" weight="fill" />}
+                                            </>
+                                          )}
+                                        </Button>
+                                  </div>
+                              </div>
+                            </div>     
+
+                          </div>
+                      </div>
+                  </div>
+              </Modal.Body>
+            <Modal.Footer>
+            </Modal.Footer>
+          </Modal>
     </div>
   )
 }

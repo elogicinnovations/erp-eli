@@ -19,12 +19,14 @@ import ReactLoading from "react-loading";
 import NoData from "../../../../../assets/image/NoData.png";
 import NoAccess from "../../../../../assets/image/NoAccess.png";
 import { jwtDecode } from "jwt-decode";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
 
 function Warehouse({ authrztn }) {
   const [departmentname, setDepartmentname] = useState("");
   const [description, setDescription] = useState("");
   const [validated, setValidated] = useState(false);
   const [department, setDepartment] = useState([]);
+  const [searchDepartment, setSearchDepartment] = useState([]);
   const [visibleButtons, setVisibleButtons] = useState({});
   const [isVertical, setIsVertical] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -34,6 +36,13 @@ function Warehouse({ authrztn }) {
   const [username, setUsername] = useState("");
   const [userRole, setUserRole] = useState("");
   const [userId, setuserId] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(department.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, department.length);
+  const currentItems = department.slice(startIndex, endIndex);
 
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
@@ -62,6 +71,7 @@ function Warehouse({ authrztn }) {
         .get(BASE_URL + "/department/fetchtableDepartment")
         .then((res) => {
           setDepartment(res.data);
+          setSearchDepartment(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -76,6 +86,21 @@ function Warehouse({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchDepartment.filter((data) => {
+      return (
+        data.department_name.toLowerCase().includes(searchTerm) ||
+        data.description.toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.updatedAt).toLowerCase().includes(searchTerm)
+        
+      );
+    });
+  
+    setDepartment(filteredData);
+  };
 
   function formatDatetime(datetime) {
     const options = {
@@ -327,11 +352,11 @@ function Warehouse({ authrztn }) {
     });
   };
 
-  useEffect(() => {
-    if ($("#order-listing").length > 0 && department.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [department]);
+  // useEffect(() => {
+  //   if ($("#order-listing").length > 0 && department.length > 0) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [department]);
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -364,7 +389,20 @@ function Warehouse({ authrztn }) {
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <table className="table-hover" id="order-listing">
+               <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
+                onChange={handleSearch}/>
+                <table className="table-hover">
                   <thead>
                     <tr>
                       <th className="tableh">Department Name</th>
@@ -506,6 +544,43 @@ function Warehouse({ authrztn }) {
                   )}
                 </table>
               </div>
+              <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
             </div>
           </div>
         ) : (

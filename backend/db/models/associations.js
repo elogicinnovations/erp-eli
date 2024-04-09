@@ -82,6 +82,8 @@ const Receiving_initial_spare = require("./receiving_initial_spare.model")
 const Receiving_initial_subpart = require("./receiving_initial_subpart.model")
 
 const StockTransfer = require("./stockTransfer.model");
+const Stock_Rejustify = require("./stockTransfer_rejustify.model")
+const Stock_History = require("./stockTransfer_history.model")
 const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
@@ -467,6 +469,14 @@ StockTransfer_subpart.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" 
 SubPart.hasMany(StockTransfer_subpart, { foreignKey: "product_id" });
 StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "product_id" });
 
+//--------------Stock Transfer rejustify
+StockTransfer.hasMany(Stock_Rejustify, { foreignKey: "stockTransfer_id" });
+Stock_Rejustify.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+
+//--------------Stock Transfer history
+StockTransfer.hasMany(Stock_History, { foreignKey: "stockTransfer_id" });
+Stock_History.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+
 //------------ Warehouse Product Inventory
 Warehouses.hasMany(Inventory, { foreignKey: "warehouse_id" });
 Inventory.belongsTo(Warehouses, { foreignKey: "warehouse_id" });
@@ -664,6 +674,8 @@ module.exports = {
   StockTransfer_assembly,
   StockTransfer_spare,
   StockTransfer_subpart,
+  Stock_Rejustify,
+  Stock_History,
 
   Warehouses,
   Department,

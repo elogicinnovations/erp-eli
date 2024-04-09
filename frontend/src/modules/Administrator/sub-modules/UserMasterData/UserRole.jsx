@@ -18,6 +18,7 @@ import {
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
 
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -34,20 +35,8 @@ import * as $ from "jquery";
 import Header from "../../../../partials/header";
 
 function UserRole({ authrztn }) {
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
-  }
-
-  function padZero(num) {
-    return num.toString().padStart(2, "0");
-  }
-
   const [role, setRole] = useState([]);
+  const [searchRole, setSearchRole] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -57,10 +46,14 @@ function UserRole({ authrztn }) {
   const [username, setUsername] = useState('');
   const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
-  const [rotatedIcons, setRotatedIcons] = useState(
-    Array(role.length).fill(false)
-  );
+  const [rotatedIcons, setRotatedIcons] = useState(Array(role.length).fill(false));
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
+  const totalPages = Math.ceil(role.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, role.length);
+  const currentItems = role.slice(startIndex, endIndex);
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
@@ -111,6 +104,7 @@ function UserRole({ authrztn }) {
       .get(BASE_URL + "/userRole/fetchuserrole")
       .then((res) => {
         setRole(res.data);
+        setSearchRole(res.data);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -130,7 +124,34 @@ function UserRole({ authrztn }) {
       })
       .catch((err) => console.log(err));
   };
-  console.log(role);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchRole.filter((data) => {
+      return (
+        data.col_rolename.toLowerCase().includes(searchTerm) ||
+        (typeof data.col_authorization === 'string' && data.col_authorization.toLowerCase().includes(searchTerm)) ||
+        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        formatDate(data.updatedAt).toLowerCase().includes(searchTerm) ||
+        data.col_desc.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setRole(filteredData);
+  };
+  
+
+
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
 
   const handleDelete = async (param_id) => {
     swal({
@@ -175,12 +196,14 @@ function UserRole({ authrztn }) {
     });
   };
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && role.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [$("#order-listing"), role]);
+  // useEffect(() => {
+  //   // Initialize DataTable when role data is available
+  //   if ($("#order-listing").length > 0 && role.length > 0) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [$("#order-listing"), role]);
+
+
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
 
@@ -260,6 +283,19 @@ function UserRole({ authrztn }) {
           {/*Employeetext-button*/}
           <div className="table-containss">
             <div className="main-of-all-tables">
+            <TextField
+              label="Search"
+              variant="outlined"
+              style={{ marginBottom: '10px', 
+              float: 'right',
+              }}
+              InputLabelProps={{
+                style: { fontSize: '14px'},
+              }}
+              InputProps={{
+                style: { fontSize: '14px', width: '250px', height: '50px' },
+              }}
+              onChange={handleSearch}/>
               <table id="order-listing">
                 <thead>
                   <tr>
@@ -273,15 +309,15 @@ function UserRole({ authrztn }) {
                 </thead>
                 {role.length > 0 ? (
                 <tbody>
-                  {role.map((data, i) => (
+                  {currentItems.map((data, i) => (
                     <tr
                       key={i}
                       className={i % 2 === 0 ? "even-row" : "odd-row"}>
-                      <td>{data?.col_rolename}</td>
-                      <td className="autho">{data?.col_authorization}</td>
-                      <td>{data?.col_desc}</td>
-                      <td>{formatDate(data?.createdAt)}</td>
-                      <td>{formatDate(data?.updatedAt)}</td>
+                      <td>{data.col_rolename}</td>
+                      <td className="autho">{data.col_authorization}</td>
+                      <td>{data.col_desc}</td>
+                      <td>{formatDate(data.createdAt)}</td>
+                      <td>{formatDate(data.updatedAt)}</td>
                       <td>
                       {isVertical[data.col_id] ? (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -375,7 +411,43 @@ function UserRole({ authrztn }) {
               </table>
             </div>
           </div>
-          <div className="pagination-contains"></div>
+          <nav>
+            <ul className="pagination" style={{ float: "right" }}>
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                type="button"
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize',
+              }}
+                className="page-link" 
+                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+              </li>
+              {[...Array(totalPages).keys()].map((num) => (
+                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                  <button 
+                  style={{
+                    fontSize: '14px',
+                    width: '25px',
+                    background: currentPage === num + 1 ? '#FFA500' : 'white',
+                    color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                    border: 'none',
+                    height: '28px',
+                  }}
+                  className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <button
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize'}}
+                className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+              </li>
+            </ul>
+          </nav>
         </div>
             ) : (
               <div className="no-access">

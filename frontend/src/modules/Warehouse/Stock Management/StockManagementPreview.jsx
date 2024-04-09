@@ -52,7 +52,7 @@ function StockTransferPreview({ authrztn }) {
   const [validated, setValidated] = useState(false);
   const [isReadOnly, setReadOnly] = useState(false);
 
-  const [files, setFiles] = useState([]);
+  const [file, setFile] = useState(null);
   const [rejustifyRemarks, setRejustifyRemarks] = useState("");
 
   const [userId, setuserId] = useState("");
@@ -69,7 +69,7 @@ function StockTransferPreview({ authrztn }) {
   }, []);
 
   const handleFileChange = (e) => {
-    setFiles(e.target.files);
+    setFile(e.target.files[0]);
   };
 
   const handleApproveClick = () => {
@@ -86,7 +86,8 @@ function StockTransferPreview({ authrztn }) {
             .post(`${BASE_URL}/StockTransfer/approve`, null, {
               params: {
                 id: id,
-                userId: userId
+                userId: userId,
+                remarks: remarks
               },
             })
             .then((res) => {
@@ -130,7 +131,8 @@ function StockTransferPreview({ authrztn }) {
             .post(`${BASE_URL}/StockTransfer/reject`, null, {
               params: {
                 id: id,
-                userId: userId
+                userId: userId,
+                remarks: remarks
               },
             })
             .then((res) => {
@@ -157,6 +159,53 @@ function StockTransferPreview({ authrztn }) {
         }
       }
     });
+  };
+
+  const handleUploadRejustify = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append("remarks", rejustifyRemarks);
+      formData.append("id", id);
+      formData.append("userId", userId);
+
+      const mimeType = file.type;
+      const fileExtension = file.name.split('.').pop();
+
+      formData.append('mimeType', mimeType);
+      formData.append('fileExtension', fileExtension);
+
+      const response = await axios.post(
+        BASE_URL + `/StockTransfer/rejustifystock`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        swal({
+          title: "Request rejustify!",
+          text: "The Requested Stock Transfer has been rejustified",
+          icon: "success",
+          button: "OK",
+        }).then(() => {
+          navigate("/stockManagement");
+        });
+      } else {
+        swal({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
+        });
+      }
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
   };
 
 
@@ -683,7 +732,7 @@ function StockTransferPreview({ authrztn }) {
             </div>
 
             <div className="save-cancel">
-              {status === "Pending" ? (
+              {status === "Pending" || status === "For-Rejustify (Stock Transfer)" ? (
                 <>
                   <Button
                     type="button"
@@ -704,6 +753,15 @@ function StockTransferPreview({ authrztn }) {
                   >
                     Reject
                   </Button>
+
+                  <Button
+                       onClick={handleShow}
+                       className="btn btn-secondary btn-md"
+                       size="md"
+                       style={{ fontSize: "20px", margin: "0px 5px" }}
+                     >
+                       Rejustify
+                     </Button>
                 </>
               ) : (
                 <></>
@@ -717,6 +775,116 @@ function StockTransferPreview({ authrztn }) {
           </div>
         )}
       </div>
+
+      <Modal show={showModal} onHide={handleClose}>
+              <Form>
+                <Modal.Header closeButton>
+                  <Modal.Title style={{ fontSize: "24px" }}>
+                    For Rejustification
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="row mt-3">
+                    <div className="col-4">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Reference
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={referenceCode}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                    </div>
+                    
+                    <div className="col-4">
+                      <Form.Group
+                        controlId="exampleForm.ControlInput2"
+                        className="datepick"
+                      >
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Source
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={source}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                    </div>
+
+                    <div className="col-4">
+                      <Form.Group
+                        controlId="exampleForm.ControlInput2"
+                        className="datepick"
+                      >
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Destination
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={destination}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <Form.Group controlId="exampleForm.ControlInput1">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Remarks:{" "}
+                      </Form.Label>
+                      <Form.Control
+                        onChange={(e) => setRejustifyRemarks(e.target.value)}
+                        placeholder="Enter details"
+                        as="textarea"
+                        rows={3}
+                        style={{
+                        fontFamily: 'Poppins, Source Sans Pro',
+                        fontSize: "16px",
+                        height: "200px",
+                        maxHeight: "200px",
+                        resize: "none",
+                        overflowY: "auto",
+                        }}
+                      />
+                    </Form.Group>
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Attach File:
+                        </Form.Label>
+                        <Form.Control type="file" onChange={handleFileChange} style={{width: '405px', height: '33px'}}/>
+                      </Form.Group>
+                    </div>
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={handleClose}
+                    style={{ fontSize: "20px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleUploadRejustify}
+                    variant="warning"
+                    size="md"
+                    style={{ fontSize: "20px" }}
+                  >
+                    Save
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
     </div>
   );
 }

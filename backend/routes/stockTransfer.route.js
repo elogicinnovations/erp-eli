@@ -22,9 +22,16 @@ const {
   ProductTAGSupplier,
   SparePart_Supplier,
   Subpart_supplier,
+  Stock_Rejustify,
+  Stock_History
 } = require("../db/models/associations");
 const session = require("express-session");
 const StockTransfer_subpart = require("../db/models/stockTransfer_subpart.model");
+const multer = require('multer');
+
+// Multer configuration
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router.use(
   session({
@@ -87,6 +94,30 @@ router.route("/fetchTableReceiving").get(async (req, res) => {
     });
 
     if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route("/fetchdropdownData").get(async (req, res) => {
+  try {
+    const data = await Stock_History.findAll({
+      include: [
+        {
+          model: StockTransfer,
+          required: true,
+        },
+      ],
+      where: { stockTransfer_id: req.query.stock_id },
+    });
+
+    if (data) {
+      // console.log(data);
       return res.json(data);
     } else {
       res.status(400);
@@ -162,6 +193,20 @@ router.route("/fetchProdutsPreview").get(async (req, res) => {
   }
 });
 
+router.route('/fetchRejustifyRemarks').get(async (req, res) => {
+  try {
+    const { stock_id } = req.query;
+    const data = await Stock_Rejustify.findOne({
+      where: {
+        stockTransfer_id: stock_id 
+      },  
+    });
+
+   res.json(data)
+  } catch (err) {
+    console.error(err);
+  }
+});
 // router.route('/latestRefcode').get(async (req, res) => {
 //   try {
 //     const latestPR = await StockTransfer.findOne({
@@ -259,9 +304,16 @@ router.route("/create").post(async (req, res) => {
       status: "Pending",
     });
 
+
+
     // console.log("Warehouse IDdsadsadasdsa" + destination);
     const createdID = StockTransfer_newData.stock_id;
 
+    await Stock_History.create({
+      stockTransfer_id: createdID,
+      status: "Pending",
+      remarks: remarks,
+    })
     
       for (const prod of addProductbackend) {
         const prod_id = prod.product_id;
@@ -541,6 +593,12 @@ router.route("/approve").post(async (req, res) => {
       }
     );
 
+    await Stock_History.create({
+      stockTransfer_id: req.query.id,
+      status: "To-Receive",
+      remarks: req.query.remarks
+    })
+
     const findStock = await StockTransfer.findOne({
       where: {
         stock_id: req.query.id,
@@ -574,6 +632,12 @@ router.route("/reject").post(async (req, res) => {
       }
     );
 
+    await Stock_History.create({
+      stockTransfer_id: req.query.id,
+      status: "Rejected",
+      remarks: req.query.remarks
+    })
+
     const findStock = await StockTransfer.findOne({
       where: {
         stock_id: req.query.id,
@@ -591,6 +655,62 @@ router.route("/reject").post(async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred");
+  }
+});
+
+router.post('/rejustifystock', upload.single('file'), async (req, res) => {
+  try {
+    const { id, remarks, userId } = req.body;
+    const file = req.file;
+
+    const mimeType = file.mimetype;
+    const fileExtension = file.originalname.split('.').pop();
+
+    const result = await Stock_Rejustify.create({
+      file: file.buffer,
+      stockTransfer_id: id,  
+      remarks: remarks, 
+      mimeType: mimeType,
+      fileExtension: fileExtension,
+    });
+
+    
+    const stock_historical = await Stock_History.create({
+      stockTransfer_id: id,
+      status: 'For-Rejustify (Stock Transfer)',
+      remarks: remarks
+    });
+
+
+    const stock_newData = await StockTransfer.update({
+      status: 'For-Rejustify (Stock Transfer)'
+    },
+    {
+      where: { 
+        stock_id: id
+       }
+    }); 
+
+    if(stock_newData){
+      const forStock = await StockTransfer.findOne({
+        where: {
+          stock_id: id,
+        }
+      });
+
+      const StockRef = forStock.reference_code;
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Stock transfer requested has been rejustified with reference code ${StockRef}`,
+    });
+  }
+
+    console.log('File data and additional data inserted successfully');
+    res.status(200).json();
+  } catch (error) {
+    console.error('Error handling file upload:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

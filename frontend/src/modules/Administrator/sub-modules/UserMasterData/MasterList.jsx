@@ -5,15 +5,12 @@ import "../../../../assets/global/style.css";
 import "../../../styles/react-style.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-// import Sidebar from "../../../Sidebar/sidebar";
-// import Header from "../../../../partials/header";
 import NoData from '../../../../assets/image/NoData.png';
 import NoAccess from '../../../../assets/image/NoAccess.png';
 import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
-// import 'bootstrap/dist/css/bootstrap.min.css'
+import { IconButton, TextField, TablePagination, } from '@mui/material';
 import Form from "react-bootstrap/Form";
-// import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {
   Eye,
   EyeSlash
@@ -42,6 +39,7 @@ import { jwtDecode } from "jwt-decode";
 function MasterList({ authrztn }) {
   const [validated, setValidated] = useState(false);
   const [masterListt, setmasterListt] = useState([]);
+  const [searchMasterlist, setSearchMasterlist] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateModalShow, setUpdateModalShow] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,15 +50,20 @@ function MasterList({ authrztn }) {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  const [rotatedIcons, setRotatedIcons] = useState(
-    Array(masterListt.length).fill(false)
-  );
+  const [rotatedIcons, setRotatedIcons] = useState(Array(masterListt.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-    const [Fname, setFname] = useState('');
-    const [username, setUsername] = useState('');
-    const [userRole, setUserRole] = useState('');
-    const [userId, setuserId] = useState('');
-    
+  const [Fname, setFname] = useState('');
+  const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userId, setuserId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(masterListt.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, masterListt.length);
+  const currentItems = masterListt.slice(startIndex, endIndex); 
+
     const decodeToken = () => {
       var token = localStorage.getItem('accessToken');
       if(typeof token === 'string'){
@@ -155,8 +158,6 @@ function MasterList({ authrztn }) {
 
   useEffect(() => {
     addAuthorization();
-
-    // console.log("ln 128: ", authorization); // []
   }, []);
 
   // const verifyAuthorization = (target) => {
@@ -173,6 +174,7 @@ function MasterList({ authrztn }) {
       .get(BASE_URL + "/masterList/masterTable")
       .then((res) => {
         setmasterListt(res.data)
+        setSearchMasterlist(res.data)
         setIsLoading(false);
       })
       .catch((err) => {
@@ -187,6 +189,21 @@ function MasterList({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchMasterlist.filter((data) => {
+      return (
+        data.userRole.col_rolename.toLowerCase().includes(searchTerm) ||
+        data.col_Fname.toLowerCase().includes(searchTerm) ||
+        data.col_email.toLowerCase().includes(searchTerm) ||
+        data.department.department_name.toLowerCase().includes(searchTerm) ||
+        data.col_status.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setmasterListt(filteredData);
+  };
 
   const handleClose = () => {
     setShowModal(false);
@@ -428,84 +445,6 @@ function MasterList({ authrztn }) {
     setValidated(true);
   };
 
-  //   const handleUpdateSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const updaemasterID = updateFormData.updateId;
-  //     const response = await axios.put(
-  //       BASE_URL + `/masterList/updateMaster/${updateFormData.updateId}?userId=${userId}`,
-  //       {
-  //         col_Fname: updateFormData.uaname,
-  //         col_address: updateFormData.uaaddress,
-  //         col_phone: updateFormData.uanum,
-  //         col_email: updateFormData.uaemail,
-  //         col_username: updateFormData.uauname,
-  //         col_roleID: updateFormData.uarole,
-  //         department_id: updateFormData.uadept,
-  //         col_Pass: updateFormData.uapass,
-  //         col_status: updateFormData.ustatus ? "Active" : "Inactive",
-  //       }
-  //     );
-
-  //     if (response.status === 200) {
-  //       swal({
-  //         title: "User Update Successful!",
-  //         text: "The User has been Updated Successfully.",
-  //         icon: "success",
-  //         button: "OK",
-  //       }).then(() => {
-  //         window.location.reload();
-  //         handleModalToggle();
-  //         setmasterListt((prevStudent) =>
-  //           prevStudent.map((data) =>
-  //             data.col_ID === updateFormData.updateId
-  //               ? {
-  //                   ...data,
-  //                   col_Fname: updateFormData.uaname,
-  //                   col_address: updateFormData.uaaddress,
-  //                   col_phone: updateFormData.uanum,
-  //                   col_email: updateFormData.uaemail,
-  //                   col_username: updateFormData.uauname,
-  //                   col_roleID: updateFormData.uarole,
-  //                   department_id: updateFormData.uadept,
-  //                   col_Pass: updateFormData.uapass,
-  //                   col_status: updateFormData.ustatus ? "Active" : "Inactive",
-  //                 }
-  //               : data
-  //           )
-  //         );
-
-  //         // Reset the form fields
-  //         setUpdateFormData({
-  //           uaname: "",
-  //           uaaddress: "",
-  //           uanum: "",
-  //           uaemail: "",
-  //           uauname: "",
-  //           uarole: "",
-  //           uadept: "",
-  //           uapass: "",
-  //           ustatus: false,
-  //           updateId: null,
-  //         });
-  //       });
-  //     } else if (response.status === 202) {
-  //       swal({
-  //         icon: "error",
-  //         title: "Email already exists",
-  //         text: "Please input another Email",
-  //       });
-  //     } else {
-  //       swal({
-  //         icon: "error",
-  //         title: "Something went wrong",
-  //         text: "Please contact our support",
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   // Validation for PhoneNumber and Email
   function isValidPhoneNumber(phone) {
@@ -575,165 +514,6 @@ function MasterList({ authrztn }) {
     }
     setValidated(true);
   };
-
-
-  // const handleFormSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     if (formData.cname === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Name is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.caddress === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Address is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.cnum === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Contact is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (!isValidPhoneNumber(formData.cnum)) {
-  //       swal({
-  //         title: "Invalid Phone Number Format",
-  //         text: "Please enter a valid number",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.cemail === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Email is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (!isValidEmail(formData.cemail)) {
-  //       swal({
-  //         title: "Invalid Email Format",
-  //         text: "Please enter a valid email address",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.cuname === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Username is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.crole === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Access Role is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.cpass === "") {
-  //       swal({
-  //         title: "Required Field",
-  //         text: "Password is Required",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     } else if (!/[A-Z]/.test(formData.cpass)) {
-  //       swal({
-  //         title: "Password Validation",
-  //         text: "Add at least one capital letter",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(formData.cpass)) {
-  //       swal({
-  //         title: "Password Validation",
-  //         text: "Add at least one special character",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     } else if (!/\d/.test(formData.cpass)) {
-  //       swal({
-  //         title: "Password Validation",
-  //         text: "Add at least one number",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     } else if (formData.cpass.length < 8) {
-  //       swal({
-  //         title: "Password Validation",
-  //         text: "Password must be at least 8 characters",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     }
-  //     if (formData.cpass != formData.cpass2) {
-  //       swal({
-  //         title: "Password error",
-  //         text: "Please confirm your password",
-  //         icon: "error",
-  //         button: "OK",
-  //       });
-  //     } else {
-  //       formData.userId = userId;
-  //       const status = formData.cstatus ? "Active" : "Inactive";
-  //       const response = await axios.post(
-  //         BASE_URL + "/masterList/createMaster",
-  //         formData
-  //       );
-  //       setShowModal(false);
-
-  //       if (response.status === 200) {
-  //         swal({
-  //           title: "User Add Successful!",
-  //           text: "The User has been Added Successfully.",
-  //           icon: "success",
-  //           button: "OK",
-  //         }).then(() => {
-  //           reloadTable();
-  //           setFormData({
-  //             cname: "",
-  //             caddress: "",
-  //             cnum: "",
-  //             cemail: "",
-  //             cuname: "",
-  //             crole: "",
-  //             cdept: "",
-  //             cpass: "",
-  //             cpass2: "",
-  //             cstatus: false,
-  //           });
-  //         });
-  //       } else if (response.status === 202) {
-  //         swal({
-  //           icon: "error",
-  //           title: "Email already exists",
-  //           text: "Please input another Email",
-  //         });
-  //       } else {
-  //         swal({
-  //           icon: "error",
-  //           title: "Something went wrong",
-  //           text: "Please contact our support",
-  //         });
-  //       }
-  //     }
-  //   } catch (err) {
-  //   }
-  // };
 
 
 
@@ -806,12 +586,12 @@ function MasterList({ authrztn }) {
             });
   }, []);
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && masterListt.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [masterListt]);
+  // useEffect(() => {
+  //   // Initialize DataTable when role data is available
+  //   if ($("#order-listing").length > 0 && masterListt.length > 0) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [masterListt]);
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -918,10 +698,23 @@ function MasterList({ authrztn }) {
 
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table id="order-listing" className="hover-table">
+              <TextField
+                label="Search"
+                variant="outlined"
+                style={{ marginBottom: '10px', 
+                float: 'right',
+                }}
+                InputLabelProps={{
+                  style: { fontSize: '14px'},
+                }}
+                InputProps={{
+                  style: { fontSize: '14px', width: '250px', height: '50px' },
+                }}
+                onChange={handleSearch}/>
+              <table className="hover-table">
                 <thead>
                   <tr>
-                    <th className="tableh">ID</th>
+                    {/* <th className="tableh">ID</th> */}
                     <th className="tableh">Role Type</th>
                     <th className="tableh">Name</th>
                     <th className="tableh">Email</th>
@@ -932,11 +725,11 @@ function MasterList({ authrztn }) {
                 </thead>
                 {masterListt.length > 0 ? (
                 <tbody>
-                  {masterListt.map((data, i) => (
+                  {currentItems.map((data, i) => (
                     <tr
                       key={i}
                       className={i % 2 === 0 ? "even-row" : "odd-row"}>
-                      <td>{data.col_id}</td>
+                      {/* <td>{data.col_id}</td> */}
                       <td>{data.userRole.col_rolename}</td>
                       <td>{data.col_Fname}</td>
                       <td>{data.col_email}</td>
@@ -1054,7 +847,43 @@ function MasterList({ authrztn }) {
             </div>
           </div>
 
-          <div className="pagination-contains"></div>
+          <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
         </div>
         ) : (
           <div className="no-access">
