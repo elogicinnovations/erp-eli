@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 // input
 import Input from '@mui/material/Input';
+import Form from "react-bootstrap/Form";
 
 
 // button
@@ -247,8 +248,9 @@ function ForgotPass() {
                       Email
                     </div>
                      <div class="email-input">
-                        <CustomInput class="" aria-label="Demo input" placeholder="Enter your email address"  value={email}
-                          onChange={(e) => setEmail(e.target.value)} ></CustomInput>
+                        <Form.Control class="" aria-label="Demo input" placeholder="Enter your email address"  value={email}
+                          onChange={(e) => setEmail(e.target.value)} 
+                          style={{height: "50px", fontSize: '18px', fontFamily: 'Poppins, Source Sans Pro'}}/>
                       </div>
                      <div className="fg-submitbutton">
                         <button className="button-pass" onClick={sendEmail} slots={{ root: 'span' }}>Submit</button>

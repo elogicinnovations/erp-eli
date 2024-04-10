@@ -675,5 +675,44 @@ router.route('/fetchPRprocess').get(async (req, res) => {
   }
 });
 
+router.route('/statusupdate').put(async (req, res) => {
+  try {
+    const { supplierCode, status, userId } = req.body;
+
+    const updateData = { supplier_status: status };
+
+    // if (status === 'Archive') {
+    //   updateData.archive_date = new Date();
+    // }
+
+    for (const suppliercodes of supplierCode) {
+      const data = await Supplier.findOne({
+        where: { supplier_code: suppliercodes} 
+      });
+
+      const suppname = data.supplier_name;
+      const currentstatus = data.supplier_status;
+
+      if(data) {
+      const updateStatus = await Supplier.update(updateData, { 
+        where: { supplier_code: suppliercodes } 
+      });
+      
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Supplier: ${suppname} Updated status from ${currentstatus} to ${status}`
+        })
+      }
+    };
+
+    
+
+    res.status(200).json({ message: 'Products updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;

@@ -24,6 +24,8 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -52,6 +54,7 @@ function Productvariants({ authrztn }) {
   const [updateModalShow, setUpdateModalShow] = useState(false);
 
   const [Manufacturer, setManufacturer] = useState([]);
+  const [searchManufacturer, setSearchManufacturer] = useState([])
   const [isLoading, setIsLoading] = useState(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -65,18 +68,14 @@ function Productvariants({ authrztn }) {
   const [nameManu, setName] = useState();
   const [descManu, setDescription] = useState();
   const [nextCode, setNextCode] = useState("");
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
     if(typeof token === 'string'){
     var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
     setuserId(decoded.id);
     }
   }
@@ -85,39 +84,33 @@ function Productvariants({ authrztn }) {
     decodeToken();
   }, [])
 
-  // const toggleDropdown = (event, index) => {
-  //   // Check if the clicked icon is already open, close it
-  //   if (index === openDropdownIndex) {
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = !newRotatedIcons[index];
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(false);
-  //     setOpenDropdownIndex(null);
-  //   } else {
-  //     // If a different icon is clicked, close the currently open dropdown and open the new one
-  //     setRotatedIcons(Array(Manufacturer.length).fill(false));
-  //     const iconPosition = event.currentTarget.getBoundingClientRect();
-  //     setDropdownPosition({
-  //       top: iconPosition.bottom + window.scrollY,
-  //       left: iconPosition.left + window.scrollX,
-  //     });
-  //     setRotatedIcons((prevRotatedIcons) => {
-  //       const newRotatedIcons = [...prevRotatedIcons];
-  //       newRotatedIcons[index] = true;
-  //       return newRotatedIcons;
-  //     });
-  //     setShowDropdown(true);
-  //     setOpenDropdownIndex(index);
-  //   }
-  // };
+  const totalPages = Math.ceil(Manufacturer.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, Manufacturer.length);
+  const currentItems = Manufacturer.slice(startIndex, endIndex);
+
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchManufacturer.filter((data) => {
+      return (
+        data.manufacturer_code.toLowerCase().includes(searchTerm) ||
+        data.manufacturer_name.toLowerCase().includes(searchTerm) ||
+        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.manufacturer_remarks.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setManufacturer(filteredData);
+  };
+  
   const reloadTable = () => {
     const delay = setTimeout(() => {
     axios
       .get(BASE_URL + "/manufacturer/retrieve")
       .then((res) => {
         setManufacturer(res.data)
+        setSearchManufacturer(res.data)
       setIsLoading(false);
     })
     .catch((err) => {
@@ -448,7 +441,20 @@ function Productvariants({ authrztn }) {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table id="order-listing">
+            <TextField
+              label="Search"
+              variant="outlined"
+              style={{ marginBottom: '10px', 
+              float: 'right',
+              }}
+              InputLabelProps={{
+                style: { fontSize: '14px'},
+              }}
+              InputProps={{
+                style: { fontSize: '14px', width: '250px', height: '50px' },
+              }}
+              onChange={handleSearch}/>
+              <table className="table-hover">
                 <thead>
                   <tr>
                     <th className="tableh">CODE</th>
@@ -567,6 +573,43 @@ function Productvariants({ authrztn }) {
               </table>
             </div>
           </div>
+          <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
         </div>
         ) : (
           <div className="no-access">

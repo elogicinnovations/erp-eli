@@ -16,18 +16,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
-  Plus,
-  Trash,
-  NotePencil,
-  DotsThreeCircle,
   CalendarBlank,
   Export,
-  ArrowClockwise,
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -48,9 +41,13 @@ function InventoryReports() {
   const [endDate, setEndDate] = useState(null);
 
   const [invetory_prd, setInvetory_prd] = useState([]);
+  const [searchInventory, setSearchInventory] = useState([]);
   const [invetory_assmbly, setInvetory_assmbly] = useState([]);
+  const [searchAssembly, setSearchAssembly] = useState([]);
   const [invetory_spare, setInvetory_spare] = useState([]);
+  const [searchSpare, setSearchSpare] = useState([]);
   const [invetory_subpart, setInvetory_subpart] = useState([]);
+  const [searchSub, setSearchSub] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [warehouse, setWarehouse] = useState([]);
@@ -58,7 +55,30 @@ function InventoryReports() {
 
   const [slctWarehouse, setSlctWarehouse] = useState();
   const [slctCategory, setSlctCategory] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
+  const totalPagesInventory = Math.ceil(invetory_prd.length / pageSize);
+  const startIndexInventory = (currentPage - 1) * pageSize;
+  const endIndexInventory = Math.min(startIndexInventory + pageSize, invetory_prd.length);
+  const currentItemsInventory = invetory_prd.slice(startIndexInventory, endIndexInventory);
+
+  const totalPagesAssembly = Math.ceil(invetory_assmbly.length / pageSize);
+  const startIndexAssembly = (currentPage - 1) * pageSize;
+  const endIndexAssembly = Math.min(startIndexAssembly + pageSize, invetory_assmbly.length);
+  const currentItemsAssembly = invetory_assmbly.slice(startIndexAssembly, endIndexAssembly);
+
+  const totalPagesSpare = Math.ceil(invetory_spare.length / pageSize);
+  const startIndexSpare = (currentPage - 1) * pageSize;
+  const endIndexSpare = Math.min(startIndexSpare + pageSize, invetory_spare.length);
+  const currentItemsSpare = invetory_spare.slice(startIndexSpare, endIndexSpare);
+
+  const totalPagesSubpart = Math.ceil(invetory_subpart.length / pageSize);
+  const startIndexSubpart = (currentPage - 1) * pageSize;
+  const endIndexSubpart = Math.min(startIndexSubpart + pageSize, invetory_subpart.length);
+  const currentItemsSubpart = invetory_subpart.slice(startIndexSubpart, endIndexSubpart);
+
+  const maxTotalPages = Math.max(totalPagesInventory, totalPagesAssembly, totalPagesSpare, totalPagesSubpart);
 
   const reloadTable = () => {
     
@@ -86,6 +106,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventoryPRD")
         .then((res) => {
           setInvetory_prd(res.data);
+          setSearchInventory(res.data)
         })
         .catch((err) => {
           console.log(err);
@@ -96,6 +117,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventoryASM")
         .then((res) => {
           setInvetory_assmbly(res.data);
+          setSearchAssembly(res.data)
         })
         .catch((err) => {
           console.log(err);
@@ -106,6 +128,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventorySPR")
         .then((res) => {
           setInvetory_spare(res.data);
+          setSearchSpare(res.data)
         })
         .catch((err) => {
           console.log(err);
@@ -116,6 +139,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventorySBP")
         .then((res) => {
           setInvetory_subpart(res.data);
+          setSearchSub(res.data)
           setIsLoading(false);
         })
         .catch((err) => {
@@ -132,18 +156,70 @@ function InventoryReports() {
 
   }, []);
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if (
-      $("#order-listing").length > 0 &&
-      invetory_prd.length > 0 &&
-      invetory_assmbly.length > 0 &&
-      invetory_spare.length > 0 &&
-      invetory_subpart.length > 0
-    ) {
-      $("#order-listing").DataTable();
-    }
-  }, [invetory_prd, invetory_assmbly, invetory_spare, invetory_subpart]);
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+
+    const filteredInventory = searchInventory.filter((data) => (
+      data.product_code.toLowerCase().includes(searchTerm) ||
+      data.product_name.toLowerCase().includes(searchTerm) ||
+      data.UOM.toLowerCase().includes(searchTerm) ||
+      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
+      data.warehouse_name.toLowerCase().includes(searchTerm)
+    ));
+    setInvetory_prd(filteredInventory);
+  
+    const filteredAssembly = searchAssembly.filter((data) => (
+      data.product_code.toLowerCase().includes(searchTerm) ||
+      data.product_name.toLowerCase().includes(searchTerm) ||
+      data.UOM.toLowerCase().includes(searchTerm) ||
+      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
+      data.warehouse_name.toLowerCase().includes(searchTerm)
+    ));
+    setInvetory_assmbly(filteredAssembly);
+  
+    const filteredSpare = searchSpare.filter((data) => (
+      data.product_code.toLowerCase().includes(searchTerm) ||
+      data.product_name.toLowerCase().includes(searchTerm) ||
+      data.UOM.toLowerCase().includes(searchTerm) ||
+      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
+      data.warehouse_name.toLowerCase().includes(searchTerm)
+    ));
+    setInvetory_spare(filteredSpare);
+  
+    const filteredSubpart = searchSub.filter((data) => (
+      data.product_code.toLowerCase().includes(searchTerm) ||
+      data.product_name.toLowerCase().includes(searchTerm) ||
+      data.UOM.toLowerCase().includes(searchTerm) ||
+      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
+      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
+      data.warehouse_name.toLowerCase().includes(searchTerm)
+    ));
+    setInvetory_subpart(filteredSubpart);
+  };
+
+  // useEffect(() => {
+  //   // Initialize DataTable when role data is available
+  //   if (
+  //     $("#order-listing").length > 0 &&
+  //     invetory_prd.length > 0 &&
+  //     invetory_assmbly.length > 0 &&
+  //     invetory_spare.length > 0 &&
+  //     invetory_subpart.length > 0
+  //   ) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [invetory_prd, invetory_assmbly, invetory_spare, invetory_subpart]);
 
   const [modalshow, setmodalShow] = useState(false);
 
@@ -493,7 +569,20 @@ function InventoryReports() {
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <table id="order-listing">
+              <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
+                onChange={handleSearch}/>
+                <table className="table-hover">
                   <thead>
                     <tr>
                       <th className="tableh">Product Code</th>
@@ -513,7 +602,7 @@ function InventoryReports() {
                   invetory_spare.length > 0 ||
                   invetory_subpart.length > 0 ? (
                     <tbody>
-                      {invetory_prd.map((data, i) => (
+                      {currentItemsInventory.map((data, i) => (
                         <tr key={i}>
                           <td>{data.product_code}</td>
                           <td>{data.product_name}</td>
@@ -533,7 +622,7 @@ function InventoryReports() {
                           <td>{data.totalPR_received_Quantity}</td>
                         </tr>
                       ))}
-                       {invetory_assmbly.map((data, i) => (
+                       {currentItemsAssembly.map((data, i) => (
                         <tr key={i}>
                           <td>{data.product_code}</td>
                           <td>{data.product_name}</td>
@@ -554,7 +643,7 @@ function InventoryReports() {
                         </tr>
                       ))}
 
-                      {invetory_spare.map((data, i) => (
+                      {currentItemsSpare.map((data, i) => (
                         <tr key={i}>
                           <td>{data.product_code}</td>
                           <td>{data.product_name}</td>
@@ -575,7 +664,7 @@ function InventoryReports() {
                         </tr>
                       ))}
 
-                      {invetory_subpart.map((data, i) => (
+                      {currentItemsSubpart.map((data, i) => (
                         <tr key={i}>
                           <td>{data.product_code}</td>
                           <td>{data.product_name}</td>
@@ -605,6 +694,57 @@ function InventoryReports() {
                 </table>
               </div>
             </div>
+            <nav>
+                        <ul className="pagination" style={{ float: "right" }}>
+                          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                            <button
+                              type="button"
+                              style={{
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                color: '#000000',
+                                textTransform: 'capitalize',
+                              }}
+                              className="page-link"
+                              onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                            >
+                              Previous
+                            </button>
+                          </li>
+                          {[...Array(maxTotalPages).keys()].map((num) => (
+                            <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                              <button
+                                style={{
+                                  fontSize: '14px',
+                                  width: '25px',
+                                  background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                                  color: currentPage === num + 1 ? '#FFFFFF' : '#000000',
+                                  border: 'none',
+                                  height: '28px',
+                                }}
+                                className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`}
+                                onClick={() => setCurrentPage(num + 1)}
+                              >
+                                {num + 1}
+                              </button>
+                            </li>
+                          ))}
+                          <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
+                            <button
+                              style={{
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                color: '#000000',
+                                textTransform: 'capitalize'
+                              }}
+                              className="page-link"
+                              onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                            >
+                              Next
+                            </button>
+                          </li>
+                        </ul>
+                      </nav>
           </div>
         )}
 

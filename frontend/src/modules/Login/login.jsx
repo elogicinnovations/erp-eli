@@ -8,6 +8,7 @@ import swal from "sweetalert";
 import { Link } from "react-router-dom";
 // import { useAuth } from '../authorize/AuthContext';
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa"; // Import icons
+import SBFLOGO from "../../assets/image/sbflogo-noback.png";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -121,11 +122,11 @@ const Login = () => {
       <div className="right-login-container">
         <div className="right-content">
           <div className="Uk-english">
-            <div className="text-english">English (UK)</div>
+            {/* <div className="text-english">English (UK)</div> */}
           </div>
 
           <div className="welcome-text">
-            <div>Welcome Back!</div>
+            <div className="logologin"><img src={SBFLOGO} alt="" srcset="" /></div>
             <div className="logintextaccount">Login to your account</div>
           </div>
 

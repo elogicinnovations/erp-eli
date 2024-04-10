@@ -65,15 +65,15 @@ function PurchaseRequest({ authrztn }) {
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
   const [userId, setuserId] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [showRejustify, setshowRejustify] = useState(false);
   const [Rejustifyremarks, setRejustifyremarks] = useState("")
   const [rejustifyFileURL, setRejustifyFileURL] = useState('');
   const [RejustifyFile, setRejustifyFile] = useState([])
   const handleCloseRejustify = () => setshowRejustify(false);
-
-  
+  const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  
+
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');

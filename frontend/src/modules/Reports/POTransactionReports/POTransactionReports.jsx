@@ -14,18 +14,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
-  Plus,
-  Trash,
-  NotePencil,
-  DotsThreeCircle,
   CalendarBlank,
   Export,
-  ArrowClockwise,
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+import NoData from '../../../../src/assets/image/NoData.png';
+
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -47,8 +41,16 @@ function POTransactionReports() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [requestsPR, setRequestsPR] = useState([]);
+  const [searchRequestPR, setSearchRequestPR] = useState([])
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(requestsPR.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, requestsPR.length);
+  const currentItems = requestsPR.slice(startIndex, endIndex);
 
   useEffect(() => {
     axios
@@ -89,9 +91,12 @@ function POTransactionReports() {
 
   const reloadTable = () => {
     axios
-      .get(BASE_URL + "/report_PO/requestPR")
-      .then((res) => setRequestsPR(res.data))
-      .catch((err) => console.log(err));
+    .get(BASE_URL + "/report_PO/requestPR")
+    .then((res) => {
+      setRequestsPR(res.data);
+      setSearchRequestPR(res.data);
+    })
+    .catch((err) => console.log(err));
   };
 
   const exportToCSV = () => {
@@ -156,6 +161,25 @@ function POTransactionReports() {
     reloadTable();
   }, []);
 
+  
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchRequestPR.filter((data) => {
+      return (
+        data.pr_num.toLowerCase().includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.date_needed.toLowerCase().includes(searchTerm) ||
+        data.used_for.toLowerCase().includes(searchTerm) ||
+        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+        data.masterlist.department.department_name.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setRequestsPR(filteredData);
+    
+  };
+
   //date format
   function formatDatetime(datetime) {
     const options = {
@@ -168,12 +192,12 @@ function POTransactionReports() {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && requestsPR.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [requestsPR]);
+  // useEffect(() => {
+  //   // Initialize DataTable when role data is available
+  //   if ($("#order-listing").length > 0 && requestsPR.length > 0) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [requestsPR]);
 
   return (
     <div className="main-of-containers">
@@ -320,8 +344,20 @@ function POTransactionReports() {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              {/* <ExportToPDF tableId="order-listing" tableData={PO_prd} /> */}
-              <table ref={tableRef} id="order-listing">
+            <TextField
+              label="Search"
+              variant="outlined"
+              style={{ marginBottom: '10px', 
+              float: 'right',
+              }}
+              InputLabelProps={{
+                style: { fontSize: '14px'},
+              }}
+              InputProps={{
+                style: { fontSize: '14px', width: '250px', height: '50px' },
+              }}
+              onChange={handleSearch}/>
+              <table ref={tableRef} className="table-hover">
                 <thead>
                   <tr>
                     <th className="tableh">PR Number</th>
@@ -333,8 +369,9 @@ function POTransactionReports() {
                     <th className="tableh">Status</th>
                   </tr>
                 </thead>
+                {requestsPR.length > 0 ? (
                 <tbody>
-                  {requestsPR.map((data, i) => (
+                  {currentItems.map((data, i) => (
                     <tr key={i}>
                       <td
                         onClick={() =>
@@ -444,9 +481,54 @@ function POTransactionReports() {
                     </tr>
                   ))}
                 </tbody>
+                ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>
+                        No Data Found
+                      </h3>
+                    </div>
+                )}
               </table>
             </div>
           </div>
+            <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
         </div>
       </div>
     </div>

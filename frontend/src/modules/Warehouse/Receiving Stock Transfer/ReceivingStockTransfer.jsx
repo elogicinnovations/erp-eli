@@ -13,12 +13,10 @@ import Form from 'react-bootstrap/Form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
-    Gear, 
-    Bell,
-    UserCircle,
     CalendarBlank,
     XCircle,
   } from "@phosphor-icons/react";
+  import { IconButton, TextField, TablePagination, } from '@mui/material';
   import '../../../assets/skydash/vendors/feather/feather.css';
   import '../../../assets/skydash/vendors/css/vendor.bundle.base.css';
   import '../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css';
@@ -40,9 +38,15 @@ function ReceivingStockTransfer({authrztn}) {
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [filteredPR, setFilteredPR] = useState([]);
+  const [searchPR, setSearchPR] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(filteredPR.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
+  const currentItems = filteredPR.slice(startIndex, endIndex);
 
-// Fetch Data
 
 const reloadTable = () => {
   const delay = setTimeout(() => {
@@ -51,6 +55,7 @@ const reloadTable = () => {
     .then((res) => {
       setStockTransfer(res.data)
       setFilteredPR(res.data)
+      setSearchPR(res.data)
       setIsLoading(false);
     })
     .catch((err) => {
@@ -65,6 +70,21 @@ const reloadTable = () => {
 useEffect(() => {
    reloadTable()
   }, []);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchPR.filter((data) => {
+      return (
+        data.stock_id.toLowerCase().includes(searchTerm) ||
+        data.remarks.toLowerCase().includes(searchTerm) ||
+        data.SourceWarehouse.warehouse_name.toLowerCase().includes(searchTerm) ||
+        data.reference_code.toLowerCase().includes(searchTerm) ||
+        data.DestinationWarehouse.warehouse_name.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setFilteredPR(filteredData);
+  };
       
 const handleXCircleClick = () => {
   setStartDate(null);
@@ -140,12 +160,12 @@ const handleGoButtonClick = () => {
       return new Date(datetime).toLocaleString('en-US', options);
     }
 
-    useEffect(() => {
-      // Initialize DataTable when role data is available
-      if ($('#order-listing').length > 0 && stockTransfer.length > 0) {
-        $('#order-listing').DataTable();
-      }
-    }, [stockTransfer]);
+    // useEffect(() => {
+    //   // Initialize DataTable when role data is available
+    //   if ($('#order-listing').length > 0 && stockTransfer.length > 0) {
+    //     $('#order-listing').DataTable();
+    //   }
+    // }, [stockTransfer]);
 
   return (
     <div className="main-of-containers">
@@ -294,6 +314,19 @@ const handleGoButtonClick = () => {
                 </div>
                 <div className="table-containss">
                     <div className="main-of-all-tables">
+                      <TextField
+                        label="Search"
+                        variant="outlined"
+                        style={{ marginBottom: '10px', 
+                        float: 'right',
+                        }}
+                        InputLabelProps={{
+                          style: { fontSize: '14px'},
+                        }}
+                        InputProps={{
+                          style: { fontSize: '14px', width: '250px', height: '50px' },
+                        }}
+                      onChange={handleSearch}/>
                         <table className='table-hover' id='order-listing'>
                                 <thead>
                                 <tr>
@@ -306,7 +339,7 @@ const handleGoButtonClick = () => {
                                 </thead>
                                 {filteredPR.length > 0 ? (
                                 <tbody>
-                                {filteredPR.map((data, i) => (
+                                {currentItems.map((data, i) => (
                                         <tr key={i}>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.stock_id}</td>
                                         <td onClick={() => navigate(`/viewToReceivingStockTransfer/${data.stock_id}`)}>{data.remarks}</td>
@@ -327,6 +360,43 @@ const handleGoButtonClick = () => {
                           </table>
                     </div>
                 </div>
+                <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
             </div>
         ) : (
           <div className="no-access">

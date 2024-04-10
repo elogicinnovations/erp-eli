@@ -52,9 +52,7 @@ function MasterList({ authrztn }) {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(Array(masterListt.length).fill(false));
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
+  const [isFormModified, setIsFormModified] = useState(false);
   const [userId, setuserId] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -68,9 +66,6 @@ function MasterList({ authrztn }) {
       var token = localStorage.getItem('accessToken');
       if(typeof token === 'string'){
       var decoded = jwtDecode(token);
-      setUsername(decoded.username);
-      setFname(decoded.Fname);
-      setUserRole(decoded.userrole);
       setuserId(decoded.id);
       }
     }
@@ -330,19 +325,17 @@ function MasterList({ authrztn }) {
     const handleUpdateFormChange = (e) => {
       const { name, value, type, checked } = e.target;
 
-      // Define regex patterns
       const nameRegex = /^[a-zA-Z\s',.\-]*$/;
       const contactRegex = /^[0-9+\\-]*$/;
 
-      // Validate input based on type
       let isValidInput = true;
       if (type === "text" && name === "uaname") {
         isValidInput = nameRegex.test(value);
       } else if (type === "text" && name === "uanum") {
         isValidInput = contactRegex.test(value);
       }
+      setIsFormModified(true);
 
-      // Update form data only if the input is valid
       if (isValidInput) {
         if (type === "checkbox") {
           setUpdateFormData((prevData) => ({
@@ -413,8 +406,6 @@ function MasterList({ authrztn }) {
                 : data
             )
           );
-
-          // Reset the form fields
           setUpdateFormData({
             uaname: "",
             uaaddress: "",
@@ -586,12 +577,6 @@ function MasterList({ authrztn }) {
             });
   }, []);
 
-  // useEffect(() => {
-  //   // Initialize DataTable when role data is available
-  //   if ($("#order-listing").length > 0 && masterListt.length > 0) {
-  //     $("#order-listing").DataTable();
-  //   }
-  // }, [masterListt]);
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -635,25 +620,9 @@ function MasterList({ authrztn }) {
   };
 
   const setButtonVisibles = (userId) => {
-    return visibleButtons[userId] || false; // Return false if undefined (closed by default)
+    return visibleButtons[userId] || false;
   };
 
-  // const [authrztn, setauthrztn] = useState([]);
-  // useEffect(() => {
-  //   var decoded = jwtDecode(localStorage.getItem("accessToken"));
-  //   axios
-  //     .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         setauthrztn(res.data.col_authorization);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  // }, []);
-
-  // console.log("ln 128: ", authorization); // []
 
   const [changePass, setChangePass] = useState(false);
 
@@ -663,9 +632,6 @@ function MasterList({ authrztn }) {
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-        <Sidebar />
-      </div> */}
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -1483,7 +1449,7 @@ function MasterList({ authrztn }) {
               variant="warning"
               className=""
               style={{ fontSize: "20px" }}
-              disabled={!UpdatepasswordsMatch && changePass}>
+              disabled={!UpdatepasswordsMatch && (changePass || !isFormModified)}>
               Update
             </Button>
             <Button

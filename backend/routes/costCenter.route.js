@@ -191,29 +191,46 @@ router.route('/initUpdate').get(async (req, res) => {
       console.error(err);
     }
 });
-  // router.route('/delete/:param_id').delete(async (req, res) => 
-  // {
-  //   const id = req.params.param_id;
-  //   await CostCenter.destroy({
-  //             where : {
-  //               id: id
-  //             }
-  //         }).then(
-  //             (del) => {
-  //                 if(del){
-  //                     res.json({success : true})
-  //                 }
-  //                 else{
-  //                     res.status(400).json({success : false})
-  //                 }
-  //             }
-  //         ).catch(
-  //             (err) => {
-  //                 console.error(err)
-  //                 res.status(409)
-  //             }
-  //         );
-  //       });
+
+router.route('/statusupdate').put(async (req, res) => {
+  try {
+    const { costCenterId, status, userId } = req.body;
+
+    const updateData = { status: status };
+
+    // if (status === 'Archive') {
+    //   updateData.archive_date = new Date();
+    // }
+
+    for (const costcenterId of costCenterId) {
+      const data = await CostCenter.findOne({
+        where: { id: costcenterId} 
+      });
+
+      const costname = data.name;
+      const currentstatus = data.status;
+
+      if(data) {
+      const updateStatus = await CostCenter.update(updateData, { 
+        where: { id: costCenterId } 
+      });
+      
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Cost Center: ${costname} Updated status from ${currentstatus} to ${status}`
+        })
+      }
+    };
+
+    
+
+    res.status(200).json({ message: 'Products updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
  
 module.exports = router;

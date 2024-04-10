@@ -19,6 +19,7 @@ import {
   CalendarBlank,
   XCircle,
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -36,23 +37,38 @@ import Header from "../../../partials/header";
 function ReceivingManagement({ authrztn }) {
   const navigate = useNavigate();
   const [PurchaseRequest, setPurchaseRequest] = useState([]);
+  const [searchPR, setSearchPR] = useState([]);
   const [receivingPO, setReceivingPO] = useState([]);
+  const [searchReceivePO, setSearchReceivePO] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [filteredPR, setFilteredPR] = useState([]);
   const [filteredRR, setFilteredRR] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  
+  const totalPagesPR = Math.ceil(searchPR.length / pageSize);
+  const startIndexPR = (currentPage - 1) * pageSize;
+  const endIndexPR = Math.min(startIndexPR + pageSize, searchPR.length);
+  const currentItemsPR = searchPR.slice(startIndexPR, endIndexPR);
 
-  // Fetch Data
+  const totalPagesReceiving = Math.ceil(searchReceivePO.length / pageSize);
+  const startIndexReceiving = (currentPage - 1) * pageSize;
+  const endIndexReceiving = Math.min(startIndexReceiving + pageSize, searchReceivePO.length);
+  const currentItemsReceiving = searchReceivePO.slice(startIndexReceiving, endIndexReceiving);
 
+  const maxTotalPages = Math.max(totalPagesPR, totalPagesReceiving);
   const reloadTable = () => {
     const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/PR/fetchTableToReceive")
         .then((res) => {
           setPurchaseRequest(res.data.prData);
+          setSearchPR(res.data.prData)
           setReceivingPO(res.data.receiving_PO);
+          setSearchReceivePO(res.data.receiving_PO);
           setFilteredPR(res.data.prData);
           setFilteredRR(res.data.receivingPO);
           setIsLoading(false);
@@ -69,6 +85,30 @@ function ReceivingManagement({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    
+    // Filter each inventory type separately
+    const filteredSearchPR = searchPR.filter((data) => (
+      data.pr_num.toLowerCase().includes(searchTerm) ||
+      data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+      data.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
+      formatDatetime(data.date_approved).toLowerCase().includes(searchTerm) ||
+      data.status.toLowerCase().includes(searchTerm) ||
+      data.remarks.toLowerCase().includes(searchTerm)
+    ));
+    setPurchaseRequest(filteredSearchPR);
+  
+    const filteredSearchReceivingPO = searchReceivePO.filter((data) => (
+      data.purchase_req.pr_num.toLowerCase().includes(searchTerm) ||
+      data.purchase_req.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+      data.purchase_req.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
+      data.status.toLowerCase().includes(searchTerm)
+    ));
+    setReceivingPO(filteredSearchReceivingPO);
+  
+  };
 
   const handleXCircleClick = () => {
     setStartDate(null);
@@ -307,7 +347,20 @@ function ReceivingManagement({ authrztn }) {
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <table className="table-hover" id="order-listing">
+              <TextField
+                label="Search"
+                variant="outlined"
+                style={{ marginBottom: '10px', 
+                float: 'right',
+                }}
+                InputLabelProps={{
+                  style: { fontSize: '14px'},
+                }}
+                InputProps={{
+                  style: { fontSize: '14px', width: '250px', height: '50px' },
+                }}
+                onChange={handleSearch}/>
+                <table className="table-hover">
                   <thead>
                     <tr>
                       <th className="tableh">PR NO.</th>
@@ -320,7 +373,7 @@ function ReceivingManagement({ authrztn }) {
                   </thead>
                   {PurchaseRequest.length > 0 || receivingPO > 0 ? (
                     <tbody>
-                      {PurchaseRequest.map((data, i) => (
+                      {currentItemsPR.map((data, i) => (
                         <tr key={i}>
                           <td
                             onClick={() =>
@@ -368,7 +421,7 @@ function ReceivingManagement({ authrztn }) {
                         </tr>
                       ))}
 
-                      {receivingPO.map((data, i) => (
+                      {currentItemsReceiving.map((data, i) => (
                         <tr key={i}>
                           <td
                             onClick={() =>
@@ -464,6 +517,57 @@ function ReceivingManagement({ authrztn }) {
                 </table>
               </div>
             </div>
+            <nav>
+            <ul className="pagination" style={{ float: "right" }}>
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                  type="button"
+                  style={{
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    color: '#000000',
+                    textTransform: 'capitalize',
+                  }}
+                  className="page-link"
+                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                >
+                  Previous
+                </button>
+              </li>
+              {[...Array(maxTotalPages).keys()].map((num) => (
+                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                  <button
+                    style={{
+                      fontSize: '14px',
+                      width: '25px',
+                      background: currentPage === num + 1 ? '#FFA500' : 'white',
+                      color: currentPage === num + 1 ? '#FFFFFF' : '#000000',
+                      border: 'none',
+                      height: '28px',
+                    }}
+                    className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`}
+                    onClick={() => setCurrentPage(num + 1)}
+                  >
+                    {num + 1}
+                  </button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
+                <button
+                  style={{
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    color: '#000000',
+                    textTransform: 'capitalize'
+                  }}
+                  className="page-link"
+                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
           </div>
         ) : (
           <div className="no-access">

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import Sidebar from "../../../../Sidebar/sidebar";
-// import Header from "../../../../../partials/header";
 import "../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import axios from "axios";
@@ -17,6 +15,7 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
 import "../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -37,6 +36,7 @@ function BinLocation({ authrztn }) {
   // Artifitial data
 
   const [binLocation, setbinLocation] = useState([]);
+  const [searchBinlocation, setSearchBinlocation] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [validated, setValidated] = useState(false);
 
@@ -57,6 +57,27 @@ function BinLocation({ authrztn }) {
   const [username, setUsername] = useState('');
   const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(binLocation.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, binLocation.length);
+  const currentItems = binLocation.slice(startIndex, endIndex);
+
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchBinlocation.filter((data) => {
+      return (
+        data.bin_name.toLowerCase().includes(searchTerm) ||
+        data.bin_subname.toLowerCase().includes(searchTerm) ||
+        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.bin_remarks.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setbinLocation(filteredData);
+  };
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
@@ -117,6 +138,7 @@ function BinLocation({ authrztn }) {
       .get(BASE_URL + "/binLocation/fetchTable")
       .then((res) => {
       setbinLocation(res.data)
+      setSearchBinlocation(res.data)
       setIsLoading(false);
     })
     .catch((err) => {
@@ -362,12 +384,12 @@ return () => clearTimeout(delay);
     });
   };
 
-  React.useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing").length > 0 && binLocation.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [binLocation]);
+  // React.useEffect(() => {
+  //   // Initialize DataTable when role data is available
+  //   if ($("#order-listing").length > 0 && binLocation.length > 0) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [binLocation]);
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -466,10 +488,23 @@ return () => clearTimeout(delay);
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table id="order-listing">
+              <TextField
+                label="Search"
+                variant="outlined"
+                style={{ marginBottom: '10px', 
+                float: 'right',
+                }}
+                InputLabelProps={{
+                  style: { fontSize: '14px'},
+                }}
+                InputProps={{
+                  style: { fontSize: '14px', width: '250px', height: '50px' },
+                }}
+                onChange={handleSearch}/>
+              <table className="table-hover">
                 <thead>
                   <tr>
-                    <th className="tableh">ID</th>
+                    {/* <th className="tableh">ID</th> */}
                     <th className="tableh">Bin Name</th>
                     <th className="tableh">Sub Bin-Name</th>
                     <th className="tableh">Remarks</th>
@@ -480,9 +515,9 @@ return () => clearTimeout(delay);
                 </thead>
                 {binLocation.length > 0 ? (
                 <tbody>
-                  {binLocation.map((data, i) => (
+                  {currentItems.map((data, i) => (
                     <tr key={i}>
-                      <td>{data.bin_id}</td>
+                      {/* <td>{data.bin_id}</td> */}
                       <td>{data.bin_name}</td>
                       <td>{data.bin_subname}</td>
                       <td>{data.bin_remarks}</td>
@@ -579,6 +614,43 @@ return () => clearTimeout(delay);
               </table>
             </div>
           </div>
+          <nav>
+            <ul className="pagination" style={{ float: "right" }}>
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                type="button"
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize',
+              }}
+                className="page-link" 
+                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+              </li>
+              {[...Array(totalPages).keys()].map((num) => (
+                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                  <button 
+                  style={{
+                    fontSize: '14px',
+                    width: '25px',
+                    background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                    color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                    border: 'none',
+                    height: '28px',
+                  }}
+                  className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <button
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize'}}
+                className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+              </li>
+            </ul>
+          </nav>
         </div>
         ) : (
           <div className="no-access">

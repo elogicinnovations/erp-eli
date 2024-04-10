@@ -18,35 +18,43 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
+  ArrowsClockwise
 } from "@phosphor-icons/react";
 import * as $ from "jquery";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { jwtDecode } from "jwt-decode";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
 
 function CostCenter({ authrztn }) {
   const [CostCenter, setCostCenter] = useState([]);
+  const [searchCostCenter, setSearchCostcenter] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [name, setName] = useState("");
   const [select_masterlist, setSelect_Masterlist] = useState([]);
   const [description, setDescription] = useState("");
-
-  const [validated, setValidated] = useState(false);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+  const [showStatusmodal, setShowStatus] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("Active");
   const [status, setStatus] = useState("Active");
+  const [validated, setValidated] = useState(false);
+
   const [visibleButtons, setVisibleButtons] = useState({});
   const [isVertical, setIsVertical] = useState({});
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(CostCenter.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, CostCenter.length);
+  const currentItems = CostCenter.slice(startIndex, endIndex);
+
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
     if(typeof token === 'string'){
     var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
     setuserId(decoded.id);
     }
   }
@@ -61,6 +69,7 @@ function CostCenter({ authrztn }) {
     .get(BASE_URL + "/costCenter/getCostCenter")
     .then((res) => {
       setCostCenter(res.data)
+      setSearchCostcenter(res.data)
       setIsLoading(false);
     })
     .catch((err) => {
@@ -74,6 +83,21 @@ function CostCenter({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchCostCenter.filter((data) => {
+      return (
+        data.name.toLowerCase().includes(searchTerm) ||
+        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.masterlist.col_phone.toLowerCase().includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setCostCenter(filteredData);
+  };
 
 
   const add = async (e) => {
@@ -371,12 +395,75 @@ function CostCenter({ authrztn }) {
     }
   };
 
+  const handleCheckboxChange = (costCenterId) => {
+    const updatedCheckboxes = [...selectedCheckboxes];
 
-  useEffect(() => {
-    if (CostCenter.length > 0) {
-      $("#order-listing").DataTable();
+    if (updatedCheckboxes.includes(costCenterId)) {
+      updatedCheckboxes.splice(updatedCheckboxes.indexOf(costCenterId), 1);
+    } else {
+      updatedCheckboxes.push(costCenterId);
     }
-  }, [CostCenter]);
+
+    setSelectedCheckboxes(updatedCheckboxes);
+    setShowChangeStatusButton(updatedCheckboxes.length > 0);
+  };
+
+  const handleSelectAllChange = () => {
+    const allCostCenterId = CostCenter.map((data) => data.id);
+  
+    if (allCostCenterId.length === 0) {
+      // No data, disable the checkbox
+      return;
+    }
+  
+    if (selectedCheckboxes.length === allCostCenterId.length) {
+      setSelectedCheckboxes([]);
+      setShowChangeStatusButton(false);
+    } else {
+      setSelectedCheckboxes(allCostCenterId);
+      setShowChangeStatusButton(true);
+    }
+  
+    setSelectAllChecked(selectedCheckboxes.length !== allCostCenterId.length);
+  
+    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allCostCenterId.length);
+  };
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+ 
+ 
+  const handleCloseStatus = () => setShowStatus(false);
+  const handleShowStatus = () => setShowStatus(true);
+
+  const handleSave = () => {
+    axios
+      .put(BASE_URL + "/costCenter/statusupdate", {
+        costCenterId: selectedCheckboxes,
+        status: selectedStatus,
+        userId
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: "Cost Center Status Update",
+            text: "The status has been updated successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleCloseStatus();
+            reloadTable();
+            setSelectAllChecked(false);
+            setSelectedCheckboxes([]);
+            setShowChangeStatusButton(false)
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
     <div className="main-of-containers">
@@ -396,26 +483,60 @@ function CostCenter({ authrztn }) {
               </div>
 
               <div className="button-create-side">
-                <div className="Buttonmodal-new">
-                  { authrztn?.includes('Cost Centre - Add') && (
-                  <button onClick={handleShow}>
-                    <span style={{}}>
-                      <Plus size={25} />
-                    </span>
-                    Create New
-                  </button>
-                  )}
 
-                </div>
+                  {authrztn?.includes('Cost Centre - Add') && (
+                    showChangeStatusButton ? (
+                      <div className="Buttonmodal-change">
+                        <button className="buttonchanges" onClick={handleShowStatus}>
+                          <span style={{}}>
+                          <ArrowsClockwise size={25} />
+                          </span>
+                          Change Status
+                        </button>
+                      </div>
+                    ) : (
+                    <div className="Buttonmodal-new">
+                      <button onClick={handleShow}>
+                        <span style={{}}>
+                          <Plus size={25} />
+                        </span>
+                        Create New
+                      </button>
+                    </div>
+                    )
+                    )}
+
+                
               </div>
             </div>
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table className="table-hover" id="order-listing">
+            <TextField
+              label="Search"
+              variant="outlined"
+              style={{ marginBottom: '10px', 
+              float: 'right',
+              }}
+              InputLabelProps={{
+                style: { fontSize: '14px'},
+              }}
+              InputProps={{
+                style: { fontSize: '14px', width: '250px', height: '50px' },
+              }}
+              onChange={handleSearch}/>
+              <table className="table-hover">
                 <thead>
                   <tr>
-                    <th className="tableh">ID</th>
+                    {/* <th className="tableh">ID</th> */}
+                    <th className="tableh" id="check">
+                      <input
+                        type="checkbox"
+                        checked={selectAllChecked}
+                        onChange={handleSelectAllChange}
+                        disabled={CostCenter.length === 0}
+                      />
+                    </th>
                     <th className="tableh">Name</th>
                     <th className="tableh">Assigned User</th>
                     <th className="tableh">Contact #</th>
@@ -431,9 +552,16 @@ function CostCenter({ authrztn }) {
                   {CostCenter.map((data, i) => (
                     data.col_Fname !== null ? (
                     <tr key={i}>
-                      <td
+                      {/* <td
                         onClick={() => navigate(`/viewCostCenter/${data.id}`)}>
                         {data.id}
+                      </td> */}
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedCheckboxes.includes(data.id)}
+                          onChange={() => handleCheckboxChange(data.id)}
+                        />
                       </td>
                       <td
                         onClick={() => navigate(`/viewCostCenter/${data.id}`)}>
@@ -567,6 +695,43 @@ function CostCenter({ authrztn }) {
               </table>
             </div>
           </div>
+          <nav>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button
+                  type="button"
+                  style={{fontSize: '14px',
+                  cursor: 'pointer',
+                  color: '#000000',
+                  textTransform: 'capitalize',
+                }}
+                  className="page-link" 
+                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                </li>
+                {[...Array(totalPages).keys()].map((num) => (
+                  <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                    <button 
+                    style={{
+                      fontSize: '14px',
+                      width: '25px',
+                      background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                      color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                      border: 'none',
+                      height: '28px',
+                    }}
+                    className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                  </li>
+                ))}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button
+                  style={{fontSize: '14px',
+                  cursor: 'pointer',
+                  color: '#000000',
+                  textTransform: 'capitalize'}}
+                  className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                </li>
+              </ul>
+            </nav>
         </div>
         ) : (
           <div className="no-access">
@@ -578,6 +743,45 @@ function CostCenter({ authrztn }) {
         )
       )}
       </div>
+
+
+      <Modal
+        size="md"
+        show={showStatusmodal}
+        onHide={handleCloseStatus}
+        backdrop="static"
+        animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}>Change Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="exampleForm.ControlInput2">
+            <Form.Label style={{ fontSize: "20px", fontFamily: "Poppins, Source Sans Pro" }}>Status</Form.Label>
+            <Form.Select
+              style={{ height: "40px", fontSize: "15px" }}
+              onChange={handleStatusChange}
+              value={selectedStatus}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              {/* <option value="Archive">Archive</option> */}
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-warning"
+            onClick={handleSave}
+            style={{ fontSize: "20px" }}>
+            Save
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={handleCloseStatus}
+            style={{ fontSize: "20px" }}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal       
         show={showModal} 

@@ -13,18 +13,12 @@ import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
-  MagnifyingGlass,
-  Gear,
-  Bell,
-  UserCircle,
-  Plus,
-  Trash,
-  NotePencil,
-  DotsThreeCircle,
   CalendarBlank,
   Export,
-  ArrowClockwise,
 } from "@phosphor-icons/react";
+import NoData from '../../../../src/assets/image/NoData.png';
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -46,12 +40,21 @@ function BIS() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [bisContent, setBisContent] = useState([]);
-
+  const [searchBIS, setSearchBIS] = useState([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(bisContent.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, bisContent.length);
+  const currentItems = bisContent.slice(startIndex, endIndex);
 
   const reloadTable = () => {
     axios
       .get(BASE_URL + "/report_BIS/content_fetch")
-      .then((res) => setBisContent(res.data))
+      .then((res) => {
+        setBisContent(res.data);
+        setSearchBIS(res.data);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -60,12 +63,25 @@ function BIS() {
     reloadTable();
   }, []);
 
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchBIS.filter((data) => {
+      return (
+        data.inventory_prd.product_tag_supplier.product.product_name.toLowerCase().includes(searchTerm) ||
+        data.inventory_prd.product_tag_supplier.product.product_unitMeasurement.toLowerCase().includes(searchTerm) ||
+        data.inventory_prd.product_tag_supplier.product.category.category_name.toLowerCase().includes(searchTerm) ||
+        data.inventory_prd.product_price.toLowerCase().includes(searchTerm) ||
+        data.inventory_prd.freight_cost.toLowerCase().includes(searchTerm) ||
+        data.inventory_prd.custom_cost.toLowerCase().includes(searchTerm) ||
+        data.inventory_prd.product_price + data.inventory_prd.freight_cost + data.inventory_prd.custom_cost.toLowerCase().includes(searchTerm) ||
+        data.quantity.toLowerCase().includes(searchTerm)
+      );
+    });
+  
+    setBisContent(filteredData);
+  };
 
-  useEffect(() => {
-    if ($("#order-listing").length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, []);
+
   const exportToCSV = () => {
     const input = tableRef.current;
 
@@ -213,7 +229,20 @@ function BIS() {
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <table ref={tableRef} id="order-listing">
+              <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
+                onChange={handleSearch}/>
+              <table ref={tableRef} className="table-hover">
                 <thead>
                   <tr>
                     <th className="tableh">Product Code</th>
@@ -250,6 +279,43 @@ function BIS() {
               </table>
             </div>
           </div>
+          <nav>
+            <ul className="pagination" style={{ float: "right" }}>
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                type="button"
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize',
+              }}
+                className="page-link" 
+                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+              </li>
+              {[...Array(totalPages).keys()].map((num) => (
+                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                  <button 
+                  style={{
+                    fontSize: '14px',
+                    width: '25px',
+                    background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                    color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                    border: 'none',
+                    height: '28px',
+                  }}
+                  className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <button
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize'}}
+                className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>

@@ -414,7 +414,7 @@ function Warehouse({ authrztn }) {
                   </thead>
                   {department.length > 0 ? (
                     <tbody>
-                      {department.map((data, i) => (
+                      {currentItems.map((data, i) => (
                         <tr key={i}>
                           <td>{data.department_name}</td>
                           <td>{data.description}</td>

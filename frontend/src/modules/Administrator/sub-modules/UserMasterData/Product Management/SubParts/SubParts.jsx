@@ -321,18 +321,18 @@ function SubParts({ authrztn }) {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-  React.useEffect(() => {
-    if ($("#order-listing").length > 0 && subParts.length > 0) {
-      $("#order-listing").DataTable();
-    }
-  }, [subParts]);
+  // React.useEffect(() => {
+  //   if ($("#order-listing").length > 0 && subParts.length > 0) {
+  //     $("#order-listing").DataTable();
+  //   }
+  // }, [subParts]);
 
-  useEffect(() => {
-    // Initialize DataTable when role data is available
-    if ($("#order-listing1").length > 0 && historypricemodal.length > 0) {
-      $("#order-listing1").DataTable();
-    }
-  }, [historypricemodal]);
+  // useEffect(() => {
+  //   // Initialize DataTable when role data is available
+  //   if ($("#order-listing1").length > 0 && historypricemodal.length > 0) {
+  //     $("#order-listing1").DataTable();
+  //   }
+  // }, [historypricemodal]);
 
   //this section is for updating of Active and Inactive status
   const handleCheckboxChange = (subpartID) => {

@@ -41,7 +41,13 @@ const ActivityLog = ({authrztn})  => {
     const [selecteduser, setselecteduser] = useState("");
     const [exportOptionsVisible, setExportOptionsVisible] = useState(false);
     const exportOptionsRef = useRef(null);
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+    const totalPages = Math.ceil(userActivity.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, userActivity.length);
+    const currentItems = userActivity.slice(startIndex, endIndex);
+
     const handleRowToggle = async (masterlist_id) => {
       try {
         const res = await axios.get(BASE_URL + '/activitylog/fetchdropdownData', {
@@ -643,46 +649,42 @@ const ActivityLog = ({authrztn})  => {
                                     )}
                                 </table>
                                 <nav>
-                                <List>
-                                {items.map(({ page, type, selected, ...item }, index) => {
-                                    let children = null;
-                                    if (type === 'start-ellipsis' || type === 'end-ellipsis') {
-                                    children = '…';
-                                    } else if (type === 'page') {
-                                    children = (
+                                    <ul className="pagination" style={{ float: "right" }}>
+                                      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                                         <button
                                         type="button"
-                                        style={{
-                                            fontWeight: selected ? 'bold' : undefined,
-                                            fontSize: '14px',
-                                            width: '25px',
-                                            background: '#FFA500',
-                                            color: '#FFFFFF',
-                                            border: 'none',
-                                            height: '28px',
-
-                                        }}
-                                        {...item}
-                                        >
-                                        {page}
-                                        </button>
-                                    );
-                                    } else {
-                                    children = (
-                                        <button type="button" {...item}
                                         style={{fontSize: '14px',
                                         cursor: 'pointer',
                                         color: '#000000',
-                                        textTransform: 'capitalize'}}>
-                                        {type}
-                                        </button>
-                                    );
-                                    }
-
-                                    return <li key={index}>{children}</li>;
-                                })}
-                                </List>
-                            </nav>
+                                        textTransform: 'capitalize',
+                                      }}
+                                        className="page-link" 
+                                        onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                                      </li>
+                                      {[...Array(totalPages).keys()].map((num) => (
+                                        <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                                          <button 
+                                          style={{
+                                            fontSize: '14px',
+                                            width: '25px',
+                                            background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                                            color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                                            border: 'none',
+                                            height: '28px',
+                                          }}
+                                          className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                                        </li>
+                                      ))}
+                                      <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                        <button
+                                        style={{fontSize: '14px',
+                                        cursor: 'pointer',
+                                        color: '#000000',
+                                        textTransform: 'capitalize'}}
+                                        className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                                      </li>
+                                    </ul>
+                                  </nav>
                             </div>
                         </div>
                     </div>

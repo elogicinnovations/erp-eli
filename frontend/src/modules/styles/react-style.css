@@ -15,6 +15,12 @@
 } */
 
 
+
+.tab-content {
+  height: 600px;
+  overflow-y: auto;
+  
+}
 .w-full {
   width: 100% !important;
 }
@@ -293,6 +299,7 @@ button.page-link:hover{
   border-radius: 10px;
   flex-direction: column;
   box-shadow: rgba(0, 0, 0, 0.75);
+  height: auto;
 }
 
 .welcome-text .logintextaccount {
@@ -300,6 +307,22 @@ button.page-link:hover{
   font-size: 2.5rem;
   font-family: Poppins, "Source Sans Pro";
   font-weight: 300;
+}
+
+.logologin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+
+}
+
+.logologin img {
+  max-width: 50%;
+  max-height: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 .welcome-text div {

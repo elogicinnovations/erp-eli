@@ -11,7 +11,13 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
+  ArrowsClockwise
 } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination, } from '@mui/material';
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/esm/Button";
+
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -31,26 +37,31 @@ import { jwtDecode } from "jwt-decode";
 
 function Supplier({ authrztn }) {
   const [supplier, setsupplier] = useState([]);
-
+  const [searchSupplier, setSearchSupplier] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
+  const [showStatusmodal, setShowStatus] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("Active");
   const [rotatedIcons, setRotatedIcons] = useState(
     Array(supplier.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.ceil(supplier.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, supplier.length);
+  const currentItems = supplier.slice(startIndex, endIndex);
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
     if(typeof token === 'string'){
     var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
     setuserId(decoded.id);
     }
   }
@@ -87,22 +98,60 @@ function Supplier({ authrztn }) {
     }
   };
 
-  useEffect(() => {
+  const reloadTable = () => {
     const delay = setTimeout(() => {
-      axios
-        .get(BASE_URL + "/supplier/fetchTable")
-        .then((res) => {
-          setsupplier(res.data);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
-    }, 1000);
+    axios
+    .get(BASE_URL + "/supplier/fetchTable")
+    .then((res) => {
+      setsupplier(res.data);
+      setSearchSupplier(res.data)
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
+  }, 1000);
 
-    return () => clearTimeout(delay);
+  return () => clearTimeout(delay);
+};
+  useEffect(() => {
+    reloadTable();
   }, []);
+
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //     axios
+  //       .get(BASE_URL + "/supplier/fetchTable")
+  //       .then((res) => {
+  //         setsupplier(res.data);
+  //         setSearchSupplier(res.data)
+  //         setIsLoading(false);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         setIsLoading(false);
+  //       });
+  //   }, 1000);
+
+  //   return () => clearTimeout(delay);
+  // }, []);
+
+  const handleSearch = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const filteredData = searchSupplier.filter((data) => {
+      return (
+        data.supplier_code.toLowerCase().includes(searchTerm) ||
+        data.supplier_name.toLowerCase().includes(searchTerm) ||
+        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        data.supplier_contactPerson.toLowerCase().includes(searchTerm) ||
+        data.supplier_status.toLowerCase().includes(searchTerm) 
+      );
+    });
+  
+    setsupplier(filteredData);
+  };
+
 
 
   function formatDate(datetime) {
@@ -212,37 +261,80 @@ function Supplier({ authrztn }) {
     return visibleButtons[userId] || false; // Return false if undefined (closed by default)
   };
 
-      useEffect(() => {
-        // Initialize DataTable when role data is available
-        if ($('#order-listing').length > 0 && supplier.length > 0) {
-          $('#order-listing').DataTable();
+  const handleCheckboxChange = (supplierCode) => {
+    const updatedCheckboxes = [...selectedCheckboxes];
+
+    if (updatedCheckboxes.includes(supplierCode)) {
+      updatedCheckboxes.splice(updatedCheckboxes.indexOf(supplierCode), 1);
+    } else {
+      updatedCheckboxes.push(supplierCode);
+    }
+
+    setSelectedCheckboxes(updatedCheckboxes);
+    setShowChangeStatusButton(updatedCheckboxes.length > 0);
+  };
+
+  const handleSelectAllChange = () => {
+    const allSuppliercode = supplier.map((data) => data.supplier_code);
+  
+    if (allSuppliercode.length === 0) {
+      // No data, disable the checkbox
+      return;
+    }
+  
+    if (selectedCheckboxes.length === allSuppliercode.length) {
+      setSelectedCheckboxes([]);
+      setShowChangeStatusButton(false);
+    } else {
+      setSelectedCheckboxes(allSuppliercode);
+      setShowChangeStatusButton(true);
+    }
+  
+    setSelectAllChecked(selectedCheckboxes.length !== allSuppliercode.length);
+  
+    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allSuppliercode.length);
+  };
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+
+  const handleCloseStatus = () => setShowStatus(false);
+  const handleShowStatus = () => setShowStatus(true);
+
+  const handleSave = () => {
+    axios
+      .put(BASE_URL + "/supplier/statusupdate", {
+        supplierCode: selectedCheckboxes,
+        status: selectedStatus,
+        userId
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          swal({
+            title: "Supplier Status Update",
+            text: "The status has been updated successfully.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleCloseStatus();
+            reloadTable();
+            setSelectAllChecked(false);
+            setSelectedCheckboxes([]);
+            setShowChangeStatusButton(false)
+          });
         }
-      }, [supplier]);
-
-      // const [authrztn, setauthrztn] = useState([]);
-      // useEffect(() => {
-
-      //   var decoded = jwtDecode(localStorage.getItem('accessToken'));
-      //   axios.get(BASE_URL + '/masterList/viewAuthorization/'+ decoded.id)
-      //     .then((res) => {
-      //       if(res.status === 200){
-      //         setauthrztn(res.data.col_authorization);
-      //       }
-      //   })
-      //     .catch((err) => {
-      //       console.error(err);
-      //   });
-
-      // }, []);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
     const navigate = useNavigate();
     return(
 
         <div className="main-of-containers">
-            {/* <div className="left-of-main-containers">
-            <Sidebar />
-            </div> */}
-      <div className="right-of-main-containers">
+          <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
                   <ReactLoading className="react-loading" type={'bubbles'}/>
@@ -250,48 +342,86 @@ function Supplier({ authrztn }) {
                 </div>
               ) : (
                 authrztn.includes('Supplier - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Supplier</p>
-              </div>
+                  <div className="right-body-contents">
+                    <div className="Employeetext-button">
+                      <div className="employee-and-button">
+                        <div className="emp-text-side">
+                          <p>Supplier</p>
+                        </div>
 
                             <div className="button-create-side">
-                            <div className="Buttonmodal-new">
-                                <Link to={'/CreateSupplier'} style={{textDecoration: 'none', backgroundColor: 'inherit'}}>
-                                { authrztn.includes('Supplier - Add') && (
-                                <button>
-                                    <span style={{ }}>
-                                    <Plus size={25} />
-                                    </span>
-                                    Create New
+
+                            {authrztn?.includes('Supplier - Add') && (
+                            showChangeStatusButton ? (
+                              <div className="Buttonmodal-change">
+                                <button className="buttonchanges" onClick={handleShowStatus}>
+                                  <span style={{}}>
+                                  <ArrowsClockwise size={25} />
+                                  </span>
+                                  Change Status
                                 </button>
-                                )}
-                                </Link>
-                                </div>
+                              </div>
+                            ) : (
+                            <div className="Buttonmodal-new">
+                              <Link to="/CreateSupplier" className="button">
+                                <span style={{}}>
+                                  <Plus size={25} />
+                                </span>
+                                  Create New
+                              </Link>
+                            </div>
+                            )
+                            )}
                             </div>
                         </div>
                     </div>
 
                     <div className="table-containss">
                         <div className="main-of-all-tables">
-                            <table className='table-hover' id='order-listing'>
+                        <TextField
+                            label="Search"
+                            variant="outlined"
+                            style={{ marginBottom: '10px', 
+                            float: 'right',
+                            }}
+                            InputLabelProps={{
+                              style: { fontSize: '14px'},
+                            }}
+                            InputProps={{
+                              style: { fontSize: '14px', width: '250px', height: '50px' },
+                            }}
+                          onChange={handleSearch}/>
+                            <table className='table-hover'>
                                     <thead>
                                     <tr>
-                                        <th className='tableh'>SUPPLIER Code</th>
-                                        <th className='tableh'>SUPPLIER NAME</th>
-                                        <th className='tableh'>CONTACT</th>
-                                        <th className='tableh'>STATUS</th>
+                                      <th className="tableh" id="check">
+                                          <input
+                                            type="checkbox"
+                                            checked={selectAllChecked}
+                                            onChange={handleSelectAllChange}
+                                            disabled={supplier.length === 0}
+                                          />
+                                        </th>
+                                        <th className='tableh'>Supplier Code</th>
+                                        <th className='tableh'>Supplier NAME</th>
+                                        <th className='tableh'>Contact</th>
+                                        <th className='tableh'>Status</th>
                                         <th className='tableh'>Date Created</th>
                                         <th className='tableh'>Date Modified</th>
-                                        <th className='tableh'>ACTION</th>
+                                        <th className='tableh'>Action</th>
                                     </tr>
                                     </thead>
                                     {supplier.length > 0 ? (
                                     <tbody>
-                                        {supplier.map((data,i) =>(
+                                        {currentItems.map((data,i) =>(
                                             <tr key={i}>
+                                                <td>
+                                                <input
+                                                  type="checkbox"
+                                                  checked={selectedCheckboxes.includes(data.supplier_code)}
+                                                  onChange={() => handleCheckboxChange(data.supplier_code)}
+                                                />
+                                              </td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_code}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_name}</td>
                                                 <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_contactPerson}</td>
@@ -396,17 +526,92 @@ function Supplier({ authrztn }) {
                                 </table>
                             </div>
                         </div>
+                        <nav>
+                  <ul className="pagination" style={{ float: "right" }}>
+                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                      <button
+                      type="button"
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize',
+                    }}
+                      className="page-link" 
+                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    </li>
+                    {[...Array(totalPages).keys()].map((num) => (
+                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                        <button 
+                        style={{
+                          fontSize: '14px',
+                          width: '25px',
+                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                          border: 'none',
+                          height: '28px',
+                        }}
+                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      </li>
+                    ))}
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                      <button
+                      style={{fontSize: '14px',
+                      cursor: 'pointer',
+                      color: '#000000',
+                      textTransform: 'capitalize'}}
+                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                    </li>
+                  </ul>
+                </nav>
                 </div>
-        ) : (
-          <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
-          </div>
-        )
+                ) : (
+                  <div className="no-access">
+                    <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+                    <h3>
+                      You don't have access to this function.
+                    </h3>
+                  </div>
+                )
               )}
             </div>
+
+            <Modal
+        size="md"
+        show={showStatusmodal}
+        onHide={handleCloseStatus}
+        backdrop="static"
+        animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}>Change Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="exampleForm.ControlInput2">
+            <Form.Label style={{ fontSize: "20px", fontFamily: "Poppins, Source Sans Pro" }}>Status</Form.Label>
+            <Form.Select
+              style={{ height: "40px", fontSize: "15px" }}
+              onChange={handleStatusChange}
+              value={selectedStatus}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              {/* <option value="Archive">Archive</option> */}
+            </Form.Select>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-warning"
+            onClick={handleSave}
+            style={{ fontSize: "20px" }}>
+            Save
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={handleCloseStatus}
+            style={{ fontSize: "20px" }}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
         </div>
     );
 }
