@@ -18,6 +18,11 @@ const Inventory_Assembly = sequelize.define('inventory_assembly', {
     allowNull: true,
 
   },
+  static_quantity: { // for dashboard count
+    type: DataTypes.INTEGER,
+    allowNull: true,
+
+  },
   price: {
     type: DataTypes.FLOAT,
     allowNull: true,

@@ -829,6 +829,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 product_tag_supp_id: inventory.product_tag_supp_id,
                 quantity: remainingQuantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -915,6 +918,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 product_tag_supp_id: inventory.product_tag_supp_id,
                 quantity: inventory.quantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -1046,6 +1052,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 assembly_tag_supp_id: inventory.assembly_tag_supp_id,
                 quantity: remainingQuantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -1131,6 +1140,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 assembly_tag_supp_id: inventory.assembly_tag_supp_id,
                 quantity: inventory.quantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -1261,6 +1273,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 spare_tag_supp_id: inventory.spare_tag_supp_id,
                 quantity: remainingQuantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -1344,6 +1359,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 spare_tag_supp_id: inventory.spare_tag_supp_id,
                 quantity: inventory.quantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -1474,6 +1492,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 subpart_tag_supp_id: inventory.subpart_tag_supp_id,
                 quantity: remainingQuantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }
@@ -1558,6 +1579,9 @@ router.route("/receivingProducts").post(async (req, res) => {
                 subpart_tag_supp_id: inventory.subpart_tag_supp_id,
                 quantity: inventory.quantity,
                 price: inventory.price,
+                freight_cost: inventory.freight_cost,
+                custom_cost: inventory.custom_cost,
+                reference_number: inventory.reference_number,
                 warehouse_id: toWarehouse_id,
               });
             }

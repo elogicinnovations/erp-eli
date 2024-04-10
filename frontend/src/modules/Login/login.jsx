@@ -44,7 +44,7 @@ const Login = () => {
         } else if (response.status === 202) {
           swal({
             title: "Login Denied",
-            text: "Please check your username and password",
+            text: "Please check your email or password",
             icon: "error",
             button: "OK",
           });

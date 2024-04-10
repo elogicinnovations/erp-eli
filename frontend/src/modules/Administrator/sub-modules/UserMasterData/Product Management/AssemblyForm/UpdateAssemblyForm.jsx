@@ -885,6 +885,7 @@ const update = async (e) => {
                                 <Form.Label style={{ fontSize: '20px' }}>Critical Inventory Thresholds: </Form.Label>
                                 <Form.Control  disabled={!isReadOnly} 
                                 value={thresholds} 
+                                required
                                 onChange={(e) => handleassemblythreshold(e)} 
                                 onKeyDown={(e) => {
                                   ["e", "E", "+", "-"].includes(e.key) &&

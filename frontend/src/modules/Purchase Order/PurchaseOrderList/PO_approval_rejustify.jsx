@@ -717,13 +717,12 @@ function POApprovalRejustify({ authrztn }) {
                 let vat = group.items[0].suppliers.supplier_vat;
 
                 group.items.forEach((item, index) => {
-                  totalSum += item.suppPrice.price * item.item.quantity;
-
-                  vatTotal += (vat / 100);
-                  vatAmount += vatTotal * totalSum;
-                  TotalAmount += vatTotal * totalSum + totalSum;
+                  totalSum += item.suppPrice.price * item.item.quantity;                
                 });
-                TotalAmount = TotalAmount.toFixed(2);
+
+                vatAmount = totalSum * (vat / 100);
+                TotalAmount = vatAmount + totalSum;
+
                 vatAmount = vatAmount.toFixed(2);
                 totalSum = totalSum.toFixed(2);
 

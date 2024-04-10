@@ -35,6 +35,7 @@ const {
   Inventory_Subpart,
 } = require("../db/models/associations");
 const session = require("express-session");
+const moment = require('moment-timezone');
 
 router.route("/insertReceived").post(async (req, res) => {
   const currentDate = new Date();
@@ -1901,6 +1902,13 @@ router.route("/approval").post(async (req, res) => {
   const spareArray = req.query.spr;
   const subpartArray = req.query.sbp;
 
+
+  const manilaTimezone = "Asia/Manila";
+moment.tz.setDefault(manilaTimezone);
+
+// Get the current datetime in Manila timezone
+const currentDateTimeInManila = moment();
+
   // console.log(productsArray)
   let final_status
 
@@ -1933,6 +1941,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory.create({
         product_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -1956,6 +1966,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory_Assembly.create({
         assembly_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -1981,6 +1993,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory_Spare.create({
         spare_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -2007,6 +2021,8 @@ router.route("/approval").post(async (req, res) => {
       // console.log(finalQuantity)
       await Inventory_Subpart.create({
         subpart_tag_supp_id: product.product_tag_id,
+        reference_number: product.ref_code,
+        static_quantity: finalQuantity,
         quantity: finalQuantity,
         price: product.price,
         warehouse_id: 1,
@@ -2017,9 +2033,12 @@ router.route("/approval").post(async (req, res) => {
   
 
   }
+
+  
   const update = Receiving_PO.update(
     {
       status: final_status,
+      date_approved: currentDateTimeInManila.format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       where: { id: receiving_po_id },

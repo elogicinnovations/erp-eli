@@ -417,7 +417,7 @@ function Warehouse({ authrztn }) {
                       {currentItems.map((data, i) => (
                         <tr key={i}>
                           <td>{data.department_name}</td>
-                          <td>{data.description}</td>
+                          <td style={{width: "250px",  }}>{data.description}</td>
                           <td>{formatDatetime(data.createdAt)}</td>
                           <td>{formatDatetime(data.updatedAt)}</td>
                           <td>

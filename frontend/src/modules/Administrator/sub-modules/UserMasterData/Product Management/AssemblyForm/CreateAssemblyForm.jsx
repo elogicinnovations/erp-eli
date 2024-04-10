@@ -741,6 +741,7 @@ function onDropImages(event) {
                   </Form.Label>
                   <Form.Control
                   value={thresholds}
+                  required
                    onChange={(e) => {
                     if(e.target.value > 100){
                       setThresholds(100)

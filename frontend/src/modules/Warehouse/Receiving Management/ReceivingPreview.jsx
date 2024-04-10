@@ -49,6 +49,7 @@ function ReceivingPreview({ authrztn }) {
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
   const [poNum, setPoNum] = useState();
+  const [refnum, setRefnum] = useState();
   const [supplierName, setSupplierName] = useState();
   const [supplierCode, setSupplierCode] = useState();
   const [supplierTerms, setSupplierTerms] = useState();
@@ -113,6 +114,7 @@ function ReceivingPreview({ authrztn }) {
         [`Date: ${formattedDate}`],
         [`Request Date: ${formatDatetime(requestPr)}`],
         [`PR Number: ${prNumber} => PO Number: ${poNum}`],
+        [`Reference Number: ${refnum}`],
         [`PO Date: ${formatDatetime(approvedPRDate)}`],
         [`Vendor Code: ${supplierCode} `],
         [`Vendor: ${supplierName} `],
@@ -257,6 +259,7 @@ function ReceivingPreview({ authrztn }) {
           setStatus(res.data.primary.status);
           setDateCreated(res.data.primary.createdAt);
           setPoNum(res.data.primary.po_id);
+          setRefnum(res.data.primary.ref_code)
           setRequestPr(res.data.primary.purchase_req.createdAt);
           setSupplierCode(
             res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
@@ -304,6 +307,7 @@ function ReceivingPreview({ authrztn }) {
                 data.purchase_req_canvassed_prd.product_tag_supplier.id,
               Base_quantity: data.received_quantity,
               set_quantity: data.set_quantity,
+              ref_code: data.receiving_po.ref_code,
               price:
                 data.purchase_req_canvassed_prd.product_tag_supplier
                   .product_price,
@@ -317,6 +321,7 @@ function ReceivingPreview({ authrztn }) {
                 data.purchase_req_canvassed_asmbly.assembly_supplier.id,
               Base_quantity: data.received_quantity,
               set_quantity: data.set_quantity,
+              ref_code: data.receiving_po.ref_code,
               price:
                 data.purchase_req_canvassed_asmbly.assembly_supplier
                   .supplier_price,
@@ -330,6 +335,7 @@ function ReceivingPreview({ authrztn }) {
                 data.purchase_req_canvassed_spare.sparepart_supplier.id,
               Base_quantity: data.received_quantity,
               set_quantity: data.set_quantity,
+              ref_code: data.receiving_po.ref_code,
               price:
                 data.purchase_req_canvassed_spare.sparepart_supplier
                   .supplier_price,
@@ -343,6 +349,7 @@ function ReceivingPreview({ authrztn }) {
                 data.purchase_req_canvassed_subpart.subpart_supplier.id,
               Base_quantity: data.received_quantity,
               set_quantity: data.set_quantity,
+              ref_code: data.receiving_po.ref_code,
               price:
                 data.purchase_req_canvassed_subpart.subpart_supplier
                   .supplier_price,
@@ -1011,6 +1018,7 @@ function ReceivingPreview({ authrztn }) {
               >
                 <li>PO Receiving Report</li>
                 <li>{`PO Number: ${poNum}`} </li>
+                <li>{`Reference Number: ${refnum}`} </li>
                 <li>Receipts shown are the total for this Purchase Order.</li>
               </div>
               <div className="row mt-5">
