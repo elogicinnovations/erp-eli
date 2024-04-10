@@ -39,6 +39,10 @@ const Receiving = sequelize.define('receiving_po', {
     initialReceive:{ //if the receiving site was in davao just for checking the quantity if complete or not
       type: DataTypes.STRING,
       allowNull: true,
+  },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
   });
 

@@ -50,25 +50,31 @@ const data2 = [
     month: "January",
     Ordered: 4000,
     Received: 2400,
-    Returned: 2400,
+
   },
   {
     month: "Febuary",
     Ordered: 4000,
     Received: 2400,
-    Returned: 2400,
+
   },
   {
     month: "March",
     Ordered: 4000,
     Received: 2400,
-    Returned: 2400,
+
   },
   {
     month: "April",
     Ordered: 4000,
     Received: 2400,
-    Returned: 2400,
+
+  },
+  {
+    month: "May",
+    Ordered: 4000,
+    Received: 2400,
+
   },
 ];
 
@@ -80,56 +86,6 @@ const supplierData = [
 ];
 const barColors = ["#8884d8", "#82ca9d", "#ffc658"];
 
-// const sample = [
-//   {
-//     sample: 'sample',
-//     status: 'Storage',
-//     supplier: 'Supplier',
-//     employee: 'Employee',
-//     quantity: '10',
-//     slstat: 'Low',
-//   },
-//   {
-//     sample: 'sample',
-//     status: 'Storage',
-//     supplier: 'Supplier',
-//     employee: 'Employee',
-//     quantity: '10',
-//     slstat: 'High',
-//   },
-//   {
-//     sample: 'sample',
-//     status: 'Deployed',
-//     supplier: 'Supplier',
-//     employee: 'Employee',
-//     quantity: '10',
-//     slstat: 'Low',
-//   },
-//   {
-//     sample: 'sample',
-//     status: 'Deployed',
-//     supplier: 'Supplier',
-//     employee: 'Employee',
-//     quantity: '10',
-//     slstat: 'Low',
-//   },
-//   {
-//     sample: 'sample',
-//     status: 'Deployed',
-//     supplier: 'Supplier',
-//     employee: 'Employee',
-//     quantity: '10',
-//     slstat: 'High',
-//   },
-//   {
-//     sample: 'sample',
-//     status: 'Storage',
-//     supplier: 'Supplier',
-//     employee: 'Employee',
-//     quantity: '10',
-//     slstat: 'High',
-//   },
-// ];
 
 const Dashboard = ({ setActiveTab }) => {
   const handleTabClick = (tabKey) => {
@@ -146,6 +102,8 @@ const Dashboard = ({ setActiveTab }) => {
   const [inStockCount, setInCount] = useState("");
   const [countInventoryGraph, setCountInventoryGraph] = useState([]);
   const [mostReqItem, setMostReqItem] = useState([]);
+  const [receivedCount, setReceivedCount] = useState("");
+  const [countOrderGraph, setCountOrderGraph] = useState([]);
 
   useEffect(() => {
     // --------------ROW 1 ----------------------
@@ -205,23 +163,35 @@ const Dashboard = ({ setActiveTab }) => {
       .get(BASE_URL + '/Dashboard/countInventoryGraph')
       .then(res => setCountInventoryGraph(res.data))
       .catch(error => console.error(error));
-  }, []);
 
-  useEffect(() => {
-    //fetch product for inventory
-    axios
+// --------------ROW 4  ----------------------
+axios
+.get(BASE_URL + "/Dashboard/fetchReceivedOrdered")
+.then((res) => setReceivedCount(res.data))
+.catch((err) => console.log(err));
+
+
+      axios
       .get(BASE_URL + "/Dashboard/fetchMostReqItem")
       .then((res) => setMostReqItem(res.data))
       .catch((err) => console.log(err));
 
+      axios
+      .get(BASE_URL + '/Dashboard/countOrderGraph')
+      .then(res => setCountOrderGraph(res.data))
+      .catch(error => console.error(error));
+
+
+      
 
   }, []);
+
 
   const StockLeveleData = [
     { name: "In Stock", value: inStockCount },
     { name: "Low Stock", value: lowStockCount },
     { name: "Out of Stock", value: outStockCount },
-    { name: "On Order", value: orderedCount },
+    // { name: "On Order", value: orderedCount },
   ];
 
 
@@ -379,7 +349,7 @@ const Dashboard = ({ setActiveTab }) => {
                   <div className="title-tab">Stock Value</div>
                 </div>
                 <div className="tab-value">
-                  <div className="tab-count">{stockValue}</div>
+                  <div className="tab-count">{`₱ ${stockValue}`}</div>
                   <div className="tab-percent">
                     <TrendDown
                       size={25}
@@ -528,16 +498,7 @@ const Dashboard = ({ setActiveTab }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* {sample.map((data,i) =>(
-                              <tr key={i}>
-                                <td className='dashtd'>{data.sample}</td>
-                                <td className='dashtd'>{data.sample}</td>
-                                <td className='highlight'>{data.supplier}</td>
-                                <td className='dashtd'>{data.sample}</td>
-                                <td className='dashtd'>{data.sample}</td>
-                                <td className='dashtd'>{data.sample}</td>
-                              </tr>
-                            ))} */}
+                    
                     </tbody>
                   </table>
                 </div>
@@ -607,7 +568,7 @@ const Dashboard = ({ setActiveTab }) => {
               <div className="order-summary-box">
                 <div className="dash-label">Purchase Order</div>
                 <div className="preview-tab">
-                  <Link to="/purchaseOrderList" className="tab">
+                  <Link to="/purchaseOrderList" style={{width: 300}} className="tab">
                     <div className="tab-data">
                       <div className="tvalue">{orderedCount}</div>
                       <div className="tlabel">Ordered</div>
@@ -621,10 +582,10 @@ const Dashboard = ({ setActiveTab }) => {
                       </div>
                     </div>
                   </Link>
-                  <Link to="/receivingManagement" className="tab">
+                  <Link to="/receivingManagement" style={{width: 300}} className="tab">
                     <div className="tab-data">
-                      <div className="tvalue">1,441</div>
-                      <div className="tlabel">Recieved</div>
+                      <div className="tvalue">{receivedCount}</div>
+                      <div className="tlabel">Received</div>
                       <div className="tcontent">
                         <CaretDown
                           size={20}
@@ -635,12 +596,13 @@ const Dashboard = ({ setActiveTab }) => {
                       </div>
                     </div>
                   </Link>
+                  {/*
                   <Link
                     to="/inventory"
                     onClick={() => handleTabClick("return")}
                     className="tab"
                   >
-                    <div className="tab-data">
+                     <div className="tab-data">
                       <div className="tvalue">1,441</div>
                       <div className="tlabel">Returned</div>
                       <div className="tcontent">
@@ -651,8 +613,9 @@ const Dashboard = ({ setActiveTab }) => {
                         />
                         <p1>25% </p1> vs last month
                       </div>
-                    </div>
+                    </div> 
                   </Link>
+                  */}
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart
@@ -694,12 +657,12 @@ const Dashboard = ({ setActiveTab }) => {
                       shape={<Rectangle radius={[20, 20, 0, 0]} />}
                       barSize={10}
                     />
-                    <Bar
+                    {/* <Bar
                       dataKey="Returned"
                       fill="red"
                       shape={<Rectangle radius={[20, 20, 0, 0]} />}
                       barSize={10}
-                    />
+                    /> */}
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -718,9 +681,9 @@ const Dashboard = ({ setActiveTab }) => {
                       <tbody>
                         {mostReqItem.map((data, i) => (
                           <tr key={i}>
-                            <td className="dashtd">{data.sample}</td>
-                            <td className="highlight">{data.supplier}</td>
-                            <td className="dashtd">{data.sample}</td>
+                            <td className="dashtd">{data.productCode}</td>
+                            <td className="highlight">{data.productName}</td>
+                            <td className="dashtd">{data.count}</td>
                           </tr>
                         ))}
                       </tbody>

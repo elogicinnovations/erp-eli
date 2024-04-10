@@ -30,8 +30,8 @@ router.route("/content_fetch").get(async (req, res) => {
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month");
-    const lastDateOfMonth = currentDate.clone().endOf("month");
+    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
 
 
     const data_prd = await IssuedApproveProduct.findAll({
@@ -39,8 +39,8 @@ router.route("/content_fetch").get(async (req, res) => {
             quantity: { [Op.ne]: 0 },
             createdAt: {
                 [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
+                    firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                    lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
                 ],
               },
         },
@@ -86,8 +86,8 @@ router.route("/content_fetch").get(async (req, res) => {
             quantity: { [Op.ne]: 0 },
             createdAt: {
                 [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
+                    firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                    lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
                 ],
               },
         },
@@ -132,8 +132,8 @@ router.route("/content_fetch").get(async (req, res) => {
             quantity: { [Op.ne]: 0 },
             createdAt: {
                 [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
+                    firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                    lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
                 ],
               },
         },
@@ -178,8 +178,8 @@ router.route("/content_fetch").get(async (req, res) => {
             quantity: { [Op.ne]: 0 },
             createdAt: {
                 [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
+                    firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                    lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
                 ],
               },
         },
