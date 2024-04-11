@@ -120,10 +120,10 @@ function ViewCostCenter({ authrztn }) {
                 <Link to="/costCenter">
                   <ArrowCircleLeft size={50} color="#60646c" weight="fill" />
                 </Link>
-                <h1>Cost Center</h1>
+                <h1 style={{marginTop: '12px'}}>Cost Center</h1>
               </Col>
               <Col>
-                <div className="row">
+                {/* <div className="row">
                   <div className="col-6">
                     <div className="form-group d-flex flex-row">
                       <label
@@ -141,7 +141,7 @@ function ViewCostCenter({ authrztn }) {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </Col>
             </Row>
             <div
@@ -167,7 +167,7 @@ function ViewCostCenter({ authrztn }) {
             </div>
             <Form>
               <div className="row">
-                <div className="col-4">
+                <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Cost Center:{" "}
@@ -181,7 +181,7 @@ function ViewCostCenter({ authrztn }) {
                   </Form.Group>
                 </div>
 
-                <div className="col-4">
+                <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Assign User{" "}
@@ -194,8 +194,10 @@ function ViewCostCenter({ authrztn }) {
                     />
                   </Form.Group>
                 </div>
+              </div>
 
-                <div className="col-4">
+              <div className="row">
+                <div className="col-6">
                   <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Contact Number:{" "}
@@ -208,19 +210,27 @@ function ViewCostCenter({ authrztn }) {
                     />
                   </Form.Group>
                 </div>
-              </div>
-              <div className="row">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Description:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    value={description}
-                    style={{ height: "100px", fontSize: "15px" }}
-                    readOnly
-                  />
-                </Form.Group>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Description:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      value={description}
+                      as="textarea"
+                        rows={3}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                          fontSize: "16px",
+                          height: "200px",
+                          maxHeight: "200px",
+                          resize: "none",
+                          overflowY: "auto",
+                        }}
+                      readOnly
+                    />
+                  </Form.Group>
+                </div>
               </div>
               <div
                 className="gen-info"

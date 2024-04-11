@@ -97,7 +97,8 @@ function ViewSpareParts({authrztn}) {
                     activeKey={activeTab}
                     onSelect={(key) => setActiveTab(key)}
                     transition={false}
-                    id="noanim-tab-example">
+                    id="noanim-tab-example"
+                    style={{border: 'none'}}>
                     <Tab
                         eventKey="Subparts"
                         title={

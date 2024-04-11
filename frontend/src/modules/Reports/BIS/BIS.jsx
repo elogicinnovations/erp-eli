@@ -15,6 +15,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   CalendarBlank,
   Export,
+  XCircle
 } from "@phosphor-icons/react";
 import NoData from '../../../../src/assets/image/NoData.png';
 import { IconButton, TextField, TablePagination, } from '@mui/material';
@@ -41,15 +42,38 @@ function BIS() {
   const [endDate, setEndDate] = useState(null);
   const [bisContent, setBisContent] = useState([]);
   const [searchBIS, setSearchBIS] = useState([])
+  const [bisContent_asm, setBisContent_asm] = useState([]);
+  const [searchBISasm, setSearchBISasm] = useState([]);
+  const [bisContent_spare, setBisContent_spare] = useState([]);
+  const [searchBISspare, setSearchBISspare] = useState([]);
+  const [bisContent_subpart, setBisContent_subpart] = useState([]);
+  const [searchBISsub, setSearchBISsub] = useState([])
+
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  const totalPages = Math.ceil(bisContent.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = Math.min(startIndex + pageSize, bisContent.length);
-  const currentItems = bisContent.slice(startIndex, endIndex);
-  const [bisContent_asm, setBisContent_asm] = useState([]);
-  const [bisContent_spare, setBisContent_spare] = useState([]);
-  const [bisContent_subpart, setBisContent_subpart] = useState([]);
+
+  const totalPagesBISProd = Math.ceil(bisContent.length / pageSize);
+  const startIndexBISprod = (currentPage - 1) * pageSize;
+  const endIndexBISprod = Math.min(startIndexBISprod + pageSize, bisContent.length);
+  const currentItemsBISprod = bisContent.slice(startIndexBISprod, endIndexBISprod);
+
+  const totalPagesBISasm = Math.ceil(bisContent_asm.length / pageSize);
+  const startIndexBISasm = (currentPage - 1) * pageSize;
+  const endIndexBISasm = Math.min(startIndexBISasm + pageSize, bisContent_asm.length);
+  const currentItemsBISasm = bisContent_asm.slice(startIndexBISasm, endIndexBISasm);
+
+  const totalPagesBISspare = Math.ceil(bisContent_spare.length / pageSize);
+  const startIndexBISspare = (currentPage - 1) * pageSize;
+  const endIndexBISspare = Math.min(startIndexBISspare + pageSize, bisContent_spare.length);
+  const currentItemsBISspare = bisContent_spare.slice(startIndexBISspare, endIndexBISspare);
+
+  const totalPagesBISsubpart = Math.ceil(bisContent_subpart.length / pageSize);
+  const startIndexBISsubpart = (currentPage - 1) * pageSize;
+  const endIndexBISsubpart = Math.min(startIndexBISsubpart + pageSize, bisContent_subpart.length);
+  const currentItemsBISsubpart = bisContent_subpart.slice(startIndexBISsubpart, endIndexBISsubpart);
+
+  const maxTotalPages = Math.max(totalPagesBISProd, totalPagesBISasm, totalPagesBISspare, totalPagesBISsubpart);
+
 
   const [department, setDepartment] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -79,12 +103,14 @@ function BIS() {
     axios
       .get(BASE_URL + "/report_BIS/content_fetch")
       .then((res) => {
-        // setBisContent(res.data);
-        setSearchBIS(res.data);
         setBisContent(res.data.prd);
+        setSearchBIS(res.data.prd);
         setBisContent_asm(res.data.asm);
+        setSearchBISasm(res.data.asm);
         setBisContent_spare(res.data.spare);
+        setSearchBISspare(res.data.spare);
         setBisContent_subpart(res.data.subpart);
+        setSearchBISsub(res.data.subpart);
       })
       .catch((err) => console.log(err));
   };
@@ -123,22 +149,68 @@ function BIS() {
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
-    const filteredData = searchBIS.filter((data) => {
-      return (
-        data.inventory_prd.product_tag_supplier.product.product_name.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.product_tag_supplier.product.product_unitMeasurement.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.product_tag_supplier.product.category.category_name.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.product_price.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.freight_cost.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.custom_cost.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.product_price + data.inventory_prd.freight_cost + data.inventory_prd.custom_cost.toLowerCase().includes(searchTerm) ||
-        data.quantity.toLowerCase().includes(searchTerm)
-      );
-    });
-  
-    setBisContent(filteredData);
-  };
 
+    const filteredSearchBIS = searchBIS.filter((data) => {
+      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
+      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
+      data.quantity.toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.product_tag_supplier.product.product_code.toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.product_tag_supplier.product.product_name.toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.product_tag_supplier.product.product_unitMeasurement.toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.product_tag_supplier.product.category.category_name.toLowerCase().includes(searchTerm) ||
+      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.price.toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.freight_cost.toLowerCase().includes(searchTerm) ||
+      data.inventory_prd.custom_cost.toLowerCase().includes(searchTerm)
+    });
+    setBisContent(filteredSearchBIS);
+
+    const filteredSearchBISasm = searchBISasm.filter((data) => {
+      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
+      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
+      data.quantity.toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.assembly_supplier.assembly.assembly_code.toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.assembly_supplier.assembly.assembly_code.toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement.toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.assembly_supplier.assembly.category.category_name.toLowerCase().includes(searchTerm) ||
+      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.price.toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.freight_cost.toLowerCase().includes(searchTerm) ||
+      data.inventory_assembly.custom_cost.toLowerCase().includes(searchTerm)
+    });
+    setBisContent_asm(filteredSearchBISasm);
+
+    const filteredSearchBISspare = searchBISspare.filter((data) => {
+      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
+      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
+      data.quantity.toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.sparepart_supplier.sparePart.spareParts_code.toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.sparepart_supplier.sparePart.spareParts_name.toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement.toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.sparepart_supplier.sparePart.category.category_name.toLowerCase().includes(searchTerm) ||
+      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.price.toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.freight_cost.toLowerCase().includes(searchTerm) ||
+      data.inventory_spare.custom_cost.toLowerCase().includes(searchTerm)
+    });
+    setBisContent_spare(filteredSearchBISspare);
+
+    const filteredSearchBISsub = searchBISsub.filter((data) => {
+      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
+      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
+      data.quantity.toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.subpart_supplier.subPart.subPart_code.toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.subpart_supplier.subPart.subPart_name.toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement.toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.subpart_supplier.subPart.category.category_name.toLowerCase().includes(searchTerm) ||
+      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.price.toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.freight_cost.toLowerCase().includes(searchTerm) ||
+      data.inventory_subpart.custom_cost.toLowerCase().includes(searchTerm)
+    });
+    setBisContent_subpart(filteredSearchBISsub);
+
+  };
   //date format
   function formatDatetime(datetime) {
     const options = {
@@ -382,17 +454,21 @@ function BIS() {
     link.click();
   };
 
-  // useEffect(() => {
-  //   if (
-  //     $("#order-listing").length > 0 &&
-  //     bisContent.length > 0 ||
-  //     bisContent_asm.length > 0 ||
-  //     bisContent_spare.length > 0 ||
-  //     bisContent_subpart.length > 0
-  //   ) {
-  //     $("#order-listing").DataTable();
-  //   }
-  // }, []);
+  const handleXCircleClick = () => {
+    setStartDate(null);
+  };
+
+  const handleXClick = () => {
+    setEndDate(null);
+  };
+
+  const clearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedDepartment("");
+    setSelectedCostcenter("");
+    reloadTable();
+  };
 
   return (
     <div className="main-of-containers">
@@ -404,138 +480,179 @@ function BIS() {
                 <p>BIS REPORT</p>
               </div>
               <div className="button-create-side">
-                <div className="filter">
-                  <div className="cat-filter">
-                    <div className="warehouse-filter">
-                      <Form.Select
-                        aria-label="item status"
-                        onChange={(e) => setSelectedDepartment(e.target.value)}
-                        style={{
-                          width: "250px",
-                          height: "40px",
-                          fontSize: "15px",
-                          marginBottom: "15px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                      >
-                        <option disabled value="" selected>
-                          Select Department ...
-                        </option>
-                        <option value={"All"}>All</option>
-                        {department.map((dept) => (
-                          <option key={dept.id} value={dept.id}>
-                            {dept.department_name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </div>
-                    <div className="product-filter">
-                      <Form.Select
-                        aria-label="item status"
-                        onChange={(e) => setSelectedCostcenter(e.target.value)}
-                        style={{
-                          width: "250px",
-                          height: "40px",
-                          fontSize: "15px",
-                          marginBottom: "15px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                      >
-                        <option disabled value="" selected>
-                          Select Cost Center ...
-                        </option>
-                        <option value={"All"}>All</option>
-                        {costCenter.map((cost) => (
-                          <option key={cost.id} value={cost.id}>
-                            {cost.name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </div>
+                  <div className="filtering-section">
+                      <div className="date-section-filter">
+                          <div style={{ position: "relative", marginBottom: "15px" }}>
+                              <DatePicker
+                              selected={startDate}
+                              onChange={(date) => setStartDate(date)}
+                              placeholderText="Choose Date From"
+                              dateFormat="yyyy-MM-dd"
+                              wrapperClassName="custom-datepicker-wrapper"
+                              popperClassName="custom-popper"
+                              style={{ fontFamily: "Poppins, Source Sans Pro"}}
+                              />
+                              <CalendarBlank
+                              size={20}
+                              weight="thin"
+                              style={{
+                                  position: "absolute",
+                                  left: "8px",
+                                  top: "50%",
+                                  transform: "translateY(-50%)",
+                                  cursor: "pointer",
+                              }}
+                              />
+                              {startDate && (
+                              <XCircle
+                                  size={16}
+                                  weight="thin"
+                                  style={{
+                                  position: "absolute",
+                                  right: "19px",
+                                  top: "50%",
+                                  transform: "translateY(-50%)",
+                                  cursor: "pointer",
+                                  }}
+                                  onClick={handleXCircleClick}
+                              />
+                              )}
+                          </div>
+                          <div className="">
+                            <Form.Select
+                              aria-label="item status"
+                              onChange={(e) => setSelectedDepartment(e.target.value)}
+                              style={{
+                                width: "308px",
+                                height: "40px",
+                                fontSize: "15px",
+                                marginBottom: "15px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                              }}
+                              value={selectedDepartment}
+                            >
+                              <option disabled value="" selected>
+                                Select Department
+                              </option>
+                              <option value={"All"}>All</option>
+                              {department.map((dept) => (
+                                <option key={dept.id} value={dept.id}>
+                                  {dept.department_name}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </div>
+                      </div>
+
+                      <div className="warehouse-product-filter">
+                          <div style={{ position: "relative", marginBottom: "15px" }}>
+                              <DatePicker
+                              selected={endDate}
+                              onChange={(date) => setEndDate(date)}
+                              placeholderText="Choose Date To"
+                              dateFormat="yyyy-MM-dd"
+                              wrapperClassName="custom-datepicker-wrapper"
+                              popperClassName="custom-popper"
+                              style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                              />
+                              <CalendarBlank
+                              size={20}
+                              weight="thin"
+                              selected={endDate}
+                              onChange={(date) => setEndDate(date)}
+                              style={{
+                                  position: "absolute",
+                                  left: "8px",
+                                  top: "50%",
+                                  transform: "translateY(-50%)",
+                                  cursor: "pointer",
+                              }}
+                              />
+                              {endDate && (
+                              <XCircle
+                                  size={16}
+                                  weight="thin"
+                                  style={{
+                                  position: "absolute",
+                                  right: "19px",
+                                  top: "50%",
+                                  transform: "translateY(-50%)",
+                                  cursor: "pointer",
+                                  }}
+                                  onClick={handleXClick}
+                              />
+                            )}
+                          </div>
+                          <div className="">
+                            <Form.Select
+                              aria-label="item status"
+                              onChange={(e) => setSelectedCostcenter(e.target.value)}
+                              style={{
+                                width: "318px",
+                                height: "40px",
+                                fontSize: "15px",
+                                marginBottom: "15px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                              }}
+                              value={selectedCostcenter}
+                            >
+                              <option disabled value="" selected>
+                                Select Cost Center
+                              </option>
+                              <option value={"All"}>All</option>
+                              {costCenter.map((cost) => (
+                                <option key={cost.id} value={cost.id}>
+                                  {cost.name}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </div>
+                      </div>
+
+                      <div className="button-filter-section">
+                          <div className="btnfilter">
+                            <button className="actualbtnfilter" onClick={handleGenerate}>
+                              FILTER
+                            </button>
+                          </div>
+                          <div className="clearbntfilter">
+                              <button className="actualclearfilter"
+                                onClick={clearFilters}
+                                >
+                                  Clear Filter
+                              </button>
+                          </div>
+                      </div>
                   </div>
-                  <div className="date-filter">
-                    <div
-                      style={{ width: "50%", zIndex: "3", padding: "0 10px" }}
-                    >
-                      <Form.Group
-                        controlId="exampleForm.ControlInput2"
-                        className="date"
-                      >
-                        <DatePicker
-                          selected={startDate}
-                          onChange={(date) => setStartDate(date)}
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="Start Date"
-                          className="form-control"
-                        />
-                      </Form.Group>
-                      <CalendarBlank
-                        size={20}
-                        style={{
-                          position: "relative",
-                          color: "#9a9a9a",
-                          position: "relative",
-                          left: "220px",
-                          bottom: "30px",
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{ width: "50%", zIndex: "3", padding: "0 10px" }}
-                    >
-                      <Form.Group
-                        controlId="exampleForm.ControlInput2"
-                        className="date"
-                      >
-                        <DatePicker
-                          selected={endDate}
-                          onChange={(date) => setEndDate(date)}
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="End Date"
-                          className="form-control"
-                        />
-                      </Form.Group>
-                      <CalendarBlank
-                        size={20}
-                        style={{
-                          position: "relative",
-                          color: "#9a9a9a",
-                          position: "relative",
-                          left: "220px",
-                          bottom: "30px",
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="genbutton">
-                  <button className="genbutton" onClick={handleGenerate}>
-                    Generate
-                  </button>
-                </div>
-                <div className="export-refresh">
-                  <button className="export" onClick={exportToCSV}>
-                    <Export size={20} weight="bold" /> <p1>Export</p1>
-                  </button>
-                </div>
+ 
               </div>
             </div>
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-              <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: '10px', 
-                  float: 'right',
-                  }}
-                  InputLabelProps={{
-                    style: { fontSize: '14px'},
-                  }}
-                  InputProps={{
-                    style: { fontSize: '14px', width: '250px', height: '50px' },
-                  }}
-                onChange={handleSearch}/>
+              <div className="searchandexport">
+                  <div className="exportfield">
+                      <button className="export" onClick={exportToCSV}>
+                        <Export size={20} weight="bold" /> <p1>Export</p1>
+                      </button>
+                  </div>
+                  <div className="searchfield">
+                    <TextField
+                      label="Search"
+                      variant="outlined"
+                      style={{
+                      float: 'right',
+                      }}
+                      InputLabelProps={{
+                        style: { fontSize: '14px'},
+                      }}
+                      InputProps={{
+                        style: { fontSize: '14px', width: '250px', height: '50px' },
+                      }}
+                    onChange={handleSearch}/>
+                  </div>
+              </div>
+
               <table ref={tableRef} className="table-hover">
                 <thead>
                   <tr>
@@ -553,8 +670,9 @@ function BIS() {
                     <th className="tableh">Issued Date</th>
                   </tr>
                 </thead>
+                {bisContent.length > 0 || bisContent_asm.length > 0 || bisContent_spare.length > 0 || bisContent_subpart.length > 0 ? (
                 <tbody>
-                  {bisContent.map((data, i) => (
+                  {currentItemsBISprod.map((data, i) => (
                     <tr key={i}>
                       <td>{data.issuance.cost_center.name}</td>
                       <td>
@@ -599,7 +717,8 @@ function BIS() {
                       <td>{formatDatetime(data.createdAt)}</td>
                     </tr>
                   ))}
-                  {bisContent_asm.map((data, i) => (
+
+                  {currentItemsBISasm.map((data, i) => (
                     <tr key={i}>
                       <td>{data.issuance.cost_center.name}</td>
                       <td>
@@ -645,7 +764,7 @@ function BIS() {
                     </tr>
                   ))}
 
-                  {bisContent_spare.map((data, i) => (
+                  {currentItemsBISspare.map((data, i) => (
                     <tr key={i}>
                       <td>{data.issuance.cost_center.name}</td>
                       <td>
@@ -691,7 +810,7 @@ function BIS() {
                     </tr>
                   ))}
 
-                  {bisContent_subpart.map((data, i) => (
+                  {currentItemsBISsubpart.map((data, i) => (
                     <tr key={i}>
                       <td>{data.issuance.cost_center.name}</td>
                       <td>
@@ -737,43 +856,65 @@ function BIS() {
                     </tr>
                   ))}
                 </tbody>
+                ) : (
+                  <div className="no-data">
+                    <img src={NoData} alt="NoData" className="no-data-img" />
+                    <h3>
+                      No Data Found
+                    </h3>
+                  </div>
+                )}
               </table>
             </div>
           </div>
-          <nav>
+          <nav style={{marginTop: '15px'}}>
             <ul className="pagination" style={{ float: "right" }}>
               <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                 <button
-                type="button"
-                style={{fontSize: '14px',
-                cursor: 'pointer',
-                color: '#000000',
-                textTransform: 'capitalize',
-              }}
-                className="page-link" 
-                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-              </li>
-              {[...Array(totalPages).keys()].map((num) => (
-                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                  <button 
+                  type="button"
                   style={{
                     fontSize: '14px',
-                    width: '25px',
-                    background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                    color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                    border: 'none',
-                    height: '28px',
+                    cursor: 'pointer',
+                    color: '#000000',
+                    textTransform: 'capitalize',
                   }}
-                  className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                  className="page-link"
+                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                >
+                  Previous
+                </button>
+              </li>
+              {[...Array(maxTotalPages).keys()].map((num) => (
+                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                  <button
+                    style={{
+                      fontSize: '14px',
+                      width: '25px',
+                      background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                      color: currentPage === num + 1 ? '#FFFFFF' : '#000000',
+                      border: 'none',
+                      height: '28px',
+                    }}
+                    className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`}
+                    onClick={() => setCurrentPage(num + 1)}
+                  >
+                    {num + 1}
+                  </button>
                 </li>
               ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+              <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
                 <button
-                style={{fontSize: '14px',
-                cursor: 'pointer',
-                color: '#000000',
-                textTransform: 'capitalize'}}
-                className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                  style={{
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    color: '#000000',
+                    textTransform: 'capitalize'
+                  }}
+                  className="page-link"
+                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                >
+                  Next
+                </button>
               </li>
             </ul>
           </nav>

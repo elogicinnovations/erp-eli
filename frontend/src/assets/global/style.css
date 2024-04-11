@@ -25047,23 +25047,23 @@
   }
   
   .tab-content {
-      border: 1px solid #CED4DA;
-      border-top: 0;
+      /* border-top: 0; */
       padding: 2rem 1rem;
       text-align: justify;
+      border: none;
   }
   
   .tab-content.tab-content-vertical {
-      border-top: 1px solid #CED4DA;
+      /* border-top: 1px solid #CED4DA; */
   }
   
   .tab-content.tab-content-vertical-custom {
-      border: 0;
+      /* border: 0; */
       padding-top: 0;
   }
   
   .tab-content.tab-content-custom-pill {
-      border: 0;
+      /* border: 0; */
       padding-left: 0;
   }
   

@@ -487,7 +487,7 @@ function SpareParts({ authrztn }) {
                       />
                     </th>
                     <th className="tableh">Code</th>
-                    <th className="tableh">Spare Parts Name</th>
+                    <th className="tableh">SpareParts Name</th>
                     <th className="tableh">Description</th>
                     <th className="tableh">Status</th>
                     <th className="tableh">Date Created</th>
@@ -653,7 +653,7 @@ function SpareParts({ authrztn }) {
               )} 
             </div>
           </div>
-             <nav>
+             <nav style={{marginTop: '15px'}}>
                   <ul className="pagination" style={{ float: "right" }}>
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button

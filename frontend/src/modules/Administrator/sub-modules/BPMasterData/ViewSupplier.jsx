@@ -194,12 +194,12 @@ function ViewSupplier({authrztn}) {
     };
       
 // styless
- useEffect(() => {
-      // Initialize DataTable when role data is available
-      if ($('#order-listing').length > 0 && product.length > 0) {
-        $('#order-listing').DataTable();
-      }
-    }, [product]);
+//  useEffect(() => {
+//       // Initialize DataTable when role data is available
+//       if ($('#order-listing').length > 0 && product.length > 0) {
+//         $('#order-listing').DataTable();
+//       }
+//     }, [product]);
 
 
     const tabStyle = {
@@ -234,6 +234,7 @@ function ViewSupplier({authrztn}) {
                                 defaultActiveKey="profile"
                                 transition={false}
                                 id="noanim-tab-example"
+                                style={{border: 'none'}}
                                 >
                                 <Tab eventKey="profile" title={<span style={{...tabStyle, fontSize: '20px', overflowY: 'auto'}}>Profile</span>}>
                                     <div style={{ maxHeight: '540px', overflowY: 'auto', paddingLeft: '15px', overflowX: 'hidden', paddingBottom: '40px' }}>
@@ -385,7 +386,7 @@ function ViewSupplier({authrztn}) {
                                             <h1>Products</h1>
                                         </div>
                                         <div className="main-of-all-tables">
-                                            <table id='order-listing'>
+                                            <table>
                                                 <thead>
                                                     <tr>
                                                         <th>Product Code</th>

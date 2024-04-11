@@ -526,43 +526,43 @@ function Supplier({ authrztn }) {
                                 </table>
                             </div>
                         </div>
-                        <nav>
-                  <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
-                    }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
+                        <nav style={{marginTop: '15px'}}>
+                      <ul className="pagination" style={{ float: "right" }}>
+                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                          <button
+                          type="button"
+                          style={{fontSize: '14px',
+                          cursor: 'pointer',
+                          color: '#000000',
+                          textTransform: 'capitalize',
                         }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
-                    </li>
-                  </ul>
-                </nav>
+                          className="page-link" 
+                          onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                        </li>
+                        {[...Array(totalPages).keys()].map((num) => (
+                          <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                            <button 
+                            style={{
+                              fontSize: '14px',
+                              width: '25px',
+                              background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
+                              color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
+                              border: 'none',
+                              height: '28px',
+                            }}
+                            className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                          </li>
+                        ))}
+                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                          <button
+                          style={{fontSize: '14px',
+                          cursor: 'pointer',
+                          color: '#000000',
+                          textTransform: 'capitalize'}}
+                          className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                        </li>
+                      </ul>
+                    </nav>
                 </div>
                 ) : (
                   <div className="no-access">
