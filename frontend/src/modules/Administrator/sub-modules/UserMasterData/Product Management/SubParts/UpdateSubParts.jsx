@@ -719,7 +719,7 @@ function selectFiles() {
               <Form.Label style={{ fontSize: "20px" }}>
                 Image Upload:{" "}
               </Form.Label>
-              <div className="card">
+              <div className="card" onClick={selectFiles}>
                   <div className="top">
                     <p>Drag & Drop Image Upload</p>
                   </div>

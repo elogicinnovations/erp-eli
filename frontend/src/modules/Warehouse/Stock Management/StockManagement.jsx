@@ -624,7 +624,7 @@ function StockManagement({ authrztn }) {
                             )}
                         </table>
 
-                          <nav>
+                          <nav style={{marginTop: '15px'}}>
                               <ul className="pagination" style={{ float: "right" }}>
                                 <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                                   <button

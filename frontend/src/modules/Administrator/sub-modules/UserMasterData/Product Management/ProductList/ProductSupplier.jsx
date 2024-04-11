@@ -172,7 +172,8 @@ function ProductSupplier({authrztn}) {
                   activeKey={activeTab}
                   onSelect={(key) => setActiveTab(key)}
                   transition={false}
-                  id="noanim-tab-example">
+                  id="noanim-tab-example"
+                  style={{border: 'none'}}>
                   <Tab
                     eventKey="Assembly"
                     title={<span style={{ fontSize: "20px" }}>Assembly</span>}>

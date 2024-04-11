@@ -16,6 +16,7 @@ import "jspdf-autotable";
 import {
   CalendarBlank,
   Export,
+  XCircle,
 } from "@phosphor-icons/react";
 import { IconButton, TextField, TablePagination, } from '@mui/material';
 import NoData from '../../../../src/assets/image/NoData.png';
@@ -192,12 +193,22 @@ function POTransactionReports() {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  // useEffect(() => {
-  //   // Initialize DataTable when role data is available
-  //   if ($("#order-listing").length > 0 && requestsPR.length > 0) {
-  //     $("#order-listing").DataTable();
-  //   }
-  // }, [requestsPR]);
+  const handleXCircleClick = () => {
+    setStartDate(null);
+  };
+
+  const handleXClick = () => {
+    setEndDate(null);
+  };
+
+  const clearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedDepartment("");
+    setSelectedStatus("");
+    reloadTable();
+  };
+
 
   return (
     <div className="main-of-containers">
@@ -208,155 +219,194 @@ function POTransactionReports() {
               <div className="emp-text-side">
                 <p>Purchase Requests Report</p>
               </div>
-              <div className="button-create-side">
-                <div className="filter">
-                  <div className="cat-filter">
-                    <div className="warehouse-filter">
-                      <Form.Select
-                        aria-label="item status"
-                        onChange={(e) => setSelectedDepartment(e.target.value)}
-                        style={{
-                          width: "250px",
-                          height: "40px",
-                          fontSize: "15px",
-                          marginBottom: "15px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                      >
-                        <option disabled value="" selected>
-                          Select Department ...
-                        </option>
-                        <option value={'All'}>
-                            All
-                          </option>
-                        {department.map((dept) => (
-                          <option key={dept.id} value={dept.id}>
-                            {dept.department_name}
-                          </option>
-                        ))}
-                      </Form.Select>
+
+              <div className="button-create-side" style={{marginTop: '5px'}}>
+                <div className="filtering-section">
+                    <div className="date-section-filter">
+                        <div style={{ position: "relative", marginBottom: "15px" }}>
+                            <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            placeholderText="Choose Date From"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro"}}
+                            />
+                            <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            style={{
+                                position: "absolute",
+                                left: "8px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                            }}
+                            />
+                            {startDate && (
+                            <XCircle
+                                size={16}
+                                weight="thin"
+                                style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                                }}
+                                onClick={handleXCircleClick}
+                            />
+                            )}
+                        </div>
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) => setSelectedDepartment(e.target.value)}
+                            value={selectedDepartment}
+                            style={{
+                              width: "274px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                          >
+                            <option disabled value="" selected>
+                              Select Department
+                            </option>
+                            <option value={'All'}>
+                                All
+                              </option>
+                            {department.map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.department_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div>
                     </div>
-                    <div className="product-filter">
-                      <Form.Select
-                        aria-label="item status"
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                        style={{
-                          width: "250px",
-                          height: "40px",
-                          fontSize: "15px",
-                          marginBottom: "15px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                      >
-                        <option value="" disabled selected>
-                          Select Status
-                        </option>
-                        <option value={'All'}>
-                            All
-                          </option>
-                        <option value="For-Approval">For-Approval</option>
 
-                        <option value="For-Rejustify">For-Rejustify</option>
-
-                        <option value="For-Canvassing">For-Canvassing</option>
-
-                        <option value="On-Canvass">On-Canvass</option>
-
-                        <option value="For-Approval (PO)">
-                          For-Approval (PO)
-                        </option>
-                        <option value="For-Rejustify (PO)">
-                          For-Rejustify (PO)
-                        </option>
-                      </Form.Select>
-                    </div>
-                  </div>
-                  <div className="date-filter">
-                    <div
-                      style={{ width: "50%", zIndex: "3", padding: "0 10px" }}
-                    >
-                      <Form.Group
-                        controlId="exampleForm.ControlInput2"
-                        className="date"
-                      >
-                        <DatePicker
-                          selected={startDate}
-                          onChange={(date) => setStartDate(date)}
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="Start Date"
-                          className="form-control"
-                        />
-                      </Form.Group>
-                      <CalendarBlank
-                        size={20}
-                        style={{
-                          position: "relative",
-                          color: "#9a9a9a",
-                          position: "relative",
-                          left: "220px",
-                          bottom: "30px",
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{ width: "50%", zIndex: "3", padding: "0 10px" }}
-                    >
-                      <Form.Group
-                        controlId="exampleForm.ControlInput2"
-                        className="date"
-                      >
-                        <DatePicker
+                    <div className="warehouse-product-filter">
+                     <div style={{ position: "relative", marginBottom: "15px" }}>
+                          <DatePicker
                           selected={endDate}
                           onChange={(date) => setEndDate(date)}
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="End Date"
-                          className="form-control"
-                        />
-                      </Form.Group>
-                      <CalendarBlank
-                        size={20}
-                        style={{
-                          position: "relative",
-                          color: "#9a9a9a",
-                          position: "relative",
-                          left: "220px",
-                          bottom: "30px",
-                        }}
-                      />
+                          placeholderText="Choose Date To"
+                          dateFormat="yyyy-MM-dd"
+                          wrapperClassName="custom-datepicker-wrapper"
+                          popperClassName="custom-popper"
+                          style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                          size={20}
+                          weight="thin"
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                          }}
+                          />
+                          {endDate && (
+                          <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                              position: "absolute",
+                              right: "19px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                              }}
+                              onClick={handleXClick}
+                          />
+                        )}
+                      </div>
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            style={{
+                              width: "284px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            value={selectedStatus}
+                          >
+                            <option value="" disabled selected>
+                              Select Status
+                            </option>
+                            <option value={'All'}>
+                                All
+                              </option>
+                            <option value="For-Approval">For-Approval</option>
+
+                            <option value="For-Rejustify">For-Rejustify</option>
+
+                            <option value="For-Canvassing">For-Canvassing</option>
+
+                            <option value="On-Canvass">On-Canvass</option>
+
+                            <option value="For-Approval (PO)">
+                              For-Approval (PO)
+                            </option>
+                            <option value="For-Rejustify (PO)">
+                              For-Rejustify (PO)
+                            </option>
+                          </Form.Select>
+                        </div>
                     </div>
-                  </div>
+
+                    <div className="button-filter-section">
+                        <div className="btnfilter">
+                            <button onClick={handleGenerate} className="actualbtnfilter">
+                              FILTER
+                            </button>
+                        </div>
+                        <div className="clearbntfilter">
+                            <button className="actualclearfilter"
+                              onClick={clearFilters}
+                              >
+                                  Clear Filter
+                              </button>
+                        </div>
+                    </div>
+
                 </div>
-                <div className="genbutton">
-                  <button onClick={handleGenerate} className="genbutton">
-                    Generate
-                  </button>
-                </div>
-                <div className="export-refresh">
-                  {/* <button className='export'>
-                                 <Export size={20} weight="bold" /> <p1>Export</p1>
-                            </button> */}
-                  <button className="export" onClick={exportToCSV}>
-                    <Export size={20} weight="bold" /> <p1>Export</p1>
-                  </button>
-                </div>
+
               </div>
             </div>
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
-            <TextField
-              label="Search"
-              variant="outlined"
-              style={{ marginBottom: '10px', 
-              float: 'right',
-              }}
-              InputLabelProps={{
-                style: { fontSize: '14px'},
-              }}
-              InputProps={{
-                style: { fontSize: '14px', width: '250px', height: '50px' },
-              }}
-              onChange={handleSearch}/>
+              <div className="searchandexport">
+                  <div className="exportfield">
+                    <button className="export" onClick={exportToCSV}>
+                      <Export size={20} weight="bold" /> <p1>Export</p1>
+                    </button>
+                  </div>
+                  <div className="searchfield">
+                    <TextField
+                      label="Search"
+                      variant="outlined"
+                      style={{ 
+                      float: 'right',
+                      }}
+                      InputLabelProps={{
+                        style: { fontSize: '14px'},
+                      }}
+                      InputProps={{
+                        style: { fontSize: '14px', width: '250px', height: '50px' },
+                      }}
+                      onChange={handleSearch}/>
+                  </div>
+              </div>
               <table ref={tableRef} className="table-hover">
                 <thead>
                   <tr>
@@ -492,7 +542,7 @@ function POTransactionReports() {
               </table>
             </div>
           </div>
-            <nav>
+            <nav style={{marginTop: '15px'}}>
                   <ul className="pagination" style={{ float: "right" }}>
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button

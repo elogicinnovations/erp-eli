@@ -18,6 +18,7 @@ import "jspdf-autotable";
 import {
   CalendarBlank,
   Export,
+  XCircle
 } from "@phosphor-icons/react";
 import { IconButton, TextField, TablePagination, } from '@mui/material';
 
@@ -53,8 +54,8 @@ function InventoryReports() {
   const [warehouse, setWarehouse] = useState([]);
   const [category, setCategory] = useState([]);
 
-  const [slctWarehouse, setSlctWarehouse] = useState();
-  const [slctCategory, setSlctCategory] = useState();
+  const [slctWarehouse, setSlctWarehouse] = useState("");
+  const [slctCategory, setSlctCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -208,18 +209,7 @@ function InventoryReports() {
     setInvetory_subpart(filteredSubpart);
   };
 
-  // useEffect(() => {
-  //   // Initialize DataTable when role data is available
-  //   if (
-  //     $("#order-listing").length > 0 &&
-  //     invetory_prd.length > 0 &&
-  //     invetory_assmbly.length > 0 &&
-  //     invetory_spare.length > 0 &&
-  //     invetory_subpart.length > 0
-  //   ) {
-  //     $("#order-listing").DataTable();
-  //   }
-  // }, [invetory_prd, invetory_assmbly, invetory_spare, invetory_subpart]);
+
 
   const [modalshow, setmodalShow] = useState(false);
 
@@ -430,11 +420,23 @@ function InventoryReports() {
         setInvetory_subpart(res.data); 
       })
       .catch((err) => console.log(err));
-    
-
-    
   };
 
+  const handleXCircleClick = () => {
+    setStartDate(null);
+  };
+
+  const handleXClick = () => {
+    setEndDate(null);
+  };
+
+  const clearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setSlctWarehouse("");
+    setSlctCategory("");
+    reloadTable();
+  };
 
   return (
     <div className="main-of-containers">
@@ -451,137 +453,187 @@ function InventoryReports() {
                 <div className="emp-text-side">
                   <p>Inventory Reports</p>
                 </div>
-                <div className="button-create-side">
-                  <div className="filter">
-                    <div className="cat-filter">
-                      <div className="warehouse-filter">
-                        <Form.Select
-                          aria-label="item status"
-                          onChange={(e) => setSlctWarehouse(e.target.value)}
-                          style={{
-                            width: "250px",
-                            height: "40px",
-                            fontSize: "15px",
-                            marginBottom: "15px",
-                            fontFamily: "Poppins, Source Sans Pro",
-                          }}
-                        >
-                          <option value="" disabled selected>
-                            Select Site
-                          </option>
-                          <option value="All">All</option>
-                          {warehouse.map((warehouse) => (
-                            <option key={warehouse.id} value={warehouse.id}>
-                              {warehouse.warehouse_name}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </div>
-                      <div className="product-filter">
-                        <Form.Select
-                          aria-label="item status"
-                          style={{
-                            width: "250px",
-                            height: "40px",
-                            fontSize: "15px",
-                            marginBottom: "15px",
-                            fontFamily: "Poppins, Source Sans Pro",
-                          }}
-                          onChange={(e) => setSlctCategory(e.target.value)}
-                        >
-                          <option disabled selected value="">
-                            Select Category ...
-                          </option>
 
-                          <option value="All">All</option>
-                          {category.map((category) => (
-                            <option
-                              key={category.category_code}
-                              value={category.category_code}
+                <div className="button-create-side" style={{marginTop: '5px'}}>
+                  <div className="filtering-section">
+                      <div className="date-section-filter">
+                          <div style={{ position: "relative", marginBottom: "15px" }}>
+                          <DatePicker
+                          selected={startDate}
+                          onChange={(date) => setStartDate(date)}
+                          placeholderText="Choose Date From"
+                          dateFormat="yyyy-MM-dd"
+                          wrapperClassName="custom-datepicker-wrapper"
+                          popperClassName="custom-popper"
+                          style={{ fontFamily: "Poppins, Source Sans Pro"}}
+                          />
+                          <CalendarBlank
+                          size={20}
+                          weight="thin"
+                          style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                          }}
+                          />
+                          {startDate && (
+                          <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                              position: "absolute",
+                              right: "19px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                              }}
+                              onClick={handleXCircleClick}
+                          />
+                          )}
+                      </div>
+
+                      <div className="">
+                            <Form.Select
+                              aria-label="item status"
+                              onChange={(e) => setSlctWarehouse(e.target.value)}
+                              style={{
+                                width: "274px",
+                                height: "40px",
+                                fontSize: "15px",
+                                marginBottom: "15px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                              }}
+                              value={slctWarehouse}
                             >
-                              {category.category_name}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </div>
+                              <option value="" disabled selected>
+                                Select Site
+                              </option>
+                              <option value="All">All</option>
+                              {warehouse.map((warehouse) => (
+                                <option key={warehouse.id} value={warehouse.id}>
+                                  {warehouse.warehouse_name}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </div>
                     </div>
-                    <div className="date-filter">
-                      <div className="date-pick">
-                        <Form.Group
-                          controlId="exampleForm.ControlInput2"
-                          className="date"
-                        >
+                    
+                      <div className="warehouse-product-filter">
+                      <div style={{ position: "relative", marginBottom: "15px" }}>
                           <DatePicker
-                            selected={startDate}
-                            onChange={(date) => setStartDate(date)}
-                            dateFormat="MM/dd/yyyy"
-                            placeholderText="Start Date"
-                            className="form-control"
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          placeholderText="Choose Date To"
+                          dateFormat="yyyy-MM-dd"
+                          wrapperClassName="custom-datepicker-wrapper"
+                          popperClassName="custom-popper"
+                          style={{ fontFamily: "Poppins, Source Sans Pro" }}
                           />
-                        </Form.Group>
-                        <CalendarBlank
+                          <CalendarBlank
                           size={20}
+                          weight="thin"
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
                           style={{
-                            position: "relative",
-                            color: "#9a9a9a",
-                            position: "relative",
-                            left: "220px",
-                            bottom: "30px",
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
                           }}
-                        />
-                      </div>
-                      <div className="date-pick">
-                        <Form.Group
-                          controlId="exampleForm.ControlInput2"
-                          className="date"
-                        >
-                          <DatePicker
-                            selected={endDate}
-                            onChange={(date) => setEndDate(date)}
-                            dateFormat="MM/dd/yyyy"
-                            placeholderText="End Date"
-                            className="form-control"
                           />
-                        </Form.Group>
-                        <CalendarBlank
-                          size={20}
-                          style={{
-                            position: "relative",
-                            color: "#9a9a9a",
-                            position: "relative",
-                            left: "220px",
-                            bottom: "30px",
-                          }}
-                        />
+                          {endDate && (
+                          <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                              position: "absolute",
+                              right: "19px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                              }}
+                              onClick={handleXClick}
+                          />
+                        )}
                       </div>
-                    </div>
+
+                          <div className="">
+                            <Form.Select
+                              aria-label="item status"
+                              style={{
+                                width: "284px",
+                                height: "40px",
+                                fontSize: "15px",
+                                marginBottom: "15px",
+                                fontFamily: "Poppins, Source Sans Pro",
+                              }}
+                              onChange={(e) => setSlctCategory(e.target.value)}
+                              value={slctCategory}
+                            >
+                              <option disabled selected value="">
+                                Select Category
+                              </option>
+
+                              <option value="All">All</option>
+                              {category.map((category) => (
+                                <option
+                                  key={category.category_code}
+                                  value={category.category_code}
+                                >
+                                  {category.category_name}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </div>
+                      </div>
+
+                      <div className="button-filter-section">
+                        <div className="btnfilter">
+                            <button onClick={handleGenerate} className="actualbtnfilter">FILTER</button>
+                        </div>
+                        <div className="clearbntfilter">
+                         <button className="actualclearfilter"
+                              onClick={clearFilters}
+                              >
+                                  Clear Filter
+                              </button>
+                        </div>
+                      </div>
                   </div>
-                  <div className="genbutton">
-                    <button onClick={handleGenerate} className="genbutton">Generate</button>
-                  </div>
-                  <div className="export-refresh">
-                    <button className="export" onClick={handleShow}>
-                      <Export size={20} weight="bold" /> <p1>Export</p1>
-                    </button>
-                  </div>
+                  
                 </div>
               </div>
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-              <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: '10px', 
-                  float: 'right',
-                  }}
-                  InputLabelProps={{
-                    style: { fontSize: '14px'},
-                  }}
-                  InputProps={{
-                    style: { fontSize: '14px', width: '250px', height: '50px' },
-                  }}
-                onChange={handleSearch}/>
+                <div className="searchandexport">
+                  <div className="exportfield">
+                    <button className="export" onClick={handleShow}>
+                      <Export size={20} weight="bold" /> <span>Export</span>
+                    </button>
+                  </div>
+
+                  <div className="searchfield">
+                    <TextField
+                      label="Search"
+                      variant="outlined"
+                      style={{
+                      float: 'right',
+                      }}
+                      InputLabelProps={{
+                        style: { fontSize: '14px'},
+                      }}
+                      InputProps={{
+                        style: { fontSize: '14px', width: '250px', height: '50px' },
+                      }}
+                    onChange={handleSearch}/>
+                  </div>
+                
+              </div>
+              
                 <table className="table-hover">
                   <thead>
                     <tr>
@@ -694,7 +746,7 @@ function InventoryReports() {
                 </table>
               </div>
             </div>
-            <nav>
+            <nav style={{marginTop: '15px'}}> 
                         <ul className="pagination" style={{ float: "right" }}>
                           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                             <button

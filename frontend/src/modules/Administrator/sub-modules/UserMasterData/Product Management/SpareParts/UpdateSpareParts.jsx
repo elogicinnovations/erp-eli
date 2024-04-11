@@ -809,7 +809,7 @@ console.log(SubParts)
                           <div className="col-6">
                             <Form.Group controlId="exampleForm.ControlInput1">
                                 <Form.Label style={{ fontSize: '20px' }}>Image Upload: </Form.Label>
-                                <div className="card">
+                                <div className="card" onClick={selectFiles}>
                                   <div className="drag-area" 
                                   onDragOver={onDragOver} 
                                   onDragLeave={onDragLeave} 

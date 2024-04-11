@@ -459,10 +459,10 @@ const Header = () => {
                       />
                       Profile
                     </Link>
-                    <button className="profile-card">
+                    <Link to="/activityLogs" className="profile-card">
                       <Files size={25} style={{ marginRight: "10px" }} />
                       Activity Logs
-                    </button>
+                    </Link>
                     <button className="profile-card" onClick={handleLogout}>
                       <SignOut size={25} style={{ marginRight: "10px" }} />
                       Logout

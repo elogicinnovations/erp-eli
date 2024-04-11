@@ -11,15 +11,16 @@ import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
 import { IconButton, TextField, TablePagination, } from '@mui/material';
 import Form from "react-bootstrap/Form";
-import {
-  Eye,
-  EyeSlash
-} from "@phosphor-icons/react";
+import UserProfile from '../../../../assets/image/user.png';
 
 import {
   Plus,
-  DotsThreeCircle,
+  DotsThreeOutlineVertical,
   DotsThreeCircleVertical,
+  Eye,
+  EyeSlash,
+  Circle,
+  DotsThreeOutline 
 } from "@phosphor-icons/react";
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -170,7 +171,7 @@ function MasterList({ authrztn }) {
       .then((res) => {
         setmasterListt(res.data)
         setSearchMasterlist(res.data)
-        setIsLoading(false);
+        setIsLoading(true);
       })
       .catch((err) => {
         console.log(err)
@@ -633,12 +634,12 @@ function MasterList({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
+      {!isLoading ? (
+        <div className="loading-container">
+          <ReactLoading className="react-loading" type={'bubbles'}/>
+          Loading Data...
+        </div>
+      ) : (
         authrztn.includes('Master List - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
@@ -661,71 +662,44 @@ function MasterList({ authrztn }) {
               </div>
             </div>
           </div>
-
+          <div className="textfield">
+            <TextField
+              label="Search"
+              variant="outlined"
+              style={{ marginBottom: '10px', 
+              float: 'right',
+              }}
+              InputLabelProps={{
+                style: { fontSize: '14px'},
+              }}
+              InputProps={{
+                style: { fontSize: '14px', width: '250px', height: '50px' },
+              }}
+              onChange={handleSearch}/>
+              </div>
           <div className="table-containss">
-            <div className="main-of-all-tables">
-              <TextField
-                label="Search"
-                variant="outlined"
-                style={{ marginBottom: '10px', 
-                float: 'right',
-                }}
-                InputLabelProps={{
-                  style: { fontSize: '14px'},
-                }}
-                InputProps={{
-                  style: { fontSize: '14px', width: '250px', height: '50px' },
-                }}
-                onChange={handleSearch}/>
-              <table className="hover-table">
-                <thead>
-                  <tr>
-                    {/* <th className="tableh">ID</th> */}
-                    <th className="tableh">Role Type</th>
-                    <th className="tableh">Name</th>
-                    <th className="tableh">Email</th>
-                    <th className="tableh">Department</th>
-                    <th className="tableh">Status</th>
-                    <th className="tableh">Action</th>
-                  </tr>
-                </thead>
-                {masterListt.length > 0 ? (
-                <tbody>
-                  {currentItems.map((data, i) => (
-                    <tr
-                      key={i}
-                      className={i % 2 === 0 ? "even-row" : "odd-row"}>
-                      {/* <td>{data.col_id}</td> */}
-                      <td>{data.userRole.col_rolename}</td>
-                      <td>{data.col_Fname}</td>
-                      <td>{data.col_email}</td>
-                      <td>{data.department.department_name}</td>
-                      <td>
-                      <div
-                          className="colorstatus"
-                          style={{
-                            backgroundColor:
-                              data.col_status === "Active"
-                                ? "green"
-                                : "red",
-                            color: "white",
-                            padding: "5px",
-                            borderRadius: "5px",
-                            textAlign: "center",
-                            width: "80px",
-                          }}>
-                        {data.col_status}
-                        </div>
-                      </td>
-                      <td>
-                      {isVertical[data.col_id] ? (
+          {masterListt.length > 0 ? (
+            <div className="users-box-main-containers">
+            {currentItems.map((data, i) => (
+              <div className="list-box-container" key={i}>
+                  <div className="top-box-list">
+                      <div className="active-inactive-identify">
+                      {data.status === 'Active' ? (
+                        <Circle size={28} color="red" weight="duotone" />
+                      ) : (
+                        <Circle size={32} color="green" weight="duotone" />
+                      )}
+                      </div>
+                      <div className="three-dots-section">
+                        {isVertical[data.col_id] ? (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircleVertical
-                            size={32}
+                          <DotsThreeOutline
+                            size={30}
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.col_id);
                             }}
+                            color="#ffffff"
                           />
                           <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
                             {setButtonVisibles(data.col_id) && (
@@ -759,12 +733,13 @@ function MasterList({ authrztn }) {
                         </div>
                       ) : (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircle
-                            size={32}
+                          <DotsThreeOutlineVertical
+                            size={30}
                             className="dots-icon"
                             onClick={() => {
                               toggleButtons(data.col_id);
                             }}
+                            color="#ffffff"
                           />
                           <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
                             {setButtonVisibles(data.col_id) && (
@@ -797,23 +772,40 @@ function MasterList({ authrztn }) {
                           </div>
                         </div>
                       )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-                  ) : (
-                    <div className="no-data">
-                      <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
-                    </div>
-                )}
-              </table>
-            </div>
-          </div>
+                      </div>
+                  </div>
 
-          <nav>
+                  <div className="mid-box-list">
+                      <div className="profile-section-mid">
+                         {data.image ? (
+                            <img src={`data:image/png;base64,${data.image}`} alt={`Masterlist ${data.image}`} />
+                          ) : (
+                            <img src={UserProfile} alt="" />
+                          )}
+                      </div>
+                  </div>
+
+                  <div className="bot-box-list">
+                      <span>{data.col_Fname}</span>
+                      <span>{data.department.department_name}</span>
+                      <span>{data.col_phone}</span>
+                      <span>{data.col_email}</span>
+                      <span>{data.col_address}</span>
+                  </div>
+              </div>
+              ))}
+          </div>
+          ) : (
+            <div className="no-data">
+              <img src={NoData} alt="NoData" className="no-data-img" />
+              <h3>
+                No Data Found
+              </h3>
+            </div>
+          )}
+        </div>
+
+          <nav style={{marginTop: '15px'}}>
                   <ul className="pagination" style={{ float: "right" }}>
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button
@@ -859,7 +851,7 @@ function MasterList({ authrztn }) {
             </h3>
           </div>
         )
-              )}
+      )}
       </div>
 
       {/* Add User */}

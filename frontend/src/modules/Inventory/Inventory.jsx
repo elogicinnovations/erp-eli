@@ -390,6 +390,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                   defaultActiveKey="inventory"
                   transition={false}
                   id="noanim-tab-example"
+                  style={{border: 'none'}}
                 >
                   <Tab eventKey="inventory" title={<span style={{ ...tabStyle, fontSize: '20px', overflowY: 'auto' }}>Inventory</span>}>
                     <div className="tab-titles">
@@ -472,7 +473,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             </div>
                           )}
                         </table>
-                        <nav>
+                        <nav style={{marginTop: '15px'}}>
                         <ul className="pagination" style={{ float: "right" }}>
                           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                             <button
@@ -556,7 +557,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             style: { fontSize: '14px', width: '250px', height: '50px' },
                           }}
                         onChange={handleSearchIssuance}/>
-                        <table id='order1-listing' className="table-hover" title="View Information">
+                        <table className="table-hover" title="View Information">
                           <thead>
                             <tr>
                               {/* <th className='tableh'>Issuance ID</th> */}
@@ -608,7 +609,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           )}
                         </table>
                       </div>
-                    <nav>
+                    <nav style={{marginTop: '15px'}}>
                         <ul className="pagination" style={{ float: "right" }}>
                           <li className={`page-item ${currentPageissuance === 1 ? "disabled" : ""}`}>
                             <button
@@ -812,7 +813,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           )}
                         </table>
                       </div>
-                      <nav>
+                      <nav style={{marginTop: '15px'}}>
                         <ul className="pagination" style={{ float: "right" }}>
                           <li className={`page-item ${currentPageReturn === 1 ? "disabled" : ""}`}>
                             <button

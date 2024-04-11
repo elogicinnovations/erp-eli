@@ -631,7 +631,7 @@ function PurchaseRequest({ authrztn }) {
                             navigate(`/onCanvass/${data.id}`) :                       
                             navigate(`/purchaseRequestPreview/${data.id}`)
                           }
-                          style={{fontSize: '14px'}}
+                          style={{fontSize: '12px'}}
                           >
                             {formatDatetime(data.createdAt)}
                           </td>
@@ -716,7 +716,7 @@ function PurchaseRequest({ authrztn }) {
                 )}
               </table>
 
-               <nav>
+               <nav style={{marginTop: '15px'}}>
                   <ul className="pagination" style={{ float: "right" }}>
                     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                       <button
