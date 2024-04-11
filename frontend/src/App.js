@@ -149,10 +149,18 @@ function App() {
                 <Header />
 
                 <Routes>
-                  <Route
+                  {/* <Route
                     path="/dashboard"
                     element={<Dashboard setActiveTab={setActiveTab} />}
-                  />
+                  /> */}
+
+                    <Route path="/dashboard" element={
+                      <Roles>
+                        {(authrztn) => <Dashboard 
+                        setActiveTab={setActiveTab}
+                        authrztn={authrztn} />}
+                      </Roles>
+                    } />
 
                   <Route path="/systemSettings" element={<SystemSettings />} />
 

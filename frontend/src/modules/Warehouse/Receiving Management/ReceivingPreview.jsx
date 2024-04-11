@@ -386,16 +386,7 @@ function ReceivingPreview({ authrztn }) {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
-  function formatDatetime(datetime) {
-    const options = {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(datetime).toLocaleString("en-US", options);
-  }
+
 
   // currentDAte
   const currentDate = new Date();

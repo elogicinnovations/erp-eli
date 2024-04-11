@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { where, Op, fn, col, gt, gte, lt, lte, sqlz } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
 const { startOfMonth, endOfMonth, format } = require("date-fns"); // You may need to install the date-fns library
-const moment = require("moment-timezone"); 
+const moment = require("moment-timezone");
 
 const {
   Issuance,
@@ -50,8 +50,11 @@ router.route("/fetchCountIssued").get(async (req, res) => {
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
-    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
+    const firstDateOfMonth = currentDate
+      .clone()
+      .startOf("month")
+      .startOf("day");
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     // Count issued products for the current month
     const countProduct = await IssuedProduct.count({
@@ -60,7 +63,7 @@ router.route("/fetchCountIssued").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
       include: [
@@ -83,7 +86,7 @@ router.route("/fetchCountIssued").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
       include: [
@@ -104,7 +107,7 @@ router.route("/fetchCountIssued").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
 
@@ -126,7 +129,7 @@ router.route("/fetchCountIssued").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
       include: [
@@ -159,9 +162,11 @@ router.route("/fetchCountInventory").get(async (req, res) => {
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
-    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
-
+    const firstDateOfMonth = currentDate
+      .clone()
+      .startOf("month")
+      .startOf("day");
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     const countProductQuantity = await Inventory.sum("quantity", {
       where: {
@@ -169,7 +174,7 @@ router.route("/fetchCountInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
@@ -180,7 +185,7 @@ router.route("/fetchCountInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
@@ -190,7 +195,7 @@ router.route("/fetchCountInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
@@ -200,7 +205,7 @@ router.route("/fetchCountInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
@@ -226,8 +231,11 @@ router.route("/fetchValueInventory").get(async (req, res) => {
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
-    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
+    const firstDateOfMonth = currentDate
+      .clone()
+      .startOf("month")
+      .startOf("day");
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     let sumPRD = 0;
     let sumAsmbly = 0;
@@ -240,7 +248,7 @@ router.route("/fetchValueInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
@@ -257,13 +265,14 @@ router.route("/fetchValueInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
 
     invasm.forEach((inv) => {
-      sumAsmbly += (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
+      sumAsmbly +=
+        (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
     });
 
     // -----------------------------------------------------
@@ -274,13 +283,14 @@ router.route("/fetchValueInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
 
     invspare.forEach((inv) => {
-      sumSpare += (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
+      sumSpare +=
+        (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
     });
 
     // -----------------------------------------------------
@@ -291,7 +301,7 @@ router.route("/fetchValueInventory").get(async (req, res) => {
           [Op.between]: [
             firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
             lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-        ],
+          ],
         },
       },
     });
@@ -315,16 +325,19 @@ router.route("/fetchCountSupplier").get(async (req, res) => {
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
-    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
+    const firstDateOfMonth = currentDate
+      .clone()
+      .startOf("month")
+      .startOf("day");
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     const countSupplier = await Supplier.count({
       where: {
         supplier_status: "Active",
         createdAt: {
           [Op.between]: [
-              firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
           ],
         },
       },
@@ -349,8 +362,11 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
-    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
+    const firstDateOfMonth = currentDate
+      .clone()
+      .startOf("month")
+      .startOf("day");
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     const ordered_canvassed = await PR_PO.findAll({
       include: [
@@ -361,8 +377,8 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
             status: "To-Receive",
             date_approved: {
               [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                  lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
               ],
             },
           },
@@ -398,8 +414,8 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
             status: "To-Receive",
             date_approved: {
               [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                  lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
               ],
             },
           },
@@ -433,8 +449,8 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
             status: "To-Receive",
             date_approved: {
               [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                  lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
               ],
             },
           },
@@ -470,8 +486,8 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
             status: "To-Receive",
             date_approved: {
               [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                  lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
               ],
             },
           },
@@ -1097,185 +1113,205 @@ router.route("/fetchOutStock").get(async (req, res) => {
 });
 router.route("/countInventoryGraph").get(async (req, res) => {
   try {
-// Get the current date
-const currentDate = new Date();
-const currentYear = currentDate.getFullYear();
+    // Get the current date
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
 
-// Get the last day of December for the current year
-const lastDayOfDecemberCurrentYear = new Date(currentYear, 11, 31); // Months are 0-indexed, so December is 11
-lastDayOfDecemberCurrentYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
+    // Get the last day of December for the current year
+    const lastDayOfDecemberCurrentYear = new Date(currentYear, 11, 31); // Months are 0-indexed, so December is 11
+    lastDayOfDecemberCurrentYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
 
-// Get the first day of January for the current year
-const firstDayOfJanuaryCurrentYear = new Date(currentYear, 0, 1); // January is 0
-firstDayOfJanuaryCurrentYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
+    // Get the first day of January for the current year
+    const firstDayOfJanuaryCurrentYear = new Date(currentYear, 0, 1); // January is 0
+    firstDayOfJanuaryCurrentYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
 
-// For last year
-const lastYear = currentYear - 1;
-// Get the last day of December for the last year
-const lastDayOfDecemberLastYear = new Date(lastYear, 11, 31);
-lastDayOfDecemberLastYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
+    // For last year
+    const lastYear = currentYear - 1;
+    // Get the last day of December for the last year
+    const lastDayOfDecemberLastYear = new Date(lastYear, 11, 31);
+    lastDayOfDecemberLastYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
 
-// Get the first day of January for the last year
-const firstDayOfJanuaryLastYear = new Date(lastYear, 0, 1);
-firstDayOfJanuaryLastYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
+    // Get the first day of January for the last year
+    const firstDayOfJanuaryLastYear = new Date(lastYear, 0, 1);
+    firstDayOfJanuaryLastYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
 
-// Format dates into desired string format
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
+    // Format dates into desired string format
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
 
+    const currentYear_StartDate = formatDate(firstDayOfJanuaryCurrentYear);
+    const currentYear_EndDate = formatDate(lastDayOfDecemberCurrentYear);
 
-const currentYear_StartDate = formatDate(firstDayOfJanuaryCurrentYear)
-const currentYear_EndDate = formatDate(lastDayOfDecemberCurrentYear)
+    const lastYear_StartDate = formatDate(firstDayOfJanuaryLastYear);
+    const lastYear_EndDate = formatDate(lastDayOfDecemberLastYear);
 
-const lastYear_StartDate = formatDate(firstDayOfJanuaryLastYear)
-const lastYear_EndDate = formatDate(lastDayOfDecemberLastYear)
+    console.log("Last day of December, current year:", currentYear_EndDate);
+    console.log("First day of January, current year:", currentYear_StartDate);
+    console.log("Last day of December, last year:", lastYear_EndDate);
+    console.log("First day of January, last year:", lastYear_StartDate);
 
-console.log("Last day of December, current year:", currentYear_EndDate);
-console.log("First day of January, current year:", currentYear_StartDate);
-console.log("Last day of December, last year:", lastYear_EndDate);
-console.log("First day of January, last year:", lastYear_StartDate);
-
-
-
-const dataCounts = await Inventory.findAll({
-  include: [{
-    model: ProductTAGSupplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        lastYear_StartDate,
-        currentYear_EndDate,
+    const dataCounts = await Inventory.findAll({
+      include: [
+        {
+          model: ProductTAGSupplier,
+          required: true,
+        },
       ],
-    },
-  },
-});
+      where: {
+        createdAt: {
+          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+        },
+      },
+    });
 
-
-const dataCounts_asm = await Inventory_Assembly.findAll({
-  include: [{
-    model: Assembly_Supplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        lastYear_StartDate,
-        currentYear_EndDate,
+    const dataCounts_asm = await Inventory_Assembly.findAll({
+      include: [
+        {
+          model: Assembly_Supplier,
+          required: true,
+        },
       ],
-    },
-  },
-});
+      where: {
+        createdAt: {
+          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+        },
+      },
+    });
 
-const dataCounts_spare = await Inventory_Spare.findAll({
-  include: [{
-    model: SparePart_Supplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        lastYear_StartDate,
-        currentYear_EndDate,
+    const dataCounts_spare = await Inventory_Spare.findAll({
+      include: [
+        {
+          model: SparePart_Supplier,
+          required: true,
+        },
       ],
-    },
-  },
-});
+      where: {
+        createdAt: {
+          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+        },
+      },
+    });
 
-const dataCounts_subpart = await Inventory_Subpart.findAll({
-  include: [{
-    model: Subpart_supplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        lastYear_StartDate,
-        currentYear_EndDate,
+    const dataCounts_subpart = await Inventory_Subpart.findAll({
+      include: [
+        {
+          model: Subpart_supplier,
+          required: true,
+        },
       ],
-    },
-  },
-});
+      where: {
+        createdAt: {
+          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+        },
+      },
+    });
 
+    // Array of month names
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
 
-// Array of month names
-const monthNames = [
-  "January", "February", "March", "April", "May", "June", "July",
-  "August", "September", "October", "November", "December"
-];
+    const combinedQuantities = {};
 
-const combinedQuantities = {};
+    // Loop through each inventory item
+    [dataCounts, dataCounts_asm, dataCounts_spare, dataCounts_subpart].forEach(
+      (data) => {
+        data.forEach((item) => {
+          const inventoryQuantity = item.static_quantity;
+          const product_id = item.product_tag_supplier
+            ? item.product_tag_supplier.product_id
+            : item.assembly_supplier
+            ? item.assembly_supplier.assembly_id
+            : item.sparepart_supplier
+            ? item.sparepart_supplier.sparePart_id
+            : item.subpart_supplier.subpart_id; // Check if it's from Inventory or Inventory_Assembly
 
-// Loop through each inventory item
-[dataCounts, dataCounts_asm, dataCounts_spare, dataCounts_subpart].forEach((data) => {
-  data.forEach((item) => {
-    const inventoryQuantity = item.static_quantity;
-    const product_id = item.product_tag_supplier ? item.product_tag_supplier.product_id : item.assembly_supplier ? item.assembly_supplier.assembly_id : item.sparepart_supplier ? item.sparepart_supplier.sparePart_id : item.subpart_supplier.subpart_id ; // Check if it's from Inventory or Inventory_Assembly
+          // Get the year and month from the createdAt field of the inventory item
+          const createdAt = new Date(item.createdAt);
+          const currentYear = createdAt.getFullYear();
+          const month = createdAt.getMonth();
 
-    // Get the year and month from the createdAt field of the inventory item
-    const createdAt = new Date(item.createdAt);
-    const currentYear = createdAt.getFullYear();
-    const month = createdAt.getMonth();
+          // Determine if it's last year or this year
+          const yearLabel =
+            currentYear === new Date().getFullYear() ? "ThisYear" : "LastYear";
 
-    // Determine if it's last year or this year
-    const yearLabel = currentYear === new Date().getFullYear() ? "ThisYear" : "LastYear";
+          if (!combinedQuantities[yearLabel]) {
+            combinedQuantities[yearLabel] = {};
+          }
 
-    if (!combinedQuantities[yearLabel]) {
-      combinedQuantities[yearLabel] = {};
-    }
+          if (!combinedQuantities[yearLabel][month]) {
+            combinedQuantities[yearLabel][month] = {};
+          }
 
-    if (!combinedQuantities[yearLabel][month]) {
-      combinedQuantities[yearLabel][month] = {};
-    }
+          if (!combinedQuantities[yearLabel][month][product_id]) {
+            // If the product_id is encountered for the first time in this year and month, initialize its quantity
+            combinedQuantities[yearLabel][month][product_id] =
+              inventoryQuantity;
+          } else {
+            // If the product_id already exists in this year and month, add the current quantity to it
+            combinedQuantities[yearLabel][month][product_id] +=
+              inventoryQuantity;
+          }
+        });
+      }
+    );
 
-    if (!combinedQuantities[yearLabel][month][product_id]) {
-      // If the product_id is encountered for the first time in this year and month, initialize its quantity
-      combinedQuantities[yearLabel][month][product_id] = inventoryQuantity;
-    } else {
-      // If the product_id already exists in this year and month, add the current quantity to it
-      combinedQuantities[yearLabel][month][product_id] += inventoryQuantity;
-    }
-  });
-});
+    // Create the array to hold the final result
+    const array = [];
 
-// Create the array to hold the final result
-const array = [];
+    // Loop through each month name
+    monthNames.forEach((monthName, index) => {
+      const monthData = {
+        month: monthName,
+        ThisYear: 0,
+        LastYear: 0,
+      };
 
-// Loop through each month name
-monthNames.forEach((monthName, index) => {
-  const monthData = {
-    month: monthName,
-    ThisYear: 0,
-    LastYear: 0
-  };
+      // Check if the month exists in ThisYear
+      if (
+        combinedQuantities["ThisYear"] &&
+        combinedQuantities["ThisYear"][index]
+      ) {
+        for (const product_id in combinedQuantities["ThisYear"][index]) {
+          monthData.ThisYear +=
+            combinedQuantities["ThisYear"][index][product_id];
+        }
+      }
 
-  // Check if the month exists in ThisYear
-  if (combinedQuantities["ThisYear"] && combinedQuantities["ThisYear"][index]) {
-    for (const product_id in combinedQuantities["ThisYear"][index]) {
-      monthData.ThisYear += combinedQuantities["ThisYear"][index][product_id];
-    }
-  }
+      // Check if the month exists in LastYear
+      if (
+        combinedQuantities["LastYear"] &&
+        combinedQuantities["LastYear"][index]
+      ) {
+        for (const product_id in combinedQuantities["LastYear"][index]) {
+          monthData.LastYear +=
+            combinedQuantities["LastYear"][index][product_id];
+        }
+      }
 
-  // Check if the month exists in LastYear
-  if (combinedQuantities["LastYear"] && combinedQuantities["LastYear"][index]) {
-    for (const product_id in combinedQuantities["LastYear"][index]) {
-      monthData.LastYear += combinedQuantities["LastYear"][index][product_id];
-    }
-  }
+      array.push(monthData);
+    });
 
-  array.push(monthData);
-});
+    // console.log(array);
 
-// console.log(array);
-   
     res.json(array);
   } catch (error) {
     console.error(error);
@@ -1283,10 +1319,8 @@ monthNames.forEach((monthName, index) => {
   }
 });
 
-
 router.route("/fetchMostReqItem").get(async (req, res) => {
   try {
-
     const productInfoArray = [];
     const ordered_canvassed = await PR_PO.findAll({
       include: [
@@ -1300,23 +1334,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         {
           model: ProductTAGSupplier,
           required: true,
-          include: [{
-            model: Product,
-            required: true
-          }]
+          include: [
+            {
+              model: Product,
+              required: true,
+            },
+          ],
         },
       ],
     });
-    
+
     // Create an array to store product information and counts
-    
-    
+
     // Create an object to store counts of each product_id
     const productCounts = {};
-    
+
     ordered_canvassed.forEach((order_quantity) => {
       const product_id = order_quantity.product_tag_supplier.product_id;
-    
+
       // Increment the count for the current product_id
       if (productCounts[product_id]) {
         productCounts[product_id]++;
@@ -1324,25 +1359,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         productCounts[product_id] = 1;
       }
     });
-    
+
     // Loop through the productCounts object to gather product information and counts
     for (const productId in productCounts) {
       const productName = ordered_canvassed.find(
         (item) => item.product_tag_supplier.product_id === parseInt(productId)
       ).product_tag_supplier.product.product_name;
-    
+
       const productCode = ordered_canvassed.find(
         (item) => item.product_tag_supplier.product_id === parseInt(productId)
       ).product_tag_supplier.product.product_code;
-    
+
       // Push product information and count into the productInfoArray
       productInfoArray.push({
         productCode: productCode,
         productName: productName,
-        count: productCounts[productId]
+        count: productCounts[productId],
       });
     }
-
 
     const ordered_canvassed_asm = await PR_PO_asmbly.findAll({
       include: [
@@ -1356,23 +1390,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         {
           model: Assembly_Supplier,
           required: true,
-          include: [{
-            model: Assembly,
-            required: true
-          }]
+          include: [
+            {
+              model: Assembly,
+              required: true,
+            },
+          ],
         },
       ],
     });
-    
+
     // Create an array to store product information and counts
-    
-    
+
     // Create an object to store counts of each product_id
     const productCounts_asm = {};
-    
+
     ordered_canvassed_asm.forEach((order_quantity) => {
       const product_id = order_quantity.assembly_supplier.assembly_id;
-    
+
       // Increment the count for the current product_id
       if (productCounts_asm[product_id]) {
         productCounts_asm[product_id]++;
@@ -1380,25 +1415,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         productCounts_asm[product_id] = 1;
       }
     });
-    
+
     // Loop through the productCounts object to gather product information and counts
     for (const productId in productCounts_asm) {
       const productName = ordered_canvassed_asm.find(
         (item) => item.assembly_supplier.assembly_id === parseInt(productId)
       ).assembly_supplier.assembly.assembly_name;
-    
+
       const productCode = ordered_canvassed_asm.find(
         (item) => item.assembly_supplier.assembly_id === parseInt(productId)
       ).assembly_supplier.assembly.assembly_code;
-    
+
       // Push product information and count into the productInfoArray
       productInfoArray.push({
         productCode: productCode,
         productName: productName,
-        count: productCounts_asm[productId]
+        count: productCounts_asm[productId],
       });
     }
-
 
     const ordered_canvassed_spr = await PR_PO_spare.findAll({
       include: [
@@ -1412,23 +1446,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         {
           model: SparePart_Supplier,
           required: true,
-          include: [{
-            model: SparePart,
-            required: true
-          }]
+          include: [
+            {
+              model: SparePart,
+              required: true,
+            },
+          ],
         },
       ],
     });
-    
+
     // Create an array to store product information and counts
-    
-    
+
     // Create an object to store counts of each product_id
     const productCounts_spare = {};
-    
+
     ordered_canvassed_spr.forEach((order_quantity) => {
       const product_id = order_quantity.sparepart_supplier.sparePart_id;
-    
+
       // Increment the count for the current product_id
       if (productCounts_spare[product_id]) {
         productCounts_spare[product_id]++;
@@ -1436,25 +1471,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         productCounts_spare[product_id] = 1;
       }
     });
-    
+
     // Loop through the productCounts object to gather product information and counts
     for (const productId in productCounts_spare) {
       const productName = ordered_canvassed_spr.find(
         (item) => item.sparepart_supplier.sparePart_id === parseInt(productId)
       ).sparepart_supplier.sparePart.spareParts_name;
-    
+
       const productCode = ordered_canvassed_spr.find(
         (item) => item.sparepart_supplier.sparePart_id === parseInt(productId)
       ).sparepart_supplier.sparePart.spareParts_code;
-    
+
       // Push product information and count into the productInfoArray
       productInfoArray.push({
         productCode: productCode,
         productName: productName,
-        count: productCounts_spare[productId]
+        count: productCounts_spare[productId],
       });
     }
-
 
     const ordered_canvassed_sbp = await PR_PO_subpart.findAll({
       include: [
@@ -1468,23 +1502,24 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         {
           model: Subpart_supplier,
           required: true,
-          include: [{
-            model: SubPart,
-            required: true
-          }]
+          include: [
+            {
+              model: SubPart,
+              required: true,
+            },
+          ],
         },
       ],
     });
-    
+
     // Create an array to store product information and counts
-    
-    
+
     // Create an object to store counts of each product_id
     const productCounts_subpart = {};
-    
+
     ordered_canvassed_sbp.forEach((order_quantity) => {
       const product_id = order_quantity.subpart_supplier.subpart_id;
-    
+
       // Increment the count for the current product_id
       if (productCounts_subpart[product_id]) {
         productCounts_subpart[product_id]++;
@@ -1492,30 +1527,30 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
         productCounts_subpart[product_id] = 1;
       }
     });
-    
+
     // Loop through the productCounts object to gather product information and counts
     for (const productId in productCounts_subpart) {
       const productName = ordered_canvassed_sbp.find(
         (item) => item.subpart_supplier.subpart_id === parseInt(productId)
       ).subpart_supplier.subPart.subPart_name;
-    
+
       const productCode = ordered_canvassed_sbp.find(
         (item) => item.subpart_supplier.subpart_id === parseInt(productId)
       ).subpart_supplier.subPart.subPart_code;
-    
+
       // Push product information and count into the productInfoArray
       productInfoArray.push({
         productCode: productCode,
         productName: productName,
-        count: productCounts_subpart[productId]
+        count: productCounts_subpart[productId],
       });
     }
-    
+
     // // Now productInfoArray contains the required information
     // console.log(productInfoArray);
     productInfoArray.sort((a, b) => b.count - a.count);
 
-    return res.json(productInfoArray)
+    return res.json(productInfoArray);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1524,14 +1559,15 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
 
 router.route("/fetchReceivedOrdered").get(async (req, res) => {
   try {
-
     const manilaTimezone = "Asia/Manila";
     moment.tz.setDefault(manilaTimezone);
 
     const currentDate = moment();
-    const firstDateOfMonth = currentDate.clone().startOf("month").startOf('day');
-    const lastDateOfMonth = currentDate.clone().endOf("month").endOf('day');
-
+    const firstDateOfMonth = currentDate
+      .clone()
+      .startOf("month")
+      .startOf("day");
+    const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     // ----------------Product on order ------------------
     let orderedCountPRD = 0;
@@ -1545,25 +1581,26 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
           model: Receiving_PO,
           required: true,
           where: {
-            status: { [Op.ne]: 'For Approval' },
-            status:{ [Op.ne]: 'In-transit'},
-            status:{ [Op.ne]: 'In-transit (Complete)'},
+            status: { [Op.ne]: "For Approval" },
+            status: { [Op.ne]: "In-transit" },
+            status: { [Op.ne]: "In-transit (Complete)" },
             date_approved: {
               [Op.between]: [
                 firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
                 lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-               ],
-             },
-
+              ],
+            },
           },
         },
         {
           model: PR_PO,
           required: true,
-            include: [{
+          include: [
+            {
               model: ProductTAGSupplier,
-              required: true
-            }]
+              required: true,
+            },
+          ],
         },
       ],
     });
@@ -1571,9 +1608,9 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
     const productCount = {};
 
     ordered_canvassed.forEach((order_quantity) => {
-      const product_id = order_quantity.purchase_req_canvassed_prd.product_tag_supplier.product_id;
-
-     
+      const product_id =
+        order_quantity.purchase_req_canvassed_prd.product_tag_supplier
+          .product_id;
 
       // Check if product_id already exists in productCount
       if (!productCount[product_id]) {
@@ -1593,13 +1630,13 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
           model: Receiving_PO,
           required: true,
           where: {
-            status: { [Op.ne]: 'For Approval' },
-            status:{ [Op.ne]: 'In-transit'},
-            status:{ [Op.ne]: 'In-transit (Complete)'},
+            status: { [Op.ne]: "For Approval" },
+            status: { [Op.ne]: "In-transit" },
+            status: { [Op.ne]: "In-transit (Complete)" },
             date_approved: {
-             [Op.between]: [
-              firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+              [Op.between]: [
+                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
               ],
             },
           },
@@ -1607,17 +1644,21 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
         {
           model: PR_PO_asmbly,
           required: true,
-            include: [{
+          include: [
+            {
               model: Assembly_Supplier,
-              required: true
-            }]
+              required: true,
+            },
+          ],
         },
       ],
     });
 
     const ASMCount = {};
     ordered_canvassed_ASM.forEach((order_quantity) => {
-      const product_id = order_quantity.purchase_req_canvassed_asmbly.assembly_supplier.assembly_id;
+      const product_id =
+        order_quantity.purchase_req_canvassed_asmbly.assembly_supplier
+          .assembly_id;
 
       // Check if product_id already exists in ASMCount
       if (!ASMCount[product_id]) {
@@ -1637,24 +1678,26 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
           model: Receiving_PO,
           required: true,
           where: {
-            status: { [Op.ne]: 'For Approval' },
-            status:{ [Op.ne]: 'In-transit'},
-            status:{ [Op.ne]: 'In-transit (Complete)'},
+            status: { [Op.ne]: "For Approval" },
+            status: { [Op.ne]: "In-transit" },
+            status: { [Op.ne]: "In-transit (Complete)" },
             date_approved: {
               [Op.between]: [
                 firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
                 lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-               ],
-             },
+              ],
+            },
           },
         },
         {
           model: PR_PO_spare,
           required: true,
-            include: [{
+          include: [
+            {
               model: SparePart_Supplier,
-              required: true
-            }]
+              required: true,
+            },
+          ],
         },
       ],
     });
@@ -1662,7 +1705,9 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
     const spareCount = {};
 
     ordered_canvassed_SPR.forEach((order_quantity) => {
-      const product_id = order_quantity.purchase_req_canvassed_spare.sparepart_supplier.sparePart_id;
+      const product_id =
+        order_quantity.purchase_req_canvassed_spare.sparepart_supplier
+          .sparePart_id;
 
       // Check if product_id already exists in spareCount
       if (!spareCount[product_id]) {
@@ -1682,24 +1727,26 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
           model: Receiving_PO,
           required: true,
           where: {
-            status: { [Op.ne]: 'For Approval' },
-            status:{ [Op.ne]: 'In-transit'},
-            status:{ [Op.ne]: 'In-transit (Complete)'},
+            status: { [Op.ne]: "For Approval" },
+            status: { [Op.ne]: "In-transit" },
+            status: { [Op.ne]: "In-transit (Complete)" },
             date_approved: {
               [Op.between]: [
-                 firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                 lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-               ],
-             },
+                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+              ],
+            },
           },
         },
         {
           model: PR_PO_subpart,
           required: true,
-            include: [{
+          include: [
+            {
               model: Subpart_supplier,
-              required: true
-            }]
+              required: true,
+            },
+          ],
         },
       ],
     });
@@ -1707,7 +1754,9 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
     const subpCount = {};
 
     ordered_canvassed_SBP.forEach((order_quantity) => {
-      const product_id = order_quantity.purchase_req_canvassed_subpart.subpart_supplier.subpart_id;
+      const product_id =
+        order_quantity.purchase_req_canvassed_subpart.subpart_supplier
+          .subpart_id;
 
       // Check if product_id already exists in subpCount
       if (!subpCount[product_id]) {
@@ -1717,7 +1766,7 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
       }
     });
 
-    console.log(`orderedCountSBPssss ${orderedCountSBP}`)
+    console.log(`orderedCountSBPssss ${orderedCountSBP}`);
 
     const totalOnOrder =
       orderedCountPRD + orderedCountASM + orderedCountSPR + orderedCountSBP;
@@ -1729,190 +1778,626 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
   }
 });
 
-
-
 router.route("/countOrderGraph").get(async (req, res) => {
   try {
-// Get the current date
-const currentDate = new Date();
-const currentYear = currentDate.getFullYear();
+    // Get the current date
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
 
-// Get the last day of December for the current year
-const lastDayOfDecemberCurrentYear = new Date(currentYear, 11, 31); // Months are 0-indexed, so December is 11
-lastDayOfDecemberCurrentYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
+    // Get the last day of December for the current year
+    const lastDayOfDecemberCurrentYear = new Date(currentYear, 11, 31); // Months are 0-indexed, so December is 11
+    lastDayOfDecemberCurrentYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
 
-// Get the first day of January for the current year
-const firstDayOfJanuaryCurrentYear = new Date(currentYear, 0, 1); // January is 0
-firstDayOfJanuaryCurrentYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
+    // Get the first day of January for the current year
+    const firstDayOfJanuaryCurrentYear = new Date(currentYear, 0, 1); // January is 0
+    firstDayOfJanuaryCurrentYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
 
-// For last year
-const lastYear = currentYear - 1;
-// Get the last day of December for the last year
-const lastDayOfDecemberLastYear = new Date(lastYear, 11, 31);
-lastDayOfDecemberLastYear.setHours(23, 59, 59); // Set to end of day (23:59:59)
-
-// Get the first day of January for the last year
-const firstDayOfJanuaryLastYear = new Date(lastYear, 0, 1);
-firstDayOfJanuaryLastYear.setHours(0, 0, 0); // Set to beginning of day (00:00:00)
-
-// Format dates into desired string format
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
-
-const currentYear_StartDate = formatDate(firstDayOfJanuaryCurrentYear)
-const currentYear_EndDate = formatDate(lastDayOfDecemberCurrentYear)
-
-const lastYear_StartDate = formatDate(firstDayOfJanuaryLastYear)
-const lastYear_EndDate = formatDate(lastDayOfDecemberLastYear)
-
-// console.log("Last day of December, current year:", currentYear_EndDate);
-// console.log("First day of January, current year:", currentYear_StartDate);
-// console.log("Last day of December, last year:", lastYear_EndDate);
-// console.log("First day of January, last year:", lastYear_StartDate);
-
-
-
-const dataCounts = await Inventory.findAll({
-  include: [{
-    model: ProductTAGSupplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        currentYear_StartDate,
-        currentYear_EndDate,
-      ],
-    },
-  },
-});
-
-
-const dataCounts_asm = await Inventory_Assembly.findAll({
-  include: [{
-    model: Assembly_Supplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        currentYear_StartDate,
-        currentYear_EndDate,
-      ],
-    },
-  },
-});
-
-const dataCounts_spare = await Inventory_Spare.findAll({
-  include: [{
-    model: SparePart_Supplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        currentYear_StartDate,
-        currentYear_EndDate,
-      ],
-    },
-  },
-});
-
-const dataCounts_subpart = await Inventory_Subpart.findAll({
-  include: [{
-    model: Subpart_supplier,
-    required: true
-  }],
-  where: {
-    createdAt: {
-      [Op.between]: [
-        currentYear_StartDate,
-        currentYear_EndDate,
-      ],
-    },
-  },
-});
-
-
-// Array of month names
-const monthNames = [
-  "January", "February", "March", "April", "May", "June", "July",
-  "August", "September", "October", "November", "December"
-];
-
-const combinedQuantities = {};
-
-// Loop through each inventory item
-[dataCounts, dataCounts_asm, dataCounts_spare, dataCounts_subpart].forEach((data) => {
-  data.forEach((item) => {
-    const inventoryQuantity = item.static_quantity;
-    const product_id = item.product_tag_supplier ? item.product_tag_supplier.product_id : item.assembly_supplier ? item.assembly_supplier.assembly_id : item.sparepart_supplier ? item.sparepart_supplier.sparePart_id : item.subpart_supplier.subpart_id ; // Check if it's from Inventory or Inventory_Assembly
-
-    // Get the year and month from the createdAt field of the inventory item
-    const createdAt = new Date(item.createdAt);
-    const currentYear = createdAt.getFullYear();
-    const month = createdAt.getMonth();
-
-    // Determine if it's last year or this year
-    const yearLabel = currentYear === new Date().getFullYear() ? "ThisYear" : "LastYear";
-
-    if (!combinedQuantities[yearLabel]) {
-      combinedQuantities[yearLabel] = {};
+    // Format dates into desired string format
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
-    if (!combinedQuantities[yearLabel][month]) {
-      combinedQuantities[yearLabel][month] = {};
+    const currentYear_StartDate = formatDate(firstDayOfJanuaryCurrentYear);
+    const currentYear_EndDate = formatDate(lastDayOfDecemberCurrentYear);
+
+    // console.log("Last day of December, current year:", currentYear_EndDate);
+    // console.log("First day of January, current year:", currentYear_StartDate);
+
+    const monthlyCounts = [
+      { month: "January", Ordered: 0, Received: 0 },
+      { month: "February", Ordered: 0, Received: 0 },
+      { month: "March", Ordered: 0, Received: 0 },
+      { month: "April", Ordered: 0, Received: 0 },
+      { month: "May", Ordered: 0, Received: 0 },
+      { month: "June", Ordered: 0, Received: 0 },
+      { month: "July", Ordered: 0, Received: 0 },
+      { month: "August", Ordered: 0, Received: 0 },
+      { month: "September", Ordered: 0, Received: 0 },
+      { month: "October", Ordered: 0, Received: 0 },
+      { month: "November", Ordered: 0, Received: 0 },
+      { month: "December", Ordered: 0, Received: 0 },
+    ];
+
+    const dataCounts_order = await PR_PO.findAll({
+      include: [
+        {
+          model: ProductTAGSupplier,
+          required: true,
+        },
+        {
+          model: PR,
+          required: true,
+          where: {
+            status: "To-Receive",
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    // Object to keep track of unique product IDs for each month
+    const uniqueProductIdsByMonth = {};
+
+    // Update the counts for each month
+    dataCounts_order.forEach((item) => {
+      const product_id = item.product_tag_supplier.product_id;
+      const createdAtMonthIndex = new Date(
+        item.purchase_req.date_approved
+      ).getMonth(); // Get the month index
+      const createdAtMonthName = new Date(
+        item.purchase_req.date_approved
+      ).toLocaleString("default", { month: "long" }); // Get the name of the month
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique product IDs
+      if (!uniqueProductIdsByMonth.hasOwnProperty(createdAtMonthName)) {
+        uniqueProductIdsByMonth[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueProductIdsByMonth[createdAtMonthName].add(product_id);
+    });
+
+    // Update the counts in the monthlyCounts array
+    for (const monthData of monthlyCounts) {
+      const monthName = monthData.month;
+      monthData.Ordered = uniqueProductIdsByMonth[monthName]
+        ? uniqueProductIdsByMonth[monthName].size
+        : 0;
     }
 
-    if (!combinedQuantities[yearLabel][month][product_id]) {
-      // If the product_id is encountered for the first time in this year and month, initialize its quantity
-      combinedQuantities[yearLabel][month][product_id] = inventoryQuantity;
-    } else {
-      // If the product_id already exists in this year and month, add the current quantity to it
-      combinedQuantities[yearLabel][month][product_id] += inventoryQuantity;
+    const dataCounts_received = await Receiving_Prd.findAll({
+      include: [
+        {
+          model: PR_PO,
+          required: true,
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+            },
+          ],
+        },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: [
+                "For Approval",
+                "In-transit",
+                "In-transit (Complete)",
+              ],
+            },
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    // Object to keep track of unique product IDs received for each month
+    const uniqueReceivedProductIdsByMonth = {};
+
+    // Update the counts for each month
+    dataCounts_received.forEach((item) => {
+      const product_id =
+        item.purchase_req_canvassed_prd.product_tag_supplier.product_id;
+      const createdAtMonthName = new Date(
+        item.receiving_po.date_approved
+      ).toLocaleString("default", { month: "long" }); // Get the name of the month
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique product IDs
+      if (!uniqueReceivedProductIdsByMonth.hasOwnProperty(createdAtMonthName)) {
+        uniqueReceivedProductIdsByMonth[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueReceivedProductIdsByMonth[createdAtMonthName].add(product_id);
+    });
+
+    // Update the counts in the monthlyCounts array for 'Received'
+    for (const monthData of monthlyCounts) {
+      const monthName = monthData.month;
+      monthData.Received = uniqueReceivedProductIdsByMonth[monthName]
+        ? uniqueReceivedProductIdsByMonth[monthName].size
+        : 0;
     }
-  });
-});
+    /// -------------------------------------ASSEMBLY ----------------------------------------
 
-// Create the array to hold the final result
-const array = [];
+    const uniqueProductIdsByMonth_asm = {};
+    const uniqueReceivedProductIdsByMonth_asm = {};
+    // Counting and updating for assembly products similar to regular products
+    const dataCounts_order_asm = await PR_PO_asmbly.findAll({
+      include: [
+        {
+          model: Assembly_Supplier,
+          required: true,
+        },
+        {
+          model: PR,
+          required: true,
+          where: {
+            status: "To-Receive",
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
 
-// Loop through each month name
-monthNames.forEach((monthName, index) => {
-  const monthData = {
-    month: monthName,
-    ThisYear: 0,
-    LastYear: 0
-  };
+    dataCounts_order_asm.forEach((item) => {
+      const product_id = item.assembly_supplier.assembly_id;
+      const createdAtMonthName = new Date(
+        item.purchase_req.date_approved
+      ).toLocaleString("default", { month: "long" });
 
-  // Check if the month exists in ThisYear
-  if (combinedQuantities["ThisYear"] && combinedQuantities["ThisYear"][index]) {
-    for (const product_id in combinedQuantities["ThisYear"][index]) {
-      monthData.ThisYear += combinedQuantities["ThisYear"][index][product_id];
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique assembly product IDs
+      if (!uniqueProductIdsByMonth_asm.hasOwnProperty(createdAtMonthName)) {
+        uniqueProductIdsByMonth_asm[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueProductIdsByMonth_asm[createdAtMonthName].add(product_id);
+    });
+
+    // Counting and updating for received assembly products
+    const dataCounts_received_asm = await Receiving_Asm.findAll({
+      include: [
+        {
+          model: PR_PO_asmbly,
+          required: true,
+          include: [
+            {
+              model: Assembly_Supplier,
+              required: true,
+            },
+          ],
+        },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: [
+                "For Approval",
+                "In-transit",
+                "In-transit (Complete)",
+              ],
+            },
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    dataCounts_received_asm.forEach((item) => {
+      const product_id =
+        item.purchase_req_canvassed_asmbly.assembly_supplier.assembly_id;
+      const createdAtMonthName = new Date(
+        item.receiving_po.date_approved
+      ).toLocaleString("default", { month: "long" });
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique received assembly product IDs
+      if (
+        !uniqueReceivedProductIdsByMonth_asm.hasOwnProperty(createdAtMonthName)
+      ) {
+        uniqueReceivedProductIdsByMonth_asm[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueReceivedProductIdsByMonth_asm[createdAtMonthName].add(product_id);
+    });
+
+    // Updating the counts in the monthlyCounts array for assembly products
+    for (const monthData of monthlyCounts) {
+      const monthName = monthData.month;
+      monthData.Ordered += uniqueProductIdsByMonth_asm[monthName]
+        ? uniqueProductIdsByMonth_asm[monthName].size
+        : 0;
+      monthData.Received += uniqueReceivedProductIdsByMonth_asm[monthName]
+        ? uniqueReceivedProductIdsByMonth_asm[monthName].size
+        : 0;
     }
+
+    /// -------------------------------------Spare PArt ----------------------------------------
+
+    const uniqueProductIdsByMonth_spare = {};
+    const uniqueReceivedProductIdsByMonth_spare = {};
+    // Counting and updating for assembly products similar to regular products
+    const dataCounts_order_spare = await PR_PO_spare.findAll({
+      include: [
+        {
+          model: SparePart_Supplier,
+          required: true,
+        },
+        {
+          model: PR,
+          required: true,
+          where: {
+            status: "To-Receive",
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    dataCounts_order_spare.forEach((item) => {
+      const product_id = item.sparepart_supplier.sparePart_id;
+      const createdAtMonthName = new Date(
+        item.purchase_req.date_approved
+      ).toLocaleString("default", { month: "long" });
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique assembly product IDs
+      if (!uniqueProductIdsByMonth_spare.hasOwnProperty(createdAtMonthName)) {
+        uniqueProductIdsByMonth_spare[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueProductIdsByMonth_spare[createdAtMonthName].add(product_id);
+    });
+
+    // Counting and updating for received assembly products
+    const dataCounts_received_spare = await Receiving_Spare.findAll({
+      include: [
+        {
+          model: PR_PO_spare,
+          required: true,
+          include: [
+            {
+              model: SparePart_Supplier,
+              required: true,
+            },
+          ],
+        },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: [
+                "For Approval",
+                "In-transit",
+                "In-transit (Complete)",
+              ],
+            },
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    dataCounts_received_spare.forEach((item) => {
+      const product_id =
+        item.purchase_req_canvassed_spare.sparepart_supplier.sparePart_id;
+      const createdAtMonthName = new Date(
+        item.receiving_po.date_approved
+      ).toLocaleString("default", { month: "long" });
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique received assembly product IDs
+      if (
+        !uniqueReceivedProductIdsByMonth_spare.hasOwnProperty(
+          createdAtMonthName
+        )
+      ) {
+        uniqueReceivedProductIdsByMonth_spare[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueReceivedProductIdsByMonth_spare[createdAtMonthName].add(product_id);
+    });
+
+    // Updating the counts in the monthlyCounts array for assembly products
+    for (const monthData of monthlyCounts) {
+      const monthName = monthData.month;
+      monthData.Ordered += uniqueProductIdsByMonth_spare[monthName]
+        ? uniqueProductIdsByMonth_spare[monthName].size
+        : 0;
+      monthData.Received += uniqueReceivedProductIdsByMonth_spare[monthName]
+        ? uniqueReceivedProductIdsByMonth_spare[monthName].size
+        : 0;
+    }
+
+    /// -------------------------------------Subpart ----------------------------------------
+
+    const uniqueProductIdsByMonth_subpart = {};
+    const uniqueReceivedProductIdsByMonth_subpart = {};
+    // Counting and updating for assembly products similar to regular products
+    const dataCounts_order_subpart = await PR_PO_subpart.findAll({
+      include: [
+        {
+          model: Subpart_supplier,
+          required: true,
+        },
+        {
+          model: PR,
+          required: true,
+          where: {
+            status: "To-Receive",
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    dataCounts_order_subpart.forEach((item) => {
+      const product_id = item.subpart_supplier.subpart_id;
+      const createdAtMonthName = new Date(
+        item.purchase_req.date_approved
+      ).toLocaleString("default", { month: "long" });
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique assembly product IDs
+      if (!uniqueProductIdsByMonth_subpart.hasOwnProperty(createdAtMonthName)) {
+        uniqueProductIdsByMonth_subpart[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueProductIdsByMonth_subpart[createdAtMonthName].add(product_id);
+    });
+
+    // Counting and updating for received assembly products
+    const dataCounts_received_subpart = await Receiving_Subpart.findAll({
+      include: [
+        {
+          model: PR_PO_subpart,
+          required: true,
+          include: [
+            {
+              model: Subpart_supplier,
+              required: true,
+            },
+          ],
+        },
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            status: {
+              [Op.notIn]: [
+                "For Approval",
+                "In-transit",
+                "In-transit (Complete)",
+              ],
+            },
+            date_approved: {
+              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+            },
+          },
+        },
+      ],
+    });
+
+    dataCounts_received_subpart.forEach((item) => {
+      const product_id =
+        item.purchase_req_canvassed_subpart.subpart_supplier.subpart_id;
+      const createdAtMonthName = new Date(
+        item.receiving_po.date_approved
+      ).toLocaleString("default", { month: "long" });
+
+      // If the month key doesn't exist, create it and initialize an empty Set to store unique received assembly product IDs
+      if (
+        !uniqueReceivedProductIdsByMonth_subpart.hasOwnProperty(
+          createdAtMonthName
+        )
+      ) {
+        uniqueReceivedProductIdsByMonth_subpart[createdAtMonthName] = new Set();
+      }
+
+      // Add the product_id to the corresponding month's set
+      uniqueReceivedProductIdsByMonth_subpart[createdAtMonthName].add(
+        product_id
+      );
+    });
+
+    // Updating the counts in the monthlyCounts array for assembly products
+    for (const monthData of monthlyCounts) {
+      const monthName = monthData.month;
+      monthData.Ordered += uniqueProductIdsByMonth_subpart[monthName]
+        ? uniqueProductIdsByMonth_subpart[monthName].size
+        : 0;
+      monthData.Received += uniqueReceivedProductIdsByMonth_subpart[monthName]
+        ? uniqueReceivedProductIdsByMonth_subpart[monthName].size
+        : 0;
+    }
+
+    // Output the updated array
+    // console.log(monthlyCounts);
+
+    // console.log(monthlyCounts);
+    res.json(monthlyCounts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-
-  // Check if the month exists in LastYear
-  if (combinedQuantities["LastYear"] && combinedQuantities["LastYear"][index]) {
-    for (const product_id in combinedQuantities["LastYear"][index]) {
-      monthData.LastYear += combinedQuantities["LastYear"][index][product_id];
-    }
-  }
-
-  array.push(monthData);
 });
 
-// console.log(array);
-   
-    res.json(array);
+router.route("/countSupplierLeadGraph").get(async (req, res) => {
+  try {
+    const dataCount = await Receiving_PO.findAll({
+      include: [
+        {
+          model: PR,
+          required: true,
+        },
+      ],
+    });
+
+    const maxCreatedAtPerPoId = {};
+
+    dataCount.forEach((item) => {
+      const pr_id = item.pr_id;
+      const createdAt = new Date(item.createdAt); // Convert createdAt to Date object
+      createdAt.setHours(0, 0, 0, 0); // Set time to midnight to exclude the time
+      const po_id = item.po_id;
+      const prApproved = new Date(item.purchase_req.date_approved); // Convert prApproved to Date object
+      prApproved.setHours(0, 0, 0, 0); // Set time to midnight to exclude the time
+
+      // Check if this po_id already has a maxCreatedAt recorded
+      if (
+        !maxCreatedAtPerPoId[po_id] ||
+        createdAt > maxCreatedAtPerPoId[po_id].createdAt
+      ) {
+        // If not, or if the current createdAt is greater, update the maxCreatedAt for this po_id
+        maxCreatedAtPerPoId[po_id] = { createdAt, pr_id, prApproved };
+      }
+    });
+
+    const po_id_list = Object.keys(maxCreatedAtPerPoId);
+
+    const promises = [];
+
+    // Define the queries for each table
+    const queries = [
+      {
+        model: PR_PO,
+        include: [
+          {
+            model: ProductTAGSupplier,
+            required: true,
+            include: [
+              {
+                model: Supplier,
+                required: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        model: PR_PO_asmbly,
+        include: [
+          {
+            model: Assembly_Supplier,
+            required: true,
+            include: [
+              {
+                model: Supplier,
+                required: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        model: PR_PO_spare,
+        include: [
+          {
+            model: SparePart_Supplier,
+            required: true,
+            include: [
+              {
+                model: Supplier,
+                required: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        model: PR_PO_subpart,
+        include: [
+          {
+            model: Subpart_supplier,
+            required: true,
+            include: [
+              {
+                model: Supplier,
+                required: true,
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    // Execute the queries for each table
+    queries.forEach((query) => {
+      promises.push(
+        query.model.findAll({
+          include: query.include,
+          where: {
+            po_id: po_id_list,
+          },
+        })
+      );
+    });
+
+    // Wait for all queries to complete
+    const results = await Promise.all(promises);
+
+    const displayedSuppliers = {};
+
+    const supplierData = [];
+
+    // Process each result
+    results.forEach((suppliers, index) => {
+      suppliers.forEach((supplier) => {
+        const supp_name = supplier.product_tag_supplier
+          ? supplier.product_tag_supplier.supplier.supplier_name
+          : supplier.assembly_supplier
+          ? supplier.assembly_supplier.supplier.supplier_name
+          : supplier.sparepart_supplier
+          ? supplier.sparepart_supplier.supplier.supplier_name
+          : supplier.subpart_supplier.supplier.supplier_name;
+
+        const po_id = supplier.po_id; // Get PO ID from the result
+
+        // Check if a supplier for this supplier name has already been displayed
+        if (!displayedSuppliers[supp_name]) {
+          const daysPassed = Math.floor(
+            (maxCreatedAtPerPoId[po_id].createdAt -
+              maxCreatedAtPerPoId[po_id].prApproved) /
+              (1000 * 60 * 60 * 24)
+          ); // Calculate days passed
+
+          // Push the supplier data into the array
+          supplierData.push({ name: supp_name, days: daysPassed });
+
+          // Mark this supplier name as displayed
+          displayedSuppliers[supp_name] = true;
+        }
+      });
+    });
+
+    // console.log(supplierData); // Output the array
+    return res.json(supplierData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1920,5 +2405,27 @@ monthNames.forEach((monthName, index) => {
 });
 
 
+router.route("/receivingOverView").get(async (req, res) => {
+
+    const receiving_po = await Receiving_PO.findAll({
+      include: [{
+        model: PR,
+        required: true
+      }],
+      where: {
+        status: {
+          [Op.notIn]: [
+            "For Approval",
+            "In-transit",
+            "In-transit (Complete)",
+            "Delivered"
+          ],
+        },
+      }
+    })
+
+    console.log(receiving_po)
+    return res.json(receiving_po)
+})
 
 module.exports = router;

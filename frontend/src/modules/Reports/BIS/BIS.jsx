@@ -80,7 +80,7 @@ function BIS() {
       .get(BASE_URL + "/report_BIS/content_fetch")
       .then((res) => {
         // setBisContent(res.data);
-        setSearchBIS(res.data);
+        setSearchBIS(res.data.prd);
         setBisContent(res.data.prd);
         setBisContent_asm(res.data.asm);
         setBisContent_spare(res.data.spare);
