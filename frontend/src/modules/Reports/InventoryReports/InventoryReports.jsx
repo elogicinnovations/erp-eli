@@ -499,7 +499,7 @@ function InventoryReports() {
                               aria-label="item status"
                               onChange={(e) => setSlctWarehouse(e.target.value)}
                               style={{
-                                width: "308px",
+                                width: "274px",
                                 height: "40px",
                                 fontSize: "15px",
                                 marginBottom: "15px",
@@ -564,7 +564,7 @@ function InventoryReports() {
                             <Form.Select
                               aria-label="item status"
                               style={{
-                                width: "318px",
+                                width: "284px",
                                 height: "40px",
                                 fontSize: "15px",
                                 marginBottom: "15px",

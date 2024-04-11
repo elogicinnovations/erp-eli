@@ -523,7 +523,7 @@ function BIS() {
                               aria-label="item status"
                               onChange={(e) => setSelectedDepartment(e.target.value)}
                               style={{
-                                width: "308px",
+                                width: "274px",
                                 height: "40px",
                                 fontSize: "15px",
                                 marginBottom: "15px",
@@ -588,7 +588,7 @@ function BIS() {
                               aria-label="item status"
                               onChange={(e) => setSelectedCostcenter(e.target.value)}
                               style={{
-                                width: "318px",
+                                width: "284px",
                                 height: "40px",
                                 fontSize: "15px",
                                 marginBottom: "15px",

@@ -265,7 +265,7 @@ function POTransactionReports() {
                             onChange={(e) => setSelectedDepartment(e.target.value)}
                             value={selectedDepartment}
                             style={{
-                              width: "308px",
+                              width: "274px",
                               height: "40px",
                               fontSize: "15px",
                               marginBottom: "15px",
@@ -331,7 +331,7 @@ function POTransactionReports() {
                             aria-label="item status"
                             onChange={(e) => setSelectedStatus(e.target.value)}
                             style={{
-                              width: "318px",
+                              width: "284px",
                               height: "40px",
                               fontSize: "15px",
                               marginBottom: "15px",
