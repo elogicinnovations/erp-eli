@@ -320,7 +320,7 @@ button.page-link:hover{
 
 .logologin img {
   max-width: 50%;
-  max-height: 200px;
+  max-height: 130px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
 }
@@ -2025,7 +2025,7 @@ button.change-password {
 } */
 
 .loginform {
-  margin-top: 100px;
+  margin-top: 80px;
 }
 
 div#order-listing1_length {
