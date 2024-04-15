@@ -44,6 +44,10 @@ router.route("/getIssuance").get(async (req, res) => {
           model: CostCenter,
           required: true,
         },
+        {
+          model: Warehouses,
+          required: true,
+        },
       ],
       // where: {
       //     issuance_id: req.query.id

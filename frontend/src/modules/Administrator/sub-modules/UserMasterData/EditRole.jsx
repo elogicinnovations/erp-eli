@@ -404,6 +404,7 @@ function EditRole() {
   const handleSelectAll = () => {
     // Select all checkboxes
     const allCheckboxValues = [
+      "Dashboard - View",
       "Master List - Add",
       "Master List - Edit",
       "Master List - Delete",
@@ -754,6 +755,147 @@ function EditRole() {
                       </tr>
                     </thead>
                     <tbody>
+
+
+                    <td>
+                        <h3 className="role-head">Dashboard Module</h3>
+                      </td>
+
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}>
+                              Dashboard
+                          </td>
+                        </td>
+
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Dashboard - View"
+                              name="vehicle1"
+                              value="Dashboard - View"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Dashboard - View"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Dashboard - View")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Dashboard - View"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Dashboard - Add"
+                              name="vehicle1"
+                              value="Dashboard - Add"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Dashboard - Add"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Dashboard - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Dashboard - Add"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Dashboard - Edit"
+                              name="vehicle1"
+                              value="Dashboard - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Dashboard - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Dashboard - Edit")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Dashboard - Edit"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Dashboard - Delete"
+                              name="vehicle1"
+                              value="Dashboard - Delete"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Dashboard - Delete"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Dashboard - Delete")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Dashboard - Delete"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Dashboard - Approval"
+                              name="vehicle1"
+                              value="Dashboard - Approval"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Dashboard - Approval"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Dashboard - Approval")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Dashboard - Approval"></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Dashboard - Reject"
+                              name="vehicle1"
+                              value="Dashboard - Reject"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Dashboard - Reject"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Dashboard - Reject")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Dashboard - Reject"></label>
+                          </div>
+                        </td>
+                      </tr>
 
                       {/* --------------------------------------BREAK ------------------------------*/}
 
