@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactLoading from 'react-loading';
 import Sidebar from "../../../../../Sidebar/sidebar";
 import NoData from '../../../../../../assets/image/NoData.png';
+import NoProduct from '../../../../../../assets/image/product-none.jpg';
 import NoAccess from '../../../../../../assets/image/NoAccess.png';
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
@@ -64,6 +65,7 @@ function SubParts({ authrztn }) {
   const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
   const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
+  const [imagesSub, setimageSub] = useState(null)
   const [dataFound, setDataFound] = useState(true);
 
   const reloadTable = () => {
@@ -90,6 +92,19 @@ function SubParts({ authrztn }) {
     deleteSubpart();
     reloadTable();
   }, []);
+
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/subPart/fetchImages", {
+      })
+      .then((res) => {
+        const data = res.data;
+        setimageSub(data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
 
 
   const decodeToken = () => {
@@ -463,185 +478,155 @@ function SubParts({ authrztn }) {
                     )}
                   </div>
 
-
             </div>
           </div>
+
+           <div className="textfieldandselectAll">
+            <div className="select-all-checkbox">
+                <span onClick={handleSelectAllChange}>Select All</span>
+                <input
+                  type="checkbox"
+                  checked={selectAllChecked}
+                  onChange={handleSelectAllChange}
+                  disabled={subParts.length === 0}
+                  className="checkboxStatus"
+                />
+            </div>
+
+            <div className="textfield">
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
+                  onChange={handleSearch}/>
+            </div>
+
+          </div>
+
           <div className="table-containss">
-            <div className="main-of-all-tables">
-              <TextField
-                    label="Search"
-                    variant="outlined"
-                    style={{ marginBottom: '10px', 
-                    float: 'right',
-                    }}
-                    InputLabelProps={{
-                      style: { fontSize: '14px'},
-                    }}
-                    InputProps={{
-                      style: { fontSize: '14px', width: '250px', height: '50px' },
-                    }}
-              onChange={handleSearch}/>
-              {tableLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-              <table className="table-hover" title="View Information">
-                <thead>
-                  <tr>
-                  <th className="tableh" id="check">
-                      <input
-                        type="checkbox"
-                        checked={selectAllChecked}
-                        onChange={handleSelectAllChange}
-                        disabled={subParts.length === 0}
-                      />
-                    </th>
-                    <th className="tableh">Code</th>
-                    <th className="tableh">SubParts Name</th>
-                    <th className="tableh">Details</th>
-                    <th className="tableh">Status</th>
-                    <th className="tableh">Date Created</th>
-                    <th className="tableh">Date Modified</th>
-                    <th className="tableh">Action</th>
-                  </tr>
-                </thead>
-                {subParts.length > 0 ? (
-                <tbody>
+          {subParts.length > 0 ? (
+              <div className="product-rectangle-containers">
                 {currentItems
                   .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.subPart_status))
                   .map((data, i) => (
-                    <tr key={i}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedCheckboxes.includes(data.id)}
-                          onChange={() => handleCheckboxChange(data.id)}
-                        />
-                      </td>
-                      <td
-                      onClick={() => navigate(`/viewsubParts/${data.id}`)}>
-                        {data.subPart_code}
-                      </td>
-                      <td
-                      onClick={() => navigate(`/viewsubParts/${data.id}`)}>
-                        {data.subPart_name}
-                      </td>
-                      <td
-                      onClick={() => navigate(`/viewsubParts/${data.id}`)}>
-                        {data.subPart_desc}
-                      </td>
-                      <td
-                      onClick={() => navigate(`/viewsubParts/${data.id}`)}>
-                        <div
-                          className="colorstatus"
-                          style={{
-                            backgroundColor:
-                              data.subPart_status === "Active"
-                                ? "green"
-                                : data.subPart_status === "Archive"
-                                ? "gray"
-                                : "red",
-                            color: "white",
-                            padding: "5px",
-                            borderRadius: "5px",
-                            textAlign: "center",
-                            width: "80px",
-                          }}
-                        >
-                          {data.subPart_status}
-                        </div>
-                      </td>
-                      <td
-                      onClick={() => navigate(`/viewsubParts/${data.id}`)}>{formatDate(data.createdAt)}</td>
-                      <td
-                      onClick={() => navigate(`/viewsubParts/${data.id}`)}>{formatDate(data.updatedAt)}</td>
-                      <td>
-                      {isVertical[data.subPart_code] ? (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircleVertical
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.subPart_code);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.subPart_code) && (
-                              <div className="choices">
-                              { authrztn?.includes('Sub-Part - Edit') && (
-                              <Link
-                                to={`/updatesubParts/${data.id}`}
-                                style={{ fontSize: "15px", fontWeight: '700' }}
-                                className="btn">
-                                Update
-                              </Link>
+                  <div className="list-rectangle-container" key={i}>
+                      <div className="left-rectangle-containers">
+                          <div className="checkbox-sections">
+                            <input
+                                type="checkbox"
+                                className="checkboxStatus"
+                                checked={selectedCheckboxes.includes(data.id)}
+                                onChange={() => handleCheckboxChange(data.id)}
+                              />
+                          </div>
+                          <div className="dots-three-sec">
+                          {isVertical[data.subPart_code] ? (
+                                <div style={{ position: 'relative', display: 'inline-block' }}>
+                                  <DotsThreeCircleVertical
+                                    size={32}
+                                    className="dots-icon"
+                                    color="beige"
+                                    onClick={() => {
+                                      toggleButtons(data.subPart_code);
+                                    }}
+                                  />
+                                  <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                                    {setButtonVisibles(data.subPart_code) && (
+                                      <div className="choices">
+                                      { authrztn?.includes('Sub-Part - Edit') && (
+                                      <Link
+                                        to={`/updatesubParts/${data.id}`}
+                                        style={{ fontSize: "15px", fontWeight: '700' }}
+                                        className="btn">
+                                        Update
+                                      </Link>
+                                      )}
+                                      { authrztn?.includes('Sub-Part - View') && (
+                                      <button
+                                        className="btn"
+                                        onClick={() => {
+                                          handlepricehistory(data.id);
+                                          closeVisibleButtons();
+                                        }}>
+                                        Price History
+                                      </button>
+                                      )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div style={{ position: 'relative', display: 'inline-block' }}>
+                                  <DotsThreeCircle
+                                    size={32}
+                                    className="dots-icon"
+                                    color="beige"
+                                    onClick={() => {
+                                      toggleButtons(data.subPart_code);
+                                    }}
+                                  />
+                                  <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
+                                    {setButtonVisibles(data.subPart_code) && (
+                                      <div className="choices">
+                                      { authrztn?.includes('Sub-Part - Edit') && (
+                                      <Link
+                                        to={`/updatesubParts/${data.id}`}
+                                        style={{ fontSize: "15px", fontWeight: '700' }}
+                                        className="btn">
+                                        Update
+                                      </Link>
+                                      )}
+                                      { authrztn?.includes('Sub-Part - View') && (
+                                      <button
+                                        className="btn"
+                                        onClick={() => {
+                                          handlepricehistory(data.id);
+                                          closeVisibleButtons();
+                                        }}>
+                                        Price History
+                                      </button>
+                                      )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                               )}
-                              { authrztn?.includes('Sub-Part - View') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handlepricehistory(data.id);
-                                  closeVisibleButtons();
-                                }}>
-                                Price History
-                              </button>
-                              )}
-                              </div>
+                          </div>
+                      </div>
+
+                      <div className="mid-rectangle-product-containers">
+                          <div className="profile-product-containers">
+                            {data.subPart_images.length > 0 ? (
+                                <img src={`data:image/png;base64,${data.subPart_images[0].subpart_image}`} alt={`Latest Image`} />
+                              ) : (
+                                <img src={NoProduct} alt="" />
                             )}
                           </div>
-                        </div>
-                      ) : (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.subPart_code);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.subPart_code) && (
-                              <div className="choices">
-                              { authrztn?.includes('Sub-Part - Edit') && (
-                              <Link
-                                to={`/updatesubParts/${data.id}`}
-                                style={{ fontSize: "15px", fontWeight: '700' }}
-                                className="btn">
-                                Update
-                              </Link>
-                              )}
-                              { authrztn?.includes('Sub-Part - View') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handlepricehistory(data.id);
-                                  closeVisibleButtons();
-                                }}>
-                                Price History
-                              </button>
-                              )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      </td>
-                    </tr>
+                      </div>
+
+                      <div className="right-rectangle-containers">
+                          <span>{data.subPart_name}</span>
+                          <span>{data.subPart_desc}</span>
+                      </div>
+                  </div>
                   ))}
-                </tbody>
-                  ) : (
-                    <div className="no-data">
-                      <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
-                    </div>
-                )}
-              </table>
-              )} 
-            </div>
+              </div>
+            ) : (
+              <div className="no-data">
+                <img src={NoData} alt="NoData" className="no-data-img" />
+                <h3>
+                  No Data Found
+                </h3>
+              </div>
+            )}
           </div>
               <nav style={{marginTop: '15px'}}>
                   <ul className="pagination" style={{ float: "right" }}>

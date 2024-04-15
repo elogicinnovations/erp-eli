@@ -685,9 +685,9 @@ function MasterList({ authrztn }) {
                   <div className="top-box-list">
                       <div className="active-inactive-identify">
                       {data.status === 'Active' ? (
-                        <Circle size={28} color="red" weight="duotone" />
+                        <Circle size={24} color="#ff3d3d" weight="fill" />
                       ) : (
-                        <Circle size={32} color="green" weight="duotone" />
+                        <Circle size={24} color="#3dff3d" weight="fill" />
                       )}
                       </div>
                       <div className="three-dots-section">

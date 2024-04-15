@@ -24,12 +24,36 @@ router.route('/fetchTable').get(async (req, res) => {
       const data = await SubPart.findAll({
         include: {
           model: Subpart_image,
-          required: false
-        }
+          required: false,
+          order: [['createdAt', 'DESC']], // Order by createdAt column in descending order
+          limit: 1, // Limit the result to only one image per subpart
+        },
       });
   
       if (data) {
         // console.log(data);
+        return res.json(data);
+      } else {
+        res.status(400);
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
+  });
+
+  router.route('/fetchImages').get(async (req, res) => {
+    try {
+      const data = await SubPart.findAll({
+        include: {
+          model: Subpart_image,
+          required: false,
+          order: [['createdAt', 'DESC']], // Order by createdAt column in descending order
+          limit: 1, // Limit the result to only one image per subpart
+        },
+      });
+  
+      if (data) {
         return res.json(data);
       } else {
         res.status(400);

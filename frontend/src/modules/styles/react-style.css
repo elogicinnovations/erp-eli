@@ -810,8 +810,140 @@ padding: 10px; /* Adjust the padding as needed */
   font-size: 15px;
 }
 
+.textfieldandselectAll{
+  display: flex;
+  width: 100%;
+}
+
+.select-all-checkbox{
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  align-items: center;
+  padding-top: 25px;
+}
+
+.select-all-checkbox span{
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 14px;
+  padding-right: 5px;
+  cursor: pointer;
+}
+
+.textfield{
+  display: flex;
+  justify-content: end;
+  width: 50%;
+}
+
 .table-containss {
   flex: 70;
+}
+
+.product-rectangle-containers{
+  border: 1px solid #ECECEC;
+  width: 100%;
+  height: 480px;
+  overflow-y: auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 35px; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.list-rectangle-container{
+  border: 1px solid #ECECEC;
+  height: 220px;
+  width: 280px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.left-rectangle-containers{
+  width: 100%;
+  height: 80px;
+  display: flex;
+  padding: 10px;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  background-color: #333;
+}
+
+.checkbox-sections{
+  width: 50%; 
+  height: 30px;
+  display: flex;
+}
+
+.checkboxStatus{
+  width: 20px;
+}
+
+.dots-three-sec{
+  width: 50%; 
+  height: 30px;
+  display: flex;
+  justify-content: end;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.mid-rectangle-product-containers{
+  border: 1px solid #d3d2d2;
+  position: absolute;
+  left: 90px;
+  width: 100px;
+  height: 100px;
+  top: 35px;
+  background-color: white;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.profile-product-containers{
+  width: 100%;
+  height: 100%;
+}
+
+.profile-product-containers img{
+  width: 100%;
+  height: 100%;
+}
+
+.right-rectangle-containers {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 140px;
+  padding-top: 60px;
+}
+
+.right-rectangle-containers span:nth-child(1){
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+}
+
+.right-rectangle-containers span:nth-child(2){
+  width: 50%;
+  height: 50%;
+  border: 1px solid rgb(194, 192, 192);
+  white-space: normal;
+  border-radius: 5px;
+  word-wrap: break-word;
+  overflow-y: auto;
+  font-size: 10px;
+  font-family: Poppins, "Source Sans Pro";
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 .users-box-main-containers{
