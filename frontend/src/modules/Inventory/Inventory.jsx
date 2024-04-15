@@ -575,7 +575,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <tr key={i} >
                                   {/* <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.issuance_id}</td> */}
                                   <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.cost_center.name}</td>
-                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.from_site}</td>
+                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.warehouse.warehouse_name}</td>
                                   <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.mrs}</td>
                                   <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.masterlist.col_Fname}</td>
                                   <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{formatDatetime(data.createdAt)}</td>

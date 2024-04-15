@@ -514,6 +514,8 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   const po_id = req.body.poID;
   const userId = req.body.userId;
 
+  const refCodes = req.body.refCodes
+
   const receivingPOS_ID = req.body.id;
 
   let status = "";
@@ -569,7 +571,7 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
       freight_cost: freighCost === 0 ? null : freighCost,
       customFee: customFee,
       totalReceived: totalReceived,
-      ref_code: formattedDate,
+      ref_code: refCodes,
       status: status,
       initialReceive:
         receving_site === "Davao City" ? initialReceiveStatus : null,

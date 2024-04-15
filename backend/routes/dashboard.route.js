@@ -44,6 +44,152 @@ const ReceivingInitial_Prd = require("../db/models/receiving_initial_prd.model")
 
 // Get count all the issued products for DASHBOARD
 
+router.route("/Costing").post(async (req, res) => {
+  try {
+
+    const {receiving_id,
+            customFee,
+            shippingFee,
+            ref_code
+          } = req.body
+
+let final_status
+if(shippingFee === '' && customFee === ''){
+  final_status = 'Delivered (Lack of Cost)'
+}
+else if (shippingFee === '' ){
+  final_status = 'Delivered (Lack of FreightCost)'
+}
+else if (customFee === ''){
+  final_status = 'Delivered (Lack of CustomCost)'
+}
+else{
+  final_status = 'Delivered'
+}
+
+
+    const inventory_fetch = await Inventory.findAll({
+      where: {
+        reference_number: ref_code
+      }
+    })
+
+    inventory_fetch.forEach(item => {
+      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
+      const finalCostFright =  shippingFee / item.static_quantity
+      Inventory.update(
+        {
+          customFee: customFee,
+          freight_cost:finalCostFright
+        },
+    
+        {
+          where: {
+            inventory_id: item.inventory_id,
+          },
+        }
+      )
+    });
+
+
+    const inventory_fetch_asm = await Inventory_Assembly.findAll({
+      where: {
+        reference_number: ref_code
+      }
+    })
+
+    inventory_fetch_asm.forEach(item => {
+      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
+      const finalCostFright =  shippingFee / item.static_quantity
+      Inventory_Assembly.update(
+        {
+          customFee: customFee,
+          freight_cost:finalCostFright
+        },
+    
+        {
+          where: {
+            inventory_id: item.inventory_id,
+          },
+        }
+      )
+    });
+
+
+    const inventory_fetch_spare = await Inventory_Spare.findAll({
+      where: {
+        reference_number: ref_code
+      }
+    })
+
+    inventory_fetch_spare.forEach(item => {
+      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
+      const finalCostFright =  shippingFee / item.static_quantity
+      Inventory_Spare.update(
+        {
+          customFee: customFee,
+          freight_cost:finalCostFright
+        },
+    
+        {
+          where: {
+            inventory_id: item.inventory_id,
+          },
+        }
+      )
+    });
+
+
+    const inventory_fetch_subpart = await Inventory_Subpart.findAll({
+      where: {
+        reference_number: ref_code
+      }
+    })
+
+    inventory_fetch_subpart.forEach(item => {
+      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
+
+      const finalCostFright =  shippingFee / item.static_quantity
+
+      Inventory_Subpart.update(
+        {
+          customFee: customFee,
+          freight_cost:finalCostFright
+        },
+    
+        {
+          where: {
+            inventory_id: item.inventory_id,
+          },
+        }
+      )
+    });
+
+    const update = Receiving_PO.update(
+      {
+        status: final_status,
+       
+      },
+      {
+        where: { id: receiving_id },
+      }
+    );
+
+    if(update){
+      return res.status(200).json()
+    }
+    else{
+      return res.status(500).json()
+    }
+  
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 router.route("/fetchCountIssued").get(async (req, res) => {
   try {
     const manilaTimezone = "Asia/Manila";
@@ -2396,7 +2542,7 @@ router.route("/countSupplierLeadGraph").get(async (req, res) => {
       });
     });
 
-    // console.log(supplierData); // Output the array
+    console.log(supplierData); // Output the array
     return res.json(supplierData);
   } catch (error) {
     console.error(error);

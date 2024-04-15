@@ -74,7 +74,86 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
   const [countOrderGraph, setCountOrderGraph] = useState([]);
   const [countSupplierLeadGraph, setCountSupplierLeadGraph] = useState([]);
   const [ReceivingOverView, setReceivingOverView] = useState([]);
+
+
   const [isLoading, setIsLoading] = useState(true);
+  const [show, setShow] = useState(false);
+
+  const [receiving_id, setReceiving_id] = useState('')
+  const [customFee, setCustomFee] = useState('');
+  const [shippingFee, setShippingFee] = useState(''); 
+  const [ref_code, setRef_code] = useState('');  
+  const [prNum, setPRnum] = useState('');  
+  const [poNum, setPonum] = useState('');  
+
+  const [validated, setValidated] = useState(false);
+
+            
+
+  const handleClose = () => {
+
+    setShow(false);
+  };
+
+
+  const add = async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
+      });
+    } else {
+      try {
+        const response = await axios.post(
+          BASE_URL + "/Dashboard/Costing",
+          {
+            receiving_id,
+            customFee,
+            shippingFee,
+            ref_code
+          }
+        );
+
+        if (response.status === 200) {
+          swal({
+            title: "Cost set Succesful!",
+            text: "",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            handleClose();
+
+            axios
+            .get(BASE_URL + "/Dashboard/receivingOverView")
+            .then((res) => setReceivingOverView(res.data))
+            .catch((error) => console.error(error));
+          });
+        } else {
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        // Handle request error
+        swal({
+          icon: "error",
+          title: "Something went wrong",
+          text: "Please contact our support",
+        });
+      }
+    }
+
+    setValidated(true); // for validations
+  };
 
   useEffect(() => {
 
@@ -199,7 +278,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
           <ReactLoading className="react-loading" type={"bubbles"} />
           Loading Data...
         </div>
-      ) : authrztn.includes("Dashboards - View") ? (
+      ) : authrztn.includes("Dashboard - View") ? (
         <div className="dashboard-container">
         {/* <div className="settings-search-master">
               <div className="dropdown-and-iconic">
@@ -438,7 +517,15 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                   </thead>
                   <tbody>
                     {ReceivingOverView.map((item) => (
-                        <tr>
+                        <tr onClick={() => {
+                          setShow(true)
+                          setCustomFee(item.customFee)
+                          setShippingFee(item.freight_cost)
+                          setReceiving_id(item.id)
+                          setRef_code(item.ref_code)
+                          setPRnum(item.purchase_req.pr_num)
+                          setPonum(item.po_id)
+                        }}>
                             <td>
                                 {item.purchase_req.pr_num}
                             </td>
@@ -706,6 +793,112 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                   ))}
                 </div>
               </div>
+
+
+
+              <Modal show={show} onHide={handleClose} backdrop="static" size="xl">
+        <Form noValidate validated={validated} onSubmit={add}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+                  {`Purchase Number: ${prNum}` }
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+              <div className="row">
+                  <div className="col-6">
+                  <h3>
+                      {`PO Number: ${poNum}`}
+                    </h3>
+                    <h3>
+                    {`Reference Number: ${ref_code}`}
+                    </h3>
+                  </div>
+                  <div className="col-6">
+                 
+                  </div>
+              </div>
+
+              <div className="row mt-5">
+                  <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Freight Cost{" "}
+                  </Form.Label>
+                  <Form.Control
+                    
+                    // readOnly={shippingFee}
+                    type='number'
+                    onChange={(e) => setShippingFee(e.target.value)}
+                    placeholder="0.00"
+                    value={shippingFee === 0 ? '' : shippingFee}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "40px",                      
+                    }}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                  />
+                </Form.Group>
+                  </div>
+                  <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Duties & Custom Cost{" "}
+                  </Form.Label>
+                  <Form.Control
+                    
+                    type='number'
+                    // readOnly={customFee}
+                    onChange={(e) => setCustomFee(e.target.value)}
+                    placeholder="0.00"
+                    value={customFee}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "40px",                      
+                    }}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                  />
+                </Form.Group>
+                  </div>
+              </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className="fs-5 lg"
+              variant="secondary"
+              onClick={handleClose}
+              size="md"
+            >
+              Close
+            </Button>
+            <Button
+              variant="primary"
+              type="submit"
+              size="md"
+              className="fs-5 lg"
+            >
+              Save
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
             </div>
           </div>
         </div>

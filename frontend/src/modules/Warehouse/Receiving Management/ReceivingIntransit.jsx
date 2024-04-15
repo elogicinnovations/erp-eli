@@ -425,6 +425,7 @@ function ReceivingIntransit({ authrztn }) {
             customFee,
             shippingFee,
             suppReceving,
+            refCodes,
             poID,
             prID,
             id,
