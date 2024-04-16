@@ -50,36 +50,97 @@ router.route("/Costing").post(async (req, res) => {
     const {receiving_id,
             customFee,
             shippingFee,
+            shippingFeeBool,
             ref_code
           } = req.body
 
+
+console.log(`shippingFeeBool ${shippingFeeBool} shippingFee${shippingFee} customFee${customFee}`)
+
 let final_status
-if(shippingFee === '' && customFee === ''){
+if((shippingFee === '' || shippingFee === 0)  && (customFee === null || customFee === '')){
   final_status = 'Delivered (Lack of Cost)'
 }
-else if (shippingFee === '' ){
+else if (shippingFee === '' || shippingFee === 0 ){
   final_status = 'Delivered (Lack of FreightCost)'
 }
-else if (customFee === ''){
+else if (customFee === null || customFee === '' ){
   final_status = 'Delivered (Lack of CustomCost)'
 }
 else{
   final_status = 'Delivered'
 }
+const inventory_fetch_sum = await Inventory.sum('static_quantity', {
+  where: {
+    reference_number: ref_code
+  }
+});
+
+const inventory_fetch_asm_sum = await Inventory_Assembly.sum('static_quantity', {
+  where: {
+    reference_number: ref_code
+  }
+});
+
+const inventory_fetch_spare_sum = await Inventory_Spare.sum('static_quantity', {
+  where: {
+    reference_number: ref_code
+  }
+});
+
+const inventory_fetch_subpart_sum = await Inventory_Subpart.sum('static_quantity', {
+  where: {
+    reference_number: ref_code
+  }
+});
+
+// Sum up the static_quantity values from all tables
+const total_static_quantity = inventory_fetch_sum + inventory_fetch_asm_sum + inventory_fetch_spare_sum + inventory_fetch_subpart_sum;
+
+// console.log("Total Static Quantity:", total_static_quantity);
+
+let finalCostFright
+
+if(shippingFeeBool === true){
+  finalCostFright = shippingFee
+}else{
+  finalCostFright = shippingFee / total_static_quantity
+}
+
+// console.log(`finalCostFright ${finalCostFright}`)
+
+const inventory_fetch = await Inventory.findAll({
+  where: {
+    reference_number: ref_code
+  }
+})
+
+const inventory_fetch_asm = await Inventory_Assembly.findAll({
+  where: {
+    reference_number: ref_code
+  }
+})
+
+const inventory_fetch_spare = await Inventory_Spare.findAll({
+  where: {
+    reference_number: ref_code
+  }
+})
+
+const inventory_fetch_subpart = await Inventory_Subpart.findAll({
+    where: {
+      reference_number: ref_code
+    }
+  })
 
 
-    const inventory_fetch = await Inventory.findAll({
-      where: {
-        reference_number: ref_code
-      }
-    })
 
     inventory_fetch.forEach(item => {
       console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-      const finalCostFright =  shippingFee / item.static_quantity
+    
       Inventory.update(
         {
-          customFee: customFee,
+          custom_cost: customFee,
           freight_cost:finalCostFright
         },
     
@@ -92,18 +153,14 @@ else{
     });
 
 
-    const inventory_fetch_asm = await Inventory_Assembly.findAll({
-      where: {
-        reference_number: ref_code
-      }
-    })
+
 
     inventory_fetch_asm.forEach(item => {
       console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-      const finalCostFright =  shippingFee / item.static_quantity
+     
       Inventory_Assembly.update(
         {
-          customFee: customFee,
+          custom_cost: customFee,
           freight_cost:finalCostFright
         },
     
@@ -116,18 +173,14 @@ else{
     });
 
 
-    const inventory_fetch_spare = await Inventory_Spare.findAll({
-      where: {
-        reference_number: ref_code
-      }
-    })
+
 
     inventory_fetch_spare.forEach(item => {
       console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-      const finalCostFright =  shippingFee / item.static_quantity
+      
       Inventory_Spare.update(
         {
-          customFee: customFee,
+          custom_cost: customFee,
           freight_cost:finalCostFright
         },
     
@@ -140,20 +193,16 @@ else{
     });
 
 
-    const inventory_fetch_subpart = await Inventory_Subpart.findAll({
-      where: {
-        reference_number: ref_code
-      }
-    })
+    
 
     inventory_fetch_subpart.forEach(item => {
       console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
 
-      const finalCostFright =  shippingFee / item.static_quantity
+     
 
       Inventory_Subpart.update(
         {
-          customFee: customFee,
+          custom_cost: customFee,
           freight_cost:finalCostFright
         },
     
@@ -168,6 +217,8 @@ else{
     const update = Receiving_PO.update(
       {
         status: final_status,
+        customFee: customFee,
+        freight_cost: finalCostFright
        
       },
       {

@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 // import { useAuth } from '../authorize/AuthContext';
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa"; // Import icons
 import SBFLOGO from "../../assets/image/sbflogo-noback.png";
+import { jwtDecode } from 'jwt-decode';
+
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -22,6 +24,29 @@ const Login = () => {
       e.preventDefault();
     }
   };
+
+  useEffect(() => {
+    // Access the token from localStorage
+    const accessToken = localStorage.getItem('accessToken');
+
+    // Log the token
+    console.log('Token:', accessToken);
+
+    // Decode the access token
+    try {
+      // const decodedToken = jwtDecode(accessToken);
+
+      if(accessToken){
+        navigate("/dashboard");
+      }
+     
+      
+      // console.log('Decoded Token:', decodedToken);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+    }
+  }, []);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();

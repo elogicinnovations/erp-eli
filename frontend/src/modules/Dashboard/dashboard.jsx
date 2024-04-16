@@ -81,7 +81,9 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
 
   const [receiving_id, setReceiving_id] = useState('')
   const [customFee, setCustomFee] = useState('');
+  const [customFeeBool, setCustomFeeBool] = useState(false);
   const [shippingFee, setShippingFee] = useState(''); 
+  const [shippingFeeBool, setShippingFeeBool] = useState(false); 
   const [ref_code, setRef_code] = useState('');  
   const [prNum, setPRnum] = useState('');  
   const [poNum, setPonum] = useState('');  
@@ -94,6 +96,12 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
 
     setShow(false);
   };
+
+  // const handleShipping = () => {
+  //   setShippingFeeBool()
+  //   setShow(false);
+  // };
+
 
 
   const add = async (e) => {
@@ -116,6 +124,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
             receiving_id,
             customFee,
             shippingFee,
+            shippingFeeBool,
             ref_code
           }
         );
@@ -520,7 +529,9 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                         <tr onClick={() => {
                           setShow(true)
                           setCustomFee(item.customFee)
+                          setCustomFeeBool(item.customFee === null  ? false : true)
                           setShippingFee(item.freight_cost)
+                          setShippingFeeBool(item.freight_cost === 0  ? false : true)
                           setReceiving_id(item.id)
                           setRef_code(item.ref_code)
                           setPRnum(item.purchase_req.pr_num)
@@ -835,6 +846,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                     type='number'
                     onChange={(e) => setShippingFee(e.target.value)}
                     placeholder="0.00"
+                    readOnly={shippingFeeBool}
                     value={shippingFee === 0 ? '' : shippingFee}
                     style={{
                       fontFamily: "Poppins, Source Sans Pro",
@@ -856,12 +868,12 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
                   >
-                    Duties & Custom Cost{" "}
+                    Duties & Custom Cost <span style={{fontSize: 12, color: 'red'}}>(type '0' if not applicable)</span>
                   </Form.Label>
                   <Form.Control
                     
                     type='number'
-                    // readOnly={customFee}
+                    readOnly={customFeeBool}
                     onChange={(e) => setCustomFee(e.target.value)}
                     placeholder="0.00"
                     value={customFee}
