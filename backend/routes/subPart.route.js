@@ -114,7 +114,7 @@ router.route('/fetchTable').get(async (req, res) => {
             threshhold: thresholds,
             bin_id: slct_binLocation,
             subPart_unitMeasurement: unitMeasurement,
-            subPart_Manufacturer: slct_manufacturer,
+            subPart_Manufacturer: slct_manufacturer === '' ? null : slct_manufacturer,
             category_code: slct_category,
             subPart_status: 'Active'
           });

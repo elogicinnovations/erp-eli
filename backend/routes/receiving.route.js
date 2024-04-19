@@ -1124,37 +1124,37 @@ router.route("/primaryData").get(async (req, res) => {
 
     const receivingParent_id = primaryData.id;
 
-    const products = await Receiving_Prd.findAll({
-      where: {
-        receiving_po_id: receivingParent_id,
-      },
-      include: [
-        {
-          model: PR_PO,
-          required: true,
-          include: [
-            {
-              model: ProductTAGSupplier,
-              required: true,
-              include: [
-                {
-                  model: Product,
-                  required: true,
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
+    // const products = await Receiving_Prd.findAll({
+    //   where: {
+    //     receiving_po_id: receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: ProductTAGSupplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: Product,
+    //               required: true,
+    //             },
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
     const assembly = await Receiving_Asm.findAll({
       where: {
@@ -1189,9 +1189,153 @@ router.route("/primaryData").get(async (req, res) => {
       ],
     });
 
+    // const spare = await Receiving_Spare.findAll({
+    //   where: {
+    //     receiving_po_id: receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO_spare,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: SparePart_Supplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: SparePart,
+    //               required: true,
+    //             },
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
+
+    // const subpart = await Receiving_Subpart.findAll({
+    //   where: {
+    //     receiving_po_id: receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO_subpart,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Subpart_supplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: SubPart,
+    //               required: true,
+    //             },
+
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
+
+    return res.json({
+      primary: primaryData,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+});
+
+
+router.route("/secondaryData").get(async (req, res) => {
+  try {
+
+   
+    const products = await Receiving_Prd.findAll({
+      where: {
+        receiving_po_id: req.query.receivingParent_id,
+      },
+      include: [
+        {
+          model: PR_PO,
+          required: true,
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+              include: [
+                {
+                  model: Product,
+                  required: true,
+                },
+                {
+                  model: Supplier,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: Receiving_PO,
+          required: true,
+        },
+      ],
+    });
+
+    const assembly = await Receiving_Asm.findAll({
+      where: {
+        receiving_po_id: req.query.receivingParent_id,
+      },
+      include: [
+        {
+          model: PR_PO_asmbly,
+          required: true,
+          include: [
+            {
+              model: Assembly_Supplier,
+              required: true,
+              include: [
+                {
+                  model: Assembly,
+                  required: true,
+                },
+
+                {
+                  model: Supplier,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: Receiving_PO,
+          required: true,
+        },
+      ],
+    });
+
     const spare = await Receiving_Spare.findAll({
       where: {
-        receiving_po_id: receivingParent_id,
+        receiving_po_id: req.query.receivingParent_id,
       },
       include: [
         {
@@ -1223,7 +1367,7 @@ router.route("/primaryData").get(async (req, res) => {
 
     const subpart = await Receiving_Subpart.findAll({
       where: {
-        receiving_po_id: receivingParent_id,
+        receiving_po_id: req.query.receivingParent_id,
       },
       include: [
         {
@@ -1255,7 +1399,6 @@ router.route("/primaryData").get(async (req, res) => {
     });
 
     return res.json({
-      primary: primaryData,
       product: products,
       assembly: assembly,
       spare: spare,

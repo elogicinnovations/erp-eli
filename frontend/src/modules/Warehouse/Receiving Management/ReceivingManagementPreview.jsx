@@ -156,6 +156,7 @@ function ReceivingManagementPreview({ authrztn }) {
   const [prod_name, setProd_name] = useState([]);
 
   const handleReceived = (po_number) => {
+    generateRandomCode()
     setIsLoading(true);
     setShow(true);
     axios
@@ -840,7 +841,7 @@ function ReceivingManagementPreview({ authrztn }) {
                     style={{ marginTop: "-20px" }}
                   >
                     <label className="" style={{ fontSize: 12 }}>
-                      Select a Receiving Area:{" "}
+                      Select Receiving Area:{" "}
                     </label>
                     <div class="">
                       <Form.Select
@@ -1130,6 +1131,10 @@ function ReceivingManagementPreview({ authrztn }) {
                             width: "100px",
                             fontSize: "14px",
                             fontFamily: "Poppins, Source Sans Pro",
+                          }}
+                          onKeyDown={(e) => {
+                            ["e", "E", "+", "-"].includes(e.key) &&
+                              e.preventDefault();
                           }}
                         />
                       </Form.Group>

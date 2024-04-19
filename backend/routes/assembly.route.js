@@ -113,7 +113,7 @@ router.route("/create").post(async (req, res) => {
         assembly_name: name,
         assembly_desc: desc,
         bin_id: slct_binLocation,
-        assembly_manufacturer: slct_manufacturer,
+        assembly_manufacturer: slct_manufacturer === '' ? null : slct_manufacturer,
         threshhold: threshholdValue,
         assembly_unitMeasurement: unitMeasurement,
         category_code: slct_category,

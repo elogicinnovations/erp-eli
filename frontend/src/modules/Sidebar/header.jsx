@@ -55,6 +55,19 @@ const Header = () => {
     decodeToken();
   }, []);
 
+
+  // useEffect(() => {
+  //   const handleUnload = () => {
+  //     localStorage.removeItem("accessToken");
+  //   };
+
+  //   window.addEventListener('unload', handleUnload);
+
+  //   return () => {
+  //     window.removeEventListener('unload', handleUnload);
+  //   };
+  // }, []);
+
   const handleLogout = async () => {
     swal({
       title: "Are you sure?",

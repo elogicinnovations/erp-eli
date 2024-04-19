@@ -28,20 +28,11 @@ const Login = () => {
   useEffect(() => {
     // Access the token from localStorage
     const accessToken = localStorage.getItem('accessToken');
-
-    // Log the token
     console.log('Token:', accessToken);
-
-    // Decode the access token
     try {
-      // const decodedToken = jwtDecode(accessToken);
-
       if(accessToken){
         navigate("/dashboard");
       }
-     
-      
-      // console.log('Decoded Token:', decodedToken);
     } catch (error) {
       console.error('Error decoding token:', error);
     }
@@ -168,7 +159,7 @@ const Login = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     maxLength={50} // Set the character limit to 50 characters
                     required
-                    onKeyDown={handleKeyPress} // Handle key press
+                   
                   />
                   <FaEnvelope className="fa-envelope" />
                 </div>
@@ -185,7 +176,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     maxLength={50} // Set the character limit to 50 characters
                     required
-                    onKeyDown={handleKeyPress} // Handle key press
+                   
                   />
                   {showPassword ? (
                     <FaEyeSlash
@@ -199,12 +190,6 @@ const Login = () => {
               </div>
 
               <div className="remember-forgot">
-                {/* <div className="rememberme">
-                                  <label className="remembertext">
-                                      <input type="checkbox" />
-                                      Remember me
-                                  </label>
-                              </div> */}
                 <div className="forgot-passcontent">
                   <Link to="/forgotpass" style={{ display: "contents" }}>
                     <div className="fpass-word">Forgot Password?</div>
@@ -212,7 +197,7 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="button-login">
+              <div onKeyDown={handleKeyPress} className="button-login">
                 <button
                   className="loginnow"
                   style={{ fontSize: "1.8em" }}

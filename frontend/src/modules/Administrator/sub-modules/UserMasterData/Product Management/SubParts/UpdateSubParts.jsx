@@ -648,9 +648,12 @@ function selectFiles() {
                     disabled={!isReadOnly}
                     aria-label=""
                     onChange={handleFormChangeManufacturer}
-                    required
-                    value={prodmanufacture}
+                    
+                    value={prodmanufacture || ''}
                     style={{ height: "40px", fontSize: "15px" }}>
+                       <option disabled value=''>
+                          No Manufacturer Selected ...
+                        </option>
                     {manufacturer.map((manufacturer) => (
                       <option
                         key={manufacturer.manufacturer_code}

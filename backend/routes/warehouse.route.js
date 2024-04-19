@@ -160,6 +160,12 @@ router.route('/deleteWarehouse/:table_id').delete(async (req, res) => {
   try {
     const id = req.params.table_id;
     const userId = req.query.userId;
+
+
+
+    if(id === '1'){
+      return res.status(205).json()
+    }
     const checkInventory = await Inventory.findAll({
       where: { warehouse_id: id },
     });

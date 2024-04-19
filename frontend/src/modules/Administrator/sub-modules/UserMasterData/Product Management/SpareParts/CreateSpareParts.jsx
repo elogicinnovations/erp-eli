@@ -646,8 +646,7 @@ useEffect(() => {
                   </Form.Label>
                   <Form.Select
                     aria-label=""
-                    onChange={handleFormChangeManufacturer}
-                    required
+                    onChange={handleFormChangeManufacturer}             
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">
@@ -695,6 +694,7 @@ useEffect(() => {
                     Critical Inventory Thresholds:{" "}
                   </Form.Label>
                   <Form.Control
+                    required
                   value={thresholds}
                   onKeyDown={(e) => {
                     ["e", "E", "+", "-"].includes(e.key) &&
@@ -726,6 +726,7 @@ useEffect(() => {
                   </Form.Label>
                   <Form.Select
                     aria-label=""
+                    required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeMeasurement}>

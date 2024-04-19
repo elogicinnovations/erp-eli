@@ -670,6 +670,7 @@ function onDropImages(event) {
                   </Form.Label>
                   <Form.Select
                     aria-label=""
+                    required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue=""
                     onChange={handleChangeMeasurement}>
@@ -692,7 +693,6 @@ function onDropImages(event) {
                   <Form.Select
                     aria-label=""
                     onChange={handleFormChangeManufacturer}
-                    required
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">

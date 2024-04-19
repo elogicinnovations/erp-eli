@@ -865,9 +865,9 @@ const update = async (e) => {
                         onChange={handleFormChangeManufacturer} 
                         required
                         style={{ height: '40px', fontSize: '15px' }}
-                        value={slct_manufacturer}>
+                        value={slct_manufacturer || ''}>
                           <option disabled value=''>
-                              Select Manufacturer ...
+                            No Manufacturer Selected ...
                           </option>
                             {manufacturer.map(manufacturer => (
                               <option key={manufacturer.manufacturer_code} value={manufacturer.manufacturer_code}>

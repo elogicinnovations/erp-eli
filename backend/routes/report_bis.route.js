@@ -423,7 +423,6 @@ router.route("/filter").get(async (req, res) => {
       console.error(err);
       res.status(500).json("Error");
     }
-  });
+});
   
-
 module.exports = router;

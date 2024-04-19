@@ -47,12 +47,6 @@ import {
 import * as $ from "jquery";
 import Header from "../../partials/header";
 
-const supplierData = [
-  { name: "Supplier A", time: 3 },
-  { name: "Supplier B", time: 6 },
-  { name: "Supplier C", time: 9 },
-  // Add more data as needed
-];
 const barColors = ["#8884d8", "#82ca9d", "#ffc658"];
 
 const Dashboard = ({ setActiveTab, authrztn }) => {

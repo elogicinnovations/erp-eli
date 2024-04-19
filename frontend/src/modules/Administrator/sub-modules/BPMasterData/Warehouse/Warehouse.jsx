@@ -329,7 +329,15 @@ function Warehouse({ authrztn }) {
               title: "Delete Prohibited",
               text: "You cannot delete Warehouse that is used",
             });
-          } else {
+          } 
+          else if (response.status === 205) {
+            swal({
+              icon: "error",
+              title: "Delete Prohibited",
+              text: "You cannot delete the main site",
+            });
+          }
+          else {
             swal({
               icon: "error",
               title: "Something went wrong",

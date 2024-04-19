@@ -107,20 +107,20 @@ function MasterList({ authrztn }) {
   const [formData, setFormData] = useState({
     cname: "",
     caddress: "",
-    cnum: "",
+    cnum: "09",
     cemail: "",
     cuname: "",
     crole: "",
     cdept: "",
     cpass: "",
     cpass2: "",
-    cstatus: false,
+    cstatus: true,
   });
 
   const [updateFormData, setUpdateFormData] = useState({
     uaname: "",
     uaaddress: "",
-    uanum: "",
+    uanum: "09",
     uaemail: "",
     uauname: "",
     uarole: "",
@@ -207,14 +207,14 @@ function MasterList({ authrztn }) {
     setFormData({
       cname: "",
       caddress: "",
-      cnum: "",
+      cnum: "09",
       cemail: "",
       cuname: "",
       crole: "",
       cdept: "",
       cpass: "",
       cpass2: "",
-      cstatus: false,
+      cstatus: true,
     });
   };
 
@@ -239,7 +239,7 @@ function MasterList({ authrztn }) {
       setUpdateFormData({
         uaname: "",
         uaaddress: "",
-        uanum: "",
+        uanum: "09",
         uaemail: "",
         uauname: "",
         uarole: "",
@@ -410,7 +410,7 @@ function MasterList({ authrztn }) {
           setUpdateFormData({
             uaname: "",
             uaaddress: "",
-            uanum: "",
+            uanum: "09",
             uaemail: "",
             uauname: "",
             uarole: "",
@@ -480,15 +480,17 @@ function MasterList({ authrztn }) {
           setFormData({
             cname: "",
             caddress: "",
-            cnum: "",
+            cnum: "09",
             cemail: "",
             cuname: "",
             crole: "",
             cdept: "",
             cpass: "",
             cpass2: "",
-            cstatus: false,
+            cstatus: true,
           });
+
+          setValidated(false)
         });
       } else if (response.status === 202) {
         swal({
@@ -684,10 +686,10 @@ function MasterList({ authrztn }) {
               <div className="list-box-container" key={i}>
                   <div className="top-box-list">
                       <div className="active-inactive-identify">
-                      {data.status === 'Active' ? (
-                        <Circle size={24} color="#ff3d3d" weight="fill" />
-                      ) : (
+                      {data.col_status === 'Active' ? (
                         <Circle size={24} color="#3dff3d" weight="fill" />
+                      ) : (
+                        <Circle size={24} color="#ff3d3d" weight="fill" />
                       )}
                       </div>
                       <div className="three-dots-section">
@@ -866,7 +868,7 @@ function MasterList({ authrztn }) {
                 name="cstatus"
                 className="toggle-switch" // Add the custom class
                 onChange={handleFormChange}
-                defaultChecked={FormData.ustatus} // Set defaultChecked based on ustatus
+                defaultChecked={formData.cstatus} // Set defaultChecked based on ustatus
               />
             </React.Fragment>
           </div>
@@ -1135,7 +1137,7 @@ function MasterList({ authrztn }) {
               variant="warning"
               size="md"
               style={{ fontSize: "20px" }}
-              disabled={!passwordsMatch}
+              disabled={!passwordsMatch || !validatePassword(formData.cpass)}
               >
               Add
             </Button>
@@ -1234,7 +1236,7 @@ function MasterList({ authrztn }) {
                     <Form.Control
                       type="text"
                       value={updateFormData.uanum}
-                      maxLength={15}
+                      maxLength={11}
                       onChange={handleUpdateFormChange}
                       name="uanum"
                       required

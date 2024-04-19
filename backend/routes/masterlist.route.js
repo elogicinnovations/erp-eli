@@ -20,7 +20,7 @@ router.use(
   })
 );
 
-const activeSessions = {};
+
 
 
 // router.route("/login").post(async (req, res) => {
@@ -112,7 +112,7 @@ const activeSessions = {};
 //     }
 //   }
 // });
-
+const activeSessions = {};
 router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
 
@@ -129,9 +129,14 @@ router.route("/login").post(async (req, res) => {
 
     if (user && user.col_Pass === password) {
       // Check if user already has an active session
+      console.log(`activeSessions[user.col_id] ${activeSessions[user.col_id]}` )
+
       if (activeSessions[user.col_id]) {
         return res.status(409).json({ error: "User already logged in on another device" });
       }
+
+
+      
 
       const userData = {
         username: user.col_username,
@@ -149,9 +154,13 @@ router.route("/login").post(async (req, res) => {
         masterlist_id: userData.id,
         action_taken: "User logged in",
       });
-      return res
+       res
         .status(200)
         .json({ message: "Login Success", accessToken: accessToken });
+        for (const key in activeSessions) {
+          delete activeSessions[key];
+        }
+        return
     } else {
       return res.status(202).json({ message: "Incorrect credentials" });
     }

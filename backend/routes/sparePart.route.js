@@ -96,7 +96,7 @@ router.route('/create').post(async (req, res) => {
             spareParts_name: name,
             spareParts_desc: desc,
             spareParts_location: slct_binLocation,
-            spareParts_manufacturer: slct_manufacturer,
+            spareParts_manufacturer: slct_manufacturer === '' ? null : slct_manufacturer,
             threshhold: threshholdValue,
             spareParts_unitMeasurement: unitMeasurement,
             category_code: slct_category,

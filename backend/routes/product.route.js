@@ -123,6 +123,9 @@ router.route("/create").post(async (req, res) => {
         images,
         userId,
       } = req.body;
+
+console.log(`slct_manufacturer : ${slct_manufacturer}`)
+
         const existingDataCode = await Product.findOne({
           where: {
             product_code: code, 
@@ -138,7 +141,7 @@ router.route("/create").post(async (req, res) => {
             product_category: slct_category,
             product_location: slct_binLocation,
             product_unitMeasurement: unitMeasurement,
-            product_manufacturer: slct_manufacturer,
+            product_manufacturer: slct_manufacturer === '' ? null : slct_manufacturer,
             product_details: details,
             product_threshold: thresholds,
             product_status: 'Active'

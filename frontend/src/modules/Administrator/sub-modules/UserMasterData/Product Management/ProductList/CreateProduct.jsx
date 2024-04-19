@@ -34,7 +34,7 @@ function CreateProduct({authrztn}) {
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
   const [unitMeasurement, setunitMeasurement] = useState("");
-  const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer
+  const [slct_manufacturer, setslct_manufacturer] = useState(''); 
   const [details, setDetails] = useState("");
   const [thresholds, setThresholds] = useState("");
   const [fetchSparePart, setFetchPart] = useState([]);

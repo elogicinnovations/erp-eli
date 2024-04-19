@@ -12,13 +12,9 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarBlank,
-  Export,
-  XCircle
-} from "@phosphor-icons/react";
-import NoData from '../../../../src/assets/image/NoData.png';
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { CalendarBlank, Export, XCircle } from "@phosphor-icons/react";
+import NoData from "../../../../src/assets/image/NoData.png";
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -41,39 +37,67 @@ function BIS() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [bisContent, setBisContent] = useState([]);
-  const [searchBIS, setSearchBIS] = useState([])
+  const [searchBIS, setSearchBIS] = useState([]);
   const [bisContent_asm, setBisContent_asm] = useState([]);
   const [searchBISasm, setSearchBISasm] = useState([]);
   const [bisContent_spare, setBisContent_spare] = useState([]);
   const [searchBISspare, setSearchBISspare] = useState([]);
   const [bisContent_subpart, setBisContent_subpart] = useState([]);
-  const [searchBISsub, setSearchBISsub] = useState([])
+  const [searchBISsub, setSearchBISsub] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
   const totalPagesBISProd = Math.ceil(bisContent.length / pageSize);
   const startIndexBISprod = (currentPage - 1) * pageSize;
-  const endIndexBISprod = Math.min(startIndexBISprod + pageSize, bisContent.length);
-  const currentItemsBISprod = bisContent.slice(startIndexBISprod, endIndexBISprod);
+  const endIndexBISprod = Math.min(
+    startIndexBISprod + pageSize,
+    bisContent.length
+  );
+  const currentItemsBISprod = bisContent.slice(
+    startIndexBISprod,
+    endIndexBISprod
+  );
 
   const totalPagesBISasm = Math.ceil(bisContent_asm.length / pageSize);
   const startIndexBISasm = (currentPage - 1) * pageSize;
-  const endIndexBISasm = Math.min(startIndexBISasm + pageSize, bisContent_asm.length);
-  const currentItemsBISasm = bisContent_asm.slice(startIndexBISasm, endIndexBISasm);
+  const endIndexBISasm = Math.min(
+    startIndexBISasm + pageSize,
+    bisContent_asm.length
+  );
+  const currentItemsBISasm = bisContent_asm.slice(
+    startIndexBISasm,
+    endIndexBISasm
+  );
 
   const totalPagesBISspare = Math.ceil(bisContent_spare.length / pageSize);
   const startIndexBISspare = (currentPage - 1) * pageSize;
-  const endIndexBISspare = Math.min(startIndexBISspare + pageSize, bisContent_spare.length);
-  const currentItemsBISspare = bisContent_spare.slice(startIndexBISspare, endIndexBISspare);
+  const endIndexBISspare = Math.min(
+    startIndexBISspare + pageSize,
+    bisContent_spare.length
+  );
+  const currentItemsBISspare = bisContent_spare.slice(
+    startIndexBISspare,
+    endIndexBISspare
+  );
 
   const totalPagesBISsubpart = Math.ceil(bisContent_subpart.length / pageSize);
   const startIndexBISsubpart = (currentPage - 1) * pageSize;
-  const endIndexBISsubpart = Math.min(startIndexBISsubpart + pageSize, bisContent_subpart.length);
-  const currentItemsBISsubpart = bisContent_subpart.slice(startIndexBISsubpart, endIndexBISsubpart);
+  const endIndexBISsubpart = Math.min(
+    startIndexBISsubpart + pageSize,
+    bisContent_subpart.length
+  );
+  const currentItemsBISsubpart = bisContent_subpart.slice(
+    startIndexBISsubpart,
+    endIndexBISsubpart
+  );
 
-  const maxTotalPages = Math.max(totalPagesBISProd, totalPagesBISasm, totalPagesBISspare, totalPagesBISsubpart);
-
+  const maxTotalPages = Math.max(
+    totalPagesBISProd,
+    totalPagesBISasm,
+    totalPagesBISspare,
+    totalPagesBISsubpart
+  );
 
   const [department, setDepartment] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -124,7 +148,7 @@ function BIS() {
       });
       return;
     }
-    
+
     axios
       .get(BASE_URL + "/report_BIS/filter", {
         params: {
@@ -149,67 +173,281 @@ function BIS() {
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
-
     const filteredSearchBIS = searchBIS.filter((data) => {
-      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
-      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
-      data.quantity.toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.product_tag_supplier.product.product_code.toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.product_tag_supplier.product.product_name.toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.product_tag_supplier.product.product_unitMeasurement.toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.product_tag_supplier.product.category.category_name.toLowerCase().includes(searchTerm) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.price.toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.freight_cost.toLowerCase().includes(searchTerm) ||
-      data.inventory_prd.custom_cost.toLowerCase().includes(searchTerm)
+      return (
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        formatDatetime(formatDatetime(data.createdAt))
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.issuance.issuance_id === "number" &&
+          data.issuance.issuance_id
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.issuance.mrs === "string" ||
+          typeof data.issuance.mrs === "number") &&
+          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
+        data.inventory_prd.product_tag_supplier.product.category.category_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_prd.product_tag_supplier.product.product_code
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_prd.product_tag_supplier.product.product_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.quantity === "number" &&
+          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
+        data.inventory_prd.product_tag_supplier.product.product_unitMeasurement
+          .toLowerCase()
+          .includes(searchTerm) ||
+        ((typeof data.inventory_prd.price === "number" ||
+          typeof data.inventory_prd.price === "string") &&
+          data.inventory_prd.price
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_prd.freight_cost === "number" ||
+          typeof data.inventory_prd.freight_cost === "string") &&
+          data.inventory_prd.freight_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_prd.custom_cost === "number" ||
+          typeof data.inventory_prd.custom_cost === "string") &&
+          data.inventory_prd.custom_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (
+          data.inventory_prd.price +
+          data.inventory_prd.freight_cost +
+          data.inventory_prd.custom_cost
+        )
+          .toFixed(2)
+          .includes(searchTerm) ||
+        (
+          (data.inventory_prd.price +
+            data.inventory_prd.freight_cost +
+            data.inventory_prd.custom_cost) *
+          data.quantity
+        )
+          .toFixed(2)
+          .includes(searchTerm)
+      );
     });
     setBisContent(filteredSearchBIS);
 
     const filteredSearchBISasm = searchBISasm.filter((data) => {
-      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
-      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
-      data.quantity.toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.assembly_supplier.assembly.assembly_code.toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.assembly_supplier.assembly.assembly_code.toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement.toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.assembly_supplier.assembly.category.category_name.toLowerCase().includes(searchTerm) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.price.toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.freight_cost.toLowerCase().includes(searchTerm) ||
-      data.inventory_assembly.custom_cost.toLowerCase().includes(searchTerm)
+      return (
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        formatDatetime(formatDatetime(data.createdAt))
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.issuance.issuance_id === "number" &&
+          data.issuance.issuance_id
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.issuance.mrs === "string" ||
+          typeof data.issuance.mrs === "number") &&
+          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
+        data.inventory_assembly.assembly_supplier.assembly.category.category_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_assembly.assembly_supplier.assembly.assembly_code
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_assembly.assembly_supplier.assembly.assembly_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.quantity === "number" &&
+          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
+        data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement
+          .toLowerCase()
+          .includes(searchTerm) ||
+        ((typeof data.inventory_assembly.price === "number" ||
+          typeof data.inventory_assembly.price === "string") &&
+          data.inventory_assembly.price
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_assembly.freight_cost === "number" ||
+          typeof data.inventory_assembly.freight_cost === "string") &&
+          data.inventory_assembly.freight_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_assembly.custom_cost === "number" ||
+          typeof data.inventory_assembly.custom_cost === "string") &&
+          data.inventory_assembly.custom_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (
+          data.inventory_assembly.price +
+          data.inventory_assembly.freight_cost +
+          data.inventory_assembly.custom_cost
+        )
+          .toFixed(2)
+          .includes(searchTerm) ||
+        (
+          (data.inventory_assembly.price +
+            data.inventory_assembly.freight_cost +
+            data.inventory_assembly.custom_cost) *
+          data.quantity
+        )
+          .toFixed(2)
+          .includes(searchTerm)
+      );
     });
     setBisContent_asm(filteredSearchBISasm);
 
     const filteredSearchBISspare = searchBISspare.filter((data) => {
-      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
-      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
-      data.quantity.toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.sparepart_supplier.sparePart.spareParts_code.toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.sparepart_supplier.sparePart.spareParts_name.toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement.toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.sparepart_supplier.sparePart.category.category_name.toLowerCase().includes(searchTerm) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.price.toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.freight_cost.toLowerCase().includes(searchTerm) ||
-      data.inventory_spare.custom_cost.toLowerCase().includes(searchTerm)
+      return (
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        formatDatetime(formatDatetime(data.createdAt))
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.issuance.issuance_id === "number" &&
+          data.issuance.issuance_id
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.issuance.mrs === "string" ||
+          typeof data.issuance.mrs === "number") &&
+          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
+        (data.inventory_spare &&
+          data.inventory_spare.sparepart_supplier &&
+          data.inventory_spare.sparepart_supplier.sparePart &&
+          data.inventory_spare.sparepart_supplier.sparePart.category &&
+          data.inventory_spare.sparepart_supplier.sparePart.category.category_name
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (data.inventory_spare &&
+          data.inventory_spare.sparepart_supplier &&
+          data.inventory_spare.sparepart_supplier.sparePart &&
+          data.inventory_spare.sparepart_supplier.sparePart.spareParts_code
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (data.inventory_spare &&
+          data.inventory_spare.sparepart_supplier &&
+          data.inventory_spare.sparepart_supplier.sparePart &&
+          data.inventory_spare.sparepart_supplier.sparePart.spareParts_name
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (typeof data.quantity === "number" &&
+          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
+        (data.inventory_spare &&
+          data.inventory_spare.sparepart_supplier &&
+          data.inventory_spare.sparepart_supplier.sparePart &&
+          data.inventory_spare.sparepart_supplier.sparePart
+            .spareParts_unitMeasurement &&
+          data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_spare.price === "number" ||
+          typeof data.inventory_spare.price === "string") &&
+          data.inventory_spare.price
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_spare.freight_cost === "number" ||
+          typeof data.inventory_spare.freight_cost === "string") &&
+          data.inventory_spare.freight_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_spare.custom_cost === "number" ||
+          typeof data.inventory_spare.custom_cost === "string") &&
+          data.inventory_spare.custom_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (
+          data.inventory_spare.price +
+          data.inventory_spare.freight_cost +
+          data.inventory_spare.custom_cost
+        )
+          .toFixed(2)
+          .includes(searchTerm) ||
+        (
+          (data.inventory_spare.price +
+            data.inventory_spare.freight_cost +
+            data.inventory_spare.custom_cost) *
+          data.quantity
+        )
+          .toFixed(2)
+          .includes(searchTerm)
+      );
     });
     setBisContent_spare(filteredSearchBISspare);
+    
 
     const filteredSearchBISsub = searchBISsub.filter((data) => {
-      data.issuance.cost_center.name.toLowerCase().includes(searchTerm) ||
-      data.issuance.cost_center.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
-      data.quantity.toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.subpart_supplier.subPart.subPart_code.toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.subpart_supplier.subPart.subPart_name.toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement.toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.subpart_supplier.subPart.category.category_name.toLowerCase().includes(searchTerm) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.price.toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.freight_cost.toLowerCase().includes(searchTerm) ||
-      data.inventory_subpart.custom_cost.toLowerCase().includes(searchTerm)
+      return (
+        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
+        formatDatetime(formatDatetime(data.createdAt))
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.issuance.issuance_id === "number" &&
+          data.issuance.issuance_id
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.issuance.mrs === "string" ||
+          typeof data.issuance.mrs === "number") &&
+          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
+        data.inventory_subpart.subpart_supplier.subPart.category.category_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_subpart.subpart_supplier.subPart.subPart_code
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_subpart.subpart_supplier.subPart.subPart_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        (typeof data.quantity === "number" &&
+          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
+        data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement
+          .toLowerCase()
+          .includes(searchTerm) ||
+        ((typeof data.inventory_subpart.price === "number" ||
+          typeof data.inventory_subpart.price === "string") &&
+          data.inventory_subpart.price
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_subpart.freight_cost === "number" ||
+          typeof data.inventory_subpart.freight_cost === "string") &&
+          data.inventory_subpart.freight_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        ((typeof data.inventory_subpart.custom_cost === "number" ||
+          typeof data.inventory_subpart.custom_cost === "string") &&
+          data.inventory_subpart.custom_cost
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm)) ||
+        (
+          data.inventory_subpart.price +
+          data.inventory_subpart.freight_cost +
+          data.inventory_subpart.custom_cost
+        )
+          .toFixed(2)
+          .includes(searchTerm) ||
+        (
+          (data.inventory_subpart.price +
+            data.inventory_subpart.freight_cost +
+            data.inventory_subpart.custom_cost) *
+          data.quantity
+        )
+          .toFixed(2)
+          .includes(searchTerm)
+      );
     });
     setBisContent_subpart(filteredSearchBISsub);
-
   };
   //date format
   function formatDatetime(datetime) {
@@ -224,10 +462,9 @@ function BIS() {
   }
 
   const exportToCSV = () => {
-
     let shouldExport = true;
 
-    bisContent.forEach(item => {
+    bisContent.forEach((item) => {
       if (item.inventory_prd && item.inventory_prd.freight_cost === 0) {
         shouldExport = false; // Set the flag to false if condition is met
         swal({
@@ -235,87 +472,94 @@ function BIS() {
           title: "Oops...",
           text: "There's still product that has no Freight Cost",
         });
-        return; 
-      }
-      else if (item.inventory_prd && item.inventory_prd.custom_cost === 0){
-        shouldExport = true; 
+        return;
+      } else if (item.inventory_prd && item.inventory_prd.custom_cost === 0) {
+        shouldExport = true;
         swal({
           icon: "warning",
           title: "Warning",
           text: "There's a product that has no Duties & Custom Cost",
         });
-        return; 
+        return;
       }
     });
 
-  bisContent_asm.forEach(item => {
-    if (item.inventory_assembly && item.inventory_assembly.freight_cost === 0) {
-      shouldExport = false; // Set the flag to false if condition is met
-      swal({
-        icon: "error",
-        title: "Oops...",
-        text: "There's still product that has no Freight Cost",
-      });
-      return; // Exit the loop early if condition is met
-    }
-    else if (item.inventory_assembly && item.inventory_assembly.custom_cost === 0){
-      shouldExport = true; 
-      swal({
-        icon: "warning",
-        title: "Warning",
-        text: "There's a product that has no Duties & Custom Cost",
-      });
-      return; 
-    }
-  });
+    bisContent_asm.forEach((item) => {
+      if (
+        item.inventory_assembly &&
+        item.inventory_assembly.freight_cost === 0
+      ) {
+        shouldExport = false; // Set the flag to false if condition is met
+        swal({
+          icon: "error",
+          title: "Oops...",
+          text: "There's still product that has no Freight Cost",
+        });
+        return; // Exit the loop early if condition is met
+      } else if (
+        item.inventory_assembly &&
+        item.inventory_assembly.custom_cost === 0
+      ) {
+        shouldExport = true;
+        swal({
+          icon: "warning",
+          title: "Warning",
+          text: "There's a product that has no Duties & Custom Cost",
+        });
+        return;
+      }
+    });
 
+    bisContent_spare.forEach((item) => {
+      if (item.inventory_spare && item.inventory_spare.freight_cost === 0) {
+        shouldExport = false; // Set the flag to false if condition is met
+        swal({
+          icon: "error",
+          title: "Oops...",
+          text: "There's still product that has no Freight Cost",
+        });
+        return; // Exit the loop early if condition is met
+      } else if (
+        item.inventory_spare &&
+        item.inventory_spare.custom_cost === 0
+      ) {
+        shouldExport = true;
+        swal({
+          icon: "warning",
+          title: "Warning",
+          text: "There's a product that has no Duties & Custom Cost",
+        });
+        return;
+      }
+    });
 
-  bisContent_spare.forEach(item => {
-    if (item.inventory_spare && item.inventory_spare.freight_cost === 0) {
-      shouldExport = false; // Set the flag to false if condition is met
-      swal({
-        icon: "error",
-        title: "Oops...",
-        text: "There's still product that has no Freight Cost",
-      });
-      return; // Exit the loop early if condition is met
-    }
-    else if (item.inventory_spare && item.inventory_spare.custom_cost === 0){
-      shouldExport = true; 
-      swal({
-        icon: "warning",
-        title: "Warning",
-        text: "There's a product that has no Duties & Custom Cost",
-      });
-      return; 
-    }
-  });
+    bisContent_subpart.forEach((item) => {
+      if (item.inventory_subpart && item.inventory_subpart.freight_cost === 0) {
+        shouldExport = false; // Set the flag to false if condition is met
+        swal({
+          icon: "error",
+          title: "Oops...",
+          text: "There's still product that has no Freight Cost",
+        });
+        return; // Exit the loop early if condition is met
+      } else if (
+        item.inventory_subpart &&
+        item.inventory_subpart.custom_cost === 0
+      ) {
+        shouldExport = true;
+        swal({
+          icon: "warning",
+          title: "Warning",
+          text: "There's a product that has no Duties & Custom Cost",
+        });
+        return;
+      }
+    });
 
-  bisContent_subpart.forEach(item => {
-    if (item.inventory_subpart && item.inventory_subpart.freight_cost === 0) {
-      shouldExport = false; // Set the flag to false if condition is met
-      swal({
-        icon: "error",
-        title: "Oops...",
-        text: "There's still product that has no Freight Cost",
-      });
-      return; // Exit the loop early if condition is met
+    // Only export if the flag is true
+    if (!shouldExport) {
+      return;
     }
-    else if (item.inventory_subpart && item.inventory_subpart.custom_cost === 0){
-      shouldExport = true; 
-      swal({
-        icon: "warning",
-        title: "Warning",
-        text: "There's a product that has no Duties & Custom Cost",
-      });
-      return; 
-    }
-  });
-
-  // Only export if the flag is true
-  if (!shouldExport) {
-    return;
-  }
 
     const rows = [];
     const columnStyles = [
@@ -335,106 +579,132 @@ function BIS() {
 
     // Add the header row
     const headerData = [
-      "Cost Center",
-      "Department",
-      "Issued Quantity",
+      "Doc Date",
+      "BIS#",
+      "MRS",
+      "Category",
       "Product Code",
       "Product Name",
+      "Issued Quantity",
       "UOM",
-      "Category",
       "Unit Price",
       "Freight Cost",
       "Duties & Custom Cost",
+      "AUP",
       "Total Price",
-      "Issued Date",
     ];
     rows.push(headerData.join(","));
 
     // Add data rows
     bisContent.forEach((data) => {
       const rowData = [
-        `"${data.issuance.cost_center.name}"`,
-        `"${data.issuance.cost_center.masterlist.department.department_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_prd.product_tag_supplier.product.product_code}"`,
-        `"${data.inventory_prd.product_tag_supplier.product.product_name}"`,
-        `"${data.inventory_prd.product_tag_supplier.product.product_unitMeasurement}"`,
+        `"${formatDatetime(data.createdAt)}"`,
+        `"${data.issuance.issuance_id}"`,
+        `\t${data.issuance.mrs}`,
         `"${data.inventory_prd.product_tag_supplier.product.category.category_name}"`,
+        `\t${data.inventory_prd.product_tag_supplier.product.product_code}`,
+        `"${data.inventory_prd.product_tag_supplier.product.product_name}"`,
+        `"${data.quantity}"`,
+        `"${data.inventory_prd.product_tag_supplier.product.product_unitMeasurement}"`,
         `"${data.inventory_prd.price}"`,
         `"${data.inventory_prd.freight_cost}"`,
         `"${data.inventory_prd.custom_cost}"`,
-        `"${
+        `"${(
           data.inventory_prd.price +
           data.inventory_prd.freight_cost +
           data.inventory_prd.custom_cost
-        }"`,
-        `"${formatDatetime(data.createdAt)}"`,
+        ).toFixed(2)}"`,
+        `"${(
+          (data.inventory_prd.price +
+            data.inventory_prd.freight_cost +
+            data.inventory_prd.custom_cost) *
+          data.quantity
+        ).toFixed(2)}"`,
       ];
       rows.push(rowData.join(","));
     });
 
     bisContent_asm.forEach((data) => {
       const rowData = [
-        `"${data.issuance.cost_center.name}"`,
-        `"${data.issuance.cost_center.masterlist.department.department_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_code}"`,
-        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_code}"`,
-        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement}"`,
+        `"${formatDatetime(data.createdAt)}"`,
+        `"${data.issuance.issuance_id}"`,
+        `\t${data.issuance.mrs}`,
         `"${data.inventory_assembly.assembly_supplier.assembly.category.category_name}"`,
+        `\t${data.inventory_assembly.assembly_supplier.assembly.assembly_code}`,
+        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_name}"`,
+        `"${data.quantity}"`,
+        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement}"`,
+
         `"${data.inventory_assembly.price}"`,
         `"${data.inventory_assembly.freight_cost}"`,
         `"${data.inventory_assembly.custom_cost}"`,
-        `"${
+        `"${(
           data.inventory_assembly.price +
           data.inventory_assembly.freight_cost +
           data.inventory_assembly.custom_cost
-        }"`,
-        `"${formatDatetime(data.createdAt)}"`,
+        ).toFixed(2)}"`,
+        `"${(
+          (data.inventory_assembly.price +
+            data.inventory_assembly.freight_cost +
+            data.inventory_assembly.custom_cost) *
+          data.quantity
+        ).toFixed(2)}"`,
       ];
       rows.push(rowData.join(","));
     });
 
     bisContent_spare.forEach((data) => {
       const rowData = [
-        `"${data.issuance.cost_center.name}"`,
-        `"${data.issuance.cost_center.masterlist.department.department_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}"`,
-        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}"`,
-        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement}"`,
+        `"${formatDatetime(data.createdAt)}"`,
+        `"${data.issuance.issuance_id}"`,
+        `\t${data.issuance.mrs}`,
         `"${data.inventory_spare.sparepart_supplier.sparePart.category.category_name}"`,
+        `\t${data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}`,
+        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}"`,
+        `"${data.quantity}"`,
+        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement}"`,
         `"${data.inventory_spare.price}"`,
         `"${data.inventory_spare.freight_cost}"`,
         `"${data.inventory_spare.custom_cost}"`,
-        `"${
+        `"${(
           data.inventory_spare.price +
           data.inventory_spare.freight_cost +
           data.inventory_spare.custom_cost
-        }"`,
-        `"${formatDatetime(data.createdAt)}"`,
+        ).toFixed(2)}"`,
+        `"${(
+          (data.inventory_spare.price +
+            data.inventory_spare.freight_cost +
+            data.inventory_spare.custom_cost) *
+          data.quantity
+        ).toFixed(2)}"`,
       ];
       rows.push(rowData.join(","));
     });
 
     bisContent_subpart.forEach((data) => {
       const rowData = [
-        `"${data.issuance.cost_center.name}"`,
-        `"${data.issuance.cost_center.masterlist.department.department_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_code}"`,
-        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_name}"`,
-        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement}"`,
+        `"${formatDatetime(data.createdAt)}"`,
+        `"${data.issuance.issuance_id}"`,
+        `\t${data.issuance.mrs}`,
         `"${data.inventory_subpart.subpart_supplier.subPart.category.category_name}"`,
+        `\t${data.inventory_subpart.subpart_supplier.subPart.subPart_code}`,
+        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_name}"`,
+        `"${data.quantity}"`,
+        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement}"`,
         `"${data.inventory_subpart.price}"`,
         `"${data.inventory_subpart.freight_cost}"`,
         `"${data.inventory_subpart.custom_cost}"`,
-        `"${
+        `"${(
           data.inventory_subpart.price +
           data.inventory_subpart.freight_cost +
           data.inventory_subpart.custom_cost
-        }"`,
-        `"${formatDatetime(data.createdAt)}"`,
+        ).toFixed(2)}"`,
+        `"${(
+          (data.inventory_subpart.price +
+            data.inventory_subpart.freight_cost +
+            data.inventory_subpart.custom_cost) *
+          data.quantity
+        ).toFixed(2)}"`,
       ];
       rows.push(rowData.join(","));
     });
@@ -480,403 +750,438 @@ function BIS() {
                 <p>BIS REPORT</p>
               </div>
               <div className="button-create-side">
-                  <div className="filtering-section">
-                      <div className="date-section-filter">
-                          <div style={{ position: "relative", marginBottom: "15px" }}>
-                              <DatePicker
-                              selected={startDate}
-                              onChange={(date) => setStartDate(date)}
-                              placeholderText="Choose Date From"
-                              dateFormat="yyyy-MM-dd"
-                              wrapperClassName="custom-datepicker-wrapper"
-                              popperClassName="custom-popper"
-                              style={{ fontFamily: "Poppins, Source Sans Pro"}}
-                              />
-                              <CalendarBlank
-                              size={20}
-                              weight="thin"
-                              style={{
-                                  position: "absolute",
-                                  left: "8px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  cursor: "pointer",
-                              }}
-                              />
-                              {startDate && (
-                              <XCircle
-                                  size={16}
-                                  weight="thin"
-                                  style={{
-                                  position: "absolute",
-                                  right: "19px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  cursor: "pointer",
-                                  }}
-                                  onClick={handleXCircleClick}
-                              />
-                              )}
-                          </div>
-                          <div className="">
-                            <Form.Select
-                              aria-label="item status"
-                              onChange={(e) => setSelectedDepartment(e.target.value)}
-                              style={{
-                                width: "274px",
-                                height: "40px",
-                                fontSize: "15px",
-                                marginBottom: "15px",
-                                fontFamily: "Poppins, Source Sans Pro",
-                              }}
-                              value={selectedDepartment}
-                            >
-                              <option disabled value="" selected>
-                                Select Department
-                              </option>
-                              <option value={"All"}>All</option>
-                              {department.map((dept) => (
-                                <option key={dept.id} value={dept.id}>
-                                  {dept.department_name}
-                                </option>
-                              ))}
-                            </Form.Select>
-                          </div>
-                      </div>
-
-                      <div className="warehouse-product-filter">
-                          <div style={{ position: "relative", marginBottom: "15px" }}>
-                              <DatePicker
-                              selected={endDate}
-                              onChange={(date) => setEndDate(date)}
-                              placeholderText="Choose Date To"
-                              dateFormat="yyyy-MM-dd"
-                              wrapperClassName="custom-datepicker-wrapper"
-                              popperClassName="custom-popper"
-                              style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                              />
-                              <CalendarBlank
-                              size={20}
-                              weight="thin"
-                              selected={endDate}
-                              onChange={(date) => setEndDate(date)}
-                              style={{
-                                  position: "absolute",
-                                  left: "8px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  cursor: "pointer",
-                              }}
-                              />
-                              {endDate && (
-                              <XCircle
-                                  size={16}
-                                  weight="thin"
-                                  style={{
-                                  position: "absolute",
-                                  right: "19px",
-                                  top: "50%",
-                                  transform: "translateY(-50%)",
-                                  cursor: "pointer",
-                                  }}
-                                  onClick={handleXClick}
-                              />
-                            )}
-                          </div>
-                          <div className="">
-                            <Form.Select
-                              aria-label="item status"
-                              onChange={(e) => setSelectedCostcenter(e.target.value)}
-                              style={{
-                                width: "284px",
-                                height: "40px",
-                                fontSize: "15px",
-                                marginBottom: "15px",
-                                fontFamily: "Poppins, Source Sans Pro",
-                              }}
-                              value={selectedCostcenter}
-                            >
-                              <option disabled value="" selected>
-                                Select Cost Center
-                              </option>
-                              <option value={"All"}>All</option>
-                              {costCenter.map((cost) => (
-                                <option key={cost.id} value={cost.id}>
-                                  {cost.name}
-                                </option>
-                              ))}
-                            </Form.Select>
-                          </div>
-                      </div>
-
-                      <div className="button-filter-section">
-                          <div className="btnfilter">
-                            <button className="actualbtnfilter" onClick={handleGenerate}>
-                              FILTER
-                            </button>
-                          </div>
-                          <div className="clearbntfilter">
-                              <button className="actualclearfilter"
-                                onClick={clearFilters}
-                                >
-                                  Clear Filter
-                              </button>
-                          </div>
-                      </div>
+                <div className="filtering-section">
+                  <div className="date-section-filter">
+                    <div style={{ position: "relative", marginBottom: "15px" }}>
+                      <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        placeholderText="Choose Date From"
+                        dateFormat="yyyy-MM-dd"
+                        wrapperClassName="custom-datepicker-wrapper"
+                        popperClassName="custom-popper"
+                        style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                      />
+                      <CalendarBlank
+                        size={20}
+                        weight="thin"
+                        style={{
+                          position: "absolute",
+                          left: "8px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                        }}
+                      />
+                      {startDate && (
+                        <XCircle
+                          size={16}
+                          weight="thin"
+                          style={{
+                            position: "absolute",
+                            right: "19px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleXCircleClick}
+                        />
+                      )}
+                    </div>
+                    <div className="">
+                      <Form.Select
+                        aria-label="item status"
+                        onChange={(e) => setSelectedDepartment(e.target.value)}
+                        style={{
+                          width: "274px",
+                          height: "40px",
+                          fontSize: "15px",
+                          marginBottom: "15px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        value={selectedDepartment}
+                      >
+                        <option disabled value="" selected>
+                          Select Department
+                        </option>
+                        <option value={"All"}>All</option>
+                        {department.map((dept) => (
+                          <option key={dept.id} value={dept.id}>
+                            {dept.department_name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </div>
                   </div>
- 
+
+                  <div className="warehouse-product-filter">
+                    <div style={{ position: "relative", marginBottom: "15px" }}>
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        placeholderText="Choose Date To"
+                        dateFormat="yyyy-MM-dd"
+                        wrapperClassName="custom-datepicker-wrapper"
+                        popperClassName="custom-popper"
+                        style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                      />
+                      <CalendarBlank
+                        size={20}
+                        weight="thin"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        style={{
+                          position: "absolute",
+                          left: "8px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                        }}
+                      />
+                      {endDate && (
+                        <XCircle
+                          size={16}
+                          weight="thin"
+                          style={{
+                            position: "absolute",
+                            right: "19px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleXClick}
+                        />
+                      )}
+                    </div>
+                    <div className="">
+                      <Form.Select
+                        aria-label="item status"
+                        onChange={(e) => setSelectedCostcenter(e.target.value)}
+                        style={{
+                          width: "284px",
+                          height: "40px",
+                          fontSize: "15px",
+                          marginBottom: "15px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        value={selectedCostcenter}
+                      >
+                        <option disabled value="" selected>
+                          Select Cost Center
+                        </option>
+                        <option value={"All"}>All</option>
+                        {costCenter.map((cost) => (
+                          <option key={cost.id} value={cost.id}>
+                            {cost.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </div>
+                  </div>
+
+                  <div className="button-filter-section">
+                    <div className="btnfilter">
+                      <button
+                        className="actualbtnfilter"
+                        onClick={handleGenerate}
+                      >
+                        FILTER
+                      </button>
+                    </div>
+                    <div className="clearbntfilter">
+                      <button
+                        className="actualclearfilter"
+                        onClick={clearFilters}
+                      >
+                        Clear Filter
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
               <div className="searchandexport">
-                  <div className="exportfield">
-                      <button className="export" onClick={exportToCSV}>
-                        <Export size={20} weight="bold" /> <p1>Export</p1>
-                      </button>
-                  </div>
-                  <div className="searchfield">
-                    <TextField
-                      label="Search"
-                      variant="outlined"
-                      style={{
-                      float: 'right',
-                      }}
-                      InputLabelProps={{
-                        style: { fontSize: '14px'},
-                      }}
-                      InputProps={{
-                        style: { fontSize: '14px', width: '250px', height: '50px' },
-                      }}
-                    onChange={handleSearch}/>
-                  </div>
+                <div className="exportfield">
+                  <button className="export" onClick={exportToCSV}>
+                    <Export size={20} weight="bold" /> <p1>Export</p1>
+                  </button>
+                </div>
+                <div className="searchfield">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{
+                      float: "right",
+                    }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
               </div>
 
               <table ref={tableRef} className="table-hover">
                 <thead>
                   <tr>
-                    <th className="tableh">Cost Center</th>
-                    <th className="tableh">Department</th>
-                    <th className="tableh">Issued Quantity</th>
+                    <th className="tableh">Doc Date</th>
+                    <th className="tableh">BIS#</th>
+                    <th className="tableh">MRS</th>
+                    <th className="tableh">Category</th>
                     <th className="tableh">Product Code</th>
                     <th className="tableh">Product Name</th>
+                    <th className="tableh">Issued Quantity</th>
                     <th className="tableh">UOM</th>
-                    <th className="tableh">Category</th>
                     <th className="tableh">Unit Price</th>
                     <th className="tableh">Freight Cost</th>
-                    <th className="tableh">Duties & Custom Cost</th>
-                    <th className="tableh">Total Price</th>
-                    <th className="tableh">Issued Date</th>
+                    <th className="tableh">Custom Cost</th>
+                    <th className="tableh">AUP</th>
+                    <th className="tableh">Total</th>
                   </tr>
                 </thead>
-                {bisContent.length > 0 || bisContent_asm.length > 0 || bisContent_spare.length > 0 || bisContent_subpart.length > 0 ? (
-                <tbody>
-                  {currentItemsBISprod.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.issuance.cost_center.name}</td>
-                      <td>
-                        {
-                          data.issuance.cost_center.masterlist.department
-                            .department_name
-                        }
-                      </td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {
-                          data.inventory_prd.product_tag_supplier.product
-                            .product_code
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_prd.product_tag_supplier.product
-                            .product_name
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_prd.product_tag_supplier.product
-                            .product_unitMeasurement
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_prd.product_tag_supplier.product
-                            .category.category_name
-                        }
-                      </td>
-                      <td>{data.inventory_prd.price}</td>
-                      <td>{data.inventory_prd.freight_cost}</td>
-                      <td>{data.inventory_prd.custom_cost}</td>
-                      <td>
-                        {data.inventory_prd.price +
-                          data.inventory_prd.freight_cost +
-                          data.inventory_prd.custom_cost}
-                      </td>
-                      <td>{formatDatetime(data.createdAt)}</td>
-                    </tr>
-                  ))}
+                {bisContent.length > 0 ||
+                bisContent_asm.length > 0 ||
+                bisContent_spare.length > 0 ||
+                bisContent_subpart.length > 0 ? (
+                  <tbody>
+                    {currentItemsBISprod.map((data, i) => (
+                      <tr key={i}>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                        <td>{data.issuance.issuance_id}</td>
+                        <td>{data.issuance.mrs}</td>
+                        <td>
+                          {
+                            data.inventory_prd.product_tag_supplier.product
+                              .category.category_name
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_prd.product_tag_supplier.product
+                              .product_code
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_prd.product_tag_supplier.product
+                              .product_name
+                          }
+                        </td>
+                        <td>{data.quantity}</td>
+                        <td>
+                          {
+                            data.inventory_prd.product_tag_supplier.product
+                              .product_unitMeasurement
+                          }
+                        </td>
+                        <td>{data.inventory_prd.price}</td>
+                        <td>{data.inventory_prd.freight_cost}</td>
+                        <td>{data.inventory_prd.custom_cost}</td>
+                        <td>
+                          {(
+                            data.inventory_prd.price +
+                            data.inventory_prd.freight_cost +
+                            data.inventory_prd.custom_cost
+                          ).toFixed(2)}
+                        </td>
+                        <td>
+                          {(
+                            (data.inventory_prd.price +
+                              data.inventory_prd.freight_cost +
+                              data.inventory_prd.custom_cost) *
+                            data.quantity
+                          ).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
 
-                  {currentItemsBISasm.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.issuance.cost_center.name}</td>
-                      <td>
-                        {
-                          data.issuance.cost_center.masterlist.department
-                            .department_name
-                        }
-                      </td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {
-                          data.inventory_assembly.assembly_supplier.assembly
-                            .assembly_code
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_assembly.assembly_supplier.assembly
-                            .assembly_name
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_assembly.assembly_supplier.assembly
-                            .assembly_unitMeasurement
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_assembly.assembly_supplier.assembly
-                            .category.category_name
-                        }
-                      </td>
-                      <td>{data.inventory_assembly.price}</td>
-                      <td>{data.inventory_assembly.freight_cost}</td>
-                      <td>{data.inventory_assembly.custom_cost}</td>
-                      <td>
-                        {data.inventory_assembly.price +
-                          data.inventory_assembly.freight_cost +
-                          data.inventory_assembly.custom_cost}
-                      </td>
-                      <td>{formatDatetime(data.createdAt)}</td>
-                    </tr>
-                  ))}
+                    {currentItemsBISasm.map((data, i) => (
+                      <tr key={i}>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                        <td>{data.issuance.issuance_id}</td>
+                        <td>{data.issuance.mrs}</td>
+                        <td>
+                          {
+                            data.inventory_assembly.assembly_supplier.assembly
+                              .category.category_name
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_assembly.assembly_supplier.assembly
+                              .assembly_code
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_assembly.assembly_supplier.assembly
+                              .assembly_name
+                          }
+                        </td>
+                        <td>{data.quantity}</td>
+                        <td>
+                          {
+                            data.inventory_assembly.assembly_supplier.assembly
+                              .assembly_unitMeasurement
+                          }
+                        </td>
 
-                  {currentItemsBISspare.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.issuance.cost_center.name}</td>
-                      <td>
-                        {
-                          data.issuance.cost_center.masterlist.department
-                            .department_name
-                        }
-                      </td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {
-                          data.inventory_spare.sparepart_supplier.sparePart
-                            .spareParts_code
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_spare.sparepart_supplier.sparePart
-                            .spareParts_name
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_spare.sparepart_supplier.sparePart
-                            .spareParts_unitMeasurement
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_spare.sparepart_supplier.sparePart
-                            .category.category_name
-                        }
-                      </td>
-                      <td>{data.inventory_spare.price}</td>
-                      <td>{data.inventory_spare.freight_cost}</td>
-                      <td>{data.inventory_spare.custom_cost}</td>
-                      <td>
-                        {data.inventory_spare.price +
-                          data.inventory_spare.freight_cost +
-                          data.inventory_spare.custom_cost}
-                      </td>
-                      <td>{formatDatetime(data.createdAt)}</td>
-                    </tr>
-                  ))}
+                        <td>{data.inventory_assembly.price}</td>
+                        <td>{data.inventory_assembly.freight_cost}</td>
+                        <td>{data.inventory_assembly.custom_cost}</td>
+                        <td>
+                          {(
+                            data.inventory_assembly.price +
+                            data.inventory_assembly.freight_cost +
+                            data.inventory_assembly.custom_cost
+                          ).toFixed(2)}
+                        </td>
+                        <td>
+                          {(
+                            (data.inventory_assembly.price +
+                              data.inventory_assembly.freight_cost +
+                              data.inventory_assembly.custom_cost) *
+                            data.quantity
+                          ).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
 
-                  {currentItemsBISsubpart.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.issuance.cost_center.name}</td>
-                      <td>
-                        {
-                          data.issuance.cost_center.masterlist.department
-                            .department_name
-                        }
-                      </td>
-                      <td>{data.quantity}</td>
-                      <td>
-                        {
-                          data.inventory_subpart.subpart_supplier.subPart
-                            .subPart_code
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_subpart.subpart_supplier.subPart
-                            .subPart_name
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_subpart.subpart_supplier.subPart
-                            .subPart_unitMeasurement
-                        }
-                      </td>
-                      <td>
-                        {
-                          data.inventory_subpart.subpart_supplier.subPart
-                            .category.category_name
-                        }
-                      </td>
-                      <td>{data.inventory_subpart.price}</td>
-                      <td>{data.inventory_subpart.freight_cost}</td>
-                      <td>{data.inventory_subpart.custom_cost}</td>
-                      <td>
-                        {data.inventory_subpart.price +
-                          data.inventory_subpart.freight_cost +
-                          data.inventory_subpart.custom_cost}
-                      </td>
-                      <td>{formatDatetime(data.createdAt)}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                    {currentItemsBISspare.map((data, i) => (
+                      <tr key={i}>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                        <td>{data.issuance.issuance_id}</td>
+                        <td>{data.issuance.mrs}</td>
+                        <td>
+                          {
+                            data.inventory_spare.sparepart_supplier.sparePart
+                              .category.category_name
+                          }
+                        </td>
+
+                        <td>
+                          {
+                            data.inventory_spare.sparepart_supplier.sparePart
+                              .spareParts_code
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_spare.sparepart_supplier.sparePart
+                              .spareParts_name
+                          }
+                        </td>
+                        <td>{data.quantity}</td>
+                        <td>
+                          {
+                            data.inventory_spare.sparepart_supplier.sparePart
+                              .spareParts_unitMeasurement
+                          }
+                        </td>
+                        <td>{data.inventory_spare.price}</td>
+                        <td>{data.inventory_spare.freight_cost}</td>
+                        <td>{data.inventory_spare.custom_cost}</td>
+                        <td>
+                          {(
+                            data.inventory_spare.price +
+                            data.inventory_spare.freight_cost +
+                            data.inventory_spare.custom_cost
+                          ).toFixed(2)}
+                        </td>
+                        <td>
+                          {(
+                            (data.inventory_spare.price +
+                              data.inventory_spare.freight_cost +
+                              data.inventory_spare.custom_cost) *
+                            data.quantity
+                          ).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                    
+                    {currentItemsBISsubpart.map((data, i) => (
+                      <tr key={i}>
+                        <td>{formatDatetime(data.createdAt)}</td>
+                        <td>{data.issuance.issuance_id}</td>
+                        <td>{data.issuance.mrs}</td>
+                        <td>
+                          {
+                            data.inventory_subpart.subpart_supplier.subPart
+                              .category.category_name
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_subpart.subpart_supplier.subPart
+                              .subPart_code
+                          }
+                        </td>
+                        <td>
+                          {
+                            data.inventory_subpart.subpart_supplier.subPart
+                              .subPart_name
+                          }
+                        </td>
+                        <td>{data.quantity}</td>
+                        <td>
+                          {
+                            data.inventory_subpart.subpart_supplier.subPart
+                              .subPart_unitMeasurement
+                          }
+                        </td>
+
+                        <td>{data.inventory_subpart.price}</td>
+                        <td>{data.inventory_subpart.freight_cost}</td>
+                        <td>{data.inventory_subpart.custom_cost}</td>
+                        <td>
+                          {(
+                            data.inventory_subpart.price +
+                            data.inventory_subpart.freight_cost +
+                            data.inventory_subpart.custom_cost
+                          ).toFixed(2)}
+                        </td>
+                        <td>
+                          {(
+                            (data.inventory_subpart.price +
+                              data.inventory_subpart.freight_cost +
+                              data.inventory_subpart.custom_cost) *
+                            data.quantity
+                          ).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))} 
+                  </tbody>
                 ) : (
                   <div className="no-data">
                     <img src={NoData} alt="NoData" className="no-data-img" />
-                    <h3>
-                      No Data Found
-                    </h3>
+                    <h3>No Data Found</h3>
                   </div>
                 )}
               </table>
             </div>
           </div>
-          <nav style={{marginTop: '15px'}}>
+          <nav style={{ marginTop: "15px" }}>
             <ul className="pagination" style={{ float: "right" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <li
+                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+              >
                 <button
                   type="button"
                   style={{
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    color: '#000000',
-                    textTransform: 'capitalize',
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    color: "#000000",
+                    textTransform: "capitalize",
                   }}
                   className="page-link"
                   onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
@@ -885,30 +1190,41 @@ function BIS() {
                 </button>
               </li>
               {[...Array(maxTotalPages).keys()].map((num) => (
-                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                <li
+                  key={num}
+                  className={`page-item ${
+                    currentPage === num + 1 ? "active" : ""
+                  }`}
+                >
                   <button
                     style={{
-                      fontSize: '14px',
-                      width: '25px',
-                      background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                      color: currentPage === num + 1 ? '#FFFFFF' : '#000000',
-                      border: 'none',
-                      height: '28px',
+                      fontSize: "14px",
+                      width: "25px",
+                      background: currentPage === num + 1 ? "#FFA500" : "white", // Set background to white if not clicked
+                      color: currentPage === num + 1 ? "#FFFFFF" : "#000000",
+                      border: "none",
+                      height: "28px",
                     }}
-                    className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`}
+                    className={`page-link ${
+                      currentPage === num + 1 ? "gold-bg" : ""
+                    }`}
                     onClick={() => setCurrentPage(num + 1)}
                   >
                     {num + 1}
                   </button>
                 </li>
               ))}
-              <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
+              <li
+                className={`page-item ${
+                  currentPage === maxTotalPages ? "disabled" : ""
+                }`}
+              >
                 <button
                   style={{
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    color: '#000000',
-                    textTransform: 'capitalize'
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    color: "#000000",
+                    textTransform: "capitalize",
                   }}
                   className="page-link"
                   onClick={() => setCurrentPage((prevPage) => prevPage + 1)}

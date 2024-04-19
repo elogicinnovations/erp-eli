@@ -42,6 +42,7 @@ function ReceivingPreview({ authrztn }) {
 
   const { id } = useParams();
   const [prNumber, setPrNumber] = useState();
+  const [receivingID, setReceivingID] = useState();
   const [usedFor, setUsedFor] = useState();
   const [department, setDepartment] = useState();
   const [requestedBy, setRequestedBy] = useState();
@@ -249,6 +250,7 @@ function ReceivingPreview({ authrztn }) {
           },
         })
         .then((res) => {
+          setReceivingID(res.data.primary.id)
           setPrNumber(res.data.primary.purchase_req.pr_num);
           setUsedFor(res.data.primary.purchase_req.used_for);
           setRemarks(res.data.primary.purchase_req.remarks);
@@ -289,6 +291,30 @@ function ReceivingPreview({ authrztn }) {
 
     return () => clearTimeout(delay);
   }, []);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/receiving/secondaryData", {
+          params: {
+            receivingParent_id: receivingID,
+          },
+        })
+        .then((res) => {
+          setproducts(res.data.product);
+          setassembly(res.data.assembly);
+          setspare(res.data.spare);
+          setsubpart(res.data.subpart);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, [receivingID]);
 
   const handleApprove = () => {
     swal({
@@ -782,10 +808,10 @@ function ReceivingPreview({ authrztn }) {
                       <th className="tableh">Duties & Customs Cost </th>
                     </tr>
                   </thead>
-                  {/* {products.length > 0 ||
-                  assembly.length > 0 ||
-                  spare.length > 0 ||
-                  subpart.length > 0 ? ( */}
+                  {(products && products.length > 0) ||
+                  (assembly && assembly.length > 0) ||
+                  (spare && spare.length > 0) ||
+                  (subpart && subpart.length > 0) ? (
                     <tbody>
                       {products.map((data, i) => (
                         <tr key={i}>
@@ -938,12 +964,12 @@ function ReceivingPreview({ authrztn }) {
                         </tr>
                       ))}
                     </tbody>
-                  {/* ) : (
+                   ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
                       <h3>No Data Found</h3>
                     </div>
-                  )} */}
+                  )}  
                 </table>
               </div>
 

@@ -33,7 +33,7 @@ function CreateSubParts({authrztn}) {
   const [unitMeasurement, setunitMeasurement] = useState("");
   const [thresholds, setThresholds] = useState("");
   const [slct_binLocation, setslct_binLocation] = useState([]);
-  const [slct_manufacturer, setslct_manufacturer] = useState([]);
+  const [slct_manufacturer, setslct_manufacturer] = useState('');
   const [slct_category, setslct_category] = useState([]);
   const [selectedimage, setselectedimage] = useState([]);
  
@@ -556,7 +556,7 @@ function onDropImages(event) {
                             <Form.Select
                               aria-label=""
                               onChange={handleFormChangeManufacturer}
-                              required
+                              
                               style={{ height: "40px", fontSize: "15px" }}
                               defaultValue="">
                               <option disabled value="">

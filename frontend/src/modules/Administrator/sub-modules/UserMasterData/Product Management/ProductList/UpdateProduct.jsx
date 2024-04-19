@@ -1027,9 +1027,9 @@ useEffect(() => {
                     onChange={handleFormChangeManufacturer}
                     
                     style={{ height: "40px", fontSize: "15px" }}
-                    value={slct_manufacturer}>
+                    value={slct_manufacturer || ''}>
                     <option disabled value="">
-                      Select Manufacturer ...
+                      No Manufacturer Selected ...
                     </option>
                     {manufacturer.map((manufacturer) => (
                       <option
