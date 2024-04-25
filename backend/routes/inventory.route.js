@@ -47,7 +47,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -73,8 +73,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
       const productID = item.product_tag_supplier?.product?.product_id;
       const productCode = item.product_tag_supplier?.product?.product_code;
       const productName = item.product_tag_supplier?.product?.product_name;
-      const Manufacturer =
-        item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
+      const Category =
+        item.product_tag_supplier?.product?.category?.category_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
       if (productCode && productName) {
@@ -86,7 +86,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -115,7 +115,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -141,8 +141,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
       const productID = item.assembly_supplier?.assembly?.id;
       const productCode = item.assembly_supplier?.assembly?.assembly_code;
       const productName = item.assembly_supplier?.assembly?.assembly_name;
-      const Manufacturer =
-        item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
+      const Category =
+        item.assembly_supplier?.assembly?.category?.category_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
       if (productCode && productName) {
@@ -154,7 +154,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -182,7 +182,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -208,8 +208,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
       const productID = item.sparepart_supplier?.sparePart?.id;
       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
-      const Manufacturer =
-        item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
+      const Category =
+        item.sparepart_supplier?.sparePart?.category?.category_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
       if (productCode && productName) {
@@ -221,7 +221,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -249,7 +249,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -274,8 +274,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
       const productID = item.subpart_supplier?.subPart?.id;
       const productCode = item.subpart_supplier?.subPart?.subPart_code;
       const productName = item.subpart_supplier?.subPart?.subPart_name;
-      const Manufacturer =
-        item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
+      const Category =
+        item.subpart_supplier?.subPart?.category?.category_name;
       const Price = item.price;
       // Ensure that productCode and productName are truthy before using them
       if (productCode && productName) {
@@ -287,7 +287,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -301,6 +301,9 @@ router.route("/fetchInventory_group").get(async (req, res) => {
     });
 
     const finalResult_subpart = Object.values(groupedSubpartData);
+
+    // console.log(`djsanldnsaldnsaldn`)
+    // console.log(finalResult_PRD)
 
     return res.json({
       product: finalResult_PRD,
@@ -333,7 +336,7 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -359,8 +362,8 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
       const productID = item.product_tag_supplier?.product?.product_id;
       const productCode = item.product_tag_supplier?.product?.product_code;
       const productName = item.product_tag_supplier?.product?.product_name;
-      const Manufacturer =
-        item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
+      const Category =
+        item.product_tag_supplier?.product?.category?.category_name;
       const Price = item.price;
       const freight_cost = item.freight_cost;
       const custom_cost = item.custom_cost;
@@ -379,7 +382,7 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -422,7 +425,7 @@ router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -448,8 +451,8 @@ router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
       const productID = item.assembly_supplier?.assembly?.id;
       const productCode = item.assembly_supplier?.assembly?.assembly_code;
       const productName = item.assembly_supplier?.assembly?.assembly_name;
-      const Manufacturer =
-        item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
+      const Category =
+        item.assembly_supplier?.assembly?.category?.category_name;
       const Price = item.price;
       const freight_cost = item.freight_cost;
       const custom_cost = item.custom_cost;
@@ -466,7 +469,7 @@ router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -510,7 +513,7 @@ router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -536,8 +539,8 @@ router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
       const productID = item.sparepart_supplier?.sparePart?.id;
       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
-      const Manufacturer =
-        item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
+      const Category =
+        item.sparepart_supplier?.sparePart?.category?.category_name;
       const Price = item.price;
 
       const freight_cost = item.freight_cost;
@@ -555,7 +558,7 @@ router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -597,7 +600,7 @@ router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -622,8 +625,8 @@ router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
       const productID = item.subpart_supplier?.subPart?.id;
       const productCode = item.subpart_supplier?.subPart?.subPart_code;
       const productName = item.subpart_supplier?.subPart?.subPart_name;
-      const Manufacturer =
-        item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
+      const Category =
+        item.subpart_supplier?.subPart?.category?.category_name;
       const Price = item.price;
       const freight_cost = item.freight_cost;
       const custom_cost = item.custom_cost;
@@ -640,7 +643,7 @@ router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            Category: Category,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -1165,7 +1168,7 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
 
               include: [
                 {
-                  model: Manufacturer,
+                  model: Category,
                   required: true,
                 },
               ],
@@ -1191,8 +1194,8 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
      const productName = item.product_tag_supplier?.product?.product_name;
      const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
      const createdAtt = item.product_tag_supplier?.product?.createdAt;
-     const Manufacturer =
-       item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
+     const Category =
+       item.product_tag_supplier?.product?.category?.category_name;
      const Price = item.price;
      // Ensure that productCode and productName are truthy before using them
      if (warehouseId && productCode && productName) {
@@ -1207,7 +1210,7 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
            warehouseId: warehouseId,
            product_code: productCode,
            product_name: productName,
-           manufacturer: Manufacturer,
+           Category: Category,
            totalQuantity: 0,
            warehouse_name: warehouse_name,
            price: Price,

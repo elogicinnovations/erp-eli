@@ -53,12 +53,12 @@ const Supplier = sequelize.define("suppliers", {
     unique: false,
   },
   supplier_Telnumber: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },
   supplier_terms: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
     unique: false,
   },

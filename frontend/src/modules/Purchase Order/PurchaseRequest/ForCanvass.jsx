@@ -999,6 +999,16 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                           Preview
                         </Button>
                         )}
+{!showPreviewButton && (
+                        <Button 
+                              onClick={add}
+                              className='btn btn-warning' 
+                              size="md" 
+                              style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
+                        >
+                          Skip
+                        </Button>
+                        )}
                         </div>
                 </Form>
 

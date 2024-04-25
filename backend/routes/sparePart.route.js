@@ -293,11 +293,11 @@ router.route("/update").post(
         //   },
         // });
 
-        const deletesupplier = await SparePart_Supplier.destroy({
-          where: {
-            sparePart_id: id,
-          },
-        });
+        // const deletesupplier = await SparePart_Supplier.destroy({
+        //   where: {
+        //     sparePart_id: id,
+        //   },
+        // });
 
         // if(deletesupplier) {
             const selectedSupplier = addPriceInput;

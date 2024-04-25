@@ -122,6 +122,7 @@ const Report_inv = require("./routes/report_inventory.route");
 
 const Report_PO = require("./routes/report_PO.route");
 const Report_BIS = require("./routes/report_bis.route");
+const Report_BIS_Summary = require("./routes/report_bis_summary.route");
 
 const Warehouse = require("./routes/warehouse.route");
 
@@ -202,6 +203,7 @@ app.use("/Dashboard", Dashboard);
 app.use("/report_inv", Report_inv);
 app.use("/report_PO", Report_PO);
 app.use("/report_BIS", Report_BIS);
+app.use("/report_BIS_Summary", Report_BIS_Summary);
 
 app.use("/warehouses", Warehouse);
 

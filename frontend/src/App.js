@@ -68,6 +68,7 @@ import ReceivingStockTransferPreview from "./modules/Warehouse/Receiving Stock T
 import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
 import BIS from "./modules/Reports/BIS/BIS";
+import BIS_Summary from "./modules/Reports/BIS/BIS_Summary";
 import ReturnForm from "./modules/Inventory/ReturnForm";
 import Sidebar from "./modules/Sidebar/sidebar";
 import { DataProvider } from "./modules/Forgot Password/sub-modules/data/dataPost";
@@ -695,6 +696,7 @@ function App() {
                     element={<POTransactionReports />}
                   />
                   <Route path="/BIS" element={<BIS />} />
+                  <Route path="/BIS_Summary" element={<BIS_Summary />} />
 
                   <Route path="/stockTransfer" element={<StockTransfer />} />
 

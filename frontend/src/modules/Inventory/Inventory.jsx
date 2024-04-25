@@ -416,7 +416,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             <tr>
                               <th className='tableh'>Product Code</th>
                               <th className='tableh'>Product Name</th>
-                              <th className='tableh'>Manufacturer</th>
+                              <th className='tableh'>Category</th>
                               <th className='tableh'>Quantity</th>
                         
                             </tr>
@@ -427,7 +427,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.productID}`)}>
                                   <td>{data.product_code}</td>
                                   <td>{data.product_name}</td>
-                                  <td>{data.manufacturer}</td>
+                                  <td>{data.Category}</td>
                                   <td>{data.totalQuantity}</td>
                                  
 
@@ -438,7 +438,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewAssembly/${data.productID}`)}>
                                   <td>{data.product_code}</td>
                                   <td>{data.product_name}</td>
-                                  <td>{data.manufacturer}</td>
+                                  <td>{data.Category}</td>
                                   <td>{data.totalQuantity}</td>
 
                                 </tr>
@@ -448,7 +448,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSpare/${data.productID}`)}>
                                   <td>{data.product_code}</td>
                                   <td>{data.product_name}</td>
-                                  <td>{data.manufacturer}</td>
+                                  <td>{data.Category}</td>
                                   <td>{data.totalQuantity}</td>
 
                                 </tr>
@@ -458,7 +458,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSubpart/${data.productID}`)}>
                                   <td>{data.product_code}</td>
                                   <td>{data.product_name}</td>
-                                  <td>{data.manufacturer}</td>
+                                  <td>{data.Category}</td>
                                   <td>{data.totalQuantity}</td>
 
                                 </tr>

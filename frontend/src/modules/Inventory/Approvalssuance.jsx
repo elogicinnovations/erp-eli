@@ -30,6 +30,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [fromSite, setFromSite] = useState();
+  const [fromSitename, setFromSitename] = useState();
   const [issuedTo, setIssuedTo] = useState();
   const [withAccountability, setWithAccountability] = useState();
   const [accountabilityRefcode, setAccountabilityRefcode] = useState();
@@ -67,6 +68,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
     })
     .then(res => {
       setFromSite(res.data[0].from_site);
+      setFromSitename(res.data[0].warehouse.warehouse_name);
       setIssuedTo(res.data[0].cost_center.name);
       setWithAccountability(res.data[0].with_accountability)
       setAccountabilityRefcode(res.data[0].accountability_refcode)
@@ -229,7 +231,7 @@ return () => clearTimeout(delay);
                   <Form.Control
                     type="text"
                     style={{ height: "40px", fontSize: "15px" }}
-                    value={fromSite}
+                    value={fromSitename}
                     readOnly
                   />
                 </Form.Group>

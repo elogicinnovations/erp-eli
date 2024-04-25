@@ -8,7 +8,7 @@ const Category = sequelize.define('category', {
     primaryKey: true,
   },
   category_name: {
-    type: DataTypes.STRING, // Change the column name to col_roleID
+    type: DataTypes.STRING, 
     allowNull: true,
     unique: false,
   },

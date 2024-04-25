@@ -34,22 +34,41 @@ router.use(session({
 
 router.route('/lastCode').get(async (req, res) => {
   try {
-    const latestPR = await Supplier.findOne({
-      attributes: [[sequelize.fn('max', sequelize.col('supplier_code')), 'latestNumber']],
-    });
-    let latestNumber = latestPR.getDataValue('latestNumber');
+  //   const latestPR = await Supplier.findOne({
+  //     attributes: [[sequelize.fn('max', sequelize.col('supplier_code')), 'latestNumber']],
+  //   });
+  //   let latestNumber = latestPR.getDataValue('latestNumber');
 
-    console.log('Latest Number:', latestNumber);
+  //   console.log('Latest Number:', latestNumber);
 
-    // Increment the latestNumber by 1 for a new entry
-    latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
+  //   // Increment the latestNumber by 1 for a new entry
+  //   latestNumber = latestNumber !== null ? (parseInt(latestNumber, 10) + 1).toString() : '1';
 
-    // Do not create a new entry, just return the incremented value
-    return res.json(latestNumber.padStart(4, '0'));
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
+  //   // Do not create a new entry, just return the incremented value
+  //   return res.json(latestNumber.padStart(4, '0'));
+  // } catch (err) {
+  //   console.error(err);
+  //   res.status(500).json("Error");
+  // }
+
+  const lastCategory = await Supplier.findOne({
+    order: [['createdAt', 'DESC']]
+});
+
+let nextCategoryCode;
+if (lastCategory) {
+    const lastCode = lastCategory.supplier_code;
+    const lastNumber = parseInt(lastCode.substring(1), 10);
+    nextCategoryCode = 'S' + (lastNumber + 1).toString().padStart(6, '0');
+} else {
+    nextCategoryCode = 'S000001'; // Initial category code
+}
+
+res.json({ nextCategoryCode });
+} catch (err) {
+console.error(err);
+res.status(500).json("Error");
+}
 });
 
 

@@ -1156,38 +1156,38 @@ router.route("/primaryData").get(async (req, res) => {
     //   ],
     // });
 
-    const assembly = await Receiving_Asm.findAll({
-      where: {
-        receiving_po_id: receivingParent_id,
-      },
-      include: [
-        {
-          model: PR_PO_asmbly,
-          required: true,
-          include: [
-            {
-              model: Assembly_Supplier,
-              required: true,
-              include: [
-                {
-                  model: Assembly,
-                  required: true,
-                },
+    // const assembly = await Receiving_Asm.findAll({
+    //   where: {
+    //     receiving_po_id: receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO_asmbly,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Assembly_Supplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: Assembly,
+    //               required: true,
+    //             },
 
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
     // const spare = await Receiving_Spare.findAll({
     //   where: {
@@ -1406,7 +1406,7 @@ router.route("/secondaryData").get(async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "An error occurred" });
+    return res.status(500).json({ message: error });
   }
 });
 
@@ -2057,11 +2057,8 @@ const currentDateTimeInManila = moment();
   // console.log(productsArray)
   let final_status
 
-
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
-      let set_quantity;
-  
       if(product.freight_cost === '0' && product.customFee === '0'){
         final_status = 'Delivered (Lack of Cost)'
       }
@@ -2074,6 +2071,63 @@ const currentDateTimeInManila = moment();
       else{
         final_status = 'Delivered'
       }
+    }
+  }
+  else if(assemblyArray && assemblyArray.length > 0){
+    for (const product of assemblyArray) {
+      if(product.freight_cost === '0' && product.customFee === '0'){
+        final_status = 'Delivered (Lack of Cost)'
+      }
+      else if (product.freight_cost === '0' ){
+        final_status = 'Delivered (Lack of FreightCost)'
+      }
+      else if (product.customFee === '0'){
+        final_status = 'Delivered (Lack of CustomCost)'
+      }
+      else{
+        final_status = 'Delivered'
+      }
+    }
+  }
+  else if(spareArray && spareArray.length > 0){
+    for (const product of spareArray) {
+      if(product.freight_cost === '0' && product.customFee === '0'){
+        final_status = 'Delivered (Lack of Cost)'
+      }
+      else if (product.freight_cost === '0' ){
+        final_status = 'Delivered (Lack of FreightCost)'
+      }
+      else if (product.customFee === '0'){
+        final_status = 'Delivered (Lack of CustomCost)'
+      }
+      else{
+        final_status = 'Delivered'
+      }
+    }
+  }
+  else if (subpartArray && subpartArray.length > 0) {
+    for (const product of subpartArray) {
+      if(product.freight_cost === '0' && product.customFee === '0'){
+        final_status = 'Delivered (Lack of Cost)'
+      }
+      else if (product.freight_cost === '0' ){
+        final_status = 'Delivered (Lack of FreightCost)'
+      }
+      else if (product.customFee === '0'){
+        final_status = 'Delivered (Lack of CustomCost)'
+      }
+      else{
+        final_status = 'Delivered'
+      }
+    }
+  }
+
+
+  if (productsArray && productsArray.length > 0) {
+    for (const product of productsArray) {
+      let set_quantity;
+  
+    
   
       if (product.set_quantity === "0") {
         set_quantity = 1;

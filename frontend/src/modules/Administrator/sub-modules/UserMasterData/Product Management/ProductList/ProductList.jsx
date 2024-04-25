@@ -25,6 +25,7 @@ import { IconButton, TextField, TablePagination, } from '@mui/material';
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import Pagination from 'react-bootstrap/Pagination'
 
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -378,6 +379,47 @@ function ProductList({ authrztn }) {
       });
   };
 
+
+
+
+  const MAX_PAGES = 5; // Maximum number of pages to display without ellipsis
+
+  // Function to generate an array of page numbers with ellipsis
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
   useEffect(() => {
     // Initialize DataTable when role data is available
     if ($("#order-listing").length > 0 && product.length > 0) {
@@ -656,43 +698,62 @@ function ProductList({ authrztn }) {
                )} 
             </div>
           </div>
-          <nav style={{marginTop: '15px'}}>
-                  <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
-                    }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
-                    </li>
-                  </ul>
-                </nav>
+          <nav style={{ marginTop: '15px' }}>
+      <ul className="pagination" style={{ float: "right" }}>
+        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+          <button
+            type="button"
+            style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+            className="page-link"
+            onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+          >
+            Previous
+          </button>
+        </li>
+        {generatePages().map((page, index) => (
+          <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+            <button
+              style={{
+                fontSize: '14px',
+                width: '25px',
+                background: currentPage === page ? '#FFA500' : 'white',
+                color: currentPage === page ? '#FFFFFF' : '#000000',
+                border: 'none',
+                height: '28px',
+              }}
+              className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+              onClick={() => handlePageClick(page)}
+            >
+              {page}
+            </button>
+          </li>
+        ))}
+        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+          <button
+            style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+            className="page-link"
+            onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+          >
+            Next
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+{/* <div className="paginationsReact" style={{ background: 'green' }}>
+   <Pagination >
+    <Pagination.First />
+    <Pagination.Prev />
+    {[...Array(totalPages).keys()].map((num) => (
+      <Pagination.Item key={num} active={currentPage === num + 1} onClick={() => setCurrentPage(num + 1)}>
+        {num + 1}
+      </Pagination.Item>
+    ))}
+    <Pagination.Next />
+    <Pagination.Last />
+  </Pagination> 
+</div> */}
+
         </div>
         ) : (
           <div className="no-access">

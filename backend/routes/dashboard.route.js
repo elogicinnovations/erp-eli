@@ -2592,9 +2592,13 @@ router.route("/countSupplierLeadGraph").get(async (req, res) => {
         }
       });
     });
+    // console.log(`supplierData`);
+    // console.log(supplierData); // Output the array
 
-    console.log(supplierData); // Output the array
-    return res.json(supplierData);
+    //filter only 5 supplier will push 
+    supplierData.sort((a, b) => a.days - b.days);
+    const topFiveSuppliers = supplierData.slice(0, 5);
+    return res.json(topFiveSuppliers);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

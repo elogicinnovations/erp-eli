@@ -21,7 +21,11 @@ router.route('/fetchTable').get(async (req, res) => {
     //       required: false,
     //     },
     //   });
-      const data = await Category.findAll();
+      const data = await Category.findAll({
+        order: [
+          ['category_name', 'ASC'] 
+        ]
+      });
   
       if (data) {
         // console.log(data);

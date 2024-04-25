@@ -165,8 +165,9 @@ router.route("/approval").post(async (req, res) => {
 
   )
   if(approve){
-    
+    console.log('dedasadsadsad')
   if (product && product.length > 0) {
+    console.log('dedasadsadsad222')
     for (const prod of product) {
       let remainingQuantity = prod.quantity;
       const productName = prod.product.product_name;
@@ -559,6 +560,10 @@ router.route("/approvalIssuance").get(async (req, res) => {
           model: CostCenter,
           required: true,
         },
+        {
+          model: Warehouses,
+          required: true
+        }
       ],
       where: {
         issuance_id: req.query.id,

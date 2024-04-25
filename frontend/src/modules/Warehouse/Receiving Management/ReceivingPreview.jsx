@@ -263,24 +263,9 @@ function ReceivingPreview({ authrztn }) {
           setPoNum(res.data.primary.po_id);
           setRefnum(res.data.primary.ref_code)
           setRequestPr(res.data.primary.purchase_req.createdAt);
-          setSupplierCode(
-            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
-              .supplier.supplier_code
-          );
-          setSupplierName(
-            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
-              .supplier.supplier_name
-          );
-          setSupplierTerms(
-            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
-              .supplier.supplier_terms
-          );
+          
           setApproveddate(res.data.primary.purchase_req.date_approved);
 
-          setproducts(res.data.product);
-          setassembly(res.data.assembly);
-          setspare(res.data.spare);
-          setsubpart(res.data.subpart);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -294,10 +279,12 @@ function ReceivingPreview({ authrztn }) {
 
   useEffect(() => {
     const delay = setTimeout(() => {
+
+      // console.log(`receivingID ${receivingID}`)
       axios
         .get(BASE_URL + "/receiving/secondaryData", {
           params: {
-            receivingParent_id: receivingID,
+            receivingParent_id: id,
           },
         })
         .then((res) => {
@@ -305,6 +292,24 @@ function ReceivingPreview({ authrztn }) {
           setassembly(res.data.assembly);
           setspare(res.data.spare);
           setsubpart(res.data.subpart);
+
+          const mapping = res.data.product[0] ? res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier 
+                          : res.data.assembly[0] ? res.data.assembly[0].purchase_req_canvassed_asmbly.assembly_supplier 
+                          : res.data.spare[0] ? res.data.spare[0].purchase_req_canvassed_spare.sparepart_supplier 
+                          : res.data.subpart[0].purchase_req_canvassed_subpart.subpart_supplier 
+
+          
+
+          console.log(mapping)
+          setSupplierCode(
+            mapping.supplier.supplier_code
+          );
+          setSupplierName(
+            mapping.supplier.supplier_name
+          );
+          setSupplierTerms(
+            mapping.supplier.supplier_terms
+          );
           setIsLoading(false);
         })
         .catch((err) => {
@@ -314,7 +319,7 @@ function ReceivingPreview({ authrztn }) {
     }, 1000);
 
     return () => clearTimeout(delay);
-  }, [receivingID]);
+  }, []);
 
   const handleApprove = () => {
     swal({

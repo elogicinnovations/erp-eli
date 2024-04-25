@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 import axios from "axios";
 import "../../../../assets/global/style.css";
 import "../../../styles/react-style.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import NoData from '../../../../assets/image/NoData.png';
-import NoAccess from '../../../../assets/image/NoAccess.png';
+import NoData from "../../../../assets/image/NoData.png";
+import NoAccess from "../../../../assets/image/NoAccess.png";
 import swal from "sweetalert";
 import BASE_URL from "../../../../assets/global/url";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 import Form from "react-bootstrap/Form";
-import UserProfile from '../../../../assets/image/user.png';
+import UserProfile from "../../../../assets/image/user.png";
 
 import {
   Plus,
@@ -20,7 +20,7 @@ import {
   Eye,
   EyeSlash,
   Circle,
-  DotsThreeOutline 
+  DotsThreeOutline,
 } from "@phosphor-icons/react";
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -51,30 +51,31 @@ function MasterList({ authrztn }) {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
-  const [rotatedIcons, setRotatedIcons] = useState(Array(masterListt.length).fill(false));
+  const [rotatedIcons, setRotatedIcons] = useState(
+    Array(masterListt.length).fill(false)
+  );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
   const [isFormModified, setIsFormModified] = useState(false);
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
   const totalPages = Math.ceil(masterListt.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, masterListt.length);
-  const currentItems = masterListt.slice(startIndex, endIndex); 
+  const currentItems = masterListt.slice(startIndex, endIndex);
 
-    const decodeToken = () => {
-      var token = localStorage.getItem('accessToken');
-      if(typeof token === 'string'){
+  const decodeToken = () => {
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
       var decoded = jwtDecode(token);
       setuserId(decoded.id);
-      }
     }
+  };
 
-    useEffect(() => {
-      decodeToken();
-    }, [])
-
+  useEffect(() => {
+    decodeToken();
+  }, []);
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -140,7 +141,6 @@ function MasterList({ authrztn }) {
       .get(BASE_URL + "/masterList/viewAuthorization/" + decoded.id)
       .then((res) => {
         if (res.status === 200) {
-
           setAuthorization(res.data.authorization);
         }
       })
@@ -166,22 +166,22 @@ function MasterList({ authrztn }) {
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/masterList/masterTable")
-      .then((res) => {
-        setmasterListt(res.data)
-        setSearchMasterlist(res.data)
-        setIsLoading(true);
-      })
-      .catch((err) => {
-        console.log(err)
-        setIsLoading(false);
-      });
+      axios
+        .get(BASE_URL + "/masterList/masterTable")
+        .then((res) => {
+          setmasterListt(res.data);
+          setSearchMasterlist(res.data);
+          setIsLoading(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }, 1000);
 
     return () => clearTimeout(delay);
   };
-  
+
   useEffect(() => {
     reloadTable();
   }, []);
@@ -197,7 +197,7 @@ function MasterList({ authrztn }) {
         data.col_status.toLowerCase().includes(searchTerm)
       );
     });
-  
+
     setmasterListt(filteredData);
   };
 
@@ -252,10 +252,14 @@ function MasterList({ authrztn }) {
     }
   };
 
-  const passwordsMatch = formData.cpass === formData.cpass2 && formData.cpass !== '' && formData.cpass2 !== '';
-  
+  const passwordsMatch =
+    formData.cpass === formData.cpass2 &&
+    formData.cpass !== "" &&
+    formData.cpass2 !== "";
+
   const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
     return regex.test(password);
   };
 
@@ -269,9 +273,12 @@ function MasterList({ authrztn }) {
       }));
     } else if (name === "cnum") {
       // Check if the value contains only numbers, '+', and '-'
-      const isValid = /^[0-9+\\-]*$/.test(value);
-
-      if (isValid) {
+      if (value.length === 1 && value !== "0") {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: "0",
+        }));
+      } else {
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
@@ -281,7 +288,7 @@ function MasterList({ authrztn }) {
       // Check if the value contains invalid characters
       const isValid = /^[a-zA-Z\s',.\-]*$/.test(value);
 
-      if (name === "cpass" || name === "cpass2") {  
+      if (name === "cpass" || name === "cpass2") {
         // For password and confirm password fields
         setFormData((prevData) => ({
           ...prevData,
@@ -315,33 +322,44 @@ function MasterList({ authrztn }) {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const UpdatepasswordsMatch = updateFormData.uapass === updateFormData.confirmPassword && updateFormData.uapass !== '' && updateFormData.confirmPassword !== '';
+  const UpdatepasswordsMatch =
+    updateFormData.uapass === updateFormData.confirmPassword &&
+    updateFormData.uapass !== "" &&
+    updateFormData.confirmPassword !== "";
 
-  
   const UpdatevalidatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
     return regex.test(password);
   };
 
-    const handleUpdateFormChange = (e) => {
-      const { name, value, type, checked } = e.target;
+  const handleUpdateFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
 
-      const nameRegex = /^[a-zA-Z\s',.\-]*$/;
-      const contactRegex = /^[0-9+\\-]*$/;
+    const nameRegex = /^[a-zA-Z\s',.\-]*$/;
+    const contactRegex = /^[0-9+\\-]*$/;
 
-      let isValidInput = true;
-      if (type === "text" && name === "uaname") {
-        isValidInput = nameRegex.test(value);
-      } else if (type === "text" && name === "uanum") {
-        isValidInput = contactRegex.test(value);
-      }
-      setIsFormModified(true);
+    let isValidInput = true;
+    if (type === "text" && name === "uaname") {
+      isValidInput = nameRegex.test(value);
+    }
+    // else if (type === "text" && name === "uanum") {
+    //   isValidInput = contactRegex.test(value);
+    // }
+    setIsFormModified(true);
 
-      if (isValidInput) {
-        if (type === "checkbox") {
+    if (isValidInput) {
+      if (type === "checkbox") {
+        setUpdateFormData((prevData) => ({
+          ...prevData,
+          [name]: checked,
+        }));
+      } else if (name === "uanum") {
+        // Check if the value contains only numbers, '+', and '-'
+        if (value.length === 1 && value !== "0") {
           setUpdateFormData((prevData) => ({
             ...prevData,
-            [name]: checked,
+            [name]: "0",
           }));
         } else {
           setUpdateFormData((prevData) => ({
@@ -349,8 +367,14 @@ function MasterList({ authrztn }) {
             [name]: value,
           }));
         }
+      } else {
+        setUpdateFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
       }
-    };
+    }
+  };
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
@@ -366,7 +390,8 @@ function MasterList({ authrztn }) {
     } else {
       const updaemasterID = updateFormData.updateId;
       const response = await axios.put(
-        BASE_URL + `/masterList/updateMaster/${updateFormData.updateId}?userId=${userId}`,
+        BASE_URL +
+          `/masterList/updateMaster/${updateFormData.updateId}?userId=${userId}`,
         {
           col_Fname: updateFormData.uaname,
           col_address: updateFormData.uaaddress,
@@ -437,7 +462,6 @@ function MasterList({ authrztn }) {
     setValidated(true);
   };
 
-
   // Validation for PhoneNumber and Email
   function isValidPhoneNumber(phone) {
     const phoneRegex = /^09\d{9}$/;
@@ -490,7 +514,7 @@ function MasterList({ authrztn }) {
             cstatus: true,
           });
 
-          setValidated(false)
+          setValidated(false);
         });
       } else if (response.status === 202) {
         swal({
@@ -508,8 +532,6 @@ function MasterList({ authrztn }) {
     }
     setValidated(true);
   };
-
-
 
   const handleDelete = async (param_id) => {
     swal({
@@ -567,19 +589,17 @@ function MasterList({ authrztn }) {
   const [department, setDepartment] = useState([]);
 
   useEffect(() => {
-   
     axios
-            .get(BASE_URL + "/department/fetchtableDepartment")
-            .then((res) => {
-              setDepartment(res.data);
-              setIsLoading(false);
-            })
-            .catch((err) => {
-              console.log(err);
-              setIsLoading(false);
-            });
+      .get(BASE_URL + "/department/fetchtableDepartment")
+      .then((res) => {
+        setDepartment(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   }, []);
-
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -626,7 +646,6 @@ function MasterList({ authrztn }) {
     return visibleButtons[userId] || false;
   };
 
-
   const [changePass, setChangePass] = useState(false);
 
   const handleToggleChangePass = () => {
@@ -636,224 +655,287 @@ function MasterList({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-      {!isLoading ? (
-        <div className="loading-container">
-          <ReactLoading className="react-loading" type={'bubbles'}/>
-          Loading Data...
-        </div>
-      ) : (
-        authrztn.includes('Master List - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>User Master Data</p>
-              </div>
+        {!isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Master List - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>User Master Data</p>
+                </div>
 
-              <div className="button-create-side">
-                <div className="Buttonmodal-new">
-                  {authrztn?.includes("Master List - Add") && (
-                    <button onClick={handleShow}>
-                      <span>
-                        <Plus size={25} />
-                      </span>
-                      New User
-                    </button>
-                  )}
+                <div className="button-create-side">
+                  <div className="Buttonmodal-new">
+                    {authrztn?.includes("Master List - Add") && (
+                      <button onClick={handleShow}>
+                        <span>
+                          <Plus size={25} />
+                        </span>
+                        New User
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="textfield">
-            <TextField
-              label="Search"
-              variant="outlined"
-              style={{ marginBottom: '10px', 
-              float: 'right',
-              }}
-              InputLabelProps={{
-                style: { fontSize: '14px'},
-              }}
-              InputProps={{
-                style: { fontSize: '14px', width: '250px', height: '50px' },
-              }}
-              onChange={handleSearch}/>
-              </div>
-          <div className="table-containss">
-          {masterListt.length > 0 ? (
-            <div className="users-box-main-containers">
-            {currentItems.map((data, i) => (
-              <div className="list-box-container" key={i}>
-                  <div className="top-box-list">
-                      <div className="active-inactive-identify">
-                      {data.col_status === 'Active' ? (
-                        <Circle size={24} color="#3dff3d" weight="fill" />
-                      ) : (
-                        <Circle size={24} color="#ff3d3d" weight="fill" />
-                      )}
-                      </div>
-                      <div className="three-dots-section">
-                        {isVertical[data.col_id] ? (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeOutline
-                            size={30}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.col_id);
-                            }}
-                            color="#ffffff"
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.col_id) && (
-                              <div className="choices">
-                                {authrztn?.includes("Master List - Edit") && (
-                                  <button
-                                    className="btn"
-                                    onClick={() => {
-                                      handleModalToggle(data);
-                                      closeVisibleButtons();
-                                    }}
-                                  >
-                                    Update
-                                  </button>
-                                )}
+            <div className="textfield">
+              <TextField
+                label="Search"
+                variant="outlined"
+                style={{
+                  marginBottom: "10px",
+                  marginRight: "20px",
+                  float: "right",
+                }}
+                InputLabelProps={{
+                  style: { fontSize: "14px" },
+                }}
+                InputProps={{
+                  style: { fontSize: "14px", width: "250px", height: "50px" },
+                }}
+                onChange={handleSearch}
+              />
+            </div>
+            <div className="table-containss">
+              {masterListt.length > 0 ? (
+                <div className="users-box-main-containers">
+                  {currentItems.map((data, i) => (
+                    <div className="list-box-container" key={i}>
+                      <div className="top-box-list">
+                        <div className="active-inactive-identify">
+                          {data.col_status === "Active" ? (
+                            <Circle size={24} color="#3dff3d" weight="fill" />
+                          ) : (
+                            <Circle size={24} color="#ff3d3d" weight="fill" />
+                          )}
+                        </div>
 
-                                {authrztn?.includes("Master List - Delete") && (
-                                  <button
-                                    className="btn"
-                                    onClick={() => {
-                                      handleDelete(data.col_id);
-                                      closeVisibleButtons();
-                                    }}
-                                  >
-                                    Delete
-                                  </button>
-                                )}
+                        {(authrztn?.includes("Master List - Edit") || authrztn?.includes("Master List - Delete")) && (
+                          <div className="three-dots-section">
+                            {isVertical[data.col_id] ? (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeOutline
+                                  size={30}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.col_id);
+                                  }}
+                                  color="#ffffff"
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.col_id) && (
+                                    <div className="choices">
+                                      {authrztn?.includes(
+                                        "Master List - Edit"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleModalToggle(data);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Update
+                                        </button>
+                                      )}
+
+                                      {authrztn?.includes(
+                                        "Master List - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(data.col_id);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeOutlineVertical
+                                  size={30}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.col_id);
+                                  }}
+                                  color="#ffffff"
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.col_id) && (
+                                    <div className="choices">
+                                      {authrztn?.includes(
+                                        "Master List - Edit"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleModalToggle(data);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Update
+                                        </button>
+                                      )}
+
+                                      {authrztn?.includes(
+                                        "Master List - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(data.col_id);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
-                        </div>
-                      ) : (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeOutlineVertical
-                            size={30}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.col_id);
-                            }}
-                            color="#ffffff"
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.col_id) && (
-                              <div className="choices">
-                                {authrztn?.includes("Master List - Edit") && (
-                                  <button
-                                    className="btn"
-                                    onClick={() => {
-                                      handleModalToggle(data);
-                                      closeVisibleButtons();
-                                    }}
-                                  >
-                                    Update
-                                  </button>
-                                )}
-
-                                {authrztn?.includes("Master List - Delete") && (
-                                  <button
-                                    className="btn"
-                                    onClick={() => {
-                                      handleDelete(data.col_id);
-                                      closeVisibleButtons();
-                                    }}
-                                  >
-                                    Delete
-                                  </button>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                        )}
                       </div>
-                  </div>
 
-                  <div className="mid-box-list">
-                      <div className="profile-section-mid">
-                         {data.image ? (
-                            <img src={`data:image/png;base64,${data.image}`} alt={`Masterlist ${data.image}`} />
+                      <div className="mid-box-list">
+                        <div className="profile-section-mid">
+                          {data.image ? (
+                            <img
+                              src={`data:image/png;base64,${data.image}`}
+                              alt={`Masterlist ${data.image}`}
+                            />
                           ) : (
                             <img src={UserProfile} alt="" />
                           )}
+                        </div>
                       </div>
-                  </div>
 
-                  <div className="bot-box-list">
-                      <span>{data.col_Fname}</span>
-                      <span>{data.department.department_name}</span>
-                      <span>{data.col_phone}</span>
-                      <span>{data.col_email}</span>
-                      <span>{data.col_address}</span>
-                  </div>
-              </div>
-              ))}
-          </div>
-          ) : (
-            <div className="no-data">
-              <img src={NoData} alt="NoData" className="no-data-img" />
-              <h3>
-                No Data Found
-              </h3>
+                      <div className="bot-box-list">
+                        <span>{data.col_Fname}</span>
+                        <span>{data.department.department_name}</span>
+                        <span>{data.col_phone}</span>
+                        <span>{data.col_email}</span>
+                        <span>{data.col_address}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-data">
+                  <img src={NoData} alt="NoData" className="no-data-img" />
+                  <h3>No Data Found</h3>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-          <nav style={{marginTop: '15px'}}>
-                  <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
                     }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
-                    </li>
-                  </ul>
-                </nav>
-        </div>
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                  >
+                    Previous
+                  </button>
+                </li>
+                {[...Array(totalPages).keys()].map((num) => (
+                  <li
+                    key={num}
+                    className={`page-item ${
+                      currentPage === num + 1 ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      style={{
+                        fontSize: "14px",
+                        width: "25px",
+                        background:
+                          currentPage === num + 1 ? "#FFA500" : "white", // Set background to white if not clicked
+                        color: currentPage === num + 1 ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
+                      }}
+                      className={`page-link ${
+                        currentPage === num + 1 ? "gold-bg" : ""
+                      }`}
+                      onClick={() => setCurrentPage(num + 1)}
+                    >
+                      {num + 1}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-      )}
+        )}
       </div>
 
       {/* Add User */}
@@ -877,9 +959,11 @@ function MasterList({ authrztn }) {
           <Modal.Body>
             <div
               className="gen-info"
-              style={{ fontSize: "20px", position: "relative" }}>
+              style={{ fontSize: "20px", position: "relative" }}
+            >
               General Information
-              <span className="gene-info"
+              <span
+                className="gene-info"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -888,108 +972,113 @@ function MasterList({ authrztn }) {
                   top: "65%",
                   left: "18rem",
                   transform: "translateY(-50%)",
-                }}></span>
+                }}
+              ></span>
             </div>
-              <div className="row mt-3">
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>Name: </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter your name"
-                      maxLength={50}
-                      style={{ height: "40px", fontSize: "15px" }}
-                      value={formData.cname}
-                      onChange={handleFormChange}
-                      name="cname"
-                      required
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Address:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Slashtech, Valenzuela City 164"
-                      style={{ height: "40px", fontSize: "15px" }}
-                      value={formData.caddress}
-                      onChange={handleFormChange}
-                      name="caddress"
-                      required
-                    />
-                  </Form.Group>
-                </div>
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>Name: </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your name"
+                    maxLength={50}
+                    style={{ height: "40px", fontSize: "15px" }}
+                    value={formData.cname}
+                    onChange={handleFormChange}
+                    name="cname"
+                    required
+                  />
+                </Form.Group>
               </div>
-            
-              <div className="row">
-                <div className="col-4">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Contact:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter your contact number"
-                      style={{ height: "40px", fontSize: "15px" }}
-                      value={formData.cnum}
-                      onChange={handleFormChange}
-                      name="cnum"
-                      maxLength={11}
-                      required
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-4">
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Email:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="email@example.com"
-                      value={formData.cemail}
-                      onChange={handleFormChange}
-                      required
-                      name="cemail"
-                      pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Department:{" "}
-                    </Form.Label>
-                    <Form.Select
-                      aria-label="Default select example"
-                      name="cdept"
-                      value={formData.cdept}
-                      onChange={handleFormChange}
-                      required
-                      style={{ height: "40px", fontSize: "15px" }}>
-                      <option disabled value="">
-                        Department
-                      </option>
-                      {department.map((dept) => (
-                        <option key={dept.id} value={dept.id}>
-                          {dept.department_name}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </div>
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Address:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Slashtech, Valenzuela City 164"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    value={formData.caddress}
+                    onChange={handleFormChange}
+                    name="caddress"
+                    required
+                  />
+                </Form.Group>
               </div>
-            
+            </div>
+
+            <div className="row">
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Contact:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your contact number"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    value={formData.cnum}
+                    onChange={handleFormChange}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                    name="cnum"
+                    maxLength={11}
+                    required
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>Email: </Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="email@example.com"
+                    value={formData.cemail}
+                    onChange={handleFormChange}
+                    required
+                    name="cemail"
+                    pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Department:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label="Default select example"
+                    name="cdept"
+                    value={formData.cdept}
+                    onChange={handleFormChange}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                  >
+                    <option disabled value="">
+                      Department
+                    </option>
+                    {department.map((dept) => (
+                      <option key={dept.id} value={dept.id}>
+                        {dept.department_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
 
             <div
               className="gen-info"
-              style={{ fontSize: "20px", position: "relative" }}>
+              style={{ fontSize: "20px", position: "relative" }}
+            >
               Account Access
-              <span className="acc-acc"
+              <span
+                className="acc-acc"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -998,138 +1087,177 @@ function MasterList({ authrztn }) {
                   top: "65%",
                   left: "14rem",
                   transform: "translateY(-50%)",
-                }}></span>
+                }}
+              ></span>
             </div>
 
-              <div className="row mt-3">
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Username:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter your username"
-                      style={{ height: "40px", fontSize: "15px" }}
-                      value={formData.cuname}
-                      onChange={handleFormChange}
-                      name="cuname"
-                      required
-                    />
-                    {/* <input type="text" style={{height: '40px', fontSize: '15px'}} placeholder="Complete Name" className="form-control" value={formData.cname} onChange={handleFormChange} name="cname" required /> */}
-                  </Form.Group>
-                </div>
-                <div className="col-6">
-
-                <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Role Type:{" "}
-                    </Form.Label>
-                    <Form.Select
-                      aria-label="Default select example"
-                      name="crole"
-                      value={formData.crole}
-                      onChange={handleFormChange}
-                      required
-                      style={{ height: "40px", fontSize: "15px" }}>
-                      <option disabled value="">
-                        Role
-                      </option>
-                      {roles.map((role) => (
-                        <option key={role.col_id} value={role.col_id}>
-                          {role.col_rolename}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </div>
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Username:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your username"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    value={formData.cuname}
+                    onChange={handleFormChange}
+                    name="cuname"
+                    required
+                  />
+                  {/* <input type="text" style={{height: '40px', fontSize: '15px'}} placeholder="Complete Name" className="form-control" value={formData.cname} onChange={handleFormChange} name="cname" required /> */}
+                </Form.Group>
               </div>
-            
-              <div className="row">
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Password:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type={showPassword ? "text" : "password"}
-                      value={formData.cpass}
-                      onChange={handleFormChange}
-                      required
-                      name="cpass"
-                      placeholder="Enter your password"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                    <div className="show">
-                      {showPassword ? (
-                        <EyeSlash size={32} color="#1a1a1a" weight="light"
-                          // className="eye"
-                          onClick={togglePasswordVisibility}
-                        />
-                      ) : (
-                        <Eye size={32} color="#1a1a1a" weight="light"
-                          // className="eye"
-                          onClick={togglePasswordVisibility}
-                        />
-                      )}
-                    </div>
-                  </Form.Group>
-                </div>
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Confirm Password:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={formData.cpass2}
-                      onChange={handleFormChange}
-                      required
-                      name="cpass2"
-                      placeholder="Confirm your password"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                    <div className="show">
-                      {showConfirmPassword ? (
-                        <EyeSlash size={32} color="#1a1a1a" weight="light"
-                          // className="eye"
-                          onClick={toggleConfirmPasswordVisibility}
-                        />
-                      ) : (
-                        <Eye size={32} color="#1a1a1a" weight="light"
-                          // className="eye"
-                          onClick={toggleConfirmPasswordVisibility}
-                        />
-                      )}
-                    </div>
-                  </Form.Group>
-                </div>
-                
-                {formData.cpass !== '' && (
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Role Type:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label="Default select example"
+                    name="crole"
+                    value={formData.crole}
+                    onChange={handleFormChange}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                  >
+                    <option disabled value="">
+                      Role
+                    </option>
+                    {roles.map((role) => (
+                      <option key={role.col_id} value={role.col_id}>
+                        {role.col_rolename}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Password:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type={showPassword ? "text" : "password"}
+                    value={formData.cpass}
+                    onChange={handleFormChange}
+                    required
+                    name="cpass"
+                    placeholder="Enter your password"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                  <div className="show">
+                    {showPassword ? (
+                      <EyeSlash
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
+                        // className="eye"
+                        onClick={togglePasswordVisibility}
+                      />
+                    ) : (
+                      <Eye
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
+                        // className="eye"
+                        onClick={togglePasswordVisibility}
+                      />
+                    )}
+                  </div>
+                </Form.Group>
+              </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Confirm Password:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.cpass2}
+                    onChange={handleFormChange}
+                    required
+                    name="cpass2"
+                    placeholder="Confirm your password"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                  <div className="show">
+                    {showConfirmPassword ? (
+                      <EyeSlash
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
+                        // className="eye"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    ) : (
+                      <Eye
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
+                        // className="eye"
+                        onClick={toggleConfirmPasswordVisibility}
+                      />
+                    )}
+                  </div>
+                </Form.Group>
+              </div>
+
+              {formData.cpass !== "" && (
                 <>
                   {!validatePassword(formData.cpass) && (
-                    <ul style={{ color: "red", fontSize: "12px", marginTop: "5px", listStyleType: "disc",}}>
+                    <ul
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "5px",
+                        listStyleType: "disc",
+                      }}
+                    >
                       <li>Password must contain at least 8 length.</li>
-                      <li>Password must contain at least one capital letter.</li>
+                      <li>
+                        Password must contain at least one capital letter.
+                      </li>
                       <li>Password must contain at least one small letter.</li>
                       <li>Password must contain at least one number.</li>
-                      <li>Password must contain at least one special character [!@#$%^&*()_+]</li>
-                  </ul>
+                      <li>
+                        Password must contain at least one special character
+                        [!@#$%^&*()_+]
+                      </li>
+                    </ul>
                   )}
                 </>
               )}
-              {formData.cpass !== '' && formData.cpass2 !== '' && (
+              {formData.cpass !== "" && formData.cpass2 !== "" && (
                 <>
                   {passwordsMatch ? (
-                    <p style={{ color: "green", fontSize: "12px", marginTop: "5px" }}>Passwords match!</p>
+                    <p
+                      style={{
+                        color: "green",
+                        fontSize: "12px",
+                        marginTop: "5px",
+                      }}
+                    >
+                      Passwords match!
+                    </p>
                   ) : (
-                    <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>Passwords do not match!</p>
+                    <p
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "5px",
+                      }}
+                    >
+                      Passwords do not match!
+                    </p>
                   )}
-                  </>
+                </>
               )}
-        
-              </div>
-            
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -1138,14 +1266,15 @@ function MasterList({ authrztn }) {
               size="md"
               style={{ fontSize: "20px" }}
               disabled={!passwordsMatch || !validatePassword(formData.cpass)}
-              >
+            >
               Add
             </Button>
             <Button
               variant="secondary"
               size="md"
               onClick={handleClose}
-              style={{ fontSize: "20px" }}>
+              style={{ fontSize: "20px" }}
+            >
               Cancel
             </Button>
           </Modal.Footer>
@@ -1155,7 +1284,8 @@ function MasterList({ authrztn }) {
       <Modal
         show={updateModalShow}
         onHide={() => handleModalToggle()}
-        size="xl">
+        size="xl"
+      >
         <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
           <Modal.Header closeButton>
             <Modal.Title className="modal-titles" style={{ fontSize: "24px" }}>
@@ -1168,7 +1298,7 @@ function MasterList({ authrztn }) {
                 <input
                   type="checkbox"
                   name="ustatus"
-                  className="toggle-switch" 
+                  className="toggle-switch"
                   onChange={handleUpdateFormChange}
                   defaultChecked={updateFormData.ustatus}
                 />
@@ -1178,9 +1308,11 @@ function MasterList({ authrztn }) {
           <Modal.Body>
             <div
               className="gen-info"
-              style={{ fontSize: "20px", position: "relative" }}>
+              style={{ fontSize: "20px", position: "relative" }}
+            >
               General Information
-              <span className="gene-info"
+              <span
+                className="gene-info"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -1189,109 +1321,114 @@ function MasterList({ authrztn }) {
                   top: "65%",
                   left: "18rem",
                   transform: "translateY(-50%)",
-                }}></span>
+                }}
+              ></span>
             </div>
-            
-              <div className="row mt-3">
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>Name: </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={updateFormData.uaname}
-                      onChange={handleUpdateFormChange}
-                      maxLength={50}
-                      name="uaname"
-                      required
-                      placeholder="Enter your name"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Address:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={updateFormData.uaaddress}
-                      onChange={handleUpdateFormChange}
-                      name="uaaddress"
-                      required
-                      placeholder="Slashtech, Valenzuela City 164"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                </div>
+
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>Name: </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={updateFormData.uaname}
+                    onChange={handleUpdateFormChange}
+                    maxLength={50}
+                    name="uaname"
+                    required
+                    placeholder="Enter your name"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
               </div>
-            
-
-              <div className="row">
-                <div className="col-4">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Contact:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={updateFormData.uanum}
-                      maxLength={11}
-                      onChange={handleUpdateFormChange}
-                      name="uanum"
-                      required
-                      placeholder="Enter your contact number"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-4">
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Email:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="name@example.com"
-                      value={updateFormData.uaemail}
-                      onChange={handleUpdateFormChange}
-                      name="uaemail"
-                      required
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                </div>
-
-                <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Role Type:{" "}
-                    </Form.Label>
-                    <Form.Select
-                      aria-label="Default select example"
-                      name="uadept"
-                      value={updateFormData.uadept}
-                      onChange={handleUpdateFormChange}
-                      required
-                      style={{ height: "40px", fontSize: "15px" }}>
-                      <option disabled value="">
-                        Department
-                      </option>
-                      {department.map((dept) => (
-                        <option key={dept.id} value={dept.id}>
-                          {dept.department_name}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </div>
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Address:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={updateFormData.uaaddress}
+                    onChange={handleUpdateFormChange}
+                    name="uaaddress"
+                    required
+                    placeholder="Slashtech, Valenzuela City 164"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
               </div>
+            </div>
+
+            <div className="row">
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Contact:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={updateFormData.uanum}
+                    maxLength={11}
+                    onChange={handleUpdateFormChange}
+                    onKeyDown={(e) => {
+                      ["e", "E", "+", "-"].includes(e.key) &&
+                        e.preventDefault();
+                    }}
+                    name="uanum"
+                    required
+                    placeholder="Enter your contact number"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>Email: </Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="name@example.com"
+                    value={updateFormData.uaemail}
+                    onChange={handleUpdateFormChange}
+                    name="uaemail"
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
+              </div>
+
+              <div className="col-4">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Role Type:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label="Default select example"
+                    name="uadept"
+                    value={updateFormData.uadept}
+                    onChange={handleUpdateFormChange}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                  >
+                    <option disabled value="">
+                      Department
+                    </option>
+                    {department.map((dept) => (
+                      <option key={dept.id} value={dept.id}>
+                        {dept.department_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
 
             <div
               className="gen-info"
-              style={{ fontSize: "20px", position: "relative" }}>
+              style={{ fontSize: "20px", position: "relative" }}
+            >
               Account Access
-              <span className="acc-acc"
+              <span
+                className="acc-acc"
                 style={{
                   position: "absolute",
                   height: "0.5px",
@@ -1300,64 +1437,68 @@ function MasterList({ authrztn }) {
                   top: "65%",
                   left: "14rem",
                   transform: "translateY(-50%)",
-                }}></span>
+                }}
+              ></span>
             </div>
-            
-              <div className="row mt-3">
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Username:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={updateFormData.uauname}
-                      onChange={handleUpdateFormChange}
-                      name="uauname"
-                      required
-                      placeholder="Enter your name"
-                      style={{ height: "40px", fontSize: "15px" }}
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Role Type:{" "}
-                    </Form.Label>
-                    <Form.Select
-                      aria-label="Default select example"
-                      name="uarole"
-                      value={updateFormData.uarole}
-                      onChange={handleUpdateFormChange}
-                      required
-                      style={{ height: "40px", fontSize: "15px" }}>
-                      <option disabled value="">
-                        Role
-                      </option>
-                      {roles.map((role) => (
-                        <option key={role.col_roleID} value={role.col_id}>
-                          {role.col_rolename}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </div>
+
+            <div className="row mt-3">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Username:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={updateFormData.uauname}
+                    onChange={handleUpdateFormChange}
+                    name="uauname"
+                    required
+                    placeholder="Enter your name"
+                    style={{ height: "40px", fontSize: "15px" }}
+                  />
+                </Form.Group>
               </div>
-            
-
-          {!changePass && (
-            <div className="change-pass">
-              <button className="change-password" type="button" onClick={handleToggleChangePass}>
-                Change Password
-              </button>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Role Type:{" "}
+                  </Form.Label>
+                  <Form.Select
+                    aria-label="Default select example"
+                    name="uarole"
+                    value={updateFormData.uarole}
+                    onChange={handleUpdateFormChange}
+                    required
+                    style={{ height: "40px", fontSize: "15px" }}
+                  >
+                    <option disabled value="">
+                      Role
+                    </option>
+                    {roles.map((role) => (
+                      <option key={role.col_roleID} value={role.col_id}>
+                        {role.col_rolename}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
             </div>
-          )}
 
-          {changePass && (
+            {!changePass && (
+              <div className="change-pass">
+                <button
+                  className="change-password"
+                  type="button"
+                  onClick={handleToggleChangePass}
+                >
+                  Change Password
+                </button>
+              </div>
+            )}
+
+            {changePass && (
               <div className="row">
-                <div className="col-6">
-                </div>
+                <div className="col-6"></div>
 
                 <div className="col-6"></div>
 
@@ -1375,11 +1516,17 @@ function MasterList({ authrztn }) {
                     />
                     <div className="show">
                       {showPassword ? (
-                        <EyeSlash size={32} color="#1a1a1a" weight="light"
+                        <EyeSlash
+                          size={32}
+                          color="#1a1a1a"
+                          weight="light"
                           onClick={togglePasswordVisibility}
                         />
                       ) : (
-                        <Eye size={32} color="#1a1a1a" weight="light"
+                        <Eye
+                          size={32}
+                          color="#1a1a1a"
+                          weight="light"
                           onClick={togglePasswordVisibility}
                         />
                       )}
@@ -1400,42 +1547,77 @@ function MasterList({ authrztn }) {
                     />
                     <div className="show">
                       {showConfirmPassword ? (
-                        <EyeSlash size={32} color="#1a1a1a" weight="light"
+                        <EyeSlash
+                          size={32}
+                          color="#1a1a1a"
+                          weight="light"
                           onClick={toggleConfirmPasswordVisibility}
                         />
                       ) : (
-                        <Eye size={32} color="#1a1a1a" weight="light"
+                        <Eye
+                          size={32}
+                          color="#1a1a1a"
+                          weight="light"
                           onClick={toggleConfirmPasswordVisibility}
                         />
                       )}
                     </div>
                   </Form.Group>
                 </div>
-                {updateFormData.uapass !== '' && updateFormData.confirmPassword !== '' && (
-                  <>
-                    {UpdatevalidatePassword(updateFormData.uapass) ? (
-                      <>
-                        {UpdatepasswordsMatch ? (
-                          <p style={{ color: "green", fontSize: "12px", marginTop: "5px" }}>Passwords match!</p>
-                        ) : (
-                          <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>Passwords do not match!</p>
-                        )}
-                      </>
-                    ) : (
-                      <ul style={{ color: "red", fontSize: "12px", marginTop: "5px", listStyleType: "disc" }}>
-                        <li>Password must contain at least 8 characters.</li>
-                        <li>Password must contain at least one capital letter.</li>
-                        <li>Password must contain at least one small letter.</li>
-                        <li>Password must contain at least one number.</li>
-                        <li>Password must contain at least one special character [!@#$%^&*()_+]</li>
-                      </ul>
-                    )}
-                  </>
-                )}
-
+                {updateFormData.uapass !== "" &&
+                  updateFormData.confirmPassword !== "" && (
+                    <>
+                      {UpdatevalidatePassword(updateFormData.uapass) ? (
+                        <>
+                          {UpdatepasswordsMatch ? (
+                            <p
+                              style={{
+                                color: "green",
+                                fontSize: "12px",
+                                marginTop: "5px",
+                              }}
+                            >
+                              Passwords match!
+                            </p>
+                          ) : (
+                            <p
+                              style={{
+                                color: "red",
+                                fontSize: "12px",
+                                marginTop: "5px",
+                              }}
+                            >
+                              Passwords do not match!
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <ul
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "5px",
+                            listStyleType: "disc",
+                          }}
+                        >
+                          <li>Password must contain at least 8 characters.</li>
+                          <li>
+                            Password must contain at least one capital letter.
+                          </li>
+                          <li>
+                            Password must contain at least one small letter.
+                          </li>
+                          <li>Password must contain at least one number.</li>
+                          <li>
+                            Password must contain at least one special character
+                            [!@#$%^&*()_+]
+                          </li>
+                        </ul>
+                      )}
+                    </>
+                  )}
               </div>
-            
-          )}
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -1443,13 +1625,18 @@ function MasterList({ authrztn }) {
               variant="warning"
               className=""
               style={{ fontSize: "20px" }}
-              disabled={!UpdatepasswordsMatch && (changePass || !isFormModified)}>
+              disabled={
+                (!UpdatepasswordsMatch && (changePass || !isFormModified)) ||
+                !UpdatevalidatePassword(updateFormData.uapass)
+              }
+            >
               Update
             </Button>
             <Button
               variant="secondary"
               onClick={() => setUpdateModalShow(!updateModalShow)}
-              style={{ fontSize: "20px" }}>
+              style={{ fontSize: "20px" }}
+            >
               Close
             </Button>
           </Modal.Footer>

@@ -73,11 +73,12 @@ function CreateSupplier({ authrztn }) {
       axios
         .get(BASE_URL + "/supplier/lastCode")
         .then((res) => {
-          const code =
-            res.data !== null ? res.data.toString().padStart(4, "0") : "0001";
+          // const code =
+          //   res.data !== null ? res.data.toString().padStart(4, "0") : "0001";
 
-          // Increment the value by 1
-          setsuppCode(code);
+          // // Increment the value by 1
+          // setNextCategoryCode(response.data.nextCategoryCode);
+          setsuppCode(res.data.nextCategoryCode);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -386,6 +387,7 @@ function CreateSupplier({ authrztn }) {
                       </option>
                       <option value="PHP">PHP (₱)</option>
                       <option value="USD">USD ($)</option>
+                      <option value="PHP/USD">PHP/USD</option>
                     </Form.Select>
                   </Col>
                   <Col></Col>
@@ -416,17 +418,17 @@ function CreateSupplier({ authrztn }) {
                       className="label-head"
                       style={{ fontSize: 20 }}
                     >
-                      Terms: (no. of days)
+                      Terms:
                     </label>
                     <Form.Control
                       className="p-3 fs-3"
                       type="text"
                       required
-                      pattern="[0-9.]*"
-                      onInput={(e) =>
-                        (e.target.value = e.target.value.replace(/[^\d.]/g, ""))
-                      }
-                      maxLength={4}
+                      // pattern="[0-9.]*"
+                      // onInput={(e) =>
+                      //   (e.target.value = e.target.value.replace(/[^\d.]/g, ""))
+                      // }
+                      // maxLength={4}
                       onChange={(e) => setsuppTerms(e.target.value)}
                       placeholder="0"
                     />

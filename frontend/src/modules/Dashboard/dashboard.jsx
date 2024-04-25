@@ -776,8 +776,8 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                 </BarChart>
               </ResponsiveContainer>
               <div className="tabss">
-                <div className="ttitle">Top Supplier by Lead Time</div>
-                <div className="tcont">
+                <div className="ttitle">Top Supplier(5) by Lead Time</div>
+                <div className="tcont" style={{ overflowY: 'auto'}}>
                   {countSupplierLeadGraph.map((data, i) => (
                     <tr key={i}>
                       <tbody>

@@ -393,11 +393,11 @@ router.route("/update").post(
         //   },
         // });
 
-        const deletesupplier = await ProductTAGSupplier.destroy({
-          where: {
-            product_id: id,
-          },
-        });
+        // const deletesupplier = await ProductTAGSupplier.destroy({
+        //   where: {
+        //     product_id: id,
+        //   },
+        // });
 
         // if(deletesupplier) {
           const selectedsupplier = productTAGSuppliers;

@@ -260,24 +260,24 @@ router.route("/update").post(
           // const ExistWarehouseId = findWarehouse.id;
           // console.log("Id ng warehouse: " + ExistWarehouseId);
 
-          const subsupprows = await Subpart_supplier.findAll({
-            where: {
-              subpart_id: id,
-            },
-          });
+          // const subsupprows = await Subpart_supplier.findAll({
+          //   where: {
+          //     subpart_id: id,
+          //   },
+          // });
           
-          if(subsupprows && subsupprows.length === 0) {
-            console.log("No subpart id found");
-            // return res.status(201).json({ message: "No subpart supplier found" });
-          }
+          // if(subsupprows && subsupprows.length === 0) {
+          //   console.log("No subpart id found");
+          //   // return res.status(201).json({ message: "No subpart supplier found" });
+          // }
           
-          const ExistSuppId = subsupprows.map(supprow => supprow.id);
+          // const ExistSuppId = subsupprows.map(supprow => supprow.id);
 
-          await Inventory_Subpart.destroy({
-            where: {
-              subpart_tag_supp_id: ExistSuppId,
-            },
-          });
+          // await Inventory_Subpart.destroy({
+          //   where: {
+          //     subpart_tag_supp_id: ExistSuppId,
+          //   },
+          // });
 
         //  const deletesupplier = await Subpart_supplier.destroy({
         //     where: {

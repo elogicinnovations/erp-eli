@@ -357,11 +357,11 @@ router.route("/update").post(
       //     },
       //  });
 
-       const deletesupplier = await Assembly_Supplier.destroy({
-          where: {
-            assembly_id: id,
-          },
-       });
+      //  const deletesupplier = await Assembly_Supplier.destroy({
+      //     where: {
+      //       assembly_id: id,
+      //     },
+      //  });
 
       //  if(deletesupplier) {
         const selectedSupplier = addPriceInput;
