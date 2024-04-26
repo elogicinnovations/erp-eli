@@ -10,7 +10,11 @@ const { Inventory, ProductTAGSupplier, Product, IssuedReturn,
         IssuedSpare, IssuedSubpart, Issuance, 
         Inventory_Assembly, Assembly_Supplier, Inventory_Spare,
         Assembly, SparePart, SubPart, SparePart_Supplier, Subpart_supplier, Inventory_Subpart,
-        Activity_Log, CostCenter
+        Activity_Log, CostCenter,
+        IssuedApproveProduct,
+        IssuedApproveAssembly,
+        IssuedApproveSubpart,
+        IssuedApproveSpare
         } = require("../db/models/associations"); 
 const session = require('express-session')
 
@@ -110,11 +114,13 @@ router.route('/fetchReturn').get(async (req, res) => {
                 [Op.or]: [
                     { status: "To be Return" },
                     { status: "Retained" }
-                ]
+                ],
+                quantity: { [Op.ne]: '0' },
             }
         });
 
         const asmData = await IssuedReturn_asm.findAll({
+
             include: [{
                     model: Inventory_Assembly,
                     required: true,
@@ -138,11 +144,13 @@ router.route('/fetchReturn').get(async (req, res) => {
                 [Op.or]: [
                     { status: "To be Return" },
                     { status: "Retained" }
-                ]
+                ],
+                quantity: { [Op.ne]: '0' },
             }
         });
 
         const spareData = await IssuedReturn_spare.findAll({
+
             include: [{
                     model: Inventory_Spare,
                     required: true,
@@ -166,11 +174,13 @@ router.route('/fetchReturn').get(async (req, res) => {
                 [Op.or]: [
                     { status: "To be Return" },
                     { status: "Retained" }
-                ]
+                ],
+                quantity: { [Op.ne]: '0' },
             }
         });
 
         const subpartData = await IssuedReturn_subpart.findAll({
+      
             include: [{
                     model: Inventory_Subpart,
                     required: true,
@@ -194,7 +204,8 @@ router.route('/fetchReturn').get(async (req, res) => {
                 [Op.or]: [
                     { status: "To be Return" },
                     { status: "Retained" }
-                ]
+                ],
+                quantity: { [Op.ne]: '0' },
             }
         });
 
@@ -234,7 +245,7 @@ router.route('/issueReturn').post(async (req, res) => {
                 // const productName = product.product.product_name; 
 
                 // console.log("Product" + productName);
-                const updateRecord = await IssuedProduct.findOne({
+                const updateRecord = await IssuedApproveProduct.findOne({
                     where: {
                         inventory_id: product.inventory_id,
                     },
@@ -242,7 +253,7 @@ router.route('/issueReturn').post(async (req, res) => {
 
                 if (updateRecord) {
                   const updatedQuantity = updateRecord.quantity - product.quantity
-                    await IssuedProduct.update(
+                    await IssuedApproveProduct.update(
                         {
                             quantity: updatedQuantity
                         },
@@ -283,21 +294,21 @@ router.route('/issueReturn').post(async (req, res) => {
 
                     // const AssemblyName = product.assembly.assembly_name;
                     // console.log(`Assembly ${AssemblyName}`);
-                        const updateRecord = await IssuedAssembly.findOne({
+                        const updateRecord = await IssuedApproveAssembly.findOne({
                             where: {
-                                inventory_Assembly_id: product.inventory_id,
+                                inventory_id: product.inventory_id,
                             },
                         });
 
                         if (updateRecord) {
                             const updatedQuantity = updateRecord.quantity - product.quantity
-                            await IssuedAssembly.update(
+                            await IssuedApproveAssembly.update(
                                 {
                                     quantity: updatedQuantity
                                 },
                                 {
                                     where: {
-                                        inventory_Assembly_id: product.inventory_id
+                                        inventory_id: product.inventory_id
                                     },
                                 }
                             )
@@ -332,21 +343,21 @@ router.route('/issueReturn').post(async (req, res) => {
 
                     // const spareName = product.sparePart.spareParts_name
                     // console.log(`Spare part ${spareName}`);
-                const updateRecord = await IssuedSpare.findOne({
+                const updateRecord = await IssuedApproveSpare.findOne({
                     where: {
-                        inventory_Spare_id: product.inventory_id,
+                        inventory_id: product.inventory_id,
                     },
                 });
 
                 if (updateRecord) {
                     const updatedQuantity = updateRecord.quantity - product.quantity
-                    await IssuedSpare.update(
+                    await IssuedApproveSpare.update(
                         {
                             quantity: updatedQuantity
                         },
                         {
                             where: {
-                                inventory_Spare_id: product.inventory_id
+                                inventory_id: product.inventory_id
                             },
                         }
                     )
@@ -381,21 +392,21 @@ router.route('/issueReturn').post(async (req, res) => {
 
             // const subpartName = product.subPart.subPart_name;
             // console.log(`Subpart ${subpartName}`);
-            const updateRecord = await IssuedSubpart.findOne({
+            const updateRecord = await IssuedApproveSubpart.findOne({
                 where: {
-                    inventory_Subpart_id: product.inventory_id,
+                    inventory_id: product.inventory_id,
                 },
             });
 
                 if (updateRecord) {
                     const updatedQuantity = updateRecord.quantity - product.quantity
-                    await IssuedSubpart.update(
+                    await IssuedApproveSubpart.update(
                         {
                             quantity: updatedQuantity
                         },
                         {
                             where: {
-                                inventory_Subpart_id: product.inventory_id
+                                inventory_id: product.inventory_id
                             },
                         }
                     )

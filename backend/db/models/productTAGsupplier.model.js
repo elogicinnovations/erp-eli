@@ -19,6 +19,10 @@ const productTAGsupplier = sequelize.define('product_tag_supplier', {
     product_price: {
         type: DataTypes.FLOAT,
         allowNull: true,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: true,
     }
     
 });

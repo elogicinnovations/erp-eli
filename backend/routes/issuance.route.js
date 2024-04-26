@@ -67,11 +67,12 @@ router.route("/getIssuance").get(async (req, res) => {
 
 router.route("/fetchApprove").get(async (req, res) => {
   try {
-    const productData = await IssuedProduct.findAll({
+
+    const productData_notApprove = await IssuedProduct.findAll({
       include: [
         {
           model: Product,
-          required: true,
+          required: true
         },
         {
           model: Issuance,
@@ -83,11 +84,11 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const asmData = await IssuedAssembly.findAll({
+    const asmData_notApprove = await IssuedAssembly.findAll({
       include: [
         {
           model: Assembly,
-          required: true,
+          required: true
         },
         {
           model: Issuance,
@@ -99,11 +100,11 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const spareData = await IssuedSpare.findAll({
+    const spareData_notApprove = await IssuedSpare.findAll({
       include: [
         {
           model: SparePart,
-          required: true,
+          required: true
         },
         {
           model: Issuance,
@@ -115,11 +116,117 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const subpartData = await IssuedSubpart.findAll({
+    const subpartData_notApprove = await IssuedSubpart.findAll({
       include: [
         {
           model: SubPart,
+          required: true
+        },
+        {
+          model: Issuance,
           required: true,
+        },
+      ],
+      where: {
+        issuance_id: req.query.id,
+      },
+    });
+
+
+
+    const productData = await IssuedApproveProduct.findAll({
+      include: [
+        {
+          model: Inventory,
+          required: true,
+
+            include: [{
+              model: ProductTAGSupplier,
+              required: true,
+                include: [{
+                  model: Product,
+                  required: true
+                }]
+
+            },]
+        },
+        {
+          model: Issuance,
+          required: true,
+        },
+      ],
+      where: {
+        issuance_id: req.query.id,
+      },
+    });
+
+    const asmData = await IssuedApproveAssembly.findAll({
+      include: [
+        {
+          model: Inventory_Assembly,
+          required: true,
+
+            include: [{
+              model: Assembly_Supplier,
+              required: true,
+                include: [{
+                  model: Assembly,
+                  required: true
+                }]
+
+            },]
+        },
+        {
+          model: Issuance,
+          required: true,
+        },
+      ],
+      where: {
+        issuance_id: req.query.id,
+      },
+    });
+
+    const spareData = await IssuedApproveSpare.findAll({
+      include: [
+        {
+          model: Inventory_Spare,
+          required: true,
+
+            include: [{
+              model: SparePart_Supplier,
+              required: true,
+                include: [{
+                  model: SparePart,
+                  required: true
+                }]
+
+            },]
+        },
+        {
+          model: Issuance,
+          required: true,
+        },
+      ],
+      where: {
+        issuance_id: req.query.id,
+      },
+    });
+
+    const subpartData = await IssuedApproveSubpart.findAll({
+      include: [
+        {
+          model: Inventory_Subpart,
+          required: true,
+
+            include: [{
+              model: Subpart_supplier,
+              required: true,
+                include: [{
+                  model: SubPart,
+                  required: true
+                }]
+
+            },]
         },
         {
           model: Issuance,
@@ -132,6 +239,10 @@ router.route("/fetchApprove").get(async (req, res) => {
     });
 
     return res.json({
+      product_notApprove: productData_notApprove,
+      assembly_notApprove: asmData_notApprove,
+      spare_notApprove: spareData_notApprove,
+      subpart_notApprove: subpartData_notApprove,
       product: productData,
       assembly: asmData,
       spare: spareData,

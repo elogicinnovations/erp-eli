@@ -19,6 +19,10 @@ const Subpart_supplier = sequelize.define('subpart_supplier', {
   supplier_price: {
     type: DataTypes.FLOAT,
     allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

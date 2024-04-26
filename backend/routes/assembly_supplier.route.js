@@ -35,6 +35,7 @@ router.route("/fetchAssigned").get(async (req, res) => {
       ],
       where: {
         assembly_id: req.query.id,
+        status: 'Active'
       },
     });
 
@@ -64,7 +65,10 @@ router.route("/fetchCanvass").get(async (req, res) => {
           required: true,
         },
       ],
-      where: { assembly_id: req.query.id },
+      where: {
+        assembly_id: req.query.id,
+        status: 'Active'
+      },
     });
 
     if (data) {

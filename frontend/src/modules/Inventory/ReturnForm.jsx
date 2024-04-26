@@ -113,6 +113,7 @@ useEffect(() => {
         const selectedSupplierOptions = data.map((row) => ({
           value: row.inventory_id,
           quantity: row.quantity,
+          landePrice: row.inventory_prd.price + row.inventory_prd.freight_cost + row.inventory_prd.custom_cost,
           code: row.inventory_prd.product_tag_supplier.product.product_code,
           name: row.inventory_prd.product_tag_supplier.product.product_name
         }));
@@ -192,6 +193,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
           const selectedSupplierOptions = data.map((row) => ({
             value: row.inventory_assembly.inventory_id,
             quantity: row.quantity,
+            landePrice: row.inventory_assembly.price + row.inventory_assembly.freight_cost + row.inventory_assembly.custom_cost,
             code: row.inventory_assembly.assembly_supplier.assembly.assembly_code,
             name: row.inventory_assembly.assembly_supplier.assembly.assembly_name
           }));
@@ -265,6 +267,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
           const selectedSupplierOptions = data.map((row) => ({
             value: row.inventory_spare.inventory_id,
             quantity: row.quantity,
+            landePrice: row.inventory_spare.price + row.inventory_spare.freight_cost + row.inventory_spare.custom_cost,
             code: row.inventory_spare.sparepart_supplier.sparePart.spareParts_code,
             name: row.inventory_spare.sparepart_supplier.sparePart.spareParts_name
           }));
@@ -335,6 +338,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
           const selectedSupplierOptions = data.map((row) => ({
             value: row.inventory_subpart.inventory_id,
             quantity: row.quantity,
+            landePrice: row.inventory_subpart.price + row.inventory_subpart.freight_cost + row.inventory_subpart.custom_cost,
             code: row.inventory_subpart.subpart_supplier.subPart.subPart_code,
             name: row.inventory_subpart.subpart_supplier.subPart.subPart_name
           }));
@@ -400,7 +404,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
         swal({
           icon: 'error',
           title: 'Fields are required',
-          text: 'Please fill the red text fields',
+          text: 'Please fill the red text fields (enter 0 if not applicable)',
         });
       } else {
         axios.post(`${BASE_URL}/issuedReturn/issueReturn`, {
@@ -563,6 +567,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                         <tr>
                                             <th className='tableh'>Product Code</th>
                                             <th className='tableh'>Product Name</th>
+                                            <th className='tableh'>Landed Cost</th>
                                             <th className='tableh'>Quantity</th>
                                             <th className='tableh'>Quantity to Return</th>
                                         </tr>
@@ -572,6 +577,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                               <tr key={data.value}>
                                                   <td>{data.code}</td>
                                                   <td>{data.name}</td>
+                                                  <td>{data.landePrice}</td>
                                                   <td>{data.quantity}</td>
                                                   <td>
                                                     <Form.Control
@@ -600,6 +606,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                                <tr key={data.value}>
                                                 <td>{data.code}</td>
                                                 <td>{data.name}</td>
+                                                <td>{data.landePrice}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
                                                   <Form.Control
@@ -629,6 +636,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                               <tr key={data.value}>
                                                 <td>{data.code}</td>
                                                 <td>{data.name}</td>
+                                                <td>{data.landePrice}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
                                                   <Form.Control
@@ -657,6 +665,7 @@ const handleQuantityChange = (inputValue, productValue, issued_quantity) => {
                                               <tr key={data.value}>
                                                 <td>{data.code}</td>
                                                 <td>{data.name}</td>
+                                                <td>{data.landePrice}</td>
                                                 <td>{data.quantity}</td>
                                                 <td>
                                                   <Form.Control

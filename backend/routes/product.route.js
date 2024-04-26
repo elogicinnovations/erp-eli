@@ -204,7 +204,8 @@ console.log(`slct_manufacturer : ${slct_manufacturer}`)
             const InsertedSupp = await ProductTAGSupplier.create({
               product_id: IdData,
               supplier_code: supplier_code,
-              product_price: price
+              product_price: price,
+              status: 'Active'
             });
 
             await productTAGsupplierHistory.create({
@@ -360,64 +361,65 @@ router.route("/update").post(
             });
           }
         };
-
-        // const findWarehouse = await Warehouses.findOne({
-        //   where: {
-        //     warehouse_name: "Main",
-        //     location: "Agusan",
-        //   },
-        // });
-        
-        // if (!findWarehouse) {
-        //   console.log("No warehouse found");
-        // }
-
-        // const ExistWarehouseId = findWarehouse.id;
-        // console.log("Id ng warehouse: " + ExistWarehouseId);
-        
-        const prodsupprows = await ProductTAGSupplier.findAll({
-          where: {
-            product_id: id,
+        await ProductTAGSupplier.update(
+          {
+            status: 'Inactive',
           },
-        });
+          {
+            where: {
+              product_id: id,
+            },
+          }
+        );
 
-        if(prodsupprows && prodsupprows.length === 0) {
-          console.log("No product id found");
-        };
-
-        const ExistSuppId = prodsupprows.map(supprow => supprow.id);
-
-        // await Inventory.destroy({
-        //   where: {
-        //     product_tag_supp_id: ExistSuppId,
-        //   },
-        // });
-
-        // const deletesupplier = await ProductTAGSupplier.destroy({
-        //   where: {
-        //     product_id: id,
-        //   },
-        // });
-
-        // if(deletesupplier) {
+  
           const selectedsupplier = productTAGSuppliers;
           for(const supplier of selectedsupplier){
             const { value, price} = supplier;
 
-            const newProductsupp = await ProductTAGSupplier.create({
-              product_id: id,
-              supplier_code: value,
-              product_price: price
-            });
-
-            const createdID = newProductsupp.id;
-
-            // await Inventory.create({
-            //   product_tag_supp_id: createdID,
-            //   quantity: 0,
-            //   price: price,
-            //   warehouse_id: ExistWarehouseId,
+            // const newProductsupp = await ProductTAGSupplier.create({
+            //   product_id: id,
+            //   supplier_code: value,
+            //   product_price: price
             // });
+
+            await ProductTAGSupplier.update(
+              {
+                product_price: price,
+                status: 'Active'
+              },
+              {
+                where: {
+                  product_id: id,
+                  supplier_code: value,
+                },
+              }
+            );
+
+            const findSupplier = await ProductTAGSupplier.findAll({
+              where: {
+                product_id: id,
+                supplier_code: value,
+              },
+            });
+    
+             
+    
+    
+            if (findSupplier.length > 0) {
+             // nothing 
+            } else {
+              await ProductTAGSupplier.create({
+                product_id: id,
+                supplier_code: value,
+                product_price: price,
+                status: 'Active'
+              });
+            }
+    
+
+
+          
 
             const ExistingSupplier = await productTAGsupplierHistory.findOne({
               where: {
@@ -445,7 +447,7 @@ router.route("/update").post(
               }
             }
           }
-        // }
+        
 
       res.status(200).json();
     }

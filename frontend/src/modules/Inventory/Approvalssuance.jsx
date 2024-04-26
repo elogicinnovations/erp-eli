@@ -2,27 +2,27 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import BASE_URL from "../../assets/global/url";
 import "../../assets/global/style.css";
-import ReactLoading from 'react-loading';
-import NoData from '../../assets/image/NoData.png';
-import NoAccess from '../../assets/image/NoAccess.png';
+import ReactLoading from "react-loading";
+import NoData from "../../assets/image/NoData.png";
+import NoAccess from "../../assets/image/NoAccess.png";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../styles/react-style.css";
 import Form from "react-bootstrap/Form";
 import subwarehouse from "../../assets/global/subwarehouse";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
-import {
-  ArrowCircleLeft
-} from "@phosphor-icons/react";
+import { ArrowCircleLeft } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
 
 const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
-
   const { id } = useParams();
   const handleTabClick = (tabKey) => {
     setActiveTab(tabKey);
   };
-
+  const [fetchProduct_notApprove, setFetchProduct_notApprove] = useState([]);
+  const [fetchAssembly_notApprove, setFetchAssembly_notApprove] = useState([]);
+  const [fetchSpare_notApprove, setFetchSpare_notApprove] = useState([]);
+  const [fetchSubpart_notApprove, setFetchSubpart_notApprove] = useState([]);
   const [fetchProduct, setFetchProduct] = useState([]);
   const [fetchAssembly, setFetchAssembly] = useState([]);
   const [fetchSpare, setFetchSpare] = useState([]);
@@ -41,168 +41,177 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
   const [mrs, setMrs] = useState();
   const [remarks, setRemarks] = useState();
   const [IssueStatus, setIssueStatus] = useState();
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
 
-    setuserId(decoded.id);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios.get(BASE_URL + '/issuance/approvalIssuance', {
-      params: {
-        id: id
-      }
-    })
-    .then(res => {
-      setFromSite(res.data[0].from_site);
-      setFromSitename(res.data[0].warehouse.warehouse_name);
-      setIssuedTo(res.data[0].cost_center.name);
-      setWithAccountability(res.data[0].with_accountability)
-      setAccountabilityRefcode(res.data[0].accountability_refcode)
-      setSerialNumber(res.data[0].serial_number)
-      setJobOrderRefcode(res.data[0].job_order_refcode)
-      setReceivedBy(res.data[0].received_by)
-      setTransportedBy(res.data[0].transported_by)
-      setMrs(res.data[0].mrs)
-      setRemarks(res.data[0].remarks)
-      setIssueStatus(res.data[0].status)
-      setIsLoading(false);
-    })
-    .catch((err) => {
-      console.log(err);
-      setIsLoading(false);
-    });
-  }, 1000);
-
-return () => clearTimeout(delay);
-}, [id]);
-
-   //get MasterList
-   const [master, setMaster] = useState([]);
-   useEffect(() => {
-     axios
-       .get(BASE_URL + "/masterList/masterTable")
-       .then((response) => {
-        setMaster(response.data);
-       })
-       .catch((error) => {
-         console.error("Error fetching roles:", error);
-       });
-   }, []);
-
-
-   useEffect(() => { 
-    axios.get(BASE_URL + '/issuance/fetchApprove',{
-      params: {
-        id
-      }
-    })
-        .then(res => {
-          setFetchProduct(res.data.product);
-          setFetchAssembly(res.data.assembly);
-          setFetchSpare(res.data.spare);
-          setFetchSubpart(res.data.subpart);
+      axios
+        .get(BASE_URL + "/issuance/approvalIssuance", {
+          params: {
+            id: id,
+          },
         })
-        .catch(err => console.log(err));
+        .then((res) => {
+          setFromSite(res.data[0].from_site);
+          setFromSitename(res.data[0].warehouse.warehouse_name);
+          setIssuedTo(res.data[0].cost_center.name);
+          setWithAccountability(res.data[0].with_accountability);
+          setAccountabilityRefcode(res.data[0].accountability_refcode);
+          setSerialNumber(res.data[0].serial_number);
+          setJobOrderRefcode(res.data[0].job_order_refcode);
+          setReceivedBy(res.data[0].received_by);
+          setTransportedBy(res.data[0].transported_by);
+          setMrs(res.data[0].mrs);
+          setRemarks(res.data[0].remarks);
+          setIssueStatus(res.data[0].status);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, [id]);
+
+  //get MasterList
+  const [master, setMaster] = useState([]);
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/masterList/masterTable")
+      .then((response) => {
+        setMaster(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching roles:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/issuance/fetchApprove", {
+        params: {
+          id,
+        },
+      })
+      .then((res) => {
+        setFetchProduct_notApprove(res.data.product_notApprove);
+        setFetchAssembly_notApprove(res.data.assembly_notApprove);
+        setFetchSpare_notApprove(res.data.spare_notApprove);
+        setFetchSubpart_notApprove(res.data.subpart_notApprove);
+        setFetchProduct(res.data.product);
+        setFetchAssembly(res.data.assembly);
+        setFetchSpare(res.data.spare);
+        setFetchSubpart(res.data.subpart);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   const handleApprove = () => {
     swal({
-      title: 'Are you sure?',
-      text: 'This action will mark the request as approved.',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "This action will mark the request as approved.",
+      icon: "warning",
       buttons: true,
       dangerMode: true,
     }).then((confirmed) => {
       if (confirmed) {
-        axios.post(BASE_URL + '/issuance/approval', null,{
-         params:{
-            id,
-            fromSite,
-            fetchProduct,
-            fetchAssembly,
-            fetchSpare,
-            fetchSubpart,
-            userId
-         }
-        })
-          .then(() => {
-            swal('Success!', 'You successfully approved this request', 'success')
-              .then(() => {
-                navigate('/inventory')
-              });
+        axios
+          .post(BASE_URL + "/issuance/approval", null, {
+            params: {
+              id,
+              fromSite,
+              fetchProduct: fetchProduct_notApprove,
+              fetchAssembly: fetchAssembly_notApprove,
+              fetchSpare: fetchSpare_notApprove,
+              fetchSubpart: fetchSubpart_notApprove,
+              userId,
+            },
           })
-          .catch(err => {
+          .then(() => {
+            swal(
+              "Success!",
+              "You successfully approved this request",
+              "success"
+            ).then(() => {
+              navigate("/inventory");
+            });
+          })
+          .catch((err) => {
             console.log(err);
-            swal('Error!', 'Something went wrong. Please try again.', 'error');
+            swal("Error!", "Something went wrong. Please try again.", "error");
           });
       }
     });
-  }
+  };
 
   const handleReject = () => {
     swal({
-      title: 'Are you sure?',
-      text: 'This action will mark the request as rejected.',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "This action will mark the request as rejected.",
+      icon: "warning",
       buttons: true,
       dangerMode: true,
     }).then((confirmed) => {
       if (confirmed) {
-        axios.post(BASE_URL + '/issuance/reject', null,{
-         params:{
-            id,
-            userId: userId
-         }
-        })
-          .then(() => {
-            swal('Success!', 'You have successfully rejected this request.', 'success')
-              .then(() => {
-                navigate('/inventory')
-              });
+        axios
+          .post(BASE_URL + "/issuance/reject", null, {
+            params: {
+              id,
+              userId: userId,
+            },
           })
-          .catch(err => {
+          .then(() => {
+            swal(
+              "Success!",
+              "You have successfully rejected this request.",
+              "success"
+            ).then(() => {
+              navigate("/inventory");
+            });
+          })
+          .catch((err) => {
             console.log(err);
-            swal('Error!', 'Something went wrong. Please try again.', 'error');
+            swal("Error!", "Something went wrong. Please try again.", "error");
           });
       }
     });
-  }
-
+  };
 
   return (
     <div className="main-of-containers">
-
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-        authrztn.includes('Inventory - Approval') ? (
-        <div className="right-body-contentss">
-                    <div className="arrowandtitle">
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Inventory - Approval") ? (
+          <div className="right-body-contentss">
+            <div className="arrowandtitle">
               <Link to="/inventory">
-                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+                <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
               </Link>
-                  <div className="titletext">
-                      <h1>Approval Issuance</h1>
-                  </div>
+              <div className="titletext">
+                <h1>Approval Issuance</h1>
               </div>
+            </div>
 
             <div
               className="gen-info"
@@ -210,7 +219,8 @@ return () => clearTimeout(delay);
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "20px",
-              }}>
+              }}
+            >
               Issuance Info
               <span
                 style={{
@@ -221,7 +231,8 @@ return () => clearTimeout(delay);
                   top: "81%",
                   left: "11.5rem",
                   transform: "translateY(-50%)",
-                }}></span>
+                }}
+              ></span>
             </div>
 
             <div className="row mt-3">
@@ -257,7 +268,7 @@ return () => clearTimeout(delay);
                   type="checkbox"
                   label="With Accountability"
                   style={{ fontSize: "15px" }}
-                  checked={withAccountability === 'true'}
+                  checked={withAccountability === "true"}
                   disabled
                   // onChange={(e) => setWithAccountability(e.target.value)}
                 />
@@ -317,7 +328,8 @@ return () => clearTimeout(delay);
                     style={{ height: "40px", fontSize: "15px" }}
                     value={receivedBy}
                     disabled
-                    required>
+                    required
+                  >
                     <option value="">Select Employee</option>
                     {master.map((master) => (
                       <option key={master.col_id} value={master.col_id}>
@@ -338,7 +350,8 @@ return () => clearTimeout(delay);
                     style={{ height: "40px", fontSize: "15px" }}
                     value={transportedBy}
                     disabled
-                    required>
+                    required
+                  >
                     <option value="">Select Employee</option>
                     {master.map((master) => (
                       <option key={master.col_id} value={master.col_id}>
@@ -381,7 +394,8 @@ return () => clearTimeout(delay);
                 fontSize: "20px",
                 position: "relative",
                 paddingTop: "30px",
-              }}>
+              }}
+            >
               <span
                 style={{
                   position: "absolute",
@@ -391,101 +405,247 @@ return () => clearTimeout(delay);
                   top: "85%",
                   left: "0rem",
                   transform: "translateY(-50%)",
-                }}></span>
+                }}
+              ></span>
             </div>
             <div className="supplier-table">
               <div className="table-containss">
                 <div className="main-of-all-tables">
-                  <table >
+                  <table>
                     <thead>
                       <tr>
                         <th className="tableh">Product Code</th>
                         <th className="tableh">Product Name</th>
+                        {(IssueStatus === "Approved" ||
+                          IssueStatus === "Rejected") && (
+                            <th className="tableh">Landed Cost</th>
+                          )}
                         <th className="tableh">UOM</th>
                         <th className="tableh">Quantity</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    {(IssueStatus == "Approved" ||
+                      IssueStatus == "Rejected") && (
+                        <tbody>
+                          {fetchProduct.map((data, i) => (
+                            <tr key={i}>
+                              <td>
+                                {
+                                  data.inventory_prd.product_tag_supplier
+                                    .product.product_code
+                                }
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_prd.product_tag_supplier
+                                    .product.product_name
+                                }
+                              </td>
+                              <td>
+                                {(
+                                  data.inventory_prd.price +
+                                  data.inventory_prd.freight_cost +
+                                  data.inventory_prd.custom_cost
+                                ).toFixed(2)}
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_prd.product_tag_supplier
+                                    .product.product_unitMeasurement
+                                }
+                              </td>
+                              <td>
+                                {data.quantity === 0
+                                  ? "returned"
+                                  : data.quantity}
+                              </td>
+                            </tr>
+                          ))}
 
-                      {fetchProduct.map((data, i) => (
-                        <tr key={i}>
-                            <td>{data.product.product_code }</td>
-                            <td>{data.product.product_name }</td>
-                            <td>{data.product.product_unitMeasurement }</td>
-                            <td>{data.quantity}</td>                         
-                        </tr>
-                        ))}
+                          {fetchAssembly.map((data, i) => (
+                            <tr key={i}>
+                              <td>
+                                {
+                                  data.inventory_assembly.assembly_supplier
+                                    .assembly.assembly_code
+                                }
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_assembly.assembly_supplier
+                                    .assembly.assembly_name
+                                }
+                              </td>
+                              <td>
+                                {(
+                                  data.inventory_assembly.price +
+                                  data.inventory_assembly.freight_cost +
+                                  data.inventory_assembly.custom_cost
+                                ).toFixed(2)}
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_assembly.assembly_supplier
+                                    .assembly.assembly_unitMeasurement
+                                }
+                              </td>
+                              <td>
+                                {data.quantity === 0
+                                  ? "returned"
+                                  : data.quantity}
+                              </td>
+                            </tr>
+                          ))}
 
-                      {fetchAssembly.map((data, i) => (
-                        <tr key={i}>
-                            <td>{data.assembly.assembly_code}</td>
-                            <td>{data.assembly.assembly_name}</td>
-                            <td>{data.assembly.assembly_unitMeasurement}</td>
-                            <td>{data.quantity}</td>                         
-                        </tr>
-                        ))}
+                          {fetchSpare.map((data, i) => (
+                            <tr key={i}>
+                              <td>
+                                {
+                                  data.inventory_spare.sparepart_supplier
+                                    .sparePart.spareParts_code
+                                }
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_spare.sparepart_supplier
+                                    .sparePart.spareParts_name
+                                }
+                              </td>
+                              <td>
+                                {(
+                                  data.inventory_spare.price +
+                                  data.inventory_spare.freight_cost +
+                                  data.inventory_spare.custom_cost
+                                ).toFixed(2)}
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_spare.sparepart_supplier
+                                    .sparePart.spareParts_unitMeasurement
+                                }
+                              </td>
+                              <td>
+                                {data.quantity === 0
+                                  ? "returned"
+                                  : data.quantity}
+                              </td>
+                            </tr>
+                          ))}
 
-                        {fetchSpare.map((data, i) => (
-                          <tr key={i}>
+                          {fetchSubpart.map((data, i) => (
+                            <tr key={i}>
+                              <td>
+                                {
+                                  data.inventory_subpart.subpart_supplier
+                                    .subPart.subPart_code
+                                }
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_subpart.subpart_supplier
+                                    .subPart.subPart_name
+                                }
+                              </td>
+                              <td>
+                                {(
+                                  data.inventory_subpart.price +
+                                  data.inventory_subpart.freight_cost +
+                                  data.inventory_subpart.custom_cost
+                                ).toFixed(2)}
+                              </td>
+                              <td>
+                                {
+                                  data.inventory_subpart.subpart_supplier
+                                    .subPart.subPart_unitMeasurement
+                                }
+                              </td>
+                              <td>
+                                {data.quantity === 0
+                                  ? "returned"
+                                  : data.quantity}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      )}
+                    {(IssueStatus !== "Approved" ||
+                      IssueStatus !== "Rejected") && (
+                        <tbody>
+                          {fetchProduct_notApprove.map((data, i) => (
+                            <tr key={i}>
+                              <td>{data.product.product_code}</td>
+                              <td>{data.product.product_name}</td>
+                              <td>{data.product.product_unitMeasurement}</td>
+                              <td>{data.quantity}</td>
+                            </tr>
+                          ))}
+
+                          {fetchAssembly_notApprove.map((data, i) => (
+                            <tr key={i}>
+                              <td>{data.assembly.assembly_code}</td>
+                              <td>{data.assembly.assembly_name}</td>
+                              <td>{data.assembly.assembly_unitMeasurement}</td>
+                              <td>{data.quantity}</td>
+                            </tr>
+                          ))}
+
+                          {fetchSpare_notApprove.map((data, i) => (
+                            <tr key={i}>
                               <td>{data.sparePart.spareParts_code}</td>
                               <td>{data.sparePart.spareParts_name}</td>
-                              <td>{data.sparePart.spareParts_unitMeasurement}</td>
-                              <td>{data.quantity}</td>                         
-                          </tr>
-                        ))}
+                              <td>
+                                {data.sparePart.spareParts_unitMeasurement}
+                              </td>
+                              <td>{data.quantity}</td>
+                            </tr>
+                          ))}
 
-                        {fetchSubpart.map((data, i) => (
-                          <tr key={i}>
+                          {fetchSubpart_notApprove.map((data, i) => (
+                            <tr key={i}>
                               <td>{data.subPart.subPart_code}</td>
                               <td>{data.subPart.subPart_name}</td>
                               <td>{data.subPart.subPart_unitMeasurement}</td>
-                              <td>{data.quantity}</td>                         
-                          </tr>
-                        ))}
-                      
-                    </tbody>
+                              <td>{data.quantity}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      )}
                   </table>
                   {IssueStatus !== "Approved" && IssueStatus !== "Rejected" && (
-                  <div className="save-cancel">
-                    <Button
+                    <div className="save-cancel">
+                      <Button
                         type="submit"
                         className="btn btn-success"
                         size="md"
                         style={{ fontSize: "20px", margin: "0px 5px" }}
                         onClick={() => handleApprove()}
-                    >
+                      >
                         Approve
-                    </Button>
-                    <Button
+                      </Button>
+                      <Button
                         type="button"
                         className="btn btn-danger"
                         size="md"
                         style={{ fontSize: "20px", margin: "0px 5px" }}
                         onClick={() => handleReject()}
-                    >
+                      >
                         Reject
-                  </Button>
-                </div>
+                      </Button>
+                    </div>
                   )}
-              </div>
-
-
-                
+                </div>
               </div>
             </div>
-        </div>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default ApprovalIssuance;

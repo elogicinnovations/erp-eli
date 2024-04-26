@@ -651,6 +651,9 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                                   <Form.Control
                                     type="number"
                                     value={quantityInputs[product.value] || ""}
+                                    onKeyDown={(e) => {
+                                      ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+                                    }}
                                     onInput={(e) =>
                                       handleQuantityChange(
                                         e.target.value,

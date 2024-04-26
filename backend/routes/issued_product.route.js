@@ -29,6 +29,7 @@ const {
 
 const session = require("express-session");
 
+
 router.use(
   session({
     secret: "secret-key",
@@ -40,9 +41,11 @@ router.use(
 router.route("/getProducts").get(async (req, res) => {
   try {
     // console.log('url_ID prod', req.query.id)
-    const data = await IssuedProduct.findAll({
+    const data = await IssuedApproveProduct.findAll({
+     
       where: {
         issuance_id: req.query.id,
+        quantity: { [Op.ne]: "0" },
       },
       include: [
         {
@@ -80,9 +83,10 @@ router.route("/getProducts").get(async (req, res) => {
 router.route("/getAssembly").get(async (req, res) => {
   try {
     console.log("url_ID asm", req.query.id);
-    const data = await IssuedAssembly.findAll({
+    const data = await IssuedApproveAssembly.findAll({
       where: {
         issuance_id: req.query.id,
+        quantity: { [Op.ne]: "0" },
       },
       include: [
         {
@@ -119,9 +123,10 @@ router.route("/getAssembly").get(async (req, res) => {
 
 router.route("/getSpare").get(async (req, res) => {
   try {
-    const data = await IssuedSpare.findAll({
+    const data = await IssuedApproveSpare.findAll({
       where: {
         issuance_id: req.query.id,
+        quantity: { [Op.ne]: "0" },
       },
       include: [
         {
@@ -158,9 +163,10 @@ router.route("/getSpare").get(async (req, res) => {
 
 router.route("/getSubpart").get(async (req, res) => {
   try {
-    const data = await IssuedSubpart.findAll({
+    const data = await IssuedApproveSubpart.findAll({
       where: {
         issuance_id: req.query.id,
+        quantity: { [Op.ne]: "0" },
       },
       include: [
         {

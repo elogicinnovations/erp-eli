@@ -76,12 +76,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
             {
               model: Product,
               required: true,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+            
             },
             {
               model: Supplier,
@@ -262,7 +257,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
       // Sum up the quantity from PR_PO
       prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
+        totalPR_received_Quantity = prItem.received_quantity;
       });
       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
       return totalPR_received_Quantity;
@@ -319,8 +314,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
       const productName = item.product_tag_supplier?.product?.product_name;
       const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
       const createdAtt = item.product_tag_supplier?.product?.createdAt;
-      const Manufacturer =
-        item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
+      
       const Price = item.price;
 
       if (warehouseId && productCode && productName) {
@@ -335,7 +329,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalPR_intransit_Quantity: 0,
@@ -410,12 +404,6 @@ router.route("/inventoryASM").get(async (req, res) => {
             {
               model: Assembly,
               required: true,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
             },
             {
               model: Supplier,
@@ -622,7 +610,7 @@ router.route("/inventoryASM").get(async (req, res) => {
 
             where: {
               status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
+              status:{ [Op.ne]: 'In-transit'},
               createdAt: {
                 [Op.between]: [
                   firstDateOfMonth.format("YYYY-MM-DD"),
@@ -637,7 +625,7 @@ router.route("/inventoryASM").get(async (req, res) => {
       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
       // Sum up the quantity from PR_PO
       prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
+        totalPR_received_Quantity = prItem.received_quantity;
       });
       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
       return totalPR_received_Quantity;
@@ -650,8 +638,7 @@ router.route("/inventoryASM").get(async (req, res) => {
       const productID = item.assembly_supplier?.assembly?.id;
       const productCode = item.assembly_supplier?.assembly?.assembly_code;
       const productName = item.assembly_supplier?.assembly?.assembly_name;
-      const Manufacturer =
-        item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
+
       const Price = item.price;
 
       const inventory_id = item.inventory_id;
@@ -670,7 +657,7 @@ router.route("/inventoryASM").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            
             totalQuantity: 0,
             totalPRQuantity_asm: 0,
             totalPR_intransit_Quantity: 0,
@@ -745,12 +732,7 @@ router.route("/inventorySPR").get(async (req, res) => {
             {
               model: SparePart,
               required: true,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+             
             },
             {
               model: Supplier,
@@ -970,7 +952,7 @@ router.route("/inventorySPR").get(async (req, res) => {
       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
       // Sum up the quantity from PR_PO
       prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
+        totalPR_received_Quantity = prItem.received_quantity;
       });
       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
       return totalPR_received_Quantity;
@@ -983,8 +965,7 @@ router.route("/inventorySPR").get(async (req, res) => {
       const productID = item.sparepart_supplier?.sparePart?.id;
       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
-      const Manufacturer =
-        item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
+     
       const Price = item.price;
       const inventory_id = item.inventory_id;
       const UOM =
@@ -1003,7 +984,7 @@ router.route("/inventorySPR").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+        
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalIssuedQuantity: 0,
@@ -1078,12 +1059,7 @@ router.route("/inventorySBP").get(async (req, res) => {
             {
               model: SubPart,
               required: true,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+              
             },
             {
               model: Supplier,
@@ -1264,7 +1240,7 @@ router.route("/inventorySBP").get(async (req, res) => {
       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
       // Sum up the quantity from PR_PO
       prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
+        totalPR_received_Quantity = prItem.received_quantity;
       });
       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
       return totalPR_received_Quantity;
@@ -1316,8 +1292,7 @@ router.route("/inventorySBP").get(async (req, res) => {
       const productID = item.subpart_supplier?.subPart?.id;
       const productCode = item.subpart_supplier?.subPart?.subPart_code;
       const productName = item.subpart_supplier?.subPart?.subPart_name;
-      const Manufacturer =
-        item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
+
       const Price = item.price;
 
       const inventory_id = item.inventory_id;
@@ -1336,7 +1311,7 @@ router.route("/inventorySBP").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalIssuedQuantity: 0,
@@ -1430,12 +1405,7 @@ router.route("/Filtered_prd").get(async (req, res) => {
               model: Product,
               required: true,
               // where: whereClause, // Include where clause for Product model
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+             
             },
             {
               model: Supplier,
@@ -1661,8 +1631,7 @@ router.route("/Filtered_prd").get(async (req, res) => {
       const productName = item.product_tag_supplier?.product?.product_name;
       const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
       const createdAtt = item.product_tag_supplier?.product?.createdAt;
-      const Manufacturer =
-        item.product_tag_supplier?.product?.manufacturer?.manufacturer_name;
+ 
       const Price = item.price;
 
       if (warehouseId && productCode && productName) {
@@ -1677,7 +1646,7 @@ router.route("/Filtered_prd").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+           
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalPR_intransit_Quantity: 0,
@@ -1763,12 +1732,7 @@ router.route("/Filtered_asm").get(async (req, res) => {
             {
               model: Assembly,
               required: true,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+              
             },
             {
               model: Supplier,
@@ -1988,8 +1952,7 @@ router.route("/Filtered_asm").get(async (req, res) => {
       const productID = item.assembly_supplier?.assembly?.id;
       const productCode = item.assembly_supplier?.assembly?.assembly_code;
       const productName = item.assembly_supplier?.assembly?.assembly_name;
-      const Manufacturer =
-        item.assembly_supplier?.assembly?.manufacturer?.manufacturer_name;
+
       const Price = item.price;
 
       const inventory_id = item.inventory_id;
@@ -2008,7 +1971,7 @@ router.route("/Filtered_asm").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+            
             totalQuantity: 0,
             totalPRQuantity_asm: 0,
             totalPR_intransit_Quantity: 0,
@@ -2093,12 +2056,7 @@ router.route("/Filtered_spare").get(async (req, res) => {
               model: SparePart,
               required: true,
               // where: whereClause,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+            
             },
             {
               model: Supplier,
@@ -2316,8 +2274,7 @@ router.route("/Filtered_spare").get(async (req, res) => {
       const productID = item.sparepart_supplier?.sparePart?.id;
       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
-      const Manufacturer =
-        item.sparepart_supplier?.sparePart?.manufacturer?.manufacturer_name;
+   
       const Price = item.price;
       const inventory_id = item.inventory_id;
       const UOM =
@@ -2336,7 +2293,7 @@ router.route("/Filtered_spare").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+        
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalIssuedQuantity: 0,
@@ -2421,12 +2378,7 @@ router.route("/Filtered_subpart").get(async (req, res) => {
               model: SubPart,
               required: true,
               // where: whereClause,
-              include: [
-                {
-                  model: Manufacturer,
-                  required: true,
-                },
-              ],
+            
             },
             {
               model: Supplier,
@@ -2644,8 +2596,7 @@ router.route("/Filtered_subpart").get(async (req, res) => {
       const productID = item.subpart_supplier?.subPart?.id;
       const productCode = item.subpart_supplier?.subPart?.subPart_code;
       const productName = item.subpart_supplier?.subPart?.subPart_name;
-      const Manufacturer =
-        item.subpart_supplier?.subPart?.manufacturer?.manufacturer_name;
+
       const Price = item.price;
 
       const inventory_id = item.inventory_id;
@@ -2664,7 +2615,7 @@ router.route("/Filtered_subpart").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            manufacturer: Manufacturer,
+       
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalIssuedQuantity: 0,

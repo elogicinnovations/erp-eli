@@ -14,7 +14,10 @@ router.route('/fetchTable').get(async (req, res) => {
           required: true
         }],
         
-        where: {product_id: req.query.id}
+        where: {
+          product_id: req.query.id,
+          status: 'Active'
+        }
       });
   
       if (data) {
@@ -49,7 +52,9 @@ router.route('/fetchTable').get(async (req, res) => {
           required: true
         }
       ],
-        where: {product_id: req.query.id}
+        where: {
+          product_id: req.query.id,
+          status: 'Active'}
       });
   
       if (data) {

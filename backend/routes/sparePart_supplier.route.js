@@ -16,6 +16,7 @@ router.route('/fetchTableEdit').get(async (req, res) => {
       const data = await SparePart_Supplier.findAll({
         where: {
           sparePart_id: req.query.id,
+          status: 'Active'
         },
         include: {
           model: Supplier,
@@ -57,7 +58,10 @@ router.route('/fetchCanvass').get(async (req, res) => {
         required: true
       }
     ],
-      where: {sparePart_id: req.query.spare_ID}
+      where: {
+        sparePart_id: req.query.spare_ID,
+        status: 'Active'
+      }
     });
 
     if (data) {
@@ -89,7 +93,10 @@ router.route('/fetchSupplierSpare').get(async (req, res) => {
         required: true
       }
     ],
-      where: {sparePart_id: req.query.id}
+      where: {
+        sparePart_id: req.query.id,
+        status: 'Active'
+      }
     });
 
     if (data) {

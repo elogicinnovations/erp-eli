@@ -20,6 +20,10 @@ const Supplier_Assembly = sequelize.define('assembly_supplier', {
     type: DataTypes.FLOAT,
     allowNull: true,
     defaultValue: 0,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

@@ -109,19 +109,6 @@ router.route('/create').post(async (req, res) => {
           });
           const createdID = spare_newData.id;
 
-          // const findWarehouse = await Warehouses.findOne({
-          //   where: {
-          //    id: 1
-          //   },
-          // });
-          
-          // if (!findWarehouse) {
-          //   console.log("No warehouse found");
-          // }
-  
-          // const ExistWarehouseId = findWarehouse.id;
-          // console.log("Id ng warehouse: " + ExistWarehouseId);
-
 
           for (const supplier of SpareaddPriceInput) {
             const supplierValue = supplier.code;
@@ -130,7 +117,8 @@ router.route('/create').post(async (req, res) => {
             const SupplierSpare_ID = await SparePart_Supplier.create({
                 sparePart_id: createdID,
                 supplier_code: supplierValue,
-                supplier_price: supplierPrices
+                supplier_price: supplierPrices,
+                status: 'Active'
             });
 
             await SparePartPrice_history.create({
@@ -139,13 +127,6 @@ router.route('/create').post(async (req, res) => {
               supplier_price: supplierPrices
             })
 
-            
-            // await Inventory_Spare.create({
-            //   spare_tag_supp_id: SupplierSpare_ID.id,
-            //   quantity: 0,
-            //   price: supplierPrices,
-            //   warehouse_id: ExistWarehouseId,
-            // });
           }
 
           const selectedSubpartIds = req.body.SubParts;
@@ -252,7 +233,7 @@ router.route("/update").post(
           const selectedSubpart = SubParts;
           for(const subpartDropdown of selectedSubpart) {
             const subpartValue = subpartDropdown.value;
-            console.log("HAHAHAH SANA ID TO" + subpartValue)
+            // console.log("HAHAHAH SANA ID TO" + subpartValue)
             await SparePart_SubPart.create({
               sparePart_id: id,
               subPart_id: subpartValue
@@ -260,65 +241,62 @@ router.route("/update").post(
           }
         }
 
-        // const findWarehouse = await Warehouses.findOne({
-        //   where: {
-        //     id: 1
-        //   },
-        // });
-        
-        // if (!findWarehouse) {
-        //   console.log("No warehouse found");
-        // }
-
-        // const ExistWarehouseId = findWarehouse.id;
-        // console.log("Id ng warehouse: " + ExistWarehouseId);
-
-
-        const sparesupprows = await SparePart_Supplier.findAll({
-          where: {
-            sparePart_id: id,
+        await SparePart_Supplier.update(
+          {
+            status: 'Inactive',
           },
-        });
+          {
+            where: {
+              sparePart_id: id,
+            },
+          }
+        );
 
-        if(sparesupprows && sparesupprows.length === 0) {
-           console.log("No sparepart id found");
-          //  return res.status(201).json({message: "No spare part supplier found"})
-        }
-
-        const ExistSuppId = sparesupprows.map(supprow => supprow.id);
-
-        // await Inventory_Spare.destroy({
-        //   where: {
-        //     spare_tag_supp_id: ExistSuppId,
-        //   },
-        // });
-
-        // const deletesupplier = await SparePart_Supplier.destroy({
-        //   where: {
-        //     sparePart_id: id,
-        //   },
-        // });
-
-        // if(deletesupplier) {
             const selectedSupplier = addPriceInput;
             for(const supplier of selectedSupplier) {
               const { value, price } = supplier;
               
-              const newSparesupp = await SparePart_Supplier.create({
-                sparePart_id: id,
-                supplier_code: value,
-                supplier_price: price,
-              });
-
-              const createdID = newSparesupp.id;
-
-
-              // await Inventory_Spare.create({
-              //   spare_tag_supp_id: createdID,
-              //   quantity: 0,
-              //   price: price,
-              //   warehouse_id: ExistWarehouseId,
+              // const newSparesupp = await SparePart_Supplier.create({
+              //   sparePart_id: id,
+              //   supplier_code: value,
+              //   supplier_price: price,
               // });
+
+              await SparePart_Supplier.update(
+                {
+                  supplier_price: price,
+                  status: 'Active'
+                },
+                {
+                  where: {
+                    sparePart_id: id,
+                    supplier_code: value,
+                  },
+                }
+              );
+
+              const findSupplier = await SparePart_Supplier.findAll({
+                where: {
+                  sparePart_id: id,
+                  supplier_code: value,
+                },
+              });
+      
+               
+      
+      
+              if (findSupplier.length > 0) {
+               // nothing 
+              } else {
+                await SparePart_Supplier.create({
+                  sparePart_id: id,
+                  supplier_code: value,
+                  supplier_price: price,
+                  status: 'Active'
+                });
+              }
+      
+  
 
               const ExistingSupplier = await SparePartPrice_history.findOne({
                 where: {

@@ -25,7 +25,10 @@ router.route('/fetchCanvass').get(async (req, res) => {
           required: true,
         },
       ],
-      where: { subpart_id: req.query.id },
+      where: { 
+        subpart_id: req.query.id,
+        status: 'Active'
+      },
       // where: { subpart_id: req.query['sub_id'] },
     });
 
@@ -48,7 +51,10 @@ router.route('/fetchCanvass').get(async (req, res) => {
           model: Supplier,
           required: true
         }],
-        where: {subpart_id: req.query.id}
+        where: {
+          subpart_id: req.query.id,
+          status: 'Active'
+        }
       });
   
       if (data) {

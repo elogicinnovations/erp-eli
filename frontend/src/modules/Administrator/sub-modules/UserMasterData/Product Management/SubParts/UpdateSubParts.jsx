@@ -828,7 +828,7 @@ function selectFiles() {
                             </td>
                             <td>
                               {/* {(supp.supplier.supplier_vat / 100 * supp.supplier_price).toFixed(2)} */}
-                              {supp.supplier.supplier_vat
+                              {supp.supplier.supplier_vat 
                                 ? (supp.supplier.supplier_vat / 100 * (supp.supplier_price || 0)).toFixed(2)
                                 : (subpartTAGSuppliers.find((option) => option.value === supp.supplier.supplier_code)?.vatable / 100 * (supp.supplier_price || 0)).toFixed(2)
                               }

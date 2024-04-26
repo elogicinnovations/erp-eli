@@ -731,7 +731,7 @@ console.log(SubParts)
                                       disabled={!isReadOnly}
                                       aria-label="" 
                                       onChange={handleFormChangeManufacturer} 
-                                      required
+                                      
                                       style={{ height: '40px', fontSize: '15px' }}
                                       value={slct_manufacturer || ''}>
                                         <option disabled value=''>
