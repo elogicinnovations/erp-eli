@@ -1,7 +1,8 @@
 const { Sequelize, Op } = require("sequelize");
 
 const sequelize = new Sequelize({
-  host: "localhost",
+  // host: "localhost",
+  host: "180.232.110.228",
   database: "erp_sbf",
   dialect: "mysql",
   username: "root",
