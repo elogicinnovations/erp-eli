@@ -656,11 +656,13 @@ router.route('/fetchPRhistory').get(async (req, res) => {
 
   router.route('/fetchRejustifyRemarks').get(async (req, res) => {
     try {
-      const { pr_id } = req.query;
-      const data = await PR_Rejustify.findOne({
+      const { pr_id, createdAt } = req.query;
+      const data = await PR_Rejustify.findAll({
         where: {
-          pr_id: pr_id 
+          pr_id: pr_id, 
+          createdAt: createdAt
         },  
+       
       });
   
      res.json(data)

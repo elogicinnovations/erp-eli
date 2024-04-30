@@ -254,6 +254,7 @@ function Warehouse({ authrztn }) {
     }));
   };
 
+  
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
 
@@ -731,7 +732,7 @@ function Warehouse({ authrztn }) {
                       fontSize: "15px",
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
-                    onChange={(e) => setDepartmentname(e.target.value)}
+                    onChange={(e) => setDepartmentname(e.target.value.trim())}
                     required
                   ></Form.Control>
                 </Form.Group>

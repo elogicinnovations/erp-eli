@@ -149,16 +149,22 @@ function PurchaseRequestPreview() {
   const handleUploadRejustify = async () => {
     try {
       const formData = new FormData();
-      formData.append('file', file);
+
+      if (file) {
+        formData.append('file', file);
+        const mimeType = file.type;
+        const fileExtension = file.name.split('.').pop();
+        formData.append('mimeType', mimeType);
+        formData.append('fileExtension', fileExtension);
+      } else {
+        // Append null or skip appending depending on your server-side logic
+        // formData.append('file', null);
+        // OR you can skip appending it altogether
+      }
+      
       formData.append('remarks', rejustifyRemarks);
       formData.append('id', id);
-
-      const mimeType = file.type;
-      const fileExtension = file.name.split('.').pop();
-
-      formData.append('mimeType', mimeType);
-      formData.append('fileExtension', fileExtension);
-
+      
       const response = await axios.post(BASE_URL + `/PR_rejustify/rejustify`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',

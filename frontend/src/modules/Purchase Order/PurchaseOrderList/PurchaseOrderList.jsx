@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import Sidebar from "../../Sidebar/sidebar";
-import NoData from '../../../../src/assets/image/NoData.png';
-import ReactLoading from 'react-loading';
-import NoAccess from '../../../assets/image/NoAccess.png';
+import NoData from "../../../../src/assets/image/NoData.png";
+import ReactLoading from "react-loading";
+import NoAccess from "../../../assets/image/NoAccess.png";
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
 import axios from "axios";
@@ -13,12 +13,12 @@ import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Collapse from '@mui/material/Collapse';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { IconButton, TextField, TablePagination, } from '@mui/material';
-import usePagination from '@mui/material/usePagination';
-import Modal from 'react-bootstrap/Modal';
+import Collapse from "@mui/material/Collapse";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { IconButton, TextField, TablePagination } from "@mui/material";
+import usePagination from "@mui/material/usePagination";
+import Modal from "react-bootstrap/Modal";
 import {
   CalendarBlank,
   XCircle,
@@ -26,7 +26,7 @@ import {
   FileCsv,
   FileXls,
   FileJpg,
-  FilePng,  
+  FilePng,
 } from "@phosphor-icons/react";
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -54,8 +54,8 @@ function PurchaseOrderList({ authrztn }) {
   const [specificPR, setSpecificPR] = useState([]);
   const [pr_req, setPr_req] = useState([]);
   const [showRejustify, setshowRejustify] = useState(false);
-  const [Rejustifyremarks, setRejustifyremarks] = useState("")
-  const [RejustifyFile, setRejustifyFile] = useState([])  
+  const [Rejustifyremarks, setRejustifyremarks] = useState("");
+  const [RejustifyFile, setRejustifyFile] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const totalPages = Math.ceil(filteredPR.length / pageSize);
@@ -78,7 +78,7 @@ function PurchaseOrderList({ authrztn }) {
 
   const handleRowToggle = async (id) => {
     try {
-      const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
+      const res = await axios.get(BASE_URL + "/PR_history/fetchdropdownData", {
         params: { id: id },
       });
 
@@ -90,15 +90,17 @@ function PurchaseOrderList({ authrztn }) {
     }
   };
 
-  const handleRejustify = async (pr_id) => {
+  const handleRejustify = async (pr_id, createdAt) => {
     try {
       setshowRejustify(true);
-      const res = await axios
-      .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
-        params: { pr_id: pr_id },
-      });
-      setRejustifyremarks(res.data.remarks)
-      setRejustifyFile(res.data)
+      const res = await axios.get(
+        BASE_URL + "/PR_history/fetchRejustifyRemarks",
+        {
+          params: { pr_id: pr_id, createdAt },
+        }
+      );
+      setRejustifyremarks(res.data[0].remarks);
+      setRejustifyFile(res.data[0]);
     } catch (err) {
       console.error(err);
     }
@@ -107,7 +109,7 @@ function PurchaseOrderList({ authrztn }) {
   const handleDownloadFile = async () => {
     try {
       if (!RejustifyFile) {
-        console.error('No file available for download');
+        console.error("No file available for download");
         return;
       }
 
@@ -126,7 +128,7 @@ function PurchaseOrderList({ authrztn }) {
       const fileName = `RejustifyFile.${fileExtension}`;
 
       // Create a link element to trigger the download
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
@@ -151,12 +153,13 @@ function PurchaseOrderList({ authrztn }) {
         formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
         data.remarks.toLowerCase().includes(searchTerm) ||
         data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.masterlist.department.department_name.toLowerCase().includes(searchTerm)
+        data.masterlist.department.department_name
+          .toLowerCase()
+          .includes(searchTerm)
       );
     });
-  
+
     setFilteredPR(filteredData);
-    
   };
 
   // const reloadTable = () => {
@@ -176,22 +179,22 @@ function PurchaseOrderList({ authrztn }) {
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/PR/fetchTable_PO")
-      .then((res) => {
-        setPr_req(res.data);
-        setAllPR(res.data);
-        setFilteredPR(res.data);
-        setIsLoading(false);
-    })
-    .catch((err) => {
-      console.log(err)
-        setIsLoading(false);
-    });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/PR/fetchTable_PO")
+        .then((res) => {
+          setPr_req(res.data);
+          setAllPR(res.data);
+          setFilteredPR(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
-};
+    return () => clearTimeout(delay);
+  };
 
   useEffect(() => {
     reloadTable();
@@ -283,425 +286,562 @@ function PurchaseOrderList({ authrztn }) {
             <Sidebar/>
         </div> */}
       <div className="right-of-main-containers">
-      {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>Purchase Order List</p>
                 </div>
-              ) : (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Purchase Order List</p>
-              </div>
-              <div className="button-create-side">
-                <div style={{ position: "relative", marginBottom: "15px" }}>
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    placeholderText="Choose Date From"
-                    dateFormat="yyyy-MM-dd"
-                    wrapperClassName="custom-datepicker-wrapper"
-                    popperClassName="custom-popper"
-                    style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                  />
-                  <CalendarBlank
-                    size={20}
-                    weight="thin"
-                    style={{
-                      position: "absolute",
-                      left: "8px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      cursor: "pointer",
-                    }}
-                  />
-                  {startDate && (
-                    <XCircle
-                      size={16}
+                <div className="button-create-side">
+                  <div style={{ position: "relative", marginBottom: "15px" }}>
+                    <DatePicker
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      placeholderText="Choose Date From"
+                      dateFormat="yyyy-MM-dd"
+                      wrapperClassName="custom-datepicker-wrapper"
+                      popperClassName="custom-popper"
+                      style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                    />
+                    <CalendarBlank
+                      size={20}
                       weight="thin"
                       style={{
                         position: "absolute",
-                        right: "19px",
+                        left: "8px",
                         top: "50%",
                         transform: "translateY(-50%)",
                         cursor: "pointer",
                       }}
-                      onClick={handleXCircleClick}
                     />
-                  )}
-                </div>
+                    {startDate && (
+                      <XCircle
+                        size={16}
+                        weight="thin"
+                        style={{
+                          position: "absolute",
+                          right: "19px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                        }}
+                        onClick={handleXCircleClick}
+                      />
+                    )}
+                  </div>
 
-                <div style={{ position: "relative", marginBottom: "15px" }}>
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    placeholderText="Choose Date To"
-                    dateFormat="yyyy-MM-dd"
-                    wrapperClassName="custom-datepicker-wrapper"
-                    popperClassName="custom-popper"
-                    style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                  />
-                  <CalendarBlank
-                    size={20}
-                    weight="thin"
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    style={{
-                      position: "absolute",
-                      left: "8px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      cursor: "pointer",
-                    }}
-                  />
-                  {endDate && (
-                    <XCircle
-                      size={16}
+                  <div style={{ position: "relative", marginBottom: "15px" }}>
+                    <DatePicker
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      placeholderText="Choose Date To"
+                      dateFormat="yyyy-MM-dd"
+                      wrapperClassName="custom-datepicker-wrapper"
+                      popperClassName="custom-popper"
+                      style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                    />
+                    <CalendarBlank
+                      size={20}
                       weight="thin"
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
                       style={{
                         position: "absolute",
-                        right: "19px",
+                        left: "8px",
                         top: "50%",
                         transform: "translateY(-50%)",
                         cursor: "pointer",
                       }}
-                      onClick={handleXClick}
                     />
-                  )}
+                    {endDate && (
+                      <XCircle
+                        size={16}
+                        weight="thin"
+                        style={{
+                          position: "absolute",
+                          right: "19px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          cursor: "pointer",
+                        }}
+                        onClick={handleXClick}
+                      />
+                    )}
+                  </div>
+                  <Form.Select
+                    aria-label="item status"
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      marginBottom: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    required
+                    title="Status is required"
+                  >
+                    <option value="" disabled selected>
+                      Select Status
+                    </option>
+                    <option value="All Status">All Status</option>
+                    <option value="For-Approval">For-Approval</option>
+                    <option value="For-Rejustify">For-Rejustify</option>
+                    <option value="For-Canvassing">For-Canvassing</option>
+                    <option value="To-Received">To-Received</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </Form.Select>
+                  <button className="goesButton" onClick={handleGoButtonClick}>
+                    FILTER
+                  </button>
+                  <button className="Filterclear" onClick={clearFilters}>
+                    Clear Filter
+                  </button>
+                  <div className="Buttonmodal-new"></div>
                 </div>
-                <Form.Select
-                  aria-label="item status"
-                  value={selectedStatus}
-                  onChange={handleStatusChange}
-                  style={{
-                    height: "40px",
-                    fontSize: "15px",
-                    marginBottom: "15px",
-                    fontFamily: "Poppins, Source Sans Pro",
-                  }}
-                  required
-                  title="Status is required"
-                >
-                  <option value="" disabled selected>
-                    Select Status
-                  </option>
-                  <option value="All Status">All Status</option>
-                  <option value="For-Approval">For-Approval</option>
-                  <option value="For-Rejustify">For-Rejustify</option>
-                  <option value="For-Canvassing">For-Canvassing</option>
-                  <option value="To-Received">To-Received</option>
-                  <option value="Cancelled">Cancelled</option>
-                </Form.Select>
-                <button className="goesButton" onClick={handleGoButtonClick}>
-                  FILTER
-                </button>
-                <button className="Filterclear" onClick={clearFilters}>
-                  Clear Filter
-                </button>
-                <div className="Buttonmodal-new"></div>
               </div>
             </div>
-          </div>
 
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-              <TextField
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <TextField
                   label="Search"
                   variant="outlined"
-                  style={{ marginBottom: '10px', 
-                  float: 'right',
-                  }}
+                  style={{ marginBottom: "10px", float: "right" }}
                   InputLabelProps={{
-                    style: { fontSize: '14px'},
+                    style: { fontSize: "14px" },
                   }}
                   InputProps={{
-                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                    style: { fontSize: "14px", width: "250px", height: "50px" },
                   }}
-                  onChange={handleSearch}/>
-              <table className="table-hover">
-                <thead>
-                  <tr>
-                    <th className="tableh"></th>
-                    <th className="tableh">PR No.</th>
-                    <th className="tableh">Requestor</th>
-                    <th className="tableh">Department</th>
-                    <th className="tableh">Status</th>
-                    <th className="pr-column">Date Approved</th>
-                    <th className="tableh">Remarks</th>
-                  </tr>
-                </thead>
-                {filteredPR.length > 0 ? (
-                  <tbody>
-                    {currentItems.map((data, i) => (
-                       <React.Fragment key={i}>
-                      <tr >
-                        <td>
-                            <IconButton
+                  onChange={handleSearch}
+                />
+                <table className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh"></th>
+                      <th className="tableh">PR No.</th>
+                      <th className="tableh">Requestor</th>
+                      <th className="tableh">Department</th>
+                      <th className="tableh">Status</th>
+                      <th className="pr-column">Date Approved</th>
+                      <th className="tableh">Remarks</th>
+                    </tr>
+                  </thead>
+                  {filteredPR.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <React.Fragment key={i}>
+                          <tr>
+                            <td>
+                              <IconButton
                                 aria-label="expand row"
                                 size="small"
-                                onClick={() => handleRowToggle(data.id)}>
-                               {openRows === data.id ? (
-                                  <KeyboardArrowUpIcon style={{ fontSize: 25 }}/>
+                                onClick={() => handleRowToggle(data.id)}
+                              >
+                                {openRows === data.id ? (
+                                  <KeyboardArrowUpIcon
+                                    style={{ fontSize: 25 }}
+                                  />
                                 ) : (
-                                  <KeyboardArrowDownIcon style={{ fontSize: 25 }}/>
+                                  <KeyboardArrowDownIcon
+                                    style={{ fontSize: 25 }}
+                                  />
                                 )}
                               </IconButton>
-                          </td>
-                        <td
-                          onClick={() =>
-                            data.status === "For-Approval (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "For-Rejustify (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "To-Receive"
-                              ? navigate(`/PO_receive/${data.id}`)
-                              : navigate(`/purchaseOrderListPreview/${data.id}`)
-                          }
-                        >
-                          {data.pr_num}
-                        </td>
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Approval (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "To-Receive"
+                                  ? navigate(`/PO_receive/${data.id}`)
+                                  : navigate(
+                                      `/purchaseOrderListPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {data.pr_num}
+                            </td>
 
-                        <td
-                          onClick={() =>
-                            data.status === "For-Approval (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "For-Rejustify (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "To-Receive"
-                              ? navigate(`/PO_receive/${data.id}`)
-                              : navigate(`/purchaseOrderListPreview/${data.id}`)
-                          }
-                        >
-                          {data.masterlist.col_Fname}
-                        </td>
-                        <td
-                          onClick={() =>
-                            data.status === "For-Approval (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "For-Rejustify (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "To-Receive"
-                              ? navigate(`/PO_receive/${data.id}`)
-                              : navigate(`/purchaseOrderListPreview/${data.id}`)
-                          }
-                        >
-                          {data.masterlist.department.department_name}
-                        </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Approval (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "To-Receive"
+                                  ? navigate(`/PO_receive/${data.id}`)
+                                  : navigate(
+                                      `/purchaseOrderListPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {data.masterlist.col_Fname}
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Approval (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "To-Receive"
+                                  ? navigate(`/PO_receive/${data.id}`)
+                                  : navigate(
+                                      `/purchaseOrderListPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {data.masterlist.department.department_name}
+                            </td>
 
-                        <td
-                          onClick={() =>
-                            data.status === "For-Approval (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "For-Rejustify (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "To-Receive"
-                              ? navigate(`/PO_receive/${data.id}`)
-                              : navigate(`/purchaseOrderListPreview/${data.id}`)
-                          }
-                        >
-                          <button
-                            className="btn btn-secondary"
-                            style={{ fontSize: "12px" }}
-                          >
-                            {data.status === "For-Approval (PO)"
-                              ? "For Approval"
-                              : data.status === "For-Rejustify (PO)"
-                              ? "For Rejustify"
-                              : data.status}
-                          </button>
-                        </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Approval (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "To-Receive"
+                                  ? navigate(`/PO_receive/${data.id}`)
+                                  : navigate(
+                                      `/purchaseOrderListPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              <button
+                                className="btn btn-secondary"
+                                style={{ fontSize: "12px" }}
+                              >
+                                {data.status === "For-Approval (PO)"
+                                  ? "For Approval"
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? "For Rejustify"
+                                  : data.status}
+                              </button>
+                            </td>
 
-                        <td
-                          onClick={() =>
-                            data.status === "For-Approval (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "For-Rejustify (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "To-Receive"
-                              ? navigate(`/PO_receive/${data.id}`)
-                              : navigate(`/purchaseOrderListPreview/${data.id}`)
-                          }
-                        >
-                          {formatDatetime(data.updatedAt)}
-                        </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Approval (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "To-Receive"
+                                  ? navigate(`/PO_receive/${data.id}`)
+                                  : navigate(
+                                      `/purchaseOrderListPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {formatDatetime(data.updatedAt)}
+                            </td>
 
-                        <td
-                          onClick={() =>
-                            data.status === "For-Approval (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "For-Rejustify (PO)"
-                              ? navigate(`/PO_approvalRejustify/${data.id}`)
-                              : data.status === "To-Receive"
-                              ? navigate(`/PO_receive/${data.id}`)
-                              : navigate(`/purchaseOrderListPreview/${data.id}`)
-                          }
-                        >
-                          {data.remarks}
-                        </td>
-                      </tr>
-                      <tr>
-                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="7">
-                              <Collapse in={openRows === data.id} timeout="auto" unmountOnExit>
-                                <div style={{width: '95%'}}>
-                                    <thead style={{borderBottom: '1px solid #CECECE'}}>
-                                      <tr>
-                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Status</th>
-                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Date</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                        {specificPR.map((history, i) => (
-                                        <tr key={i}>
-                                          {history.status === 'For-Rejustify (PO)' ? (
-                                          <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
-                                            handleRejustify(history.pr_id);
-                                          }}>
-                                            <div className="for-rejustify"
+                            <td
+                              onClick={() =>
+                                data.status === "For-Approval (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  : data.status === "To-Receive"
+                                  ? navigate(`/PO_receive/${data.id}`)
+                                  : navigate(
+                                      `/purchaseOrderListPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {data.remarks}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td
+                              style={{
+                                paddingBottom: 0,
+                                paddingTop: 0,
+                                backgroundColor: "#F5EFED",
+                              }}
+                              colSpan="7"
+                            >
+                              <Collapse
+                                in={openRows === data.id}
+                                timeout="auto"
+                                unmountOnExit
+                              >
+                                <div style={{ width: "95%" }}>
+                                  <thead
+                                    style={{
+                                      borderBottom: "1px solid #CECECE",
+                                    }}
+                                  >
+                                    <tr>
+                                      <th
+                                        style={{
+                                          backgroundColor: "inherit",
+                                          fontFamily: "Arial, sans-serif",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        Status
+                                      </th>
+                                      <th
+                                        style={{
+                                          backgroundColor: "inherit",
+                                          fontFamily: "Arial, sans-serif",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        Date
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {specificPR.map((history, i) => (
+                                      <tr key={i}>
+                                        {history.status ===
+                                        "For-Rejustify (PO)" ? (
+                                          <td
                                             style={{
-                                              color: "white",
-                                              padding: "5px",
-                                              borderRadius: "5px",
-                                              textAlign: "center",
-                                              width: "130px",
-                                              backgroundColor: "red"}}>
-                                              {history.status}  
-                                            </div>                                           
+                                              fontSize: "14px",
+                                              padding: "10px",
+                                              fontFamily: "Arial, sans-serif",
+                                            }}
+                                            onClick={() => {
+                                              handleRejustify(
+                                                history.pr_id,
+                                                history.createdAt
+                                              );
+                                            }}
+                                          >
+                                            <div
+                                              className="for-rejustify"
+                                              style={{
+                                                color: "white",
+                                                padding: "5px",
+                                                borderRadius: "5px",
+                                                textAlign: "center",
+                                                width: "130px",
+                                                backgroundColor: "red",
+                                              }}
+                                            >
+                                              {history.status}
+                                            </div>
                                           </td>
-                                          ) : (
-                                            <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>
-                                               {history.status}                                            
-                                            </td>
-                                            )}
-                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{formatDatetime(history.createdAt)}</td>
-                                        </tr>
-                                        ))}
+                                        ) : (
+                                          <td
+                                            style={{
+                                              fontSize: "14px",
+                                              padding: "10px",
+                                              fontFamily: "Arial, sans-serif",
+                                            }}
+                                          >
+                                            {history.status}
+                                          </td>
+                                        )}
+                                        <td
+                                          style={{
+                                            fontSize: "14px",
+                                            padding: "10px",
+                                            fontFamily: "Arial, sans-serif",
+                                          }}
+                                        >
+                                          {formatDatetime(history.createdAt)}
+                                        </td>
+                                      </tr>
+                                    ))}
                                   </tbody>
-                                  </div>
+                                </div>
                               </Collapse>
                             </td>
                           </tr>
-                      </React.Fragment>
-                    ))}
-                  </tbody>
-                ) : (
-                  <div className="no-data">
+                        </React.Fragment>
+                      ))}
+                    </tbody>
+                  ) : (
+                    <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
-                  </div>
-                )}
-              </table>
+                      <h3>No Data Found</h3>
+                    </div>
+                  )}
+                </table>
 
-              <nav style={{marginTop: '15px'}}>
+                <nav style={{ marginTop: "15px" }}>
                   <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
+                    >
                       <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
-                    }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                        type="button"
+                        style={{
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          color: "#000000",
+                          textTransform: "capitalize",
+                        }}
+                        className="page-link"
+                        onClick={() =>
+                          setCurrentPage((prevPage) => prevPage - 1)
+                        }
+                      >
+                        Previous
+                      </button>
                     </li>
                     {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      <li
+                        key={num}
+                        className={`page-item ${
+                          currentPage === num + 1 ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          style={{
+                            fontSize: "14px",
+                            width: "25px",
+                            background:
+                              currentPage === num + 1 ? "#FFA500" : "white", // Set background to white if not clicked
+                            color:
+                              currentPage === num + 1 ? "#FFFFFF" : "#000000",
+                            border: "none",
+                            height: "28px",
+                          }}
+                          className={`page-link ${
+                            currentPage === num + 1 ? "gold-bg" : ""
+                          }`}
+                          onClick={() => setCurrentPage(num + 1)}
+                        >
+                          {num + 1}
+                        </button>
                       </li>
                     ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
+                    >
                       <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                        style={{
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          color: "#000000",
+                          textTransform: "capitalize",
+                        }}
+                        className="page-link"
+                        onClick={() =>
+                          setCurrentPage((prevPage) => prevPage + 1)
+                        }
+                      >
+                        Next
+                      </button>
                     </li>
                   </ul>
                 </nav>
+              </div>
             </div>
           </div>
-        </div>
-          )}
+        )}
       </div>
 
       <Modal
-            show={showRejustify}
-            onHide={handleCloseRejustify}
-            backdrop="static"
-            keyboard={false}
-            size="lg"
+        show={showRejustify}
+        onHide={handleCloseRejustify}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
           >
-              <Modal.Header closeButton>
-                <Modal.Title style={{fontSize: '24px', fontFamily: 'Poppins, Source Sans Pro'}}>For-Rejustify</Modal.Title>
-                  
-              </Modal.Header>
-              <Modal.Body>
-                  <div className="rejustify-modal-container">
-                      <div className="rejustify-modal-content">
-                          <div className="remarks-file-section">
-                              <div className="remarks-sec">
-                              <p>
-                                Remarks
-                              </p>
-                              <Form.Control
-                                  as="textarea"
-                                  rows={3}
-                                  style={{
-                                  fontFamily: 'Poppins, Source Sans Pro',
-                                  fontSize: "16px",
-                                  height: "200px",
-                                  maxHeight: "200px",
-                                  resize: "none",
-                                  overflowY: "auto",
-                                  }}
-                                  disabled
-                                  value={Rejustifyremarks}
-                                />
-                              </div>
+            For-Rejustify
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="rejustify-modal-container">
+            <div className="rejustify-modal-content">
+              <div className="remarks-file-section">
+                <div className="remarks-sec">
+                  <p>Remarks</p>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                      fontSize: "16px",
+                      height: "200px",
+                      maxHeight: "200px",
+                      resize: "none",
+                      overflowY: "auto",
+                    }}
+                    disabled
+                    value={Rejustifyremarks}
+                  />
+                </div>
 
-                             <div className="file-sec-container">
-                                  <p>
-                                    File Attached
-                                  </p>
-                              <div className="file-sec">
-                                  <div className="file-content" >
-                                    <Button onClick={handleDownloadFile}>
-                                          Download File
-                                          {RejustifyFile && RejustifyFile.fileExtension && (
-                                            <>
-                                              {RejustifyFile.fileExtension === 'pdf' && <FilePdf size={32} color="#ef6262" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'csv' && <FileCsv size={32} color="#8fffa2" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'xls' && <FileXls size={32} color="#8fffa2" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'jpg' && <FileJpg size={32} color="#757575" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'png' && <FilePng size={32} color="#757575" weight="fill" />}
-                                            </>
-                                          )}
-                                        </Button>
-                                  </div>
-                              </div>
-                            </div>     
-
-                          </div>
-                      </div>
+                <div className="file-sec-container">
+                  <p>File Attached</p>
+                  <div className="file-sec">
+                    <div className="file-content">
+                      <Button onClick={handleDownloadFile}>
+                        {RejustifyFile && RejustifyFile.fileExtension
+                          ? "Download File"
+                          : "No File Attached"}
+                        {RejustifyFile && RejustifyFile.fileExtension && (
+                          <>
+                            {RejustifyFile.fileExtension === "pdf" && (
+                              <FilePdf
+                                size={32}
+                                color="#ef6262"
+                                weight="fill"
+                              />
+                            )}
+                            {RejustifyFile.fileExtension === "csv" && (
+                              <FileCsv
+                                size={32}
+                                color="#8fffa2"
+                                weight="fill"
+                              />
+                            )}
+                            {RejustifyFile.fileExtension === "xls" && (
+                              <FileXls
+                                size={32}
+                                color="#8fffa2"
+                                weight="fill"
+                              />
+                            )}
+                            {RejustifyFile.fileExtension === "jpg" && (
+                              <FileJpg
+                                size={32}
+                                color="#757575"
+                                weight="fill"
+                              />
+                            )}
+                            {RejustifyFile.fileExtension === "png" && (
+                              <FilePng
+                                size={32}
+                                color="#757575"
+                                weight="fill"
+                              />
+                            )}
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
-              </Modal.Body>
-            <Modal.Footer>
-            </Modal.Footer>
-          </Modal>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
     </div>
   );
 }

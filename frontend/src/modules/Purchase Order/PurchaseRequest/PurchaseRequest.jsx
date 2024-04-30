@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
-import NoAccess from '../../../assets/image/NoAccess.png';
+import ReactLoading from "react-loading";
+import NoAccess from "../../../assets/image/NoAccess.png";
 // import Sidebar from "../../Sidebar/sidebar";
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
@@ -11,16 +11,16 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Collapse from '@mui/material/Collapse';
+import Collapse from "@mui/material/Collapse";
 // import IconButton from '@mui/material/IconButton';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
-import usePagination from '@mui/material/usePagination';
-import { styled } from '@mui/material/styles';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import usePagination from "@mui/material/usePagination";
+import { styled } from "@mui/material/styles";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import {
   Plus,
   CalendarBlank,
@@ -29,12 +29,12 @@ import {
   FileCsv,
   FileXls,
   FileJpg,
-  FilePng,    
+  FilePng,
 } from "@phosphor-icons/react";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
-import NoData from '../../../../src/assets/image/NoData.png';
+import NoData from "../../../../src/assets/image/NoData.png";
 
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -50,8 +50,7 @@ import "../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../partials/header";
 import { jwtDecode } from "jwt-decode";
-// const ITEMS_PER_PAGE = 5; 
-
+// const ITEMS_PER_PAGE = 5;
 
 function PurchaseRequest({ authrztn }) {
   const { id } = useParams();
@@ -64,45 +63,43 @@ function PurchaseRequest({ authrztn }) {
   const [allPR, setAllPR] = useState([]);
   const [openRows, setOpenRows] = useState(null);
   const [specificPR, setSpecificPR] = useState([]);
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
   const [showRejustify, setshowRejustify] = useState(false);
-  const [Rejustifyremarks, setRejustifyremarks] = useState("")
-  const [rejustifyFileURL, setRejustifyFileURL] = useState('');
-  const [RejustifyFile, setRejustifyFile] = useState([])
+  const [Rejustifyremarks, setRejustifyremarks] = useState("");
+  const [rejustifyFileURL, setRejustifyFileURL] = useState("");
+  const [RejustifyFile, setRejustifyFile] = useState([]);
   const handleCloseRejustify = () => setshowRejustify(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  
-
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
-
-
+  }, []);
 
   const totalPages = Math.ceil(filteredPR.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
   const currentItems = filteredPR.slice(startIndex, endIndex);
 
-  const handleRejustify = async (pr_id) => {
+  const handleRejustify = async (pr_id, createdAt) => {
     try {
       setshowRejustify(true);
-      const res = await axios
-      .get(BASE_URL + '/PR_history/fetchRejustifyRemarks', {
-        params: { pr_id: pr_id },
-      });
-      setRejustifyremarks(res.data.remarks)
-      setRejustifyFile(res.data)
+      const res = await axios.get(
+        BASE_URL + "/PR_history/fetchRejustifyRemarks",
+        {
+          params: { pr_id: pr_id, createdAt },
+        }
+      );
+      setRejustifyremarks(res.data[0].remarks);
+      setRejustifyFile(res.data[0]);
     } catch (err) {
       console.error(err);
     }
@@ -111,7 +108,7 @@ function PurchaseRequest({ authrztn }) {
   const handleDownloadFile = async () => {
     try {
       if (!RejustifyFile) {
-        console.error('No file available for download');
+        console.error("No file available for download");
         return;
       }
 
@@ -130,7 +127,7 @@ function PurchaseRequest({ authrztn }) {
       const fileName = `RejustifyFile.${fileExtension}`;
 
       // Create a link element to trigger the download
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
@@ -145,28 +142,27 @@ function PurchaseRequest({ authrztn }) {
       console.error(err);
     }
   };
-  
-  
+
   // const handleDownloadFile = async () => {
   //   try {
   //     // Convert the array data into a Uint8Array
   //     const uint8Array = new Uint8Array(RejustifyFile.data);
-  
+
   //     // Create a Blob object from the Uint8Array with MIME type 'application/pdf'
   //     const blob = new Blob([uint8Array], { type: 'application/pdf' });
-  
+
   //     // Create a URL for the Blob object
   //     const url = window.URL.createObjectURL(blob);
-      
+
   //     // Create a link element to trigger the download
   //     const a = document.createElement('a');
   //     a.href = url;
   //     a.download = 'RejustifyFile.pdf'; // Set a default name with '.pdf' extension
   //     document.body.appendChild(a);
-      
+
   //     // Trigger the download
   //     a.click();
-  
+
   //     // Clean up resources
   //     document.body.removeChild(a);
   //     window.URL.revokeObjectURL(url);
@@ -174,11 +170,10 @@ function PurchaseRequest({ authrztn }) {
   //     console.error(err);
   //   }
   // };
-  
 
   const handleRowToggle = async (id) => {
     try {
-      const res = await axios.get(BASE_URL + '/PR_history/fetchdropdownData', {
+      const res = await axios.get(BASE_URL + "/PR_history/fetchdropdownData", {
         params: { id: id },
       });
 
@@ -189,7 +184,7 @@ function PurchaseRequest({ authrztn }) {
       console.error(err);
     }
   };
-  
+
   const handleXCircleClick = () => {
     setStartDate(null);
   };
@@ -220,26 +215,25 @@ function PurchaseRequest({ authrztn }) {
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/PR/fetchTable")
-      .then((res) => {
-        setAllPR(res.data);
-        setFilteredPR(res.data);
-        setIsLoading(false);
-    })
-    .catch((err) => {
-      console.log(err)
-        setIsLoading(false);
-    });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/PR/fetchTable")
+        .then((res) => {
+          setAllPR(res.data);
+          setFilteredPR(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
-};
+    return () => clearTimeout(delay);
+  };
 
   useEffect(() => {
     reloadTable();
   }, []);
-  
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -251,9 +245,8 @@ function PurchaseRequest({ authrztn }) {
         data.remarks.toLowerCase().includes(searchTerm)
       );
     });
-  
+
     setFilteredPR(filteredData);
-    
   };
 
   const handleGoButtonClick = () => {
@@ -367,7 +360,7 @@ function PurchaseRequest({ authrztn }) {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
-//WAG e delete
+  //WAG e delete
   // useEffect(() => {
   //   if ($("#order-listing").length > 0 && allPR.length > 0 && !$.fn.DataTable.isDataTable('#order-listing')) {
   //     $('#order-listing').DataTable({
@@ -378,11 +371,10 @@ function PurchaseRequest({ authrztn }) {
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if ($('#order-listing').length > 0 && allPR.length > 0) {
-      $('#order-listing').DataTable();
+    if ($("#order-listing").length > 0 && allPR.length > 0) {
+      $("#order-listing").DataTable();
     }
   }, [allPR]);
-
 
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -390,446 +382,598 @@ function PurchaseRequest({ authrztn }) {
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
-  
 
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-      {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("PR - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>Purchase Request</p>
                 </div>
-              ) : (
-        authrztn.includes('PR - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Purchase Request</p>
-              </div>
-              <div className="resp">
-                <div className="button-create-side">
-                  <div className="date-beg" style={{ position: "relative", marginBottom: "15px" }}>
-                    <DatePicker
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      placeholderText="Choose Date From"
-                      dateFormat="yyyy-MM-dd"
-                      wrapperClassName="custom-datepicker-wrapper"
-                      popperClassName="custom-popper"
-                    />
-                    <CalendarBlank
-                      size={20}
-                      weight="thin"
-                      style={{
-                        position: "absolute",
-                        left: "8px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                      }}
-                    />
-                    {startDate && (
-                      <XCircle
-                        size={16}
+                <div className="resp">
+                  <div className="button-create-side">
+                    <div
+                      className="date-beg"
+                      style={{ position: "relative", marginBottom: "15px" }}
+                    >
+                      <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        placeholderText="Choose Date From"
+                        dateFormat="yyyy-MM-dd"
+                        wrapperClassName="custom-datepicker-wrapper"
+                        popperClassName="custom-popper"
+                      />
+                      <CalendarBlank
+                        size={20}
                         weight="thin"
                         style={{
                           position: "absolute",
-                          right: "19px",
+                          left: "8px",
                           top: "50%",
                           transform: "translateY(-50%)",
                           cursor: "pointer",
                         }}
-                        onClick={handleXCircleClick}
                       />
-                    )}
-                  </div>
+                      {startDate && (
+                        <XCircle
+                          size={16}
+                          weight="thin"
+                          style={{
+                            position: "absolute",
+                            right: "19px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleXCircleClick}
+                        />
+                      )}
+                    </div>
 
-                  <div className="date-end" style={{ position: "relative", marginBottom: "15px" }}>
-                    <DatePicker
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      placeholderText="Choose Date To"
-                      dateFormat="yyyy-MM-dd"
-                      wrapperClassName="custom-datepicker-wrapper"
-                      popperClassName="custom-popper"
-                    />
-                    <CalendarBlank
-                      size={20}
-                      weight="thin"
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      style={{
-                        position: "absolute",
-                        left: "8px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                      }}
-                    />
-                    {endDate && (
-                      <XCircle
-                        size={16}
+                    <div
+                      className="date-end"
+                      style={{ position: "relative", marginBottom: "15px" }}
+                    >
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        placeholderText="Choose Date To"
+                        dateFormat="yyyy-MM-dd"
+                        wrapperClassName="custom-datepicker-wrapper"
+                        popperClassName="custom-popper"
+                      />
+                      <CalendarBlank
+                        size={20}
                         weight="thin"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
                         style={{
                           position: "absolute",
-                          right: "19px",
+                          left: "8px",
                           top: "50%",
                           transform: "translateY(-50%)",
                           cursor: "pointer",
                         }}
-                        onClick={handleXClick}
                       />
-                    )}
-                  </div>
-                  <Form.Select className="fil-stat"
-                    aria-label="item status"
-                    value={selectedStatus}
-                    onChange={handleStatusChange}
-                    style={{
-                      height: "40px",
-                      fontSize: "15px",
-                      marginBottom: "15px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
-                    required>
-                    <option value="" disabled selected>
-                      Select Status
-                    </option>
-                    <option value="All Status">All Status</option>
-                    <option value="For-Approval">For-Approval</option>
-                    <option value="For-Rejustify">For-Rejustify</option>
-                    <option value="For-Canvassing">For-Canvassing</option>
-                    <option value="To-Receive">To Receive</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </Form.Select>
-                  <button className="goesButton" onClick={handleGoButtonClick}>
-                    FILTER
-                  </button>
-                  <button className="Filterclear" onClick={clearFilters}>
-                    Clear Filter
-                  </button>
-                  <div className="Buttonmodal-new">
-
-                    { authrztn.includes('PR - Add') && (
-                    <Link to="/createPurchaseRequest" className="button">
-                      <span style={{}}>
-                        <Plus size={25} />
-                      </span>
-                      New PR
-                    </Link>
-                    )}
-
+                      {endDate && (
+                        <XCircle
+                          size={16}
+                          weight="thin"
+                          style={{
+                            position: "absolute",
+                            right: "19px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                          }}
+                          onClick={handleXClick}
+                        />
+                      )}
+                    </div>
+                    <Form.Select
+                      className="fil-stat"
+                      aria-label="item status"
+                      value={selectedStatus}
+                      onChange={handleStatusChange}
+                      style={{
+                        height: "40px",
+                        fontSize: "15px",
+                        marginBottom: "15px",
+                        fontFamily: "Poppins, Source Sans Pro",
+                      }}
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select Status
+                      </option>
+                      <option value="All Status">All Status</option>
+                      <option value="For-Approval">For-Approval</option>
+                      <option value="For-Rejustify">For-Rejustify</option>
+                      <option value="For-Canvassing">For-Canvassing</option>
+                      <option value="To-Receive">To Receive</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </Form.Select>
+                    <button
+                      className="goesButton"
+                      onClick={handleGoButtonClick}
+                    >
+                      FILTER
+                    </button>
+                    <button className="Filterclear" onClick={clearFilters}>
+                      Clear Filter
+                    </button>
+                    <div className="Buttonmodal-new">
+                      {authrztn.includes("PR - Add") && (
+                        <Link to="/createPurchaseRequest" className="button">
+                          <span style={{}}>
+                            <Plus size={25} />
+                          </span>
+                          New PR
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
+            <div className="table-containss">
+              <div className="main-of-all-tables">
                 <TextField
                   label="Search"
                   variant="outlined"
-                  style={{ marginBottom: '10px', 
-                  float: 'right',
-                  }}
+                  style={{ marginBottom: "10px", float: "right" }}
                   InputLabelProps={{
-                    style: { fontSize: '14px'},
+                    style: { fontSize: "14px" },
                   }}
                   InputProps={{
-                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                    style: { fontSize: "14px", width: "250px", height: "50px" },
                   }}
-                  onChange={handleSearch}/>
-              <table aria-label="collapsible table" className='table-hover'>
-                <thead>
-                  <tr>
-                    <th className="tableh"></th>
-                    <th className="tableh">PR #.</th>
-                    <th className="tableh">Requestor</th>
-                    <th className="tableh">Department</th>
-                    <th className="tableh">Status</th>
-                    <th className="pr-column">Date Created</th>
-                    <th className="tableh">Remarks</th>
-                    <th className="tableh">Action</th>
-                  </tr>
-                </thead>
-                {filteredPR.length > 0 ? (
-                  <tbody>
-                    {currentItems.map((data, i) => (
-                      <React.Fragment key={i}>
-                        <tr>
-                          <td>
-                            <IconButton
+                  onChange={handleSearch}
+                />
+                <table aria-label="collapsible table" className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh"></th>
+                      <th className="tableh">PR #.</th>
+                      <th className="tableh">Requestor</th>
+                      <th className="tableh">Department</th>
+                      <th className="tableh">Status</th>
+                      <th className="pr-column">Date Created</th>
+                      <th className="tableh">Remarks</th>
+                      <th className="tableh">Action</th>
+                    </tr>
+                  </thead>
+                  {filteredPR.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <React.Fragment key={i}>
+                          <tr>
+                            <td>
+                              <IconButton
                                 aria-label="expand row"
                                 size="small"
-                                onClick={() => handleRowToggle(data.id)}>
-                               {openRows === data.id ? (
-                                  <KeyboardArrowUpIcon style={{ fontSize: 25 }}/>
+                                onClick={() => handleRowToggle(data.id)}
+                              >
+                                {openRows === data.id ? (
+                                  <KeyboardArrowUpIcon
+                                    style={{ fontSize: 25 }}
+                                  />
                                 ) : (
-                                  <KeyboardArrowDownIcon style={{ fontSize: 25 }}/>
+                                  <KeyboardArrowDownIcon
+                                    style={{ fontSize: 25 }}
+                                  />
                                 )}
                               </IconButton>
-                          </td>
-                          <td onClick={() => 
-                                data.status === 'For-Canvassing' ?
-                                navigate(`/forCanvass/${data.id}`) :   
-                                data.status === 'On-Canvass' ?
-                                navigate(`/onCanvass/${data.id}`) :                       
-                                navigate(`/purchaseRequestPreview/${data.id}`)
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Canvassing"
+                                  ? navigate(`/forCanvass/${data.id}`)
+                                  : data.status === "On-Canvass"
+                                  ? navigate(`/onCanvass/${data.id}`)
+                                  : navigate(
+                                      `/purchaseRequestPreview/${data.id}`
+                                    )
                               }
-                          >
-                            {data.pr_num}
-                          </td>
-                            <td onClick={() => 
-                                data.status === 'For-Canvassing' ?
-                                navigate(`/forCanvass/${data.id}`) :   
-                                data.status === 'On-Canvass' ?
-                                navigate(`/onCanvass/${data.id}`) :                       
-                                navigate(`/purchaseRequestPreview/${data.id}`)
-                              }
-                          >
-                           {data.masterlist.col_Fname}
-                          </td>
-                          <td onClick={() => 
-                                data.status === 'For-Canvassing' ?
-                                navigate(`/forCanvass/${data.id}`) :   
-                                data.status === 'On-Canvass' ?
-                                navigate(`/onCanvass/${data.id}`) :                       
-                                navigate(`/purchaseRequestPreview/${data.id}`)
-                              }
-                          >
-                           {data.masterlist.department.department_name}
-                          </td>
-                          <td onClick={() => 
-                                data.status === 'For-Canvassing' ?
-                                navigate(`/forCanvass/${data.id}`) :   
-                                data.status === 'On-Canvass' ?
-                                navigate(`/onCanvass/${data.id}`) :                       
-                                navigate(`/purchaseRequestPreview/${data.id}`)
-                              }
-                          >
-                            <div
-                              style={{
-                                backgroundColor: "#5C636A",
-                                fontSize: "10px",
-                                color: "white",
-                                padding: "5px",
-                                borderRadius: "5px",
-                                textAlign: "center",
-                                width: "105px"
-                              }}
                             >
-                              {data.status}
-                            </div>
-
-                          </td>
-                          <td onClick={() => 
-                          data.status === 'For-Canvassing' ?
-                            navigate(`/forCanvass/${data.id}`) :   
-                            data.status === 'On-Canvass' ?
-                            navigate(`/onCanvass/${data.id}`) :                       
-                            navigate(`/purchaseRequestPreview/${data.id}`)
-                          }
-                          style={{fontSize: '12px'}}
-                          >
-                            {formatDatetime(data.createdAt)}
-                          </td>
-                          <td onClick={() =>                      
-                                data.status === 'For-Canvassing' ?
-                                navigate(`/forCanvass/${data.id}`) :   
-                                data.status === 'On-Canvass' ?
-                                navigate(`/onCanvass/${data.id}`) :                       
-                                navigate(`/purchaseRequestPreview/${data.id}`)
-                              }                      
+                              {data.pr_num}
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Canvassing"
+                                  ? navigate(`/forCanvass/${data.id}`)
+                                  : data.status === "On-Canvass"
+                                  ? navigate(`/onCanvass/${data.id}`)
+                                  : navigate(
+                                      `/purchaseRequestPreview/${data.id}`
+                                    )
+                              }
                             >
-                            {data.remarks}
-                          </td>
-                          <td>
-                            <div className="d-flex flex-direction-row align-items-center">
-                              { authrztn.includes('PR - Reject') && (
-                                data.status !== "Cancelled" && data.status !== "For-Canvassing"
-                                && data.status !== "On-Canvass" && data.status !== "For-Approval (PO)" 
-                                && data.status !== "To-Receive" && data.status !== "Delivered") && (
-                                  <button
-                                    className="btn btn-danger"
-                                    onClick={() => CancelRequest(data.id, data.status)}
-                                  >
-                                    Cancel
-                                  </button>
-                              )}
-                            </div>                   
+                              {data.masterlist.col_Fname}
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Canvassing"
+                                  ? navigate(`/forCanvass/${data.id}`)
+                                  : data.status === "On-Canvass"
+                                  ? navigate(`/onCanvass/${data.id}`)
+                                  : navigate(
+                                      `/purchaseRequestPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {data.masterlist.department.department_name}
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Canvassing"
+                                  ? navigate(`/forCanvass/${data.id}`)
+                                  : data.status === "On-Canvass"
+                                  ? navigate(`/onCanvass/${data.id}`)
+                                  : navigate(
+                                      `/purchaseRequestPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              <div
+                                style={{
+                                  backgroundColor: "#5C636A",
+                                  fontSize: "10px",
+                                  color: "white",
+                                  padding: "5px",
+                                  borderRadius: "5px",
+                                  textAlign: "center",
+                                  width: "105px",
+                                }}
+                              >
+                                {data.status}
+                              </div>
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Canvassing"
+                                  ? navigate(`/forCanvass/${data.id}`)
+                                  : data.status === "On-Canvass"
+                                  ? navigate(`/onCanvass/${data.id}`)
+                                  : navigate(
+                                      `/purchaseRequestPreview/${data.id}`
+                                    )
+                              }
+                              style={{ fontSize: "12px" }}
+                            >
+                              {formatDatetime(data.createdAt)}
+                            </td>
+                            <td
+                              onClick={() =>
+                                data.status === "For-Canvassing"
+                                  ? navigate(`/forCanvass/${data.id}`)
+                                  : data.status === "On-Canvass"
+                                  ? navigate(`/onCanvass/${data.id}`)
+                                  : navigate(
+                                      `/purchaseRequestPreview/${data.id}`
+                                    )
+                              }
+                            >
+                              {data.remarks}
+                            </td>
+                            <td>
+                              <div className="d-flex flex-direction-row align-items-center">
+                                {authrztn.includes("PR - Reject") &&
+                                  data.status !== "Cancelled" &&
+                                  data.status !== "For-Canvassing" &&
+                                  data.status !== "On-Canvass" &&
+                                  data.status !== "For-Approval (PO)" &&
+                                  data.status !== "To-Receive" &&
+                                  data.status !== "Delivered" && (
+                                    <button
+                                      className="btn btn-danger"
+                                      onClick={() =>
+                                        CancelRequest(data.id, data.status)
+                                      }
+                                    >
+                                      Cancel
+                                    </button>
+                                  )}
+                              </div>
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#F5EFED' }} colSpan="8">
-                              <Collapse in={openRows === data.id} timeout="auto" unmountOnExit>
-                                <div style={{width: '95%'}}>
-                                    <thead style={{borderBottom: '1px solid #CECECE'}}>
-                                      <tr>
-                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Status</th>
-                                        <th style={{backgroundColor: 'inherit', fontFamily: 'Arial, sans-serif', fontWeight: 'bold'}}>Date</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                        {specificPR.map((history, i) => (
-                                        <tr key={i}>
-                                          {history.status === 'For-Rejustify' ? (
-                                          <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}} onClick={() => {
-                                            handleRejustify(history.pr_id);
-                                          }}>
-                                            <div className="for-rejustify"
+                            <td
+                              style={{
+                                paddingBottom: 0,
+                                paddingTop: 0,
+                                backgroundColor: "#F5EFED",
+                              }}
+                              colSpan="8"
+                            >
+                              <Collapse
+                                in={openRows === data.id}
+                                timeout="auto"
+                                unmountOnExit
+                              >
+                                <div style={{ width: "95%" }}>
+                                  <thead
+                                    style={{
+                                      borderBottom: "1px solid #CECECE",
+                                    }}
+                                  >
+                                    <tr>
+                                      <th
+                                        style={{
+                                          backgroundColor: "inherit",
+                                          fontFamily: "Arial, sans-serif",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        Status
+                                      </th>
+                                      <th
+                                        style={{
+                                          backgroundColor: "inherit",
+                                          fontFamily: "Arial, sans-serif",
+                                          fontWeight: "bold",
+                                        }}
+                                      >
+                                        Date
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {specificPR.map((history, i) => (
+                                      <tr key={i}>
+                                        {history.status === "For-Rejustify" ? (
+                                          <td
                                             style={{
-                                              color: "white",
-                                              padding: "5px",
-                                              borderRadius: "5px",
-                                              textAlign: "center",
-                                              width: "100px",
-                                              backgroundColor: "red"}}>
-                                              {history.status}  
+                                              fontSize: "14px",
+                                              padding: "10px",
+                                              fontFamily: "Arial, sans-serif",
+                                            }}
+                                            onClick={() => {
+                                              handleRejustify(
+                                                history.pr_id,
+                                                history.createdAt
+                                              );
+                                            }}
+                                          >
+                                            <div
+                                              className="for-rejustify"
+                                              style={{
+                                                color: "white",
+                                                padding: "5px",
+                                                borderRadius: "5px",
+                                                textAlign: "center",
+                                                width: "100px",
+                                                backgroundColor: "red",
+                                              }}
+                                            >
+                                              {history.status}
                                             </div>
-                                                                                      
                                           </td>
-                                          ) : (
-                                            <td style={{ fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif' }}>
-                                               {history.status}                                            
-                                            </td>
-                                            )}
-                                          <td style={{fontSize: '14px', padding: '10px', fontFamily: 'Arial, sans-serif'}}>{formatDatetime(history.createdAt)}</td>
-                                        </tr>
-                                        ))}
+                                        ) : (
+                                          <td
+                                            style={{
+                                              fontSize: "14px",
+                                              padding: "10px",
+                                              fontFamily: "Arial, sans-serif",
+                                            }}
+                                          >
+                                            {history.status}
+                                          </td>
+                                        )}
+                                        <td
+                                          style={{
+                                            fontSize: "14px",
+                                            padding: "10px",
+                                            fontFamily: "Arial, sans-serif",
+                                          }}
+                                        >
+                                          {formatDatetime(history.createdAt)}
+                                        </td>
+                                      </tr>
+                                    ))}
                                   </tbody>
-                                  </div>
+                                </div>
                               </Collapse>
                             </td>
                           </tr>
                         </React.Fragment>
-                    ))}
-                  </tbody>
-                ) : (
+                      ))}
+                    </tbody>
+                  ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
+                      <h3>No Data Found</h3>
                     </div>
-                )}
-              </table>
+                  )}
+                </table>
 
-               <nav style={{marginTop: '15px'}}>
+                <nav style={{ marginTop: "15px" }}>
                   <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
+                    >
                       <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
-                    }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                        type="button"
+                        style={{
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          color: "#000000",
+                          textTransform: "capitalize",
+                        }}
+                        className="page-link"
+                        onClick={() =>
+                          setCurrentPage((prevPage) => prevPage - 1)
+                        }
+                      >
+                        Previous
+                      </button>
                     </li>
                     {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
+                      <li
+                        key={num}
+                        className={`page-item ${
+                          currentPage === num + 1 ? "active" : ""
+                        }`}
+                      >
+                        <button
+                          style={{
+                            fontSize: "14px",
+                            width: "25px",
+                            background:
+                              currentPage === num + 1 ? "#FFA500" : "white", // Set background to white if not clicked
+                            color:
+                              currentPage === num + 1 ? "#FFFFFF" : "#000000",
+                            border: "none",
+                            height: "28px",
+                          }}
+                          className={`page-link ${
+                            currentPage === num + 1 ? "gold-bg" : ""
+                          }`}
+                          onClick={() => setCurrentPage(num + 1)}
+                        >
+                          {num + 1}
+                        </button>
                       </li>
                     ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
+                    >
                       <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
+                        style={{
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          color: "#000000",
+                          textTransform: "capitalize",
+                        }}
+                        className="page-link"
+                        onClick={() =>
+                          setCurrentPage((prevPage) => prevPage + 1)
+                        }
+                      >
+                        Next
+                      </button>
                     </li>
                   </ul>
                 </nav>
+              </div>
             </div>
           </div>
-        </div>
         ) : (
-            <div className="no-access">
-              <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-              <h3>
-                You don't have access to this function.
-              </h3>
-            </div>
-          )
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
         )}
 
-          <Modal
-            show={showRejustify}
-            onHide={handleCloseRejustify}
-            backdrop="static"
-            keyboard={false}
-            size="lg"
-          >
-              <Modal.Header closeButton>
-                <Modal.Title style={{fontSize: '24px', fontFamily: 'Poppins, Source Sans Pro'}}>For-Rejustify</Modal.Title>
-                  
-              </Modal.Header>
-              <Modal.Body>
-                  <div className="rejustify-modal-container">
-                      <div className="rejustify-modal-content">
-                          <div className="remarks-file-section">
-                              <div className="remarks-sec">
-                              <p>
-                                Remarks
-                              </p>
-                              <Form.Control
-                                  as="textarea"
-                                  rows={3}
-                                  style={{
-                                  fontFamily: 'Poppins, Source Sans Pro',
-                                  fontSize: "16px",
-                                  height: "200px",
-                                  maxHeight: "200px",
-                                  resize: "none",
-                                  overflowY: "auto",
-                                  }}
-                                  disabled
-                                  value={Rejustifyremarks}
-                                />
-                              </div>
-
-                             <div className="file-sec-container">
-                                  <p>
-                                    File Attached
-                                  </p>
-                              <div className="file-sec">
-                                  <div className="file-content" >
-                                    <Button onClick={handleDownloadFile}>
-                                          Download File
-                                          {RejustifyFile && RejustifyFile.fileExtension && (
-                                            <>
-                                              {RejustifyFile.fileExtension === 'pdf' && <FilePdf size={32} color="#ef6262" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'csv' && <FileCsv size={32} color="#8fffa2" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'xls' && <FileXls size={32} color="#8fffa2" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'jpg' && <FileJpg size={32} color="#757575" weight="fill" />}
-                                              {RejustifyFile.fileExtension === 'png' && <FilePng size={32} color="#757575" weight="fill" />}
-                                            </>
-                                          )}
-                                        </Button>
-                                  </div>
-                              </div>
-                            </div>     
-
-                          </div>
-                      </div>
+        <Modal
+          show={showRejustify}
+          onHide={handleCloseRejustify}
+          backdrop="static"
+          keyboard={false}
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title
+              style={{
+                fontSize: "24px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              For-Rejustify
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="rejustify-modal-container">
+              <div className="rejustify-modal-content">
+                <div className="remarks-file-section">
+                  <div className="remarks-sec">
+                    <p>Remarks</p>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      style={{
+                        fontFamily: "Poppins, Source Sans Pro",
+                        fontSize: "16px",
+                        height: "200px",
+                        maxHeight: "200px",
+                        resize: "none",
+                        overflowY: "auto",
+                      }}
+                      disabled
+                      value={Rejustifyremarks}
+                    />
                   </div>
-              </Modal.Body>
-            <Modal.Footer>
-            </Modal.Footer>
-          </Modal>
+
+                  <div className="file-sec-container">
+                    <p>File Attached</p>
+                    <div className="file-sec">
+                      <div className="file-content">
+                        <Button onClick={handleDownloadFile}>
+                          {RejustifyFile && RejustifyFile.fileExtension
+                            ? "Download File"
+                            : "No File Attached"}
+                          {RejustifyFile && RejustifyFile.fileExtension && (
+                            <>
+                              {RejustifyFile.fileExtension === "pdf" && (
+                                <FilePdf
+                                  size={32}
+                                  color="#ef6262"
+                                  weight="fill"
+                                />
+                              )}
+                              {RejustifyFile.fileExtension === "csv" && (
+                                <FileCsv
+                                  size={32}
+                                  color="#8fffa2"
+                                  weight="fill"
+                                />
+                              )}
+                              {RejustifyFile.fileExtension === "xls" && (
+                                <FileXls
+                                  size={32}
+                                  color="#8fffa2"
+                                  weight="fill"
+                                />
+                              )}
+                              {RejustifyFile.fileExtension === "jpg" && (
+                                <FileJpg
+                                  size={32}
+                                  color="#757575"
+                                  weight="fill"
+                                />
+                              )}
+                              {RejustifyFile.fileExtension === "png" && (
+                                <FilePng
+                                  size={32}
+                                  color="#757575"
+                                  weight="fill"
+                                />
+                              )}
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer></Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

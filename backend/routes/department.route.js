@@ -58,7 +58,7 @@ router.route("/fetchtableDepartment").get(async (req, res) => {
 
 router.route("/updateDepartment/:param_id").put(async (req, res) => {
   try {
-    const name = req.body.department_name;
+    const name = req.body.department_name.trim();
     const updatemasterID = req.params.param_id;
     const userId = req.query.userId;
 

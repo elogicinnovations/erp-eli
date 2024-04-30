@@ -21,21 +21,25 @@ router.use(session({
 router.post('/rejustify', upload.single('file'), async (req, res) => {
     try {
       const { id, remarks } = req.body;
-      const { userId } = req.query;
-  
-      const file = req.file;
+    const { userId } = req.query;
 
-      const mimeType = file.mimetype;
-      const fileExtension = file.originalname.split('.').pop();
-  
-      const result = await PR_Rejustify.create({
-        file: file.buffer,
-        pr_id: id,  
-        remarks: remarks, 
-        mimeType: mimeType,
-        fileExtension: fileExtension,
-      });
+    const file = req.file;
 
+    let mimeType = null;
+    let fileExtension = null;
+
+    if (file) {
+      mimeType = file.mimetype;
+      fileExtension = file.originalname.split('.').pop();
+    }
+
+    const result = await PR_Rejustify.create({
+      file: file ? file.buffer : null,
+      pr_id: id,
+      remarks: remarks,
+      mimeType: mimeType,
+      fileExtension: fileExtension,
+    });
       
       const PR_historical = await PR_history.create({
         pr_id: id,
@@ -80,11 +84,16 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
       const { id, remarks, userId } = req.body;
       const file = req.file;
 
-      const mimeType = file.mimetype;
-      const fileExtension = file.originalname.split('.').pop();
+      let mimeType = null;
+      let fileExtension = null;
+  
+      if (file) {
+        mimeType = file.mimetype;
+        fileExtension = file.originalname.split('.').pop();
+      }
 
       const result = await PR_Rejustify.create({
-        file: file.buffer,
+        file: file ? file.buffer : null,
         pr_id: id,
         remarks: remarks,
         mimeType: mimeType,
