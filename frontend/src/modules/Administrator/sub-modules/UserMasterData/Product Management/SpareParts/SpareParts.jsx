@@ -15,6 +15,7 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
   ArrowsClockwise,
+  Circle
 } from "@phosphor-icons/react";
 import { IconButton, TextField, TablePagination, } from '@mui/material';
 
@@ -607,7 +608,20 @@ function SpareParts({ authrztn }) {
                 </div>
 
                 <div className="right-rectangle-containers">
-                  <span>{data.spareParts_name}</span>
+                  <div className="active-icon-with-prodname">
+                    <div className="active-stats-icon">
+                      {data.spareParts_status === "Active" ? (
+                          <Circle size={16} color="green" weight="fill" />
+                        ) : (
+                          <Circle size={16} color="red" weight="fill" />
+                        )}
+                    </div>
+
+                    <div className="products-Name">
+                      {data.spareParts_name}
+                    </div>
+                  </div>
+                  
                   <span>{data.spareParts_desc}</span>
                 </div>
 

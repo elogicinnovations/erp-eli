@@ -421,6 +421,19 @@ function SubParts({ authrztn }) {
   };
  //end of updating status 
  
+ const getStatusColor = (status) => {
+  switch (status) {
+    case "Active":
+      return "green";
+    case "Archive":
+      return "gray";
+    case "Inactive":
+      return "red";
+    default:
+      return "transparent"; 
+  }
+};
+
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -523,10 +536,11 @@ function SubParts({ authrztn }) {
                             <input
                                 type="checkbox"
                                 className="checkboxStatus"
-                                checked={selectedCheckboxes.includes(data.id)}
+                                   checked={selectedCheckboxes.includes(data.id)}
                                 onChange={() => handleCheckboxChange(data.id)}
                               />
                           </div>
+
                           <div className="dots-three-sec">
                           {isVertical[data.id] ? (
                                 <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -628,20 +642,18 @@ function SubParts({ authrztn }) {
                       </div>
 
                       <div className="right-rectangle-containers">
-                         <div className="active-icon-with-prodname">
-                          <div className="active-stats-icon">
-                              {data.subPart_status === "Active" ? (
-                                <Circle size={16} color="green" weight="fill" />
-                              ) : (
-                                <Circle size={16} color="red" weight="fill" />
-                              )}
+                        <div className="right-angle-content">
+                          <div className="statuses-section" style={{ backgroundColor: getStatusColor(data.subPart_status) }}>
+                            {data.subPart_status}
                           </div>
-                          <div className="products-Name">
-                            {data.subPart_name}
-                          </div>
-                         </div>
+                            <div className="active-icon-with-prodname">
 
-                          <span>{data.subPart_desc}</span>
+                              <div className="products-Name">
+                                {data.subPart_name}
+                              </div>
+                            </div>
+
+                        </div>
                       </div>
                   </div>
                   ))}

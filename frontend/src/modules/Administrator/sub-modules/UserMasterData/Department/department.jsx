@@ -152,7 +152,7 @@ function Warehouse({ authrztn }) {
         .then((res) => {
           if (res.status === 200) {
             swal({
-              title: "Department Add Successful!",
+              title: "Department Added Successful!",
               text: "The Department has been added successfully.",
               icon: "success",
               button: "OK",

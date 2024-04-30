@@ -856,7 +856,7 @@ button.page-link:hover {
 
 .list-rectangle-container {
   border: 1px solid #ececec;
-  height: 220px;
+  height: 280px;
   width: 280px;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
@@ -906,58 +906,70 @@ button.page-link:hover {
   top: 35px;
   background-color: white;
   padding: 8px;
-  border-radius: 10px;
+  border-radius: 40%;
 }
 
 .profile-product-containers {
   width: 100%;
   height: 100%;
+  border-radius: 40%;
+
 }
 
 .profile-product-containers img {
   width: 100%;
   height: 100%;
+  border-radius: 40%;
 }
 
 .right-rectangle-containers {
   width: 100%;
-  text-align: center;
+  display: flex;
+  height: auto;
+}
+
+.right-angle-content{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  height: 140px;
-  padding-top: 60px;
+  height: 145px;
+  width: 100%;
+  padding-top: 70px;
+
 }
 
 .active-icon-with-prodname{
   display: flex;
   flex-direction: row;
   width: 100%;
-  align-items: center;
   justify-content: center;
 }
 
+.statuses-section{
+  width: 50%;
+  height: 20px;
+  justify-content: center;
+  color: #fff;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  padding: "5px";
+  text-align: center;
+  margin: auto;
+  border-radius: 5px;
+}
 
 
 .products-Name{
   font-size: 12px;
   font-family: Poppins, "Source Sans Pro";
-  margin-left: 5px;
+  width: 100%;
+  overflow-y: auto;
+  height: 110px;
+  text-align: center;
+  word-wrap: break-word;
+  padding: 10px;
 }
 
-.right-rectangle-containers span:nth-child(2) {
-  width: 50%;
-  height: 50%;
-  border: 1px solid rgb(194, 192, 192);
-  white-space: normal;
-  border-radius: 5px;
-  word-wrap: break-word;
-  overflow-y: auto;
-  font-size: 10px;
-  font-family: Poppins, "Source Sans Pro";
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-  margin-top: 7px;
-}
+
 
 .users-box-main-containers {
   border: 1px solid #ececec;
