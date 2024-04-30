@@ -49,7 +49,14 @@ router.route('/fetchTable').get(async (req, res) => {
   //       required: false,
   //     },
   //   });
-    const data = await SparePart.findAll();
+    const data = await SparePart.findAll({
+      include: {
+        model: SparePart_image,
+        required: false,
+        order: [["createdAt", "DESC"]], // Order by createdAt column in descending order
+        limit: 1, // Limit the result to only one image per subpart
+      },
+    });
 
     if (data) {
       // console.log(data);

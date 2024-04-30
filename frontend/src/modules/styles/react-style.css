@@ -929,9 +929,20 @@ button.page-link:hover {
   padding-top: 60px;
 }
 
-.right-rectangle-containers span:nth-child(1) {
+.active-icon-with-prodname{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.products-Name{
   font-size: 12px;
   font-family: Poppins, "Source Sans Pro";
+  margin-left: 5px;
 }
 
 .right-rectangle-containers span:nth-child(2) {
@@ -945,6 +956,7 @@ button.page-link:hover {
   font-size: 10px;
   font-family: Poppins, "Source Sans Pro";
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  margin-top: 7px;
 }
 
 .users-box-main-containers {

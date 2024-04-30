@@ -17,7 +17,8 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
-  ArrowsClockwise
+  ArrowsClockwise,
+  Circle
 } from "@phosphor-icons/react";
 import deleteSubpart from "../../../../../Archiving Delete/subpart_delete";
 import { IconButton, TextField, TablePagination, } from '@mui/material';
@@ -508,7 +509,6 @@ function SubParts({ authrztn }) {
                   }}
                   onChange={handleSearch}/>
             </div>
-
           </div>
 
           <div className="table-containss">
@@ -528,18 +528,18 @@ function SubParts({ authrztn }) {
                               />
                           </div>
                           <div className="dots-three-sec">
-                          {isVertical[data.subPart_code] ? (
+                          {isVertical[data.id] ? (
                                 <div style={{ position: 'relative', display: 'inline-block' }}>
                                   <DotsThreeCircleVertical
                                     size={32}
                                     className="dots-icon"
                                     color="beige"
                                     onClick={() => {
-                                      toggleButtons(data.subPart_code);
+                                      toggleButtons(data.id);
                                     }}
                                   />
                                   <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                                    {setButtonVisibles(data.subPart_code) && (
+                                    {setButtonVisibles(data.id) && (
                                       <div className="choices">
                                       { authrztn?.includes('Sub-Part - Edit') && (
                                       <Link
@@ -559,6 +559,13 @@ function SubParts({ authrztn }) {
                                         Price History
                                       </button>
                                       )}
+                                     {authrztn?.includes('Sub-Part - View') && (
+                                      <button
+                                        className="btn"
+                                        onClick={() => navigate(`/viewsubParts/${data.id}`)}>
+                                        View
+                                      </button>
+                                      )}
                                       </div>
                                     )}
                                   </div>
@@ -570,11 +577,11 @@ function SubParts({ authrztn }) {
                                     className="dots-icon"
                                     color="beige"
                                     onClick={() => {
-                                      toggleButtons(data.subPart_code);
+                                      toggleButtons(data.id);
                                     }}
                                   />
                                   <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                                    {setButtonVisibles(data.subPart_code) && (
+                                    {setButtonVisibles(data.id) && (
                                       <div className="choices">
                                       { authrztn?.includes('Sub-Part - Edit') && (
                                       <Link
@@ -592,6 +599,14 @@ function SubParts({ authrztn }) {
                                           closeVisibleButtons();
                                         }}>
                                         Price History
+                                      </button>
+                                      )}
+
+                                      {authrztn?.includes('Sub-Part - View') && (
+                                      <button
+                                        className="btn"
+                                        onClick={() => navigate(`/viewsubParts/${data.id}`)}>
+                                        View
                                       </button>
                                       )}
                                       </div>
@@ -613,7 +628,19 @@ function SubParts({ authrztn }) {
                       </div>
 
                       <div className="right-rectangle-containers">
-                          <span>{data.subPart_name}</span>
+                         <div className="active-icon-with-prodname">
+                          <div className="active-stats-icon">
+                              {data.subPart_status === "Active" ? (
+                                <Circle size={16} color="green" weight="fill" />
+                              ) : (
+                                <Circle size={16} color="red" weight="fill" />
+                              )}
+                          </div>
+                          <div className="products-Name">
+                            {data.subPart_name}
+                          </div>
+                         </div>
+
                           <span>{data.subPart_desc}</span>
                       </div>
                   </div>
