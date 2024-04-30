@@ -5,7 +5,8 @@ const sequelize = new Sequelize({
   database: "erp_sbf",
   dialect: "mysql",
   username: "root",
-  password: "",
+  // password: "",
+  password: "LIOyqn49725",
   timezone: "+08:00", // Asia/Manila timezone
   alter: false,
 });
