@@ -64,6 +64,43 @@ function MasterList({ authrztn }) {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, masterListt.length);
   const currentItems = masterListt.slice(startIndex, endIndex);
+  const MAX_PAGES = 5;
+
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
 
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
@@ -187,6 +224,7 @@ function MasterList({ authrztn }) {
   }, []);
 
   const handleSearch = (event) => {
+    setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchMasterlist.filter((data) => {
       return (
@@ -700,6 +738,7 @@ function MasterList({ authrztn }) {
                 onChange={handleSearch}
               />
             </div>
+            
             <div className="table-containss">
               {masterListt.length > 0 ? (
                 <div className="users-box-main-containers">
@@ -708,9 +747,9 @@ function MasterList({ authrztn }) {
                       <div className="top-box-list">
                         <div className="active-inactive-identify">
                           {data.col_status === "Active" ? (
-                            <Circle size={24} color="#3dff3d" weight="fill" />
+                            <Circle size={24} color="green" weight="fill" />
                           ) : (
-                            <Circle size={24} color="#ff3d3d" weight="fill" />
+                            <Circle size={24} color="red" weight="fill" />
                           )}
                         </div>
 
@@ -866,9 +905,7 @@ function MasterList({ authrztn }) {
 
             <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>
-                <li
-                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-                >
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
                   <button
                     type="button"
                     style={{
@@ -883,44 +920,29 @@ function MasterList({ authrztn }) {
                     Previous
                   </button>
                 </li>
-                {[...Array(totalPages).keys()].map((num) => (
-                  <li
-                    key={num}
-                    className={`page-item ${
-                      currentPage === num + 1 ? "active" : ""
-                    }`}
-                  >
+
+
+                  {generatePages().map((page, index) => (
+                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
                     <button
                       style={{
-                        fontSize: "14px",
-                        width: "25px",
-                        background:
-                          currentPage === num + 1 ? "#FFA500" : "white", // Set background to white if not clicked
-                        color: currentPage === num + 1 ? "#FFFFFF" : "#000000",
-                        border: "none",
-                        height: "28px",
+                        fontSize: '14px',
+                        width: '25px',
+                        background: currentPage === page ? '#FFA500' : 'white',
+                        color: currentPage === page ? '#FFFFFF' : '#000000',
+                        border: 'none',
+                        height: '28px',
                       }}
-                      className={`page-link ${
-                        currentPage === num + 1 ? "gold-bg" : ""
-                      }`}
-                      onClick={() => setCurrentPage(num + 1)}
+                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      onClick={() => handlePageClick(page)}
                     >
-                      {num + 1}
+                      {page}
                     </button>
                   </li>
                 ))}
-                <li
-                  className={`page-item ${
-                    currentPage === totalPages ? "disabled" : ""
-                  }`}
-                >
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                   <button
-                    style={{
-                      fontSize: "14px",
-                      cursor: "pointer",
-                      color: "#000000",
-                      textTransform: "capitalize",
-                    }}
+                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >

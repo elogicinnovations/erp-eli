@@ -125,7 +125,9 @@ router.route('/update/:param_id').put(async (req, res) => {
 
 router.route('/retrieve').get(async (req, res) => {
     try {
-      const data = await Manufacturer.findAll();
+      const data = await Manufacturer.findAll({
+        order: [['createdAt', 'DESC']],
+      });
   
       if (data) {
         return res.json(data);

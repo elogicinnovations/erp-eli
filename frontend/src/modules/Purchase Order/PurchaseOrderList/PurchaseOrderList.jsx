@@ -58,10 +58,51 @@ function PurchaseOrderList({ authrztn }) {
   const [RejustifyFile, setRejustifyFile] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+
   const totalPages = Math.ceil(filteredPR.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, filteredPR.length);
-  const currentItems = filteredPR.slice(startIndex, endIndex);
+  const currentItems = filteredPR.slice(startIndex, endIndex)
+  const MAX_PAGES = 5;
+
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
+
   const handleCloseRejustify = () => setshowRejustify(false);
 
   const handleXCircleClick = () => {
@@ -145,6 +186,7 @@ function PurchaseOrderList({ authrztn }) {
   };
 
   const handleSearch = (event) => {
+    setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = allPR.filter((data) => {
       return (
@@ -694,49 +736,29 @@ function PurchaseOrderList({ authrztn }) {
                         Previous
                       </button>
                     </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li
-                        key={num}
-                        className={`page-item ${
-                          currentPage === num + 1 ? "active" : ""
-                        }`}
-                      >
+                    {generatePages().map((page, index) => (
+                      <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
                         <button
                           style={{
-                            fontSize: "14px",
-                            width: "25px",
-                            background:
-                              currentPage === num + 1 ? "#FFA500" : "white", // Set background to white if not clicked
-                            color:
-                              currentPage === num + 1 ? "#FFFFFF" : "#000000",
-                            border: "none",
-                            height: "28px",
+                            fontSize: '14px',
+                            width: '25px',
+                            background: currentPage === page ? '#FFA500' : 'white',
+                            color: currentPage === page ? '#FFFFFF' : '#000000',
+                            border: 'none',
+                            height: '28px',
                           }}
-                          className={`page-link ${
-                            currentPage === num + 1 ? "gold-bg" : ""
-                          }`}
-                          onClick={() => setCurrentPage(num + 1)}
+                          className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                          onClick={() => handlePageClick(page)}
                         >
-                          {num + 1}
+                          {page}
                         </button>
                       </li>
                     ))}
-                    <li
-                      className={`page-item ${
-                        currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    >
+                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                       <button
-                        style={{
-                          fontSize: "14px",
-                          cursor: "pointer",
-                          color: "#000000",
-                          textTransform: "capitalize",
-                        }}
+                        style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
                         className="page-link"
-                        onClick={() =>
-                          setCurrentPage((prevPage) => prevPage + 1)
-                        }
+                        onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                       >
                         Next
                       </button>

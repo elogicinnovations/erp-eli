@@ -3,6 +3,7 @@ import ReactLoading from 'react-loading';
 import Sidebar from "../../../../../Sidebar/sidebar";
 import NoData from '../../../../../../assets/image/NoData.png';
 import NoAccess from '../../../../../../assets/image/NoAccess.png';
+import NoProduct from '../../../../../../assets/image/product-none.jpg';
 import "../../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import { Link } from "react-router-dom";
@@ -60,7 +61,7 @@ function AssemblyForm({ authrztn }) {
   const [userId, setuserId] = useState('');
   const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const pageSize = 12;
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
@@ -109,8 +110,48 @@ function AssemblyForm({ authrztn }) {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, assembly.length);
   const currentItems = assembly.slice(startIndex, endIndex);
+  const MAX_PAGES = 5;
+
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
 
   const handleSearch = (event) => {
+    setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = cloneAssembly.filter((data) => {
       return (
@@ -388,11 +429,22 @@ function AssemblyForm({ authrztn }) {
     setSelectedStatus(event.target.value);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Active":
+        return "green";
+      case "Archive":
+        return "gray";
+      case "Inactive":
+        return "red";
+      default:
+        return "transparent"; 
+    }
+  };
+  
+
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
               {isLoading ? (
                 <div className="loading-container">
@@ -446,122 +498,65 @@ function AssemblyForm({ authrztn }) {
                   </Link>
                 </div>
                 )
-                  )}
+              )}
                   
               </div>
             </div>
           </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
+
+
+          <div className="textfieldandselectAll">
+            <div className="select-all-checkbox">
+                <span onClick={handleSelectAllChange}>Select All</span>
+                <input
+                  type="checkbox"
+                  checked={selectAllChecked}
+                  onChange={handleSelectAllChange}
+                  disabled={assembly.length === 0}
+                  className="checkboxStatus"
+                />
+            </div>
+
+            <div className="textfield">
               <TextField
-                      label="Search"
-                      variant="outlined"
-                      style={{ marginBottom: '10px', 
-                      float: 'right',
-                      }}
-                      InputLabelProps={{
-                        style: { fontSize: '14px'},
-                      }}
-                      InputProps={{
-                        style: { fontSize: '14px', width: '250px', height: '50px' },
-                      }}
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: '10px', 
+                  float: 'right',
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: '14px'},
+                  }}
+                  InputProps={{
+                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                  }}
                 onChange={handleSearch}/>
-              {tableLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-              <table className="table-hover" title="View Information">
-                <thead>
-                  <tr>
-                    <th className="tableh">
-                      <input
-                        type="checkbox"
-                        checked={selectAllChecked}
-                        onChange={handleSelectAllChange}
-                        disabled={assembly.length === 0}
-                      />
-                    </th>
-                    <th className="tableh">Product Code</th>
-                    <th className="tableh">Assembly Name</th>
-                    <th className="tableh">Details</th>
-                    <th className="tableh">Status</th>
-                    <th className="tableh">Date Created</th>
-                    <th className="tableh">Date Modified</th>
-                    <th className="tableh">Action</th>
-                  </tr>
-                </thead>
-                {assembly.length > 0 ? (
-                <tbody>
-                  {assembly.filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.assembly_status))
+            </div>
+          </div>
+
+          <div className="table-containss">
+          {assembly.length > 0 ? (
+            <div className="product-rectangle-containers">
+              {currentItems.filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.assembly_status))
                   .map((data, i) => (
-                    <tr key={i}>
-                      <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedCheckboxes.includes(data.id)}
-                        onChange={() => handleCheckboxChange(data.id)}
+              <div className="list-rectangle-container" key={i}>
+                <div className="left-rectangle-containers">
+                  <div className="checkbox-sections">
+                    <input
+                      className="checkboxStatus"
+                      type="checkbox"
+                      checked={selectedCheckboxes.includes(data.id)}
+                      onChange={() => handleCheckboxChange(data.id)}
                       />
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewAssembleForm/${data.id}`)
-                        }>
-                        {data.assembly_code}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewAssembleForm/${data.id}`)
-                        }>
-                        {data.assembly_name}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewAssembleForm/${data.id}`)
-                        }>
-                        {data.assembly_desc}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewAssembleForm/${data.id}`)
-                        }>
-                        <div
-                          className="colorstatus"
-                          style={{
-                            backgroundColor:
-                              data.assembly_status === "Active"
-                                ? "green"
-                                : data.assembly_status === "Archive"
-                                ? "gray"
-                                : "red",
-                            color: "white",
-                            padding: "5px",
-                            borderRadius: "5px",
-                            textAlign: "center",
-                            width: "80px",
-                          }}>
-                        {data.assembly_status}
-                        </div>
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewAssembleForm/${data.id}`)
-                        }>
-                        {formatDate(data.createdAt)}
-                      </td>
-                      <td
-                        onClick={() =>
-                          navigate(`/viewAssembleForm/${data.id}`)
-                        }>
-                        {formatDate(data.updatedAt)}
-                      </td>
-                      <td>
-                      {isVertical[data.assembly_code] ? (
+                  </div>
+
+                  <div className="dots-three-sec">
+                  {isVertical[data.assembly_code] ? (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircleVertical
                             size={32}
                             className="dots-icon"
+                            color="beige"
                             onClick={() => {
                               toggleButtons(data.assembly_code);
                             }}
@@ -585,6 +580,16 @@ function AssemblyForm({ authrztn }) {
                                 }}
                                 className="btn">
                                 Price History
+                              </button>
+                              )}
+
+                              {authrztn.includes('Assembly - View') && (
+                              <button
+                                onClick={() =>
+                                  navigate(`/viewAssembleForm/${data.id}`)
+                                }
+                                className="btn">
+                                  View
                               </button>
                               )}
                               </div>
@@ -594,6 +599,7 @@ function AssemblyForm({ authrztn }) {
                       ) : (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                           <DotsThreeCircle
+                            color="beige"
                             size={32}
                             className="dots-icon"
                             onClick={() => {
@@ -621,64 +627,101 @@ function AssemblyForm({ authrztn }) {
                                 Price History
                               </button>
                               )}
+
+                              {authrztn.includes('Assembly - View') && (
+                              <button
+                                onClick={() =>
+                                  navigate(`/viewAssembleForm/${data.id}`)
+                                }
+                                className="btn">
+                                  View
+                              </button>
+                              )}
                               </div>
                             )}
                           </div>
                         </div>
                       )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-                  ) : (
-                    <div className="no-data">
-                      <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
+                  </div>
+                </div>
+
+                <div className="mid-rectangle-product-containers">
+                  <div className="profile-product-containers">
+                    {data.assembly_images.length > 0 ? (
+                          <img src={`data:image/png;base64,${data.assembly_images[0].assembly_image}`} alt={`Latest Image`} />
+                        ) : (
+                          <img src={NoProduct} alt="" />
+                      )}
+                  </div>
+                </div>
+
+                <div className="right-rectangle-containers">
+                  <div className="right-angle-content">
+                    <div className="statuses-section" style={{ backgroundColor: getStatusColor(data.assembly_status)}}>
+                        {data.assembly_status}
                     </div>
-                )}
-              </table>
-              )}
+
+                    <div className="active-icon-with-prodname">
+                      <div className="products-Name">
+                          {data.assembly_name}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+               ))}
             </div>
+             ) : (
+              <div className="no-data">
+                <img src={NoData} alt="NoData" className="no-data-img" />
+                <h3>
+                  No Data Found
+                </h3>
+              </div>
+            )}
           </div>
           <nav style={{marginTop: '15px'}}>
-                  <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
+            <ul className="pagination" style={{ float: "right" }}>
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                type="button"
+                style={{fontSize: '14px',
+                cursor: 'pointer',
+                color: '#000000',
+                textTransform: 'capitalize',
+              }}
+                className="page-link" 
+                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+              </li>
+              {generatePages().map((page, index) => (
+                <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <button
+                    style={{
+                      fontSize: '14px',
+                      width: '25px',
+                      background: currentPage === page ? '#FFA500' : 'white',
+                      color: currentPage === page ? '#FFFFFF' : '#000000',
+                      border: 'none',
+                      height: '28px',
                     }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
-                    </li>
-                  </ul>
-                </nav>
+                    className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                    onClick={() => handlePageClick(page)}
+                  >
+                    {page}
+                  </button>
+                </li>
+              ))}
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <button
+                  style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                  className="page-link"
+                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
         ) : (
           <div className="no-access">

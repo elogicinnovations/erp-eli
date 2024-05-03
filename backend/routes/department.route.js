@@ -43,7 +43,9 @@ router.route("/createDepartment").post(async (req, res) => {
 
 router.route("/fetchtableDepartment").get(async (req, res) => {
   try {
-    const data = await Department.findAll();
+    const data = await Department.findAll({
+      order: [['createdAt', 'DESC']],
+    });
 
     if (data) {
       return res.json(data);

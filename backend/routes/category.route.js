@@ -13,6 +13,32 @@ router.use(session({
 }));
 
 
+router.route('/fetchCategoryReport').get(async (req, res) => {
+  try {
+  //   const data = await MasterList.findAll({
+  //     include: {
+  //       model: UserRole,
+  //       required: false,
+  //     },
+  //   });
+    const data = await Category.findAll({
+      order: [
+        ['category_name', 'ASC'] 
+      ]
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 router.route('/fetchTable').get(async (req, res) => {
     try {
     //   const data = await MasterList.findAll({
@@ -23,7 +49,7 @@ router.route('/fetchTable').get(async (req, res) => {
     //   });
       const data = await Category.findAll({
         order: [
-          ['category_name', 'ASC'] 
+          ['category_name', 'DESC'] 
         ]
       });
   

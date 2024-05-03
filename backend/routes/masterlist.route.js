@@ -375,6 +375,7 @@ router.route("/masterTable").get(async (req, res) => {
       where: {
         user_type: { [Op.ne]: "Superadmin" },
       },
+      order: [['createdAt', 'DESC']],
       include: [
         {
           model: UserRole,

@@ -68,7 +68,7 @@ function SpareParts({ authrztn }) {
   const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
   const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const pageSize = 12;
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
@@ -119,9 +119,49 @@ function SpareParts({ authrztn }) {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, sparePart.length);
   const currentItems = sparePart.slice(startIndex, endIndex);
+  const MAX_PAGES = 5;
+
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
 
 
   const handleSearch = (event) => {
+    setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = cloneSpareParts.filter((data) => {
       return (
@@ -395,6 +435,18 @@ function SpareParts({ authrztn }) {
     setSelectedStatus(event.target.value);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Active":
+        return "green";
+      case "Archive":
+        return "gray";
+      case "Inactive":
+        return "red";
+      default:
+        return "transparent"; 
+    }
+  };
   
   return (
     <div className="main-of-containers">
@@ -598,33 +650,28 @@ function SpareParts({ authrztn }) {
                 </div>
 
                 <div className="mid-rectangle-product-containers">
-                  <div className="profile-product-containers">
-                      {data.sparePart_images.length > 0 ? (
-                            <img src={`data:image/png;base64,${data.sparePart_images[0].sparepart_image}`} alt={`Latest Image`} />
-                          ) : (
-                            <img src={NoProduct} alt="" />
-                        )}
-                  </div>
+                    <div className="profile-product-containers">
+                        {data.sparePart_images.length > 0 ? (
+                              <img src={`data:image/png;base64,${data.sparePart_images[0].sparepart_image}`} alt={`Latest Image`} />
+                            ) : (
+                              <img src={NoProduct} alt="" />
+                          )}
+                    </div>
                 </div>
 
                 <div className="right-rectangle-containers">
-                  <div className="active-icon-with-prodname">
-                    <div className="active-stats-icon">
-                      {data.spareParts_status === "Active" ? (
-                          <Circle size={16} color="green" weight="fill" />
-                        ) : (
-                          <Circle size={16} color="red" weight="fill" />
-                        )}
-                    </div>
+                   <div className="right-angle-content">
+                      <div className="statuses-section" style={{ backgroundColor: getStatusColor(data.spareParts_status) }}>
+                          {data.spareParts_status}
+                      </div>
 
-                    <div className="products-Name">
-                      {data.spareParts_name}
-                    </div>
-                  </div>
-                  
-                  <span>{data.spareParts_desc}</span>
+                      <div className="active-icon-with-prodname">
+                        <div className="products-Name">
+                           {data.spareParts_name}
+                        </div>
+                      </div>
+                   </div>
                 </div>
-
               </div>
                ))}
             </div>
@@ -639,42 +686,47 @@ function SpareParts({ authrztn }) {
           </div>
 
              <nav style={{marginTop: '15px'}}>
-                  <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
-                    }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
-                    </li>
-                  </ul>
-              </nav>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button
+                  type="button"
+                  style={{fontSize: '14px',
+                  cursor: 'pointer',
+                  color: '#000000',
+                  textTransform: 'capitalize',
+                }}
+                  className="page-link" 
+                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                </li>
+                {generatePages().map((page, index) => (
+                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                    <button
+                      style={{
+                        fontSize: '14px',
+                        width: '25px',
+                        background: currentPage === page ? '#FFA500' : 'white',
+                        color: currentPage === page ? '#FFFFFF' : '#000000',
+                        border: 'none',
+                        height: '28px',
+                      }}
+                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button
+                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+             </ul>
+          </nav>
         </div>
         ) : (
           <div className="no-access">

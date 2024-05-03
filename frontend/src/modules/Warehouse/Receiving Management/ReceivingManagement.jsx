@@ -59,7 +59,47 @@ function ReceivingManagement({ authrztn }) {
   const endIndexReceiving = Math.min(startIndexReceiving + pageSize, searchReceivePO.length);
   const currentItemsReceiving = searchReceivePO.slice(startIndexReceiving, endIndexReceiving);
 
-  const maxTotalPages = Math.max(totalPagesPR, totalPagesReceiving);
+  const totalPages = Math.max(totalPagesPR, totalPagesReceiving);
+  const MAX_PAGES = 5; 
+
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
+
   const reloadTable = () => {
     const delay = setTimeout(() => {
       axios
@@ -87,8 +127,8 @@ function ReceivingManagement({ authrztn }) {
   }, []);
 
   const handleSearch = (event) => {
+    setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
-    
     // Filter each inventory type separately
     const filteredSearchPR = searchPR.filter((data) => (
       data.pr_num.toLowerCase().includes(searchTerm) ||
@@ -107,7 +147,6 @@ function ReceivingManagement({ authrztn }) {
       data.status.toLowerCase().includes(searchTerm)
     ));
     setReceivingPO(filteredSearchReceivingPO);
-  
   };
 
   const handleXCircleClick = () => {
@@ -534,40 +573,35 @@ function ReceivingManagement({ authrztn }) {
                   Previous
                 </button>
               </li>
-              {[...Array(maxTotalPages).keys()].map((num) => (
-                <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                {generatePages().map((page, index) => (
+                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                    <button
+                      style={{
+                        fontSize: '14px',
+                        width: '25px',
+                        background: currentPage === page ? '#FFA500' : 'white',
+                        color: currentPage === page ? '#FFFFFF' : '#000000',
+                        border: 'none',
+                        height: '28px',
+                      }}
+                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
                   <button
-                    style={{
-                      fontSize: '14px',
-                      width: '25px',
-                      background: currentPage === num + 1 ? '#FFA500' : 'white',
-                      color: currentPage === num + 1 ? '#FFFFFF' : '#000000',
-                      border: 'none',
-                      height: '28px',
-                    }}
-                    className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`}
-                    onClick={() => setCurrentPage(num + 1)}
+                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >
-                    {num + 1}
+                    Next
                   </button>
                 </li>
-              ))}
-              <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
-                <button
-                  style={{
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    color: '#000000',
-                    textTransform: 'capitalize'
-                  }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
-                >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
+              </ul>
+            </nav>
           </div>
         ) : (
           <div className="no-access">

@@ -58,6 +58,7 @@ router.route("/fetchALLProduct").get(async (req, res) => {
 router.route("/fetchTable").get(async (req, res) => {
   try {
     const data = await Product.findAll({
+      order: [['createdAt', 'DESC']],
       attributes: [
         "product_id",
         "product_code",
@@ -67,6 +68,12 @@ router.route("/fetchTable").get(async (req, res) => {
         "updatedAt",
         'product_status'
       ],
+      include: {
+        model: Product_image,
+        required: false,
+        order: [["createdAt", "DESC"]], // Order by createdAt column in descending order
+        limit: 1, // Limit the result to only one image per subpart
+      },
     });
 
     if (data) {

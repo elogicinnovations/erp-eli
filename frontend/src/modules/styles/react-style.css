@@ -3,15 +3,6 @@
   padding: 0;
 }
 
-/* .dropdown-heading-value span {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.disabled-dropdown {
-  opacity: 0.5;
-  pointer-events: none;
-} */
 
 .tab-content {
   height: 600px;
@@ -419,11 +410,15 @@ button.page-link:hover {
   width: 50%; /* Set the width to 100% to fill the available space */
 }
 
-.eye {
+/* .eye {
   right: 4%;
   font-size: 3.5em;
   top: 10%;
   color: #968f8f;
+} */
+
+.profileEyes{
+  margin-bottom: 20px;
 }
 
 .remember-forgot {
@@ -539,6 +534,17 @@ button.page-link:hover {
   padding: 30px;
   display: flex;
   flex-direction: column;
+}
+
+.right-body-contents-BIS{
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 50%;
 }
 
 .settings-search-master {
@@ -849,14 +855,14 @@ button.page-link:hover {
   padding: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 35px;
+  gap: 85px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
 }
 
 .list-rectangle-container {
   border: 1px solid #ececec;
-  height: 280px;
+  height: 290px;
   width: 280px;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
@@ -886,6 +892,7 @@ button.page-link:hover {
 
 .checkboxStatus {
   width: 20px;
+  cursor: pointer;
 }
 
 .dots-three-sec {
@@ -906,20 +913,18 @@ button.page-link:hover {
   top: 35px;
   background-color: white;
   padding: 8px;
-  border-radius: 40%;
+  border-radius: 5px;
 }
 
 .profile-product-containers {
   width: 100%;
   height: 100%;
-  border-radius: 40%;
-
+  border-radius: 5px;
 }
 
 .profile-product-containers img {
   width: 100%;
   height: 100%;
-  border-radius: 40%;
 }
 
 .right-rectangle-containers {
@@ -961,12 +966,16 @@ button.page-link:hover {
 .products-Name{
   font-size: 12px;
   font-family: Poppins, "Source Sans Pro";
-  width: 100%;
+  width: 80%;
   overflow-y: auto;
-  height: 110px;
+  height: 100px;
   text-align: center;
   word-wrap: break-word;
   padding: 10px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+  border-radius: 5px;
+  border: 1px solid rgb(212, 208, 208);
+  margin-top: 7px;
 }
 
 
@@ -2528,8 +2537,10 @@ button.genbutton {
   display: flex;
 }
 
+
 .export p1 {
   margin: 0 10px;
+
 }
 
 .refresh p1 {
@@ -5431,6 +5442,49 @@ span:nth-child(5) {
   font-family: Poppins, "Source Sans Pro";
   font-size: 15px;
 }
+
+.user-info-profile{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.information-user-section{
+  width: 50%;
+}
+
+.profile-user-section-lane{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.round-profile-display{
+  border: 1px solid gray;
+  border-radius: 50%;
+  width: 30%;
+  height: 70%;
+  display: flex;
+}
+
+.round-profile-display img{
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-upload-section{
+  width: 100%;
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
 @keyframes ellipsis {
   to {
     width: 40px;

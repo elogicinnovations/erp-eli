@@ -83,7 +83,9 @@ router.route('/fetchTable').get(async (req, res) => {
   //       required: false,
   //     },
   //   });
-    const data = await Supplier.findAll();
+    const data = await Supplier.findAll({
+      order: [['createdAt', 'DESC']],
+    });
 
     if (data) {
       // console.log(data);

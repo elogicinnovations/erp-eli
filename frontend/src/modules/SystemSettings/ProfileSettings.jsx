@@ -3,12 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  Eye,
+  EyeSlash,
+} from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../assets/global/url";
 import user from "../../assets/image/user.png";
 import Image from "react-bootstrap/Image";
 import swal from "sweetalert";
 import { jwtDecode } from "jwt-decode";
+import "../styles/react-style.css";
 
 function ProfileSettings() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -337,128 +342,132 @@ function ProfileSettings() {
               }}
             ></span>
           </div>
-          <div className="row mt-3">
-            <div className="col-6">
-              <Form.Group className="mb-4">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Full Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </Form.Group>
 
-              <Form.Group className="mb-4">
-                <Form.Label style={{ fontSize: "20px" }}>UserName: </Form.Label>
-                <Form.Control
-                  type="text"
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </Form.Group>
+          <div className="user-info-profile">
+            <div className="information-user-section">
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group>
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Full Name:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      style={{ height: "40px", fontSize: "15px" }}
+                      readOnly={!isEditMode}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </Form.Group>
+                </div>
+              <div className="col-6">
+                <Form.Group>
+                    <Form.Label style={{ fontSize: "20px" }}>UserName: </Form.Label>
+                    <Form.Control
+                      type="text"
+                      style={{ height: "40px", fontSize: "15px" }}
+                      readOnly={!isEditMode}
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </Form.Group>
+              </div>
+          </div>
 
-              <Form.Group className="mb-4">
-                <Form.Label style={{ fontSize: "20px" }}>Address: </Form.Label>
-                <Form.Control
-                  type="text"
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-              </Form.Group>
-            </div>
+              <div className="row">
+                <div className="col-6">
+                <Form.Group>
+                  <Form.Label style={{ fontSize: "20px" }}>Address: </Form.Label>
+                  <Form.Control
+                    type="text"
+                    style={{ height: "40px", fontSize: "15px" }}
+                    readOnly={!isEditMode}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </Form.Group>
+                </div>
 
-            <div className="col-6 d-flex align-items-center justify-content-center">
-              <div
-                className="col-6 d-flex align-items-center justify-content-center"
-                style={{
-                  width: "270px",
-                  height: "270px",
-                }}
-              >
-                <Image
-                  className=""
-                  style={{
-                    width: "90%",
-                    height: "90%",
-                  }}
-                  src={`data:image/png;base64,${productImages}`}
-                  roundedCircle
-                />
+                <div className="col-6">
+                <Form.Group>
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Contact Number:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="Enter Contact Number..."
+                      style={{ height: "40px", fontSize: "15px" }}
+                      readOnly={!isEditMode}
+                      value={cnum}
+                      onChange={(e) => setCnum(e.target.value)}
+                      onKeyDown={(e) => {
+                        ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+                      }}
+                    />
+                  </Form.Group>
+                </div>
               </div>
 
-              {isEditMode ? (
-                <input
-                  name="file"
-                  type="file"
-                  className="file"
-                  ref={fileInputRef}
-                  onChange={(e) => onFileSelect(e)}
-                />
-              ) : (
-                <></>
-              )}
+              <div className="row">
+                <div className="col-6">
+                <Form.Group>
+                    <Form.Label style={{ fontSize: "20px" }}>Email: </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter Email..."
+                      style={{ height: "40px", fontSize: "15px" }}
+                      readOnly={!isEditMode}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Form.Group>
+                </div>
+
+                <div className="col-6">
+                <Form.Group>
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      User Role:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="User Role..."
+                      style={{ height: "40px", fontSize: "15px" }}
+                      readOnly
+                      value={role}
+                    />
+                  </Form.Group>
+                </div>
+              </div>
             </div>
+
+
+            <div className="profile-user-section-lane">
+                <div className="round-profile-display">
+                <img className="image-round"
+                    src={`data:image/png;base64,${productImages}`}
+                  />
+                </div>
+
+                {isEditMode ? (
+                  <div className="profile-upload-section">
+                    <input
+                        name="file"
+                        type="file"
+                        className="file-image-profile"
+                        ref={fileInputRef}
+                        onChange={(e) => onFileSelect(e)}
+                      />
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
           </div>
-          <div className="row mt-3">
-            {/* <div className="col-6">
-               
-              </div> */}
-          </div>
-          <div className="row mt-3">
-            <div className="col-4">
-              <Form.Group>
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Contact Number:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter Contact Number..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  value={cnum}
-                  onChange={(e) => setCnum(e.target.value)}
-                  onKeyDown={(e) => {
-                    ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
-                  }}
-                />
-              </Form.Group>
-            </div>
-            <div className="col-4">
-              <Form.Group>
-                <Form.Label style={{ fontSize: "20px" }}>Email: </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Email..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly={!isEditMode}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </Form.Group>
-            </div>
-            <div className="col-4">
-              <Form.Group>
-                <Form.Label style={{ fontSize: "20px" }}>
-                  User Role:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="User Role..."
-                  style={{ height: "40px", fontSize: "15px" }}
-                  readOnly
-                  value={role}
-                />
-              </Form.Group>
-            </div>
-          </div>
+
+            
+
+
+         
           <div className="save-cancel">
             {!isEditMode ? (
               <>
@@ -530,7 +539,7 @@ function ProfileSettings() {
           </div>
           <div className="row">
             <div className="col-6">
-              <Form.Group>
+              <Form.Group >
                 <Form.Label style={{ fontSize: "20px" }}>
                   Current Password:{" "}
                 </Form.Label>
@@ -545,20 +554,26 @@ function ProfileSettings() {
                 />
                 <div className="show">
                   {showCurrentPassword ? (
-                    <FaEyeSlash
-                      className="eye"
+                    <EyeSlash
+                      className="profileEyes"
+                      size={32}
+                      color="#1a1a1a"
+                      weight="light"
                       onClick={toggleCurrentPasswordVisibility}
                     />
                   ) : (
-                    <FaEye
-                      className="eye"
+                    <Eye
+                      className="profileEyes"
+                      size={32}
+                      color="#1a1a1a"
+                      weight="light"
                       onClick={toggleCurrentPasswordVisibility}
                     />
                   )}
                 </div>
               </Form.Group>
             </div>
-            <div className="col-6 d-flex align-items-center">
+            <div className="col-6 d-flex align-items-center" style={{marginTop: '15px'}}>
               {!isValidPass ? (
                 <Button
                   type="button"
@@ -592,13 +607,17 @@ function ProfileSettings() {
                   />
                   <div className="show">
                     {showPassword ? (
-                      <FaEyeSlash
-                        className="eye"
+                      <EyeSlash
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
                         onClick={togglePasswordVisibility}
                       />
                     ) : (
-                      <FaEye
-                        className="eye"
+                      <Eye
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
                         onClick={togglePasswordVisibility}
                       />
                     )}
@@ -622,13 +641,17 @@ function ProfileSettings() {
                   />
                   <div className="show">
                     {showConfirmPassword ? (
-                      <FaEyeSlash
-                        className="eye"
+                      <EyeSlash
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
                         onClick={toggleConfirmPasswordVisibility}
                       />
                     ) : (
-                      <FaEye
-                        className="eye"
+                      <Eye
+                        size={32}
+                        color="#1a1a1a"
+                        weight="light"
                         onClick={toggleConfirmPasswordVisibility}
                       />
                     )}

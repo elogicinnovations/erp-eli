@@ -693,10 +693,29 @@ function App() {
                   />
                   <Route
                     path="/POTransactionReports"
-                    element={<POTransactionReports />}
+                    element={
+                      <Roles>
+                        {(authrztn) => (
+                          <POTransactionReports authrztn={authrztn} />
+                        )}
+                      </Roles>
+                    }
                   />
-                  <Route path="/BIS" element={<BIS />} />
-                  <Route path="/BIS_Summary" element={<BIS_Summary />} />
+                  <Route path="/BIS" element={
+                      <Roles>
+                        {(authrztn) => (
+                          <BIS authrztn={authrztn} />
+                        )}
+                      </Roles>
+                    } />
+
+                  <Route path="/SummaryBIS" element={
+                      <Roles>
+                        {(authrztn) => (
+                          <BIS_Summary authrztn={authrztn} />
+                        )}
+                      </Roles>
+                    } />
 
                   <Route path="/stockTransfer" element={<StockTransfer />} />
 

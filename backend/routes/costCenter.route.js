@@ -34,7 +34,7 @@ router.route('/getCostCenter').get(async (req, res) =>
 {
     try {
         const data = await CostCenter.findAll({
-         
+          order: [['createdAt', 'DESC']],
           include: {
             model: MasterList, 
             required: true},

@@ -826,15 +826,16 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="BIS Detailed" />
               </ListItem>
             </NavLink>
+
             <NavLink
-              to="/BIS_Summary"
+              to="/SummaryBIS"
               style={{ textDecoration: "none", color: "inherit" }}
               activeClassName="active"
             >
               <ListItem
                 button
                 className={`adminsub-menu ${
-                  location.pathname.startsWith("/BIS_Summary")
+                  location.pathname.startsWith("/SummaryBIS")
                     ? "active"
                     : ""
                 }`}

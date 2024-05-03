@@ -57,7 +57,9 @@ router.use(
   router.route('/fetchtableWarehouses').get(async (req, res) => 
   {
     try {
-        const data = await Warehouses.findAll();
+        const data = await Warehouses.findAll({
+          order: [['createdAt', 'DESC']],
+        });
 
         if (data) {
         return res.json(data);

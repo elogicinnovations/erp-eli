@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import Sidebar from "../../Sidebar/sidebar";
+import ReactLoading from 'react-loading';
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
-import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import { Link, useNavigate } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -18,8 +16,9 @@ import {
   Export,
   XCircle,
 } from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { TextField } from '@mui/material';
 import NoData from '../../../../src/assets/image/NoData.png';
+import NoAccess from '../../../../src/assets/image/NoAccess.png';
 
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -35,10 +34,11 @@ import "../../../assets/skydash/js/off-canvas";
 import * as $ from "jquery";
 import Header from "../../../partials/header";
 
-function POTransactionReports() {
+function POTransactionReports({ authrztn }) {
   const tableRef = useRef();
   const navigate = useNavigate();
   const [department, setDepartment] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [requestsPR, setRequestsPR] = useState([]);
@@ -52,6 +52,45 @@ function POTransactionReports() {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, requestsPR.length);
   const currentItems = requestsPR.slice(startIndex, endIndex);
+  const MAX_PAGES = 5;
+
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = totalPages;
+
+    if (totalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= totalPages - half) {
+        startPage = totalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < totalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     axios
@@ -91,13 +130,20 @@ function POTransactionReports() {
   };
 
   const reloadTable = () => {
+    const delay = setTimeout(() => {
     axios
     .get(BASE_URL + "/report_PO/requestPR")
     .then((res) => {
       setRequestsPR(res.data);
       setSearchRequestPR(res.data);
+      setIsLoading(false);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {console.log(err)
+      setIsLoading(false);
+    });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
 
   const exportToCSV = () => {
@@ -164,6 +210,7 @@ function POTransactionReports() {
 
   
   const handleSearch = (event) => {
+    setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchRequestPR.filter((data) => {
       return (
@@ -213,6 +260,13 @@ function POTransactionReports() {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
+      {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={'bubbles'}/>
+            Loading Data...
+          </div>
+        ) : (
+        authrztn.includes('Report - View') ? (
         <div className="right-body-contents">
           <div className="Employeetext-button">
             <div className="employee-and-button">
@@ -543,43 +597,57 @@ function POTransactionReports() {
             </div>
           </div>
             <nav style={{marginTop: '15px'}}>
-                  <ul className="pagination" style={{ float: "right" }}>
-                    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                      <button
-                      type="button"
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
-                    }}
-                      className="page-link" 
-                      onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                    </li>
-                    {[...Array(totalPages).keys()].map((num) => (
-                      <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
-                        <button 
-                        style={{
-                          fontSize: '14px',
-                          width: '25px',
-                          background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                          color: currentPage === num + 1 ? '#FFFFFF' : '#000000', 
-                          border: 'none',
-                          height: '28px',
-                        }}
-                        className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPage(num + 1)}>{num + 1}</button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                      <button
-                      style={{fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize'}}
-                      className="page-link" onClick={() => setCurrentPage((prevPage) => prevPage + 1)}>Next</button>
-                    </li>
-                  </ul>
-                </nav>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                  <button
+                  type="button"
+                  style={{fontSize: '14px',
+                  cursor: 'pointer',
+                  color: '#000000',
+                  textTransform: 'capitalize',
+                }}
+                  className="page-link" 
+                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                </li>
+                {generatePages().map((page, index) => (
+                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                    <button
+                      style={{
+                        fontSize: '14px',
+                        width: '25px',
+                        background: currentPage === page ? '#FFA500' : 'white',
+                        color: currentPage === page ? '#FFFFFF' : '#000000',
+                        border: 'none',
+                        height: '28px',
+                      }}
+                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                  <button
+                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
         </div>
+          ) : (
+            <div className="no-access">
+              <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
+              <h3>
+                You don't have access to this function.
+              </h3>
+            </div>
+          )
+        )}
       </div>
     </div>
   );

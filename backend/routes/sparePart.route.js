@@ -50,6 +50,7 @@ router.route('/fetchTable').get(async (req, res) => {
   //     },
   //   });
     const data = await SparePart.findAll({
+      order: [['createdAt', 'DESC']],
       include: {
         model: SparePart_image,
         required: false,

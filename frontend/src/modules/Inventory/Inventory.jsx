@@ -42,6 +42,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const startIndexIssuance = (currentPageissuance - 1) * pageIssuanceSize;
   const endIndexIssuance = Math.min(startIndexIssuance + pageIssuanceSize, searchIssuance.length);
   const currentItemsIssuance = searchIssuance.slice(startIndexIssuance, endIndexIssuance);
+  const MAX_PAGES_ISSUANCE = 5;
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -67,6 +68,85 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const currentItemsSubpart = searchSub.slice(startIndexSubpart, endIndexSubpart);
 
   const maxTotalPages = Math.max(totalPagesInventory, totalPagesAssembly, totalPagesSpare, totalPagesSubpart);
+  const MAX_PAGES = 5;
+
+  //inventory pagination
+  const generatePages = () => {
+    const pages = [];
+    let startPage = 1;
+    let endPage = maxTotalPages;
+
+    if (maxTotalPages > MAX_PAGES) {
+      const half = Math.floor(MAX_PAGES / 2);
+      if (currentPage <= half + 1) {
+        endPage = MAX_PAGES;
+      } else if (currentPage >= maxTotalPages - half) {
+        startPage = maxTotalPages - MAX_PAGES + 1;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (startPage > 1) {
+      pages.unshift('...');
+    }
+    if (endPage < maxTotalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClick = (page) => {
+    if (page === '...') return;
+    setCurrentPage(page);
+  };
+
+  //Issuance Pagination
+  const generatePagesIssuance = () => {
+    const pages = [];
+    let startPageIssuance = 1;
+    let endPageIssuance = totalPagesIssuance;
+
+    if (totalPagesIssuance > MAX_PAGES_ISSUANCE) {
+      const half = Math.floor(MAX_PAGES_ISSUANCE / 2);
+      if (currentPageissuance <= half + 1) {
+        endPageIssuance = MAX_PAGES_ISSUANCE;
+      } else if (currentPageissuance >= totalPagesIssuance - half) {
+        startPageIssuance = totalPagesIssuance - MAX_PAGES_ISSUANCE + 1;
+      } else {
+        startPageIssuance = currentPageissuance - half;
+        endPageIssuance = currentPageissuance + half;
+      }
+    }
+
+    for (let i = startPageIssuance; i <= endPageIssuance; i++) {
+      pages.push(i);
+    }
+
+    if (startPageIssuance > 1) {
+      pages.unshift('...');
+    }
+    if (endPageIssuance < totalPagesIssuance) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  //pagination end
+
+  const handlePageClickIssuance = (page) => {
+    if (page === '...') return;
+    setCurrentPageIssuance(page);
+  };
 
 
   useEffect(() => {
@@ -117,6 +197,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   }, []);
 
   const handleSearch = (event) => {
+    setCurrentPage(1)
     const searchTerm = event.target.value.toLowerCase();
     
     // Filter each inventory type separately
@@ -151,6 +232,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   
 
   const handleSearchIssuance = (event) => {
+    setCurrentPageIssuance(1)
     const searchTermIssuance = event.target.value.toLowerCase();
     const filteredDataIssuance = searchIssuance.filter((data) => {
       return (
@@ -209,6 +291,43 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const currentItemsReturnSubpart = searchReturnsubpart.slice(startIndexReturnSubpart, endIndexReturnSubpart);
 
   const maxReturnTotalPages = Math.max(totalPagesReturnProd, totalPagesReturnAsm, totalPagesReturnSpare, totalPagesReturnSubpart);
+  const MAX_PAGES_RETURN = 5;
+
+  const generatePagesReturn = () => {
+    const pages = [];
+    let startPageReturn = 1;
+    let endPageReturn = maxReturnTotalPages;
+
+    if (maxReturnTotalPages > MAX_PAGES_RETURN) {
+      const half = Math.floor(MAX_PAGES_RETURN / 2);
+      if (currentPageReturn <= half + 1) {
+        endPageReturn = MAX_PAGES_RETURN;
+      } else if (currentPageReturn >= maxReturnTotalPages - half) {
+        startPageReturn = maxReturnTotalPages - MAX_PAGES_RETURN + 1;
+      } else {
+        startPageReturn = currentPageReturn - half;
+        endPageReturn = currentPageReturn + half;
+      }
+    }
+
+    for (let i = startPageReturn; i <= endPageReturn; i++) {
+      pages.push(i);
+    }
+
+    if (startPageReturn > 1) {
+      pages.unshift('...');
+    }
+    if (endPageReturn < maxReturnTotalPages) {
+      pages.push('...');
+    }
+
+    return pages;
+  };
+
+  const handlePageClickReturn = (page) => {
+    if (page === '...') return;
+    setCurrentPageReturn(page);
+  };
 
   const reloadTable_return = () => {
     axios.get(BASE_URL + '/issuedReturn/fetchReturn')
@@ -230,6 +349,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   }, [id]);
 
   const handleSearchReturn = (event) => {
+    setCurrentPageReturn(1)
     const searchTermReturn = event.target.value.toLowerCase();
     
     const filteredReturnProd = searchReturnPrd.filter((data) => (
@@ -490,32 +610,27 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                               Previous
                             </button>
                           </li>
-                          {[...Array(maxTotalPages).keys()].map((num) => (
-                            <li key={num} className={`page-item ${currentPage === num + 1 ? "active" : ""}`}>
+                          {generatePages().map((page, index) => (
+                            <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
                               <button
                                 style={{
                                   fontSize: '14px',
                                   width: '25px',
-                                  background: currentPage === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                                  color: currentPage === num + 1 ? '#FFFFFF' : '#000000',
+                                  background: currentPage === page ? '#FFA500' : 'white',
+                                  color: currentPage === page ? '#FFFFFF' : '#000000',
                                   border: 'none',
                                   height: '28px',
                                 }}
-                                className={`page-link ${currentPage === num + 1 ? "gold-bg" : ""}`}
-                                onClick={() => setCurrentPage(num + 1)}
+                                className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                                onClick={() => handlePageClick(page)}
                               >
-                                {num + 1}
+                                {page}
                               </button>
                             </li>
                           ))}
                           <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
                             <button
-                              style={{
-                                fontSize: '14px',
-                                cursor: 'pointer',
-                                color: '#000000',
-                                textTransform: 'capitalize'
-                              }}
+                              style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
                               className="page-link"
                               onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                             >
@@ -609,7 +724,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           )}
                         </table>
                       </div>
-                    <nav style={{marginTop: '15px'}}>
+                      <nav style={{marginTop: '15px'}}>
                         <ul className="pagination" style={{ float: "right" }}>
                           <li className={`page-item ${currentPageissuance === 1 ? "disabled" : ""}`}>
                             <button
@@ -622,27 +737,33 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             className="page-link" 
                             onClick={() => setCurrentPageIssuance((prevPage) => prevPage - 1)}>Previous</button>
                           </li>
-                          {[...Array(totalPagesIssuance).keys()].map((num) => (
-                            <li key={num} className={`page-item ${currentPageissuance === num + 1 ? "active" : ""}`}>
-                              <button 
-                              style={{
-                                fontSize: '14px',
-                                width: '25px',
-                                background: currentPageissuance === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                                color: currentPageissuance === num + 1 ? '#FFFFFF' : '#000000', 
-                                border: 'none',
-                                height: '28px',
-                              }}
-                              className={`page-link ${currentPageissuance === num + 1 ? "gold-bg" : ""}`} onClick={() => setCurrentPageIssuance(num + 1)}>{num + 1}</button>
+
+                          {generatePagesIssuance().map((pageissuance, index) => (
+                            <li key={index} className={`page-item ${currentPageissuance === pageissuance ? "active" : ""}`}>
+                              <button
+                                style={{
+                                  fontSize: '14px',
+                                  width: '25px',
+                                  background: currentPageissuance === pageissuance ? '#FFA500' : 'white',
+                                  color: currentPageissuance === pageissuance ? '#FFFFFF' : '#000000',
+                                  border: 'none',
+                                  height: '28px',
+                                }}
+                                className={`page-link ${currentPageissuance === pageissuance ? "gold-bg" : ""}`}
+                                onClick={() => handlePageClickIssuance(pageissuance)}
+                              >
+                                {pageissuance}
+                              </button>
                             </li>
                           ))}
                           <li className={`page-item ${currentPageissuance === totalPagesIssuance ? "disabled" : ""}`}>
                             <button
-                            style={{fontSize: '14px',
-                            cursor: 'pointer',
-                            color: '#000000',
-                            textTransform: 'capitalize'}}
-                            className="page-link" onClick={() => setCurrentPageIssuance((prevPage) => prevPage + 1)}>Next</button>
+                              style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                              className="page-link"
+                              onClick={() => setCurrentPageIssuance((prevPage) => prevPage + 1)}
+                            >
+                              Next
+                            </button>
                           </li>
                         </ul>
                       </nav>
@@ -830,32 +951,28 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                               Previous
                             </button>
                           </li>
-                          {[...Array(maxReturnTotalPages).keys()].map((num) => (
-                            <li key={num} className={`page-item ${currentPageReturn === num + 1 ? "active" : ""}`}>
+
+                           {generatePagesIssuance().map((pageReturn, index) => (
+                            <li key={index} className={`page-item ${currentPageReturn === pageReturn ? "active" : ""}`}>
                               <button
                                 style={{
                                   fontSize: '14px',
                                   width: '25px',
-                                  background: currentPageReturn === num + 1 ? '#FFA500' : 'white', // Set background to white if not clicked
-                                  color: currentPageReturn === num + 1 ? '#FFFFFF' : '#000000',
+                                  background: currentPageReturn === pageReturn ? '#FFA500' : 'white',
+                                  color: currentPageReturn === pageReturn ? '#FFFFFF' : '#000000',
                                   border: 'none',
                                   height: '28px',
                                 }}
-                                className={`page-link ${currentPageReturn === num + 1 ? "gold-bg" : ""}`}
-                                onClick={() => setCurrentPageReturn(num + 1)}
+                                className={`page-link ${currentPageReturn === pageReturn ? "gold-bg" : ""}`}
+                                onClick={() => handlePageClickReturn(pageReturn)}
                               >
-                                {num + 1}
+                                {pageReturn}
                               </button>
                             </li>
                           ))}
                           <li className={`page-item ${currentPageReturn === maxReturnTotalPages ? "disabled" : ""}`}>
                             <button
-                              style={{
-                                fontSize: '14px',
-                                cursor: 'pointer',
-                                color: '#000000',
-                                textTransform: 'capitalize'
-                              }}
+                              style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
                               className="page-link"
                               onClick={() => setCurrentPageReturn((prevPage) => prevPage + 1)}
                             >

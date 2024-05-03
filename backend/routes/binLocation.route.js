@@ -20,7 +20,9 @@ router.route('/fetchTable').get(async (req, res) => {
     //       required: false,
     //     },
     //   });
-      const data = await BinLocation.findAll();
+      const data = await BinLocation.findAll({
+        order: [['createdAt', 'DESC']],
+      });
   
       if (data) {
         // console.log(data);
