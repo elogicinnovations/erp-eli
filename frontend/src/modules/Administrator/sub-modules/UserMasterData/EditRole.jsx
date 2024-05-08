@@ -209,41 +209,41 @@ function EditRole() {
         });
       }
       
-      if (value === "Assembly - View") {
-        ["Assembly - Add", "Assembly - Edit", "Assembly - Delete"].forEach((relatedValue) => {
-          const relatedIndex = updatedCheckboxes.findIndex((item) =>
-            item.value.includes(relatedValue)
-          );
-          if (relatedIndex !== -1) {
-            updatedCheckboxes.splice(relatedIndex, 1);
-            console.log(`Unchecked: ${relatedValue}`);
-          }
-        });
-      }
+      // if (value === "Assembly - View") {
+      //   ["Assembly - Add", "Assembly - Edit", "Assembly - Delete"].forEach((relatedValue) => {
+      //     const relatedIndex = updatedCheckboxes.findIndex((item) =>
+      //       item.value.includes(relatedValue)
+      //     );
+      //     if (relatedIndex !== -1) {
+      //       updatedCheckboxes.splice(relatedIndex, 1);
+      //       console.log(`Unchecked: ${relatedValue}`);
+      //     }
+      //   });
+      // }
       
-      if (value === "Spare Part - View") {
-        ["Spare Part - Add", "Spare Part - Edit", "Spare Part - Delete"].forEach((relatedValue) => {
-          const relatedIndex = updatedCheckboxes.findIndex((item) =>
-            item.value.includes(relatedValue)
-          );
-          if (relatedIndex !== -1) {
-            updatedCheckboxes.splice(relatedIndex, 1);
-            console.log(`Unchecked: ${relatedValue}`);
-          }
-        });
-      }
+      // if (value === "Spare Part - View") {
+      //   ["Spare Part - Add", "Spare Part - Edit", "Spare Part - Delete"].forEach((relatedValue) => {
+      //     const relatedIndex = updatedCheckboxes.findIndex((item) =>
+      //       item.value.includes(relatedValue)
+      //     );
+      //     if (relatedIndex !== -1) {
+      //       updatedCheckboxes.splice(relatedIndex, 1);
+      //       console.log(`Unchecked: ${relatedValue}`);
+      //     }
+      //   });
+      // }
       
-      if (value === "Sub-Part - View") {
-        ["Sub-Part - Add", "Sub-Part - Edit", "Sub-Part - Delete"].forEach((relatedValue) => {
-          const relatedIndex = updatedCheckboxes.findIndex((item) =>
-            item.value.includes(relatedValue)
-          );
-          if (relatedIndex !== -1) {
-            updatedCheckboxes.splice(relatedIndex, 1);
-            console.log(`Unchecked: ${relatedValue}`);
-          }
-        });
-      }
+      // if (value === "Sub-Part - View") {
+      //   ["Sub-Part - Add", "Sub-Part - Edit", "Sub-Part - Delete"].forEach((relatedValue) => {
+      //     const relatedIndex = updatedCheckboxes.findIndex((item) =>
+      //       item.value.includes(relatedValue)
+      //     );
+      //     if (relatedIndex !== -1) {
+      //       updatedCheckboxes.splice(relatedIndex, 1);
+      //       console.log(`Unchecked: ${relatedValue}`);
+      //     }
+      //   });
+      // }
       
       if (value === "Product Categories - View") {
         ["Product Categories - Add", "Product Categories - Edit", "Product Categories - Delete"].forEach((relatedValue) => {
@@ -421,18 +421,18 @@ function EditRole() {
       "Product List - Edit",
       "Product List - Delete",
       "Product List - View",
-      "Assembly - Add",
-      "Assembly - Edit",
-      "Assembly - Delete",
-      "Assembly - View",
-      "Spare Part - Add",
-      "Spare Part - Edit",
-      "Spare Part - Delete",
-      "Spare Part - View",
-      "Sub-Part - Add",
-      "Sub-Part - Edit",
-      "Sub-Part - Delete",
-      "Sub-Part - View",
+      // "Assembly - Add",
+      // "Assembly - Edit",
+      // "Assembly - Delete",
+      // "Assembly - View",
+      // "Spare Part - Add",
+      // "Spare Part - Edit",
+      // "Spare Part - Delete",
+      // "Spare Part - View",
+      // "Sub-Part - Add",
+      // "Sub-Part - Edit",
+      // "Sub-Part - Delete",
+      // "Sub-Part - View",
       "Product Categories - Add",
       "Product Categories - Edit",
       "Product Categories - Delete",
@@ -520,23 +520,23 @@ function EditRole() {
   const ProductListEdit = selectedCheckboxes.some((item) => item.value === "Product List - Edit") && !ProductListDisable;
   const ProductListDelete = selectedCheckboxes.some((item) => item.value === "Product List - Delete") && !ProductListDisable;
 
-  const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
-  const AssemblyDisable = !Assembly;
-  const AssemblyAdd = selectedCheckboxes.some((item) => item.value === "Assembly - Add") && !AssemblyDisable;
-  const AssemblyEdit = selectedCheckboxes.some((item) => item.value === "Assembly - Edit") && !AssemblyDisable;
-  const AssemblyDelete = selectedCheckboxes.some((item) => item.value === "Assembly - Delete") && !AssemblyDisable;
+  // const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
+  // const AssemblyDisable = !Assembly;
+  // const AssemblyAdd = selectedCheckboxes.some((item) => item.value === "Assembly - Add") && !AssemblyDisable;
+  // const AssemblyEdit = selectedCheckboxes.some((item) => item.value === "Assembly - Edit") && !AssemblyDisable;
+  // const AssemblyDelete = selectedCheckboxes.some((item) => item.value === "Assembly - Delete") && !AssemblyDisable;
 
-  const SpareParts = selectedCheckboxes.some((item) => item.value === "Spare Part - View");
-  const SparePartsDisable = !SpareParts;
-  const SparePartsAdd = selectedCheckboxes.some((item) => item.value === "Spare Part - Add") && !SparePartsDisable;
-  const SparePartsEdit = selectedCheckboxes.some((item) => item.value === "Spare Part - Edit") && !SparePartsDisable;
-  const SparePartsDelete = selectedCheckboxes.some((item) => item.value === "Spare Part - Delete") && !SparePartsDisable;
+  // const SpareParts = selectedCheckboxes.some((item) => item.value === "Spare Part - View");
+  // const SparePartsDisable = !SpareParts;
+  // const SparePartsAdd = selectedCheckboxes.some((item) => item.value === "Spare Part - Add") && !SparePartsDisable;
+  // const SparePartsEdit = selectedCheckboxes.some((item) => item.value === "Spare Part - Edit") && !SparePartsDisable;
+  // const SparePartsDelete = selectedCheckboxes.some((item) => item.value === "Spare Part - Delete") && !SparePartsDisable;
 
-  const SubParts = selectedCheckboxes.some((item) => item.value === "Sub-Part - View");
-  const SubPartsDisable = !SubParts;
-  const SubPartsAdd = selectedCheckboxes.some((item) => item.value === "Sub-Part - Add") && !SubPartsDisable;
-  const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
-  const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
+  // const SubParts = selectedCheckboxes.some((item) => item.value === "Sub-Part - View");
+  // const SubPartsDisable = !SubParts;
+  // const SubPartsAdd = selectedCheckboxes.some((item) => item.value === "Sub-Part - Add") && !SubPartsDisable;
+  // const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
+  // const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
 
   const ProductCategories = selectedCheckboxes.some((item) => item.value === "Product Categories - View");
   const ProductCategoriesDisable = !ProductCategories;
@@ -1425,7 +1425,7 @@ function EditRole() {
 
                       </tr>
 
-                      <tr>
+                      {/* <tr>
                         <td>
                           <td
                             className="role"
@@ -1552,9 +1552,9 @@ function EditRole() {
                         </td>
 
 
-                      </tr>
+                      </tr> */}
 
-                      <tr>
+                      {/* <tr>
                         <td>
                           <td
                             className="role"
@@ -1680,9 +1680,9 @@ function EditRole() {
                           </div>
                         </td>
 
-                      </tr>
+                      </tr> */}
 
-                      <tr>
+                      {/* <tr>
                         <td>
                           <td
                             className="role"
@@ -1809,7 +1809,7 @@ function EditRole() {
                         </td>
 
 
-                      </tr>
+                      </tr> */}
 
                       <tr>
                         <td>

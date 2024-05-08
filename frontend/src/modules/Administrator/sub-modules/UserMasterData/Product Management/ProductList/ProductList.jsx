@@ -67,7 +67,7 @@ function ProductList({ authrztn }) {
   const [userId, setuserId] = useState('');
   const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 12;
+  const pageSize = 10;
 
   const reloadTable = () => {
     const delay = setTimeout(() => {

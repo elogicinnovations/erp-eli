@@ -973,6 +973,7 @@ const handleAddToTablePO_Subpart = (subpartId, code, name, supp_email, quantity)
                                 variant='seconday' 
                                 size="md" 
                                 style={{ fontSize: '20px', margin: '0px 5px', fontFamily: 'Poppins, Source Sans Pro' }}
+                                onClick={handleClosePreview}
                                 >
                                   Close
                                 </Button>

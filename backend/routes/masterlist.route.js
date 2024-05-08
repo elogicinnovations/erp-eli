@@ -277,7 +277,6 @@ const transporter = nodemailer.createTransport({
 router.route("/emailForgotPass").post(async (req, res) => {
   const { email } = req.body;
 
-  console.log(email);
   await MasterList.findAll({
     where: {
       col_email: email,
@@ -285,7 +284,7 @@ router.route("/emailForgotPass").post(async (req, res) => {
   })
     .then((forgot) => {
       if (forgot && forgot.length > 0) {
-        const code = Math.floor(1000 + Math.random() * 9000); // Generate a random code
+        const code = Math.floor(1000 + Math.random() * 9000);
 
         const mailOptions = {
           from: gmailEmail,
@@ -374,6 +373,7 @@ router.route("/masterTable").get(async (req, res) => {
     const data = await MasterList.findAll({
       where: {
         user_type: { [Op.ne]: "Superadmin" },
+        col_status: { [Op.ne]: "Archive" },
       },
       order: [['createdAt', 'DESC']],
       include: [
@@ -534,40 +534,74 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
   }
 });
 
-//DELETE:
-router.route("/deleteMaster/:param_id").delete(async (req, res) => {
+//archie:
+router.route("/archivemasterList/:param_id").put(async (req, res) => {
   const id = req.params.param_id;
   const userId = req.query.userId;
 
-  const userName = await MasterList.findOne({
-    where: {
-      col_id: id,
-    },
-  });
-
-  const masterlistName = userName.col_Fname;
-
-  await MasterList.destroy({
-    where: {
-      col_id: id,
-    },
-  })
-    .then(async (del) => {
-      if (del) {
-        await Activity_Log.create({
-          masterlist_id: userId,
-          action_taken: `Deleted the account of ${masterlistName}`,
-        });
-        res.json({ success: true });
-      } else {
-        res.status(400).json({ success: false });
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(409);
+  try {
+    const userName = await MasterList.findOne({
+      where: {
+        col_id: id,
+      },
     });
+
+    const masterlistName = userName.col_Fname;
+
+    const updatedRows = await MasterList.update(
+      { col_status: 'Archive' },
+      { where: { col_id: id } }
+    );
+
+    if (updatedRows[0] > 0) {
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Deleted the account of ${masterlistName}`,
+      });
+      res.json({ success: true });
+    } else {
+      res.status(400).json({ success: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(409).json({ success: false });
+  }
 });
+// router.route("/deleteMaster/:param_id").delete(async (req, res) => {
+//   const id = req.params.param_id;
+//   const userId = req.query.userId;
+
+//   const userName = await MasterList.findOne({
+//     where: {
+//       col_id: id,
+//     },
+//   });
+
+//   const masterlistName = userName.col_Fname;
+
+//   await MasterList.destroy({
+//     where: {
+//       col_id: id,
+//     },
+//   })
+//     .then(async (del) => {
+//       if (del) {
+//         await Activity_Log.create({
+//           masterlist_id: userId,
+//           action_taken: `Deleted the account of ${masterlistName}`,
+//         });
+//         res.json({ success: true });
+//       } else {
+//         res.status(400).json({ success: false });
+//       }
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//       res.status(409);
+//     });
+// });
+
+
 
 //CREATE
 // router.route('/add').post(async (req, res) => {
@@ -606,29 +640,6 @@ router.route("/deleteMaster/:param_id").delete(async (req, res) => {
 //     });
 // });
 
-// //DELETE:
-// router.route('/deleteMaster/:param_id').delete(async (req, res) => {
-//     const b = req.query.id
-//     await User.destroy({
-//         where : {
-//             id: b
-//         }
-//     }).then(
-//         (del) => {
-//             if(del){
-//                 res.json({success : true})
-//             }
-//             else{
-//                 res.status(400).json({success : false})
-//             }
-//         }
-//     ).catch(
-//         (err) => {
-//             console.error(err)
-//             res.status(409)
-//         }
-//     );
-// });
 
 router.route("/viewAuthorization/:id").get(async (req, res) => {
   try {

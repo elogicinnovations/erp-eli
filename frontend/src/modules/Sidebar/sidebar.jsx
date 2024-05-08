@@ -133,13 +133,13 @@ function Sidebar({ authrztn }) {
       path.match(/^\/updateProduct\/(\d+)$/) ||
       path.match(/^\/productSupplier\/(\d+)$/) ||
       path === "/ProductManu" ||
-      path === "/subParts" ||
-      path === "/createsubParts" ||
-      path.startsWith("/spareParts") ||
-      path.startsWith("/createSpareParts") ||
-      path.startsWith("/updateSpareParts") ||
-      path.startsWith("/assemblyForm") ||
-      path.startsWith("/createAssemblyForm") ||
+      // path === "/subParts" ||
+      // path === "/createsubParts" ||
+      // path.startsWith("/spareParts") ||
+      // path.startsWith("/createSpareParts") ||
+      // path.startsWith("/updateSpareParts") ||
+      // path.startsWith("/assemblyForm") ||
+      // path.startsWith("/createAssemblyForm") ||
       path.match(/^\/updateAssemblyForm\/(\d+)$/)
     ) {
       setOpenAdministrator(true);
@@ -188,9 +188,9 @@ function Sidebar({ authrztn }) {
       "Product Categories - View",
       "Product Manufacturer - View",
       "Bin Location - View",
-      "Sub-Part - View",
-      "Spare Part - View",
-      "Assembly - View",
+      // "Sub-Part - View",
+      // "Spare Part - View",
+      // "Assembly - View",
       "Product List - View",
     ].includes(permission)
   );
@@ -397,7 +397,7 @@ function Sidebar({ authrztn }) {
                   )}
 
                   {/* Sub Parts */}
-                  {authrztn.includes("Sub-Part - View") && (
+                  {/* {authrztn.includes("Sub-Part - View") && (
                     <NavLink
                       to="/subParts"
                       style={{ textDecoration: "none", color: "inherit" }}
@@ -415,10 +415,10 @@ function Sidebar({ authrztn }) {
                         <ListItemText primary="Product Sub-Parts" />
                       </ListItem>
                     </NavLink>
-                  )}
+                  )} */}
 
                   {/* Spare Parts */}
-                  {authrztn.includes("Spare Part - View") && (
+                  {/* {authrztn.includes("Spare Part - View") && (
                     <NavLink
                       to="/spareParts"
                       style={{ textDecoration: "none", color: "inherit" }}
@@ -438,10 +438,10 @@ function Sidebar({ authrztn }) {
                         <ListItemText primary="Product Parts" />
                       </ListItem>
                     </NavLink>
-                  )}
+                  )} */}
 
                   {/* Product Assembly */}
-                  {authrztn.includes("Assembly - View") && (
+                  {/* {authrztn.includes("Assembly - View") && (
                     <NavLink
                       to="/assemblyForm"
                       style={{ textDecoration: "none", color: "inherit" }}
@@ -461,7 +461,7 @@ function Sidebar({ authrztn }) {
                         <ListItemText primary="Product Assembly" />
                       </ListItem>
                     </NavLink>
-                  )}
+                  )} */}
 
                   {/* Product List */}
                   {authrztn.includes("Product List - View") && (

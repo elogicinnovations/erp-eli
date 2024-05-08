@@ -40,17 +40,24 @@ function UpdateProduct({authrztn}) {
   const [slct_manufacturer, setslct_manufacturer] = useState([]); // for getting the value of selected manufacturer
   const [details, setDetails] = useState("");
   const [thresholds, setThresholds] = useState("");
-  const [fetchSparePart, setFetchPart] = useState([]); //for retrieveing ng mga sparepart
-  const [fetchSubPart, setFetchsub] = useState([]); //for retrieving ng mga subpart
-  const [fetchAssembly, setAssembly] = useState([]); //for retrieving ng mga assembly
-
+  const [selectProductType, setProductType] = useState("");
+  const [PartNumber, setPartNumber] = useState("");
+  // const [fetchSparePart, setFetchPart] = useState([]); //for retrieveing ng mga sparepart
+  // const [fetchSubPart, setFetchsub] = useState([]); //for retrieving ng mga subpart
+  // const [fetchAssembly, setAssembly] = useState([]); //for retrieving ng mga assembly
+  // const [spareParts, setSparePart] = useState([]); //for handling ng onchange sa dropdown ng spareparts
+  // const [subparting, setsubparting] = useState([]); //for handling ng onchange sa dropdown ng subpart
+  // const [assembly, setassemblies] = useState([]); //for handling ng onchange sa dropdown ng assembly
   const [fetchSupp, setFetchSupp] = useState([]); //for retrieving ng mga supplier sa dropdown
   const [tablesupplier, settablesupplier] = useState([]); // for fetching product data that tag to supplier in table
   const [productTAGSuppliers, setProductTAGSuppliers] = useState([]); //for handling ng onchange sa dropdown ng supplier para makuha price at product code
 
-  const [spareParts, setSparePart] = useState([]); //for handling ng onchange sa dropdown ng spareparts
-  const [subparting, setsubparting] = useState([]); //for handling ng onchange sa dropdown ng subpart
-  const [assembly, setassemblies] = useState([]); //for handling ng onchange sa dropdown ng assembly
+  const [fetchProductAssemblies, setFetchProductAssemblies] = useState([]);
+  const [fetchProductSubAssemblies, setFetchProductSubAssembly] = useState([]);
+  const [fetchProductSpareParts, setFetchProductSpareParts] = useState([]);
+  const [specificProductAssembly, setSpecificProductAssembly] = useState([]);
+  const [specificProductSubAssembly, setSpecificProductSubAssembly] = useState([]);
+  const [specificProductSpares, setSpecificProductSpares] = useState([]);
 
   const [price, setPrice] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -77,135 +84,275 @@ function UpdateProduct({authrztn}) {
   useEffect(() => {
     decodeToken();
   }, [])
-  // const handlePriceChange = (index, value) => {
-  //   const updatedTable = [...tablesupplier];
-  //   updatedTable[index].product_price = value;
 
-  //   // const serializedPrice = updatedTable.map((row) => ({
-  //   //   price: row.product_price || '',
-  //   //   suppliercodes: row.supplier_code
-  //   // }));
 
-  //   // setaddPriceInputbackend(serializedPrice);
+  //Fetch ang specific na product type assembly
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios
+      .get(BASE_URL + "/productassm/fetchProductassembly", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const data = res.data;
+        const selectedProductAssembly = data.map((row) => ({
+          value: row.tagged_product_assemblies.product_id,
+          label: row.tagged_product_assemblies.product_name,
+        }));
+        setSpecificProductAssembly(selectedProductAssembly);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
 
-  //   const productTAGSuppliersData = updatedTable.map((row) => ({
-  //     price: row.product_price || '',
-  //     supplier_code: row.supplier_code
-  //   }));
-  //   setProductTAGSuppliers(productTAGSuppliersData);
-  //   settablesupplier(updatedTable);
+  return () => clearTimeout(delay);
+  }, [id]);
 
-  //   return updatedTable;
-  // }; for back up lang to
+
+    //Fetch ang specific na product type sub-assembly
+    useEffect(() => {
+      const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/productsubAssm/fetchProductSubassembly", {
+          params: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          const data = res.data;
+          const selectedProductSubAssembly = data.map((row) => ({
+            value: row.tag_sub_assemblies.product_id,
+            label: row.tag_sub_assemblies.product_name,
+          }));
+          setSpecificProductSubAssembly(selectedProductSubAssembly);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+  
+    return () => clearTimeout(delay);
+    }, [id]);
+
+        //Fetch ang specific na product type spare parts
+        useEffect(() => {
+          const delay = setTimeout(() => {
+          axios
+            .get(BASE_URL + "/productsparestag/fetchProductSpares", {
+              params: {
+                id: id,
+              },
+            })
+            .then((res) => {
+              const data = res.data;
+              const selectedProductSubAssembly = data.map((row) => ({
+                value: row.tag_product_spares.product_id,
+                label: row.tag_product_spares.product_name,
+              }));
+              setSpecificProductSpares(selectedProductSubAssembly);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              console.log(err);
+              setIsLoading(false);
+            });
+        }, 1000);
+      
+        return () => clearTimeout(delay);
+        }, [id]);
+
+
+
+      //Product Assembly fetch
+      useEffect(() => {
+        const delay = setTimeout(() => {
+        axios
+          .get(BASE_URL + "/product/DropdownProductAssembly")
+          .then((res) => {
+            setFetchProductAssemblies(res.data)
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+          });
+      }, 1000);
+    
+      return () => clearTimeout(delay);
+      }, []);
+    
+    //Product Sub-Assembly fetch
+    useEffect(() => {
+      const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/product/DropdownProductSubAssembly")
+        .then((res) => {
+          setFetchProductSubAssembly(res.data)
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+  
+    return () => clearTimeout(delay);
+    }, []);
+  
+    //Product Spare Parts fetch
+    useEffect(() => {
+      const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/product/DropdownProductSpareParts")
+        .then((res) => {
+          setFetchProductSpareParts(res.data)
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+  
+    return () => clearTimeout(delay);
+    }, []);
+
+
+    //for product type assembly handler
+    const handleMultiProductAssemblyChange = (e) => {
+      setSpecificProductAssembly(e.value.map(value => ({ value, label: "" })));
+      setIsSaveButtonDisabled(false);
+    };
+
+    //for product type sub assembly handler
+    const handleMultiProductSubAssemblyChange = (e) => {
+      setSpecificProductSubAssembly(e.value.map(value => ({ value, label: "" })));
+      setIsSaveButtonDisabled(false);
+    };
+
+    //for product type spare parts handler
+    const handleMultiProductSpareChange = (e) => {
+      setSpecificProductSpares(e.value.map(value => ({ value, label: "" })));
+      setIsSaveButtonDisabled(false);
+    };
+
+    //for product type select
+    const handleSelectProductType = (event) => {
+      const selectedProductType = event.target.value;
+      setProductType(selectedProductType);
+      setIsSaveButtonDisabled(false);
+      if (selectedProductType === "N/A") {
+        setSpecificProductAssembly([]);
+        setSpecificProductSubAssembly([]);
+        setSpecificProductSpares([]);
+      }
+    };
 
   //fetching of assembly in dropdown
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productAssembly/fetchassemblyTable", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        const data = res.data;
-        const selectedAssembly = data.map((row) => ({
-          value: row.assembly_id,
-          label: row.assembly.assembly_name,
-        }));
-        setassemblies(selectedAssembly);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productAssembly/fetchassemblyTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const data = res.data;
+  //       const selectedAssembly = data.map((row) => ({
+  //         value: row.assembly_id,
+  //         label: row.assembly.assembly_name,
+  //       }));
+  //       setassemblies(selectedAssembly);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, [id]);
+  // return () => clearTimeout(delay);
+  // }, [id]);
 
   //fetching of subparts in dropdown
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productSubpart/fetchsubpartTable", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        const data = res.data;
-        const selectedSubparts = data.map((row) => ({
-          value: row.subPart_id,
-          label: row.subPart.subPart_name,
-        }));
-        setsubparting(selectedSubparts);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productSubpart/fetchsubpartTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const data = res.data;
+  //       const selectedSubparts = data.map((row) => ({
+  //         value: row.subPart_id,
+  //         label: row.subPart.subPart_name,
+  //       }));
+  //       setsubparting(selectedSubparts);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, [id]);
+  // return () => clearTimeout(delay);
+  // }, [id]);
 
   //fetching of spareparts in dropdown
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productSparepart/fetchsparepartTable", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        const data = res.data;
-        const selectedSpareparts = data.map((row) => ({
-          value: row.sparePart_id,
-          label: row.sparePart.spareParts_name,
-        }));
-        setSparePart(selectedSpareparts);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productSparepart/fetchsparepartTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const data = res.data;
+  //       const selectedSpareparts = data.map((row) => ({
+  //         value: row.sparePart_id,
+  //         label: row.sparePart.spareParts_name,
+  //       }));
+  //       setSparePart(selectedSpareparts);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, [id]);
+  // return () => clearTimeout(delay);
+  // }, [id]);
+
+
 
   //for onchange dropdown of spareparts
-  const handleMultiSparePartsSelectChange = (e) => {
-    setSparePart(e.value.map(value => ({ value, label: "" })));
-    setIsSaveButtonDisabled(false);
-  };
-  // const handleSparepartChange = (selectedSpareOptions) => {
-  //   setSparePart(selectedSpareOptions);
+  // const handleMultiSparePartsSelectChange = (e) => {
+  //   setSparePart(e.value.map(value => ({ value, label: "" })));
   //   setIsSaveButtonDisabled(false);
   // };
 
   // //for onchange dropdown of subparts
-  const handleMultiSubPartSelectChange = (e) => {
-    setsubparting(e.value.map(value => ({ value, label: "" })));
-    setIsSaveButtonDisabled(false);
-  };
-  // const handleSubpartChange = (selectedSubOption) => {
-  //   setsubparting(selectedSubOption);
+  // const handleMultiSubPartSelectChange = (e) => {
+  //   setsubparting(e.value.map(value => ({ value, label: "" })));
   //   setIsSaveButtonDisabled(false);
   // };
 
   // //for onchange dropdown of assembly
-  const handleMultiAssemblySelectChange = (e) => {
-    setassemblies(e.value.map(value => ({ value, label: "" })));
-    setIsSaveButtonDisabled(false);
-  };
-  // const handleAssemblyChange = (selectedAssemblyOptions) => {
-  //   setassemblies(selectedAssemblyOptions);
+  // const handleMultiAssemblySelectChange = (e) => {
+  //   setSpecificProductAssembly(e.value.map(value => ({ value, label: "" })));
   //   setIsSaveButtonDisabled(false);
   // };
 
@@ -293,6 +440,8 @@ useEffect(() => {
       setCode(res.data[0].product_code)
       setProd_id(res.data[0].productsID)
       setName(res.data[0].product_name);
+      setProductType(res.data[0].type);
+      setPartNumber(res.data[0].part_number);
       setslct_category(res.data[0].product_category);
       setslct_binLocation(res.data[0].product_location);
       setunitMeasurement(res.data[0].product_unitMeasurement);
@@ -327,28 +476,28 @@ useEffect(() => {
   }, []);
 
   //Assembly Fetch
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/assembly/fetchTable")
-      .then((res) => setAssembly(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/assembly/fetchTable")
+  //     .then((res) => setAssembly(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   //Subpart Fetch
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/subpart/fetchTable")
-      .then((res) => setFetchsub(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/subpart/fetchTable")
+  //     .then((res) => setFetchsub(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   //Spare part Fetch
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/sparePart/fetchTable")
-      .then((res) => setFetchPart(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/sparePart/fetchTable")
+  //     .then((res) => setFetchPart(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   //when user click the Add supplier button
   const handleAddSupp = () => {
@@ -374,6 +523,11 @@ useEffect(() => {
   // for Item name input
   const handleItemName = (event) => {
     setName(event.target.value);
+    setIsSaveButtonDisabled(false);
+  }
+
+  const handlePartNumber = (event) => {
+    setPartNumber(event.target.value);
     setIsSaveButtonDisabled(false);
   }
 
@@ -421,13 +575,6 @@ useEffect(() => {
     setslct_manufacturer(event.target.value);
     setIsSaveButtonDisabled(false);
   };
-
-  // const handleKeyPress = (e) => {
-  //   if (e.key === "e" || isNaN(e.key)) {
-  //     e.preventDefault();
-  //   }
-  //   e.target.value = e.target.value.replace(/[^0-9.]/);
-  // };
 
   useEffect(() => {
     axios
@@ -614,9 +761,14 @@ useEffect(() => {
           slct_manufacturer,
           details,
           thresholds,
-          assembly,
-          spareParts,
-          subparting,
+          selectProductType,
+          PartNumber,
+          // assembly,
+          // spareParts,
+          // subparting,
+          specificProductAssembly,
+          specificProductSubAssembly,
+          specificProductSpares,
           productTAGSuppliers,
           productImages,
           userId,
@@ -791,7 +943,7 @@ useEffect(() => {
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Item Name:{" "}
+                    Product Name:{" "}
                   </Form.Label>
                   <Form.Control
                     disabled={!isReadOnly}
@@ -805,136 +957,118 @@ useEffect(() => {
                 </Form.Group>
               </div>
             </div>
-
             <div className="row">
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
+              <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Assembly:{" "}
+                    Product Type:
                   </Form.Label>
-                  <MultiSelect
-                      disabled={!isReadOnly}
-                      value={assembly.map(item => item.value)}
-                      options={fetchAssembly.map((assembly) => ({
-                        value: assembly.id,
-                        label: assembly.assembly_name,
-                      }))}
-                      onChange={handleMultiAssemblySelectChange}
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter
-                  />
-                  {/* <Select
+                  <Form.Select
                     disabled={!isReadOnly}
-                    isMulti
-                    options={fetchAssembly.map((assembly) => ({
-                      value: assembly.id,
-                      label: assembly.assembly_name,
-                    }))}
-                    onChange={handleAssemblyChange}
-                    value={assembly}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'red', 
-                        fontSize: '15px',
-                        fontWeight: 650
-                      }),
-                      option: (provided) => ({
-                        ...provided,
-                        color: 'black', 
-                        fontSize: '15px', 
-                      }),
-                    }}
-                  /> */}
+                    aria-label=""
+                    style={{ height: "40px", fontSize: "15px" }}
+                    defaultValue=""
+                    onChange={handleSelectProductType}
+                    value={selectProductType}
+                    >
+                    <option disabled value="">
+                      Select Product Type
+                    </option>
+                      <option value="N/A">N/A</option>
+                      <option value="Assembly">Assembly</option>
+                      <option value="Sub-Assembly">Sub-Assembly</option>
+                      <option value="SpareParts">SpareParts</option>
+                  </Form.Select>
                 </Form.Group>
               </div>
 
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Spare Parts:{" "}
-                  </Form.Label>
-                  <MultiSelect
-                      disabled={!isReadOnly}
-                      value={spareParts.map(item => item.value)}
-                      options={fetchSparePart.map((sparePart) => ({
-                        value: sparePart.id,
-                        label: sparePart.spareParts_name,
-                      }))}
-                      onChange={handleMultiSparePartsSelectChange}
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter
+              <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput2">
+                <Form.Label style={{ fontSize: "20px" }}>
+                  Part Number:
+                </Form.Label>
+                  <Form.Control
+                  disabled={!isReadOnly}
+                  type="text"
+                  placeholder="Enter Part Number"
+                  onChange={(e) => handlePartNumber(e)}
+                  style={{ height: "40px", fontSize: "15px" }}
+                  value={PartNumber}
                   />
-                  {/* <Select
-                    disabled={!isReadOnly}
-                    isMulti
-                    options={fetchSparePart.map((sparePart) => ({
-                      value: sparePart.id,
-                      label: sparePart.spareParts_name,
-                    }))}
-                    onChange={handleSparepartChange}
-                    value={spareParts}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'red', 
-                        fontSize: '15px',
-                        fontWeight: 650
-                      }),
-                      option: (provided) => ({
-                        ...provided,
-                        color: 'black', 
-                        fontSize: '15px', 
-                      }),
-                    }}
-                  /> */}
-                </Form.Group>
-              </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Sub Parts:{" "}
-                  </Form.Label>
-                  <MultiSelect
-                      disabled={!isReadOnly}
-                      value={subparting.map(item => item.value)}
-                      options={fetchSubPart.map((subpart) => ({
-                          value: subpart.id,
-                          label: subpart.subPart_name,
-                      }))}
-                      onChange={handleMultiSubPartSelectChange}
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter
-                  />
-                  {/* <Select
-                    disabled={!isReadOnly}
-                    isMulti
-                    options={fetchSubPart.map((subpart) => ({
-                      value: subpart.id,
-                      label: subpart.subPart_name,
-                    }))}
-                    onChange={handleSubpartChange}
-                    value={subparting}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'red', 
-                        fontSize: '15px',
-                        fontWeight: 650
-                      }),
-                      option: (provided) => ({
-                        ...provided,
-                        color: 'black', 
-                        fontSize: '15px', 
-                      }),
-                    }}
-                  /> */}
                 </Form.Group>
               </div>
             </div>
+
+            {selectProductType !== "N/A" && (
+            <div className="row">
+              {(selectProductType === "Sub-Assembly" || selectProductType === "SpareParts") && (
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Product Assembly:
+                  </Form.Label>
+                  <MultiSelect
+                      disabled={!isReadOnly}
+                      value={specificProductAssembly.map(item => item.value)}
+                      options={fetchProductAssemblies.map((assembly) => ({
+                        value: assembly.product_id,
+                        label: assembly.product_name,
+                      }))}
+                      onChange={handleMultiProductAssemblyChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                </Form.Group>
+              </div>
+              )}
+
+              {(selectProductType === "Assembly" || selectProductType === "SpareParts") && (
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Product Sub-Assembly:
+                  </Form.Label>
+                  <MultiSelect
+                      disabled={!isReadOnly}
+                      value={specificProductSubAssembly.map(item => item.value)}
+                      options={fetchProductSubAssemblies.map((subAsm) => ({
+                        value: subAsm.product_id,
+                        label: subAsm.product_name,
+                      }))}
+                      onChange={handleMultiProductSubAssemblyChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                </Form.Group>
+              </div>
+              )}
+
+              {(selectProductType === "Assembly" || selectProductType === "Sub-Assembly") && (
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    SpareParts
+                  </Form.Label>
+                  <MultiSelect
+                      disabled={!isReadOnly}
+                      value={specificProductSpares.map(item => item.value)}
+                      options={fetchProductSpareParts.map((spares) => ({
+                          value: spares.product_id,
+                          label: spares.product_name,
+                      }))}
+                      onChange={handleMultiProductSpareChange}
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter
+                  />
+                </Form.Group>
+              </div>
+              )}
+            </div>
+            )}
+
 
             <div className="row">
               <div className="col-6">

@@ -14,8 +14,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 // input
 import Input from "@mui/material/Input";
 import Form from "react-bootstrap/Form";
-
-// button
+import ReactLoading from 'react-loading';
 
 import { Button, buttonClasses } from "@mui/base/Button";
 import { styled } from "@mui/system";
@@ -122,20 +121,22 @@ const StyledInputElement = styled("input")(
 );
 
 function ForgotPass() {
+  
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const { setEmailPOst, setVerificationCode } = useDataContext();
 
   const sendEmail = () => {
+    setIsLoading(true)
     axios
       .post(BASE_URL + "/masterList/emailForgotPass", { email })
       .then((response) => {
+
         if (response.status === 200) {
           const responseBody = response.data;
           const verificationcode = responseBody.code;
-          console.log(verificationcode);
-
           swal({
             title: "Email Sent Successfully!",
             text: "Please check your email",
@@ -144,9 +145,11 @@ function ForgotPass() {
           }).then(() => {
             setEmailPOst(email); // Set email in the context
             setVerificationCode(verificationcode); // Set verification code in the context
+            setIsLoading(false);
             navigate(`/OTP`);
           });
         } else if (response.status === 202) {
+          setIsLoading(false);
           swal({
             title: "Email not registered!",
             text: "Please check the input email",
@@ -156,6 +159,7 @@ function ForgotPass() {
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         console.error(error.response.data);
         swal({
           title: "Something Went Wrong",
@@ -222,6 +226,7 @@ function ForgotPass() {
                 
               />
             </div>
+            {!isLoading ? (
             <div onKeyDown={handleKeyPress} className="fg-submitbutton">
               <button
                 className="button-pass"
@@ -231,6 +236,14 @@ function ForgotPass() {
                 Submit
               </button>
             </div>
+              ) : (
+                <>
+                <div className="loading-container">
+                  <ReactLoading className="react-loading" type={"bubbles"} />
+                     Please Wait...
+                </div>
+              </>
+            )}  
 
             <div class="remembered-text">Remember Your Password?</div>
 

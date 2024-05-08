@@ -52,6 +52,16 @@ const Product = sequelize.define('product', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null,
+  },
+  part_number: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null,
+  },
   archive_date: {
     type: DataTypes.DATEONLY,
     allowNull: true,

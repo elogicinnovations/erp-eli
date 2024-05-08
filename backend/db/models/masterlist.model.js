@@ -71,6 +71,11 @@ const MasterList = sequelize.define("masterlist", {
       this.setDataValue("image", Buffer.from(value, "base64"));
     },
   },
+  archive_date: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    defaultValue: null,
+  },
 });
 
 module.exports = MasterList;

@@ -10,7 +10,10 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa"; // Import icons
 import SBFLOGO from "../../assets/image/sbflogo-noback.png";
 import { jwtDecode } from 'jwt-decode';
-
+import {
+  Eye,
+  EyeSlash,
+} from "@phosphor-icons/react";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -179,12 +182,17 @@ const Login = () => {
                    
                   />
                   {showPassword ? (
-                    <FaEyeSlash
-                      className="eye"
+                    <EyeSlash
+                      size={32}
+                      color="#1a1a1a"
+                      weight="light"
                       onClick={togglePasswordVisibility}
                     />
                   ) : (
-                    <FaEye className="eye" onClick={togglePasswordVisibility} />
+                    <Eye
+                    size={32}
+                    color="#1a1a1a"
+                    weight="light" className="eye" onClick={togglePasswordVisibility} />
                   )}
                 </div>
               </div>

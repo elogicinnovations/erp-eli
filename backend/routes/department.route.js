@@ -72,6 +72,14 @@ router.route("/updateDepartment/:param_id").put(async (req, res) => {
       },
     });
 
+    const findPreviousName = await Department.findOne({
+      where: {
+        id: updatemasterID,
+      }
+    });
+
+    const prevName = findPreviousName.department_name;
+
     if (existingData) {
       res.status(202).send("Exist");
     } else {
@@ -88,7 +96,7 @@ router.route("/updateDepartment/:param_id").put(async (req, res) => {
 
       await Activity_Log.create({
         masterlist_id: userId,
-        action_taken: `Department: Updated the information of department ${req.body.department_name}`,
+        action_taken: `Department: Updated the information of department from ${prevName} to ${req.body.department_name}`,
       });
 
       res

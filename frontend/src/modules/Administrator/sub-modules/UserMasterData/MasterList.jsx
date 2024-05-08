@@ -581,8 +581,8 @@ function MasterList({ authrztn }) {
     }).then(async (willDelete) => {
       if (willDelete) {
         try {
-          const response = await axios.delete(
-            `${BASE_URL}/masterlist/deleteMaster/${param_id}?userId=${userId}`
+          const response = await axios.put(
+            `${BASE_URL}/masterlist/archivemasterList/${param_id}?userId=${userId}`
           );
           if (response.data.success) {
             swal({

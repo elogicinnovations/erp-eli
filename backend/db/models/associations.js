@@ -15,6 +15,10 @@ const Product_Subparts = require("./product_subparts.model");
 const Product_Spareparts = require("./product_spare.model");
 const Product_Assembly = require("./product_assembly.model");
 const Product_image = require("./product_image.model");
+const Product_Assm = require("./product_assm.model");
+const Product_Sub_Assembly = require("./product_sub_assembly.model");
+const Product_Spare_Parts = require("./product_spareparts.model")
+
 
 const SubPart = require("./subpart.model");
 const Subpart_supplier = require("./subpart_supplier.model");
@@ -161,6 +165,27 @@ Assembly_image.belongsTo(Assembly, { foreignKey: "assembly_id" });
 
 Product.hasMany(Product_image, { foreignKey: "product_id" });
 Product_image.belongsTo(Product, { foreignKey: "product_id" });
+
+//product type assembly
+Product.hasMany(Product_Assm, { foreignKey: "product_id", as: "product" });
+Product_Assm.belongsTo(Product, { foreignKey: "product_id", as: "product" });
+
+Product.hasMany(Product_Assm, { foreignKey: "tag_product_assm", as: "tagged_product_assemblies" });
+Product_Assm.belongsTo(Product, { foreignKey: "tag_product_assm", as: "tagged_product_assemblies" });
+
+//product type sub assembly
+Product.hasMany(Product_Sub_Assembly, { foreignKey: "product_id", as: "productIncremented" }); //Product ID
+Product_Sub_Assembly.belongsTo(Product, { foreignKey: "product_id", as: "productIncremented" });
+
+Product.hasMany(Product_Sub_Assembly, { foreignKey: "tag_product_sub_assembly", as: "tag_sub_assemblies"  }); // Tag product sub assembly
+Product_Sub_Assembly.belongsTo(Product, { foreignKey: "tag_product_sub_assembly", as: "tag_sub_assemblies"  });
+
+//product type spare parts
+Product.hasMany(Product_Spare_Parts, { foreignKey: "product_id", as: "IncrementedProduct" }); //Product ID
+Product_Spare_Parts.belongsTo(Product, { foreignKey: "product_id", as: "IncrementedProduct" });
+
+Product.hasMany(Product_Spare_Parts, { foreignKey: "tag_product_spare_parts", as: "tag_product_spares" }); 
+Product_Spare_Parts.belongsTo(Product, { foreignKey: "tag_product_spare_parts", as: "tag_product_spares" }); // Tag product Spare Parts
 
 Product.hasMany(PR_product, { foreignKey: "product_id" });
 PR_product.belongsTo(Product, { foreignKey: "product_id" });
@@ -599,6 +624,9 @@ module.exports = {
   Product_Subparts,
   Product_image,
   productTAGsupplierHistory,
+  Product_Sub_Assembly,
+  Product_Spare_Parts,
+  Product_Assm,
 
   Category,
   BinLocation,

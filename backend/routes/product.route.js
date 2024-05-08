@@ -16,6 +16,9 @@ const {
   Assembly,
   SparePart,
   SubPart,
+  Product_Assm,
+  Product_Sub_Assembly,
+  Product_Spare_Parts
 } = require("../db/models/associations");
 const session = require("express-session");
 const multer = require("multer");
@@ -29,6 +32,74 @@ router.use(
     saveUninitialized: true,
   })
 );
+
+//for dropdown Assembly
+router.route("/DropdownProductAssembly").get(async (req, res) => {
+  try {
+    const data = await Product.findAll({
+      where: {
+        [Op.or]: [
+          { type: 'Assembly' },
+          { type: null }
+        ]
+      }
+    });
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400).json("No data found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+
+//for dropdown sub-assembly
+router.route("/DropdownProductSubAssembly").get(async (req, res) => {
+  try {
+    const data = await Product.findAll({
+      where: {
+        [Op.or]: [
+          { type: 'Sub-Assembly' },
+          { type: null }
+        ]
+      }
+    });
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400).json("No data found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+//for dropdown product spare parts
+router.route("/DropdownProductSpareParts").get(async (req, res) => {
+  try {
+   const data = await Product.findAll({
+    where: {
+      [Op.or]: [
+        { type: 'SpareParts' },
+        { type: null }
+      ]
+    }
+   });
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 
 // for PR  fetching all the products, assembly, sparePart, subpart
 router.route("/fetchALLProduct").get(async (req, res) => {
@@ -55,6 +126,8 @@ router.route("/fetchALLProduct").get(async (req, res) => {
   }
 });
 
+
+//fetching of product in data table with picture
 router.route("/fetchTable").get(async (req, res) => {
   try {
     const data = await Product.findAll({
@@ -124,14 +197,10 @@ router.route("/create").post(async (req, res) => {
         slct_manufacturer,
         details,
         thresholds,
-        assembly,
-        spareParts,
-        subparting,
-        images,
+        selectProductType,
+        ProductNumber,
         userId,
       } = req.body;
-
-console.log(`slct_manufacturer : ${slct_manufacturer}`)
 
         const existingDataCode = await Product.findOne({
           where: {
@@ -142,6 +211,8 @@ console.log(`slct_manufacturer : ${slct_manufacturer}`)
         if (existingDataCode) {
           res.status(201).send('Exist');
         } else {
+          const typeValue = selectProductType === '' || selectProductType === 'N/A' ? null : selectProductType;
+
             const newData = await Product.create({
             product_code: code.toUpperCase(),
             product_name: name,
@@ -151,7 +222,9 @@ console.log(`slct_manufacturer : ${slct_manufacturer}`)
             product_manufacturer: slct_manufacturer === '' ? null : slct_manufacturer,
             product_details: details,
             product_threshold: thresholds,
-            product_status: 'Active'
+            product_status: 'Active',
+            type: typeValue,
+            part_number: ProductNumber,
           });
 
           await Activity_Log.create({
@@ -161,34 +234,65 @@ console.log(`slct_manufacturer : ${slct_manufacturer}`)
 
           const IdData = newData.product_id;
 
-          const selectedAssemblies = req.body.assembly;
-          for (const assemblyDropdown of selectedAssemblies) {
+          //Product Assembly Dropdown
+          const selectedProductAssemblies = req.body.ProductAssemblies;
+          for (const Product_assemblyDropdown of selectedProductAssemblies) {
 
-            await Product_Assembly.create({
+            await Product_Assm.create({
               product_id: IdData,
-              assembly_id: assemblyDropdown
+              tag_product_assm: Product_assemblyDropdown,
             });
           }
+
+          //Product Sub-Assembly
+          const selectedProductSubAssemblies = req.body.ProductSubAssembly;
+          for (const Product_sub_assemblyDropdown of selectedProductSubAssemblies) {
+
+            await Product_Sub_Assembly.create({
+              product_id: IdData,
+              tag_product_sub_assembly: Product_sub_assemblyDropdown,
+            });
+          }
+
+          //Product Spareparts
+          const selectedProductSpare_parts = req.body.ProductSpareParts;
+          for (const Product_spare_partDropdown of selectedProductSpare_parts) {
+
+            await Product_Spare_Parts.create({
+              product_id: IdData,
+              tag_product_spare_parts: Product_spare_partDropdown,
+            });
+          }
+
+          
+          // const selectedAssemblies = req.body.assembly;
+          // for (const assemblyDropdown of selectedAssemblies) {
+
+          //   await Product_Assembly.create({
+          //     product_id: IdData,
+          //     assembly_id: assemblyDropdown
+          //   });
+          // }
 
           //Spareparts
-          const selectedSpare = req.body.spareParts;
-          for (const spareDropdown of selectedSpare) {
+          // const selectedSpare = req.body.spareParts;
+          // for (const spareDropdown of selectedSpare) {
 
-            await Product_Spareparts.create({
-              product_id: IdData,
-              sparePart_id: spareDropdown
-            });
-          }
+          //   await Product_Spareparts.create({
+          //     product_id: IdData,
+          //     sparePart_id: spareDropdown
+          //   });
+          // }
 
           //Subparts
-          const selectedSubparting = req.body.subparting;
-          for (const subpartDropdown of selectedSubparting) {
+          // const selectedSubparting = req.body.subparting;
+          // for (const subpartDropdown of selectedSubparting) {
   
-            await Product_Subparts.create({
-              product_id: IdData,
-              subPart_id: subpartDropdown
-            });
-          }
+          //   await Product_Subparts.create({
+          //     product_id: IdData,
+          //     subPart_id: subpartDropdown
+          //   });
+          // }
 
           // const findWarehouse = await Warehouses.findOne({
           //   where: {
@@ -259,14 +363,20 @@ router.route("/update").post(
       slct_manufacturer,
       details,
       thresholds,
-      assembly,
-      spareParts,
-      subparting,
+      selectProductType,
+      PartNumber,
+      // assembly,
+      // spareParts,
+      // subparting,
+      specificProductAssembly,
+      specificProductSubAssembly,
+      specificProductSpares,
       productTAGSuppliers,
       productImages,
       userId
     } = req.body;
   try {
+
     const existingDataCode = await Product.findOne({
       where: {
         product_code: code,
@@ -277,6 +387,7 @@ router.route("/update").post(
     if (existingDataCode) {
       return res.status(201).send("Exist");
     } else {
+      const typeValue = selectProductType === '' || selectProductType === 'N/A' ? null : selectProductType;
       const product_newdata = await Product.update(
         {
           product_code: code,
@@ -287,6 +398,8 @@ router.route("/update").post(
           product_manufacturer: slct_manufacturer,
           product_details: details,
           product_threshold: thresholds,
+          type: typeValue,
+          part_number: PartNumber,
         },
         {
           where: {
@@ -300,57 +413,109 @@ router.route("/update").post(
         action_taken: `Product: Updated the information product ${name}`,
       });
 
-        const deleteassembly = Product_Assembly.destroy({
+
+        const deleteProductAssembly = Product_Assm.destroy({
           where: {
             product_id: id
           },
         });
 
-        if(deleteassembly) {
-          const selectedAssemblies = assembly;
-          for(const assemblyDropdown of selectedAssemblies) {
+        if(deleteProductAssembly) {
+          const selectedProductAssemblies = specificProductAssembly;
+          for(const assemblyDropdown of selectedProductAssemblies) {
             const assemblyValue = assemblyDropdown.value;
-            await Product_Assembly.create({
+            await Product_Assm.create({
               product_id: id,
-              assembly_id: assemblyValue
+              tag_product_assm: assemblyValue
             }); 
           }
         };
 
-        const deletespare = Product_Spareparts.destroy({
+        const deleteProductSubAssembly = Product_Sub_Assembly.destroy({
           where: {
             product_id: id
           },
         });
 
-        if(deletespare) {
-          const selectedSpare = spareParts;
-          for(const spareDropdown of selectedSpare) {
-            const spareValue = spareDropdown.value;
-            await Product_Spareparts.create({
+        if(deleteProductSubAssembly) {
+          const selectedProductSubAssemblies = specificProductSubAssembly;
+          for(const subassemblyDropdown of selectedProductSubAssemblies) {
+            const subassemblyValue = subassemblyDropdown.value;
+            await Product_Sub_Assembly.create({
               product_id: id,
-              sparePart_id: spareValue
-            })
+              tag_product_sub_assembly: subassemblyValue
+            }); 
           }
         };
-        
 
-        const deletesubpart = Product_Subparts.destroy({
+        const deleteProductSpares = Product_Spare_Parts.destroy({
           where: {
             product_id: id
           },
-        })
+        });
 
-        if(deletesubpart) {
-          const selectedSubpart = subparting;
-          for(const subpartDropdown of selectedSubpart){
-            const subpartValue = subpartDropdown.value;
-            await Product_Subparts.create({
+        if(deleteProductSpares) {
+          const selectedProductSpares = specificProductSpares;
+          for(const sparesDropdown of selectedProductSpares) {
+            const sparesValue = sparesDropdown.value;
+            await Product_Spare_Parts.create({
               product_id: id,
-              subPart_id: subpartValue
-            });
+              tag_product_spare_parts: sparesValue
+            }); 
           }
         };
+
+        // const deleteassembly = Product_Assembly.destroy({
+        //   where: {
+        //     product_id: id
+        //   },
+        // });
+
+        // if(deleteassembly) {
+        //   const selectedAssemblies = assembly;
+        //   for(const assemblyDropdown of selectedAssemblies) {
+        //     const assemblyValue = assemblyDropdown.value;
+        //     await Product_Assembly.create({
+        //       product_id: id,
+        //       assembly_id: assemblyValue
+        //     }); 
+        //   }
+        // };
+
+        // const deletespare = Product_Spareparts.destroy({
+        //   where: {
+        //     product_id: id
+        //   },
+        // });
+
+        // if(deletespare) {
+        //   const selectedSpare = spareParts;
+        //   for(const spareDropdown of selectedSpare) {
+        //     const spareValue = spareDropdown.value;
+        //     await Product_Spareparts.create({
+        //       product_id: id,
+        //       sparePart_id: spareValue
+        //     })
+        //   }
+        // };
+        
+
+        // const deletesubpart = Product_Subparts.destroy({
+        //   where: {
+        //     product_id: id
+        //   },
+        // })
+
+        // if(deletesubpart) {
+        //   const selectedSubpart = subparting;
+        //   for(const subpartDropdown of selectedSubpart){
+        //     const subpartValue = subpartDropdown.value;
+        //     await Product_Subparts.create({
+        //       product_id: id,
+        //       subPart_id: subpartValue
+        //     });
+        //   }
+        // };
 
         const deleteproductImage = Product_image.destroy({
           where: {
@@ -384,12 +549,6 @@ router.route("/update").post(
           for(const supplier of selectedsupplier){
             const { value, price} = supplier;
 
-            // const newProductsupp = await ProductTAGSupplier.create({
-            //   product_id: id,
-            //   supplier_code: value,
-            //   product_price: price
-            // });
-
             await ProductTAGSupplier.update(
               {
                 product_price: price,
@@ -411,8 +570,6 @@ router.route("/update").post(
             });
     
              
-    
-    
             if (findSupplier.length > 0) {
              // nothing 
             } else {
@@ -424,9 +581,6 @@ router.route("/update").post(
               });
             }
     
-
-
-          
 
             const ExistingSupplier = await productTAGsupplierHistory.findOne({
               where: {

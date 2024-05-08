@@ -44,90 +44,114 @@ function ProductSupplier({authrztn}) {
   const [isLoading, setIsLoading] = useState(true);
 
   const [activeTab, setActiveTab] = useState("Assembly");
-  const [Assembly, setAssembly] = useState([]); //for fetching ng assembly na may where clause id
-  const [Subparts, setSubParts] = useState([]); //for fetching ng subparts na may where clause id
-  const [Spareparts, setSpareparts] = useState([]); //for fetching ng spareparts na may where clause id
-
+  // const [Assembly, setAssembly] = useState([]); //for fetching ng assembly na may where clause id
+  // const [Subparts, setSubParts] = useState([]); //for fetching ng subparts na may where clause id
+  // const [Spareparts, setSpareparts] = useState([]); //for fetching ng spareparts na may where clause id
+  const [specificProductAssembly, setSpecificProductAssembly] = useState([]);
+  const [specificProductSubAssembly, setSpecificProductSubAssembly] = useState([]);
+  const [specificProductSpares, setSpecificProductSpares] = useState([]);
   //------------------------------for tagging of supplier ---------------------------//
 
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productTAGsupplier/fetchTable", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        const data = res.data;
-        setproduct(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productTAGsupplier/fetchTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       const data = res.data;
+  //       setproduct(data);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, [id]);
+  // return () => clearTimeout(delay);
+  // }, [id]);
 
 
   //fetching of assembly
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productAssembly/fetchassemblyTable", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        setAssembly(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productAssembly/fetchassemblyTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setAssembly(res.data)
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, [id]);
+  // return () => clearTimeout(delay);
+  // }, [id]);
 
   //fetching of subparts
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productSubpart/fetchsubpartTable", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        setSubParts(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productSubpart/fetchsubpartTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setSubParts(res.data)
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, [id]);
+  // return () => clearTimeout(delay);
+  // }, [id]);
 
   //fetching of spareparts
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/productSparepart/fetchsparepartTable", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setSpareparts(res.data)
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
+
+  // return () => clearTimeout(delay);
+  // }, [id]);
+
+  //Fetch ang specific na product type assembly
   useEffect(() => {
     const delay = setTimeout(() => {
     axios
-      .get(BASE_URL + "/productSparepart/fetchsparepartTable", {
+      .get(BASE_URL + "/productassm/fetchTableProductassembly", {
         params: {
           id: id,
         },
       })
       .then((res) => {
-        setSpareparts(res.data)
+        setSpecificProductAssembly(res.data);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -139,21 +163,61 @@ function ProductSupplier({authrztn}) {
   return () => clearTimeout(delay);
   }, [id]);
 
+    //Fetch ang specific na product type sub-assembly
+    useEffect(() => {
+      const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/productsubAssm/fetchTableProductSubAssembly", {
+          params: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          setSpecificProductSubAssembly(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+  
+    return () => clearTimeout(delay);
+    }, [id]);
+
+    //Fetch ang specific na product type spare parts
+    useEffect(() => {
+      const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/productsparestag/fetchTableProductSpares", {
+          params: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          setSpecificProductSpares(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+  
+    return () => clearTimeout(delay);
+    }, [id]);
 
 
   return (
     <div className="main-of-containers">
-      {/* <div className="left-of-main-containers">
-            <Sidebar/>
-        </div> */}
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-                authrztn.includes('Product List - View') ? (
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={'bubbles'}/>
+            Loading Data...
+          </div>
+        ) : (
+          authrztn.includes('Product List - View') ? (
         <div className="right-body-contentss">
         <div className="headers-text">
             <div className="arrowandtitle">
@@ -184,17 +248,17 @@ function ProductSupplier({authrztn}) {
                       <table id="order-listing">
                         <thead>
                           <tr>
-                            <th>Assembly Code</th>
-                            <th>Assembly Name</th>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {Assembly.map((assemblies, i) => (
+                          {specificProductAssembly.map((assemblies, i) => (
                             <tr key={i}>
-                              <td>{assemblies.assembly.assembly_code}</td>
-                              <td>{assemblies.assembly.assembly_name}</td>
-                              <td>{assemblies.assembly.assembly_desc}</td>
+                              <td>{assemblies.tagged_product_assemblies.product_code}</td>
+                              <td>{assemblies.tagged_product_assemblies.product_name}</td>
+                              <td>{assemblies.tagged_product_assemblies.product_details}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -205,7 +269,7 @@ function ProductSupplier({authrztn}) {
                   <Tab
                     eventKey="ordered list"
                     title={
-                      <span style={{ fontSize: "20px" }}>Spare Parts</span>
+                      <span style={{ fontSize: "20px" }}>Sub-Assembly</span>
                     }>
                     <div className="orderhistory-side">
                       <div className="printersbtn"></div>
@@ -214,17 +278,17 @@ function ProductSupplier({authrztn}) {
                       <table id="ordered-listing">
                         <thead>
                           <tr>
-                            <th>Spare-Parts Code</th>
-                            <th>Spare-Parts Name</th>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {Spareparts.map((sparepart, i) => (
+                          {specificProductSubAssembly.map((sub, i) => (
                             <tr key={i}>
-                              <td>{sparepart.sparePart.spareParts_code}</td>
-                              <td>{sparepart.sparePart.spareParts_name}</td>
-                              <td>{sparepart.sparePart.spareParts_desc}</td>
+                              <td>{sub.tag_sub_assemblies.product_code}</td>
+                              <td>{sub.tag_sub_assemblies.product_name}</td>
+                              <td>{sub.tag_sub_assemblies.product_details}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -233,7 +297,7 @@ function ProductSupplier({authrztn}) {
                   </Tab>
                   <Tab
                     eventKey="Subparts"
-                    title={<span style={{ fontSize: "20px" }}>Sub Parts</span>}>
+                    title={<span style={{ fontSize: "20px" }}>SpareParts</span>}>
                     <div className="productandprint">
                       <div className="printbtns"></div>
                     </div>
@@ -241,17 +305,17 @@ function ProductSupplier({authrztn}) {
                       <table id="order-listing">
                         <thead>
                           <tr>
-                            <th>Sub-Part Code</th>
-                            <th>Sub-Part Name</th>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
                             <th>Description</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {Subparts.map((subpart, i) => (
+                          {specificProductSpares.map((spares, i) => (
                             <tr key={i}>
-                              <td>{subpart.subPart.subPart_code}</td>
-                              <td>{subpart.subPart.subPart_name}</td>
-                              <td>{subpart.subPart.subPart_desc}</td>
+                              <td>{spares.tag_product_spares.product_code}</td>
+                              <td>{spares.tag_product_spares.product_name	}</td>
+                              <td>{spares.tag_product_spares.product_details	}</td>
                             </tr>
                           ))}
                         </tbody>

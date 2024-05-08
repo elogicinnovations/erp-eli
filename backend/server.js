@@ -65,6 +65,9 @@ const Product_Subparts = require("./routes/product_subpart.route");
 const Product_Spareparts = require("./routes/product_sparepart");
 const productTAGsupplierHistory = require("./routes/productTAGSupplierHistory.route");
 const ProductImage = require("./routes/product_image.route");
+const ProductAssm = require("./routes/product_assm.route");
+const ProductSubAssm = require("./routes/product_sub_assm.route");
+const ProductSpares = require("./routes/product_spares_tag.route");
 
 const manufacturer = require("./routes/manufacturer.route");
 
@@ -151,6 +154,9 @@ app.use("/productSubpart", Product_Subparts);
 app.use("/productSparepart", Product_Spareparts);
 app.use("/productpricehistoy", productTAGsupplierHistory);
 app.use("/productImage", ProductImage);
+app.use("/productassm", ProductAssm);
+app.use("/productsubAssm", ProductSubAssm);
+app.use("/productsparestag", ProductSpares);
 
 app.use("/costCenter", costCenter);
 app.use("/manufacturer", manufacturer);

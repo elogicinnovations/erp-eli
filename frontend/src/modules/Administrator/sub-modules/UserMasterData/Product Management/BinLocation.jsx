@@ -749,9 +749,10 @@ return () => clearTimeout(delay);
                   </Form.Label>
                   <Form.Control
                     type="text"
+                    required
                     style={{ height: "40px", 
-                              fontSize: "15px", 
-                              fontFamily: 'Poppins, Source Sans Pro' }}
+                            fontSize: "15px", 
+                            fontFamily: 'Poppins, Source Sans Pro' }}
                     value={binLocationSubName}
                     onChange={(e) => setbinLocationSubName(e.target.value)}
                   />

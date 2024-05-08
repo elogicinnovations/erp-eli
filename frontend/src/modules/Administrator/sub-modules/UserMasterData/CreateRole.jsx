@@ -161,38 +161,38 @@ function Create_role() {
       );
     } else
   
-    if (value === "Assembly - View" && selectedCheckboxes.some((item) => item.value === "Assembly - View")) {
-      setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Assembly - View" &&
-          item.value !== "Assembly - Add" &&
-          item.value !== "Assembly - Edit" &&
-          item.value !== "Assembly - Delete"
-        )
-      );
-    } else
+    // if (value === "Assembly - View" && selectedCheckboxes.some((item) => item.value === "Assembly - View")) {
+    //   setSelectedCheckboxes(
+    //     selectedCheckboxes.filter((item) => 
+    //       item.value !== "Assembly - View" &&
+    //       item.value !== "Assembly - Add" &&
+    //       item.value !== "Assembly - Edit" &&
+    //       item.value !== "Assembly - Delete"
+    //     )
+    //   );
+    // } else
   
-    if (value === "Spare Part - View" && selectedCheckboxes.some((item) => item.value === "Spare Part - View")) {
-      setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Spare Part - View" &&
-          item.value !== "Spare Part - Add" &&
-          item.value !== "Spare Part - Edit" &&
-          item.value !== "Spare Part - Delete"
-        )
-      );
-    } else
+    // if (value === "Spare Part - View" && selectedCheckboxes.some((item) => item.value === "Spare Part - View")) {
+    //   setSelectedCheckboxes(
+    //     selectedCheckboxes.filter((item) => 
+    //       item.value !== "Spare Part - View" &&
+    //       item.value !== "Spare Part - Add" &&
+    //       item.value !== "Spare Part - Edit" &&
+    //       item.value !== "Spare Part - Delete"
+    //     )
+    //   );
+    // } else
   
-    if (value === "Sub-Part - View" && selectedCheckboxes.some((item) => item.value === "Sub-Part - View")) {
-      setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Sub-Part - View" &&
-          item.value !== "Sub-Part - Add" &&
-          item.value !== "Sub-Part - Edit" &&
-          item.value !== "Sub-Part - Delete"
-        )
-      );
-    } else
+    // if (value === "Sub-Part - View" && selectedCheckboxes.some((item) => item.value === "Sub-Part - View")) {
+    //   setSelectedCheckboxes(
+    //     selectedCheckboxes.filter((item) => 
+    //       item.value !== "Sub-Part - View" &&
+    //       item.value !== "Sub-Part - Add" &&
+    //       item.value !== "Sub-Part - Edit" &&
+    //       item.value !== "Sub-Part - Delete"
+    //     )
+    //   );
+    // } else
   
     if (value === "Product Categories - View" && selectedCheckboxes.some((item) => item.value === "Product Categories - View")) {
       setSelectedCheckboxes(
@@ -347,18 +347,18 @@ function Create_role() {
       "Product List - Edit",
       "Product List - Delete",
       "Product List - View",
-      "Assembly - Add",
-      "Assembly - Edit",
-      "Assembly - Delete",
-      "Assembly - View",
-      "Spare Part - Add",
-      "Spare Part - Edit",
-      "Spare Part - Delete",
-      "Spare Part - View",
-      "Sub-Part - Add",
-      "Sub-Part - Edit",
-      "Sub-Part - Delete",
-      "Sub-Part - View",
+      // "Assembly - Add",
+      // "Assembly - Edit",
+      // "Assembly - Delete",
+      // "Assembly - View",
+      // "Spare Part - Add",
+      // "Spare Part - Edit",
+      // "Spare Part - Delete",
+      // "Spare Part - View",
+      // "Sub-Part - Add",
+      // "Sub-Part - Edit",
+      // "Sub-Part - Delete",
+      // "Sub-Part - View",
       "Product Categories - Add",
       "Product Categories - Edit",
       "Product Categories - Delete",
@@ -449,23 +449,23 @@ function Create_role() {
   const ProductListEdit = selectedCheckboxes.some((item) => item.value === "Product List - Edit") && !ProductListDisable;
   const ProductListDelete = selectedCheckboxes.some((item) => item.value === "Product List - Delete") && !ProductListDisable;
 
-  const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
-  const AssemblyDisable = !Assembly;
-  const AssemblyAdd = selectedCheckboxes.some((item) => item.value === "Assembly - Add") && !AssemblyDisable;
-  const AssemblyEdit = selectedCheckboxes.some((item) => item.value === "Assembly - Edit") && !AssemblyDisable;
-  const AssemblyDelete = selectedCheckboxes.some((item) => item.value === "Assembly - Delete") && !AssemblyDisable;
+  // const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
+  // const AssemblyDisable = !Assembly;
+  // const AssemblyAdd = selectedCheckboxes.some((item) => item.value === "Assembly - Add") && !AssemblyDisable;
+  // const AssemblyEdit = selectedCheckboxes.some((item) => item.value === "Assembly - Edit") && !AssemblyDisable;
+  // const AssemblyDelete = selectedCheckboxes.some((item) => item.value === "Assembly - Delete") && !AssemblyDisable;
 
-  const SpareParts = selectedCheckboxes.some((item) => item.value === "Spare Part - View");
-  const SparePartsDisable = !SpareParts;
-  const SparePartsAdd = selectedCheckboxes.some((item) => item.value === "Spare Part - Add") && !SparePartsDisable;
-  const SparePartsEdit = selectedCheckboxes.some((item) => item.value === "Spare Part - Edit") && !SparePartsDisable;
-  const SparePartsDelete = selectedCheckboxes.some((item) => item.value === "Spare Part - Delete") && !SparePartsDisable;
+  // const SpareParts = selectedCheckboxes.some((item) => item.value === "Spare Part - View");
+  // const SparePartsDisable = !SpareParts;
+  // const SparePartsAdd = selectedCheckboxes.some((item) => item.value === "Spare Part - Add") && !SparePartsDisable;
+  // const SparePartsEdit = selectedCheckboxes.some((item) => item.value === "Spare Part - Edit") && !SparePartsDisable;
+  // const SparePartsDelete = selectedCheckboxes.some((item) => item.value === "Spare Part - Delete") && !SparePartsDisable;
 
-  const SubParts = selectedCheckboxes.some((item) => item.value === "Sub-Part - View");
-  const SubPartsDisable = !SubParts;
-  const SubPartsAdd = selectedCheckboxes.some((item) => item.value === "Sub-Part - Add") && !SubPartsDisable;
-  const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
-  const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
+  // const SubParts = selectedCheckboxes.some((item) => item.value === "Sub-Part - View");
+  // const SubPartsDisable = !SubParts;
+  // const SubPartsAdd = selectedCheckboxes.some((item) => item.value === "Sub-Part - Add") && !SubPartsDisable;
+  // const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
+  // const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
 
   const ProductCategories = selectedCheckboxes.some((item) => item.value === "Product Categories - View");
   const ProductCategoriesDisable = !ProductCategories;
@@ -1302,7 +1302,7 @@ function Create_role() {
 
                       </tr>
 
-                      <tr>
+                      {/* <tr>
                         <td>
                           <td
                             className="role"
@@ -1429,9 +1429,9 @@ function Create_role() {
                         </td>
 
 
-                      </tr>
+                      </tr> */}
 
-                      <tr>
+                      {/* <tr>
                         <td>
                           <td
                             className="role"
@@ -1557,9 +1557,9 @@ function Create_role() {
                           </div>
                         </td>
 
-                      </tr>
+                      </tr> */}
 
-                      <tr>
+                      {/* <tr>
                         <td>
                           <td
                             className="role"
@@ -1686,7 +1686,7 @@ function Create_role() {
                         </td>
 
 
-                      </tr>
+                      </tr> */}
 
                       <tr>
                         <td>

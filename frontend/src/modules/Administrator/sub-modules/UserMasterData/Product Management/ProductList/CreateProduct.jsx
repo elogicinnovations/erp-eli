@@ -31,20 +31,29 @@ function CreateProduct({authrztn}) {
 
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
+  const [ProductNumber, setProductNumber] = useState("");
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
   const [unitMeasurement, setunitMeasurement] = useState("");
   const [slct_manufacturer, setslct_manufacturer] = useState(''); 
   const [details, setDetails] = useState("");
   const [thresholds, setThresholds] = useState("");
-  const [fetchSparePart, setFetchPart] = useState([]);
-  const [fetchSubPart, setFetchsub] = useState([]);
-  const [fetchAssembly, setAssembly] = useState([]);
-  const [spareParts, setSparePart] = useState([]);
-  const [subparting, setsubparting] = useState([]);
-  const [assembly, setassemblies] = useState([]);
-  const [productStatus, setproductStatus] = useState(true);
+  const [selectProductType, setProductType] = useState("");
+  // const [fetchSparePart, setFetchPart] = useState([]);
+  // const [fetchSubPart, setFetchsub] = useState([]);
+  // const [fetchAssembly, setAssembly] = useState([]);
+  // const [spareParts, setSparePart] = useState([]);
+  // const [subparting, setsubparting] = useState([]);
+  // const [assembly, setassemblies] = useState([]);
+  // const [productStatus, setproductStatus] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchProductAssemblies, setFetchProductAssemblies] = useState([]);
+  const [fetchProductSubAssembly, setFetchProductSubAssembly] = useState([]);
+  const [fetchProductSpareParts, setFetchProductSpareParts] = useState([]);
+  const [ProductAssemblies, setProductAssemblies] = useState([]);
+  const [ProductSubAssembly, setProductSubAssembly] = useState([]);
+  const [ProductSpareParts, setProductSpareParts] = useState([]);
+ 
 
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
@@ -52,22 +61,22 @@ function CreateProduct({authrztn}) {
   const [supp, setSupp] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [fetchSupp, setFetchSupp] = useState([]);
-  const [selectedimage, setselectedimage] = useState([]);
-  const [productImage, setProductImage] = useState([]);
-  const [productImageType, setProductImageType] = useState([]);
+  // const [selectedimage, setselectedimage] = useState([]);
+  // const [productImage, setProductImage] = useState([]);
+  // const [productImageType, setProductImageType] = useState([]);
+  // const [Fname, setFname] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [userRole, setUserRole] = useState('');
   const [status, setStatus] = useState("Active");
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState('');
 
   const decodeToken = () => {
     var token = localStorage.getItem('accessToken');
     if(typeof token === 'string'){
     var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
+    // setUsername(decoded.username);
+    // setFname(decoded.Fname);
+    // setUserRole(decoded.userrole);
     setuserId(decoded.id);
     }
   }
@@ -75,7 +84,6 @@ function CreateProduct({authrztn}) {
   useEffect(() => {
     decodeToken();
   }, [])
-
 
   //toggle switch Active and Inactive
   const GreenSwitch = styled(Switch)(({ theme }) => ({
@@ -90,27 +98,15 @@ function CreateProduct({authrztn}) {
     },
   }));
 
-  const handleStatusChange = (e) => {
-    setproductStatus(e.target.checked); // Update the status Active or Inactive
-  };
-
-  // const handleKeyPress = (e) => {
-  //   if (e.key === "e" || isNaN(e.key)) {
-  //     e.preventDefault();
-  //   }
-  //   e.target.value = e.target.value.replace(/[^0-9.]/);
+  // const handleStatusChange = (e) => {
+  //   setproductStatus(e.target.checked); // Update the status Active or Inactive
   // };
+
 
   useEffect(() => {
     axios
       .get(BASE_URL + "/product/lastCode")
       .then((res) => {
-        // const codes =
-        //   res.data !== null ? res.data.toString().padStart(6, "0") : "000001";
-
-        // // Increment the value by 1
-        // setCode(codes);
-
         const codes =
           res.data !== null ? res.data.toString().padStart(6, "0") : "000000";
           setCode(codes);
@@ -135,60 +131,117 @@ function CreateProduct({authrztn}) {
 
   return () => clearTimeout(delay);
   }, []);
+  
+
+    //Product Assembly fetch
+    useEffect(() => {
+      const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/product/DropdownProductAssembly")
+        .then((res) => {
+          setFetchProductAssemblies(res.data)
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+  
+    return () => clearTimeout(delay);
+    }, []);
+  
+  //Product Sub-Assembly fetch
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios
+      .get(BASE_URL + "/product/DropdownProductSubAssembly")
+      .then((res) => {
+        setFetchProductSubAssembly(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+  }, []);
+
+  //Product Spare Parts fetch
+  useEffect(() => {
+    const delay = setTimeout(() => {
+    axios
+      .get(BASE_URL + "/product/DropdownProductSpareParts")
+      .then((res) => {
+        setFetchProductSpareParts(res.data)
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, 1000);
+
+  return () => clearTimeout(delay);
+  }, []);
+
+  
 
   //Assembly Fetch
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/assembly/fetchTable")
-      .then((res) => {
-        setAssembly(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+//   useEffect(() => {
+//     const delay = setTimeout(() => {
+//     axios
+//       .get(BASE_URL + "/assembly/fetchTable")
+//       .then((res) => {
+//         setAssembly(res.data)
+//         setIsLoading(false);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//         setIsLoading(false);
+//       });
+//   }, 1000);
 
-return () => clearTimeout(delay);
-}, []);
+// return () => clearTimeout(delay);
+// }, []);
 
   //Subpart Fetch
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/subpart/fetchTable")
-      .then((res) => {
-        setFetchsub(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/subpart/fetchTable")
+  //     .then((res) => {
+  //       setFetchsub(res.data)
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, []);
+  // return () => clearTimeout(delay);
+  // }, []);
 
   //Spare part Fetch
-  useEffect(() => {
-    const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/sparePart/fetchTable")
-      .then((res) => {
-        setFetchPart(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //   axios
+  //     .get(BASE_URL + "/sparePart/fetchTable")
+  //     .then((res) => {
+  //       setFetchPart(res.data)
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //     });
+  // }, 1000);
 
-  return () => clearTimeout(delay);
-  }, []);
+  // return () => clearTimeout(delay);
+  // }, []);
 
   // const handleSparepartChange = (selectedOptions) => {
   //   setSparePart(selectedOptions);
@@ -202,6 +255,17 @@ return () => clearTimeout(delay);
   //   setassemblies(selectedOptions);
   // };
 
+  // for select product type
+  const handleSelectProductType = (event) => {
+    const selectedProductType = event.target.value;
+    setProductType(selectedProductType);
+
+    if (selectedProductType === "N/A") {
+      setProductAssemblies([]);
+      setProductSubAssembly([]);
+      setProductSpareParts([]);
+    }
+  };
 
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
@@ -438,9 +502,14 @@ function onDropImages(event) {
           slct_manufacturer,
           details,
           thresholds,
-          assembly,
-          spareParts,
-          subparting,
+          ProductNumber,
+          selectProductType,
+          // assembly,
+          // spareParts,
+          // subparting,
+          ProductAssemblies,
+          ProductSubAssembly,
+          ProductSpareParts,
           productTAGSuppliers,
           images,
           userId,
@@ -574,130 +643,113 @@ function onDropImages(event) {
             </div>
 
             <div className="row">
-              <div className="col-4">
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product Type:
+                    </Form.Label>
+                    <Form.Select
+                      aria-label=""
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue=""
+                      onChange={handleSelectProductType}
+                      >
+                      <option disabled value="">
+                        Select Product Type
+                      </option>
+                        <option value="N/A">N/A</option>
+                        <option value="Assembly">Assembly</option>
+                        <option value="Sub-Assembly">Sub-Assembly</option>
+                        <option value="SpareParts">SpareParts</option>
+                    </Form.Select>
+                  </Form.Group>
+                </div>
+
+              <div className="col-6">
+              <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Assembly:{" "}
+                    Part Number:
                   </Form.Label>
+                    <Form.Control
+                    type="text"
+                    placeholder="Enter Part Number"
+                    onChange={(e) => setProductNumber(e.target.value)}
+                    style={{ height: "40px", fontSize: "15px" }}
+                    />
+                </Form.Group>
+              </div>
+            </div>
+
+            {selectProductType !== "N/A" && (
+            <div className="row">
+              {(selectProductType === "Sub-Assembly" || selectProductType === "SpareParts") && (
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Assembly:
+                    </Form.Label>
                     <MultiSelect
-                      value={assembly}
-                      options={fetchAssembly.map((assembly) => ({
-                        value: assembly.id,
-                        label: assembly.assembly_name,
+                      value={ProductAssemblies}
+                      options={fetchProductAssemblies.map((asm) => ({
+                        value: asm.product_id,
+                        label: asm.product_name,
                       }))}
-                      onChange={(e) => setassemblies(e.value)}
-                      placeholder="Select Assembly"
+                      onChange={(e) => setProductAssemblies(e.value)}
+                      placeholder="Select Product Assembly"
                       maxSelectedLabels={3}
                       className="w-full md:w-20rem"
                       filter 
                     />
-                  {/* <Select
-                    isMulti
-                    options={fetchAssembly.map((assembly) => ({
-                      value: assembly.id,
-                      label: assembly.assembly_name,
-                    }))}
-                    onChange={handleAssemblyChange}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'red', 
-                        fontSize: '15px',
-                        fontWeight: 650
-                      }),
-                      option: (provided) => ({
-                        ...provided,
-                        color: 'black', 
-                        fontSize: '15px', 
-                      }),
-                    }}
-                    
-                  /> */}
-                </Form.Group>
+                 </Form.Group>
               </div>
+              )}
 
-              <div className="col-4">
+              {(selectProductType === "Assembly" || selectProductType === "SpareParts") && (
+              <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
-                    Spare Parts:{" "}
+                    Sub-Assembly:
                   </Form.Label>
                   <MultiSelect
-                      value={spareParts}
-                      options={fetchSparePart.map((sparePart) => ({
-                        value: sparePart.id,
-                        label: sparePart.spareParts_name,
+                      value={ProductSubAssembly}
+                      options={fetchProductSubAssembly.map((subAsm) => ({
+                        value: subAsm.product_id,
+                        label: subAsm.product_name,
                       }))}
-                      onChange={(e) => setSparePart(e.value)}
+                      onChange={(e) => setProductSubAssembly(e.value)}
+                      placeholder="Select Sub-Assembly"
+                      maxSelectedLabels={3}
+                      className="w-full md:w-20rem"
+                      filter 
+                    />
+                </Form.Group>
+              </div>
+              )}
+
+              {(selectProductType === "Assembly" || selectProductType === "Sub-Assembly") && (
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput2">
+                  <Form.Label style={{ fontSize: "20px" }}>
+                    Spare Parts:
+                  </Form.Label>
+                  <MultiSelect
+                      value={ProductSpareParts}
+                      options={fetchProductSpareParts.map((spares) => ({
+                        value: spares.product_id,
+                        label: spares.product_name,
+                      }))}
+                      onChange={(e) => setProductSpareParts(e.value)}
                       placeholder="Select Spare Parts"
                       maxSelectedLabels={3}
                       className="w-full md:w-20rem"
                       filter 
                     />
-                  {/* <Select
-                    isMulti
-                    options={fetchSparePart.map((sparePart) => ({
-                      value: sparePart.id,
-                      label: sparePart.spareParts_name,
-                    }))}
-                    onChange={handleSparepartChange}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'red', 
-                        fontSize: '15px',
-                        fontWeight: 650
-                      }),
-                      option: (provided) => ({
-                        ...provided,
-                        color: 'black', 
-                        fontSize: '15px', 
-                      }),
-                    }}
-                  /> */}
                 </Form.Group>
               </div>
-              <div className="col-4">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Sub Parts:{" "}
-                  </Form.Label>
-                  <MultiSelect
-                      value={subparting}
-                      options={fetchSubPart.map((subpart) => ({
-                        value: subpart.id,
-                        label: subpart.subPart_name,
-                      }))}
-                      onChange={(e) => setsubparting(e.value)}
-                      placeholder="Select SubPart"
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter 
-                    />
-                  {/* <Select
-                    isMulti
-                    options={fetchSubPart.map((subpart) => ({
-                      value: subpart.id,
-                      label: subpart.subPart_name,
-                    }))}
-                    onChange={handleSubpartChange}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        color: 'red', 
-                        fontSize: '15px',
-                        fontWeight: 650
-                      }),
-                      option: (provided) => ({
-                        ...provided,
-                        color: 'black', 
-                        fontSize: '15px', 
-                      }),
-                    }}
-                  /> */}
-                </Form.Group>
-              </div>
+              )}
             </div>
-
+            )}
+            
             <div className="row">
               <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput2">
@@ -712,7 +764,7 @@ function onDropImages(event) {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">
-                      Select Category ...
+                      Select Category
                     </option>
                     {category.map((category) => (
                       <option
@@ -736,7 +788,7 @@ function onDropImages(event) {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">
-                      Select Bin Location ...
+                      Select Bin Location
                     </option>
                     {binLocation.map((binLocation) => (
                       <option
@@ -766,7 +818,7 @@ function onDropImages(event) {
                     required
                     >
                     <option disabled value="">
-                      Select Unit Measurement ...
+                      Select Unit Measurement
                     </option>
                     {cls_unitMeasurement.map((unitM, index) => (
                       <option key={index} value={unitM}>
@@ -788,7 +840,7 @@ function onDropImages(event) {
                     style={{ height: "40px", fontSize: "15px" }}
                     defaultValue="">
                     <option disabled value="">
-                      Select Manufacturer ...
+                      Select Manufacturer
                     </option>
                     {manufacturer.map((manufacturer) => (
                       <option
@@ -825,7 +877,8 @@ function onDropImages(event) {
             </div> */}
 
             <div className="row mt-3">
-              <div className="col-6">
+
+            <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Critical Inventory Thresholds:{" "}
@@ -856,9 +909,10 @@ function onDropImages(event) {
                   />
                 </Form.Group>
               </div>
-              <div className="col-6">
 
-              </div>
+              <div className="col-6">
+                </div>
+
             </div>
 
             <div className="row">

@@ -80,6 +80,7 @@ function PurchaseOrderListPreview() {
     setShowModalAS(false);
     setShowModalspare(false);
     setShowModalSubpart(false);
+    setEditMode(false);
   };
 
   useEffect(() => {
@@ -433,6 +434,7 @@ function PurchaseOrderListPreview() {
       } else {
         // If the user cancels or closes the confirmation dialog
         swal("Update Canceled", "Supplier price remains unchanged.", "info");
+        setEditMode((prev) => ({ ...prev, [index]: false }));
       }
     });
   };
@@ -492,6 +494,7 @@ function PurchaseOrderListPreview() {
       } else {
         // If the user cancels or closes the confirmation dialog
         swal("Update Canceled", "Supplier price remains unchanged.", "info");
+        setEditMode((prev) => ({ ...prev, [index]: false }));
       }
     });
   };
@@ -552,6 +555,7 @@ function PurchaseOrderListPreview() {
       } else {
         // If the user cancels or closes the confirmation dialog
         swal("Update Canceled", "Supplier price remains unchanged.", "info");
+        setEditMode((prev) => ({ ...prev, [index]: false }));
       }
     });
   };
@@ -612,6 +616,7 @@ function PurchaseOrderListPreview() {
       } else {
         // If the user cancels or closes the confirmation dialog
         swal("Update Canceled", "Supplier price remains unchanged.", "info");
+        setEditMode((prev) => ({ ...prev, [index]: false }));
       }
     });
   };
