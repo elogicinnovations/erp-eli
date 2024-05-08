@@ -65,13 +65,6 @@ function Create_role() {
         icon: "error",
         button: "OK",
       });
-    } else if (desc === "") {
-      swal({
-        title: "Required Field",
-        text: "Description is required",
-        icon: "error",
-        button: "OK",
-      });
     } else {
       try {
         const response = await fetch(
@@ -591,7 +584,6 @@ function Create_role() {
                           maxLength={200}
                           className="form-control"
                           name="desc"
-                          required
                         />
                       </Form.Group>
                     </div>

@@ -231,15 +231,25 @@ button.page-link:hover {
 }
 
 .Slashtext-contents div:first-child {
-  color: #ffffff;
-  font-size: 4rem;
+  color: #000000;
+  font-weight: bold;
+  font-size: 7rem;
   font-family: Poppins, "Source Sans Pro";
+  text-shadow: -1px -1px 0 #9c9c9c,  
+                1px -1px 0 #9c9c9c,
+               -1px  1px 0 #9c9c9c,
+                1px  1px 0 #9c9c9c;
 }
 
 .Slashtext-contents div:last-child {
-  color: #ffffff;
-  font-size: 4rem;
+  color: #000000;
+  font-weight: bold;
+  font-size: 7rem;
   font-family: Poppins, "Source Sans Pro";
+  text-shadow: -1px -1px 0 #9c9c9c,  
+                1px -1px 0 #9c9c9c,
+               -1px  1px 0 #9c9c9c,
+                1px  1px 0 #9c9c9c;
 }
 
 .slash-footer {

@@ -8,7 +8,7 @@ import swal from "sweetalert";
 import { Link } from "react-router-dom";
 // import { useAuth } from '../authorize/AuthContext';
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa"; // Import icons
-import SBFLOGO from "../../assets/image/sbflogo-noback.png";
+import SBFLOGO from "../../assets/image/SBF.png";
 import { jwtDecode } from 'jwt-decode';
 import {
   Eye,
@@ -129,12 +129,12 @@ const Login = () => {
     <div className="login-main-containers">
       <div className="left-login-containers">
         <div className="Slashtext-contents">
-          <div>SBF PHILIPPINES DRILLING RESOURCE</div>
+          <div>SBF PHILIPPINES DRILLING RESOURCES</div>
           <div>CORPORATION</div>
         </div>
 
         <div className="slash-footer">
-          <div>Copyright © 2023 CCJJ, All Rights Reserved.</div>
+          <div>Copyright © 2024 ELI IT Solutions, All Rights Reserved.</div>
         </div>
       </div>
 

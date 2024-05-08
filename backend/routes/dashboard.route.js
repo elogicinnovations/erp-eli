@@ -44,6 +44,46 @@ const ReceivingInitial_Prd = require("../db/models/receiving_initial_prd.model")
 
 // Get count all the issued products for DASHBOARD
 
+
+router.route('/fetchPrApproveProduct').get(async (req, res) => {
+  try {
+    const data = await PR_PO.findAll({
+        include: [{
+          model: PR,
+          required: true
+        },{
+          model: ProductTAGSupplier,
+          required: true,
+          include: [{
+            model: Product,
+            required: true
+          },{
+            model: Supplier,
+            required: true
+          },
+         ]
+        }],
+        where: {
+        date_approved: {
+            [Op.ne]: null
+          },
+          quantity: {
+            [Op.gt]: 0 // Quantity greater than 0
+          }
+        }
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 router.route("/Costing").post(async (req, res) => {
   try {
 

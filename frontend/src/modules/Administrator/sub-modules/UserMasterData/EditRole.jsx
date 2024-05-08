@@ -715,7 +715,6 @@ function EditRole() {
                           name="desc"
                           value={desc}
                           onChange={(e) => setDesc(e.target.value)}
-                          required
                         />
                       </Form.Group>
                     </div>

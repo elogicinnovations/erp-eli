@@ -145,7 +145,7 @@ function MasterList({ authrztn }) {
   const [formData, setFormData] = useState({
     cname: "",
     caddress: "",
-    cnum: "09",
+    cnum: "",
     cemail: "",
     cuname: "",
     crole: "",
@@ -158,7 +158,7 @@ function MasterList({ authrztn }) {
   const [updateFormData, setUpdateFormData] = useState({
     uaname: "",
     uaaddress: "",
-    uanum: "09",
+    uanum: "",
     uaemail: "",
     uauname: "",
     uarole: "",
@@ -310,13 +310,9 @@ function MasterList({ authrztn }) {
         [name]: checked,
       }));
     } else if (name === "cnum") {
-      // Check if the value contains only numbers, '+', and '-'
-      if (value.length === 1 && value !== "0") {
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: "0",
-        }));
-      } else {
+      const isValid = /^[0-9+()]*$/.test(value);
+
+      if (isValid) {
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
@@ -393,13 +389,9 @@ function MasterList({ authrztn }) {
           [name]: checked,
         }));
       } else if (name === "uanum") {
-        // Check if the value contains only numbers, '+', and '-'
-        if (value.length === 1 && value !== "0") {
-          setUpdateFormData((prevData) => ({
-            ...prevData,
-            [name]: "0",
-          }));
-        } else {
+        const isValid = /^[0-9+()]*$/.test(value);
+
+        if (isValid) {
           setUpdateFormData((prevData) => ({
             ...prevData,
             [name]: value,
@@ -1044,11 +1036,10 @@ function MasterList({ authrztn }) {
                     value={formData.cnum}
                     onChange={handleFormChange}
                     onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
+                      ["e", "E", "-"].includes(e.key) &&
                         e.preventDefault();
                     }}
                     name="cnum"
-                    maxLength={11}
                     required
                   />
                 </Form.Group>
@@ -1390,10 +1381,9 @@ function MasterList({ authrztn }) {
                   <Form.Control
                     type="text"
                     value={updateFormData.uanum}
-                    maxLength={11}
                     onChange={handleUpdateFormChange}
                     onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
+                      ["e", "E", "-"].includes(e.key) &&
                         e.preventDefault();
                     }}
                     name="uanum"

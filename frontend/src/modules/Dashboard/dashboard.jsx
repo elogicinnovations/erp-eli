@@ -46,6 +46,7 @@ import {
 
 import * as $ from "jquery";
 import Header from "../../partials/header";
+import { tr } from "date-fns/locale";
 
 const barColors = ["#8884d8", "#82ca9d", "#ffc658"];
 
@@ -68,7 +69,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
   const [countOrderGraph, setCountOrderGraph] = useState([]);
   const [countSupplierLeadGraph, setCountSupplierLeadGraph] = useState([]);
   const [ReceivingOverView, setReceivingOverView] = useState([]);
-
+  const [approvedProductPO, setApprovedProductPO] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [show, setShow] = useState(false);
@@ -158,6 +159,8 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
     setValidated(true); // for validations
   };
 
+  
+
   useEffect(() => {
 
     // --------------ROW 1 ----------------------
@@ -218,6 +221,10 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
       .catch((error) => console.error(error));
 
     // --------------ROW 3  ----------------------
+    axios
+      .get(BASE_URL + "/Dashboard/fetchPrApproveProduct")
+      .then((res) => setApprovedProductPO(res.data))
+      .catch((error) => console.error(error));
 
     axios
     .get(BASE_URL + "/Dashboard/receivingOverView")
@@ -272,6 +279,20 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
     // { name: "On Order", value: orderedCount },
   ];
 
+  const calculateDaysToGo = (dateApproved, daysTo) => {
+    // Extracting only the date part from the date_approved
+    const approvedDate = new Date(dateApproved);
+    const currentDate = new Date();
+    const approvedDateOnly = new Date(approvedDate.getFullYear(), approvedDate.getMonth(), approvedDate.getDate());
+    const currentDateOnly = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    
+    // Calculating the difference in days
+    const diffTime = Math.abs(currentDateOnly - approvedDateOnly);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return daysTo - diffDays;
+  };
+
   return (
     <div className="main-of-containers">
       
@@ -283,28 +304,6 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
         </div>
       ) : authrztn.includes("Dashboard - View") ? (
         <div className="dashboard-container">
-        {/* <div className="settings-search-master">
-              <div className="dropdown-and-iconic">
-                  <div className="dropdown-side">
-                      <div className="emp-text-side">
-                      </div>
-                  </div>
-                  <div className="iconic-side">
-                      <div className="gearsides">
-                          <Gear size={35}/>
-                      </div>
-                      <div className="bellsides">
-                          <Bell size={35}/>
-                      </div>
-                      <div className="usersides">
-                          <UserCircle size={35}/>
-                      </div>
-                      <div className="username">
-                        <h3>{username}</h3>
-                      </div>
-                  </div>
-              </div>
-            </div> */}
         <div className="dashboard-content">
           <div className="preview-tabs">
             <Link
@@ -502,6 +501,47 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
               </ResponsiveContainer>
             </div>
           </div>
+          <div className="po-overview">
+            <div className="dash-label" style={{ paddingBottom: "20px" }}>
+              Estimated Days to Deliver
+            </div>
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <table className="dash-table" >
+                  <thead>
+                    <tr>
+                      <th>PR Number</th>
+                      <th>PO Number</th>
+                      <th>Supplier Name</th>
+                      <th>Product Code</th>
+                      <th>Product Name</th>
+                      <th>Days From</th>
+                      <th>Days To</th>
+                      <th>Date Approved</th>
+                      <th>Days To Go</th>
+                    </tr>
+                  </thead>
+                  <tbody style={{ overflow: 'auto' }}>
+                  {approvedProductPO.map((prod, index) => (
+                      <tr key={index}>
+                        <td>{prod.purchase_req.pr_num}</td>
+                        <td>{prod.po_id}</td>
+                        <td>{prod.product_tag_supplier.supplier.supplier_name}</td>
+                        <td>{prod.product_tag_supplier.product.product_code}</td>
+                        <td>{prod.product_tag_supplier.product.product_name}</td>
+                        <td>{prod.days_from}</td>
+                        <td>{prod.days_to}</td>
+                        <td>{formatDatetime(prod.date_approved)}</td>
+                        <td>{calculateDaysToGo(prod.date_approved, prod.days_to)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          
           <div className="po-overview">
             <div className="dash-label" style={{ paddingBottom: "20px" }}>
               Receiving Order Overview
