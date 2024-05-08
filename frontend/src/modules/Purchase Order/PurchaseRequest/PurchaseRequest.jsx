@@ -67,6 +67,7 @@ function PurchaseRequest({ authrztn }) {
   const [showRejustify, setshowRejustify] = useState(false);
   const [Rejustifyremarks, setRejustifyremarks] = useState("");
   const [rejustifyFileURL, setRejustifyFileURL] = useState("");
+  const [department, setDepartment] = useState('');
   const [RejustifyFile, setRejustifyFile] = useState([]);
   const handleCloseRejustify = () => setshowRejustify(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,6 +77,9 @@ function PurchaseRequest({ authrztn }) {
     var token = localStorage.getItem("accessToken");
     if (typeof token === "string") {
       var decoded = jwtDecode(token);
+
+      // console.log(decoded)
+      setDepartment(decoded.department_id)
       setuserId(decoded.id);
     }
   };
@@ -596,237 +600,500 @@ function PurchaseRequest({ authrztn }) {
                     <tbody>
                       {currentItems.map((data, i) => (
                         <React.Fragment key={i}>
-                          <tr>
-                            <td>
-                              <IconButton
-                                aria-label="expand row"
-                                size="small"
-                                onClick={() => handleRowToggle(data.id)}
-                              >
-                                {openRows === data.id ? (
-                                  <KeyboardArrowUpIcon
-                                    style={{ fontSize: 25 }}
-                                  />
-                                ) : (
-                                  <KeyboardArrowDownIcon
-                                    style={{ fontSize: 25 }}
-                                  />
-                                )}
-                              </IconButton>
-                            </td>
-                            <td
-                              onClick={() =>
-                                data.status === "For-Canvassing"
-                                  ? navigate(`/forCanvass/${data.id}`)
-                                  : data.status === "On-Canvass"
-                                  ? navigate(`/onCanvass/${data.id}`)
-                                  : navigate(
-                                      `/purchaseRequestPreview/${data.id}`
-                                    )
-                              }
-                            >
-                              {data.pr_num}
-                            </td>
-                            <td
-                              onClick={() =>
-                                data.status === "For-Canvassing"
-                                  ? navigate(`/forCanvass/${data.id}`)
-                                  : data.status === "On-Canvass"
-                                  ? navigate(`/onCanvass/${data.id}`)
-                                  : navigate(
-                                      `/purchaseRequestPreview/${data.id}`
-                                    )
-                              }
-                            >
-                              {data.masterlist.col_Fname}
-                            </td>
-                            <td
-                              onClick={() =>
-                                data.status === "For-Canvassing"
-                                  ? navigate(`/forCanvass/${data.id}`)
-                                  : data.status === "On-Canvass"
-                                  ? navigate(`/onCanvass/${data.id}`)
-                                  : navigate(
-                                      `/purchaseRequestPreview/${data.id}`
-                                    )
-                              }
-                            >
-                              {data.masterlist.department.department_name}
-                            </td>
-                            <td
-                              onClick={() =>
-                                data.status === "For-Canvassing"
-                                  ? navigate(`/forCanvass/${data.id}`)
-                                  : data.status === "On-Canvass"
-                                  ? navigate(`/onCanvass/${data.id}`)
-                                  : navigate(
-                                      `/purchaseRequestPreview/${data.id}`
-                                    )
-                              }
-                            >
-                              <div
-                                style={{
-                                  backgroundColor: "#5C636A",
-                                  fontSize: "10px",
-                                  color: "white",
-                                  padding: "5px",
-                                  borderRadius: "5px",
-                                  textAlign: "center",
-                                  width: "105px",
-                                }}
-                              >
-                                {data.status === 'For-Rejustify' ? 'Rejustified' : data.status}
-                              </div>
-                            </td>
-                            <td
-                              onClick={() =>
-                                data.status === "For-Canvassing"
-                                  ? navigate(`/forCanvass/${data.id}`)
-                                  : data.status === "On-Canvass"
-                                  ? navigate(`/onCanvass/${data.id}`)
-                                  : navigate(
-                                      `/purchaseRequestPreview/${data.id}`
-                                    )
-                              }
-                              style={{ fontSize: "12px" }}
-                            >
-                              {formatDatetime(data.createdAt)}
-                            </td>
-                            <td
-                              onClick={() =>
-                                data.status === "For-Canvassing"
-                                  ? navigate(`/forCanvass/${data.id}`)
-                                  : data.status === "On-Canvass"
-                                  ? navigate(`/onCanvass/${data.id}`)
-                                  : navigate(
-                                      `/purchaseRequestPreview/${data.id}`
-                                    )
-                              }
-                            >
-                              {data.remarks}
-                            </td>
-                            <td>
-                              <div className="d-flex flex-direction-row align-items-center">
-                                {authrztn.includes("PR - Reject") &&
-                                  data.status !== "Cancelled" &&
-                                  data.status !== "Rejected" &&
-                                  data.status !== "For-Rejustify" &&
-                                  data.status !== "For-Canvassing" &&
-                                  data.status !== "On-Canvass" &&
-                                  data.status !== "For-Approval (PO)" &&
-                                  data.status !== "To-Receive" &&
-                                  data.status !== "Delivered" && (
-                                    <button
-                                      className="btn btn-danger"
-                                      onClick={() =>
-                                        CancelRequest(data.id, data.status)
-                                      }
-                                    >
-                                      Cancel
-                                    </button>
-                                  )}
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              style={{
-                                paddingBottom: 0,
-                                paddingTop: 0,
-                                backgroundColor: "#F5EFED",
-                              }}
-                              colSpan="8"
-                            >
-                              <Collapse
-                                in={openRows === data.id}
-                                timeout="auto"
-                                unmountOnExit
-                              >
-                                <div style={{ width: "95%" }}>
-                                  <thead
+                          {department === 1 ? (
+                            <>
+                              <tr>
+                                <td>
+                                  <IconButton
+                                    aria-label="expand row"
+                                    size="small"
+                                    onClick={() => handleRowToggle(data.id)}
+                                  >
+                                    {openRows === data.id ? (
+                                      <KeyboardArrowUpIcon
+                                        style={{ fontSize: 25 }}
+                                      />
+                                    ) : (
+                                      <KeyboardArrowDownIcon
+                                        style={{ fontSize: 25 }}
+                                      />
+                                    )}
+                                  </IconButton>
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    data.status === "For-Canvassing"
+                                      ? navigate(`/forCanvass/${data.id}`)
+                                      : data.status === "On-Canvass"
+                                        ? navigate(`/onCanvass/${data.id}`)
+                                        : navigate(
+                                          `/purchaseRequestPreview/${data.id}`
+                                        )
+                                  }
+                                >
+                                  {data.pr_num}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    data.status === "For-Canvassing"
+                                      ? navigate(`/forCanvass/${data.id}`)
+                                      : data.status === "On-Canvass"
+                                        ? navigate(`/onCanvass/${data.id}`)
+                                        : navigate(
+                                          `/purchaseRequestPreview/${data.id}`
+                                        )
+                                  }
+                                >
+                                  {data.masterlist.col_Fname}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    data.status === "For-Canvassing"
+                                      ? navigate(`/forCanvass/${data.id}`)
+                                      : data.status === "On-Canvass"
+                                        ? navigate(`/onCanvass/${data.id}`)
+                                        : navigate(
+                                          `/purchaseRequestPreview/${data.id}`
+                                        )
+                                  }
+                                >
+                                  {data.masterlist.department.department_name}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    data.status === "For-Canvassing"
+                                      ? navigate(`/forCanvass/${data.id}`)
+                                      : data.status === "On-Canvass"
+                                        ? navigate(`/onCanvass/${data.id}`)
+                                        : navigate(
+                                          `/purchaseRequestPreview/${data.id}`
+                                        )
+                                  }
+                                >
+                                  <div
                                     style={{
-                                      borderBottom: "1px solid #CECECE",
+                                      backgroundColor: "#5C636A",
+                                      fontSize: "10px",
+                                      color: "white",
+                                      padding: "5px",
+                                      borderRadius: "5px",
+                                      textAlign: "center",
+                                      width: "105px",
                                     }}
                                   >
-                                    <tr>
-                                      <th
+                                    {data.status === 'For-Rejustify' ? 'Rejustified' : data.status}
+                                  </div>
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    data.status === "For-Canvassing"
+                                      ? navigate(`/forCanvass/${data.id}`)
+                                      : data.status === "On-Canvass"
+                                        ? navigate(`/onCanvass/${data.id}`)
+                                        : navigate(
+                                          `/purchaseRequestPreview/${data.id}`
+                                        )
+                                  }
+                                  style={{ fontSize: "12px" }}
+                                >
+                                  {formatDatetime(data.createdAt)}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    data.status === "For-Canvassing"
+                                      ? navigate(`/forCanvass/${data.id}`)
+                                      : data.status === "On-Canvass"
+                                        ? navigate(`/onCanvass/${data.id}`)
+                                        : navigate(
+                                          `/purchaseRequestPreview/${data.id}`
+                                        )
+                                  }
+                                >
+                                  {data.remarks}
+                                </td>
+                                <td>
+                                  {department === data.masterlist.department_id ? (
+                                    <>
+                                      <div className="d-flex flex-direction-row align-items-center">
+                                        {authrztn.includes("PR - Reject") &&
+                                          data.status !== "Cancelled" &&
+                                          data.status !== "Rejected" &&
+                                          data.status !== "For-Rejustify" &&
+                                          data.status !== "For-Canvassing" &&
+                                          data.status !== "On-Canvass" &&
+                                          data.status !== "For-Approval (PO)" &&
+                                          data.status !== "To-Receive" &&
+                                          data.status !== "Delivered" && (
+                                            <button
+                                              className="btn btn-danger"
+                                              onClick={() =>
+                                                CancelRequest(data.id, data.status)
+                                              }
+                                            >
+                                              Cancel
+                                            </button>
+                                          )}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <></>
+                                  )}
+
+                                </td>
+                              </tr>
+                              <tr>
+                                <td
+                                  style={{
+                                    paddingBottom: 0,
+                                    paddingTop: 0,
+                                    backgroundColor: "#F5EFED",
+                                  }}
+                                  colSpan="8"
+                                >
+                                  <Collapse
+                                    in={openRows === data.id}
+                                    timeout="auto"
+                                    unmountOnExit
+                                  >
+                                    <div style={{ width: "95%" }}>
+                                      <thead
                                         style={{
-                                          backgroundColor: "inherit",
-                                          fontFamily: "Arial, sans-serif",
-                                          fontWeight: "bold",
+                                          borderBottom: "1px solid #CECECE",
                                         }}
                                       >
-                                        Status
-                                      </th>
-                                      <th
-                                        style={{
-                                          backgroundColor: "inherit",
-                                          fontFamily: "Arial, sans-serif",
-                                          fontWeight: "bold",
-                                        }}
-                                      >
-                                        Date
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {specificPR.map((history, i) => (
-                                      <tr key={i}>
-                                        {history.status === "For-Rejustify" ? (
-                                          <td
+                                        <tr>
+                                          <th
                                             style={{
-                                              fontSize: "14px",
-                                              padding: "10px",
+                                              backgroundColor: "inherit",
                                               fontFamily: "Arial, sans-serif",
-                                            }}
-                                            onClick={() => {
-                                              handleRejustify(
-                                                history.pr_id,
-                                                history.createdAt
-                                              );
+                                              fontWeight: "bold",
                                             }}
                                           >
-                                            <div
-                                              className="for-rejustify"
+                                            Status
+                                          </th>
+                                          <th
+                                            style={{
+                                              backgroundColor: "inherit",
+                                              fontFamily: "Arial, sans-serif",
+                                              fontWeight: "bold",
+                                            }}
+                                          >
+                                            Date
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {specificPR.map((history, i) => (
+                                          <tr key={i}>
+                                            {history.status === "For-Rejustify" ? (
+                                              <td
+                                                style={{
+                                                  fontSize: "14px",
+                                                  padding: "10px",
+                                                  fontFamily: "Arial, sans-serif",
+                                                }}
+                                                onClick={() => {
+                                                  handleRejustify(
+                                                    history.pr_id,
+                                                    history.createdAt
+                                                  );
+                                                }}
+                                              >
+                                                <div
+                                                  className="for-rejustify"
+                                                  style={{
+                                                    color: "white",
+                                                    padding: "5px",
+                                                    borderRadius: "5px",
+                                                    textAlign: "center",
+                                                    width: "100px",
+                                                    backgroundColor: "red",
+                                                  }}
+                                                >
+                                                  {history.status === "For-Rejustify" ? 'Rejustified' : history.status}
+                                                </div>
+                                              </td>
+                                            ) : (
+                                              <td
+                                                style={{
+                                                  fontSize: "14px",
+                                                  padding: "10px",
+                                                  fontFamily: "Arial, sans-serif",
+                                                }}
+                                              >
+                                                {history.status}
+                                              </td>
+                                            )}
+                                            <td
                                               style={{
-                                                color: "white",
-                                                padding: "5px",
-                                                borderRadius: "5px",
-                                                textAlign: "center",
-                                                width: "100px",
-                                                backgroundColor: "red",
+                                                fontSize: "14px",
+                                                padding: "10px",
+                                                fontFamily: "Arial, sans-serif",
                                               }}
                                             >
-                                              {history.status === "For-Rejustify" ? 'Rejustified' : history.status}
-                                            </div>
-                                          </td>
+                                              {formatDatetime(history.createdAt)}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </div>
+                                  </Collapse>
+                                </td>
+                              </tr>
+                            </>
+                          ) : (
+                            <>
+                              {department === data.masterlist.department_id ? (
+                                <>
+                                  <tr>
+                                    <td>
+                                      <IconButton
+                                        aria-label="expand row"
+                                        size="small"
+                                        onClick={() => handleRowToggle(data.id)}
+                                      >
+                                        {openRows === data.id ? (
+                                          <KeyboardArrowUpIcon
+                                            style={{ fontSize: 25 }}
+                                          />
                                         ) : (
-                                          <td
+                                          <KeyboardArrowDownIcon
+                                            style={{ fontSize: 25 }}
+                                          />
+                                        )}
+                                      </IconButton>
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        data.status === "For-Canvassing"
+                                          ? navigate(`/forCanvass/${data.id}`)
+                                          : data.status === "On-Canvass"
+                                            ? navigate(`/onCanvass/${data.id}`)
+                                            : navigate(
+                                              `/purchaseRequestPreview/${data.id}`
+                                            )
+                                      }
+                                    >
+                                      {data.pr_num}
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        data.status === "For-Canvassing"
+                                          ? navigate(`/forCanvass/${data.id}`)
+                                          : data.status === "On-Canvass"
+                                            ? navigate(`/onCanvass/${data.id}`)
+                                            : navigate(
+                                              `/purchaseRequestPreview/${data.id}`
+                                            )
+                                      }
+                                    >
+                                      {data.masterlist.col_Fname}
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        data.status === "For-Canvassing"
+                                          ? navigate(`/forCanvass/${data.id}`)
+                                          : data.status === "On-Canvass"
+                                            ? navigate(`/onCanvass/${data.id}`)
+                                            : navigate(
+                                              `/purchaseRequestPreview/${data.id}`
+                                            )
+                                      }
+                                    >
+                                      {data.masterlist.department.department_name}
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        data.status === "For-Canvassing"
+                                          ? navigate(`/forCanvass/${data.id}`)
+                                          : data.status === "On-Canvass"
+                                            ? navigate(`/onCanvass/${data.id}`)
+                                            : navigate(
+                                              `/purchaseRequestPreview/${data.id}`
+                                            )
+                                      }
+                                    >
+                                      <div
+                                        style={{
+                                          backgroundColor: "#5C636A",
+                                          fontSize: "10px",
+                                          color: "white",
+                                          padding: "5px",
+                                          borderRadius: "5px",
+                                          textAlign: "center",
+                                          width: "105px",
+                                        }}
+                                      >
+                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status}
+                                      </div>
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        data.status === "For-Canvassing"
+                                          ? navigate(`/forCanvass/${data.id}`)
+                                          : data.status === "On-Canvass"
+                                            ? navigate(`/onCanvass/${data.id}`)
+                                            : navigate(
+                                              `/purchaseRequestPreview/${data.id}`
+                                            )
+                                      }
+                                      style={{ fontSize: "12px" }}
+                                    >
+                                      {formatDatetime(data.createdAt)}
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        data.status === "For-Canvassing"
+                                          ? navigate(`/forCanvass/${data.id}`)
+                                          : data.status === "On-Canvass"
+                                            ? navigate(`/onCanvass/${data.id}`)
+                                            : navigate(
+                                              `/purchaseRequestPreview/${data.id}`
+                                            )
+                                      }
+                                    >
+                                      {data.remarks}
+                                    </td>
+                                    <td>
+                                      {department === data.masterlist.department_id ? (
+                                        <>
+                                          <div className="d-flex flex-direction-row align-items-center">
+                                            {authrztn.includes("PR - Reject") &&
+                                              data.status !== "Cancelled" &&
+                                              data.status !== "Rejected" &&
+                                              data.status !== "For-Rejustify" &&
+                                              data.status !== "For-Canvassing" &&
+                                              data.status !== "On-Canvass" &&
+                                              data.status !== "For-Approval (PO)" &&
+                                              data.status !== "To-Receive" &&
+                                              data.status !== "Delivered" && (
+                                                <button
+                                                  className="btn btn-danger"
+                                                  onClick={() =>
+                                                    CancelRequest(data.id, data.status)
+                                                  }
+                                                >
+                                                  Cancel
+                                                </button>
+                                              )}
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td
+                                      style={{
+                                        paddingBottom: 0,
+                                        paddingTop: 0,
+                                        backgroundColor: "#F5EFED",
+                                      }}
+                                      colSpan="8"
+                                    >
+                                      <Collapse
+                                        in={openRows === data.id}
+                                        timeout="auto"
+                                        unmountOnExit
+                                      >
+                                        <div style={{ width: "95%" }}>
+                                          <thead
                                             style={{
-                                              fontSize: "14px",
-                                              padding: "10px",
-                                              fontFamily: "Arial, sans-serif",
+                                              borderBottom: "1px solid #CECECE",
                                             }}
                                           >
-                                            {history.status}
-                                          </td>
-                                        )}
-                                        <td
-                                          style={{
-                                            fontSize: "14px",
-                                            padding: "10px",
-                                            fontFamily: "Arial, sans-serif",
-                                          }}
-                                        >
-                                          {formatDatetime(history.createdAt)}
-                                        </td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </div>
-                              </Collapse>
-                            </td>
-                          </tr>
+                                            <tr>
+                                              <th
+                                                style={{
+                                                  backgroundColor: "inherit",
+                                                  fontFamily: "Arial, sans-serif",
+                                                  fontWeight: "bold",
+                                                }}
+                                              >
+                                                Status
+                                              </th>
+                                              <th
+                                                style={{
+                                                  backgroundColor: "inherit",
+                                                  fontFamily: "Arial, sans-serif",
+                                                  fontWeight: "bold",
+                                                }}
+                                              >
+                                                Date
+                                              </th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {specificPR.map((history, i) => (
+                                              <tr key={i}>
+                                                {history.status === "For-Rejustify" ? (
+                                                  <td
+                                                    style={{
+                                                      fontSize: "14px",
+                                                      padding: "10px",
+                                                      fontFamily: "Arial, sans-serif",
+                                                    }}
+                                                    onClick={() => {
+                                                      handleRejustify(
+                                                        history.pr_id,
+                                                        history.createdAt
+                                                      );
+                                                    }}
+                                                  >
+                                                    <div
+                                                      className="for-rejustify"
+                                                      style={{
+                                                        color: "white",
+                                                        padding: "5px",
+                                                        borderRadius: "5px",
+                                                        textAlign: "center",
+                                                        width: "100px",
+                                                        backgroundColor: "red",
+                                                      }}
+                                                    >
+                                                      {history.status === "For-Rejustify" ? 'Rejustified' : history.status}
+                                                    </div>
+                                                  </td>
+                                                ) : (
+                                                  <td
+                                                    style={{
+                                                      fontSize: "14px",
+                                                      padding: "10px",
+                                                      fontFamily: "Arial, sans-serif",
+                                                    }}
+                                                  >
+                                                    {history.status}
+                                                  </td>
+                                                )}
+                                                <td
+                                                  style={{
+                                                    fontSize: "14px",
+                                                    padding: "10px",
+                                                    fontFamily: "Arial, sans-serif",
+                                                  }}
+                                                >
+                                                  {formatDatetime(history.createdAt)}
+                                                </td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </div>
+                                      </Collapse>
+                                    </td>
+                                  </tr>
+                                </>
+                              ) : (
+                                <>
+
+                                </>
+                              )}
+
+                            </>
+                          )}
+
+
                         </React.Fragment>
                       ))}
                     </tbody>
@@ -841,9 +1108,8 @@ function PurchaseRequest({ authrztn }) {
                 <nav style={{ marginTop: "15px" }}>
                   <ul className="pagination" style={{ float: "right" }}>
                     <li
-                      className={`page-item ${
-                        currentPage === 1 ? "disabled" : ""
-                      }`}
+                      className={`page-item ${currentPage === 1 ? "disabled" : ""
+                        }`}
                     >
                       <button
                         type="button"

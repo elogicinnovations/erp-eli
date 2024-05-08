@@ -2,7 +2,7 @@ const router = require('express').Router()
 const {where, Op} = require('sequelize')
 const sequelize = require('../db/config/sequelize.config');
 // const PR_Rejustify = require('../db/models/pr_rejustify.model')
-const {PR_history, PR_Rejustify, PR, Activity_Log} = require('../db/models/associations')
+const {PR_history, PR_Rejustify, PR, Activity_Log, PR_PO} = require('../db/models/associations')
 const session = require('express-session')
 const multer = require('multer');
 
@@ -81,7 +81,7 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
 
   router.post('/rejustify_for_PO', upload.single('file'), async (req, res) => {
     try {
-      const { id, remarks, userId } = req.body;
+      const { id, remarks, userId, po_idRejustify } = req.body;
       const file = req.file;
 
       let mimeType = null;
@@ -95,6 +95,7 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
       const result = await PR_Rejustify.create({
         file: file ? file.buffer : null,
         pr_id: id,
+        po_id: po_idRejustify,
         remarks: remarks,
         mimeType: mimeType,
         fileExtension: fileExtension,
@@ -103,22 +104,23 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
       
       const PR_historical = await PR_history.create({
         pr_id: id,
+        po_id: po_idRejustify,
         status: 'For-Rejustify (PO)',
         remarks: remarks
       });
 
 
-      const PR_newData = await PR.update({
+      const PR_newData = await PR_PO.update({
         status: 'For-Rejustify (PO)'
       },
       {
-        where: { id }
+        where: { po_id: po_idRejustify }
       }); 
 
       if(PR_newData){
-        const forPR = await PR.findOne({
+        const forPR = await PR_PO.findOne({
           where: {
-            id: id,
+            po_id: po_idRejustify,
           },
         });
 
@@ -126,7 +128,7 @@ router.post('/rejustify', upload.single('file'), async (req, res) => {
 
         await Activity_Log.create({
           masterlist_id: userId,
-          action_taken: `The Purchase Order has been Rejustified with pr number ${PRnum}`,
+          action_taken: `The Purchase Order has been Rejustified with po number ${po_idRejustify}`,
         });
       }
   

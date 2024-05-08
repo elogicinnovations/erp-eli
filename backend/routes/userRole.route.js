@@ -7,6 +7,7 @@ const {
   UserRole,
   Warehouses,
   Activity_Log,
+  Department,
 } = require("../db/models/associations");
 const session = require("express-session");
 
@@ -251,6 +252,27 @@ router.route("/rbacautoadd").post(async (req, res) => {
       warehouse_name: "Main",
       location: "Agusan",
       details: "",
+    });
+
+    //for department (MCD)
+    const existingDEpt = await Department.findOne({
+      where: {
+        id: 1,
+        department_name: "MATERIAL CONTROL DEPARTMENT",
+      },
+    });
+
+    if (existingDEpt) {
+      return res
+        .status(200)
+        .json({
+          message:
+            "Warehouse with the specified name and location already exists",
+        });
+    }
+
+    const newDept = await Department.create({
+      department_name: "MATERIAL CONTROL DEPARTMENT",
     });
 
     res.status(201).json(newUseradmin);

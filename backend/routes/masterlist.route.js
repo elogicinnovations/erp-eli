@@ -143,6 +143,7 @@ router.route("/login").post(async (req, res) => {
         id: user.col_id,
         Fname: user.col_Fname,
         userrole: user.userRole.col_rolename,
+        department_id: user.department_id
       };
       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
       res.cookie("access-token", accessToken, {});

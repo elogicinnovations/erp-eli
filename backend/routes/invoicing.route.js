@@ -361,6 +361,7 @@ router.route("/fetchPOarray").get(async (req, res) => {
                 ["product_code", "code"],
                 ["product_name", "name"],
                 ["product_unitMeasurement", "uom"],
+                ["part_number", "part_number"],
               ],
             },
             {
