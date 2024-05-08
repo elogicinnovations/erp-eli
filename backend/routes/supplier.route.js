@@ -59,9 +59,9 @@ let nextCategoryCode;
 if (lastCategory) {
     const lastCode = lastCategory.supplier_code;
     const lastNumber = parseInt(lastCode.substring(1), 10);
-    nextCategoryCode = 'S' + (lastNumber + 1).toString().padStart(6, '0');
+    nextCategoryCode = 'S' + (lastNumber + 1).toString().padStart(5, '0');
 } else {
-    nextCategoryCode = 'S000001'; // Initial category code
+    nextCategoryCode = 'S00001'; // Initial category code
 }
 
 res.json({ nextCategoryCode });
