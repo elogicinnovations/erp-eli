@@ -799,20 +799,28 @@ function ReceivingManagementPreview({ authrztn }) {
                         </div>
 
                         <div className="third-div-content">
+
+                        {group.items[0].item.status === null ? (
+                          <>
+                            PO Approval Required
+                          </>
+                        ) : (
                           <div className="button-supp-data">
-                            <button
-                              className="btn btn-warning"
-                              onClick={() => handleReceived(group.title)}
-                            >
-                              Receive
-                            </button>
-                            <button
-                              className="btn btn-success"
-                              onClick={() => handleViewTransaction(group.title)}
-                            >
-                              View
-                            </button>
-                          </div>
+                          <button
+                            className="btn btn-warning"
+                            onClick={() => handleReceived(group.title)}
+                          >
+                            Receive
+                          </button>
+                          <button
+                            className="btn btn-success"
+                            onClick={() => handleViewTransaction(group.title)}
+                          >
+                            View
+                          </button>
+                        </div>
+                        )}
+                          
                         </div>
                       </div>
                     )}

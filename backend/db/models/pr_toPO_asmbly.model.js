@@ -39,6 +39,14 @@ const PR_PO_asmbly = sequelize.define('purchase_req_canvassed_asmbly', {
   quality_assurance: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 });
 

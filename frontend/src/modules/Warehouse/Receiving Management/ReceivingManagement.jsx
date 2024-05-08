@@ -441,7 +441,7 @@ function ReceivingManagement({ authrztn }) {
                               navigate(`/viewToReceive/${data.id}`)
                             }
                           >
-                            {data.status}
+                            {data.status === 'To-Receive (Partial)' ? 'To-Receive' : data.status}
                           </td>
                           <td
                             onClick={() =>
@@ -508,8 +508,9 @@ function ReceivingManagement({ authrztn }) {
                           <td
                             onClick={() =>
                               data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingPreview/${data.id}`) 
+                              )
+                              : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
                               ) : (
                                 <></>

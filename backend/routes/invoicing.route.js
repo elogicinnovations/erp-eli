@@ -552,17 +552,32 @@ router.route("/fetchPOarray").get(async (req, res) => {
 
 router.route("/approve_PO").post(async (req, res) => {
   try {
-    const { id, POarray, prNum, userId, formattedDateApproved } = req.body;
+    const { id, imageData, prNum, userId, POarray, formattedDateApproved, po_idApproval } = req.body;
     const gmailEmail = "sbfmailer@gmail.com";
     const gmailPassword = "uoetasnknsroxwnq";
 
-    POarray.forEach(async (group, index) => {
-      // console.log(group)
-      let toSendEmail = group.items[0].suppliers.supplier_email;
+    const findEmail = await PR_PO.findAll({
+      where:{
+        po_id: po_idApproval
+      },
+      include:[{
+        model: ProductTAGSupplier,
+        required: true,
+          include: [{
+            model: Supplier,
+            required: true
+          }]
+      }]
+    })
+
+    let toSendEmail = findEmail[0].product_tag_supplier.supplier.supplier_email;
+    // console.log(`findEmail`)
+
+    // console.log(toSendEmail)
 
       // Convert base64 image data to binary buffer
-      const imageData = group.imageData.split(";base64,").pop();
-      const imageBuffer = Buffer.from(imageData, "base64");
+      const imageDatas = imageData.split(";base64,").pop();
+      const imageBuffer = Buffer.from(imageDatas, "base64");
 
       // Create a PDF document
       const doc = new PDFDocument();
@@ -609,39 +624,153 @@ router.route("/approve_PO").post(async (req, res) => {
       });
 
       doc.end();
-    });
 
-    const PR_newData = await PR.update({
-      status: 'To-Receive',
+    // POarray.forEach(async (group, index) => {
+    //   // console.log(group)
+    //   let toSendEmail = group.items[0].suppliers.supplier_email;
+
+    //   // Convert base64 image data to binary buffer
+    //   const imageDatas = imageData.split(";base64,").pop();
+    //   const imageBuffer = Buffer.from(imageDatas, "base64");
+
+    //   // Create a PDF document
+    //   const doc = new PDFDocument();
+    //   const pdfBuffers = [];
+
+    //   // Add the image to the PDF
+    //   doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
+    //   doc.on("data", (chunk) => pdfBuffers.push(chunk));
+
+    //   // Listen for the end of the document
+    //   doc.on('end', () => {
+    //     // Create a nodemailer transporter
+    //     const transporter = nodemailer.createTransport({
+    //       service: "gmail",
+    //       auth: {
+    //         user: gmailEmail,
+    //         pass: gmailPassword,
+    //       },
+    //     });
+
+    //     // Define email options
+    //     const mailOptions = {
+    //       from: gmailEmail,
+    //       to: toSendEmail,
+    //       subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+    //       text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
+    //       attachments: [
+    //         {
+    //           filename: `purchase_order.pdf`, // Unique filename for each PDF
+    //           content: Buffer.concat(pdfBuffers),
+    //         },
+    //       ],
+    //     };
+
+    //     // Send the email
+    //     transporter.sendMail(mailOptions, (error, info) => {
+    //       if (error) {
+    //         console.log("Error sending email:", error);
+    //       } else {
+    //         console.log("Email Sent:", info);
+            
+    //       }
+    //     });
+    //   });
+
+    //   doc.end();
+    // });
+
+    const PO_Approved = await PR_PO.update({
+      status: 'Approved',
       date_approved: formattedDateApproved
     },
     {
-      where: { id: id }
+      where: { po_id: po_idApproval }
     });
+   
+    // POarray.forEach(async (group, index) => {
+      
+    // })
 
-    const PR_historical = await PR_history.create({
-      pr_id: id,
-      status: 'To-Receive',
-      isRead: 1,
-      date_approved: formattedDateApproved
-    });
 
-    if (PR_newData) {
-      const forPR = await PR.findOne({
-        where: {
-          id: id,
-        },
+    const isAPproved = await PR_PO.count({
+      where:{
+        status: null,
+        pr_id: id
+      }
+    })
+
+    console.log(isAPproved)
+
+    if(isAPproved === 0){
+      const PR_newData = await PR.update({
+        status: 'To-Receive',
+        date_approved: formattedDateApproved
+      },
+      {
+        where: { id: id }
       });
 
-      const PRnum = forPR.pr_num;
-
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `The Purchase Order is being To-Receive with pr number ${PRnum}`,
+      const PR_historical = await PR_history.create({
+        pr_id: id,
+        status: 'To-Receive',
+        isRead: 1,
+        date_approved: formattedDateApproved
       });
 
+      if (PR_newData) {
+        const forPR = await PR.findOne({
+          where: {
+            id: id,
+          },
+        });
+
+        const PRnum = forPR.pr_num;
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `The Purchase Order number ${po_idApproval} is being approved with pr number ${PRnum}`,
+        });
+      }
+      res.status(200).json();
+     
+    } else{
+      const PR_newData = await PR.update({
+        status: 'To-Receive (Partial)',
+        // date_approved: formattedDateApproved
+      },
+      {
+        where: { id: id }
+      });
+
+      const PR_historical = await PR_history.create({
+        pr_id: id,
+        status: 'To-Receive (Partial)',
+        isRead: 1,
+        // date_approved: formattedDateApproved
+      });
+
+      if (PR_newData) {
+        const forPR = await PR.findOne({
+          where: {
+            id: id,
+          },
+        });
+
+        const PRnum = forPR.pr_num;
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `The Purchase Order number ${po_idApproval} is being approved with pr number ${PRnum}`,
+        });
+
+       
+      }
       res.status(200).json();
     }
+
+
+
 
     
   } catch (err) {
