@@ -504,6 +504,8 @@ function PurchaseOrderList({ authrztn }) {
                                   ? navigate(`/PO_approvalRejustify/${data.id}`)
                                   : data.status === "For-Rejustify (PO)"
                                   ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  :  data.status === "To-Receive (Partial)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
                                   : data.status === "To-Receive"
                                   ? navigate(`/PO_receive/${data.id}`)
                                   : navigate(
@@ -515,32 +517,37 @@ function PurchaseOrderList({ authrztn }) {
                             </td>
 
                             <td
-                              onClick={() =>
-                                data.status === "For-Approval (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "For-Rejustify (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "To-Receive"
-                                  ? navigate(`/PO_receive/${data.id}`)
-                                  : navigate(
-                                      `/purchaseOrderListPreview/${data.id}`
-                                    )
-                              }
+                             
+                                onClick={() =>
+                                  data.status === "For-Approval (PO)"
+                                    ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                    : data.status === "For-Rejustify (PO)"
+                                    ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                    :  data.status === "To-Receive (Partial)"
+                                    ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                    : data.status === "To-Receive"
+                                    ? navigate(`/PO_receive/${data.id}`)
+                                    : navigate(
+                                        `/purchaseOrderListPreview/${data.id}`
+                                      )
+                                }
                             >
                               {data.masterlist.col_Fname}
                             </td>
                             <td
-                              onClick={() =>
-                                data.status === "For-Approval (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "For-Rejustify (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "To-Receive"
-                                  ? navigate(`/PO_receive/${data.id}`)
-                                  : navigate(
-                                      `/purchaseOrderListPreview/${data.id}`
-                                    )
-                              }
+                             onClick={() =>
+                              data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                :  data.status === "To-Receive (Partial)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "To-Receive"
+                                ? navigate(`/PO_receive/${data.id}`)
+                                : navigate(
+                                    `/purchaseOrderListPreview/${data.id}`
+                                  )
+                            }
                             >
                               {data.masterlist.department.department_name}
                             </td>
@@ -550,6 +557,8 @@ function PurchaseOrderList({ authrztn }) {
                                 data.status === "For-Approval (PO)"
                                   ? navigate(`/PO_approvalRejustify/${data.id}`)
                                   : data.status === "For-Rejustify (PO)"
+                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                  :  data.status === "To-Receive (Partial)"
                                   ? navigate(`/PO_approvalRejustify/${data.id}`)
                                   : data.status === "To-Receive"
                                   ? navigate(`/PO_receive/${data.id}`)
@@ -566,38 +575,45 @@ function PurchaseOrderList({ authrztn }) {
                                   ? "For Approval"
                                   : data.status === "For-Rejustify (PO)"
                                   ? "For Rejustify"
+                                  : data.status === "To-Receive (Partial)"
+                                  ? "For Approval"
                                   : data.status}
                               </button>
                             </td>
 
                             <td
-                              onClick={() =>
-                                data.status === "For-Approval (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "For-Rejustify (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "To-Receive"
-                                  ? navigate(`/PO_receive/${data.id}`)
-                                  : navigate(
-                                      `/purchaseOrderListPreview/${data.id}`
-                                    )
-                              }
+                             onClick={() =>
+                              data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                :  data.status === "To-Receive (Partial)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "To-Receive"
+                                ? navigate(`/PO_receive/${data.id}`)
+                                : navigate(
+                                    `/purchaseOrderListPreview/${data.id}`
+                                  )
+                            }
                             >
                               {formatDatetime(data.updatedAt)}
                             </td>
 
                             <td
-                              onClick={() =>
-                                data.status === "For-Approval (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "For-Rejustify (PO)"
-                                  ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                  : data.status === "To-Receive"
-                                  ? navigate(`/PO_receive/${data.id}`)
-                                  : navigate(
-                                      `/purchaseOrderListPreview/${data.id}`
-                                    )
-                              }
+                             
+                                onClick={() =>
+                                  data.status === "For-Approval (PO)"
+                                    ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                    : data.status === "For-Rejustify (PO)"
+                                    ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                    :  data.status === "To-Receive (Partial)"
+                                    ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                    : data.status === "To-Receive"
+                                    ? navigate(`/PO_receive/${data.id}`)
+                                    : navigate(
+                                        `/purchaseOrderListPreview/${data.id}`
+                                      )
+                                }
                             >
                               {data.remarks}
                             </td>

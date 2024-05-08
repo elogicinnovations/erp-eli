@@ -51,7 +51,7 @@ function POApprovalRejustify({ authrztn }) {
   const [date, setDate] = useState(new Date());
   const [dateApproved, setDateApproved] = useState(new Date());
   const [showSignature, setShowSignature] = useState(false);
-
+  const [po_idRejustify, setPo_idRejustify] = useState("");
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -91,26 +91,33 @@ function POApprovalRejustify({ authrztn }) {
     decodeToken();
   }, []);
 
-  const handleShow = () => setShowModal(true);
+  const handleShow = (po_idsss) => {
+    setPo_idRejustify(po_idsss)
+    setShowModal(true)
+  };
 
   const handleClose = () => {
     setShowModal(false);
     setShowModalPreview(false);
   };
 
+  const reloadTable = () => {
+    axios
+    .get(BASE_URL + "/invoice/fetchPOarray", {
+      params: {
+        id: id,
+      },
+    })
+    .then((res) => {
+      setPOarray(res.data)
+      setIsLoading(false)
+    })
+    .catch((err) => console.log(err));
+  }
+
   const [POarray, setPOarray] = useState([]);
   useEffect(() => {
-    axios
-      .get(BASE_URL + "/invoice/fetchPOarray", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        setPOarray(res.data)
-        setIsLoading(false)
-      })
-      .catch((err) => console.log(err));
+    reloadTable()
   }, []);
 
   useEffect(() => {
@@ -228,9 +235,61 @@ function POApprovalRejustify({ authrztn }) {
     });
   };
 
-  const handleApprove = async () => {
+  const handleReject = async (po_idss) => {
+    const po_approvalID = po_idss
     swal({
-      title: "Are you sure want to approve this purchase Order?",
+      title: "Confirm Reject",
+      text: "Are you sure you want to reject this purchase order?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          axios.post(`${BASE_URL}/PR/rejectPO`, null, {
+            params: {
+              po_approvalID,
+              userId
+            }
+          })
+            .then((res) => {
+              console.log(res);
+              if (res.status === 200) {
+                swal({
+                  title: "Purchase Order Rejected",
+                  text: "The purchase order has been successfully rejected.",
+                  icon: 'success',
+                  button: 'OK'
+                })
+                  .then(() => {
+                    reloadTable()
+                  });
+              } else {
+                swal({
+                  icon: 'error',
+                  title: 'Something went wrong',
+                  text: 'Please contact our support'
+                });
+              }
+            })
+
+
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        swal({
+          title: "Cancelled Successfully",
+          icon: "warning",
+        });
+      }
+    });
+  }
+
+  const handleApprove = async (po_idss) => {
+    const po_idApproval = po_idss
+    swal({
+      title: `Are you sure want to approve this purchase Order?`,
       text: "This action cannot be undone.",
       icon: "warning",
       buttons: true,
@@ -240,35 +299,28 @@ function POApprovalRejustify({ authrztn }) {
         // setsignatureTriggered(true);
         setLoadAprrove(true)
         try {
-          const updatedPOarray = [];
-          for (const group of POarray) {
-            let supp_code = group.items[0].suppliers.supplier_code;
-            let supp_name = group.items[0].suppliers.supplier_name;
-            const div = document.getElementById(`content-to-capture-${group.title}-${supp_code}-${supp_name}`);
+          const div = document.getElementById(`content-to-capture-${po_idApproval}`);
 
-            // const span = document.createElement('span');
-            // span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
-            // div.appendChild(span);
-            
-            // console.log(div.appendChild(span))
-            
-            const canvas = await html2canvas(div);
-            const imageData = canvas.toDataURL("image/png");
+          // const span = document.createElement('span');
+          // span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
+          // div.appendChild(span);
+          
+          // console.log(div.appendChild(span))
+          
+          const canvas = await html2canvas(div);
+          const imageData = canvas.toDataURL("image/png");
 
-            const updatedGroup = {
-              ...group,
-              imageData: imageData,
-            };
-
-            updatedPOarray.push(updatedGroup);
-          }
+         
+          
 
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             id,
-            POarray: updatedPOarray,
+            POarray,
+            imageData,
             prNum,
             userId,
-            formattedDateApproved
+            formattedDateApproved,
+            po_idApproval,
           });
 
           if (response.status === 200) {
@@ -602,9 +654,36 @@ function POApprovalRejustify({ authrztn }) {
                   <div key={group.title} className="canvass-supplier-container">
                     <div className="canvass-supplier-content">
                       {/* <h3>{`PO Number: ${group.title}`}</h3> */}
-                      <div className="PO-num">
-                        <p>{`PO #: ${group.title}`}</p>
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="PO-num">
+                            <p>{`PO #: ${group.title}`}</p>
+                          </div>
+                        </div>
+
+                        <div className="col-6">
+                          <div style={{display: 'flex', justifyContent: 'end', marginRight: '10px'}}>
+                            {group.items[0].item.status === 'Rejected' ? (
+                              <>
+                                <Button
+                                  onClick={() => {handleShow(group.title)}}
+                                  className="btn btn-secondary btn-md"
+                                  size="md"
+                                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                                >
+                                  Rejustify
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <p style={{color: 'red', fontSize: '15px'}}>{`Status: ${group.items[0].item.status === null ? 'For-Approval' : group.items[0].item.status}`}</p>
+                              </>
+                            )}
+                            
+                          </div>
+                        </div>
                       </div>
+                     
                       {group.items.length > 0 && (
                         <div className="canvass-title">
                           <div className="supplier-info">
@@ -669,16 +748,17 @@ function POApprovalRejustify({ authrztn }) {
               >
                 Preview
               </Button>
-              <Button
-                type="button"
-                className="btn btn-danger"
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}
-                onClick={() => handleCancel(id)}
-              >
-                Re-Canvass
-              </Button>
-
+              {authrztn.includes("PO - Reject") && (
+                <Button
+                  type="button"
+                  className="btn btn-danger"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                  onClick={() => handleCancel(id)}
+                >
+                  Re-Canvass
+                </Button>
+              )}
               {/* <Button
               onClick={handleShow}
               className="btn btn-secondary btn-md"
@@ -738,9 +818,13 @@ function POApprovalRejustify({ authrztn }) {
             
                 return (
                   <Modal.Body
-                    id={`content-to-capture-${group.title}-${supp_code}-${supp_name}`}
+                    // id={`content-to-capture-${group.title}`}
                   >
-                    <div key={group.title} className="receipt-main-container">
+
+{group.items[0].item.status === null ? (
+      // Render content if status is null
+      <>
+          <div id={`content-to-capture-${group.title}`} key={group.title} className="receipt-main-container">
                       <div className="receipt-content">
                         <div className="receipt-header">
                           <div className="sbflogoes">
@@ -987,33 +1071,33 @@ function POApprovalRejustify({ authrztn }) {
                         </div>
                       </div>
                     </div>
-                  </Modal.Body>
-                );
-              })}
 
-              <Modal.Footer>
-                <>
-                  {!loadAprrove ? (
+                    {!loadAprrove ? (
                      <div className="save-cancel">
-                     <Button
-                       onClick={handleShow}
-                       className="btn btn-secondary btn-md"
-                       size="md"
-                       style={{ fontSize: "20px", margin: "0px 5px" }}
-                     >
-                       Rejustify
-                     </Button>
-   
-                     <Button
-                       type="button"
-                       className="btn btn-success"
-                       size="md"
-                       style={{ fontSize: "20px", margin: "0px 5px" }}
-                      //  onClick={() => handleApprove()}
-                      onClick={() => {handleApprove(); setShowSignature(true)}}
-                     >
-                       Approve
-                     </Button>
+                      {authrztn.includes("PO - Reject") && (
+                      <Button
+                        onClick={() => {handleReject(group.title) }}
+                        className="btn btn-danger btn-md"
+                        size="md"
+                        style={{ fontSize: "20px", margin: "0px 5px" }}
+                      >
+                        Reject
+                      </Button>
+                      )}
+
+{authrztn.includes("PO - Approval") && (
+  <Button
+    type="button"
+    className="btn btn-success"
+    size="md"
+    style={{ fontSize: "20px", margin: "0px 5px" }}
+    //  onClick={() => handleApprove()}
+    onClick={() => {handleApprove(group.title); setShowSignature(true); }}
+  >
+    Approve
+  </Button>
+)}
+                     
                    </div>
                   ) : (
                     <>
@@ -1023,6 +1107,19 @@ function POApprovalRejustify({ authrztn }) {
                       </div>
                     </>
                   )}
+      </>
+    ) : (
+      // Render content if status is not null
+      <></> // Or any other content you want to render
+    )}
+                 
+                  </Modal.Body>
+                );
+              })}
+
+              <Modal.Footer>
+                <>
+                  
                 </>
                
               </Modal.Footer>
@@ -1040,7 +1137,7 @@ function POApprovalRejustify({ authrztn }) {
                     <div className="col-6">
                       <Form.Group controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ fontSize: "20px" }}>
-                          PR No.:{" "}
+                          PR No.:{' '}
                         </Form.Label>
                         <Form.Control
                           type="text"

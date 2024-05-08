@@ -39,6 +39,14 @@ const PR_PO_spare = sequelize.define('purchase_req_canvassed_spare', {
   quality_assurance: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 });
 

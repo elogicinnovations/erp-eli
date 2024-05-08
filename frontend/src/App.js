@@ -539,10 +539,20 @@ function App() {
                       </Roles>
                     }
                   />
-                  <Route
+                   <Route
+                    path="/purchaseRequestPreview/:id"
+                    element={
+                      <Roles>
+                        {(authrztn) => (
+                          <PurchaseRequestPreview authrztn={authrztn} />
+                        )}
+                      </Roles>
+                    }
+                  />
+                  {/* <Route
                     path="/purchaseRequestPreview/:id"
                     element={<PurchaseRequestPreview />}
-                  />
+                  /> */}
                   <Route 
                     path="/PRredirect/:id" 
                     element={

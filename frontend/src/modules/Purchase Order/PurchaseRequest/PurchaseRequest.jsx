@@ -675,7 +675,7 @@ function PurchaseRequest({ authrztn }) {
                                   width: "105px",
                                 }}
                               >
-                                {data.status}
+                                {data.status === 'For-Rejustify' ? 'Rejustified' : data.status}
                               </div>
                             </td>
                             <td
@@ -709,6 +709,8 @@ function PurchaseRequest({ authrztn }) {
                               <div className="d-flex flex-direction-row align-items-center">
                                 {authrztn.includes("PR - Reject") &&
                                   data.status !== "Cancelled" &&
+                                  data.status !== "Rejected" &&
+                                  data.status !== "For-Rejustify" &&
                                   data.status !== "For-Canvassing" &&
                                   data.status !== "On-Canvass" &&
                                   data.status !== "For-Approval (PO)" &&
@@ -795,7 +797,7 @@ function PurchaseRequest({ authrztn }) {
                                                 backgroundColor: "red",
                                               }}
                                             >
-                                              {history.status}
+                                              {history.status === "For-Rejustify" ? 'Rejustified' : history.status}
                                             </div>
                                           </td>
                                         ) : (

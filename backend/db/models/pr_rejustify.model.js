@@ -12,6 +12,10 @@ const PR_Rejustify = sequelize.define('purchase_req_rejustify', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  po_id:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   file: {
     type: DataTypes.BLOB('long'),
     allowNull: true,

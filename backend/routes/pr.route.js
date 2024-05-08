@@ -76,7 +76,7 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
       ],
       where: {
         status: {
-          [Op.or]: ["To-Receive", "Delivered"],
+          [Op.or]: ["To-Receive", "Delivered", "To-Receive (Partial)"],
         },
       },
     });
@@ -168,6 +168,7 @@ router.route("/fetchTable_PO").get(async (req, res) => {
       ],
       where: {
         [Op.or]: [
+          { status: "To-Receive (Partial)" },
           { status: "For-Approval (PO)" },
           { status: "For-Rejustify (PO)" },
           { status: "To-Receive" },
@@ -392,6 +393,82 @@ router.route('/lastPRNumber').get(async (req, res) => {
       });
     
 
+    res.status(200).json();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred");
+  }
+});
+
+router.route("/reject").post(async (req, res) => {
+  try {
+    const { id, userId } = req.query;
+
+    const PR_newData = await PR.update(
+      {
+        status: "Rejected",
+      },
+      {
+        where: { id: id },
+      }
+    );
+
+    const PR_historical = await PR_history.create({
+      pr_id: id,
+      status: "Rejected",
+    });
+
+    if (PR_historical) {
+      const forPR = await PR.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      const PRnum = forPR.pr_num;
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Purchase Request has been Rejected with pr number ${PRnum}`,
+      });
+    }
+
+    res.status(200).json();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred");
+  }
+});
+
+
+router.route("/rejectPO").post(async (req, res) => {
+
+  try {
+    const { po_approvalID, userId } = req.query;
+
+    const PR_newData = await PR_PO.update(
+      {
+        status: "Rejected",
+      },
+      {
+        where: { po_id: po_approvalID },
+      }
+    );
+
+    const forPR = await PR_PO.findOne({
+      where: {
+        po_id: po_approvalID,
+      },
+    });
+
+    const PRnum = forPR.pr_num;
+
+    await Activity_Log.create({
+      masterlist_id: userId,
+      action_taken: `Purchase Request has been Rejected with po number ${po_approvalID}`,
+    });
+
+    
     res.status(200).json();
   } catch (err) {
     console.error(err);
