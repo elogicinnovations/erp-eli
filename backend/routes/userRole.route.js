@@ -273,6 +273,7 @@ router.route("/rbacautoadd").post(async (req, res) => {
 
     const newDept = await Department.create({
       department_name: "MATERIAL CONTROL DEPARTMENT",
+      description: "N/A"
     });
 
     res.status(201).json(newUseradmin);

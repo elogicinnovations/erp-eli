@@ -9,6 +9,7 @@ import "../../styles/react-style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import SBFLOGO from "../../../assets/image/sbflogo-noback.png";
+import ReactLoading from 'react-loading';
 // input
 import Input from "@mui/material/Input";
 
@@ -131,6 +132,7 @@ function OTP() {
   const inputRef4 = useRef(null);
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [value1, setValue1] = useState("");
   const [value2, setValue2] = useState("");
@@ -194,6 +196,7 @@ function OTP() {
   }, [remainingTime]);
 
   const handleResendCode = async () => {
+    setIsLoading(true)
     try {
       const response = await fetch(BASE_URL + "/masterList/emailResendCode", {
         method: "POST",
@@ -209,20 +212,23 @@ function OTP() {
         setIsResendDisabled(true); //disabled button
         setRemainingTime(120); //recount
         setResendCode(ResendCode); //pass to outside
-
         swal({
           title: "Email Sent Successfully!",
           text: "Please check your email",
           icon: "success",
           button: "OK",
         });
+        setIsLoading(false)
       } else {
+        
         swal({
           title: "Something Went Wrong",
           text: "Please contact our suppport team",
           icon: "error",
           button: "OK",
-        }).then(() => {});
+        }).then(() => {
+          setIsLoading(false)
+        });
       }
     } catch (error) {
       console.error("Email sending failed", error);
@@ -345,14 +351,24 @@ function OTP() {
             </div>
           </div>{" "}
           {/*codebox close div*/}
+          {!isLoading ? (
           <div onKeyDown={handleKeyPress} className="button-otp-submit">
             <button onClick={handlesubmitCode} class="button-pass">
               Submit
             </button>
           </div>
+            ) : (
+              <>
+              <div className="loading-container">
+                <ReactLoading className="react-loading" type={"bubbles"} />
+                    Please Wait...
+              </div>
+            </>
+          )}  
           <div onClick={handleKeyPress} style={{ float: "left" }}>
             <p className="notreceive">Didn’t receive code ?</p>
           </div>
+
           <div style={{ float: "right" }} onClick={handleKeyPress}>
             <button
               type="button"
@@ -363,6 +379,7 @@ function OTP() {
               Re-send
             </button>
           </div>
+
           <div style={{ float: "left" }}>
             <div className="backtofg">
               <Link

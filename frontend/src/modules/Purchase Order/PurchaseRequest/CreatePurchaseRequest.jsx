@@ -328,7 +328,7 @@ function CreatePurchaseRequest() {
                     className="form-control"
                   />
 
-                  <CalendarBlank
+                  {/* <CalendarBlank
                     size={20}
                     style={{
                       position: "absolute",
@@ -337,7 +337,7 @@ function CreatePurchaseRequest() {
                       transform: "translateY(-50%)",
                       cursor: "pointer",
                     }}
-                  />
+                  /> */}
                 </Form.Group>
                 </div>
               </div>

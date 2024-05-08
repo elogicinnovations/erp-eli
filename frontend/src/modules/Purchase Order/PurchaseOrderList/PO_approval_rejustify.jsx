@@ -1018,7 +1018,7 @@ function POApprovalRejustify({ authrztn }) {
                               <div className="fifthmidrows">
                                 <div className="conditionsection">
                                   <div className="tobeUsed">
-                                    <span>To be used for: <strong>{`${useFor}`}</strong></span>
+                                    <span style={{color: 'red'}}>To be used for:</span>  <strong style={{fontSize: '12px'}}>{`${useFor}`}</strong>
                                   </div>
                                   <span>TERMS AND CONDITIONS: </span>
                                   <span>

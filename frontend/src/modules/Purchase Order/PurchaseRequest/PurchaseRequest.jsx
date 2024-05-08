@@ -681,7 +681,7 @@ function PurchaseRequest({ authrztn }) {
                                       width: "105px",
                                     }}
                                   >
-                                    {data.status === 'For-Rejustify' ? 'Rejustified' : data.status}
+                                    {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
                                   </div>
                                 </td>
                                 <td
@@ -924,7 +924,7 @@ function PurchaseRequest({ authrztn }) {
                                           width: "105px",
                                         }}
                                       >
-                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status}
+                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
                                       </div>
                                     </td>
                                     <td
@@ -1053,7 +1053,7 @@ function PurchaseRequest({ authrztn }) {
                                                         backgroundColor: "red",
                                                       }}
                                                     >
-                                                      {history.status === "For-Rejustify" ? 'Rejustified' : history.status}
+                                                      {history.status === 'For-Rejustify' ? 'Rejustified' : history.status === "On-Canvass" ? 'For-PO' : history.status}
                                                     </div>
                                                   </td>
                                                 ) : (
