@@ -123,12 +123,14 @@ function ProductCategory({authrztn}) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchCategory.filter((data) => {
       return (
-        data.category_code.toLowerCase().includes(searchTerm) ||
-        data.category_name.toLowerCase().includes(searchTerm) ||
-        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
-        data.category_remarks.toLowerCase().includes(searchTerm)
+        (data.category_code?.toLowerCase() || '').includes(searchTerm) ||
+        (data.category_name?.toLowerCase() || '').includes(searchTerm) ||
+        (formatDate(data.createdAt)?.toLowerCase() || '').includes(searchTerm) ||
+        (data.category_remarks?.toLowerCase() || '').includes(searchTerm)
       );
     });
+    
+    
   
     setcategory(filteredData);
   };

@@ -182,13 +182,14 @@ function Supplier({ authrztn }) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchSupplier.filter((data) => {
       return (
-        data.supplier_code.toLowerCase().includes(searchTerm) ||
-        data.supplier_name.toLowerCase().includes(searchTerm) ||
-        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
-        data.supplier_contactPerson.toLowerCase().includes(searchTerm) ||
-        data.supplier_status.toLowerCase().includes(searchTerm) 
+        (data.supplier_code?.toLowerCase() || '').includes(searchTerm) ||
+        (data.supplier_name?.toLowerCase() || '').includes(searchTerm) ||
+        (formatDate(data.createdAt)?.toLowerCase() || '').includes(searchTerm) ||
+        (data.supplier_contactPerson?.toLowerCase() || '').includes(searchTerm) ||
+        (data.supplier_status?.toLowerCase() || '').includes(searchTerm) 
       );
     });
+    
   
     setsupplier(filteredData);
   };
