@@ -133,10 +133,15 @@ function Productvariants({ authrztn }) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchManufacturer.filter((data) => {
       return (
-        data.manufacturer_code.toLowerCase().includes(searchTerm) ||
-        data.manufacturer_name.toLowerCase().includes(searchTerm) ||
-        formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
-        data.manufacturer_remarks.toLowerCase().includes(searchTerm)
+        // data.manufacturer_code.toLowerCase().includes(searchTerm) ||
+        // data.manufacturer_name.toLowerCase().includes(searchTerm) ||
+        // formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
+        // data.manufacturer_remarks.toLowerCase().includes(searchTerm)
+
+        (data.manufacturer_code?.toLowerCase() || '').includes(searchTerm) ||
+        (data.manufacturer_name?.toLowerCase() || '').includes(searchTerm) ||
+        (formatDate(data.createdAt)?.toLowerCase() || '').includes(searchTerm) ||
+        (data.manufacturer_remarks?.toLowerCase() || '').includes(searchTerm)
       );
     });
   

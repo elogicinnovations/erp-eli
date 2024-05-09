@@ -515,6 +515,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                       <th>Supplier Name</th>
                       <th>Product Code</th>
                       <th>Product Name</th>
+                      <th>Quantity</th>
                       <th>Days From</th>
                       <th>Days To</th>
                       <th>Date Approved</th>
@@ -529,6 +530,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                         <td>{prod.product_tag_supplier.supplier.supplier_name}</td>
                         <td>{prod.product_tag_supplier.product.product_code}</td>
                         <td>{prod.product_tag_supplier.product.product_name}</td>
+                        <td>{prod.quantity}</td>
                         <td>{prod.days_from}</td>
                         <td>{prod.days_to}</td>
                         <td>{formatDatetime(prod.date_approved)}</td>

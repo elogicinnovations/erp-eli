@@ -74,6 +74,7 @@ router.route('/fetchPrApproveProduct').get(async (req, res) => {
     });
 
     if (data) {
+      console.log("asasa")
       return res.json(data);
     } else {
       res.status(400);
