@@ -642,7 +642,7 @@ function BIS({ authrztn }) {
       "Unit Price",
       "Freight Cost",
       "Duties & Custom Cost",
-      "AUP",
+      "Landed Cost",
       "Total Price",
     ];
     rows.push(headerData.join(","));
@@ -1004,7 +1004,7 @@ function BIS({ authrztn }) {
                     <th className="tableh">Unit Price</th>
                     <th className="tableh">Freight Cost</th>
                     <th className="tableh">Custom Cost</th>
-                    <th className="tableh">AUP</th>
+                    <th className="tableh">Landed Cost</th>
                     <th className="tableh">Total</th>
                   </tr>
                 </thead>

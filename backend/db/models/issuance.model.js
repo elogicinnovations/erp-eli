@@ -52,6 +52,10 @@ const Issuance = sequelize.define('issuance', {
   status:{
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 
 });

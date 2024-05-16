@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import ReactLoading from 'react-loading';
-import NoData from '../../assets/image/NoData.png';
-import NoAccess from '../../assets/image/NoAccess.png';
-import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
-import Sidebar from '../Sidebar/sidebar';
-import axios from 'axios';
-import Modal from 'react-bootstrap/Modal';
-import BASE_URL from '../../assets/global/url';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import Form from 'react-bootstrap/Form';
-import swal from 'sweetalert';
-import Button from 'react-bootstrap/Button';
-import { jwtDecode } from 'jwt-decode';
-import {
-  Plus,
-} from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
-import * as $ from 'jquery';
-import Header from '../../partials/header';
+import React, { useEffect, useState } from "react";
+import ReactLoading from "react-loading";
+import NoData from "../../assets/image/NoData.png";
+import NoAccess from "../../assets/image/NoAccess.png";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import Sidebar from "../Sidebar/sidebar";
+import axios from "axios";
+import Modal from "react-bootstrap/Modal";
+import BASE_URL from "../../assets/global/url";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import Form from "react-bootstrap/Form";
+import swal from "sweetalert";
+import Button from "react-bootstrap/Button";
+import { jwtDecode } from "jwt-decode";
+import { Plus } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination } from "@mui/material";
+import * as $ from "jquery";
+import Header from "../../partials/header";
 
 const Inventory = ({ activeTab, onSelect, authrztn }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [issuance, setIssuance] = useState([]);
-  const [searchIssuance, setSearchIssuance] = useState([])
+  const [searchIssuance, setSearchIssuance] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [inventoryFilter, setInventoryFilter] = useState('All');
   const [searchInventory, setSearchInventory] = useState([]);
   const [assembly, setAssembly] = useState([]);
   const [searchAssembly, setSearchAssembly] = useState([]);
@@ -35,13 +34,21 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
   const [warehouseInv, setwarehouseInv] = useState([]);
-  const [currentPageissuance, setCurrentPageIssuance] = useState(1)
+  const [currentPageissuance, setCurrentPageIssuance] = useState(1);
   const pageIssuanceSize = 10;
 
-  const totalPagesIssuance = Math.ceil(searchIssuance.length / pageIssuanceSize);
+  const totalPagesIssuance = Math.ceil(
+    searchIssuance.length / pageIssuanceSize
+  );
   const startIndexIssuance = (currentPageissuance - 1) * pageIssuanceSize;
-  const endIndexIssuance = Math.min(startIndexIssuance + pageIssuanceSize, searchIssuance.length);
-  const currentItemsIssuance = searchIssuance.slice(startIndexIssuance, endIndexIssuance);
+  const endIndexIssuance = Math.min(
+    startIndexIssuance + pageIssuanceSize,
+    searchIssuance.length
+  );
+  const currentItemsIssuance = searchIssuance.slice(
+    startIndexIssuance,
+    endIndexIssuance
+  );
   const MAX_PAGES_ISSUANCE = 5;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,25 +56,51 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
 
   const totalPagesInventory = Math.ceil(searchInventory.length / pageSize);
   const startIndexInventory = (currentPage - 1) * pageSize;
-  const endIndexInventory = Math.min(startIndexInventory + pageSize, searchInventory.length);
-  const currentItemsInventory = searchInventory.slice(startIndexInventory, endIndexInventory);
+  const endIndexInventory = Math.min(
+    startIndexInventory + pageSize,
+    searchInventory.length
+  );
+  const currentItemsInventory = searchInventory.slice(
+    startIndexInventory,
+    endIndexInventory
+  );
 
   const totalPagesAssembly = Math.ceil(searchAssembly.length / pageSize);
   const startIndexAssembly = (currentPage - 1) * pageSize;
-  const endIndexAssembly = Math.min(startIndexAssembly + pageSize, searchAssembly.length);
-  const currentItemsAssembly = searchAssembly.slice(startIndexAssembly, endIndexAssembly);
+  const endIndexAssembly = Math.min(
+    startIndexAssembly + pageSize,
+    searchAssembly.length
+  );
+  const currentItemsAssembly = searchAssembly.slice(
+    startIndexAssembly,
+    endIndexAssembly
+  );
 
   const totalPagesSpare = Math.ceil(searchSpare.length / pageSize);
   const startIndexSpare = (currentPage - 1) * pageSize;
-  const endIndexSpare = Math.min(startIndexSpare + pageSize, searchSpare.length);
+  const endIndexSpare = Math.min(
+    startIndexSpare + pageSize,
+    searchSpare.length
+  );
   const currentItemsSpare = searchSpare.slice(startIndexSpare, endIndexSpare);
 
   const totalPagesSubpart = Math.ceil(searchSub.length / pageSize);
   const startIndexSubpart = (currentPage - 1) * pageSize;
-  const endIndexSubpart = Math.min(startIndexSubpart + pageSize, searchSub.length);
-  const currentItemsSubpart = searchSub.slice(startIndexSubpart, endIndexSubpart);
+  const endIndexSubpart = Math.min(
+    startIndexSubpart + pageSize,
+    searchSub.length
+  );
+  const currentItemsSubpart = searchSub.slice(
+    startIndexSubpart,
+    endIndexSubpart
+  );
 
-  const maxTotalPages = Math.max(totalPagesInventory, totalPagesAssembly, totalPagesSpare, totalPagesSubpart);
+  const maxTotalPages = Math.max(
+    totalPagesInventory,
+    totalPagesAssembly,
+    totalPagesSpare,
+    totalPagesSubpart
+  );
   const MAX_PAGES = 5;
 
   //inventory pagination
@@ -93,10 +126,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < maxTotalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -105,7 +138,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -132,10 +165,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     }
 
     if (startPageIssuance > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPageIssuance < totalPagesIssuance) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -144,14 +177,14 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   //pagination end
 
   const handlePageClickIssuance = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPageIssuance(page);
   };
 
-
   useEffect(() => {
     // Fetch issuances and calculate expiration status
-    axios.get(BASE_URL + '/issuance/getIssuance')
+    axios
+      .get(BASE_URL + "/issuance/getIssuance")
       .then((res) => {
         const now = new Date();
         const expirationStatus = {};
@@ -167,12 +200,11 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
       .catch((err) => console.log(err));
   }, []);
 
-
-
   const reloadTable_inventory = () => {
     const delay = setTimeout(() => {
-      axios.get(BASE_URL + '/inventory/fetchInventory_group')
-        .then(res => {
+      axios
+        .get(BASE_URL + "/inventory/fetchInventory_group")
+        .then((res) => {
           setInventory(res.data.product);
           setSearchInventory(res.data.product);
           setAssembly(res.data.assembly);
@@ -184,7 +216,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
           setIsLoading(false);
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
           setIsLoading(false);
         });
     }, 1000);
@@ -193,69 +225,89 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   };
 
   useEffect(() => {
-    reloadTable_inventory()
+    reloadTable_inventory();
   }, []);
 
-  const handleSearch = (event) => {
-    setCurrentPage(1)
-    const searchTerm = event.target.value.toLowerCase();
-    
-    // Filter each inventory type separately
-    const filteredInventory = searchInventory.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.manufacturer.toLowerCase().includes(searchTerm)
-    ));
-    setInventory(filteredInventory);
-  
-    const filteredAssembly = searchAssembly.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.manufacturer.toLowerCase().includes(searchTerm)
-    ));
-    setAssembly(filteredAssembly);
-  
-    const filteredSpare = searchSpare.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.manufacturer.toLowerCase().includes(searchTerm)
-    ));
-    setSpare(filteredSpare);
-  
-    const filteredSubpart = searchSub.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.manufacturer.toLowerCase().includes(searchTerm)
-    ));
-    setSubpart(filteredSubpart);
-  };
-  
+const handleSearch = (event) => {
+  setCurrentPage(1);
+  const searchTerm = event.target.value.toLowerCase();
+
+  // Helper function to safely check and convert strings to lowercase
+  const safeToLowerCase = (str) => (str ? str.toLowerCase() : '');
+
+  // Filter each inventory type separately
+  const filteredInventory = searchInventory.filter(
+    (data) =>
+      safeToLowerCase(data.product_code).includes(searchTerm) ||
+      safeToLowerCase(data.product_name).includes(searchTerm) ||
+      safeToLowerCase(data.manufacturer).includes(searchTerm)
+  );
+  setInventory(filteredInventory);
+
+  const filteredAssembly = searchAssembly.filter(
+    (data) =>
+      safeToLowerCase(data.product_code).includes(searchTerm) ||
+      safeToLowerCase(data.product_name).includes(searchTerm) ||
+      safeToLowerCase(data.manufacturer).includes(searchTerm)
+  );
+  setAssembly(filteredAssembly);
+
+  const filteredSpare = searchSpare.filter(
+    (data) =>
+      safeToLowerCase(data.product_code).includes(searchTerm) ||
+      safeToLowerCase(data.product_name).includes(searchTerm) ||
+      safeToLowerCase(data.manufacturer).includes(searchTerm)
+  );
+  setSpare(filteredSpare);
+
+  const filteredSubpart = searchSub.filter(
+    (data) =>
+      safeToLowerCase(data.product_code).includes(searchTerm) ||
+      safeToLowerCase(data.product_name).includes(searchTerm) ||
+      safeToLowerCase(data.manufacturer).includes(searchTerm)
+  );
+  setSubpart(filteredSubpart);
+};
+
 
   const handleSearchIssuance = (event) => {
-    setCurrentPageIssuance(1)
+    setCurrentPageIssuance(1);
     const searchTermIssuance = event.target.value.toLowerCase();
     const filteredDataIssuance = searchIssuance.filter((data) => {
       return (
         data.cost_center.name.toLowerCase().includes(searchTermIssuance) ||
         data.from_site.toLowerCase().includes(searchTermIssuance) ||
-        formatDatetime(data.createdAt).toLowerCase().includes(searchTermIssuance) ||
+        formatDatetime(data.createdAt)
+          .toLowerCase()
+          .includes(searchTermIssuance) ||
         data.masterlist.col_Fname.toLowerCase().includes(searchTermIssuance) ||
         data.mrs.toLowerCase().includes(searchTermIssuance)
       );
     });
-  
+
     setIssuance(filteredDataIssuance);
   };
 
+  const isReturnButtonDisabled = (createdAt) => {
+    const currentDate = new Date();
+    const createdDate = new Date(createdAt);
   
+    const differenceInTime = currentDate - createdDate;
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+  
+    return differenceInDays >= 5;
+  };
+  
+
   // Get Issuance
   useEffect(() => {
-    axios.get(BASE_URL + '/issuance/getIssuance')
-      .then(res => {
+    axios
+      .get(BASE_URL + "/issuance/getIssuance")
+      .then((res) => {
         setIssuance(res.data);
         setSearchIssuance(res.data);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
   const { id } = useParams();
@@ -270,27 +322,64 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [currentPageReturn, setCurrentPageReturn] = useState(1);
   const pageSizeReturn = 10;
 
-  const totalPagesReturnProd = Math.ceil(searchReturnPrd.length / pageSizeReturn);
+  const totalPagesReturnProd = Math.ceil(
+    searchReturnPrd.length / pageSizeReturn
+  );
   const startIndexReturnProd = (currentPageReturn - 1) * pageSizeReturn;
-  const endIndexReturnProd = Math.min(startIndexReturnProd + pageSizeReturn, searchReturnPrd.length);
-  const currentItemsReturnProd = searchReturnPrd.slice(startIndexReturnProd, endIndexReturnProd);
+  const endIndexReturnProd = Math.min(
+    startIndexReturnProd + pageSizeReturn,
+    searchReturnPrd.length
+  );
+  const currentItemsReturnProd = searchReturnPrd.slice(
+    startIndexReturnProd,
+    endIndexReturnProd
+  );
 
-  const totalPagesReturnAsm = Math.ceil(searchReturnasm.length / pageSizeReturn);
+  const totalPagesReturnAsm = Math.ceil(
+    searchReturnasm.length / pageSizeReturn
+  );
   const startIndexReturnAsm = (currentPageReturn - 1) * pageSizeReturn;
-  const endIndexReturnAsm = Math.min(startIndexReturnAsm + pageSizeReturn, searchReturnasm.length);
-  const currentItemsReturnAsm = searchReturnasm.slice(startIndexReturnAsm, endIndexReturnAsm);
+  const endIndexReturnAsm = Math.min(
+    startIndexReturnAsm + pageSizeReturn,
+    searchReturnasm.length
+  );
+  const currentItemsReturnAsm = searchReturnasm.slice(
+    startIndexReturnAsm,
+    endIndexReturnAsm
+  );
 
-  const totalPagesReturnSpare = Math.ceil(searchReturnspare.length / pageSizeReturn);
+  const totalPagesReturnSpare = Math.ceil(
+    searchReturnspare.length / pageSizeReturn
+  );
   const startIndexReturnSpare = (currentPageReturn - 1) * pageSizeReturn;
-  const endIndexReturnSpare = Math.min(startIndexReturnSpare + pageSizeReturn, searchReturnspare.length);
-  const currentItemsReturnSpare = searchReturnspare.slice(startIndexReturnSpare, endIndexReturnSpare);
+  const endIndexReturnSpare = Math.min(
+    startIndexReturnSpare + pageSizeReturn,
+    searchReturnspare.length
+  );
+  const currentItemsReturnSpare = searchReturnspare.slice(
+    startIndexReturnSpare,
+    endIndexReturnSpare
+  );
 
-  const totalPagesReturnSubpart = Math.ceil(searchReturnsubpart.length / pageSizeReturn);
+  const totalPagesReturnSubpart = Math.ceil(
+    searchReturnsubpart.length / pageSizeReturn
+  );
   const startIndexReturnSubpart = (currentPageReturn - 1) * pageSizeReturn;
-  const endIndexReturnSubpart = Math.min(startIndexReturnSubpart + pageSizeReturn, searchReturnsubpart.length);
-  const currentItemsReturnSubpart = searchReturnsubpart.slice(startIndexReturnSubpart, endIndexReturnSubpart);
+  const endIndexReturnSubpart = Math.min(
+    startIndexReturnSubpart + pageSizeReturn,
+    searchReturnsubpart.length
+  );
+  const currentItemsReturnSubpart = searchReturnsubpart.slice(
+    startIndexReturnSubpart,
+    endIndexReturnSubpart
+  );
 
-  const maxReturnTotalPages = Math.max(totalPagesReturnProd, totalPagesReturnAsm, totalPagesReturnSpare, totalPagesReturnSubpart);
+  const maxReturnTotalPages = Math.max(
+    totalPagesReturnProd,
+    totalPagesReturnAsm,
+    totalPagesReturnSpare,
+    totalPagesReturnSubpart
+  );
   const MAX_PAGES_RETURN = 5;
 
   const generatePagesReturn = () => {
@@ -315,82 +404,110 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     }
 
     if (startPageReturn > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPageReturn < maxReturnTotalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
   };
 
   const handlePageClickReturn = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPageReturn(page);
   };
 
   const reloadTable_return = () => {
-    axios.get(BASE_URL + '/issuedReturn/fetchReturn')
-      .then(res => {
+    axios
+      .get(BASE_URL + "/issuedReturn/fetchReturn")
+      .then((res) => {
         setReturned_prd(res.data.product);
         setSearchReturnprd(res.data.product);
         setReturned_asm(res.data.assembly);
-        setSearchReturnasm(res.data.assembly)
+        setSearchReturnasm(res.data.assembly);
         setReturned_spare(res.data.spare);
         setSearchReturnspare(res.data.spare);
         setReturned_subpart(res.data.subpart);
         setSearchReturnsubpart(res.data.subpart);
       })
-      .catch(err => console.log(err));
-  }
-  
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
-    reloadTable_return()
+    reloadTable_return();
   }, [id]);
 
   const handleSearchReturn = (event) => {
-    setCurrentPageReturn(1)
+    setCurrentPageReturn(1);
     const searchTermReturn = event.target.value.toLowerCase();
-    
-    const filteredReturnProd = searchReturnPrd.filter((data) => (
-      data.inventory_prd.product_tag_supplier.product.product_code.toLowerCase().includes(searchTermReturn) ||
-      data.inventory_prd.product_tag_supplier.product.product_name.toLowerCase().includes(searchTermReturn) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTermReturn) ||
-      data.status.toLowerCase().includes(searchTermReturn)
-    ));
+
+    const filteredReturnProd = searchReturnPrd.filter(
+      (data) =>
+        data.inventory_prd.product_tag_supplier.product.product_code
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.inventory_prd.product_tag_supplier.product.product_name
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        formatDatetime(data.createdAt)
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.status.toLowerCase().includes(searchTermReturn)
+    );
     setReturned_prd(filteredReturnProd);
-  
-    const filteredReturnAsm = searchReturnasm.filter((data) => (
-      data.inventory_assembly.assembly_supplier.assembly.assembly_code.toLowerCase().includes(searchTermReturn) ||
-      data.inventory_assembly.assembly_supplier.assembly.assembly_name.toLowerCase().includes(searchTermReturn) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTermReturn) ||
-      data.status.toLowerCase().includes(searchTermReturn)
-    ));
+
+    const filteredReturnAsm = searchReturnasm.filter(
+      (data) =>
+        data.inventory_assembly.assembly_supplier.assembly.assembly_code
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.inventory_assembly.assembly_supplier.assembly.assembly_name
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        formatDatetime(data.createdAt)
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.status.toLowerCase().includes(searchTermReturn)
+    );
     setReturned_asm(filteredReturnAsm);
-  
-    const filteredReturnSpare = searchReturnspare.filter((data) => (
-      data.inventory_spare.sparepart_supplier.sparePart.spareParts_code.toLowerCase().includes(searchTermReturn) ||
-      data.inventory_spare.sparepart_supplier.sparePart.spareParts_name.toLowerCase().includes(searchTermReturn) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTermReturn) ||
-      data.status.toLowerCase().includes(searchTermReturn)
-    ));
+
+    const filteredReturnSpare = searchReturnspare.filter(
+      (data) =>
+        data.inventory_spare.sparepart_supplier.sparePart.spareParts_code
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.inventory_spare.sparepart_supplier.sparePart.spareParts_name
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        formatDatetime(data.createdAt)
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.status.toLowerCase().includes(searchTermReturn)
+    );
     setReturned_spare(filteredReturnSpare);
-  
-    const filteredReturnSubpart = searchReturnsubpart.filter((data) => (
-      data.inventory_subpart.subpart_supplier.subPart.subPart_code.toLowerCase().includes(searchTermReturn) ||
-      data.inventory_subpart.subpart_supplier.subPart.subPart_name.toLowerCase().includes(searchTermReturn) ||
-      formatDatetime(data.createdAt).toLowerCase().includes(searchTermReturn) ||
-      data.status.toLowerCase().includes(searchTermReturn)
-    ));
+
+    const filteredReturnSubpart = searchReturnsubpart.filter(
+      (data) =>
+        data.inventory_subpart.subpart_supplier.subPart.subPart_code
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.inventory_subpart.subpart_supplier.subPart.subPart_name
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        formatDatetime(data.createdAt)
+          .toLowerCase()
+          .includes(searchTermReturn) ||
+        data.status.toLowerCase().includes(searchTermReturn)
+    );
     setReturned_subpart(filteredReturnSubpart);
   };
-  
 
   const handleMoveToInventory = (prmy_id, inventoryID, quantity, type) => {
     swal({
-      title: 'Are you sure?',
-      text: 'This will move the item to inventory!',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "This will move the item to inventory!",
+      icon: "warning",
       buttons: true,
       dangerMode: true,
     }).then((confirmed) => {
@@ -400,19 +517,30 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         const invetory_id = inventoryID;
         const table_quantity = quantity;
         const primary_id = prmy_id;
-        axios.post(BASE_URL + '/issuedReturn/moveToInventory', {
-          invetory_id, table_quantity, primary_id, types
-        })
-          .then(() => {
-            swal('Success!', 'Item moved to inventory successfully!', 'success')
-              .then(() => {
-                reloadTable_return(); // Reload only the table for the specific type
-                reloadTable_inventory(); // Reload the entire inventory table
-              });
+        axios
+          .post(BASE_URL + "/issuedReturn/moveToInventory", {
+            invetory_id,
+            table_quantity,
+            primary_id,
+            types,
           })
-          .catch(err => {
+          .then(() => {
+            swal(
+              "Success!",
+              "Item moved to inventory successfully!",
+              "success"
+            ).then(() => {
+              reloadTable_return(); // Reload only the table for the specific type
+              reloadTable_inventory(); // Reload the entire inventory table
+            });
+          })
+          .catch((err) => {
             console.log(err);
-            swal('Error!', 'Failed to move item to inventory. Please try again.', 'error');
+            swal(
+              "Error!",
+              "Failed to move item to inventory. Please try again.",
+              "error"
+            );
           });
       }
     });
@@ -421,35 +549,77 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const handleRetain = (returnId, type) => {
     // Show confirmation SweetAlert
     swal({
-      title: 'Are you sure?',
-      text: 'This will set the status to Retained!',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "This will set the status to Retained!",
+      icon: "warning",
       buttons: true,
       dangerMode: true,
     }).then((confirmed) => {
       if (confirmed) {
-        const primaryID = returnId
-        const types = type
-        axios.post(BASE_URL + `/issuedReturn/retain`, {
-          primaryID, types
-        })
+        const primaryID = returnId;
+        const types = type;
+        axios
+          .post(BASE_URL + `/issuedReturn/retain`, {
+            primaryID,
+            types,
+          })
           .then(() => {
             // Show success SweetAlert
-            swal('Success!', 'Status set to Retained successfully!', 'success')
-              .then(() => {
-                reloadTable_return()
-                reloadTable_inventory()
-              });
+            swal(
+              "Success!",
+              "Status set to Retained successfully!",
+              "success"
+            ).then(() => {
+              reloadTable_return();
+              reloadTable_inventory();
+            });
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             // Show error SweetAlert if the API call fails
-            swal('Error!', 'Failed to update status to Retained. Please try again.', 'error');
+            swal(
+              "Error!",
+              "Failed to update status to Retained. Please try again.",
+              "error"
+            );
           });
       }
     });
   };
+  const handleFilter = (e) => {
+    setIsLoading(true);
 
+    const value = e.target.value
+
+    setInventoryFilter(value)
+
+    if(value === 'All'){
+      reloadTable_inventory()
+    }else {
+      const delay = setTimeout(() => {
+        axios
+          .get(BASE_URL + "/inventory/fetchInventory_group_filter", {
+            params:{
+              value
+            }
+          })
+          .then((res) => {
+            setInventory(res.data);
+            setSearchInventory(res.data);
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+          });
+      }, 1000);
+  
+      return () => clearTimeout(delay);
+    }
+
+   
+
+  }
 
   // useEffect(() => {
   //   // Initialize DataTable when role data is available
@@ -473,294 +643,257 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   // }, [returned_prd]);
 
   const tabStyle = {
-    padding: '10px 15px',
-    margin: '0 10px',
-    color: '#333',
-    transition: 'color 0.3s',
+    padding: "10px 15px",
+    margin: "0 10px",
+    color: "#333",
+    transition: "color 0.3s",
   };
 
   //date format
   function formatDatetime(datetime) {
     const options = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     };
-    return new Date(datetime).toLocaleString('en-US', options);
+    return new Date(datetime).toLocaleString("en-US", options);
   }
-
 
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
         {isLoading ? (
           <div className="loading-container">
-            <ReactLoading className="react-loading" type={'bubbles'} />
+            <ReactLoading className="react-loading" type={"bubbles"} />
             Loading Data...
           </div>
-        ) : (
-          authrztn.includes('Inventory - View') ? (
-            <div className="right-body-contentss">
-              <div className="tabbutton-sides">
-                <Tabs
-                  activeKey={activeTab}
-                  onSelect={onSelect}
-                  defaultActiveKey="inventory"
-                  transition={false}
-                  id="noanim-tab-example"
-                  style={{border: 'none'}}
+        ) : authrztn.includes("Inventory - View") ? (
+          <div className="right-body-contentss">
+            <div className="tabbutton-sides">
+              <Tabs
+                activeKey={activeTab}
+                onSelect={onSelect}
+                defaultActiveKey="inventory"
+                transition={false}
+                id="noanim-tab-example"
+                style={{ border: "none" }}
+              >
+                <Tab
+                  eventKey="inventory"
+                  title={
+                    <span
+                      style={{
+                        ...tabStyle,
+                        fontSize: "20px",
+                        overflowY: "auto",
+                      }}
+                    >
+                      Inventory
+                    </span>
+                  }
                 >
-                  <Tab eventKey="inventory" title={<span style={{ ...tabStyle, fontSize: '20px', overflowY: 'auto' }}>Inventory</span>}>
-                    <div className="tab-titles">
-                      <h1>Inventory</h1>
+                  <div className="tab-titles">
+                    <h1>Inventory</h1>
+                  </div>
+                  <div className="row">
+                    <div className="col-6 d-flex justify-content-start">
+                      <Form.Select
+                        aria-label="item status"
+                        onChange={(e) => handleFilter(e)}
+                        style={{
+                          width: "274px",
+                          height: "45px",
+                          fontSize: "15px",
+                          marginBottom: "15px",
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        value={inventoryFilter}
+                      >
+                        <option value={"All"}>All</option>
+                        <option value={"LS"}>Low Stock</option>
+                        <option value={"OTS"}>Out of Stock</option>
+                      </Form.Select>
                     </div>
-                    <div className="table-containss">
-                      <div className="main-of-all-tables">
+                    <div className="col-6 d-flex justify-content-end">
                       <TextField
                         label="Search"
                         variant="outlined"
-                        style={{ marginBottom: '10px', 
-                        float: 'right',
-                        }}
+                        style={{ marginBottom: "10px", float: "right" }}
                         InputLabelProps={{
-                          style: { fontSize: '14px'},
+                          style: { fontSize: "14px" },
                         }}
                         InputProps={{
-                          style: { fontSize: '14px', width: '250px', height: '50px' },
+                          style: {
+                            fontSize: "14px",
+                            width: "250px",
+                            height: "50px",
+                          },
                         }}
-                      onChange={handleSearch}/>
-                        <table className='table-hover' id='order-listing'>
-                          <thead>
-                            <tr>
-                              <th className='tableh'>Product Code</th>
-                              <th className='tableh'>Product Name</th>
-                              <th className='tableh'>Category</th>
-                              <th className='tableh'>Quantity</th>
-                        
-                            </tr>
-                          </thead>
-                          {inventory.length > 0 || assembly.length > 0 || spare.length > 0 || subpart.length > 0 ? (
-                            <tbody>
-                               {currentItemsInventory.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewInventory/${data.productID}`)}>
-                                  <td>{data.product_code}</td>
-                                  <td>{data.product_name}</td>
-                                  <td>{data.Category}</td>
-                                  <td>{data.totalQuantity}</td>
-                                 
+                        onChange={handleSearch}
+                      />
+                    </div>
+                  </div>
+                  <div className="table-containss">
+                    <div className="main-of-all-tables">
+                      <table className="table-hover" id="order-listing">
+                        <thead>
+                          <tr>
+                            <th className="tableh">Product Code</th>
+                            <th className="tableh">Product Name</th>
+                            <th className="tableh">Category</th>
+                            <th className="tableh">Quantity</th>
+                          </tr>
+                        </thead>
+                        {inventory.length > 0 ||
+                        assembly.length > 0 ||
+                        spare.length > 0 ||
+                        subpart.length > 0 ? (
+                          <tbody>
+                            {currentItemsInventory.map((data, i) => (
+                              <tr
+                                key={i}
+                                className="clickable_Table_row"
+                                title="View Information"
+                                onClick={() =>
+                                  navigate(`/viewInventory/${data.productID}`)
+                                }
+                              >
+                                <td>{data.product_code}</td>
+                                <td>{data.product_name}</td>
+                                <td>{data.Category}</td>
+                                <td>{data.totalQuantity}</td>
+                              </tr>
+                            ))}
 
-                                </tr>
-                              ))}
+                            {currentItemsAssembly.map((data, i) => (
+                              <tr
+                                key={i}
+                                className="clickable_Table_row"
+                                title="View Information"
+                                onClick={() =>
+                                  navigate(`/viewAssembly/${data.productID}`)
+                                }
+                              >
+                                <td>{data.product_code}</td>
+                                <td>{data.product_name}</td>
+                                <td>{data.Category}</td>
+                                <td>{data.totalQuantity}</td>
+                              </tr>
+                            ))}
 
-                              {currentItemsAssembly.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewAssembly/${data.productID}`)}>
-                                  <td>{data.product_code}</td>
-                                  <td>{data.product_name}</td>
-                                  <td>{data.Category}</td>
-                                  <td>{data.totalQuantity}</td>
+                            {currentItemsSpare.map((data, i) => (
+                              <tr
+                                key={i}
+                                className="clickable_Table_row"
+                                title="View Information"
+                                onClick={() =>
+                                  navigate(`/viewSpare/${data.productID}`)
+                                }
+                              >
+                                <td>{data.product_code}</td>
+                                <td>{data.product_name}</td>
+                                <td>{data.Category}</td>
+                                <td>{data.totalQuantity}</td>
+                              </tr>
+                            ))}
 
-                                </tr>
-                              ))}
-
-                              {currentItemsSpare.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSpare/${data.productID}`)}>
-                                  <td>{data.product_code}</td>
-                                  <td>{data.product_name}</td>
-                                  <td>{data.Category}</td>
-                                  <td>{data.totalQuantity}</td>
-
-                                </tr>
-                              ))}
-
-                              {currentItemsSubpart.map((data, i) => (
-                                <tr key={i} className='clickable_Table_row' title='View Information' onClick={() => navigate(`/viewSubpart/${data.productID}`)}>
-                                  <td>{data.product_code}</td>
-                                  <td>{data.product_name}</td>
-                                  <td>{data.Category}</td>
-                                  <td>{data.totalQuantity}</td>
-
-                                </tr>
-                              ))}
-                            </tbody>
-                          ) : (
-                            <div className="no-data">
-                              <img src={NoData} alt="NoData" className="no-data-img" />
-                              <h3>
-                                No Data Found
-                              </h3>
-                            </div>
-                          )}
-                        </table>
-                        <nav style={{marginTop: '15px'}}>
+                            {currentItemsSubpart.map((data, i) => (
+                              <tr
+                                key={i}
+                                className="clickable_Table_row"
+                                title="View Information"
+                                onClick={() =>
+                                  navigate(`/viewSubpart/${data.productID}`)
+                                }
+                              >
+                                <td>{data.product_code}</td>
+                                <td>{data.product_name}</td>
+                                <td>{data.Category}</td>
+                                <td>{data.totalQuantity}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        ) : (
+                          <div className="no-data">
+                            <img
+                              src={NoData}
+                              alt="NoData"
+                              className="no-data-img"
+                            />
+                            <h3>No Data Found</h3>
+                          </div>
+                        )}
+                      </table>
+                      <nav style={{ marginTop: "15px" }}>
                         <ul className="pagination" style={{ float: "right" }}>
-                          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                          <li
+                            className={`page-item ${
+                              currentPage === 1 ? "disabled" : ""
+                            }`}
+                          >
                             <button
                               type="button"
                               style={{
-                                fontSize: '14px',
-                                cursor: 'pointer',
-                                color: '#000000',
-                                textTransform: 'capitalize',
+                                fontSize: "14px",
+                                cursor: "pointer",
+                                color: "#000000",
+                                textTransform: "capitalize",
                               }}
                               className="page-link"
-                              onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                              onClick={() =>
+                                setCurrentPage((prevPage) => prevPage - 1)
+                              }
                             >
                               Previous
                             </button>
                           </li>
                           {generatePages().map((page, index) => (
-                            <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                            <li
+                              key={index}
+                              className={`page-item ${
+                                currentPage === page ? "active" : ""
+                              }`}
+                            >
                               <button
                                 style={{
-                                  fontSize: '14px',
-                                  width: '25px',
-                                  background: currentPage === page ? '#FFA500' : 'white',
-                                  color: currentPage === page ? '#FFFFFF' : '#000000',
-                                  border: 'none',
-                                  height: '28px',
+                                  fontSize: "14px",
+                                  width: "25px",
+                                  background:
+                                    currentPage === page ? "#FFA500" : "white",
+                                  color:
+                                    currentPage === page
+                                      ? "#FFFFFF"
+                                      : "#000000",
+                                  border: "none",
+                                  height: "28px",
                                 }}
-                                className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                                className={`page-link ${
+                                  currentPage === page ? "gold-bg" : ""
+                                }`}
                                 onClick={() => handlePageClick(page)}
                               >
                                 {page}
                               </button>
                             </li>
                           ))}
-                          <li className={`page-item ${currentPage === maxTotalPages ? "disabled" : ""}`}>
+                          <li
+                            className={`page-item ${
+                              currentPage === maxTotalPages ? "disabled" : ""
+                            }`}
+                          >
                             <button
-                              style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                              style={{
+                                fontSize: "14px",
+                                cursor: "pointer",
+                                color: "#000000",
+                                textTransform: "capitalize",
+                              }}
                               className="page-link"
-                              onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
-                            >
-                              Next
-                            </button>
-                          </li>
-                        </ul>
-                      </nav>
-                      </div>
-                    </div>
-                  </Tab>
-                  <Tab eventKey="issuance" title={<span style={{ ...tabStyle, fontSize: '20px' }}>Issuance</span>}>
-                    <div className="tab-titles">
-                      <h1>Issuance</h1>
-                      <div>
-                        {authrztn.includes('Inventory - Add') && (
-                          <Link to={'/createIssuance'} className="issuance-btn">
-                            <span style={{ marginRight: '4px' }}>
-                              <Plus size={20} />
-                            </span>
-                            Add Issuance
-                          </Link>
-                        )}
-
-                      </div>
-                    </div>
-                    <div className="table-containss">
-                      <div className="main-of-all-tables">
-                      <TextField
-                          label="Search"
-                          variant="outlined"
-                          style={{ marginBottom: '10px', 
-                          float: 'right',
-                          }}
-                          InputLabelProps={{
-                            style: { fontSize: '14px'},
-                          }}
-                          InputProps={{
-                            style: { fontSize: '14px', width: '250px', height: '50px' },
-                          }}
-                        onChange={handleSearchIssuance}/>
-                        <table className="table-hover" title="View Information">
-                          <thead>
-                            <tr>
-                              {/* <th className='tableh'>Issuance ID</th> */}
-                              <th className='tableh'>Issued To</th>
-                              <th className='tableh'>Origin Site</th>
-                              <th className='tableh'>MRS #</th>
-                              <th className='tableh'>Received By</th>
-                              <th className='tableh'>Date Created</th>
-                              <th className='tableh'>Action</th>
-                            </tr>
-                          </thead>
-                          {issuance.length > 0 ? (
-                            <tbody>
-                              {currentItemsIssuance.map((data, i) => (
-                                <tr key={i} >
-                                  {/* <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.issuance_id}</td> */}
-                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.cost_center.name}</td>
-                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.warehouse.warehouse_name}</td>
-                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.mrs}</td>
-                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.masterlist.col_Fname}</td>
-                                  <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{formatDatetime(data.createdAt)}</td>
-                                  <td>
-                                    <Button
-                                      onClick={() => {
-                                        if (data.status === 'Approved') {
-                                          navigate(`/returnForm/${data.issuance_id}`);
-                                        }
-                                      }}
-                                      style={{
-                                        fontSize: '12px',
-                                        color: 'black',
-                                        cursor: data.status !== 'Approved' ? 'not-allowed' : 'pointer'
-                                      }}
-                                      variant="outline-secondary"
-                                    >
-                                      Return
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          ) : (
-                            <div className="no-data">
-                              <img src={NoData} alt="NoData" className="no-data-img" />
-                              <h3>
-                                No Data Found
-                              </h3>
-                            </div>
-                          )}
-                        </table>
-                      </div>
-                      <nav style={{marginTop: '15px'}}>
-                        <ul className="pagination" style={{ float: "right" }}>
-                          <li className={`page-item ${currentPageissuance === 1 ? "disabled" : ""}`}>
-                            <button
-                            type="button"
-                            style={{fontSize: '14px',
-                            cursor: 'pointer',
-                            color: '#000000',
-                            textTransform: 'capitalize',
-                          }}
-                            className="page-link" 
-                            onClick={() => setCurrentPageIssuance((prevPage) => prevPage - 1)}>Previous</button>
-                          </li>
-
-                          {generatePagesIssuance().map((pageissuance, index) => (
-                            <li key={index} className={`page-item ${currentPageissuance === pageissuance ? "active" : ""}`}>
-                              <button
-                                style={{
-                                  fontSize: '14px',
-                                  width: '25px',
-                                  background: currentPageissuance === pageissuance ? '#FFA500' : 'white',
-                                  color: currentPageissuance === pageissuance ? '#FFFFFF' : '#000000',
-                                  border: 'none',
-                                  height: '28px',
-                                }}
-                                className={`page-link ${currentPageissuance === pageissuance ? "gold-bg" : ""}`}
-                                onClick={() => handlePageClickIssuance(pageissuance)}
-                              >
-                                {pageissuance}
-                              </button>
-                            </li>
-                          ))}
-                          <li className={`page-item ${currentPageissuance === totalPagesIssuance ? "disabled" : ""}`}>
-                            <button
-                              style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                              className="page-link"
-                              onClick={() => setCurrentPageIssuance((prevPage) => prevPage + 1)}
+                              onClick={() =>
+                                setCurrentPage((prevPage) => prevPage + 1)
+                              }
                             >
                               Next
                             </button>
@@ -768,235 +901,601 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                         </ul>
                       </nav>
                     </div>
-                  </Tab>
-                  <Tab eventKey="return" title={<span style={{ ...tabStyle, fontSize: '20px' }}>Return</span>}>
-                    <div className="tab-titles">
-                      <h1>Return</h1>
+                  </div>
+                </Tab>
+                <Tab
+                  eventKey="issuance"
+                  title={
+                    <span style={{ ...tabStyle, fontSize: "20px" }}>
+                      Issuance
+                    </span>
+                  }
+                >
+                  <div className="tab-titles">
+                    <h1>Issuance</h1>
+                    <div>
+                      {authrztn.includes("Inventory - Add") && (
+                        <Link to={"/createIssuance"} className="issuance-btn">
+                          <span style={{ marginRight: "4px" }}>
+                            <Plus size={20} />
+                          </span>
+                          Add Issuance
+                        </Link>
+                      )}
                     </div>
-                    <div className="table-containss">
-                      <div className="main-of-all-tables">
+                  </div>
+                  <div className="table-containss">
+                    <div className="main-of-all-tables">
                       <TextField
                         label="Search"
                         variant="outlined"
-                        style={{ marginBottom: '10px', 
-                        float: 'right',
-                        }}
+                        style={{ marginBottom: "10px", float: "right" }}
                         InputLabelProps={{
-                          style: { fontSize: '14px'},
+                          style: { fontSize: "14px" },
                         }}
                         InputProps={{
-                          style: { fontSize: '14px', width: '250px', height: '50px' },
+                          style: {
+                            fontSize: "14px",
+                            width: "250px",
+                            height: "50px",
+                          },
                         }}
-                        onChange={handleSearchReturn}/>
-                        <table id='order2-listing'>
-                          <thead>
-                            <tr>
-                              <th className='tableh'>Product Code</th>
-                              <th className='tableh'>Product Name</th>
-                              <th className='tableh'>Return By</th>
-                              <th className='tableh'>Return Quantity</th>
-                              <th className='tableh'>Date Return</th>
-                              <th className='tableh'>Date Issued</th>
-                              <th className='tableh'>Status</th>
-                              <th className='tableh'>Action</th>
+                        onChange={handleSearchIssuance}
+                      />
+                      <table className="table-hover" title="View Information">
+                        <thead>
+                          <tr>
+                            <th className='tableh'>BIS #</th>
+                            <th className="tableh">Issued To</th>
+                            <th className="tableh">Origin Site</th>
+                            <th className="tableh">MRS #</th>
+                            <th className="tableh">Received By</th>
+                            <th className="tableh">Date Created</th>
+                            <th className="tableh">Action</th>
+                          </tr>
+                        </thead>
+                        {issuance.length > 0 ? (
+                          <tbody>
+                          {currentItemsIssuance.map((data, i) => (
+                            <tr key={i}>
+                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.issuance_id}</td>
+                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
+                                {data.cost_center.name}
+                              </td>
+                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
+                                {data.warehouse.warehouse_name}
+                              </td>
+                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
+                                {data.mrs}
+                              </td>
+                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
+                                {data.masterlist.col_Fname}
+                              </td>
+                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
+                                {formatDatetime(data.createdAt)}
+                              </td>
+                              <td>
+                                <Button
+                                  onClick={() => {
+                                    if (data.status === "Approved") {
+                                      navigate(`/returnForm/${data.issuance_id}`);
+                                    }
+                                  }}
+                                  style={{
+                                    fontSize: "12px",
+                                    color: "black",
+                                    cursor: data.status !== "Approved" || isReturnButtonDisabled(data.date_approved)
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  }}
+                                  variant="outline-secondary"
+                                  disabled={isReturnButtonDisabled(data.date_approved)}
+                                >
+                                  Return
+                                </Button>
+                              </td>
                             </tr>
-                          </thead>
-                        {returned_prd.length > 0 || returned_asm.length > 0 || returned_spare.length > 0 || returned_subpart.length > 0 ? (
-                            <tbody>
-                              {currentItemsReturnProd.map((data, i) => (
-                                <tr key={i}>
-                                  <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
-                                  <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
-                                  <td>{data.return_by}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{formatDatetime(data.createdAt)}</td>
-                                  <td>{formatDatetime(data.issuance.updatedAt)}</td>
-                                  <td>{data.status}</td>
-                                  <td>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleMoveToInventory(data.id, data.inventory_prd.inventory_id, data.quantity, "product")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      move to inventory
-                                    </button>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleRetain(data.id, "product")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      Retain
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-
-                              {currentItemsReturnAsm.map((data, i) => (
-                                <tr key={i}>
-                                  <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_code}</td>
-                                  <td>{data.inventory_assembly.assembly_supplier.assembly.assembly_name}</td>
-                                  <td>{data.return_by}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{formatDatetime(data.createdAt)}</td>
-                                  <td>{formatDatetime(data.issuance.updatedAt)}</td>
-                                  <td>{data.status}</td>
-                                  <td>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleMoveToInventory(data.id, data.inventory_assembly.inventory_id, data.quantity, "assembly")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      move to inventory
-                                    </button>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleRetain(data.id, "assembly")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      Retain
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-
-
-                              {currentItemsReturnSpare.map((data, i) => (
-                                <tr key={i}>
-                                  <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}</td>
-                                  <td>{data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}</td>
-                                  <td>{data.return_by}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{formatDatetime(data.createdAt)}</td>
-                                  <td>{formatDatetime(data.issuance.updatedAt)}</td>
-                                  <td>{data.status}</td>
-                                  <td>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleMoveToInventory(data.id, data.inventory_spare.inventory_id, data.quantity, "spare")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      move to inventory
-                                    </button>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleRetain(data.id, "spare")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      Retain
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-
-                              {currentItemsReturnSubpart.map((data, i) => (
-                                <tr key={i}>
-                                  <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_code}</td>
-                                  <td>{data.inventory_subpart.subpart_supplier.subPart.subPart_name}</td>
-                                  <td>{data.return_by}</td>
-                                  <td>{data.quantity}</td>
-                                  <td>{formatDatetime(data.createdAt)}</td>
-                                  <td>{formatDatetime(data.issuance.updatedAt)}</td>
-                                  <td>{data.status}</td>
-                                  <td>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleMoveToInventory(data.id, data.inventory_subpart.inventory_id, data.quantity, "subpart")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      move to inventory
-                                    </button>
-                                    <button
-                                      style={{ fontSize: '12px' }}
-                                      className='btn'
-                                      onClick={() => handleRetain(data.id, "subpart")}
-                                      disabled={data.status === 'Retained' || data.status === 'Returned'}
-                                    >
-                                      Retain
-                                    </button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                                                      ) : (
-                            <div className="no-data">
-                              <img src={NoData} alt="NoData" className="no-data-img" />
-                              <h3>
-                                No Data Found
-                              </h3>
-                            </div>
-                          )}
-                        </table>
-                      </div>
-                      <nav style={{marginTop: '15px'}}>
-                        <ul className="pagination" style={{ float: "right" }}>
-                          <li className={`page-item ${currentPageReturn === 1 ? "disabled" : ""}`}>
-                            <button
-                              type="button"
-                              style={{
-                                fontSize: '14px',
-                                cursor: 'pointer',
-                                color: '#000000',
-                                textTransform: 'capitalize',
-                              }}
-                              className="page-link"
-                              onClick={() => setCurrentPageReturn((prevPage) => prevPage - 1)}
-                            >
-                              Previous
-                            </button>
-                          </li>
-
-                           {generatePagesIssuance().map((pageReturn, index) => (
-                            <li key={index} className={`page-item ${currentPageReturn === pageReturn ? "active" : ""}`}>
-                              <button
-                                style={{
-                                  fontSize: '14px',
-                                  width: '25px',
-                                  background: currentPageReturn === pageReturn ? '#FFA500' : 'white',
-                                  color: currentPageReturn === pageReturn ? '#FFFFFF' : '#000000',
-                                  border: 'none',
-                                  height: '28px',
-                                }}
-                                className={`page-link ${currentPageReturn === pageReturn ? "gold-bg" : ""}`}
-                                onClick={() => handlePageClickReturn(pageReturn)}
-                              >
-                                {pageReturn}
-                              </button>
-                            </li>
                           ))}
-                          <li className={`page-item ${currentPageReturn === maxReturnTotalPages ? "disabled" : ""}`}>
+                        </tbody>
+                        ) : (
+                          <div className="no-data">
+                            <img
+                              src={NoData}
+                              alt="NoData"
+                              className="no-data-img"
+                            />
+                            <h3>No Data Found</h3>
+                          </div>
+                        )}
+                      </table>
+                    </div>
+                    <nav style={{ marginTop: "15px" }}>
+                      <ul className="pagination" style={{ float: "right" }}>
+                        <li
+                          className={`page-item ${
+                            currentPageissuance === 1 ? "disabled" : ""
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            style={{
+                              fontSize: "14px",
+                              cursor: "pointer",
+                              color: "#000000",
+                              textTransform: "capitalize",
+                            }}
+                            className="page-link"
+                            onClick={() =>
+                              setCurrentPageIssuance((prevPage) => prevPage - 1)
+                            }
+                          >
+                            Previous
+                          </button>
+                        </li>
+
+                        {generatePagesIssuance().map((pageissuance, index) => (
+                          <li
+                            key={index}
+                            className={`page-item ${
+                              currentPageissuance === pageissuance
+                                ? "active"
+                                : ""
+                            }`}
+                          >
                             <button
-                              style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                              className="page-link"
-                              onClick={() => setCurrentPageReturn((prevPage) => prevPage + 1)}
+                              style={{
+                                fontSize: "14px",
+                                width: "25px",
+                                background:
+                                  currentPageissuance === pageissuance
+                                    ? "#FFA500"
+                                    : "white",
+                                color:
+                                  currentPageissuance === pageissuance
+                                    ? "#FFFFFF"
+                                    : "#000000",
+                                border: "none",
+                                height: "28px",
+                              }}
+                              className={`page-link ${
+                                currentPageissuance === pageissuance
+                                  ? "gold-bg"
+                                  : ""
+                              }`}
+                              onClick={() =>
+                                handlePageClickIssuance(pageissuance)
+                              }
                             >
-                              Next
+                              {pageissuance}
                             </button>
                           </li>
-                        </ul>
-                      </nav>
+                        ))}
+                        <li
+                          className={`page-item ${
+                            currentPageissuance === totalPagesIssuance
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            style={{
+                              fontSize: "14px",
+                              cursor: "pointer",
+                              color: "#000000",
+                              textTransform: "capitalize",
+                            }}
+                            className="page-link"
+                            onClick={() =>
+                              setCurrentPageIssuance((prevPage) => prevPage + 1)
+                            }
+                          >
+                            Next
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </Tab>
+                <Tab
+                  eventKey="return"
+                  title={
+                    <span style={{ ...tabStyle, fontSize: "20px" }}>
+                      Return
+                    </span>
+                  }
+                >
+                  <div className="tab-titles">
+                    <h1>Return</h1>
+                  </div>
+                  <div className="table-containss">
+                    <div className="main-of-all-tables">
+                      <TextField
+                        label="Search"
+                        variant="outlined"
+                        style={{ marginBottom: "10px", float: "right" }}
+                        InputLabelProps={{
+                          style: { fontSize: "14px" },
+                        }}
+                        InputProps={{
+                          style: {
+                            fontSize: "14px",
+                            width: "250px",
+                            height: "50px",
+                          },
+                        }}
+                        onChange={handleSearchReturn}
+                      />
+                      <table id="order2-listing" className="table-responsive">
+                        <thead>
+                          <tr>
+                            <th className="tableh">BIS #</th>
+                            <th className="tableh">Product Code</th>
+                            <th className="tableh">Product Name</th>
+                            <th className="tableh">Return By</th>
+                            <th className="tableh">Accountability Refcode:</th>
+                            <th className="tableh">MRS no.</th>
+                            <th className="tableh">Return Quantity</th>
+                            <th className="tableh">Date Return</th>
+                            <th className="tableh">Date Approved</th>
+                            <th className="tableh">Status</th>
+                            <th className="tableh text-center">Action</th>
+                          </tr>
+                        </thead>
+                        {returned_prd.length > 0 ||
+                        returned_asm.length > 0 ||
+                        returned_spare.length > 0 ||
+                        returned_subpart.length > 0 ? (
+                          <tbody>
+                            {currentItemsReturnProd.map((data, i) => (
+                              <tr key={i}>
+                                <td>
+                                  {data.issuance.issuance_id}
+                                </td>
+                                <td>
+                                  {
+                                    data.inventory_prd.product_tag_supplier
+                                      .product.product_code
+                                  }
+                                </td>
+                                <td>
+                                  {
+                                    data.inventory_prd.product_tag_supplier
+                                      .product.product_name
+                                  }
+                                </td>
+                                <td>{data.return_by}</td>
+                                <td>{data.issuance.accountability_refcode}</td>
+                                <td>{data.issuance.mrs}</td>
+                                <td>{data.quantity}</td>
+                                <td>{formatDatetime(data.createdAt)}</td>
+                                <td>
+                                  {formatDatetime(data.issuance.date_approved)}
+                                </td>
+                                <td>{data.status}</td>
+                                <td >
+                                  <div className="">
+                                    <div className="text-center">
+                                    <Button
+                                    style={{ fontSize: "12px", width: '130px', marginBottom: '2px' }}
+                                    className="btn "
+                                    onClick={() =>
+                                      handleMoveToInventory(
+                                        data.id,
+                                        data.inventory_prd.inventory_id,
+                                        data.quantity,
+                                        "product"
+                                      )
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    move to inventory
+                                  </Button>
+                                    
+                                    </div>
+                                    <div className="text-center" >
+                                    <Button
+
+                                    variant='secondary'
+                                    style={{ fontSize: "12px", width: '130px' }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleRetain(data.id, "product")
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    Retain
+                                  </Button>
+                                    </div>
+                                  </div>
+                                 
+                                  
+                                </td>
+                              </tr>
+                            ))}
+
+                            {currentItemsReturnAsm.map((data, i) => (
+                              <tr key={i}>
+                                <td>
+                                  {
+                                    data.inventory_assembly.assembly_supplier
+                                      .assembly.assembly_code
+                                  }
+                                </td>
+                                <td>
+                                  {
+                                    data.inventory_assembly.assembly_supplier
+                                      .assembly.assembly_name
+                                  }
+                                </td>
+                                <td>{data.return_by}</td>
+                                <td>{data.quantity}</td>
+                                <td>{formatDatetime(data.createdAt)}</td>
+                                <td>
+                                  {formatDatetime(data.issuance.updatedAt)}
+                                </td>
+                                <td>{data.status}</td>
+                                <td>
+                                  <button
+                                    style={{ fontSize: "12px" }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleMoveToInventory(
+                                        data.id,
+                                        data.inventory_assembly.inventory_id,
+                                        data.quantity,
+                                        "assembly"
+                                      )
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    move to inventory
+                                  </button>
+                                  <button
+                                    style={{ fontSize: "12px" }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleRetain(data.id, "assembly")
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    Retain
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+
+                            {currentItemsReturnSpare.map((data, i) => (
+                              <tr key={i}>
+                                <td>
+                                  {
+                                    data.inventory_spare.sparepart_supplier
+                                      .sparePart.spareParts_code
+                                  }
+                                </td>
+                                <td>
+                                  {
+                                    data.inventory_spare.sparepart_supplier
+                                      .sparePart.spareParts_name
+                                  }
+                                </td>
+                                <td>{data.return_by}</td>
+                                <td>{data.quantity}</td>
+                                <td>{formatDatetime(data.createdAt)}</td>
+                                <td>
+                                  {formatDatetime(data.issuance.updatedAt)}
+                                </td>
+                                <td>{data.status}</td>
+                                <td>
+                                  <button
+                                    style={{ fontSize: "12px" }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleMoveToInventory(
+                                        data.id,
+                                        data.inventory_spare.inventory_id,
+                                        data.quantity,
+                                        "spare"
+                                      )
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    move to inventory
+                                  </button>
+                                  <button
+                                    style={{ fontSize: "12px" }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleRetain(data.id, "spare")
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    Retain
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+
+                            {currentItemsReturnSubpart.map((data, i) => (
+                              <tr key={i}>
+                                <td>
+                                  {
+                                    data.inventory_subpart.subpart_supplier
+                                      .subPart.subPart_code
+                                  }
+                                </td>
+                                <td>
+                                  {
+                                    data.inventory_subpart.subpart_supplier
+                                      .subPart.subPart_name
+                                  }
+                                </td>
+                                <td>{data.return_by}</td>
+                                <td>{data.quantity}</td>
+                                <td>{formatDatetime(data.createdAt)}</td>
+                                <td>
+                                  {formatDatetime(data.issuance.updatedAt)}
+                                </td>
+                                <td>{data.status}</td>
+                                <td>
+                                  <button
+                                    style={{ fontSize: "12px" }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleMoveToInventory(
+                                        data.id,
+                                        data.inventory_subpart.inventory_id,
+                                        data.quantity,
+                                        "subpart"
+                                      )
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    move to inventory
+                                  </button>
+                                  <button
+                                    style={{ fontSize: "12px" }}
+                                    className="btn"
+                                    onClick={() =>
+                                      handleRetain(data.id, "subpart")
+                                    }
+                                    disabled={
+                                      data.status === "Retained" ||
+                                      data.status === "Returned"
+                                    }
+                                  >
+                                    Retain
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        ) : (
+                          <div className="no-data">
+                            <img
+                              src={NoData}
+                              alt="NoData"
+                              className="no-data-img"
+                            />
+                            <h3>No Data Found</h3>
+                          </div>
+                        )}
+                      </table>
                     </div>
-                  </Tab>
-                </Tabs>
-              </div>
-                </div>
-          ) : (
-            <div className="no-access">
-              <img src={NoAccess} alt="NoAccess" className="no-access-img" />
-              <h3>
-                You don't have access to this function.
-              </h3>
+                    <nav style={{ marginTop: "15px" }}>
+                      <ul className="pagination" style={{ float: "right" }}>
+                        <li
+                          className={`page-item ${
+                            currentPageReturn === 1 ? "disabled" : ""
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            style={{
+                              fontSize: "14px",
+                              cursor: "pointer",
+                              color: "#000000",
+                              textTransform: "capitalize",
+                            }}
+                            className="page-link"
+                            onClick={() =>
+                              setCurrentPageReturn((prevPage) => prevPage - 1)
+                            }
+                          >
+                            Previous
+                          </button>
+                        </li>
+
+                        {generatePagesIssuance().map((pageReturn, index) => (
+                          <li
+                            key={index}
+                            className={`page-item ${
+                              currentPageReturn === pageReturn ? "active" : ""
+                            }`}
+                          >
+                            <button
+                              style={{
+                                fontSize: "14px",
+                                width: "25px",
+                                background:
+                                  currentPageReturn === pageReturn
+                                    ? "#FFA500"
+                                    : "white",
+                                color:
+                                  currentPageReturn === pageReturn
+                                    ? "#FFFFFF"
+                                    : "#000000",
+                                border: "none",
+                                height: "28px",
+                              }}
+                              className={`page-link ${
+                                currentPageReturn === pageReturn
+                                  ? "gold-bg"
+                                  : ""
+                              }`}
+                              onClick={() => handlePageClickReturn(pageReturn)}
+                            >
+                              {pageReturn}
+                            </button>
+                          </li>
+                        ))}
+                        <li
+                          className={`page-item ${
+                            currentPageReturn === maxReturnTotalPages
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            style={{
+                              fontSize: "14px",
+                              cursor: "pointer",
+                              color: "#000000",
+                              textTransform: "capitalize",
+                            }}
+                            className="page-link"
+                            onClick={() =>
+                              setCurrentPageReturn((prevPage) => prevPage + 1)
+                            }
+                          >
+                            Next
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </Tab>
+              </Tabs>
             </div>
-          )
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
         )}
       </div>
     </div>
   );
-}
+};
 export default Inventory;

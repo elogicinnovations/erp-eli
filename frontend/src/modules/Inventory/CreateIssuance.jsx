@@ -64,6 +64,21 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
 
   useEffect(() => {
     decodeToken();
+
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/issuance/lastAccRefCode")
+        .then((res) => {
+          setAccountabilityRefcode(res.data.nextCode);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
   }, [])
 
   const handleAddProdClick = () => {
@@ -501,7 +516,10 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                       type="text"
                       placeholder="Enter Refcode..."
                       style={{ height: "40px", fontSize: "15px" }}
-                      onChange={(e) => setAccountabilityRefcode(e.target.value)}
+                      readOnly
+                      required
+                      value={accountabilityRefcode}
+                      // onChange={(e) => setAccountabilityRefcode(e.target.value)}
                     />
                   </Form.Group>
                 </div>

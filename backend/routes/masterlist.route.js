@@ -378,10 +378,10 @@ router.route("/masterTable").get(async (req, res) => {
       },
       order: [['createdAt', 'DESC']],
       include: [
-        {
-          model: UserRole,
-          required: true,
-        },
+        // {
+        //   model: UserRole,
+        //   required: true,
+        // },
 
         {
           model: Department,
@@ -423,32 +423,43 @@ router.route("/createMaster").post(async (req, res) => {
       const status = req.body.cstatus ? "Active" : "Inactive";
 
       // Validate the password
-      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\S{8,}$/;
-      if (!passwordRegex.test(req.body.cpass)) {
-        return res.status(400).json({
-          errors: [
-            {
-              field: "col_Pass",
-              message:
-                "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one digit, and no spaces.",
-            },
-          ],
-        });
-      }
+      // const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])\S{8,}$/;
+      // if (!passwordRegex.test(req.body.cpass)) {
+      //   return res.status(400).json({
+      //     errors: [
+      //       {
+      //         field: "col_Pass",
+      //         message:
+      //           "Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one digit, and no spaces.",
+      //       },
+      //     ],
+      //   });
+      // }
 
       // console.log('tyr: ' + req.body.crole)
+
+      let UserType;
+
+      if(req.body.cpass === "" || req.body.cpass === null){
+      
+        UserType = "Employee"
+      }else{
+        UserType = "Standard User"
+      }
+
+
       // Insert a new record into the table
       const newData = await MasterList.create({
         col_address: req.body.caddress,
         col_phone: req.body.cnum,
-        col_username: req.body.cuname,
-        col_roleID: req.body.crole,
+        col_username: req.body.cuname || null,
+        col_roleID: req.body.crole || null,
         department_id: req.body.cdept,
         col_email: req.body.cemail,
-        col_Pass: req.body.cpass,
+        col_Pass: req.body.cpass || null,
         col_status: status,
         col_Fname: req.body.cname,
-        user_type: "Standard User",
+        user_type: UserType,
       });
 
       await Activity_Log.create({
@@ -479,7 +490,7 @@ router.route("/createMaster").post(async (req, res) => {
     } else {
       // Handle other types of errors
       console.error(err);
-      res.status(500).send("An error occurred");
+      res.status(500).send(err);
     }
   }
 });
@@ -504,6 +515,15 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
       // Convert boolean status to "Active" or "Inactive"
       const status = req.body.cstatus ? "Active" : "Inactive";
 
+      let UserType;
+
+      if(req.body.col_Pass === "" || req.body.col_Pass === null){
+      
+        UserType = "Employee"
+      }else{
+        UserType = "Standard User"
+      }
+
       // Update the record in the table
       const [affectedRows] = await MasterList.update(
         {
@@ -516,6 +536,7 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
           col_address: req.body.col_address,
           col_username: req.body.col_username,
           col_status: req.body.col_status,
+          user_type: UserType
         },
         {
           where: { col_id: updatemasterID },

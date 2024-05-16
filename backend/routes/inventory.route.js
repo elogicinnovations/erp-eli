@@ -32,6 +32,162 @@ router.use(
   })
 );
 
+router.route("/fetchInventory_group_filter").get(async (req, res) => {
+  try {
+      const {value} = req.query
+      if(value === 'LS'){
+        const productData = await Inventory.findAll({
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+              include: [
+                {
+                  model: Product,
+                  required: true,
+                
+                  include: [
+                    {
+                      model: Category,
+                      required: true,
+                    },
+                  ],
+                },
+                {
+                  model: Supplier,
+                  required: true,
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+    
+        // Grouping the product data by warehouse_id
+        const groupedProductData = {};
+        productData.forEach((item) => {
+          const warehouseId = item.warehouse_id;
+          const warehouse_name = item.warehouse?.warehouse_name;
+          const productID = item.product_tag_supplier?.product?.product_id;
+          const productCode = item.product_tag_supplier?.product?.product_code;
+          const productName = item.product_tag_supplier?.product?.product_name;
+          const productThreshold = item.product_tag_supplier?.product?.product_threshold;
+          const Category =
+            item.product_tag_supplier?.product?.category?.category_name;
+          const Price = item.price;
+          // Ensure that productCode and productName are truthy before using them
+          if (productCode && productName) {
+            const key = `${productCode}_${productName}`;
+    
+            if (!groupedProductData[key]) {
+              groupedProductData[key] = {
+                productID: productID,
+                warehouseId: warehouseId,
+                product_code: productCode,
+                product_name: productName,
+                productThreshold: productThreshold,
+                Category: Category,
+                totalQuantity: 0,
+                warehouse_name: warehouse_name,
+                price: Price,
+                products: [],
+              };
+            }
+    
+            groupedProductData[key].totalQuantity += item.quantity;
+            groupedProductData[key].products.push(item);
+          }
+        });
+    
+        const filteredProductData = Object.values(groupedProductData).filter(product => product.totalQuantity <= product.productThreshold);
+        const finalResult_PRD = filteredProductData;
+        return res.json(finalResult_PRD);
+        // console.log(finalResult_PRD)
+      }else if (value === 'OTS'){
+        const productData = await Inventory.findAll({
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+              include: [
+                {
+                  model: Product,
+                  required: true,
+                
+                  include: [
+                    {
+                      model: Category,
+                      required: true,
+                    },
+                  ],
+                },
+                {
+                  model: Supplier,
+                  required: true,
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+    
+        // Grouping the product data by warehouse_id
+        const groupedProductData = {};
+        productData.forEach((item) => {
+          const warehouseId = item.warehouse_id;
+          const warehouse_name = item.warehouse?.warehouse_name;
+          const productID = item.product_tag_supplier?.product?.product_id;
+          const productCode = item.product_tag_supplier?.product?.product_code;
+          const productName = item.product_tag_supplier?.product?.product_name;
+          const productThreshold = item.product_tag_supplier?.product?.product_threshold;
+          const Category =
+            item.product_tag_supplier?.product?.category?.category_name;
+          const Price = item.price;
+          // Ensure that productCode and productName are truthy before using them
+          if (productCode && productName) {
+            const key = `${productCode}_${productName}`;
+    
+            if (!groupedProductData[key]) {
+              groupedProductData[key] = {
+                productID: productID,
+                warehouseId: warehouseId,
+                product_code: productCode,
+                product_name: productName,
+                productThreshold: productThreshold,
+                Category: Category,
+                totalQuantity: 0,
+                warehouse_name: warehouse_name,
+                price: Price,
+                products: [],
+              };
+            }
+    
+            groupedProductData[key].totalQuantity += item.quantity;
+            groupedProductData[key].products.push(item);
+          }
+        });
+    
+        const filteredProductData = Object.values(groupedProductData).filter(product => product.totalQuantity === 0);
+        const finalResult_PRD = filteredProductData;
+        return res.json(finalResult_PRD);
+      }
+
+   
+
+
+ 
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 router.route("/fetchInventory_group").get(async (req, res) => {
   try {
     const productData = await Inventory.findAll({

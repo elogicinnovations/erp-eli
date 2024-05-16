@@ -15,13 +15,13 @@ import { ArrowCircleLeft, CalendarBlank } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
-import SBFLOGO from "../../../assets/image/sbflogo-noback.png";
+import SBFLOGO from "../../../assets/image/sbf_logoo_final.jpg";
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
 import html2canvas from "html2canvas";
-import ReactLoading from 'react-loading';
-import NoAccess from '../../../assets/image/NoAccess.png';
-import ESignature from '../../../assets/image/e-signature.png';
+import ReactLoading from "react-loading";
+import NoAccess from "../../../assets/image/NoAccess.png";
+import ESignature from "../../../assets/image/e-signature.png";
 
 function POApprovalRejustify({ authrztn }) {
   const { id } = useParams();
@@ -52,7 +52,7 @@ function POApprovalRejustify({ authrztn }) {
   const [dateApproved, setDateApproved] = useState(new Date());
   const [showSignature, setShowSignature] = useState(false);
   const [po_idRejustify, setPo_idRejustify] = useState("");
-  const [requestor, setRequestor] = useState('');
+  const [requestor, setRequestor] = useState("");
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -78,7 +78,10 @@ function POApprovalRejustify({ authrztn }) {
     return () => clearInterval(interval);
   }, []);
 
-  const formattedDateApproved = dateApproved.toISOString().slice(0, 19).replace('T', ' ');
+  const formattedDateApproved = dateApproved
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
@@ -93,8 +96,8 @@ function POApprovalRejustify({ authrztn }) {
   }, []);
 
   const handleShow = (po_idsss) => {
-    setPo_idRejustify(po_idsss)
-    setShowModal(true)
+    setPo_idRejustify(po_idsss);
+    setShowModal(true);
   };
 
   const handleClose = () => {
@@ -110,15 +113,15 @@ function POApprovalRejustify({ authrztn }) {
         },
       })
       .then((res) => {
-        setPOarray(res.data)
-        setIsLoading(false)
+        setPOarray(res.data);
+        setIsLoading(false);
       })
       .catch((err) => console.log(err));
-  }
+  };
 
   const [POarray, setPOarray] = useState([]);
   useEffect(() => {
-    reloadTable()
+    reloadTable();
   }, []);
 
   useEffect(() => {
@@ -176,7 +179,7 @@ function POApprovalRejustify({ authrztn }) {
         setPRnum(res.data.pr_num);
         const parsedDate = new Date(res.data.date_needed);
         setDateNeeded(parsedDate);
-        setRequestor(res.data.masterlist_id)
+        setRequestor(res.data.masterlist_id);
         setUseFor(res.data.used_for);
         setRemarks(res.data.remarks);
         setStatus(res.data.status);
@@ -197,7 +200,6 @@ function POApprovalRejustify({ authrztn }) {
       .catch((err) => console.log(err));
   }, []);
 
-
   const handleCancel = async (id) => {
     swal({
       title: "Are you sure?",
@@ -210,7 +212,7 @@ function POApprovalRejustify({ authrztn }) {
         try {
           const response = await axios.put(BASE_URL + `/PR/cancel_PO`, {
             row_id: id,
-            userId
+            userId,
           });
 
           if (response.status === 200) {
@@ -237,7 +239,7 @@ function POApprovalRejustify({ authrztn }) {
   };
 
   const handleReject = async (po_idss) => {
-    const po_approvalID = po_idss
+    const po_approvalID = po_idss;
     swal({
       title: "Confirm Reject",
       text: "Are you sure you want to reject this purchase order?",
@@ -247,34 +249,32 @@ function POApprovalRejustify({ authrztn }) {
     }).then(async (approve) => {
       if (approve) {
         try {
-          axios.post(`${BASE_URL}/PR/rejectPO`, null, {
-            params: {
-              po_approvalID,
-              userId
-            }
-          })
+          axios
+            .post(`${BASE_URL}/PR/rejectPO`, null, {
+              params: {
+                po_approvalID,
+                userId,
+              },
+            })
             .then((res) => {
               console.log(res);
               if (res.status === 200) {
                 swal({
                   title: "Purchase Order Rejected",
                   text: "The purchase order has been successfully rejected.",
-                  icon: 'success',
-                  button: 'OK'
-                })
-                  .then(() => {
-                    reloadTable()
-                  });
+                  icon: "success",
+                  button: "OK",
+                }).then(() => {
+                  reloadTable();
+                });
               } else {
                 swal({
-                  icon: 'error',
-                  title: 'Something went wrong',
-                  text: 'Please contact our support'
+                  icon: "error",
+                  title: "Something went wrong",
+                  text: "Please contact our support",
                 });
               }
-            })
-
-
+            });
         } catch (err) {
           console.log(err);
         }
@@ -285,10 +285,10 @@ function POApprovalRejustify({ authrztn }) {
         });
       }
     });
-  }
+  };
 
   const handleApprove = async (po_idss) => {
-    const po_idApproval = po_idss
+    const po_idApproval = po_idss;
     swal({
       title: `Are you sure want to approve this purchase Order?`,
       text: "This action cannot be undone.",
@@ -298,9 +298,11 @@ function POApprovalRejustify({ authrztn }) {
     }).then(async (approve) => {
       if (approve) {
         // setsignatureTriggered(true);
-        setLoadAprrove(true)
+        setLoadAprrove(true);
         try {
-          const div = document.getElementById(`content-to-capture-${po_idApproval}`);
+          const div = document.getElementById(
+            `content-to-capture-${po_idApproval}`
+          );
 
           // const span = document.createElement('span');
           // span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
@@ -310,9 +312,6 @@ function POApprovalRejustify({ authrztn }) {
 
           const canvas = await html2canvas(div);
           const imageData = canvas.toDataURL("image/png");
-
-
-
 
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             id,
@@ -333,7 +332,7 @@ function POApprovalRejustify({ authrztn }) {
             }).then(() => {
               navigate("/purchaseOrderList");
               // setIsLoading(false)
-              setLoadAprrove(false)
+              setLoadAprrove(false);
             });
           } else {
             swal({
@@ -358,11 +357,11 @@ function POApprovalRejustify({ authrztn }) {
       const formData = new FormData();
 
       if (file) {
-        formData.append('file', file);
+        formData.append("file", file);
         const mimeType = file.type;
-        const fileExtension = file.name.split('.').pop();
-        formData.append('mimeType', mimeType);
-        formData.append('fileExtension', fileExtension);
+        const fileExtension = file.name.split(".").pop();
+        formData.append("mimeType", mimeType);
+        formData.append("fileExtension", fileExtension);
       } else {
         // Append null or skip appending depending on your server-side logic
         // formData.append('file', null);
@@ -406,8 +405,6 @@ function POApprovalRejustify({ authrztn }) {
       console.error("Error uploading files:", error);
     }
   };
-
-
 
   const [POPreview, setPOPreview] = useState([]);
   const handlePreview = async (po_num) => {
@@ -664,28 +661,47 @@ function POApprovalRejustify({ authrztn }) {
                         </div>
 
                         <div className="col-6">
-                          <div style={{ display: 'flex', justifyContent: 'end', marginRight: '10px' }}>
-                            {group.items[0].item.status === 'Rejected' ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "end",
+                              marginRight: "10px",
+                            }}
+                          >
+                            {group.items[0].item.status === "Rejected" ? (
                               <>
                                 {requestor === userId ? (
                                   <Button
-                                    onClick={() => { handleShow(group.title) }}
+                                    onClick={() => {
+                                      handleShow(group.title);
+                                    }}
                                     className="btn btn-secondary btn-md"
                                     size="md"
-                                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                                    style={{
+                                      fontSize: "20px",
+                                      margin: "0px 5px",
+                                    }}
                                   >
                                     Rejustify
                                   </Button>
-                                 ) : (
+                                ) : (
                                   <></>
                                 )}
                               </>
                             ) : (
                               <>
-                                <p style={{ color: 'red', fontSize: '15px' }}>{`Status: ${group.items[0].item.status === null ? 'For-Approval' : group.items[0].item.status === 'For-Rejustify (PO)' ? 'Rejustified' : group.items[0].item.status}`}</p>
+                                <p
+                                  style={{ color: "red", fontSize: "15px" }}
+                                >{`Status: ${
+                                  group.items[0].item.status === null
+                                    ? "For-Approval"
+                                    : group.items[0].item.status ===
+                                      "For-Rejustify (PO)"
+                                    ? "Rejustified"
+                                    : group.items[0].item.status
+                                }`}</p>
                               </>
                             )}
-
                           </div>
                         </div>
                       </div>
@@ -795,8 +811,12 @@ function POApprovalRejustify({ authrztn }) {
               size="xl"
             >
               <Modal.Header closeButton>
-                <Modal.Title
-                  style={{ fontSize: '25px' }}>DEPARTMENT: <strong>{POdepartmentUser?.masterlist?.department?.department_name}</strong></Modal.Title>
+                <Modal.Title style={{ fontSize: "25px" }}>
+                  DEPARTMENT:{" "}
+                  <strong>
+                    {POdepartmentUser?.masterlist?.department?.department_name}
+                  </strong>
+                </Modal.Title>
               </Modal.Header>
               {POarray.map((group) => {
                 let totalSum = 0;
@@ -818,19 +838,28 @@ function POApprovalRejustify({ authrztn }) {
                 vatAmount = vatAmount.toFixed(2);
                 totalSum = totalSum.toFixed(2);
 
-                TotalAmount = parseFloat(TotalAmount).toLocaleString('en-US', { minimumFractionDigits: 2 });
-                vatAmount = parseFloat(vatAmount).toLocaleString('en-US', { minimumFractionDigits: 2 });
-                totalSum = parseFloat(totalSum).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                TotalAmount = parseFloat(TotalAmount).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                });
+                vatAmount = parseFloat(vatAmount).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                });
+                totalSum = parseFloat(totalSum).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                });
 
                 return (
                   <Modal.Body
                   // id={`content-to-capture-${group.title}`}
                   >
-
                     {group.items[0].item.status === null ? (
                       // Render content if status is null
                       <>
-                        <div id={`content-to-capture-${group.title}`} key={group.title} className="receipt-main-container">
+                        <div
+                          id={`content-to-capture-${group.title}`}
+                          key={group.title}
+                          className="receipt-main-container"
+                        >
                           <div className="receipt-content">
                             <div className="receipt-header">
                               <div className="sbflogoes">
@@ -884,7 +913,12 @@ function POApprovalRejustify({ authrztn }) {
                                     {prNum}
                                   </label>
                                 </span>
-                                <span>DATE PREPARED: <strong>{`${date.toLocaleDateString('en-PH')}`}</strong></span>
+                                <span>
+                                  DATE PREPARED:{" "}
+                                  <strong>{`${date.toLocaleDateString(
+                                    "en-PH"
+                                  )}`}</strong>
+                                </span>
                               </div>
                             </div>
 
@@ -895,17 +929,9 @@ function POApprovalRejustify({ authrztn }) {
                                 <span>UNIT</span>
                               </div>
 
-                              <div className="thirdmidrows">
-                                <div className="row">
-                                  <div className="col-6">
-                                    <span>DESCRIPTION</span>
-                                  </div>
-                                  <div className="col-6">
-                                    <span>Part Number</span>
-                                  </div>
-                                </div>
-                                
-                               
+                              <div className="thirdmidrows ">
+                                <span>DESCRIPTION</span>
+                                <span className="">Part Number</span>
                               </div>
 
                               <div className="thirdrightrows">
@@ -950,17 +976,15 @@ function POApprovalRejustify({ authrztn }) {
                               <div className="midfourthrows">
                                 {/* for product name */}
                                 {group.items.map((item, index) => (
-                                  <div key={index}>
-                                    <div className="row">
-                                        <div className="col-6" style={{display: 'flex', justifyContent: 'start', paddingLeft: '15px'}}>
-                                          <span>{`${item.supp_tag.name}`}</span>
-                                        </div>
-                                        <div className="col-6" style={{display: 'flex', justifyContent: 'start', paddingLeft: '15px'}}>
-                                          <span>{`${item.supp_tag.part_number === null ? '--' : item.supp_tag.part_number}`}</span>
-                                        </div>
-                                      </div>
-                                    
-                                   
+                                  <div className="midfourthrows_div" key={index}>
+                                    <span title={`Product Name: ${item.supp_tag.name}`}>{`${item.supp_tag.name}`}</span>
+                                    <span>
+                                      {item.supp_tag.part_number === null
+                                        ? "--"
+                                        : item.supp_tag.part_number === ""
+                                        ? "--"
+                                        : item.supp_tag.part_number}
+                                    </span>
                                     <br />
                                   </div>
                                 ))}
@@ -972,8 +996,7 @@ function POApprovalRejustify({ authrztn }) {
                                   {" "}
                                   {group.items.map((item, index) => (
                                     <div key={index}>
-                                      <label>{`${item.suppPrice.price
-                                        }`}</label>
+                                      <label>{`${item.suppPrice.price}`}</label>
                                       {/* <label>{`${item.suppPrice.price}`}</label> */}
                                       <br />
                                     </div>
@@ -986,7 +1009,14 @@ function POApprovalRejustify({ authrztn }) {
                                   {group.items.map((item, index) => (
                                     <div key={index}>
                                       {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
-                                      <label>{(item.suppPrice.price * item.item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}</label>
+                                      <label>
+                                        {(
+                                          item.suppPrice.price *
+                                          item.item.quantity
+                                        ).toLocaleString(undefined, {
+                                          minimumFractionDigits: 2,
+                                        })}
+                                      </label>
 
                                       <br />
                                     </div>
@@ -999,7 +1029,6 @@ function POApprovalRejustify({ authrztn }) {
                               <div className="fifthleftrows">
                                 <div className="received-section">
                                   <span>P.O RECEIVED BY: </span>
-
                                 </div>
                                 <div className="deliverydate">
                                   <span>DELIVERY DATE: </span>
@@ -1011,25 +1040,32 @@ function POApprovalRejustify({ authrztn }) {
                                 </div>
                                 <div className="preparedby">
                                   <span>PREPARED BY: </span>
-                                  <span>{POdepartmentUser?.masterlist?.col_Fname}</span>
+                                  <span>
+                                    {POdepartmentUser?.masterlist?.col_Fname}
+                                  </span>
                                 </div>
                               </div>
 
                               <div className="fifthmidrows">
                                 <div className="conditionsection">
                                   <div className="tobeUsed">
-                                    <span style={{color: 'red'}}>To be used for:</span>  <strong style={{fontSize: '12px'}}>{`${useFor}`}</strong>
+                                    <span style={{ color: "red" }}>
+                                      To be used for:
+                                    </span>{" "}
+                                    <strong
+                                      style={{ fontSize: "12px" }}
+                                    >{`${useFor}`}</strong>
                                   </div>
                                   <span>TERMS AND CONDITIONS: </span>
                                   <span>
-                                    1. Acceptance of this order is an acceptance of
-                                    all conditions herein.
+                                    1. Acceptance of this order is an acceptance
+                                    of all conditions herein.
                                   </span>
                                   <span>
                                     2. Make all deliveries to receiving, However
                                     subject to count, weight and specification
-                                    approval of SBF Philippines Drilling Resources
-                                    Corporation.
+                                    approval of SBF Philippines Drilling
+                                    Resources Corporation.
                                   </span>
                                   <span>
                                     3. The original purchase order copy and
@@ -1037,22 +1073,28 @@ function POApprovalRejustify({ authrztn }) {
                                     delivery.
                                   </span>
                                   <span>
-                                    4. In case the supplier fails to deliver goods
-                                    on delivery date specified herein, SBF
-                                    Philippines Drilling Resources Corporation has
-                                    the right to cancel this order or demand penalty
-                                    charged as stated.
+                                    4. In case the supplier fails to deliver
+                                    goods on delivery date specified herein, SBF
+                                    Philippines Drilling Resources Corporation
+                                    has the right to cancel this order or demand
+                                    penalty charged as stated.
                                   </span>
                                   <span>
-                                    5. Problems encountered related to your supply
-                                    should immediately brought to the attention of
-                                    the purchasing manager.
+                                    5. Problems encountered related to your
+                                    supply should immediately brought to the
+                                    attention of the purchasing manager.
                                   </span>
                                 </div>
                                 <div className="checkedsection">
                                   <div className="notedby">
                                     <span>Checked by: </span>
-                                    <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>
+                                    <span>
+                                      <img
+                                        src={ESignature}
+                                        alt="ESignature"
+                                        className="signature-image"
+                                      />
+                                    </span>
                                     <span>ALLAN JUEN</span>
                                   </div>
                                   <div className="recommending">
@@ -1067,27 +1109,43 @@ function POApprovalRejustify({ authrztn }) {
                                   <div className="vatandAmounttotal">
                                     <div className="vatamounts">
                                       <span>VAT ({`${vat}%`})</span>
-                                      <span><strong>{`${vatAmount}`}</strong></span>
+                                      <span>
+                                        <strong>{`${vatAmount}`}</strong>
+                                      </span>
                                     </div>
                                     <div className="totalAmounts">
                                       <span>Total Amount</span>
-                                      <span><strong>{`${totalSum}`}</strong></span>
+                                      <span>
+                                        <strong>{`${totalSum}`}</strong>
+                                      </span>
                                     </div>
                                   </div>
 
                                   <div className="overallTotal">
-                                    <span>Overall Total: <strong>{`${currency} ${TotalAmount}`}</strong></span>
+                                    <span>
+                                      Overall Total:{" "}
+                                      <strong>{`${currency} ${TotalAmount}`}</strong>
+                                    </span>
                                   </div>
-
                                 </div>
 
                                 <div className="codesection">
                                   <span>Date Approved:</span>
-                                  <span>{dateApproved.toLocaleDateString('en-PH')}</span>
+                                  <span>
+                                    {dateApproved.toLocaleDateString("en-PH")}
+                                  </span>
                                 </div>
                                 <div className="approvedsby">
                                   <span>Approved By: </span>
-                                  {showSignature && <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>}
+                                  {showSignature && (
+                                    <span>
+                                      <img
+                                        src={ESignature}
+                                        alt="ESignature"
+                                        className="signature-image"
+                                      />
+                                    </span>
+                                  )}
                                   <span>Daniel Byron S. Afdal</span>
                                 </div>
                               </div>
@@ -1099,7 +1157,9 @@ function POApprovalRejustify({ authrztn }) {
                           <div className="save-cancel">
                             {authrztn.includes("PO - Reject") && (
                               <Button
-                                onClick={() => { handleReject(group.title) }}
+                                onClick={() => {
+                                  handleReject(group.title);
+                                }}
                                 className="btn btn-danger btn-md"
                                 size="md"
                                 style={{ fontSize: "20px", margin: "0px 5px" }}
@@ -1115,17 +1175,365 @@ function POApprovalRejustify({ authrztn }) {
                                 size="md"
                                 style={{ fontSize: "20px", margin: "0px 5px" }}
                                 //  onClick={() => handleApprove()}
-                                onClick={() => { handleApprove(group.title); setShowSignature(true); }}
+                                onClick={() => {
+                                  handleApprove(group.title);
+                                  setShowSignature(true);
+                                }}
                               >
                                 Approve
                               </Button>
                             )}
-
                           </div>
                         ) : (
                           <>
                             <div className="loading-container">
-                              <ReactLoading className="react-loading" type={"bubbles"} />
+                              <ReactLoading
+                                className="react-loading"
+                                type={"bubbles"}
+                              />
+                              Sending Email Invoice Please Wait...
+                            </div>
+                          </>
+                        )}
+                      </>
+                    ) : // Render content if status is not null
+                    group.items[0].item.status === "For-Rejustify (PO)" ? (
+                      // Render content if status is null
+                      <>
+                        <div
+                          id={`content-to-capture-${group.title}`}
+                          key={group.title}
+                          className="receipt-main-container"
+                        >
+                          <div className="receipt-content">
+                            <div className="receipt-header">
+                              <div className="sbflogoes">
+                                <img src={SBFLOGO} alt="" />
+                              </div>
+                              <div className="sbftexts">
+                                <span>SBF PHILIPPINES DRILLING </span>
+                                <span>RESOURCES CORPORATION</span>
+                                <span>
+                                  Padigusan, Sta.Cruz, Rosario, Agusan del sur
+                                </span>
+                                <span>Landline No. 0920-949-3373</span>
+                                <span>Email Address: sbfpdrc@gmail.com</span>
+                              </div>
+                              <div className="spacesbf"></div>
+                            </div>
+
+                            <div className="po-number-container">
+                              <div className="shippedto">
+                                {/* <span>SHIPPED TO:</span> */}
+                              </div>
+                              <div className="blank"></div>
+                              <div className="po-content">
+                                <span>PURCHASE ORDER</span>
+                                <span>
+                                  P.O-NO.{" "}
+                                  <label style={{ fontSize: 14, color: "red" }}>
+                                    {group.title}
+                                  </label>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="secondrowes">
+                              <div className="leftsecondrows">
+                                {/* <span>FOB</span>
+                              <span>VIA</span> */}
+                              </div>
+
+                              <div className="midsecondrows">
+                                <span>VENDOR</span>
+                                <span>
+                                  {group.items[0].suppliers.supplier_name}
+                                </span>
+                              </div>
+
+                              <div className="rightsecondrows">
+                                <span>
+                                  PR NO.
+                                  <label style={{ fontSize: 14, color: "red" }}>
+                                    {prNum}
+                                  </label>
+                                </span>
+                                <span>
+                                  DATE PREPARED:{" "}
+                                  <strong>{`${date.toLocaleDateString(
+                                    "en-PH"
+                                  )}`}</strong>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="thirdrowes">
+                              <div className="thirdleftrows">
+                                <span>ITEM NO.</span>
+                                <span>QUANTITY</span>
+                                <span>UNIT</span>
+                              </div>
+
+                              <div className="thirdmidrows">
+                                <span>DESCRIPTION</span>
+                                <span className="">Part Number</span>
+                              </div>
+
+                              <div className="thirdrightrows">
+                                <span>{`UNIT PRICE`}</span>
+                                <span>TOTAL</span>
+                              </div>
+                            </div>
+
+                            <div className="fourthrowes">
+                              <div className="leftfourthrows">
+                                {/* for product code */}
+                                <span>
+                                  {group.items.map((item, index) => (
+                                    <div key={index}>
+                                      <label>{`${item.supp_tag.code}`}</label>
+                                      <br />
+                                    </div>
+                                  ))}
+                                </span>
+                                {/* for product quantity */}
+                                <span>
+                                  {" "}
+                                  {group.items.map((item, index) => (
+                                    <div key={index}>
+                                      <label>{`${item.item.quantity}`}</label>
+                                      <br />
+                                    </div>
+                                  ))}
+                                </span>
+
+                                {/* for product unit of measurement */}
+                                <span>
+                                  {group.items.map((item, index) => (
+                                    <div key={index}>
+                                      <label>{`${item.supp_tag.uom}`}</label>
+                                      <br />
+                                    </div>
+                                  ))}
+                                </span>
+                              </div>
+
+                              <div className="midfourthrows">
+                                {/* for product name */}
+                                {group.items.map((item, index) => (
+                                  <div className="midfourthrows_div" key={index}>
+                                    <span title={`Product Name: ${item.supp_tag.name}`}>{`${item.supp_tag.name}`}</span>
+                                    <span>
+                                      {item.supp_tag.part_number === null
+                                        ? "--"
+                                        : item.supp_tag.part_number === ""
+                                        ? "--"
+                                        : item.supp_tag.part_number}
+                                    </span>
+                                    <br />
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="rightfourthrows">
+                                {/* for unit price */}
+                                <span>
+                                  {" "}
+                                  {group.items.map((item, index) => (
+                                    <div key={index}>
+                                      <label>{`${item.suppPrice.price}`}</label>
+                                      {/* <label>{`${item.suppPrice.price}`}</label> */}
+                                      <br />
+                                    </div>
+                                  ))}
+                                </span>
+
+                                {/* for unit price total */}
+                                <span>
+                                  {" "}
+                                  {group.items.map((item, index) => (
+                                    <div key={index}>
+                                      {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
+                                      <label>
+                                        {(
+                                          item.suppPrice.price *
+                                          item.item.quantity
+                                        ).toLocaleString(undefined, {
+                                          minimumFractionDigits: 2,
+                                        })}
+                                      </label>
+
+                                      <br />
+                                    </div>
+                                  ))}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="fifthrowes">
+                              <div className="fifthleftrows">
+                                <div className="received-section">
+                                  <span>P.O RECEIVED BY: </span>
+                                </div>
+                                <div className="deliverydate">
+                                  <span>DELIVERY DATE: </span>
+                                  <span></span>
+                                </div>
+                                <div className="terms">
+                                  <span>TERMS: </span>
+                                  <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
+                                </div>
+                                <div className="preparedby">
+                                  <span>PREPARED BY: </span>
+                                  <span>
+                                    {POdepartmentUser?.masterlist?.col_Fname}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="fifthmidrows">
+                                <div className="conditionsection">
+                                  <div className="tobeUsed">
+                                    <span>
+                                      To be used for:{" "}
+                                      <strong>{`${useFor}`}</strong>
+                                    </span>
+                                  </div>
+                                  <span>TERMS AND CONDITIONS: </span>
+                                  <span>
+                                    1. Acceptance of this order is an acceptance
+                                    of all conditions herein.
+                                  </span>
+                                  <span>
+                                    2. Make all deliveries to receiving, However
+                                    subject to count, weight and specification
+                                    approval of SBF Philippines Drilling
+                                    Resources Corporation.
+                                  </span>
+                                  <span>
+                                    3. The original purchase order copy and
+                                    suppliers original invoice must accompany
+                                    delivery.
+                                  </span>
+                                  <span>
+                                    4. In case the supplier fails to deliver
+                                    goods on delivery date specified herein, SBF
+                                    Philippines Drilling Resources Corporation
+                                    has the right to cancel this order or demand
+                                    penalty charged as stated.
+                                  </span>
+                                  <span>
+                                    5. Problems encountered related to your
+                                    supply should immediately brought to the
+                                    attention of the purchasing manager.
+                                  </span>
+                                </div>
+                                <div className="checkedsection">
+                                  <div className="notedby">
+                                    <span>Checked by: </span>
+                                    <span>
+                                      <img
+                                        src={ESignature}
+                                        alt="ESignature"
+                                        className="signature-image"
+                                      />
+                                    </span>
+                                    <span>ALLAN JUEN</span>
+                                  </div>
+                                  <div className="recommending">
+                                    {/* <span>RECOMMENDING APPROVAL</span> */}
+                                    <span></span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="fifthrightrows">
+                                <div className="totalamount">
+                                  <div className="vatandAmounttotal">
+                                    <div className="vatamounts">
+                                      <span>VAT ({`${vat}%`})</span>
+                                      <span>
+                                        <strong>{`${vatAmount}`}</strong>
+                                      </span>
+                                    </div>
+                                    <div className="totalAmounts">
+                                      <span>Total Amount</span>
+                                      <span>
+                                        <strong>{`${totalSum}`}</strong>
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <div className="overallTotal">
+                                    <span>
+                                      Overall Total:{" "}
+                                      <strong>{`${currency} ${TotalAmount}`}</strong>
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="codesection">
+                                  <span>Date Approved:</span>
+                                  <span>
+                                    {dateApproved.toLocaleDateString("en-PH")}
+                                  </span>
+                                </div>
+                                <div className="approvedsby">
+                                  <span>Approved By: </span>
+                                  {showSignature && (
+                                    <span>
+                                      <img
+                                        src={ESignature}
+                                        alt="ESignature"
+                                        className="signature-image"
+                                      />
+                                    </span>
+                                  )}
+                                  <span>Daniel Byron S. Afdal</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {!loadAprrove ? (
+                          <div className="save-cancel">
+                            {authrztn.includes("PO - Reject") && (
+                              <Button
+                                onClick={() => {
+                                  handleReject(group.title);
+                                }}
+                                className="btn btn-danger btn-md"
+                                size="md"
+                                style={{ fontSize: "20px", margin: "0px 5px" }}
+                              >
+                                Reject
+                              </Button>
+                            )}
+
+                            {authrztn.includes("PO - Approval") && (
+                              <Button
+                                type="button"
+                                className="btn btn-success"
+                                size="md"
+                                style={{ fontSize: "20px", margin: "0px 5px" }}
+                                //  onClick={() => handleApprove()}
+                                onClick={() => {
+                                  handleApprove(group.title);
+                                  setShowSignature(true);
+                                }}
+                              >
+                                Approve
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <>
+                            <div className="loading-container">
+                              <ReactLoading
+                                className="react-loading"
+                                type={"bubbles"}
+                              />
                               Sending Email Invoice Please Wait...
                             </div>
                           </>
@@ -1133,314 +1541,14 @@ function POApprovalRejustify({ authrztn }) {
                       </>
                     ) : (
                       // Render content if status is not null
-                      group.items[0].item.status === 'For-Rejustify (PO)' ? (
-                        // Render content if status is null
-                        <>
-                          <div id={`content-to-capture-${group.title}`} key={group.title} className="receipt-main-container">
-                            <div className="receipt-content">
-                              <div className="receipt-header">
-                                <div className="sbflogoes">
-                                  <img src={SBFLOGO} alt="" />
-                                </div>
-                                <div className="sbftexts">
-                                  <span>SBF PHILIPPINES DRILLING </span>
-                                  <span>RESOURCES CORPORATION</span>
-                                  <span>
-                                    Padigusan, Sta.Cruz, Rosario, Agusan del sur
-                                  </span>
-                                  <span>Landline No. 0920-949-3373</span>
-                                  <span>Email Address: sbfpdrc@gmail.com</span>
-                                </div>
-                                <div className="spacesbf"></div>
-                              </div>
-  
-                              <div className="po-number-container">
-                                <div className="shippedto">
-                                  {/* <span>SHIPPED TO:</span> */}
-                                </div>
-                                <div className="blank"></div>
-                                <div className="po-content">
-                                  <span>PURCHASE ORDER</span>
-                                  <span>
-                                    P.O-NO.{" "}
-                                    <label style={{ fontSize: 14, color: "red" }}>
-                                      {group.title}
-                                    </label>
-                                  </span>
-                                </div>
-                              </div>
-  
-                              <div className="secondrowes">
-                                <div className="leftsecondrows">
-                                  {/* <span>FOB</span>
-                              <span>VIA</span> */}
-                                </div>
-  
-                                <div className="midsecondrows">
-                                  <span>VENDOR</span>
-                                  <span>
-                                    {group.items[0].suppliers.supplier_name}
-                                  </span>
-                                </div>
-  
-                                <div className="rightsecondrows">
-                                  <span>
-                                    PR NO.
-                                    <label style={{ fontSize: 14, color: "red" }}>
-                                      {prNum}
-                                    </label>
-                                  </span>
-                                  <span>DATE PREPARED: <strong>{`${date.toLocaleDateString('en-PH')}`}</strong></span>
-                                </div>
-                              </div>
-  
-                              <div className="thirdrowes">
-                                <div className="thirdleftrows">
-                                  <span>ITEM NO.</span>
-                                  <span>QUANTITY</span>
-                                  <span>UNIT</span>
-                                </div>
-  
-                                <div className="thirdmidrows">
-                                  <span>DESCRIPTION</span>
-                                </div>
-  
-                                <div className="thirdrightrows">
-                                  <span>{`UNIT PRICE`}</span>
-                                  <span>TOTAL</span>
-                                </div>
-                              </div>
-  
-                              <div className="fourthrowes">
-                                <div className="leftfourthrows">
-                                  {/* for product code */}
-                                  <span>
-                                    {group.items.map((item, index) => (
-                                      <div key={index}>
-                                        <label>{`${item.supp_tag.code}`}</label>
-                                        <br />
-                                      </div>
-                                    ))}
-                                  </span>
-                                  {/* for product quantity */}
-                                  <span>
-                                    {" "}
-                                    {group.items.map((item, index) => (
-                                      <div key={index}>
-                                        <label>{`${item.item.quantity}`}</label>
-                                        <br />
-                                      </div>
-                                    ))}
-                                  </span>
-  
-                                  {/* for product unit of measurement */}
-                                  <span>
-                                    {group.items.map((item, index) => (
-                                      <div key={index}>
-                                        <label>{`${item.supp_tag.uom}`}</label>
-                                        <br />
-                                      </div>
-                                    ))}
-                                  </span>
-                                </div>
-  
-                                <div className="midfourthrows">
-                                  {/* for product name */}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                     <div className="row">
-                                        <div className="col-6" style={{display: 'flex', justifyContent: 'start', paddingLeft: '15px'}}>
-                                          <span>{`${item.supp_tag.name}`}</span>
-                                        </div>
-                                        <div className="col-6" style={{display: 'flex', justifyContent: 'start', paddingLeft: '15px'}}>
-                                          <span>{`${item.supp_tag.part_number === null ? '--' : item.supp_tag.part_number}`}</span>
-                                        </div>
-                                      </div>
-                                      <br />
-                                    </div>
-                                  ))}
-                                </div>
-  
-                                <div className="rightfourthrows">
-                                  {/* for unit price */}
-                                  <span>
-                                    {" "}
-                                    {group.items.map((item, index) => (
-                                      <div key={index}>
-                                        <label>{`${item.suppPrice.price
-                                          }`}</label>
-                                        {/* <label>{`${item.suppPrice.price}`}</label> */}
-                                        <br />
-                                      </div>
-                                    ))}
-                                  </span>
-  
-                                  {/* for unit price total */}
-                                  <span>
-                                    {" "}
-                                    {group.items.map((item, index) => (
-                                      <div key={index}>
-                                        {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
-                                        <label>{(item.suppPrice.price * item.item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}</label>
-  
-                                        <br />
-                                      </div>
-                                    ))}
-                                  </span>
-                                </div>
-                              </div>
-  
-                              <div className="fifthrowes">
-                                <div className="fifthleftrows">
-                                  <div className="received-section">
-                                    <span>P.O RECEIVED BY: </span>
-  
-                                  </div>
-                                  <div className="deliverydate">
-                                    <span>DELIVERY DATE: </span>
-                                    <span></span>
-                                  </div>
-                                  <div className="terms">
-                                    <span>TERMS: </span>
-                                    <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
-                                  </div>
-                                  <div className="preparedby">
-                                    <span>PREPARED BY: </span>
-                                    <span>{POdepartmentUser?.masterlist?.col_Fname}</span>
-                                  </div>
-                                </div>
-  
-                                <div className="fifthmidrows">
-                                  <div className="conditionsection">
-                                    <div className="tobeUsed">
-                                      <span>To be used for: <strong>{`${useFor}`}</strong></span>
-                                    </div>
-                                    <span>TERMS AND CONDITIONS: </span>
-                                    <span>
-                                      1. Acceptance of this order is an acceptance of
-                                      all conditions herein.
-                                    </span>
-                                    <span>
-                                      2. Make all deliveries to receiving, However
-                                      subject to count, weight and specification
-                                      approval of SBF Philippines Drilling Resources
-                                      Corporation.
-                                    </span>
-                                    <span>
-                                      3. The original purchase order copy and
-                                      suppliers original invoice must accompany
-                                      delivery.
-                                    </span>
-                                    <span>
-                                      4. In case the supplier fails to deliver goods
-                                      on delivery date specified herein, SBF
-                                      Philippines Drilling Resources Corporation has
-                                      the right to cancel this order or demand penalty
-                                      charged as stated.
-                                    </span>
-                                    <span>
-                                      5. Problems encountered related to your supply
-                                      should immediately brought to the attention of
-                                      the purchasing manager.
-                                    </span>
-                                  </div>
-                                  <div className="checkedsection">
-                                    <div className="notedby">
-                                      <span>Checked by: </span>
-                                      <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>
-                                      <span>ALLAN JUEN</span>
-                                    </div>
-                                    <div className="recommending">
-                                      {/* <span>RECOMMENDING APPROVAL</span> */}
-                                      <span></span>
-                                    </div>
-                                  </div>
-                                </div>
-  
-                                <div className="fifthrightrows">
-                                  <div className="totalamount">
-                                    <div className="vatandAmounttotal">
-                                      <div className="vatamounts">
-                                        <span>VAT ({`${vat}%`})</span>
-                                        <span><strong>{`${vatAmount}`}</strong></span>
-                                      </div>
-                                      <div className="totalAmounts">
-                                        <span>Total Amount</span>
-                                        <span><strong>{`${totalSum}`}</strong></span>
-                                      </div>
-                                    </div>
-  
-                                    <div className="overallTotal">
-                                      <span>Overall Total: <strong>{`${currency} ${TotalAmount}`}</strong></span>
-                                    </div>
-  
-                                  </div>
-  
-                                  <div className="codesection">
-                                    <span>Date Approved:</span>
-                                    <span>{dateApproved.toLocaleDateString('en-PH')}</span>
-                                  </div>
-                                  <div className="approvedsby">
-                                    <span>Approved By: </span>
-                                    {showSignature && <span><img src={ESignature} alt="ESignature" className="signature-image" /></span>}
-                                    <span>Daniel Byron S. Afdal</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-  
-                          {!loadAprrove ? (
-                            <div className="save-cancel">
-                              {authrztn.includes("PO - Reject") && (
-                                <Button
-                                  onClick={() => { handleReject(group.title) }}
-                                  className="btn btn-danger btn-md"
-                                  size="md"
-                                  style={{ fontSize: "20px", margin: "0px 5px" }}
-                                >
-                                  Reject
-                                </Button>
-                              )}
-  
-                              {authrztn.includes("PO - Approval") && (
-                                <Button
-                                  type="button"
-                                  className="btn btn-success"
-                                  size="md"
-                                  style={{ fontSize: "20px", margin: "0px 5px" }}
-                                  //  onClick={() => handleApprove()}
-                                  onClick={() => { handleApprove(group.title); setShowSignature(true); }}
-                                >
-                                  Approve
-                                </Button>
-                              )}
-  
-                            </div>
-                          ) : (
-                            <>
-                              <div className="loading-container">
-                                <ReactLoading className="react-loading" type={"bubbles"} />
-                                Sending Email Invoice Please Wait...
-                              </div>
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        // Render content if status is not null
-                        <></> // Or any other content you want to render
-                      )
+                      <></> // Or any other content you want to render
                     )}
-
                   </Modal.Body>
                 );
               })}
 
               <Modal.Footer>
-                <>
-
-                </>
-
+                <></>
               </Modal.Footer>
             </Modal>
 
@@ -1456,7 +1564,7 @@ function POApprovalRejustify({ authrztn }) {
                     <div className="col-6">
                       <Form.Group controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ fontSize: "20px" }}>
-                          PR No.:{' '}
+                          PR No.:{" "}
                         </Form.Label>
                         <Form.Control
                           type="text"
@@ -1508,7 +1616,11 @@ function POApprovalRejustify({ authrztn }) {
                           Attach File:
                         </Form.Label>
                         {/* <Form.Control as="textarea"placeholder="Enter details name" style={{height: '100px', fontSize: '15px'}}/> */}
-                        <Form.Control type="file" onChange={handleFileChange} style={{ width: '405px', height: '33px' }} />
+                        <Form.Control
+                          type="file"
+                          onChange={handleFileChange}
+                          style={{ width: "405px", height: "33px" }}
+                        />
                       </Form.Group>
                     </div>
                   </div>
@@ -1534,8 +1646,6 @@ function POApprovalRejustify({ authrztn }) {
                 </Modal.Footer>
               </Form>
             </Modal>
-
-
           </div>
         ) : (
           <div className="no-access">

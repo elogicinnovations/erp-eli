@@ -65,6 +65,29 @@ router.route("/getIssuance").get(async (req, res) => {
   }
 });
 
+router.route('/lastAccRefCode').get(async (req, res) => {
+  try {
+  const lastCodes = await Issuance.findOne({
+    order: [['issuance_id', 'DESC']]
+});
+
+let nextCode;
+if (lastCodes) {
+    const lastCode = lastCodes.accountability_refcode;
+    const lastNumber = parseInt(lastCode.substring(1), 10);
+    nextCode = (lastNumber + 1).toString().padStart(6, '0');
+} else {
+  nextCode = '000001'; // Initial category code
+}
+
+res.json({ nextCode });
+} catch (err) {
+console.error(err);
+res.status(500).json("Error");
+}
+});
+
+
 router.route("/fetchApprove").get(async (req, res) => {
   try {
 
@@ -263,10 +286,12 @@ router.route("/approval").post(async (req, res) => {
   const subpart = req.query.fetchSubpart;
   const userId = req.query.userId;
 
-
+ // Get the current date and time in the Philippines time zone
+ const currentDate = new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" });
   const approve = await Issuance.update(
       {
-          status: 'Approved'
+          status: 'Approved',
+          date_approved: new Date(currentDate),
       },
       {
           where:{

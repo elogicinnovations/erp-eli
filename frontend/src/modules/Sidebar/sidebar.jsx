@@ -216,7 +216,7 @@ function Sidebar({ authrztn }) {
           <div className="sbf-logo">
             <img
               className="sbflogo"
-              src={require("../../assets/image/SBF.png")}
+              src={require("../../assets/image/sbf_logoo_final.jpg")}
               alt="SBF Logo"
             />
           </div>

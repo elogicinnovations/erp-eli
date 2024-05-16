@@ -8,7 +8,7 @@ import swal from "sweetalert";
 import { Link } from "react-router-dom";
 // import { useAuth } from '../authorize/AuthContext';
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa"; // Import icons
-import SBFLOGO from "../../assets/image/SBF.png";
+import SBFLOGO from "../../assets/image/sbf_logoo_final.jpg";
 import { jwtDecode } from 'jwt-decode';
 import {
   Eye,

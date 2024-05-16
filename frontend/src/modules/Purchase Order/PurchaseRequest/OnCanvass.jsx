@@ -57,6 +57,7 @@ function PurchaseOrderListPreview() {
   //for adding the data from table canvass to table PO
   const [products, setProducts] = useState([]);
   const [suppProducts, setSuppProducts] = useState([]);
+  const [selectedProductname, setSelectedProductname] = useState(""); //para sa pag display ng name sa header of product if mag canvass
 
   // for Assembly canvassing
   const [assembly, setAssembly] = useState([]);
@@ -623,9 +624,9 @@ function PurchaseOrderListPreview() {
 
   //------------------------------------------------Product rendering data ------------------------------------------------//
 
-  const handleCanvass = (product_id) => {
+  const handleCanvass = (product_id, prd_code, prd_name) => {
     setShowModal(true);
-
+    setSelectedProductname(`${prd_code} - ${prd_name}`);
     axios
       .get(BASE_URL + "/productTAGsupplier/fetchCanvass", {
         params: {
@@ -968,7 +969,7 @@ function PurchaseOrderListPreview() {
                         <td>
                           <button
                             type="button"
-                            onClick={() => handleCanvass(data.product_id)}
+                            onClick={() => handleCanvass(data.product_id, data.product.product_code, data.product.product_name)}
                             className="btn canvas"
                           >
                             <ShoppingCart size={20} />
@@ -1214,7 +1215,7 @@ function PurchaseOrderListPreview() {
           <Modal show={showModal} onHide={handleClose} size="xl">
             <Modal.Header closeButton>
               <Modal.Title style={{ fontSize: "24px" }}>
-                Product List
+                {selectedProductname}
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
