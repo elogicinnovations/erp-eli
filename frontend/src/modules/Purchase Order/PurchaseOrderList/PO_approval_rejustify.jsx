@@ -28,6 +28,7 @@ function POApprovalRejustify({ authrztn }) {
   const navigate = useNavigate();
 
   const [dateNeeded, setDateNeeded] = useState(null);
+  const [prID, setPrID] = useState("");
   const [prNum, setPRnum] = useState("");
   const [useFor, setUseFor] = useState("");
   const [remarks, setRemarks] = useState("");
@@ -109,7 +110,7 @@ function POApprovalRejustify({ authrztn }) {
     axios
       .get(BASE_URL + "/invoice/fetchPOarray", {
         params: {
-          id: id,
+          po_id: id,
         },
       })
       .then((res) => {
@@ -128,77 +129,79 @@ function POApprovalRejustify({ authrztn }) {
     console.log("arrayss", JSON.stringify(POarray, null, 2));
   }, [POarray]);
 
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/PR_product/fetchPrProduct", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => setProducts(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/PR_assembly/fetchViewAssembly", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => setAssembly(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/PR_spare/fetchViewSpare", {
+  //       params: { id: id },
+  //     })
+  //     .then((res) => setSpare(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/PR_subpart/fetchViewSubpart", {
+  //       params: { id: id },
+  //     })
+  //     .then((res) => setSubpart(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
+
   useEffect(() => {
     axios
-      .get(BASE_URL + "/PR_product/fetchPrProduct", {
+      .get(BASE_URL + "/invoice/fetchView_PO", {
         params: {
-          id: id,
-        },
-      })
-      .then((res) => setProducts(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/PR_assembly/fetchViewAssembly", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => setAssembly(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/PR_spare/fetchViewSpare", {
-        params: { id: id },
-      })
-      .then((res) => setSpare(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/PR_subpart/fetchViewSubpart", {
-        params: { id: id },
-      })
-      .then((res) => setSubpart(res.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/PR/fetchView", {
-        params: {
-          id: id,
+          po_id: id,
         },
       })
       .then((res) => {
-        setPRnum(res.data.pr_num);
-        const parsedDate = new Date(res.data.date_needed);
+        setPrID(res.data.purchase_req.id)
+        setPRnum(res.data.purchase_req.pr_num);
+        const parsedDate = new Date(res.data.purchase_req.date_needed);
         setDateNeeded(parsedDate);
-        setRequestor(res.data.masterlist_id);
-        setUseFor(res.data.used_for);
-        setRemarks(res.data.remarks);
-        setStatus(res.data.status);
+        setRequestor(res.data.purchase_req.masterlist_id);
+        setUseFor(res.data.purchase_req.used_for);
+        setRemarks(res.data.purchase_req.remarks);
+        setStatus(res.data.purchase_req.status);
+        setDepartmentPO(res.data)
       })
       .catch((err) => {
         console.error(err);
       });
   }, [id]);
 
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/PR/fetchDepartment", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => setDepartmentPO(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(BASE_URL + "/invoicing/fetchDepartment", {
+  //       params: {
+  //         id: id,
+  //       },
+  //     })
+  //     .then((res) => setDepartmentPO(res.data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   const handleCancel = async (id) => {
     swal({
@@ -314,7 +317,7 @@ function POApprovalRejustify({ authrztn }) {
           const imageData = canvas.toDataURL("image/png");
 
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
-            id,
+            prID,
             POarray,
             imageData,
             prNum,
@@ -406,20 +409,20 @@ function POApprovalRejustify({ authrztn }) {
     }
   };
 
-  const [POPreview, setPOPreview] = useState([]);
-  const handlePreview = async (po_num) => {
-    const po_number = po_num;
-    setShowModalPreview(true);
-    axios
-      .get(BASE_URL + "/invoice/fetchPOPreview", {
-        params: {
-          id: id,
-          po_number,
-        },
-      })
-      .then((res) => setPOPreview(res.data))
-      .catch((err) => console.log(err));
-  };
+  // const [POPreview, setPOPreview] = useState([]);
+  // const handlePreview = async (po_num) => {
+  //   const po_number = po_num;
+  //   setShowModalPreview(true);
+  //   axios
+  //     .get(BASE_URL + "/invoice/fetchPOPreview", {
+  //       params: {
+  //         id: id,
+  //         po_number,
+  //       },
+  //     })
+  //     .then((res) => setPOPreview(res.data))
+  //     .catch((err) => console.log(err));
+  // };
 
   const [showes, setShow] = useState(false);
 
@@ -579,185 +582,29 @@ function POApprovalRejustify({ authrztn }) {
                   <thead>
                     <tr>
                       <th className="tableh">Product Code</th>
-                      <th className="tableh">Needed Quantity</th>
                       <th className="tableh">Product Name</th>
-                      <th className="tableh">Description</th>
+                      <th className="tableh">UOM</th>
+                      <th className="tableh">Needed Quantity</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.product.product_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.product.product_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
-
-                    {assembly.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.assembly.assembly_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.assembly.assembly_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
-
-                    {spare.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.sparePart.spareParts_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.sparePart.spareParts_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
-
-                    {subpart.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.subPart.subPart_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.subPart.subPart_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
+                    {POarray.map((data, i) => (
+                      data.items && data.items.map((item, j) => (
+                        item.supp_tag && item.item && (
+                          <tr key={`${i}-${j}`}>
+                            <td>{item.supp_tag.code}</td>
+                            <td>{item.supp_tag.name}</td>
+                            <td>{item.supp_tag.uom}</td>
+                            <td>{item.item.quantity}</td>
+                          </tr>
+                        )
+                      ))
+                    ))}  
                   </tbody>
                 </table>
               </div>
             </div>
-            <div
-              className="gen-info"
-              style={{
-                fontSize: "20px",
-                position: "relative",
-                paddingTop: "20px",
-                fontFamily: "Poppins, Source Sans Pro",
-              }}
-            >
-              Canvassed Item
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "-webkit-fill-available",
-                  background: "#FFA500",
-                  top: "81%",
-                  left: "17rem",
-                  transform: "translateY(-50%)",
-                }}
-              ></span>
-            </div>
-
-            <div className="table-contains">
-              <div className="canvass-main-container">
-                {POarray.map((group) => (
-                  <div key={group.title} className="canvass-supplier-container">
-                    <div className="canvass-supplier-content">
-                      {/* <h3>{`PO Number: ${group.title}`}</h3> */}
-                      <div className="row">
-                        <div className="col-6">
-                          <div className="PO-num">
-                            <p>{`PO #: ${group.title}`}</p>
-                          </div>
-                        </div>
-
-                        <div className="col-6">
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "end",
-                              marginRight: "10px",
-                            }}
-                          >
-                            {group.items[0].item.status === "Rejected" ? (
-                              <>
-                                {requestor === userId ? (
-                                  <Button
-                                    onClick={() => {
-                                      handleShow(group.title);
-                                    }}
-                                    className="btn btn-secondary btn-md"
-                                    size="md"
-                                    style={{
-                                      fontSize: "20px",
-                                      margin: "0px 5px",
-                                    }}
-                                  >
-                                    Rejustify
-                                  </Button>
-                                ) : (
-                                  <></>
-                                )}
-                              </>
-                            ) : (
-                              <>
-                                <p
-                                  style={{ color: "red", fontSize: "15px" }}
-                                >{`Status: ${
-                                  group.items[0].item.status === null
-                                    ? "For-Approval"
-                                    : group.items[0].item.status ===
-                                      "For-Rejustify (PO)"
-                                    ? "Rejustified"
-                                    : group.items[0].item.status
-                                }`}</p>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {group.items.length > 0 && (
-                        <div className="canvass-title">
-                          <div className="supplier-info">
-                            <p>{`Supplier: ${group.items[0].suppliers.supplier_code} - ${group.items[0].suppliers.supplier_name}`}</p>
-                          </div>
-                        </div>
-                      )}
-                      {group.items.map((item, index) => (
-                        <div className="canvass-data-container" key={index}>
-                          <div
-                            className="col-4"
-                            style={{
-                              fontFamily: "Poppins, Source Sans Pro",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {`Product Code: `}
-                            <strong>{`${item.supp_tag.code}`}</strong>
-                          </div>
-                          <div
-                            className="col-4"
-                            style={{
-                              fontFamily: "Poppins, Source Sans Pro",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {`Product Name: `}
-                            <strong>{`${item.supp_tag.name}`}</strong>
-                          </div>
-                          <div
-                            className="col-4"
-                            style={{
-                              fontFamily: "Poppins, Source Sans Pro",
-                              fontSize: "14px",
-                            }}
-                          >
-                            {`Quantity: `}
-                            <strong>{`${item.item.quantity}`}</strong>
-                          </div>
-                          {/* <p className='fs-5 fw-bold'>
-                                          {`Product Code: ${item.supp_tag.code} Product Name: ${item.supp_tag.name}`}
-                                        </p>
-                                        <p className='fs-5 fw-bold'>
-                                          {`Quantity: ${item.item.quantity}`}
-                                        </p>                                */}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+           
 
             <div className="save-cancel">
               <Button
@@ -814,7 +661,7 @@ function POApprovalRejustify({ authrztn }) {
                 <Modal.Title style={{ fontSize: "25px" }}>
                   DEPARTMENT:{" "}
                   <strong>
-                    {POdepartmentUser?.masterlist?.department?.department_name}
+                    {POdepartmentUser?.purchase_req?.masterlist?.department?.department_name}
                   </strong>
                 </Modal.Title>
               </Modal.Header>
@@ -824,6 +671,7 @@ function POApprovalRejustify({ authrztn }) {
                 let vatTotal = 0;
                 let vatAmount = 0;
                 let currency = group.items[0].suppliers.supplier_currency;
+                let current_status = group.items[0].item.status;
                 let supp_code = group.items[0].suppliers.supplier_code;
                 let supp_name = group.items[0].suppliers.supplier_name;
                 let vat = group.items[0].suppliers.supplier_vat;
@@ -852,9 +700,8 @@ function POApprovalRejustify({ authrztn }) {
                   <Modal.Body
                   // id={`content-to-capture-${group.title}`}
                   >
-                    {group.items[0].item.status === null ? (
-                      // Render content if status is null
-                      <>
+             
+                      
                         <div
                           id={`content-to-capture-${group.title}`}
                           key={group.title}
@@ -1041,7 +888,7 @@ function POApprovalRejustify({ authrztn }) {
                                 <div className="preparedby">
                                   <span>PREPARED BY: </span>
                                   <span>
-                                    {POdepartmentUser?.masterlist?.col_Fname}
+                                    {POdepartmentUser?.purchase_req?.masterlist?.col_Fname}
                                   </span>
                                 </div>
                               </div>
@@ -1137,23 +984,48 @@ function POApprovalRejustify({ authrztn }) {
                                 </div>
                                 <div className="approvedsby">
                                   <span>Approved By: </span>
-                                  {showSignature && (
-                                    <span>
-                                      <img
-                                        src={ESignature}
-                                        alt="ESignature"
-                                        className="signature-image"
-                                      />
-                                    </span>
-                                  )}
+
+                                  {
+                                    current_status === "Approved" ? (
+                                      <>
+                                        <span>
+                                          <img
+                                            src={ESignature}
+                                            alt="ESignature"
+                                            className="signature-image"
+                                          />
+                                        </span>
+                                      </>
+                                    ) 
+                                    : 
+                                    (
+                                      <>
+                                        {showSignature && (
+                                          <span>
+                                            <img
+                                              src={ESignature}
+                                              alt="ESignature"
+                                              className="signature-image"
+                                            />
+                                          </span>
+                                        )}
+                                      </>
+                                    )
+                                  }
+                                  
                                   <span>Daniel Byron S. Afdal</span>
+                                  
+                                   
+                                  
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        {!loadAprrove ? (
+                        {current_status === null ? (
+                          <>
+                             {!loadAprrove ? (
                           <div className="save-cancel">
                             {authrztn.includes("PO - Reject") && (
                               <Button
@@ -1195,354 +1067,16 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                           </>
                         )}
-                      </>
-                    ) : // Render content if status is not null
-                    group.items[0].item.status === "For-Rejustify (PO)" ? (
-                      // Render content if status is null
-                      <>
-                        <div
-                          id={`content-to-capture-${group.title}`}
-                          key={group.title}
-                          className="receipt-main-container"
-                        >
-                          <div className="receipt-content">
-                            <div className="receipt-header">
-                              <div className="sbflogoes">
-                                <img src={SBFLOGO} alt="" />
-                              </div>
-                              <div className="sbftexts">
-                                <span>SBF PHILIPPINES DRILLING </span>
-                                <span>RESOURCES CORPORATION</span>
-                                <span>
-                                  Padigusan, Sta.Cruz, Rosario, Agusan del sur
-                                </span>
-                                <span>Landline No. 0920-949-3373</span>
-                                <span>Email Address: sbfpdrc@gmail.com</span>
-                              </div>
-                              <div className="spacesbf"></div>
-                            </div>
-
-                            <div className="po-number-container">
-                              <div className="shippedto">
-                                {/* <span>SHIPPED TO:</span> */}
-                              </div>
-                              <div className="blank"></div>
-                              <div className="po-content">
-                                <span>PURCHASE ORDER</span>
-                                <span>
-                                  P.O-NO.{" "}
-                                  <label style={{ fontSize: 14, color: "red" }}>
-                                    {group.title}
-                                  </label>
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="secondrowes">
-                              <div className="leftsecondrows">
-                                {/* <span>FOB</span>
-                              <span>VIA</span> */}
-                              </div>
-
-                              <div className="midsecondrows">
-                                <span>VENDOR</span>
-                                <span>
-                                  {group.items[0].suppliers.supplier_name}
-                                </span>
-                              </div>
-
-                              <div className="rightsecondrows">
-                                <span>
-                                  PR NO.
-                                  <label style={{ fontSize: 14, color: "red" }}>
-                                    {prNum}
-                                  </label>
-                                </span>
-                                <span>
-                                  DATE PREPARED:{" "}
-                                  <strong>{`${date.toLocaleDateString(
-                                    "en-PH"
-                                  )}`}</strong>
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="thirdrowes">
-                              <div className="thirdleftrows">
-                                <span>ITEM NO.</span>
-                                <span>QUANTITY</span>
-                                <span>UNIT</span>
-                              </div>
-
-                              <div className="thirdmidrows">
-                                <span>DESCRIPTION</span>
-                                <span className="">Part Number</span>
-                              </div>
-
-                              <div className="thirdrightrows">
-                                <span>{`UNIT PRICE`}</span>
-                                <span>TOTAL</span>
-                              </div>
-                            </div>
-
-                            <div className="fourthrowes">
-                              <div className="leftfourthrows">
-                                {/* for product code */}
-                                <span>
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.supp_tag.code}`}</label>
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-                                {/* for product quantity */}
-                                <span>
-                                  {" "}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.item.quantity}`}</label>
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-
-                                {/* for product unit of measurement */}
-                                <span>
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.supp_tag.uom}`}</label>
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-                              </div>
-
-                              <div className="midfourthrows">
-                                {/* for product name */}
-                                {group.items.map((item, index) => (
-                                  <div className="midfourthrows_div" key={index}>
-                                    <span title={`Product Name: ${item.supp_tag.name}`}>{`${item.supp_tag.name}`}</span>
-                                    <span>
-                                      {item.supp_tag.part_number === null
-                                        ? "--"
-                                        : item.supp_tag.part_number === ""
-                                        ? "--"
-                                        : item.supp_tag.part_number}
-                                    </span>
-                                    <br />
-                                  </div>
-                                ))}
-                              </div>
-
-                              <div className="rightfourthrows">
-                                {/* for unit price */}
-                                <span>
-                                  {" "}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.suppPrice.price}`}</label>
-                                      {/* <label>{`${item.suppPrice.price}`}</label> */}
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-
-                                {/* for unit price total */}
-                                <span>
-                                  {" "}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
-                                      <label>
-                                        {(
-                                          item.suppPrice.price *
-                                          item.item.quantity
-                                        ).toLocaleString(undefined, {
-                                          minimumFractionDigits: 2,
-                                        })}
-                                      </label>
-
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="fifthrowes">
-                              <div className="fifthleftrows">
-                                <div className="received-section">
-                                  <span>P.O RECEIVED BY: </span>
-                                </div>
-                                <div className="deliverydate">
-                                  <span>DELIVERY DATE: </span>
-                                  <span></span>
-                                </div>
-                                <div className="terms">
-                                  <span>TERMS: </span>
-                                  <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
-                                </div>
-                                <div className="preparedby">
-                                  <span>PREPARED BY: </span>
-                                  <span>
-                                    {POdepartmentUser?.masterlist?.col_Fname}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="fifthmidrows">
-                                <div className="conditionsection">
-                                  <div className="tobeUsed">
-                                    <span>
-                                      To be used for:{" "}
-                                      <strong>{`${useFor}`}</strong>
-                                    </span>
-                                  </div>
-                                  <span>TERMS AND CONDITIONS: </span>
-                                  <span>
-                                    1. Acceptance of this order is an acceptance
-                                    of all conditions herein.
-                                  </span>
-                                  <span>
-                                    2. Make all deliveries to receiving, However
-                                    subject to count, weight and specification
-                                    approval of SBF Philippines Drilling
-                                    Resources Corporation.
-                                  </span>
-                                  <span>
-                                    3. The original purchase order copy and
-                                    suppliers original invoice must accompany
-                                    delivery.
-                                  </span>
-                                  <span>
-                                    4. In case the supplier fails to deliver
-                                    goods on delivery date specified herein, SBF
-                                    Philippines Drilling Resources Corporation
-                                    has the right to cancel this order or demand
-                                    penalty charged as stated.
-                                  </span>
-                                  <span>
-                                    5. Problems encountered related to your
-                                    supply should immediately brought to the
-                                    attention of the purchasing manager.
-                                  </span>
-                                </div>
-                                <div className="checkedsection">
-                                  <div className="notedby">
-                                    <span>Checked by: </span>
-                                    <span>
-                                      <img
-                                        src={ESignature}
-                                        alt="ESignature"
-                                        className="signature-image"
-                                      />
-                                    </span>
-                                    <span>ALLAN JUEN</span>
-                                  </div>
-                                  <div className="recommending">
-                                    {/* <span>RECOMMENDING APPROVAL</span> */}
-                                    <span></span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="fifthrightrows">
-                                <div className="totalamount">
-                                  <div className="vatandAmounttotal">
-                                    <div className="vatamounts">
-                                      <span>VAT ({`${vat}%`})</span>
-                                      <span>
-                                        <strong>{`${vatAmount}`}</strong>
-                                      </span>
-                                    </div>
-                                    <div className="totalAmounts">
-                                      <span>Total Amount</span>
-                                      <span>
-                                        <strong>{`${totalSum}`}</strong>
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  <div className="overallTotal">
-                                    <span>
-                                      Overall Total:{" "}
-                                      <strong>{`${currency} ${TotalAmount}`}</strong>
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="codesection">
-                                  <span>Date Approved:</span>
-                                  <span>
-                                    {dateApproved.toLocaleDateString("en-PH")}
-                                  </span>
-                                </div>
-                                <div className="approvedsby">
-                                  <span>Approved By: </span>
-                                  {showSignature && (
-                                    <span>
-                                      <img
-                                        src={ESignature}
-                                        alt="ESignature"
-                                        className="signature-image"
-                                      />
-                                    </span>
-                                  )}
-                                  <span>Daniel Byron S. Afdal</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {!loadAprrove ? (
-                          <div className="save-cancel">
-                            {authrztn.includes("PO - Reject") && (
-                              <Button
-                                onClick={() => {
-                                  handleReject(group.title);
-                                }}
-                                className="btn btn-danger btn-md"
-                                size="md"
-                                style={{ fontSize: "20px", margin: "0px 5px" }}
-                              >
-                                Reject
-                              </Button>
-                            )}
-
-                            {authrztn.includes("PO - Approval") && (
-                              <Button
-                                type="button"
-                                className="btn btn-success"
-                                size="md"
-                                style={{ fontSize: "20px", margin: "0px 5px" }}
-                                //  onClick={() => handleApprove()}
-                                onClick={() => {
-                                  handleApprove(group.title);
-                                  setShowSignature(true);
-                                }}
-                              >
-                                Approve
-                              </Button>
-                            )}
-                          </div>
+                      
+                          </>
                         ) : (
                           <>
-                            <div className="loading-container">
-                              <ReactLoading
-                                className="react-loading"
-                                type={"bubbles"}
-                              />
-                              Sending Email Invoice Please Wait...
-                            </div>
+                          
                           </>
                         )}
-                      </>
-                    ) : (
-                      // Render content if status is not null
-                      <></> // Or any other content you want to render
-                    )}
+
+                       
+                  
                   </Modal.Body>
                 );
               })}

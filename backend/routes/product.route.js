@@ -199,6 +199,7 @@ router.route("/create").post(async (req, res) => {
         thresholds,
         selectProductType,
         ProductNumber,
+        UOM_set,
         userId,
       } = req.body;
 
@@ -222,6 +223,7 @@ router.route("/create").post(async (req, res) => {
             product_manufacturer: slct_manufacturer === '' ? null : slct_manufacturer,
             product_details: details,
             product_threshold: thresholds,
+            UOM_set: UOM_set,
             product_status: 'Active',
             type: typeValue,
             part_number: ProductNumber,
@@ -368,6 +370,7 @@ router.route("/update").post(
       // assembly,
       // spareParts,
       // subparting,
+      UOM_set,
       specificProductAssembly,
       specificProductSubAssembly,
       specificProductSpares,
@@ -398,6 +401,7 @@ router.route("/update").post(
           product_manufacturer: slct_manufacturer,
           product_details: details,
           product_threshold: thresholds,
+          UOM_set: UOM_set,
           type: typeValue,
           part_number: PartNumber,
         },

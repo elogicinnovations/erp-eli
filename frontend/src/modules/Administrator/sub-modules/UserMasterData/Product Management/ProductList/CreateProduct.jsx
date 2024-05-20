@@ -6,9 +6,9 @@ import axios from "axios";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate } from "react-router-dom";
 import "../../../../../styles/react-style.css";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 // import NoData from '../../../../../../assets/image/NoData.png';
-import NoAccess from '../../../../../../assets/image/NoAccess.png';
+import NoAccess from "../../../../../../assets/image/NoAccess.png";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
@@ -18,9 +18,9 @@ import { green } from "@mui/material/colors";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import { jwtDecode } from "jwt-decode";
-import { MultiSelect } from 'primereact/multiselect';
+import { MultiSelect } from "primereact/multiselect";
 
-function CreateProduct({authrztn}) {
+function CreateProduct({ authrztn }) {
   const navigate = useNavigate();
   //try
   const [validated, setValidated] = useState(false); // for form validation
@@ -35,7 +35,8 @@ function CreateProduct({authrztn}) {
   const [slct_category, setslct_category] = useState([]); // for getting the value of selected category
   const [slct_binLocation, setslct_binLocation] = useState([]); // for getting the value of selected bin location
   const [unitMeasurement, setunitMeasurement] = useState("");
-  const [slct_manufacturer, setslct_manufacturer] = useState(''); 
+  const [UOM_set, setUOM_set] = useState(false); //para ma required sa receiving if set siya
+  const [slct_manufacturer, setslct_manufacturer] = useState("");
   const [details, setDetails] = useState("");
   const [thresholds, setThresholds] = useState("");
   const [selectProductType, setProductType] = useState("");
@@ -53,7 +54,6 @@ function CreateProduct({authrztn}) {
   const [ProductAssemblies, setProductAssemblies] = useState([]);
   const [ProductSubAssembly, setProductSubAssembly] = useState([]);
   const [ProductSpareParts, setProductSpareParts] = useState([]);
- 
 
   const [priceInput, setPriceInput] = useState({});
   const [addPriceInput, setaddPriceInputbackend] = useState([]);
@@ -68,22 +68,22 @@ function CreateProduct({authrztn}) {
   // const [username, setUsername] = useState('');
   // const [userRole, setUserRole] = useState('');
   const [status, setStatus] = useState("Active");
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    // setUsername(decoded.username);
-    // setFname(decoded.Fname);
-    // setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      // setUsername(decoded.username);
+      // setFname(decoded.Fname);
+      // setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   //toggle switch Active and Inactive
   const GreenSwitch = styled(Switch)(({ theme }) => ({
@@ -102,14 +102,13 @@ function CreateProduct({authrztn}) {
   //   setproductStatus(e.target.checked); // Update the status Active or Inactive
   // };
 
-
   useEffect(() => {
     axios
       .get(BASE_URL + "/product/lastCode")
       .then((res) => {
         const codes =
           res.data !== null ? res.data.toString().padStart(6, "0") : "000000";
-          setCode(codes);
+        setCode(codes);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -117,29 +116,10 @@ function CreateProduct({authrztn}) {
   //Supplier Fetch
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/supplier/fetchTable")
-      .then((res) => {
-        setFetchSupp(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
-
-  return () => clearTimeout(delay);
-  }, []);
-  
-
-    //Product Assembly fetch
-    useEffect(() => {
-      const delay = setTimeout(() => {
       axios
-        .get(BASE_URL + "/product/DropdownProductAssembly")
+        .get(BASE_URL + "/supplier/fetchTable")
         .then((res) => {
-          setFetchProductAssemblies(res.data)
+          setFetchSupp(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -147,65 +127,81 @@ function CreateProduct({authrztn}) {
           setIsLoading(false);
         });
     }, 1000);
-  
+
     return () => clearTimeout(delay);
-    }, []);
-  
+  }, []);
+
+  //Product Assembly fetch
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/product/DropdownProductAssembly")
+        .then((res) => {
+          setFetchProductAssemblies(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  }, []);
+
   //Product Sub-Assembly fetch
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/product/DropdownProductSubAssembly")
-      .then((res) => {
-        setFetchProductSubAssembly(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/product/DropdownProductSubAssembly")
+        .then((res) => {
+          setFetchProductSubAssembly(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
+    return () => clearTimeout(delay);
   }, []);
 
   //Product Spare Parts fetch
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/product/DropdownProductSpareParts")
-      .then((res) => {
-        setFetchProductSpareParts(res.data)
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/product/DropdownProductSpareParts")
+        .then((res) => {
+          setFetchProductSpareParts(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
+    return () => clearTimeout(delay);
   }, []);
 
-  
-
   //Assembly Fetch
-//   useEffect(() => {
-//     const delay = setTimeout(() => {
-//     axios
-//       .get(BASE_URL + "/assembly/fetchTable")
-//       .then((res) => {
-//         setAssembly(res.data)
-//         setIsLoading(false);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         setIsLoading(false);
-//       });
-//   }, 1000);
+  //   useEffect(() => {
+  //     const delay = setTimeout(() => {
+  //     axios
+  //       .get(BASE_URL + "/assembly/fetchTable")
+  //       .then((res) => {
+  //         setAssembly(res.data)
+  //         setIsLoading(false);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         setIsLoading(false);
+  //       });
+  //   }, 1000);
 
-// return () => clearTimeout(delay);
-// }, []);
+  // return () => clearTimeout(delay);
+  // }, []);
 
   //Subpart Fetch
   // useEffect(() => {
@@ -354,131 +350,129 @@ function CreateProduct({authrztn}) {
       });
   }, []);
 
-const [images, setImages] = useState([]);
-const fileInputRef = useRef(null);
+  const [images, setImages] = useState([]);
+  const fileInputRef = useRef(null);
 
-function selectFiles() {
-  fileInputRef.current.click();
-}
-function onFileSelect(event) {
-  const files = event.target.files;
-
-  if (files.length === 0) return;
-
-  if (images.length + files.length > 5) {
-    swal({
-      icon: "error",
-      title: "File Limit Exceeded",
-      text: "You can upload up to 5 images only.",
-    });
-    return;
+  function selectFiles() {
+    fileInputRef.current.click();
   }
+  function onFileSelect(event) {
+    const files = event.target.files;
 
-  for (let i = 0; i < files.length; i++) {
-    const fileType = files[i].type.split('/')[1].toLowerCase();
-    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+    if (files.length === 0) return;
 
-    if (fileSize > 5) {
+    if (images.length + files.length > 5) {
       swal({
         icon: "error",
-        title: "File Size Limit Exceeded",
-        text: "Each image must be up to 5MB in size.",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
       });
-      continue;
+      return;
     }
 
-    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
-      swal({
-        icon: "error",
-        title: "Invalid File Type",
-        text: "Only JPEG and PNG files are allowed.",
-      });
-      continue;
-    }
+    for (let i = 0; i < files.length; i++) {
+      const fileType = files[i].type.split("/")[1].toLowerCase();
+      const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
 
-    if (!images.some((e) => e.name === files[i].name)) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImages((prevImages) => [
-          ...prevImages,
-          {
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-            base64Data: e.target.result.split(',')[1],
-          },
-        ]);
-      };
-      reader.readAsDataURL(files[i]);
+      if (fileSize > 5) {
+        swal({
+          icon: "error",
+          title: "File Size Limit Exceeded",
+          text: "Each image must be up to 5MB in size.",
+        });
+        continue;
+      }
+
+      if (fileType !== "jpeg" && fileType !== "png" && fileType !== "webp") {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG and PNG files are allowed.",
+        });
+        continue;
+      }
+
+      if (!images.some((e) => e.name === files[i].name)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              url: URL.createObjectURL(files[i]),
+              base64Data: e.target.result.split(",")[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
     }
   }
-}
 
-function deleteImage(index){
-  setImages((prevImages) => 
-    prevImages.filter((_, i) => i !== index)
-  )
-}
-
-function onDragOver(event){
-  event.preventDefault();
-  event.dataTransfer.dropEffect = "copy";
-}
-
-function onDragLeave(event) {
-  event.preventDefault();
-}
-
-function onDropImages(event) {
-  event.preventDefault();
-  const files = event.dataTransfer.files;
-
-  if (images.length + files.length > 5) {
-    swal({
-      icon: "error",
-      title: "File Limit Exceeded",
-      text: "You can upload up to 5 images only.",
-    });
-    return;
+  function deleteImage(index) {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   }
 
-  for (let i = 0; i < files.length; i++) {
-    const fileType = files[i].type.split('/')[1].toLowerCase();
-    const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
+  function onDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+  }
 
-    if (fileSize > 5) {
+  function onDragLeave(event) {
+    event.preventDefault();
+  }
+
+  function onDropImages(event) {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+
+    if (images.length + files.length > 5) {
       swal({
         icon: "error",
-        title: "File Size Limit Exceeded",
-        text: "Each image must be up to 5MB in size.",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
       });
-      continue;
+      return;
     }
 
-    if (fileType !== 'jpeg' && fileType !== 'png' && fileType !== 'webp') {
-      swal({
-        icon: "error",
-        title: "Invalid File Type",
-        text: "Only JPEG and PNG files are allowed.",
-      });
-      continue;
-    }
+    for (let i = 0; i < files.length; i++) {
+      const fileType = files[i].type.split("/")[1].toLowerCase();
+      const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
 
-    if (!images.some((e) => e.name === files[i].name)) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImages((prevImages) => [
-          ...prevImages,
-          {
-            name: files[i].name,
-            url: URL.createObjectURL(files[i]),
-            base64Data: e.target.result.split(',')[1],
-          },
-        ]);
-      };
-      reader.readAsDataURL(files[i]);
+      if (fileSize > 5) {
+        swal({
+          icon: "error",
+          title: "File Size Limit Exceeded",
+          text: "Each image must be up to 5MB in size.",
+        });
+        continue;
+      }
+
+      if (fileType !== "jpeg" && fileType !== "png" && fileType !== "webp") {
+        swal({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Only JPEG and PNG files are allowed.",
+        });
+        continue;
+      }
+
+      if (!images.some((e) => e.name === files[i].name)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImages((prevImages) => [
+            ...prevImages,
+            {
+              name: files[i].name,
+              url: URL.createObjectURL(files[i]),
+              base64Data: e.target.result.split(",")[1],
+            },
+          ]);
+        };
+        reader.readAsDataURL(files[i]);
+      }
     }
   }
-}
 
   const add = async (e) => {
     e.preventDefault();
@@ -507,6 +501,7 @@ function onDropImages(event) {
           // assembly,
           // spareParts,
           // subparting,
+          UOM_set,
           ProductAssemblies,
           ProductSubAssembly,
           ProductSpareParts,
@@ -572,79 +567,80 @@ function onDropImages(event) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-                authrztn.includes('Product List - Add') ? (
-        <div className="right-body-contentss">
-          <div className="arrowandtitle">
-              <Link to="/productList">
-                  <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
-              </Link>
-                  <div className="titletext">
-                      <h1>Add Product</h1>
-                  </div>
-              </div>
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "20px",
-              fontFamily: "Poppins, Source Sans Pro"
-            }}>
-            General Information
-            <span
-              style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "81%",
-                left: "21rem",
-                transform: "translateY(-50%)",
-              }}></span>
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
           </div>
-          <Form noValidate validated={validated} onSubmit={add}>
-            <div className="row mt-3">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Code:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    onChange={(e) => setCode(e.target.value)}
-                    value={code}
-                    readOnly
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Name:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter item name"
-                    style={{ height: "40px", fontSize: "15px" }}
-                    maxLength={50}
-                  />
-                </Form.Group>
+        ) : authrztn.includes("Product List - Add") ? (
+          <div className="right-body-contentss">
+            <div className="arrowandtitle">
+              <Link to="/productList">
+                <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+              </Link>
+              <div className="titletext">
+                <h1>Add Product</h1>
               </div>
             </div>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              General Information
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "21rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+            <Form noValidate validated={validated} onSubmit={add}>
+              <div className="row mt-3">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product Code:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      required
+                      type="text"
+                      onChange={(e) => setCode(e.target.value)}
+                      value={code}
+                      readOnly
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product Name:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      required
+                      type="text"
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter item name"
+                      style={{ height: "40px", fontSize: "15px" }}
+                      maxLength={50}
+                    />
+                  </Form.Group>
+                </div>
+              </div>
 
-            <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Product Type:
                     </Form.Label>
@@ -653,209 +649,225 @@ function onDropImages(event) {
                       style={{ height: "40px", fontSize: "15px" }}
                       defaultValue=""
                       onChange={handleSelectProductType}
-                      >
+                    >
                       <option disabled value="">
                         Select Product Type
                       </option>
-                        <option value="N/A">N/A</option>
-                        <option value="Assembly">Assembly</option>
-                        <option value="Sub-Assembly">Sub-Assembly</option>
-                        <option value="SpareParts">SpareParts</option>
+                      <option value="N/A">N/A</option>
+                      <option value="Assembly">Assembly</option>
+                      <option value="Sub-Assembly">Sub-Assembly</option>
+                      <option value="SpareParts">SpareParts</option>
                     </Form.Select>
                   </Form.Group>
                 </div>
 
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Part Number:
-                  </Form.Label>
-                    <Form.Control
-                    type="text"
-                    placeholder="Enter Part Number"
-                    onChange={(e) => setProductNumber(e.target.value)}
-                    style={{ height: "40px", fontSize: "15px" }}
-                    />
-                </Form.Group>
-              </div>
-            </div>
-
-            {selectProductType !== "N/A" && (
-            <div className="row">
-              {(selectProductType === "Sub-Assembly" || selectProductType === "SpareParts") && (
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
                     <Form.Label style={{ fontSize: "20px" }}>
-                      Assembly:
+                      Part Number:
                     </Form.Label>
-                    <MultiSelect
-                      value={ProductAssemblies}
-                      options={fetchProductAssemblies.map((asm) => ({
-                        value: asm.product_id,
-                        label: asm.product_name,
-                      }))}
-                      onChange={(e) => setProductAssemblies(e.value)}
-                      placeholder="Select Product Assembly"
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter 
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter Part Number"
+                      onChange={(e) => setProductNumber(e.target.value)}
+                      style={{ height: "40px", fontSize: "15px" }}
                     />
-                 </Form.Group>
+                  </Form.Group>
+                </div>
               </div>
+
+              {selectProductType !== "N/A" && (
+                <div className="row">
+                  {(selectProductType === "Sub-Assembly" ||
+                    selectProductType === "SpareParts") && (
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Assembly:
+                        </Form.Label>
+                        <MultiSelect
+                          value={ProductAssemblies}
+                          options={fetchProductAssemblies.map((asm) => ({
+                            value: asm.product_id,
+                            label: asm.product_name,
+                          }))}
+                          onChange={(e) => setProductAssemblies(e.value)}
+                          placeholder="Select Product Assembly"
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+
+                  {(selectProductType === "Assembly" ||
+                    selectProductType === "SpareParts") && (
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Sub-Assembly:
+                        </Form.Label>
+                        <MultiSelect
+                          value={ProductSubAssembly}
+                          options={fetchProductSubAssembly.map((subAsm) => ({
+                            value: subAsm.product_id,
+                            label: subAsm.product_name,
+                          }))}
+                          onChange={(e) => setProductSubAssembly(e.value)}
+                          placeholder="Select Sub-Assembly"
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+
+                  {(selectProductType === "Assembly" ||
+                    selectProductType === "Sub-Assembly") && (
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Spare Parts:
+                        </Form.Label>
+                        <MultiSelect
+                          value={ProductSpareParts}
+                          options={fetchProductSpareParts.map((spares) => ({
+                            value: spares.product_id,
+                            label: spares.product_name,
+                          }))}
+                          onChange={(e) => setProductSpareParts(e.value)}
+                          placeholder="Select Spare Parts"
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+                </div>
               )}
 
-              {(selectProductType === "Assembly" || selectProductType === "SpareParts") && (
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Sub-Assembly:
-                  </Form.Label>
-                  <MultiSelect
-                      value={ProductSubAssembly}
-                      options={fetchProductSubAssembly.map((subAsm) => ({
-                        value: subAsm.product_id,
-                        label: subAsm.product_name,
-                      }))}
-                      onChange={(e) => setProductSubAssembly(e.value)}
-                      placeholder="Select Sub-Assembly"
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter 
-                    />
-                </Form.Group>
-              </div>
-              )}
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Category:{" "}
+                    </Form.Label>
 
-              {(selectProductType === "Assembly" || selectProductType === "Sub-Assembly") && (
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Spare Parts:
-                  </Form.Label>
-                  <MultiSelect
-                      value={ProductSpareParts}
-                      options={fetchProductSpareParts.map((spares) => ({
-                        value: spares.product_id,
-                        label: spares.product_name,
-                      }))}
-                      onChange={(e) => setProductSpareParts(e.value)}
-                      placeholder="Select Spare Parts"
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter 
-                    />
-                </Form.Group>
-              </div>
-              )}
-            </div>
-            )}
-            
-            <div className="row">
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Category:{" "}
-                  </Form.Label>
-
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeCategory}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue="">
-                    <option disabled value="">
-                      Select Category
-                    </option>
-                    {category.map((category) => (
-                      <option
-                        key={category.category_code}
-                        value={category.category_code}>
-                        {category.category_name}
+                    <Form.Select
+                      aria-label=""
+                      onChange={handleFormChangeCategory}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue=""
+                    >
+                      <option disabled value="">
+                        Select Category
                       </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Bin Location:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeBinLocation}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue="">
-                    <option disabled value="">
-                      Select Bin Location
-                    </option>
-                    {binLocation.map((binLocation) => (
-                      <option
-                        key={binLocation.bin_id}
-                        value={binLocation.bin_id}>
+                      {category.map((category) => (
+                        <option
+                          key={category.category_code}
+                          value={category.category_code}
+                        >
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Bin Location:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label=""
+                      onChange={handleFormChangeBinLocation}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue=""
+                    >
+                      <option disabled value="">
+                        Select Bin Location
+                      </option>
+                      {binLocation.map((binLocation) => (
+                        <option
+                          key={binLocation.bin_id}
+                          value={binLocation.bin_id}
+                        >
                           <strong>{binLocation.bin_name + "-"}</strong>
                           <strong>{binLocation.bin_subname}</strong>
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
               </div>
-            </div>
 
-            <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Unit of Measurement:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleChangeMeasurement}
-                    required
+              <div className="row">
+                <div className="col-6">
+                  <div>
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Unit of Measurement:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label=""
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue=""
+                      onChange={handleChangeMeasurement}
+                      required
                     >
-                    <option disabled value="">
-                      Select Unit Measurement
-                    </option>
-                    {cls_unitMeasurement.map((unitM, index) => (
-                      <option key={index} value={unitM}>
-                        {unitM}
+                      <option disabled value="">
+                        Select Unit Measurement
                       </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Manufacturer:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label=""
-                    onChange={handleFormChangeManufacturer}
-                    
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue="">
-                    <option disabled value="">
-                      Select Manufacturer
-                    </option>
-                    {manufacturer.map((manufacturer) => (
-                      <option
-                        key={manufacturer.manufacturer_code}
-                        value={manufacturer.manufacturer_code}>
-                        {manufacturer.manufacturer_name}
+                      {cls_unitMeasurement.map((unitM, index) => (
+                        <option key={index} value={unitM}>
+                          {unitM}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                  </div>
+                  <Form.Group className="mb-3">
+                    <Form.Check 
+                      type="checkbox"
+                      style={{ fontSize: "15px", color: 'red' }} 
+                      onClick={() => setUOM_set(!UOM_set)} 
+                      label={UOM_set === true ? "Sub-Unit quantity is enabled" : "Check this to enable sub-unit quantity"}
+                      />
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Manufacturer:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      aria-label=""
+                      onChange={handleFormChangeManufacturer}
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue=""
+                    >
+                      <option disabled value="">
+                        Select Manufacturer
                       </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+                      {manufacturer.map((manufacturer) => (
+                        <option
+                          key={manufacturer.manufacturer_code}
+                          value={manufacturer.manufacturer_code}
+                        >
+                          {manufacturer.manufacturer_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
               </div>
-            </div>
 
-
-            {/* <div
+              {/* <div
               className="gen-info"
               style={{
                 fontSize: "20px",
@@ -876,238 +888,271 @@ function onDropImages(event) {
                 }}></span>
             </div> */}
 
-            <div className="row mt-3">
-
-            <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Critical Inventory Thresholds:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    value={thresholds}
-                    onChange={(e) => {
-                      if(e.target.value > 100){
-                        setThresholds(100)
-                      } 
-                      else if(e.target.value === '0'){
-                        setThresholds(1)
-                      }
-                      else{
-                        setThresholds(e.target.value)
-                      }                  
-                    }}
-                    // onInput={handleKeyPress}
-                    onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
-                        e.preventDefault();
-                    }}
-                    type="number"
-                    placeholder="Minimum Stocking"
-                    style={{ height: "40px", fontSize: "15px" }}
-                    title="Please enter a valid number"
-                  />
-                </Form.Group>
-              </div>
-
-              <div className="col-6">
+              <div className="row mt-3">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Critical Inventory Thresholds:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      required
+                      value={thresholds}
+                      onChange={(e) => {
+                        if (e.target.value > 100) {
+                          setThresholds(100);
+                        } else if (e.target.value === "0") {
+                          setThresholds(1);
+                        } else {
+                          setThresholds(e.target.value);
+                        }
+                      }}
+                      // onInput={handleKeyPress}
+                      onKeyDown={(e) => {
+                        ["e", "E", "+", "-"].includes(e.key) &&
+                          e.preventDefault();
+                      }}
+                      type="number"
+                      placeholder="Minimum Stocking"
+                      style={{ height: "40px", fontSize: "15px" }}
+                      title="Please enter a valid number"
+                    />
+                  </Form.Group>
                 </div>
 
-            </div>
+                <div className="col-6"></div>
+              </div>
 
-            <div className="row">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Details Here:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    onChange={(e) => setDetails(e.target.value)}
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Details Here:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      onChange={(e) => setDetails(e.target.value)}
                       as="textarea"
-                        rows={3}
-                        style={{
-                        fontFamily: 'Poppins, Source Sans Pro',
+                      rows={3}
+                      style={{
+                        fontFamily: "Poppins, Source Sans Pro",
                         fontSize: "16px",
                         height: "124px",
                         maxHeight: "124px",
                         resize: "none",
                         overflowY: "auto",
                       }}
-                  />
-                </Form.Group>
-              </div>
+                    />
+                  </Form.Group>
+                </div>
 
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
                     <Form.Label style={{ fontSize: "20px" }}>
                       Image Upload:{" "}
-                  </Form.Label>
-                  <div className="card" onClick={selectFiles}>
-                    <div className="drag-area" 
-                    onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDropImages}>
+                    </Form.Label>
+                    <div className="card" onClick={selectFiles}>
+                      <div
+                        className="drag-area"
+                        onDragOver={onDragOver}
+                        onDragLeave={onDragLeave}
+                        onDrop={onDropImages}
+                      >
                         <>
-                         Drag & Drop image here or {" "}
-                        <span className="select" role="button" onClick={selectFiles}>
-                          Browse
-                        </span>
+                          Drag & Drop image here or{" "}
+                          <span
+                            className="select"
+                            role="button"
+                            onClick={selectFiles}
+                          >
+                            Browse
+                          </span>
                         </>
-                      <input name="file" type="file" className="file" multiple ref={fileInputRef} onChange={onFileSelect}/>
-                    </div>
-                    <div className="ccontainerss">
-                      {images.map((images,index)=>(
-                      <div className="imagess" key={index}>
-                        <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                        <img src={images.url} alt={images.name} /> 
-                      </div>
-                      ))}
-                    </div>
-                  </div>
-                </Form.Group>
-              </div>
-            </div>
-
-
-            <div
-              className="gen-info"
-              style={{
-                fontSize: "20px",
-                position: "relative",
-                paddingTop: "30px",
-                fontFamily: "Poppins, Source Sans Pro"
-              }}>
-              Supplier List
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "-webkit-fill-available",
-                  background: "#FFA500",
-                  top: "85%",
-                  left: "12rem",
-                  transform: "translateY(-50%)",
-                }}></span>
-            </div>
-            <div className="supplier-table">
-              <div className="table-containss">
-                <div className="main-of-all-tables">
-                  <table id="order-listing">
-                    <thead>
-                      <tr>
-                        <th className="tableh">Supplier Code</th>
-                        <th className="tableh">Name</th>
-                        <th className="tableh">Email</th>
-                        <th className="tableh">Contact</th>
-                        <th className="tableh">Address</th>
-                        <th className="tableh">Price</th>
-                        <th className="tableh">VAT </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {supp.length > 0 ? (
-                        supp.map((supp) => (
-                          <tr>
-                            <td>{supp.codes}</td>
-                            <td>{supp.names}</td>
-                            <td>{supp.email}</td>
-                            <td>{supp.contact}</td>
-                            <td>{supp.address}</td>
-                            <td>
-                              <div className="d-flex align-items-center">
-                                <span
-                                  style={{
-                                    fontSize: "20px",
-                                    marginRight: "5px",
-                                  }}>
-                                  ₱
-                                </span>
-                                <Form.Control
-                                  type="number"
-                                  style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
-                                  placeholder="Input Price"
-                                  value={priceInput[supp.value] || ""}
-                                  onChange={(e) =>
-                                    handlePriceinput(e.target.value, supp.value)
-                                  }
-                                  required 
-                                />
-                            </div>
-                            </td>
-                            <td>{isNaN((supp.vatable / 100) * priceInput[supp.value]) ? 0 : ((supp.vatable / 100) * priceInput[supp.value]).toFixed(2)}</td>
-
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="8" style={{ textAlign: "center"}}>
-                            No Supplier selected
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                    {showDropdown && (
-                      <div className="dropdown mt-3">
-                        <Select
-                          isMulti
-                          options={fetchSupp.map((supp) => ({
-                            value: `${supp.supplier_code} - ${supp.supplier_name}`,
-                            label: (
-                              <div>
-                                Supplier Code: <strong>{supp.supplier_code}</strong> / Name:{" "}
-                                <strong>{supp.supplier_name}</strong>
-                              </div>
-                            ),
-                            codes: supp.supplier_code,
-                            vatable: supp.supplier_vat,
-                            names: supp.supplier_name,
-                            email: supp.supplier_email,
-                            contact: supp.supplier_number,
-                            address: supp.supplier_address,
-                            price: supp.supplier_price,
-                          }))}
-                          onChange={handleSelectChange_Supp}
+                        <input
+                          name="file"
+                          type="file"
+                          className="file"
+                          multiple
+                          ref={fileInputRef}
+                          onChange={onFileSelect}
                         />
                       </div>
-                    )}
-
-                    <Button
-                      variant="outline-warning"
-                      onClick={handleAddSuppClick}
-                      size="md"
-                      style={{ fontSize: "15px", marginTop: "10px" }}>
-                      Add Supplier
-                    </Button>
-                  </table>
+                      <div className="ccontainerss">
+                        {images.map((images, index) => (
+                          <div className="imagess" key={index}>
+                            <span
+                              className="delete"
+                              onClick={() => deleteImage(index)}
+                            >
+                              &times;
+                            </span>
+                            <img src={images.url} alt={images.name} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </Form.Group>
                 </div>
               </div>
-            </div>
 
-            <div className="save-cancel">
-              <Button
-                type="submit"
-                variant="warning"
-                size="md"
-                style={{ fontSize: "20px" }}>
-                Save
-              </Button>
-              <Link
-                to="/productList"
-                className="btn btn-secondary btn-md"
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
-                Cancel
-              </Link>
-            </div>
-          </Form>
-        </div>
+              <div
+                className="gen-info"
+                style={{
+                  fontSize: "20px",
+                  position: "relative",
+                  paddingTop: "30px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                }}
+              >
+                Supplier List
+                <span
+                  style={{
+                    position: "absolute",
+                    height: "0.5px",
+                    width: "-webkit-fill-available",
+                    background: "#FFA500",
+                    top: "85%",
+                    left: "12rem",
+                    transform: "translateY(-50%)",
+                  }}
+                ></span>
+              </div>
+              <div className="supplier-table">
+                <div className="table-containss">
+                  <div className="main-of-all-tables">
+                    <table id="order-listing">
+                      <thead>
+                        <tr>
+                          <th className="tableh">Supplier Code</th>
+                          <th className="tableh">Name</th>
+                          <th className="tableh">Email</th>
+                          <th className="tableh">Contact</th>
+                          <th className="tableh">Address</th>
+                          <th className="tableh">Price</th>
+                          <th className="tableh">VAT </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {supp.length > 0 ? (
+                          supp.map((supp) => (
+                            <tr>
+                              <td>{supp.codes}</td>
+                              <td>{supp.names}</td>
+                              <td>{supp.email}</td>
+                              <td>{supp.contact}</td>
+                              <td>{supp.address}</td>
+                              <td>
+                                <div className="d-flex align-items-center">
+                                  <span
+                                    style={{
+                                      fontSize: "20px",
+                                      marginRight: "5px",
+                                    }}
+                                  >
+                                    ₱
+                                  </span>
+                                  <Form.Control
+                                    type="number"
+                                    style={{
+                                      height: "35px",
+                                      fontSize: "14px",
+                                      fontFamily: "Poppins, Source Sans Pro",
+                                    }}
+                                    placeholder="Input Price"
+                                    value={priceInput[supp.value] || ""}
+                                    onChange={(e) =>
+                                      handlePriceinput(
+                                        e.target.value,
+                                        supp.value
+                                      )
+                                    }
+                                    required
+                                  />
+                                </div>
+                              </td>
+                              <td>
+                                {isNaN(
+                                  (supp.vatable / 100) * priceInput[supp.value]
+                                )
+                                  ? 0
+                                  : (
+                                      (supp.vatable / 100) *
+                                      priceInput[supp.value]
+                                    ).toFixed(2)}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" style={{ textAlign: "center" }}>
+                              No Supplier selected
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                      {showDropdown && (
+                        <div className="dropdown mt-3">
+                          <Select
+                            isMulti
+                            options={fetchSupp.map((supp) => ({
+                              value: `${supp.supplier_code} - ${supp.supplier_name}`,
+                              label: (
+                                <div>
+                                  Supplier Code:{" "}
+                                  <strong>{supp.supplier_code}</strong> / Name:{" "}
+                                  <strong>{supp.supplier_name}</strong>
+                                </div>
+                              ),
+                              codes: supp.supplier_code,
+                              vatable: supp.supplier_vat,
+                              names: supp.supplier_name,
+                              email: supp.supplier_email,
+                              contact: supp.supplier_number,
+                              address: supp.supplier_address,
+                              price: supp.supplier_price,
+                            }))}
+                            onChange={handleSelectChange_Supp}
+                          />
+                        </div>
+                      )}
+
+                      <Button
+                        variant="outline-warning"
+                        onClick={handleAddSuppClick}
+                        size="md"
+                        style={{ fontSize: "15px", marginTop: "10px" }}
+                      >
+                        Add Supplier
+                      </Button>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div className="save-cancel">
+                <Button
+                  type="submit"
+                  variant="warning"
+                  size="md"
+                  style={{ fontSize: "20px" }}
+                >
+                  Save
+                </Button>
+                <Link
+                  to="/productList"
+                  className="btn btn-secondary btn-md"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                >
+                  Cancel
+                </Link>
+              </div>
+            </Form>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
     </div>
   );

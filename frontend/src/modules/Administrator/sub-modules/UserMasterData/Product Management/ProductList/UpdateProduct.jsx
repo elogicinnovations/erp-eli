@@ -30,6 +30,7 @@ function UpdateProduct({authrztn}) {
   const [binLocation, setbinLocation] = useState([]); // for fetching bin location data
   const [manufacturer, setManufacturer] = useState([]); // for fetching manufacturer data
   const [isReadOnly, setReadOnly] = useState(false);
+  const [UOM_set, setUOM_set] = useState(false); //para ma required sa receiving if set siya
 
   const [code, setCode] = useState("");
   const [prod_id, setProd_id] = useState("");
@@ -445,6 +446,7 @@ useEffect(() => {
       setslct_category(res.data[0].product_category);
       setslct_binLocation(res.data[0].product_location);
       setunitMeasurement(res.data[0].product_unitMeasurement);
+      setUOM_set(res.data[0].UOM_set);
       setslct_manufacturer(res.data[0].product_manufacturer);
       setDetails(res.data[0].product_details);
       setThresholds(res.data[0].product_threshold);
@@ -766,6 +768,7 @@ useEffect(() => {
           // assembly,
           // spareParts,
           // subparting,
+          UOM_set,
           specificProductAssembly,
           specificProductSubAssembly,
           specificProductSpares,
@@ -1128,7 +1131,8 @@ useEffect(() => {
 
             <div className="row">
               <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
+               <div>
+               <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Unit of Measurment:{" "}
                   </Form.Label>
@@ -1149,6 +1153,18 @@ useEffect(() => {
                     ))}
                   </Form.Select>
                 </Form.Group>
+               </div>
+
+                <Form.Group className="mb-3">
+                    <Form.Check 
+                      type="checkbox"
+                      disabled={!isReadOnly}
+                      style={{ fontSize: "15px", color: 'red' }} 
+                      checked={UOM_set === true}
+                      onClick={() => { setUOM_set(!UOM_set); setIsSaveButtonDisabled(false); }}
+                      label={UOM_set === true ? "Sub-Unit quantity is enabled" : "Check this to enable sub-unit quantity"}
+                      />
+                  </Form.Group>
               </div>
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">

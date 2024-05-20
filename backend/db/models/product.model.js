@@ -33,6 +33,11 @@ const Product = sequelize.define('product', {
     allowNull: true,
     unique: false,
   },
+  UOM_set: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    unique: false,
+  },
   product_details: {
     type: DataTypes.STRING,
     allowNull: true,

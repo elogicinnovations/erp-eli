@@ -17,6 +17,7 @@ const {
   MasterList,
   Department,
   Receiving_PO,
+  ProductTAGSupplier,
 } = require("../db/models/associations");
 const session = require("express-session");
 
@@ -156,29 +157,46 @@ router.route("/viewToReceive").get(async (req, res) => {
 
 router.route("/fetchTable_PO").get(async (req, res) => {
   try {
-    const data = await PR.findAll({
+    const data = await PR_PO.findAll({
       include: [
         {
-          model: MasterList,
+          model: PR,
           required: true,
 
-          include: Department,
-          required: true,
-        },
+          include: [{
+            model: MasterList,
+            required: true,
+              include: [{
+                model: Department,
+                required: true
+              }]
+          }]
+        }
       ],
-      where: {
-        [Op.or]: [
-          { status: "To-Receive (Partial)" },
-          { status: "For-Approval (PO)" },
-          { status: "For-Rejustify (PO)" },
-          { status: "To-Receive" },
-        ],
-      },
+      // where: {
+      //   [Op.or]: [
+      //     { status: "To-Receive (Partial)" },
+      //     { status: "For-Approval (PO)" },
+      //     { status: "For-Rejustify (PO)" },
+      //     { status: "To-Receive" },
+      //   ],
+      // },
     });
 
     if (data) {
-      // console.log(data);
-      return res.json(data);
+          // Create a map to keep track of unique po_ids
+      const uniquePoMap = new Map();
+
+      // Filter data to ensure only unique po_ids
+      const uniqueData = data.filter(item => {
+        if (!uniquePoMap.has(item.po_id)) {
+          uniquePoMap.set(item.po_id, true);
+          return true;
+        }
+        return false;
+      });
+
+  return res.json(uniqueData);
     } else {
       res.status(400);
     }
