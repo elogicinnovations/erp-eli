@@ -67,6 +67,8 @@ const PR_subPart = require("./pr_subPart.model");
 const PR_history = require("./pr_historical.model");
 const PR_Rejustify = require("./pr_rejustify.model");
 const PR_PO = require("./pr_toPO.model");
+const PO_REJECT = require("./pr_PO_Reject.model");
+const PR_REJECT = require("./pr_Reject.model");
 const PR_PO_asmbly = require("./pr_toPO_asmbly.model");
 const PR_PO_spare = require("./pr_toPO_spare.model");
 const PR_PO_subpart = require("./pr_toPO_subpart.model");
@@ -189,6 +191,9 @@ Product_Spare_Parts.belongsTo(Product, { foreignKey: "tag_product_spare_parts", 
 
 Product.hasMany(PR_product, { foreignKey: "product_id" });
 PR_product.belongsTo(Product, { foreignKey: "product_id" });
+
+PR.hasMany(PR_product, { foreignKey: "pr_id" });
+PR_product.belongsTo(PR, { foreignKey: "pr_id" });
 
 Assembly.hasMany(PR_assembly, { foreignKey: "assembly_id" });
 PR_assembly.belongsTo(Assembly, { foreignKey: "assembly_id" });
@@ -525,6 +530,20 @@ PR_PO.belongsTo(PR, { foreignKey: "pr_id" });
 ProductTAGSupplier.hasMany(PR_PO, { foreignKey: "product_tag_supplier_ID" });
 PR_PO.belongsTo(ProductTAGSupplier, { foreignKey: "product_tag_supplier_ID" });
 
+//-------------PO reject with remarks -------------------
+PR.hasMany(PO_REJECT, { foreignKey: "pr_id" });
+PO_REJECT.belongsTo(PR, { foreignKey: "pr_id" });
+
+MasterList.hasMany(PO_REJECT, { foreignKey: "masterlist_id" });
+PO_REJECT.belongsTo(MasterList, { foreignKey: "masterlist_id" });
+
+//-------------Pr reject with remarks -------------------
+PR.hasMany(PR_REJECT, { foreignKey: "pr_id" });
+PR_REJECT.belongsTo(PR, { foreignKey: "pr_id" });
+
+MasterList.hasMany(PR_REJECT, { foreignKey: "masterlist_id" });
+PR_REJECT.belongsTo(MasterList, { foreignKey: "masterlist_id" });
+
 //------------- Purchase Order Assembly------------
 PR.hasMany(PR_PO_asmbly, { foreignKey: "pr_id" });
 PR_PO_asmbly.belongsTo(PR, { foreignKey: "pr_id" });
@@ -612,6 +631,9 @@ Receiving_Image.belongsTo(PR, { foreignKey: "pr_id" });
 PR.hasMany(PR_Rejustify, { foreignKey: "pr_id" });
 PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id" });
 
+MasterList.hasMany(PR_Rejustify, { foreignKey: "masterlist_id" });
+PR_Rejustify.belongsTo(MasterList, { foreignKey: "masterlist_id" });
+
 module.exports = {
   MasterList,
   UserRole,
@@ -680,6 +702,8 @@ module.exports = {
   PR_history,
   PR_Rejustify,
   PR_PO,
+  PR_REJECT,
+  PO_REJECT,
   PR_PO_asmbly,
   PR_PO_spare,
   PR_PO_subpart,

@@ -8,6 +8,10 @@ const PR_Rejustify = sequelize.define('purchase_req_rejustify', {
     primaryKey: true,
     autoIncrement: true,
   },
+  masterlist_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   pr_id:{
     type: DataTypes.INTEGER,
     allowNull: false,

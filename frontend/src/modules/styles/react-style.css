@@ -5531,6 +5531,13 @@ span:nth-child(5) {
   justify-content: center;
 }
 
+.emoji-mart {
+  position: absolute;
+  bottom: 120px; /* Adjust according to your layout */
+  left: 10px;    /* Adjust according to your layout */
+}
+
+
 
 
 @keyframes ellipsis {

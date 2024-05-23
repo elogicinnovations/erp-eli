@@ -23,6 +23,10 @@ const PR_product = sequelize.define('purchase_req_product', {
   description: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  isPO: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
   }
 });
 

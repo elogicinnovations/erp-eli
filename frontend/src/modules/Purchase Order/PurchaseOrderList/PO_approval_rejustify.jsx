@@ -6,6 +6,8 @@ import "../../styles/react-style.css";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
+import Image from "react-bootstrap/Image";
+
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -16,12 +18,19 @@ import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
 import SBFLOGO from "../../../assets/image/sbf_logoo_final.jpg";
+import TransactionIcon35 from "../../../assets/image/transactionIcon35.png";
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
 import html2canvas from "html2canvas";
 import ReactLoading from "react-loading";
 import NoAccess from "../../../assets/image/NoAccess.png";
 import ESignature from "../../../assets/image/e-signature.png";
+import { Note, Smiley, Trash } from "@phosphor-icons/react";
+
+// import EmojiPicker from './../../../hooks/components/EmojiPicker';
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import zIndex from "@mui/material/styles/zIndex";
 
 function POApprovalRejustify({ authrztn }) {
   const { id } = useParams();
@@ -33,8 +42,10 @@ function POApprovalRejustify({ authrztn }) {
   const [useFor, setUseFor] = useState("");
   const [remarks, setRemarks] = useState("");
   const [status, setStatus] = useState("");
+  const [supplierName, setSupplierName] = useState("");
 
   //   const [validated, setValidated] = useState(false);
+  const [rejustifyHistory, setRejustifyHistory] = useState([]);
   const [products, setProducts] = useState([]);
   const [assembly, setAssembly] = useState([]);
   const [spare, setSpare] = useState([]);
@@ -44,16 +55,24 @@ function POApprovalRejustify({ authrztn }) {
   const [rejustifyRemarks, setRejustifyRemarks] = useState("");
 
   const [showModal, setShowModal] = useState(false);
+  const [showModal_reject, setShowModal_reject] = useState(false);
+  const [showModal_remarks, setShowModal_remarks] = useState(false);
+  const [rejectRemarks, setRejectRemarks] = useState("");
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [showModalPreview, setShowModalPreview] = useState(false);
   const [userId, setuserId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [loadAprrove, setLoadAprrove] = useState(false);
-  const [POdepartmentUser, setDepartmentPO] = useState("");
+  const [POdepartmentUser, setDepartmentPO] = useState(""); // department ng nag request
+  const [department, setDepartment] = useState(""); // department ng user na gumagamit now
   const [date, setDate] = useState(new Date());
   const [dateApproved, setDateApproved] = useState(new Date());
   const [showSignature, setShowSignature] = useState(false);
   const [po_idRejustify, setPo_idRejustify] = useState("");
   const [requestor, setRequestor] = useState("");
+
+  //
+
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -89,6 +108,7 @@ function POApprovalRejustify({ authrztn }) {
     if (typeof token === "string") {
       var decoded = jwtDecode(token);
       setuserId(decoded.id);
+      setDepartment(decoded.department_id);
     }
   };
 
@@ -103,7 +123,24 @@ function POApprovalRejustify({ authrztn }) {
 
   const handleClose = () => {
     setShowModal(false);
-    setShowModalPreview(false);
+    // setShowModalPreview(false);
+    setShowModal_reject(false);
+    setShowModal_remarks(false);
+  };
+
+  const handleReject_history = () => {
+    setShowModal_remarks(true);
+    axios
+      .get(BASE_URL + "/invoice/fetchRejectHistory", {
+        params: {
+          po_id: id,
+          pr_id: prID,
+        },
+      })
+      .then((res) => {
+        setRejustifyHistory(res.data);
+      })
+      .catch((err) => console.log(err));
   };
 
   const reloadTable = () => {
@@ -129,46 +166,6 @@ function POApprovalRejustify({ authrztn }) {
     console.log("arrayss", JSON.stringify(POarray, null, 2));
   }, [POarray]);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + "/PR_product/fetchPrProduct", {
-  //       params: {
-  //         id: id,
-  //       },
-  //     })
-  //     .then((res) => setProducts(res.data))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + "/PR_assembly/fetchViewAssembly", {
-  //       params: {
-  //         id: id,
-  //       },
-  //     })
-  //     .then((res) => setAssembly(res.data))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + "/PR_spare/fetchViewSpare", {
-  //       params: { id: id },
-  //     })
-  //     .then((res) => setSpare(res.data))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + "/PR_subpart/fetchViewSubpart", {
-  //       params: { id: id },
-  //     })
-  //     .then((res) => setSubpart(res.data))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
   useEffect(() => {
     axios
       .get(BASE_URL + "/invoice/fetchView_PO", {
@@ -177,15 +174,16 @@ function POApprovalRejustify({ authrztn }) {
         },
       })
       .then((res) => {
-        setPrID(res.data.purchase_req.id)
+        setPrID(res.data.purchase_req.id);
         setPRnum(res.data.purchase_req.pr_num);
         const parsedDate = new Date(res.data.purchase_req.date_needed);
         setDateNeeded(parsedDate);
         setRequestor(res.data.purchase_req.masterlist_id);
         setUseFor(res.data.purchase_req.used_for);
         setRemarks(res.data.purchase_req.remarks);
-        setStatus(res.data.purchase_req.status);
-        setDepartmentPO(res.data)
+        setStatus(res.data.status);
+        setDepartmentPO(res.data);
+        setSupplierName(res.data.product_tag_supplier.supplier.supplier_name);
       })
       .catch((err) => {
         console.error(err);
@@ -203,25 +201,60 @@ function POApprovalRejustify({ authrztn }) {
   //     .catch((err) => console.log(err));
   // }, []);
 
-  const handleCancel = async (id) => {
-    swal({
-      title: "Are you sure?",
-      text: "You are about to set as re-canvass. This cannot be recover",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (cancel) => {
-      if (cancel) {
-        try {
-          const response = await axios.put(BASE_URL + `/PR/cancel_PO`, {
-            row_id: id,
-            userId,
-          });
+  // const handleCancel = async (id) => {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "You are about to set as re-canvass. This cannot be recover",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //   }).then(async (cancel) => {
+  //     if (cancel) {
+  //       try {
+  //         const response = await axios.put(BASE_URL + `/PR/cancel_PO`, {
+  //           row_id: id,
+  //           userId,
+  //         });
 
-          if (response.status === 200) {
+  //         if (response.status === 200) {
+  //           swal({
+  //             title: "Updated Successfully",
+  //             text: "The Request is set to re-canvass successfully",
+  //             icon: "success",
+  //             button: "OK",
+  //           }).then(() => {
+  //             navigate("/purchaseOrderList");
+  //           });
+  //         } else {
+  //           swal({
+  //             icon: "error",
+  //             title: "Something went wrong",
+  //             text: "Please contact our support",
+  //           });
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   });
+  // };
+  const handleRejected = async () => {
+    try {
+      axios
+        .post(`${BASE_URL}/PR/rejectPO`, null, {
+          params: {
+            po_id: id,
+            prID,
+            prNum,
+            rejectRemarks,
+            userId,
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
             swal({
-              title: "Updated Successfully",
-              text: "The Request is set to re-canvass successfully",
+              title: "Purchase Order Rejected",
+              text: "The purchase order has been successfully rejected.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -234,13 +267,11 @@ function POApprovalRejustify({ authrztn }) {
               text: "Please contact our support",
             });
           }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    });
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
-
   const handleReject = async (po_idss) => {
     const po_approvalID = po_idss;
     swal({
@@ -251,36 +282,7 @@ function POApprovalRejustify({ authrztn }) {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
-        try {
-          axios
-            .post(`${BASE_URL}/PR/rejectPO`, null, {
-              params: {
-                po_approvalID,
-                userId,
-              },
-            })
-            .then((res) => {
-              console.log(res);
-              if (res.status === 200) {
-                swal({
-                  title: "Purchase Order Rejected",
-                  text: "The purchase order has been successfully rejected.",
-                  icon: "success",
-                  button: "OK",
-                }).then(() => {
-                  reloadTable();
-                });
-              } else {
-                swal({
-                  icon: "error",
-                  title: "Something went wrong",
-                  text: "Please contact our support",
-                });
-              }
-            });
-        } catch (err) {
-          console.log(err);
-        }
+        setShowModal_reject(true);
       } else {
         swal({
           title: "Cancelled Successfully",
@@ -372,9 +374,9 @@ function POApprovalRejustify({ authrztn }) {
       }
 
       formData.append("remarks", rejustifyRemarks);
-      formData.append("id", id);
+      formData.append("pr_id", prID);
       formData.append("userId", userId);
-      formData.append("po_idRejustify", po_idRejustify);
+      formData.append("po_idRejustify", id);
 
       const response = await axios.post(
         BASE_URL + `/PR_rejustify/rejustify_for_PO`,
@@ -409,6 +411,90 @@ function POApprovalRejustify({ authrztn }) {
     }
   };
 
+  const handleDownloadFile = async (file, mimeType, fileExtension) => {
+    try {
+      if (!file) {
+        console.error("No file available for download");
+        return;
+      }
+
+      // Convert the array data into a Uint8Array
+      const uint8Array = new Uint8Array(file.data);
+
+      // Create a Blob object from the Uint8Array with the determined MIME type
+      const blob = new Blob([uint8Array], { type: mimeType });
+
+      // Create a URL for the Blob object
+      const url = window.URL.createObjectURL(blob);
+
+      // Set a default file name with the correct file extension
+      const fileName = `RejustifyFile.${fileExtension}`;
+
+      // Create a link element to trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+
+      // Trigger the download
+      a.click();
+
+      // Clean up resources
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRemovePoProduct = async (PR_PO_primaryID, productName) => { // para if reject pwede mag remove ng prodduct
+
+    const primary_ID = PR_PO_primaryID
+    const product_name = productName
+    swal({
+      title: `Confirm removal of this product from purchase order #${id}?`,
+      text: `${product_name}`,
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+      
+
+        await axios
+        .post(BASE_URL + `/invoice/remove_productPO`, null, {
+          params: {
+            primary_ID,
+            po_id: id,
+            userId,
+            prNum,
+            prID,
+            product_name
+          }
+        })
+        .then((res) => {
+          if(res.status === 200){
+            swal({
+              icon: "success",
+              title: `Product ${product_name} has successfully removed from PO # ${id}`,
+              text: "Please contact our support",
+            })
+            .then(() => {
+              reloadTable()
+            })
+          }
+          else{
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          } 
+        })
+      }
+    })
+  }
+
   // const [POPreview, setPOPreview] = useState([]);
   // const handlePreview = async (po_num) => {
   //   const po_number = po_num;
@@ -428,6 +514,18 @@ function POApprovalRejustify({ authrztn }) {
 
   const handleCloseses = () => setShow(false);
   const handleShowses = () => setShow(true);
+
+  //date format
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
 
   return (
     <div className="main-of-containers">
@@ -563,7 +661,7 @@ function POApprovalRejustify({ authrztn }) {
                 fontFamily: "Poppins, Source Sans Pro",
               }}
             >
-              Requested Product
+              <p className="h2"> {supplierName} </p>
               <span
                 style={{
                   position: "absolute",
@@ -571,7 +669,7 @@ function POApprovalRejustify({ authrztn }) {
                   width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "81%",
-                  left: "20rem",
+                  left: "11rem",
                   transform: "translateY(-50%)",
                 }}
               ></span>
@@ -585,28 +683,66 @@ function POApprovalRejustify({ authrztn }) {
                       <th className="tableh">Product Name</th>
                       <th className="tableh">UOM</th>
                       <th className="tableh">Needed Quantity</th>
+                      {status === "Rejected" ? (
+                        <>
+                          <th className="tableh">Action</th>
+                        </>
+                      ) : (
+                        <></>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
-                    {POarray.map((data, i) => (
-                      data.items && data.items.map((item, j) => (
-                        item.supp_tag && item.item && (
-                          <tr key={`${i}-${j}`}>
-                            <td>{item.supp_tag.code}</td>
-                            <td>{item.supp_tag.name}</td>
-                            <td>{item.supp_tag.uom}</td>
-                            <td>{item.item.quantity}</td>
-                          </tr>
+                    {POarray.map(
+                      (data, i) =>
+                        data.items &&
+                        data.items.map(
+                          (item, j) =>
+                            item.supp_tag &&
+                            item.item && (
+                              <tr key={`${i}-${j}`}>
+                                <td>{item.supp_tag.code}</td>
+                                <td>{item.supp_tag.name}</td>
+                                <td>{item.supp_tag.uom}</td>
+                                <td>{item.item.quantity}</td>
+                                {status === "Rejected" ? (
+                                  <>
+                                    <td>
+                                      <Button variant onClick={() => handleRemovePoProduct(item.item.id, item.supp_tag.name)} >
+                                        <Trash size={32} />
+                                      </Button>
+                                      
+                                    </td>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                               
+                              </tr>
+                            )
                         )
-                      ))
-                    ))}  
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
-           
 
             <div className="save-cancel">
+              {status !== null ? ( // if status is equal to "Rejected", "Rejustified", "Approved" it is visible
+                <Button
+                  type="button"
+                  className="btn btn-secondary"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                  // onClick={() => handleCancel(id)}
+                  onClick={() => handleReject_history()}
+                >
+                  Reject History
+                </Button>
+              ) : (
+                <></>
+              )}
+
               <Button
                 type="button"
                 className="btn btn-warning"
@@ -617,7 +753,7 @@ function POApprovalRejustify({ authrztn }) {
               >
                 Preview
               </Button>
-              {authrztn.includes("PO - Reject") && (
+              {/* {authrztn.includes("PO - Reject") && (
                 <Button
                   type="button"
                   className="btn btn-danger"
@@ -627,7 +763,7 @@ function POApprovalRejustify({ authrztn }) {
                 >
                   Re-Canvass
                 </Button>
-              )}
+              )} */}
               {/* <Button
               onClick={handleShow}
               className="btn btn-secondary btn-md"
@@ -661,7 +797,10 @@ function POApprovalRejustify({ authrztn }) {
                 <Modal.Title style={{ fontSize: "25px" }}>
                   DEPARTMENT:{" "}
                   <strong>
-                    {POdepartmentUser?.purchase_req?.masterlist?.department?.department_name}
+                    {
+                      POdepartmentUser?.purchase_req?.masterlist?.department
+                        ?.department_name
+                    }
                   </strong>
                 </Modal.Title>
               </Modal.Header>
@@ -700,241 +839,306 @@ function POApprovalRejustify({ authrztn }) {
                   <Modal.Body
                   // id={`content-to-capture-${group.title}`}
                   >
-             
-                      
-                        <div
-                          id={`content-to-capture-${group.title}`}
-                          key={group.title}
-                          className="receipt-main-container"
-                        >
-                          <div className="receipt-content">
-                            <div className="receipt-header">
-                              <div className="sbflogoes">
-                                <img src={SBFLOGO} alt="" />
-                              </div>
-                              <div className="sbftexts">
-                                <span>SBF PHILIPPINES DRILLING </span>
-                                <span>RESOURCES CORPORATION</span>
-                                <span>
-                                  Padigusan, Sta.Cruz, Rosario, Agusan del sur
-                                </span>
-                                <span>Landline No. 0920-949-3373</span>
-                                <span>Email Address: sbfpdrc@gmail.com</span>
-                              </div>
-                              <div className="spacesbf"></div>
-                            </div>
+                    <div
+                      id={`content-to-capture-${group.title}`}
+                      key={group.title}
+                      className="receipt-main-container"
+                    >
+                      <div className="receipt-content">
+                        <div className="receipt-header">
+                          <div className="sbflogoes">
+                            <img src={SBFLOGO} alt="" />
+                          </div>
+                          <div className="sbftexts">
+                            <span>SBF PHILIPPINES DRILLING </span>
+                            <span>RESOURCES CORPORATION</span>
+                            <span>
+                              Padigusan, Sta.Cruz, Rosario, Agusan del sur
+                            </span>
+                            <span>Landline No. 0920-949-3373</span>
+                            <span>Email Address: sbfpdrc@gmail.com</span>
+                          </div>
+                          <div className="spacesbf"></div>
+                        </div>
 
-                            <div className="po-number-container">
-                              <div className="shippedto">
-                                {/* <span>SHIPPED TO:</span> */}
-                              </div>
-                              <div className="blank"></div>
-                              <div className="po-content">
-                                <span>PURCHASE ORDER</span>
-                                <span>
-                                  P.O-NO.{" "}
-                                  <label style={{ fontSize: 14, color: "red" }}>
-                                    {group.title}
-                                  </label>
-                                </span>
-                              </div>
-                            </div>
+                        <div className="po-number-container">
+                          <div className="shippedto">
+                            {/* <span>SHIPPED TO:</span> */}
+                          </div>
+                          <div className="blank"></div>
+                          <div className="po-content">
+                            <span>PURCHASE ORDER</span>
+                            <span>
+                              P.O-NO.{" "}
+                              <label style={{ fontSize: 14, color: "red" }}>
+                                {group.title}
+                              </label>
+                            </span>
+                          </div>
+                        </div>
 
-                            <div className="secondrowes">
-                              <div className="leftsecondrows">
-                                {/* <span>FOB</span>
+                        <div className="secondrowes">
+                          <div className="leftsecondrows">
+                            {/* <span>FOB</span>
                             <span>VIA</span> */}
-                              </div>
+                          </div>
 
-                              <div className="midsecondrows">
-                                <span>VENDOR</span>
+                          <div className="midsecondrows">
+                            <span>VENDOR</span>
+                            <span>
+                              {group.items[0].suppliers.supplier_name}
+                            </span>
+                          </div>
+
+                          <div className="rightsecondrows">
+                            <span>
+                              PR NO.
+                              <label style={{ fontSize: 14, color: "red" }}>
+                                {prNum}
+                              </label>
+                            </span>
+                            <span>
+                              DATE PREPARED:{" "}
+                              <strong>{`${date.toLocaleDateString(
+                                "en-PH"
+                              )}`}</strong>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="thirdrowes">
+                          <div className="thirdleftrows">
+                            <span>ITEM NO.</span>
+                            <span>QUANTITY</span>
+                            <span>UNIT</span>
+                          </div>
+
+                          <div className="thirdmidrows ">
+                            <span>DESCRIPTION</span>
+                            <span className="">Part Number</span>
+                          </div>
+
+                          <div className="thirdrightrows">
+                            <span>{`UNIT PRICE`}</span>
+                            <span>TOTAL</span>
+                          </div>
+                        </div>
+
+                        <div className="fourthrowes">
+                          <div className="leftfourthrows">
+                            {/* for product code */}
+                            <span>
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.supp_tag.code}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+                            {/* for product quantity */}
+                            <span>
+                              {" "}
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.item.quantity}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+
+                            {/* for product unit of measurement */}
+                            <span>
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.supp_tag.uom}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+                          </div>
+
+                          <div className="midfourthrows">
+                            {/* for product name */}
+                            {group.items.map((item, index) => (
+                              <div className="midfourthrows_div" key={index}>
+                                <span
+                                  title={`Product Name: ${item.supp_tag.name}`}
+                                >{`${item.supp_tag.name}`}</span>
                                 <span>
-                                  {group.items[0].suppliers.supplier_name}
+                                  {item.supp_tag.part_number === null
+                                    ? "--"
+                                    : item.supp_tag.part_number === ""
+                                    ? "--"
+                                    : item.supp_tag.part_number}
                                 </span>
+                                <br />
                               </div>
+                            ))}
+                          </div>
 
-                              <div className="rightsecondrows">
-                                <span>
-                                  PR NO.
-                                  <label style={{ fontSize: 14, color: "red" }}>
-                                    {prNum}
+                          <div className="rightfourthrows">
+                            {/* for unit price */}
+                            <span>
+                              {" "}
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>{`${item.suppPrice.price}`}</label>
+                                  {/* <label>{`${item.suppPrice.price}`}</label> */}
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+
+                            {/* for unit price total */}
+                            <span>
+                              {" "}
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
+                                  <label>
+                                    {(
+                                      item.suppPrice.price * item.item.quantity
+                                    ).toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                    })}
                                   </label>
-                                </span>
+
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="fifthrowes">
+                          <div className="fifthleftrows">
+                            <div className="received-section">
+                              <span>P.O RECEIVED BY: </span>
+                            </div>
+                            <div className="deliverydate">
+                              <span>DELIVERY DATE: </span>
+                              <span></span>
+                            </div>
+                            <div className="terms">
+                              <span>TERMS: </span>
+                              <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
+                            </div>
+                            <div className="preparedby">
+                              <span>PREPARED BY: </span>
+                              <span>
+                                {
+                                  POdepartmentUser?.purchase_req?.masterlist
+                                    ?.col_Fname
+                                }
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="fifthmidrows">
+                            <div className="conditionsection">
+                              <div className="tobeUsed">
+                                <span style={{ color: "red" }}>
+                                  To be used for:
+                                </span>{" "}
+                                <strong
+                                  style={{ fontSize: "12px" }}
+                                >{`${useFor}`}</strong>
+                              </div>
+                              <span>TERMS AND CONDITIONS: </span>
+                              <span>
+                                1. Acceptance of this order is an acceptance of
+                                all conditions herein.
+                              </span>
+                              <span>
+                                2. Make all deliveries to receiving, However
+                                subject to count, weight and specification
+                                approval of SBF Philippines Drilling Resources
+                                Corporation.
+                              </span>
+                              <span>
+                                3. The original purchase order copy and
+                                suppliers original invoice must accompany
+                                delivery.
+                              </span>
+                              <span>
+                                4. In case the supplier fails to deliver goods
+                                on delivery date specified herein, SBF
+                                Philippines Drilling Resources Corporation has
+                                the right to cancel this order or demand penalty
+                                charged as stated.
+                              </span>
+                              <span>
+                                5. Problems encountered related to your supply
+                                should immediately brought to the attention of
+                                the purchasing manager.
+                              </span>
+                            </div>
+                            <div className="checkedsection">
+                              <div className="notedby">
+                                <span>Checked by: </span>
                                 <span>
-                                  DATE PREPARED:{" "}
-                                  <strong>{`${date.toLocaleDateString(
-                                    "en-PH"
-                                  )}`}</strong>
+                                  <img
+                                    src={ESignature}
+                                    alt="ESignature"
+                                    className="signature-image"
+                                  />
+                                </span>
+                                <span>ALLAN JUEN</span>
+                              </div>
+                              <div className="recommending">
+                                {/* <span>RECOMMENDING APPROVAL</span> */}
+                                <span></span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="fifthrightrows">
+                            <div className="totalamount">
+                              <div className="vatandAmounttotal">
+                                <div className="vatamounts">
+                                  <span>VAT ({`${vat}%`})</span>
+                                  <span>
+                                    <strong>{`${vatAmount}`}</strong>
+                                  </span>
+                                </div>
+                                <div className="totalAmounts">
+                                  <span>Total Amount</span>
+                                  <span>
+                                    <strong>{`${totalSum}`}</strong>
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="overallTotal">
+                                <span>
+                                  Overall Total:{" "}
+                                  <strong>{`${currency} ${TotalAmount}`}</strong>
                                 </span>
                               </div>
                             </div>
 
-                            <div className="thirdrowes">
-                              <div className="thirdleftrows">
-                                <span>ITEM NO.</span>
-                                <span>QUANTITY</span>
-                                <span>UNIT</span>
-                              </div>
-
-                              <div className="thirdmidrows ">
-                                <span>DESCRIPTION</span>
-                                <span className="">Part Number</span>
-                              </div>
-
-                              <div className="thirdrightrows">
-                                <span>{`UNIT PRICE`}</span>
-                                <span>TOTAL</span>
-                              </div>
+                            <div className="codesection">
+                              <span>Date Approved:</span>
+                              <span>
+                                {dateApproved.toLocaleDateString("en-PH")}
+                              </span>
                             </div>
+                            <div className="approvedsby">
+                              <span>Approved By: </span>
 
-                            <div className="fourthrowes">
-                              <div className="leftfourthrows">
-                                {/* for product code */}
+                              {current_status === "Approved" ? (
                                 <span>
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.supp_tag.code}`}</label>
-                                      <br />
-                                    </div>
-                                  ))}
+                                  <span>
+                                    <img
+                                      src={ESignature}
+                                      alt="ESignature"
+                                      className="signature-image"
+                                    />
+                                  </span>
                                 </span>
-                                {/* for product quantity */}
-                                <span>
-                                  {" "}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.item.quantity}`}</label>
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-
-                                {/* for product unit of measurement */}
-                                <span>
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.supp_tag.uom}`}</label>
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-                              </div>
-
-                              <div className="midfourthrows">
-                                {/* for product name */}
-                                {group.items.map((item, index) => (
-                                  <div className="midfourthrows_div" key={index}>
-                                    <span title={`Product Name: ${item.supp_tag.name}`}>{`${item.supp_tag.name}`}</span>
-                                    <span>
-                                      {item.supp_tag.part_number === null
-                                        ? "--"
-                                        : item.supp_tag.part_number === ""
-                                        ? "--"
-                                        : item.supp_tag.part_number}
-                                    </span>
-                                    <br />
-                                  </div>
-                                ))}
-                              </div>
-
-                              <div className="rightfourthrows">
-                                {/* for unit price */}
-                                <span>
-                                  {" "}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      <label>{`${item.suppPrice.price}`}</label>
-                                      {/* <label>{`${item.suppPrice.price}`}</label> */}
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-
-                                {/* for unit price total */}
-                                <span>
-                                  {" "}
-                                  {group.items.map((item, index) => (
-                                    <div key={index}>
-                                      {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
-                                      <label>
-                                        {(
-                                          item.suppPrice.price *
-                                          item.item.quantity
-                                        ).toLocaleString(undefined, {
-                                          minimumFractionDigits: 2,
-                                        })}
-                                      </label>
-
-                                      <br />
-                                    </div>
-                                  ))}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="fifthrowes">
-                              <div className="fifthleftrows">
-                                <div className="received-section">
-                                  <span>P.O RECEIVED BY: </span>
-                                </div>
-                                <div className="deliverydate">
-                                  <span>DELIVERY DATE: </span>
-                                  <span></span>
-                                </div>
-                                <div className="terms">
-                                  <span>TERMS: </span>
-                                  <span>{`${group.items[0].suppliers.supplier_terms} days`}</span>
-                                </div>
-                                <div className="preparedby">
-                                  <span>PREPARED BY: </span>
-                                  <span>
-                                    {POdepartmentUser?.purchase_req?.masterlist?.col_Fname}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="fifthmidrows">
-                                <div className="conditionsection">
-                                  <div className="tobeUsed">
-                                    <span style={{ color: "red" }}>
-                                      To be used for:
-                                    </span>{" "}
-                                    <strong
-                                      style={{ fontSize: "12px" }}
-                                    >{`${useFor}`}</strong>
-                                  </div>
-                                  <span>TERMS AND CONDITIONS: </span>
-                                  <span>
-                                    1. Acceptance of this order is an acceptance
-                                    of all conditions herein.
-                                  </span>
-                                  <span>
-                                    2. Make all deliveries to receiving, However
-                                    subject to count, weight and specification
-                                    approval of SBF Philippines Drilling
-                                    Resources Corporation.
-                                  </span>
-                                  <span>
-                                    3. The original purchase order copy and
-                                    suppliers original invoice must accompany
-                                    delivery.
-                                  </span>
-                                  <span>
-                                    4. In case the supplier fails to deliver
-                                    goods on delivery date specified herein, SBF
-                                    Philippines Drilling Resources Corporation
-                                    has the right to cancel this order or demand
-                                    penalty charged as stated.
-                                  </span>
-                                  <span>
-                                    5. Problems encountered related to your
-                                    supply should immediately brought to the
-                                    attention of the purchasing manager.
-                                  </span>
-                                </div>
-                                <div className="checkedsection">
-                                  <div className="notedby">
-                                    <span>Checked by: </span>
+                              ) : (
+                                <>
+                                  {showSignature && (
                                     <span>
                                       <img
                                         src={ESignature}
@@ -942,90 +1146,21 @@ function POApprovalRejustify({ authrztn }) {
                                         className="signature-image"
                                       />
                                     </span>
-                                    <span>ALLAN JUEN</span>
-                                  </div>
-                                  <div className="recommending">
-                                    {/* <span>RECOMMENDING APPROVAL</span> */}
-                                    <span></span>
-                                  </div>
-                                </div>
-                              </div>
+                                  )}
+                                </>
+                              )}
 
-                              <div className="fifthrightrows">
-                                <div className="totalamount">
-                                  <div className="vatandAmounttotal">
-                                    <div className="vatamounts">
-                                      <span>VAT ({`${vat}%`})</span>
-                                      <span>
-                                        <strong>{`${vatAmount}`}</strong>
-                                      </span>
-                                    </div>
-                                    <div className="totalAmounts">
-                                      <span>Total Amount</span>
-                                      <span>
-                                        <strong>{`${totalSum}`}</strong>
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  <div className="overallTotal">
-                                    <span>
-                                      Overall Total:{" "}
-                                      <strong>{`${currency} ${TotalAmount}`}</strong>
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="codesection">
-                                  <span>Date Approved:</span>
-                                  <span>
-                                    {dateApproved.toLocaleDateString("en-PH")}
-                                  </span>
-                                </div>
-                                <div className="approvedsby">
-                                  <span>Approved By: </span>
-
-                                  {
-                                    current_status === "Approved" ? (
-                                      <>
-                                        <span>
-                                          <img
-                                            src={ESignature}
-                                            alt="ESignature"
-                                            className="signature-image"
-                                          />
-                                        </span>
-                                      </>
-                                    ) 
-                                    : 
-                                    (
-                                      <>
-                                        {showSignature && (
-                                          <span>
-                                            <img
-                                              src={ESignature}
-                                              alt="ESignature"
-                                              className="signature-image"
-                                            />
-                                          </span>
-                                        )}
-                                      </>
-                                    )
-                                  }
-                                  
-                                  <span>Daniel Byron S. Afdal</span>
-                                  
-                                   
-                                  
-                                </div>
-                              </div>
+                              <span>Daniel Byron S. Afdal</span>
                             </div>
                           </div>
                         </div>
+                      </div>
+                    </div>
 
-                        {current_status === null ? (
-                          <>
-                             {!loadAprrove ? (
+                    {current_status === null ||
+                    current_status === "Rejustified" ? (
+                      <>
+                        {!loadAprrove ? (
                           <div className="save-cancel">
                             {authrztn.includes("PO - Reject") && (
                               <Button
@@ -1067,16 +1202,10 @@ function POApprovalRejustify({ authrztn }) {
                             </div>
                           </>
                         )}
-                      
-                          </>
-                        ) : (
-                          <>
-                          
-                          </>
-                        )}
-
-                       
-                  
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </Modal.Body>
                 );
               })}
@@ -1098,7 +1227,7 @@ function POApprovalRejustify({ authrztn }) {
                     <div className="col-6">
                       <Form.Group controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ fontSize: "20px" }}>
-                          PR No.:{" "}
+                          PR No. :{" "}
                         </Form.Label>
                         <Form.Control
                           type="text"
@@ -1109,6 +1238,22 @@ function POApprovalRejustify({ authrztn }) {
                       </Form.Group>
                     </div>
                     <div className="col-6">
+                      <Form.Group
+                        controlId="exampleForm.ControlInput2"
+                        className="datepick"
+                      >
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          PO NO. :{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={id}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                    </div>
+                    <div className="">
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
                         className="datepick"
@@ -1163,7 +1308,10 @@ function POApprovalRejustify({ authrztn }) {
                   <Button
                     variant="secondary"
                     size="md"
-                    onClick={handleClose}
+                    onClick={() => {
+                      setShowModal(false);
+                      setShowModal_remarks(true);
+                    }}
                     style={{ fontSize: "20px" }}
                   >
                     Cancel
@@ -1177,6 +1325,230 @@ function POApprovalRejustify({ authrztn }) {
                   >
                     Save
                   </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
+
+            <Modal show={showModal_reject} onHide={handleClose}>
+              <Form>
+                <Modal.Header closeButton>
+                  <Modal.Title style={{ fontSize: "24px" }}>
+                    Reject Form
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="row mt-3">
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          PR No.:{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={prNum}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                    </div>
+                    <div className="col-6">
+                      <Form.Group
+                        controlId="exampleForm.ControlInput2"
+                        className="datepick"
+                      >
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Date Needed:{" "}
+                        </Form.Label>
+                        <DatePicker
+                          readOnly
+                          selected={dateNeeded}
+                          onChange={(date) => setDateNeeded(date)}
+                          dateFormat="MM/dd/yyyy"
+                          placeholderText="Start Date"
+                          className="form-control"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <Form.Group controlId="exampleForm.ControlInput1">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Remarks:{" "}
+                      </Form.Label>
+
+                      <div style={{ position: "relative" }} className="">
+                        <Form.Control
+                          as="textarea"
+                          onChange={(e) => setRejectRemarks(e.target.value)}
+                          placeholder="Enter details"
+                          style={{
+                            height: "100px",
+                            fontSize: "15px",
+                            margin: 0,
+                            padding: 0,
+                          }}
+                          value={rejectRemarks}
+                        />
+
+                        <Button
+                          variant
+                          style={{
+                            position: "absolute",
+                            bottom: "3px",
+                            left: "3px",
+                          }}
+                          onClick={() => setIsPickerVisible(!isPickerVisible)}
+                          className="border border-radius"
+                        >
+                          <Smiley size={20} color="#161718" />
+                        </Button>
+                      </div>
+                    </Form.Group>
+
+                    {isPickerVisible === true ? (
+                      <>
+                        <Picker
+                          style={{ zIndex: 1 }}
+                          data={data}
+                          previewPosition="none"
+                          onEmojiSelect={(e) => {
+                            setRejectRemarks(
+                              (prevRemarks) => prevRemarks + e.native
+                            );
+                            setIsPickerVisible(!isPickerVisible);
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={handleClose}
+                    style={{ fontSize: "20px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleRejected}
+                    variant="warning"
+                    size="md"
+                    style={{ fontSize: "20px" }}
+                  >
+                    Save
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
+
+            <Modal
+              show={showModal_remarks}
+              onHide={handleClose}
+              backdrop="static"
+              keyboard={false}
+              size="xl"
+            >
+              <Form>
+                <Modal.Header closeButton>
+                  <Modal.Title style={{ fontSize: "24px" }}>
+                    Reject History
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {rejustifyHistory.map((data, index) => (
+                    <React.Fragment key={index}>
+                      <span className="h2">{`${data.source}`}</span>
+                      <div className="d-flex w-100 border-bottom justify-content-center align-items-center">
+                        <Note size={55} className="mr-3" color="#066ff9" />
+
+                        <div className="w-50">
+                          <div
+                            className="d-flex flex-column float-start"
+                            style={{ maxWidth: "100%" }}
+                          >
+                            <span
+                              className="h3 w-100"
+                              style={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                              }}
+                            >{`"${data.remarks}"`}</span>
+                            <span className="h4 text-muted">{`BY: ${data.masterlist.col_Fname}`}</span>
+                          </div>
+                        </div>
+
+                        <div className="w-50">
+                          <div className="d-flex flex-column float-end">
+                            <span className="h3">{`(${formatDatetime(
+                              data.createdAt
+                            )})`}</span>
+                            {data.source === "REJUSTIFICATION" &&
+                            data.file !== null ? (
+                              <>
+                                <Button
+                                  onClick={() =>
+                                    handleDownloadFile(
+                                      data.file,
+                                      data.mimeType,
+                                      data.fileExtension
+                                    )
+                                  }
+                                  className="fs-5"
+                                  variant="link"
+                                >
+                                  Download
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <span className="h4 text-muted mt-2 text-end">{`No available file to download `}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                    </React.Fragment>
+                  ))}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={handleClose}
+                    style={{ fontSize: "20px" }}
+                  >
+                    Cancel
+                  </Button>
+
+                  {department === 1 ? (
+                    <>
+                      {status === "Rejected" ? (
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            setShowModal(true);
+                            setShowModal_remarks(false);
+                          }}
+                          variant="warning"
+                          size="md"
+                          style={{ fontSize: "20px" }}
+                        >
+                          Rejustify
+                        </Button>
+                      ) : (
+                        <></>
+                      )}
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Modal.Footer>
               </Form>
             </Modal>

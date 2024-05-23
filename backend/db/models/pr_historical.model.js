@@ -24,6 +24,10 @@ const PR_history = sequelize.define('purchase_req_history', {
     type: DataTypes.DATE,
     allowNull: true
   },
+  // masterlist_id: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: false,
+  // },
   isRead: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,

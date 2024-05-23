@@ -1,5 +1,5 @@
 const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const { DataTypes, BOOLEAN } = require('sequelize');
 
 const PR = sequelize.define('purchase_req', {
   id: {
@@ -35,6 +35,14 @@ const PR = sequelize.define('purchase_req', {
   date_approved: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  isPRcomplete: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  isPOcomplete: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 });
 

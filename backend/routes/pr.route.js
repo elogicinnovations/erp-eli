@@ -18,6 +18,8 @@ const {
   Department,
   Receiving_PO,
   ProductTAGSupplier,
+  PO_REJECT,
+  PR_REJECT,
 } = require("../db/models/associations");
 const session = require("express-session");
 
@@ -163,15 +165,19 @@ router.route("/fetchTable_PO").get(async (req, res) => {
           model: PR,
           required: true,
 
-          include: [{
-            model: MasterList,
-            required: true,
-              include: [{
-                model: Department,
-                required: true
-              }]
-          }]
-        }
+          include: [
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
       ],
       // where: {
       //   [Op.or]: [
@@ -184,11 +190,11 @@ router.route("/fetchTable_PO").get(async (req, res) => {
     });
 
     if (data) {
-          // Create a map to keep track of unique po_ids
+      // Create a map to keep track of unique po_ids
       const uniquePoMap = new Map();
 
       // Filter data to ensure only unique po_ids
-      const uniqueData = data.filter(item => {
+      const uniqueData = data.filter((item) => {
         if (!uniquePoMap.has(item.po_id)) {
           uniquePoMap.set(item.po_id, true);
           return true;
@@ -196,7 +202,7 @@ router.route("/fetchTable_PO").get(async (req, res) => {
         return false;
       });
 
-  return res.json(uniqueData);
+      return res.json(uniqueData);
     } else {
       res.status(400);
     }
@@ -284,7 +290,6 @@ router.route("/lastPRNumber").get(async (req, res) => {
   }
 });
 
-
 router.route("/create").post(async (req, res) => {
   try {
     const { prNum, dateNeed, useFor, remarks, addProductbackend, userId } =
@@ -317,6 +322,7 @@ router.route("/create").post(async (req, res) => {
           product_id: prod_value,
           quantity: prod_quantity,
           description: prod_desc,
+          isPO: false
         });
       } else if (prod_type === "Assembly") {
         await PR_assembly.create({
@@ -356,22 +362,25 @@ router.route("/create").post(async (req, res) => {
   }
 });
 
-router.route('/fetchDepartment').get(async (req, res) => {
+router.route("/fetchDepartment").get(async (req, res) => {
   try {
-   
     const data = await PR.findOne({
-      include : [{
-        model: MasterList,
-        required: true,
-          
-          include:[{
-            model: Department,
-            required: true
-          }]
-      }],
-        where: {
-          id: req.query.id
-        }
+      include: [
+        {
+          model: MasterList,
+          required: true,
+
+          include: [
+            {
+              model: Department,
+              required: true,
+            },
+          ],
+        },
+      ],
+      where: {
+        id: req.query.id,
+      },
     });
 
     if (data) {
@@ -385,31 +394,29 @@ router.route('/fetchDepartment').get(async (req, res) => {
     res.status(500).json("Error");
   }
 });
-  
 
+router.route("/lastPRNumber").get(async (req, res) => {
+  // try {
 
-router.route('/lastPRNumber').get(async (req, res) => {
-    // try {
+  //     const latestPR = await PR.findOne({
+  //         attributes: [[sequelize.fn('max', sequelize.col('pr_num')), 'latestPRNumber']],
+  //       });
+  //     const latestPRNumber = latestPR.getDataValue('latestPRNumber');
 
-    //     const latestPR = await PR.findOne({
-    //         attributes: [[sequelize.fn('max', sequelize.col('pr_num')), 'latestPRNumber']],
-    //       });
-    //     const latestPRNumber = latestPR.getDataValue('latestPRNumber');
+  //     // console.log('Latest PR Number:', latestPRNumber);
+  //     return res.json(latestPRNumber);
 
-    //     // console.log('Latest PR Number:', latestPRNumber);
-    //     return res.json(latestPRNumber);
+  // } catch (err) {
+  //   console.error(err);
+  //   res.status(500).json("Error");
+  // }
 
-
-    // } catch (err) {
-    //   console.error(err);
-    //   res.status(500).json("Error");
-    // }
-
-    try {
-      const latestPR = await PR.findOne({
-        attributes: [[sequelize.fn('max', sequelize.col('pr_num')), 'latestNumber']],
-      });
-    
+  try {
+    const latestPR = await PR.findOne({
+      attributes: [
+        [sequelize.fn("max", sequelize.col("pr_num")), "latestNumber"],
+      ],
+    });
 
     res.status(200).json();
   } catch (err) {
@@ -420,23 +427,24 @@ router.route('/lastPRNumber').get(async (req, res) => {
 
 router.route("/reject").post(async (req, res) => {
   try {
-    const { id, userId } = req.query;
+    const { id, userId, rejectRemarks } = req.query;
 
-    const PR_newData = await PR.update(
-      {
-        status: "Rejected",
-      },
-      {
-        where: { id: id },
-      }
-    );
-
-    const PR_historical = await PR_history.create({
+    const Reject_Remarks = await PR_REJECT.create({
       pr_id: id,
-      status: "Rejected",
+      remarks: rejectRemarks,
+      masterlist_id: userId,
     });
 
-    if (PR_historical) {
+    if (Reject_Remarks) {
+      const PR_newData = await PR.update(
+        {
+          status: "Rejected",
+        },
+        {
+          where: { id: id },
+        }
+      );
+
       const forPR = await PR.findOne({
         where: {
           id: id,
@@ -445,49 +453,116 @@ router.route("/reject").post(async (req, res) => {
 
       const PRnum = forPR.pr_num;
 
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Purchase Request has been Rejected with pr number ${PRnum}`,
+      const PR_historical = await PR_history.create({
+        pr_id: id,
+        status: "Rejected",
+        remarks: `Purchase Request has been Rejected with pr number ${PRnum}`,
       });
-    }
 
-    res.status(200).json();
+      if (PR_historical) {
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Purchase Request has been Rejected with pr number ${PRnum}`,
+        });
+
+        res.status(200).json();
+      }
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred");
   }
 });
-
-
-router.route("/rejectPO").post(async (req, res) => {
-
+router.route("/fetchRejectHistory").get(async (req, res) => {
   try {
-    const { po_approvalID, userId } = req.query;
-
-    const PR_newData = await PR_PO.update(
-      {
-        status: "Rejected",
-      },
-      {
-        where: { po_id: po_approvalID },
-      }
-    );
-
-    const forPR = await PR_PO.findOne({
+    const {pr_id} = req.query
+    const prRejectData = await PR_REJECT.findAll({
       where: {
-        po_id: po_approvalID,
+        pr_id: pr_id
       },
+      include: [{
+        model: MasterList,
+        required: true
+      }]
     });
 
-    const PRnum = forPR.pr_num;
+    const prRejustifyData = await PR_Rejustify.findAll({
+      where: {
+        pr_id: pr_id
+      },
+      include: [{
+        model: MasterList,
+        required: true
+      }]
+    });
 
-    await Activity_Log.create({
+    // console.log(poRejectData)
+
+
+   // Extract the dataValues from each result
+   const prRejectValues = prRejectData.map(item => ({
+    ...item.dataValues,
+    source: 'REJECTION'
+  }));
+  const prRejustifyValues = prRejustifyData.map(item => ({
+    ...item.dataValues,
+    source: 'REJUSTIFICATION'
+  }));
+// Combine the dataValues into one array
+const combinedData = [...prRejectValues, ...prRejustifyValues];
+
+// Sort the combined data by createdAt column in descending order
+combinedData.sort((a, b) =>  new Date(a.createdAt) - new Date(b.createdAt));
+
+// console.log(combinedData);
+
+// If you want to send the sorted data as a response
+res.json(combinedData);
+
+   
+  
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+router.route("/rejectPO").post(async (req, res) => {
+  try {
+    const { po_id, prID, prNum, rejectRemarks, userId } = req.query;
+
+    const Reject_Remarks = await PO_REJECT.create({
+      pr_id: prID,
+      po_id: po_id,
+      remarks: rejectRemarks,
       masterlist_id: userId,
-      action_taken: `Purchase Request has been Rejected with po number ${po_approvalID}`,
     });
 
-    
-    res.status(200).json();
+    if (Reject_Remarks) {
+      const PR_newData = await PR_PO.update(
+        {
+          status: "Rejected",
+        },
+        {
+          where: { po_id: po_id },
+        }
+      );
+
+      if (PR_newData) {
+        const PR_historical = await PR_history.create({
+          pr_id: prID,
+          status: "Rejected",
+          remarks: `Purchase Order no. ${po_id} has been Rejected with pr number ${prNum}`,
+        });
+        if (PR_historical) {
+          await Activity_Log.create({
+            masterlist_id: userId,
+            action_taken: `Purchase Order no. ${po_id} has been Rejected with pr number ${prNum}`,
+          });
+
+          res.status(200).json();
+        }
+      }
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred");
@@ -722,9 +797,9 @@ router.route("/cancel_PO").put(async (req, res) => {
 
     const findPr = await PR.findOne({
       where: {
-        id: row_id
-      }
-    })
+        id: row_id,
+      },
+    });
 
     const prnumber = findPr.pr_num;
 

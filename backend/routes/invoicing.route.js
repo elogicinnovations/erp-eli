@@ -20,6 +20,10 @@ const {
   Activity_Log,
   MasterList,
   Department,
+  PO_Received,
+  PO_REJECT,
+  PR_Rejustify,
+  PR_product,
 } = require("../db/models/associations");
 const session = require("express-session");
 const nodemailer = require("nodemailer");
@@ -56,6 +60,9 @@ router.route("/save").post(async (req, res) => {
     const arrayPO = req.body.arrayPO;
     const PR_id = req.body.pr_id;
     const userId = req.body.userId;
+    const POarray_checker =  req.body.selected_PR_Prod_array; // array for checker if lahat ba ng product na gwan ng PO 
+
+
     for (const parent of arrayPO) {
       const po_number = parent.title;
 
@@ -106,33 +113,61 @@ router.route("/save").post(async (req, res) => {
       }
     }
 
-    const PR_update = PR.update(
+    let pr_status, prComplete;
+
+    const allTrue = POarray_checker.every(item => item.isPO === true);
+
+    POarray_checker.forEach(data => {
+      console.log(data)
+       PR_product.update(
+        {
+          isPO: data.isPO,
+        },
+        {
+          where: { id: data.id },
+        }
+      );
+    });
+
+    if (allTrue) {
+      pr_status = 'For-Approval (PO)'
+      prComplete = true
+    } else {
+      pr_status = 'On-Canvass';
+      prComplete = false
+    }
+
+    const PR_update = await PR.update(
       {
-        status: "For-Approval (PO)",
+        status: pr_status,
+        isPRcomplete: prComplete
       },
       {
         where: { id: PR_id },
       }
     );
 
+    const forPR = await PR.findOne({
+      where: {
+        id: PR_id,
+      },
+    });
+
+    const PRnum = forPR.pr_num;
+
     if (PR_update) {
       const PR_historical = PR_history.create({
         pr_id: PR_id,
-        status: "For-Approval (PO)",
+        status: "Approved",
+        remarks: `Purchase Request # ${PRnum} is now approved`
       });
 
       if (PR_historical) {
-        const forPR = await PR.findOne({
-          where: {
-            id: PR_id,
-          },
-        });
-
-        const PRnum = forPR.pr_num;
+        
 
         await Activity_Log.create({
           masterlist_id: userId,
-          action_taken: `Purchase Request is For-Approval (PO) with pr number ${PRnum}`,
+          action_taken: `Purchase Request # ${PRnum} is now approved`,
         });
 
         return res.status(200).json();
@@ -356,6 +391,15 @@ router.route("/fetchView_PO").get(async (req, res) => {
             },
           ],
         },
+        {
+          model: ProductTAGSupplier,
+          required: true,
+
+            include: [{
+              model: Supplier,
+              required: true
+            }]
+        }
       ],
     });
 
@@ -370,6 +414,112 @@ router.route("/fetchView_PO").get(async (req, res) => {
     res.status(500).json("Error");
   }
 });
+router.route("/fetchRejectHistory").get(async (req, res) => {
+  try {
+    const {po_id, pr_id} = req.query
+    const poRejectData = await PO_REJECT.findAll({
+      where: {
+        po_id: po_id,
+        pr_id: pr_id
+      },
+      include: [{
+        model: MasterList,
+        required: true
+      }]
+      // attributes: [
+      //   ["remarks", "remarks"],
+      //   ["file", null]
+      //   ["mimeType", null],
+      //   ["fileExtension", null]
+      //   ["createdAt", "createdAt"],
+      //   ["type", "Reject"]
+      // ]
+    });
+
+    const prRejustifyData = await PR_Rejustify.findAll({
+      where: {
+        po_id: po_id,
+        pr_id: pr_id
+      },
+      include: [{
+        model: MasterList,
+        required: true
+      }]
+      // attributes: [
+      //   ["remarks", "remarks"],
+      //   ["file", "file"],
+      //   ["mimeType", "mimeType"],
+      //   ["fileExtension", "fileExtension"],
+      //   ["createdAt", "createdAt"],
+      //   ["type", "Rejustify"]
+      // ]
+    });
+
+    // console.log(poRejectData)
+
+
+   // Extract the dataValues from each result
+   const poRejectValues = poRejectData.map(item => ({
+    ...item.dataValues,
+    source: 'REJECTION'
+  }));
+  const prRejustifyValues = prRejustifyData.map(item => ({
+    ...item.dataValues,
+    source: 'REJUSTIFICATION'
+  }));
+// Combine the dataValues into one array
+const combinedData = [...poRejectValues, ...prRejustifyValues];
+
+// Sort the combined data by createdAt column in descending order
+combinedData.sort((a, b) =>  new Date(a.createdAt) - new Date(b.createdAt));
+
+// console.log(combinedData);
+
+// If you want to send the sorted data as a response
+res.json(combinedData);
+
+   
+  
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+
+
+router.route("/remove_productPO").post(async (req, res) => {
+  try {
+    const {primary_ID, po_id, prID, userId, prNum, product_name} = req.query
+    
+    const deletePO_product = await PR_PO.destroy({
+      where: {
+        id: primary_ID,
+      },
+    });
+
+  if(deletePO_product){
+    const PR_historical = await PR_history.create({
+      pr_id: prID,
+      status: "Rejected",
+      isRead: 1,
+      remarks: `The Product "${product_name}" has been removed from Purchase Order # ${po_id} with pr number ${prNum}`,
+    });
+
+    await Activity_Log.create({
+      masterlist_id: userId,
+      action_taken: `The Product "${product_name}" has been removed from Purchase Order # ${po_id} with pr number ${prNum}`,
+    });
+
+
+    res.status(200).json()
+  }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json()
+  }
+});
+
 router.route("/fetchPOarray").get(async (req, res) => {
   try {
     const po_id = req.query.po_id;

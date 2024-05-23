@@ -670,19 +670,40 @@ function PurchaseRequest({ authrztn }) {
                                         )
                                   }
                                 >
-                                  <div
-                                    style={{
-                                      backgroundColor: "#5C636A",
-                                      fontSize: "10px",
-                                      color: "white",
-                                      padding: "5px",
-                                      borderRadius: "5px",
-                                      textAlign: "center",
-                                      width: "105px",
-                                    }}
-                                  >
-                                    {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
-                                  </div>
+                                  {data.isPRcomplete === false ? (
+                                    <>
+                                      <div
+                                        style={{
+                                          backgroundColor: "#5C636A",
+                                          fontSize: "10px",
+                                          color: "white",
+                                          padding: "5px",
+                                          borderRadius: "5px",
+                                          textAlign: "center",
+                                          width: "105px",
+                                        }}
+                                      >
+                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'Pending PR' : data.status}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <>
+                                       <div
+                                        style={{
+                                          backgroundColor: "#5C636A",
+                                          fontSize: "10px",
+                                          color: "white",
+                                          padding: "5px",
+                                          borderRadius: "5px",
+                                          textAlign: "center",
+                                          width: "105px",
+                                        }}
+                                      >
+                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
+                                      </div>
+                                    </>
+                                  )}
+                                  
                                 </td>
                                 <td
                                   onClick={() =>
@@ -913,7 +934,25 @@ function PurchaseRequest({ authrztn }) {
                                             )
                                       }
                                     >
+                                      {data.isPRcomplete === false ? (
+                                    <>
                                       <div
+                                        style={{
+                                          backgroundColor: "#5C636A",
+                                          fontSize: "10px",
+                                          color: "white",
+                                          padding: "5px",
+                                          borderRadius: "5px",
+                                          textAlign: "center",
+                                          width: "105px",
+                                        }}
+                                      >
+                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'Pending PR' : data.status}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <>
+                                       <div
                                         style={{
                                           backgroundColor: "#5C636A",
                                           fontSize: "10px",
@@ -926,6 +965,9 @@ function PurchaseRequest({ authrztn }) {
                                       >
                                         {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
                                       </div>
+                                    </>
+                                  )}
+                                  
                                     </td>
                                     <td
                                       onClick={() =>

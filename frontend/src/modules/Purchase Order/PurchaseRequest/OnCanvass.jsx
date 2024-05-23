@@ -34,7 +34,8 @@ function PurchaseOrderListPreview() {
   const [useFor, setUseFor] = useState("");
   const [remarks, setRemarks] = useState("");
   const [status, setStatus] = useState("");
-
+  const [selected_PR_Prod, setSelected_PR_Prod] = useState("") // mag hold ng primary id ng na select na profduct sa table na purchase req product
+  const [selected_PR_Prod_array, setSelected_PR_Prod_array] = useState([]) // mag hold ng primary id pag naka select na ng supplier para pang check if maynakaligtaan na product wala pa na PO e insert ito sa table na purchase req product
   const [validated, setValidated] = useState(false);
   const [editMode, setEditMode] = useState({});
   const [userId, setuserId] = useState('');
@@ -91,9 +92,19 @@ function PurchaseOrderListPreview() {
           id: id,
         },
       })
-      .then((res) => setProducts(res.data))
+      .then((res) => {
+        setProducts(res.data)
+        const modifiedData = res.data.map(row => ({
+          id: row.id,
+          isPO: row.isPO,
+        }));
+        setSelected_PR_Prod_array(modifiedData)
+        console.log(modifiedData)
+      })
       .catch((err) => console.log(err));
   }, []);
+//   console.log(`selected_PR_Prod_array`)
+//  console.log(selected_PR_Prod_array)
 
   useEffect(() => {
     axios
@@ -300,6 +311,13 @@ function PurchaseOrderListPreview() {
 
 
   const handleAddToTable = (product, type, code, name, supp_email) => {
+
+    setSelected_PR_Prod_array(prevArray => 
+      prevArray.map(item => 
+        item.id === selected_PR_Prod ? { ...item, isPO: true } : item
+      )
+    );
+
     setProductArrays((prevArrays) => {
       const supplierCode = product.supplier.supplier_code;
       const supplierName = product.supplier.supplier_name;
@@ -371,6 +389,11 @@ function PurchaseOrderListPreview() {
       }
     });
   };
+
+  // useEffect(() => {
+  //   console.log(`selected_PR_Prod_array`)
+  //   console.log(selected_PR_Prod_array)
+  // }, [selected_PR_Prod_array]);
 
   const handleEditPrice = (index) => {
     setEditMode((prev) => ({ ...prev, [index]: true }));
@@ -624,7 +647,8 @@ function PurchaseOrderListPreview() {
 
   //------------------------------------------------Product rendering data ------------------------------------------------//
 
-  const handleCanvass = (product_id, prd_code, prd_name) => {
+  const handleCanvass = (primary_id, product_id, prd_code, prd_name) => {
+    setSelected_PR_Prod(primary_id)
     setShowModal(true);
     setSelectedProductname(`${prd_code} - ${prd_name}`);
     axios
@@ -642,9 +666,17 @@ function PurchaseOrderListPreview() {
     // console.log(product_id)
   };
   const handleAddToTablePO = (productId, code, name, supp_email) => {
+
+      
+
+  
     const product = suppProducts.find((data) => data.id === productId);
     handleAddToTable(product, "product", code, name, supp_email);
+
+
+
   };
+
 
   //------------------------------------------------Assembly rendering data ------------------------------------------------//
 
@@ -783,6 +815,7 @@ function PurchaseOrderListPreview() {
           arrayPO: addPObackend,
           pr_id: id,
           userId,
+          selected_PR_Prod_array
         })
         .then((res) => {
           // console.log(res);
@@ -967,14 +1000,33 @@ function PurchaseOrderListPreview() {
                         <td>{data.product.product_name}</td>
                         <td>{data.description}</td>
                         <td>
-                          <button
-                            type="button"
-                            onClick={() => handleCanvass(data.product_id, data.product.product_code, data.product.product_name)}
-                            className="btn canvas"
-                          >
-                            <ShoppingCart size={20} />
-                            Canvas
-                          </button>
+                          {
+                            data.isPO === true ? (
+                              <React.Fragment>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCanvass(data.id, data.product_id, data.product.product_code, data.product.product_name)}
+                                  className="btn canvas"
+                                  disabled
+                                >
+                                  <ShoppingCart size={20} />
+                                  Purchase Ordered
+                                </button>
+                              </React.Fragment>
+                            ) : (
+                              <React.Fragment>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCanvass(data.id, data.product_id, data.product.product_code, data.product.product_name)}
+                                  className="btn canvas"
+                                >
+                                  <ShoppingCart size={20} />
+                                  Canvas
+                                </button>
+                              </React.Fragment>
+                            )
+                          }
+                          
                         </td>
                       </tr>
                     ))}
