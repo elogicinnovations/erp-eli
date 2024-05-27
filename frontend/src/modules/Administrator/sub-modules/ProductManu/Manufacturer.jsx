@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 import axios from "axios";
 import "../../../../assets/global/style.css";
 import "../../../styles/react-style.css";
 import Button from "react-bootstrap/Button";
-import NoData from '../../../../assets/image/NoData.png';
-import NoAccess from '../../../../assets/image/NoAccess.png';
+import NoData from "../../../../assets/image/NoData.png";
+import NoAccess from "../../../../assets/image/NoAccess.png";
 import Modal from "react-bootstrap/Modal";
 import Sidebar from "../../../Sidebar/sidebar";
 import swal from "sweetalert";
@@ -24,7 +24,7 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -44,7 +44,7 @@ function Productvariants({ authrztn }) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
-    setShow(false)
+    setShow(false);
     setName("");
     setDescription("");
     setValidated(false);
@@ -54,7 +54,7 @@ function Productvariants({ authrztn }) {
   const [updateModalShow, setUpdateModalShow] = useState(false);
 
   const [Manufacturer, setManufacturer] = useState([]);
-  const [searchManufacturer, setSearchManufacturer] = useState([])
+  const [searchManufacturer, setSearchManufacturer] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -68,21 +68,21 @@ function Productvariants({ authrztn }) {
   const [nameManu, setName] = useState();
   const [descManu, setDescription] = useState();
   const [nextCode, setNextCode] = useState("");
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  
+
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   const totalPages = Math.ceil(Manufacturer.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
@@ -112,10 +112,10 @@ function Productvariants({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -124,7 +124,7 @@ function Productvariants({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -138,36 +138,38 @@ function Productvariants({ authrztn }) {
         // formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
         // data.manufacturer_remarks.toLowerCase().includes(searchTerm)
 
-        (data.manufacturer_code?.toLowerCase() || '').includes(searchTerm) ||
-        (data.manufacturer_name?.toLowerCase() || '').includes(searchTerm) ||
-        (formatDate(data.createdAt)?.toLowerCase() || '').includes(searchTerm) ||
-        (data.manufacturer_remarks?.toLowerCase() || '').includes(searchTerm)
+        (data.manufacturer_code?.toLowerCase() || "").includes(searchTerm) ||
+        (data.manufacturer_name?.toLowerCase() || "").includes(searchTerm) ||
+        (formatDate(data.createdAt)?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data.manufacturer_remarks?.toLowerCase() || "").includes(searchTerm)
       );
     });
-  
+
     setManufacturer(filteredData);
   };
-  
+
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/manufacturer/retrieve")
-      .then((res) => {
-        setManufacturer(res.data)
-        setSearchManufacturer(res.data)
-      setIsLoading(false);
-    })
-    .catch((err) => {
-      console.log(err)
-      setIsLoading(false);
-    });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/manufacturer/retrieve")
+        .then((res) => {
+          setManufacturer(res.data);
+          setSearchManufacturer(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
-};
+    return () => clearTimeout(delay);
+  };
 
   useEffect(() => {
-    reloadTable()
+    reloadTable();
   }, []);
 
   function formatDate(datetime) {
@@ -181,8 +183,6 @@ function Productvariants({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-
-  
   useEffect(() => {
     // Fetch the next code when the modal is opened
     if (show) {
@@ -227,16 +227,15 @@ function Productvariants({ authrztn }) {
               icon: "success",
               button: "OK",
             }).then(() => {
-              reloadTable()
+              reloadTable();
               handleClose();
-
             });
           } else if (res.status === 201) {
             swal({
               title: "Manufacturer Already Exists",
               text: "Please enter a different manufacturer.",
               icon: "error",
-            });;
+            });
           } else {
             swal({
               title: "Oops! Something Went Wrong",
@@ -272,7 +271,7 @@ function Productvariants({ authrztn }) {
               icon: "success",
               button: "OK",
             }).then(() => {
-             reloadTable()
+              reloadTable();
             });
           } else if (response.status === 202) {
             swal({
@@ -299,7 +298,6 @@ function Productvariants({ authrztn }) {
       }
     });
   };
-
 
   const [updateFormData, setUpdateFormData] = useState({
     manufacturer_name: "",
@@ -363,7 +361,7 @@ function Productvariants({ authrztn }) {
           button: "OK",
         }).then(() => {
           handleModalToggle();
-          reloadTable()
+          reloadTable();
         });
       } else if (response.status === 202) {
         swal({
@@ -451,151 +449,197 @@ function Productvariants({ authrztn }) {
 
   return (
     <div className="main-of-containers">
-
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Product Manufacturer - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>Manufacturer</p>
                 </div>
-              ) : (
-        authrztn.includes('Product Manufacturer - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Manufacturer</p>
-              </div>
 
-              <div className="button-create-side">
-                <div className="Buttonmodal-new">
-
-                  { authrztn.includes('Product Manufacturer - Add') && (
-                    <button onClick={handleShow}>
-                      <span style={{}}>
-                        <Plus size={25} />
-                      </span>
-                      Create New
-                    </button>
-                  ) }
-
+                <div className="button-create-side">
+                  <div className="Buttonmodal-new">
+                    {authrztn.includes("Product Manufacturer - Add") && (
+                      <button onClick={handleShow}>
+                        <span style={{}}>
+                          <Plus size={25} />
+                        </span>
+                        Create New
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-            <TextField
-              label="Search"
-              variant="outlined"
-              style={{ marginBottom: '10px', 
-              float: 'right',
-              }}
-              InputLabelProps={{
-                style: { fontSize: '14px'},
-              }}
-              InputProps={{
-                style: { fontSize: '14px', width: '250px', height: '50px' },
-              }}
-              onChange={handleSearch}/>
-              <table className="table-hover">
-                <thead>
-                  <tr>
-                    <th className="tableh">CODE</th>
-                    <th className="tableh">NAME</th>
-                    <th className="tableh">REMARKS</th>
-                    <th className="tableh">DATE CREATED</th>
-                    <th className="tableh">DATE UPDATED</th>
-                    <th className="tableh">ACTION</th>
-                  </tr>
-                </thead>
-                {Manufacturer.length > 0 ? (
-                <tbody>
-                  {currentItems.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.manufacturer_code}</td>
-                      <td>{data.manufacturer_name}</td>
-                      <td className="autho">{data.manufacturer_remarks}</td>
-                      <td>{formatDate(data.createdAt)}</td>
-                      <td>{formatDate(data.updatedAt)}</td>
-                      <td>
-                      {isVertical[data.manufacturer_code] ? (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircleVertical
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.manufacturer_code);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.manufacturer_code) && (
-                              <div className="choices">
-                              { authrztn.includes('Product Manufacturer - Edit') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleModalToggle(data);
-                                  closeVisibleButtons();
-                                }}>
-                                Update
-                              </button>
-                              )}
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
 
-                              { authrztn.includes('Product Manufacturer - Delete') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleDelete(data.manufacturer_code);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
-                              )}
+                <table className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh">CODE</th>
+                      <th className="tableh">NAME</th>
+                      <th className="tableh">REMARKS</th>
+                      <th className="tableh">DATE CREATED</th>
+                      <th className="tableh">DATE UPDATED</th>
+                      <th className="tableh">ACTION</th>
+                    </tr>
+                  </thead>
+                  {Manufacturer.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.manufacturer_code}</td>
+                          <td>{data.manufacturer_name}</td>
+                          <td className="autho">{data.manufacturer_remarks}</td>
+                          <td>{formatDate(data.createdAt)}</td>
+                          <td>{formatDate(data.updatedAt)}</td>
+                          <td>
+                            {isVertical[data.manufacturer_code] ? (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircleVertical
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.manufacturer_code);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(
+                                    data.manufacturer_code
+                                  ) && (
+                                    <div className="choices">
+                                      {authrztn.includes(
+                                        "Product Manufacturer - Edit"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleModalToggle(data);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Update
+                                        </button>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Product Manufacturer - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(
+                                              data.manufacturer_code
+                                            );
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircle
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.manufacturer_code);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(
+                                    data.manufacturer_code
+                                  ) && (
+                                    <div className="choices">
+                                      {authrztn.includes(
+                                        "Product Manufacturer - Edit"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleModalToggle(data);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Update
+                                        </button>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Product Manufacturer - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(
+                                              data.manufacturer_code
+                                            );
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
-                          </div>
-                        </div>
-                      ) : (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.manufacturer_code);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.manufacturer_code) && (
-                              <div className="choices">
-                              { authrztn.includes('Product Manufacturer - Edit') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleModalToggle(data);
-                                  closeVisibleButtons();
-                                }}>
-                                Update
-                              </button>
-                              )}
-
-                              { authrztn.includes('Product Manufacturer - Delete') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleDelete(data.manufacturer_code);
-                                  closeVisibleButtons();
-                                }}>
-                                Delete
-                              </button>
-                              )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      </td>
-                      {/* <td>
+                          </td>
+                          {/* <td>
                                   <button className="btn" onClick={() => handleModalToggle(data)}>
                                     <NotePencil size={32} />
                                   </button>
@@ -603,73 +647,90 @@ function Productvariants({ authrztn }) {
                                     <Trash size={32} color="#e60000" />
                                   </button>
                                 </td> */}
-                    </tr>
-                  ))}
-                </tbody>
+                        </tr>
+                      ))}
+                    </tbody>
                   ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
+                      <h3>No Data Found</h3>
                     </div>
-                )}
-              </table>
+                  )}
+                </table>
+              </div>
             </div>
-          </div>
-          <nav style={{marginTop: '15px'}}>
-            <ul className="pagination" style={{ float: "right" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                type="button"
-                style={{fontSize: '14px',
-                cursor: 'pointer',
-                color: '#000000',
-                textTransform: 'capitalize',
-              }}
-                className="page-link" 
-                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-              </li>
-
-              {generatePages().map((page, index) => (
-                <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
+                    type="button"
                     style={{
-                      fontSize: '14px',
-                      width: '25px',
-                      background: currentPage === page ? '#FFA500' : 'white',
-                      color: currentPage === page ? '#FFFFFF' : '#000000',
-                      border: 'none',
-                      height: '28px',
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
                     }}
-                    className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
-                    onClick={() => handlePageClick(page)}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
                   >
-                    {page}
+                    Previous
                   </button>
                 </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+
+                {generatePages().map((page, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      style={{
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
+                      }}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
                 >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
 
       <Modal
@@ -677,61 +738,78 @@ function Productvariants({ authrztn }) {
         onHide={handleClose}
         backdrop="static"
         keyboard={false}
-        size="lg">
+        size="lg"
+      >
         <Form noValidate validated={validated} onSubmit={addManufacturer}>
           <Modal.Header closeButton>
-            <Modal.Title style={{fontSize: '24px',
-                fontFamily: 'Poppins, Source Sans Pro'}}>
+            <Modal.Title
+              style={{
+                fontSize: "24px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
               Create Manufacturer
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="row">
               <div className="col-6">
-                <Form.Group
-                  controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px",
-                              fontFamily: 'Poppins, Source Sans Pro'}}>
-                          Manufacturer Code
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Manufacturer Code
                   </Form.Label>
                   <Form.Control
                     type="text"
                     disabled
                     value={code || nextCode}
                     onChange={(e) => setCode(e.target.value)}
-                    style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
                   />
                 </Form.Group>
               </div>
               <div className="col-6">
-                <Form.Group
-                  controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px",
-                          fontFamily: 'Poppins, Source Sans Pro'}}>
-                           Manufacturer Name
-                    </Form.Label>
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Manufacturer Name
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     value={nameManu}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
                   />
                 </Form.Group>
               </div>
             </div>
-            
 
             <div className="mt-3">
-              <Form.Group
-                controlId="exampleForm.ControlTextarea1">
-                <Form.Label style={{ fontSize: "20px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}>
-                          Description
+              <Form.Group controlId="exampleForm.ControlTextarea1">
+                <Form.Label
+                  style={{
+                    fontSize: "20px",
+                    fontFamily: "Poppins, Source Sans Pro",
+                  }}
+                >
+                  Description
                 </Form.Label>
                 <Form.Control
                   value={descManu}
@@ -739,7 +817,7 @@ function Productvariants({ authrztn }) {
                   as="textarea"
                   rows={3}
                   style={{
-                    fontFamily: 'Poppins, Source Sans Pro',
+                    fontFamily: "Poppins, Source Sans Pro",
                     fontSize: "16px",
                     height: "200px",
                     maxHeight: "200px",
@@ -749,26 +827,32 @@ function Productvariants({ authrztn }) {
                 />
               </Form.Group>
             </div>
-          <div className="save-cancel">
+            <div className="save-cancel">
               <Button
                 type="submit"
                 variant="warning"
                 size="md"
-                style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+              >
                 Save
               </Button>
               <Button
                 variant="secondary"
                 size="md"
-                style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}
-                onClick={handleClose}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+                onClick={handleClose}
+              >
                 Close
               </Button>
-          </div>
+            </div>
           </Modal.Body>
         </Form>
       </Modal>
@@ -778,63 +862,78 @@ function Productvariants({ authrztn }) {
         onHide={() => handleModalToggle()}
         backdrop="static"
         keyboard={false}
-        size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title style={{fontSize: '24px',
-                fontFamily: 'Poppins, Source Sans Pro'}}>
-              Update Manufacturer
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
-              <div className="row">
-                <div className="col-6">
-                  <Form.Group
-                    controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px",
-                            fontFamily: 'Poppins, Source Sans Pro'}}>
-                      Manufacturer Code
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter code"
-                      value={updateFormData.manufacturer_code}
-                      readOnly
-                      onChange={handleUpdateFormChange}
-                      name="manufacturer_code"
-                      style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col-6">
-                  <Form.Group
-                    controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px",
-                            fontFamily: 'Poppins, Source Sans Pro'}}>
-                              Manufacturer Name 
-                      </Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter name"
-                      value={updateFormData.manufacturer_name}
-                      onChange={handleUpdateFormChange}
-                      name="manufacturer_name"
-                      required
-                      style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
-                    />
-                  </Form.Group>
-                </div>
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
+          >
+            Update Manufacturer
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
+            <div className="row">
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Manufacturer Code
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter code"
+                    value={updateFormData.manufacturer_code}
+                    readOnly
+                    onChange={handleUpdateFormChange}
+                    name="manufacturer_code"
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  />
+                </Form.Group>
               </div>
+              <div className="col-6">
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Manufacturer Name
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter name"
+                    value={updateFormData.manufacturer_name}
+                    onChange={handleUpdateFormChange}
+                    name="manufacturer_name"
+                    required
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  />
+                </Form.Group>
+              </div>
+            </div>
 
-              <div className="mt-3">
-              <Form.Group
-                controlId="exampleForm.ControlTextarea1">
-                <Form.Label style={{ fontSize: "20px",
-                          fontFamily: 'Poppins, Source Sans Pro'}}>
+            <div className="mt-3">
+              <Form.Group controlId="exampleForm.ControlTextarea1">
+                <Form.Label
+                  style={{
+                    fontSize: "20px",
+                    fontFamily: "Poppins, Source Sans Pro",
+                  }}
+                >
                   Description
                 </Form.Label>
                 <Form.Control
@@ -842,40 +941,46 @@ function Productvariants({ authrztn }) {
                   onChange={handleUpdateFormChange}
                   name="manufacturer_remarks"
                   as="textarea"
-                    rows={3}
-                    style={{
-                    fontFamily: 'Poppins, Source Sans Pro',
+                  rows={3}
+                  style={{
+                    fontFamily: "Poppins, Source Sans Pro",
                     fontSize: "16px",
                     height: "200px",
                     maxHeight: "200px",
                     resize: "none",
                     overflowY: "auto",
-                    }}
+                  }}
                 />
               </Form.Group>
-              </div>
+            </div>
             <div className="save-cancel">
               <Button
                 type="submit"
                 variant="warning"
                 size="md"
-                    style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+              >
                 Update
               </Button>
               <Button
                 variant="secondary"
                 size="md"
-                    style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}
-                onClick={() => setUpdateModalShow(!updateModalShow)}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+                onClick={() => setUpdateModalShow(!updateModalShow)}
+              >
                 Close
               </Button>
             </div>
-            </Form>
-          </Modal.Body>
+          </Form>
+        </Modal.Body>
       </Modal>
     </div>
   );

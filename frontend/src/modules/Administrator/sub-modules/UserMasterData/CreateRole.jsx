@@ -20,26 +20,25 @@ function Create_role() {
   // Inserting to database checkboxes
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userId, setuserId] = useState('');
+  const [Fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
-
+  }, []);
 
   const handleRoleNameInput = (e) => {
     const inputValue = e.target.value;
@@ -120,43 +119,53 @@ function Create_role() {
     const rolename = document.getElementsByName("rolename")[0].value;
     const desc = document.getElementsByName("desc")[0].value;
     const authorization = value;
-  
-    if (value === "Master List - View" && selectedCheckboxes.some((item) => item.value === "Master List - View")) {
+
+    if (
+      value === "Master List - View" &&
+      selectedCheckboxes.some((item) => item.value === "Master List - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Master List - View" &&
-          item.value !== "Master List - Add" &&
-          item.value !== "Master List - Edit" &&
-          item.value !== "Master List - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Master List - View" &&
+            item.value !== "Master List - Add" &&
+            item.value !== "Master List - Edit" &&
+            item.value !== "Master List - Delete"
         )
       );
-    } else
-  
-    if (value === "User Access Role - View" && selectedCheckboxes.some((item) => item.value === "User Access Role - View")) {
+    } else if (
+      value === "User Access Role - View" &&
+      selectedCheckboxes.some(
+        (item) => item.value === "User Access Role - View"
+      )
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "User Access Role - View" &&
-          item.value !== "User Access Role - Add" &&
-          item.value !== "User Access Role - Edit" &&
-          item.value !== "User Access Role - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "User Access Role - View" &&
+            item.value !== "User Access Role - Add" &&
+            item.value !== "User Access Role - Edit" &&
+            item.value !== "User Access Role - Delete"
         )
       );
-    } else
-  
-    if (value === "Product List - View" && selectedCheckboxes.some((item) => item.value === "Product List - View")) {
+    } else if (
+      value === "Product List - View" &&
+      selectedCheckboxes.some((item) => item.value === "Product List - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Product List - View" &&
-          item.value !== "Product List - Add" &&
-          item.value !== "Product List - Edit" &&
-          item.value !== "Product List - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Product List - View" &&
+            item.value !== "Product List - Add" &&
+            item.value !== "Product List - Edit" &&
+            item.value !== "Product List - Delete"
         )
       );
-    } else
-  
+    }
+
     // if (value === "Assembly - View" && selectedCheckboxes.some((item) => item.value === "Assembly - View")) {
     //   setSelectedCheckboxes(
-    //     selectedCheckboxes.filter((item) => 
+    //     selectedCheckboxes.filter((item) =>
     //       item.value !== "Assembly - View" &&
     //       item.value !== "Assembly - Add" &&
     //       item.value !== "Assembly - Edit" &&
@@ -164,10 +173,10 @@ function Create_role() {
     //     )
     //   );
     // } else
-  
+
     // if (value === "Spare Part - View" && selectedCheckboxes.some((item) => item.value === "Spare Part - View")) {
     //   setSelectedCheckboxes(
-    //     selectedCheckboxes.filter((item) => 
+    //     selectedCheckboxes.filter((item) =>
     //       item.value !== "Spare Part - View" &&
     //       item.value !== "Spare Part - Add" &&
     //       item.value !== "Spare Part - Edit" &&
@@ -175,10 +184,10 @@ function Create_role() {
     //     )
     //   );
     // } else
-  
+
     // if (value === "Sub-Part - View" && selectedCheckboxes.some((item) => item.value === "Sub-Part - View")) {
     //   setSelectedCheckboxes(
-    //     selectedCheckboxes.filter((item) => 
+    //     selectedCheckboxes.filter((item) =>
     //       item.value !== "Sub-Part - View" &&
     //       item.value !== "Sub-Part - Add" &&
     //       item.value !== "Sub-Part - Edit" &&
@@ -186,124 +195,153 @@ function Create_role() {
     //     )
     //   );
     // } else
-  
-    if (value === "Product Categories - View" && selectedCheckboxes.some((item) => item.value === "Product Categories - View")) {
+    else if (
+      value === "Product Categories - View" &&
+      selectedCheckboxes.some(
+        (item) => item.value === "Product Categories - View"
+      )
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Product Categories - View" &&
-          item.value !== "Product Categories - Add" &&
-          item.value !== "Product Categories - Edit" &&
-          item.value !== "Product Categories - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Product Categories - View" &&
+            item.value !== "Product Categories - Add" &&
+            item.value !== "Product Categories - Edit" &&
+            item.value !== "Product Categories - Delete"
         )
       );
-    } else
-  
-    if (value === "Product Manufacturer - View" && selectedCheckboxes.some((item) => item.value === "Product Manufacturer - View")) {
+    } else if (
+      value === "Product Manufacturer - View" &&
+      selectedCheckboxes.some(
+        (item) => item.value === "Product Manufacturer - View"
+      )
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Product Manufacturer - View" &&
-          item.value !== "Product Manufacturer - Add" &&
-          item.value !== "Product Manufacturer - Edit" &&
-          item.value !== "Product Manufacturer - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Product Manufacturer - View" &&
+            item.value !== "Product Manufacturer - Add" &&
+            item.value !== "Product Manufacturer - Edit" &&
+            item.value !== "Product Manufacturer - Delete"
         )
       );
-    } else
-  
-    if (value === "Bin Location - View" && selectedCheckboxes.some((item) => item.value === "Bin Location - View")) {
+    } else if (
+      value === "Bin Location - View" &&
+      selectedCheckboxes.some((item) => item.value === "Bin Location - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Bin Location - View" &&
-          item.value !== "Bin Location - Add" &&
-          item.value !== "Bin Location - Edit" &&
-          item.value !== "Bin Location - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Bin Location - View" &&
+            item.value !== "Bin Location - Add" &&
+            item.value !== "Bin Location - Edit" &&
+            item.value !== "Bin Location - Delete"
         )
       );
-    } else
-  
-    if (value === "Cost Centre - View" && selectedCheckboxes.some((item) => item.value === "Cost Centre - View")) {
+    } else if (
+      value === "Cost Centre - View" &&
+      selectedCheckboxes.some((item) => item.value === "Cost Centre - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Cost Centre - View" &&
-          item.value !== "Cost Centre - Add" &&
-          item.value !== "Cost Centre - Edit" &&
-          item.value !== "Cost Centre - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Cost Centre - View" &&
+            item.value !== "Cost Centre - Add" &&
+            item.value !== "Cost Centre - Edit" &&
+            item.value !== "Cost Centre - Delete"
         )
       );
-    } else
-  
-    if (value === "Supplier - View" && selectedCheckboxes.some((item) => item.value === "Supplier - View")) {
+    } else if (
+      value === "Supplier - View" &&
+      selectedCheckboxes.some((item) => item.value === "Supplier - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Supplier - View" &&
-          item.value !== "Supplier - Add" &&
-          item.value !== "Supplier - Edit" &&
-          item.value !== "Supplier - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Supplier - View" &&
+            item.value !== "Supplier - Add" &&
+            item.value !== "Supplier - Edit" &&
+            item.value !== "Supplier - Delete"
         )
       );
-    } else
-
-    if (value === "Warehouses - View" && selectedCheckboxes.some((item) => item.value === "Warehouses - View")) {
+    } else if (
+      value === "Warehouses - View" &&
+      selectedCheckboxes.some((item) => item.value === "Warehouses - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Warehouses - View" &&
-          item.value !== "Warehouses - Add" &&
-          item.value !== "Warehouses - Edit" &&
-          item.value !== "Warehouses - Delete"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Warehouses - View" &&
+            item.value !== "Warehouses - Add" &&
+            item.value !== "Warehouses - Edit" &&
+            item.value !== "Warehouses - Delete"
         )
       );
-    } else
-  
-    if (value === "Inventory - View" && selectedCheckboxes.some((item) => item.value === "Inventory - View")) {
+    } else if (
+      value === "Inventory - View" &&
+      selectedCheckboxes.some((item) => item.value === "Inventory - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Inventory - View" &&
-          item.value !== "Inventory - Add" &&
-          item.value !== "Inventory - Edit" &&
-          item.value !== "Inventory - Approval" &&
-          item.value !== "Inventory - Reject"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Inventory - View" &&
+            item.value !== "Inventory - Add" &&
+            item.value !== "Inventory - Edit" &&
+            item.value !== "Inventory - Approval" &&
+            item.value !== "Inventory - Reject"
         )
       );
-    } else
-  
-    if (value === "PR - View" && selectedCheckboxes.some((item) => item.value === "PR - View")) {
+    } else if (
+      value === "PR - View" &&
+      selectedCheckboxes.some((item) => item.value === "PR - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-        item.value !== "PR - View" &&
-        item.value !== "PR - Add" &&
-        item.value !== "PR - Edit" &&
-        item.value !== "PR - Approval" &&
-        item.value !== "PR - Reject"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "PR - View" &&
+            item.value !== "PR - Add" &&
+            item.value !== "PR - Edit" &&
+            item.value !== "PR - Approval" &&
+            item.value !== "PR - Reject"
         )
       );
-    } else
-  
-    if (value === "PO - View" && selectedCheckboxes.some((item) => item.value === "PO - View")) {
+    } else if (
+      value === "PO - View" &&
+      selectedCheckboxes.some((item) => item.value === "PO - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "PO - View" &&
-          item.value !== "PO - Approval" &&
-          item.value !== "PO - Reject"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "PO - View" &&
+            item.value !== "PO - Approval" &&
+            item.value !== "PO - Reject"
         )
       );
-    } else
-  
-    if (value === "Receiving - View" && selectedCheckboxes.some((item) => item.value === "Receiving - View")) {
+    } else if (
+      value === "Receiving - View" &&
+      selectedCheckboxes.some((item) => item.value === "Receiving - View")
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-        item.value !== "Receiving - View" &&
-        item.value !== "Receiving - Approval" &&
-        item.value !== "Receiving - Reject"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Receiving - View" &&
+            item.value !== "Receiving - Approval" &&
+            item.value !== "Receiving - Reject"
         )
       );
-    } else
-  
-    if (value === "Stock Management - View" && selectedCheckboxes.some((item) => item.value === "Stock Management - View")) {
+    } else if (
+      value === "Stock Management - View" &&
+      selectedCheckboxes.some(
+        (item) => item.value === "Stock Management - View"
+      )
+    ) {
       setSelectedCheckboxes(
-        selectedCheckboxes.filter((item) => 
-          item.value !== "Stock Management - View" &&
-          item.value !== "Stock Management - Add" &&
-          item.value !== "Stock Management - Approval" &&
-          item.value !== "Stock Management - Reject"
+        selectedCheckboxes.filter(
+          (item) =>
+            item.value !== "Stock Management - View" &&
+            item.value !== "Stock Management - Add" &&
+            item.value !== "Stock Management - Approval" &&
+            item.value !== "Stock Management - Reject"
         )
       );
     } else {
@@ -319,7 +357,7 @@ function Create_role() {
       }
     }
   };
-  
+
   const handleSelectAll = () => {
     // Select all checkboxes
     const allCheckboxValues = [
@@ -398,7 +436,7 @@ function Create_role() {
       "Stock Management - Approval",
       "Stock Management - Reject",
       "Report - View",
-      "Activity Logs - View"
+      "Activity Logs - View",
     ];
 
     const updatedCheckboxes = allCheckboxValues.map((value) => ({
@@ -416,31 +454,64 @@ function Create_role() {
     setSelectedCheckboxes([]);
   };
 
-
-
-  const MasterList = selectedCheckboxes.find((item) => item.value === "Master List - View");
+  const MasterList = selectedCheckboxes.find(
+    (item) => item.value === "Master List - View"
+  );
   const MasterListDisable = !MasterList;
-  const MasterListAdd = selectedCheckboxes.some((item) => item.value === "Master List - Add") && !MasterListDisable;
-  const MasterListEdit = selectedCheckboxes.some((item) => item.value === "Master List - Edit") && !MasterListDisable;
-  const MasterListDelete = selectedCheckboxes.some((item) => item.value === "Master List - Delete") && !MasterListDisable;
+  const MasterListAdd =
+    selectedCheckboxes.some((item) => item.value === "Master List - Add") &&
+    !MasterListDisable;
+  const MasterListEdit =
+    selectedCheckboxes.some((item) => item.value === "Master List - Edit") &&
+    !MasterListDisable;
+  const MasterListDelete =
+    selectedCheckboxes.some((item) => item.value === "Master List - Delete") &&
+    !MasterListDisable;
 
-  const Department = selectedCheckboxes.find((item) => item.value === "Department - View");
+  const Department = selectedCheckboxes.find(
+    (item) => item.value === "Department - View"
+  );
   const DepartmentDisable = !Department;
-  const DepartmentAdd = selectedCheckboxes.some((item) => item.value === "Department - Add") && !DepartmentDisable;
-  const DepartmentEdit = selectedCheckboxes.some((item) => item.value === "Department - Edit") && !DepartmentDisable;
-  const DepartmentDelete = selectedCheckboxes.some((item) => item.value === "Department - Delete") && !DepartmentDisable;
+  const DepartmentAdd =
+    selectedCheckboxes.some((item) => item.value === "Department - Add") &&
+    !DepartmentDisable;
+  const DepartmentEdit =
+    selectedCheckboxes.some((item) => item.value === "Department - Edit") &&
+    !DepartmentDisable;
+  const DepartmentDelete =
+    selectedCheckboxes.some((item) => item.value === "Department - Delete") &&
+    !DepartmentDisable;
 
-  const UserRole = selectedCheckboxes.some((item) => item.value === "User Access Role - View");
+  const UserRole = selectedCheckboxes.some(
+    (item) => item.value === "User Access Role - View"
+  );
   const UserRoleDisable = !UserRole;
-  const UserRoleAdd = selectedCheckboxes.some((item) => item.value === "User Access Role - Add") && !UserRoleDisable;
-  const UserRoleEdit = selectedCheckboxes.some((item) => item.value === "User Access Role - Edit") && !UserRoleDisable;
-  const UserRoleDelete = selectedCheckboxes.some((item) => item.value === "User Access Role - Delete") && !UserRoleDisable;
+  const UserRoleAdd =
+    selectedCheckboxes.some(
+      (item) => item.value === "User Access Role - Add"
+    ) && !UserRoleDisable;
+  const UserRoleEdit =
+    selectedCheckboxes.some(
+      (item) => item.value === "User Access Role - Edit"
+    ) && !UserRoleDisable;
+  const UserRoleDelete =
+    selectedCheckboxes.some(
+      (item) => item.value === "User Access Role - Delete"
+    ) && !UserRoleDisable;
 
-  const ProductList = selectedCheckboxes.some((item) => item.value === "Product List - View");
+  const ProductList = selectedCheckboxes.some(
+    (item) => item.value === "Product List - View"
+  );
   const ProductListDisable = !ProductList;
-  const ProductListAdd = selectedCheckboxes.some((item) => item.value === "Product List - Add") && !ProductListDisable;
-  const ProductListEdit = selectedCheckboxes.some((item) => item.value === "Product List - Edit") && !ProductListDisable;
-  const ProductListDelete = selectedCheckboxes.some((item) => item.value === "Product List - Delete") && !ProductListDisable;
+  const ProductListAdd =
+    selectedCheckboxes.some((item) => item.value === "Product List - Add") &&
+    !ProductListDisable;
+  const ProductListEdit =
+    selectedCheckboxes.some((item) => item.value === "Product List - Edit") &&
+    !ProductListDisable;
+  const ProductListDelete =
+    selectedCheckboxes.some((item) => item.value === "Product List - Delete") &&
+    !ProductListDisable;
 
   // const Assembly = selectedCheckboxes.some((item) => item.value === "Assembly - View");
   // const AssemblyDisable = !Assembly;
@@ -460,71 +531,168 @@ function Create_role() {
   // const SubPartsEdit = selectedCheckboxes.some((item) => item.value === "Sub-Part - Edit") && !SubPartsDisable;
   // const SubPartsDelete = selectedCheckboxes.some((item) => item.value === "Sub-Part - Delete") && !SubPartsDisable;
 
-  const ProductCategories = selectedCheckboxes.some((item) => item.value === "Product Categories - View");
+  const ProductCategories = selectedCheckboxes.some(
+    (item) => item.value === "Product Categories - View"
+  );
   const ProductCategoriesDisable = !ProductCategories;
-  const ProductCategoriesAdd = selectedCheckboxes.some((item) => item.value === "Product Categories - Add") && !ProductCategoriesDisable;
-  const ProductCategoriesEdit = selectedCheckboxes.some((item) => item.value === "Product Categories - Edit") && !ProductCategoriesDisable;
-  const ProductCategoriesDelete = selectedCheckboxes.some((item) => item.value === "Product Categories - Delete") && !ProductCategoriesDisable;
+  const ProductCategoriesAdd =
+    selectedCheckboxes.some(
+      (item) => item.value === "Product Categories - Add"
+    ) && !ProductCategoriesDisable;
+  const ProductCategoriesEdit =
+    selectedCheckboxes.some(
+      (item) => item.value === "Product Categories - Edit"
+    ) && !ProductCategoriesDisable;
+  const ProductCategoriesDelete =
+    selectedCheckboxes.some(
+      (item) => item.value === "Product Categories - Delete"
+    ) && !ProductCategoriesDisable;
 
-  const ProductManufacturer = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - View");
+  const ProductManufacturer = selectedCheckboxes.some(
+    (item) => item.value === "Product Manufacturer - View"
+  );
   const ProductManufacturerDisable = !ProductManufacturer;
-  const ProductManufacturerAdd = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Add") && !ProductManufacturerDisable;
-  const ProductManufacturerEdit = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Edit") && !ProductManufacturerDisable;
-  const ProductManufacturerDelete = selectedCheckboxes.some((item) => item.value === "Product Manufacturer - Delete") && !ProductManufacturerDisable;
+  const ProductManufacturerAdd =
+    selectedCheckboxes.some(
+      (item) => item.value === "Product Manufacturer - Add"
+    ) && !ProductManufacturerDisable;
+  const ProductManufacturerEdit =
+    selectedCheckboxes.some(
+      (item) => item.value === "Product Manufacturer - Edit"
+    ) && !ProductManufacturerDisable;
+  const ProductManufacturerDelete =
+    selectedCheckboxes.some(
+      (item) => item.value === "Product Manufacturer - Delete"
+    ) && !ProductManufacturerDisable;
 
-  const BinLocation = selectedCheckboxes.some((item) => item.value === "Bin Location - View");
+  const BinLocation = selectedCheckboxes.some(
+    (item) => item.value === "Bin Location - View"
+  );
   const BinLocationDisable = !BinLocation;
-  const BinLocationAdd = selectedCheckboxes.some((item) => item.value === "Bin Location - Add") && !BinLocationDisable;
-  const BinLocationEdit = selectedCheckboxes.some((item) => item.value === "Bin Location - Edit") && !BinLocationDisable;
-  const BinLocationDelete = selectedCheckboxes.some((item) => item.value === "Bin Location - Delete") && !BinLocationDisable;
+  const BinLocationAdd =
+    selectedCheckboxes.some((item) => item.value === "Bin Location - Add") &&
+    !BinLocationDisable;
+  const BinLocationEdit =
+    selectedCheckboxes.some((item) => item.value === "Bin Location - Edit") &&
+    !BinLocationDisable;
+  const BinLocationDelete =
+    selectedCheckboxes.some((item) => item.value === "Bin Location - Delete") &&
+    !BinLocationDisable;
 
-  const CostCentre = selectedCheckboxes.some((item) => item.value === "Cost Centre - View");
+  const CostCentre = selectedCheckboxes.some(
+    (item) => item.value === "Cost Centre - View"
+  );
   const CostCentreDisable = !CostCentre;
-  const CostCentreAdd = selectedCheckboxes.some((item) => item.value === "Cost Centre - Add") && !CostCentreDisable;
-  const CostCentreEdit = selectedCheckboxes.some((item) => item.value === "Cost Centre - Edit") && !CostCentreDisable;
-  const CostCentreDelete = selectedCheckboxes.some((item) => item.value === "Cost Centre - Delete") && !CostCentreDisable;
+  const CostCentreAdd =
+    selectedCheckboxes.some((item) => item.value === "Cost Centre - Add") &&
+    !CostCentreDisable;
+  const CostCentreEdit =
+    selectedCheckboxes.some((item) => item.value === "Cost Centre - Edit") &&
+    !CostCentreDisable;
+  const CostCentreDelete =
+    selectedCheckboxes.some((item) => item.value === "Cost Centre - Delete") &&
+    !CostCentreDisable;
 
-  const Supplier = selectedCheckboxes.some((item) => item.value === "Supplier - View");
+  const Supplier = selectedCheckboxes.some(
+    (item) => item.value === "Supplier - View"
+  );
   const SupplierDisable = !Supplier;
-  const SupplierAdd = selectedCheckboxes.some((item) => item.value === "Supplier - Add") && !SupplierDisable;
-  const SupplierEdit = selectedCheckboxes.some((item) => item.value === "Supplier - Edit") && !SupplierDisable;
-  const SupplierDelete = selectedCheckboxes.some((item) => item.value === "Supplier - Delete") && !SupplierDisable;
+  const SupplierAdd =
+    selectedCheckboxes.some((item) => item.value === "Supplier - Add") &&
+    !SupplierDisable;
+  const SupplierEdit =
+    selectedCheckboxes.some((item) => item.value === "Supplier - Edit") &&
+    !SupplierDisable;
+  const SupplierDelete =
+    selectedCheckboxes.some((item) => item.value === "Supplier - Delete") &&
+    !SupplierDisable;
 
-  const Warehouses = selectedCheckboxes.some((item) => item.value === "Warehouses - View");
+  const Warehouses = selectedCheckboxes.some(
+    (item) => item.value === "Warehouses - View"
+  );
   const WarehousesDisable = !Warehouses;
-  const WarehousesAdd = selectedCheckboxes.some((item) => item.value === "Warehouses - Add") && !WarehousesDisable;
-  const WarehousesEdit = selectedCheckboxes.some((item) => item.value === "Warehouses - Edit") && !WarehousesDisable;
-  const WarehousesDelete = selectedCheckboxes.some((item) => item.value === "Warehouses - Delete") && !WarehousesDisable;
+  const WarehousesAdd =
+    selectedCheckboxes.some((item) => item.value === "Warehouses - Add") &&
+    !WarehousesDisable;
+  const WarehousesEdit =
+    selectedCheckboxes.some((item) => item.value === "Warehouses - Edit") &&
+    !WarehousesDisable;
+  const WarehousesDelete =
+    selectedCheckboxes.some((item) => item.value === "Warehouses - Delete") &&
+    !WarehousesDisable;
 
-  const Inventory = selectedCheckboxes.some((item) => item.value === "Inventory - View");
+  const Inventory = selectedCheckboxes.some(
+    (item) => item.value === "Inventory - View"
+  );
   const InventoryDisable = !Inventory;
-  const InventoryAdd = selectedCheckboxes.some((item) => item.value === "Inventory - Add") && !InventoryDisable;
-  const InventoryEdit = selectedCheckboxes.some((item) => item.value === "Inventory - Edit") && !InventoryDisable;
-  const InventoryApproval = selectedCheckboxes.some((item) => item.value === "Inventory - Approval") && !InventoryDisable;
-  const InventoryReject = selectedCheckboxes.some((item) => item.value === "Inventory - Reject") && !InventoryDisable;
+  const InventoryAdd =
+    selectedCheckboxes.some((item) => item.value === "Inventory - Add") &&
+    !InventoryDisable;
+  const InventoryEdit =
+    selectedCheckboxes.some((item) => item.value === "Inventory - Edit") &&
+    !InventoryDisable;
+  const InventoryApproval =
+    selectedCheckboxes.some((item) => item.value === "Inventory - Approval") &&
+    !InventoryDisable;
+  const InventoryReject =
+    selectedCheckboxes.some((item) => item.value === "Inventory - Reject") &&
+    !InventoryDisable;
 
-  const PurchaseRequest = selectedCheckboxes.some((item) => item.value === "PR - View");
+  const PurchaseRequest = selectedCheckboxes.some(
+    (item) => item.value === "PR - View"
+  );
   const PurchaseRequestDisable = !PurchaseRequest;
-  const PurchaseRequestAdd = selectedCheckboxes.some((item) => item.value === "PR - Add") && !PurchaseRequestDisable;
-  const PurchaseRequestEdit = selectedCheckboxes.some((item) => item.value === "PR - Edit") && !PurchaseRequestDisable;
-  const PurchaseRequestApproval = selectedCheckboxes.some((item) => item.value === "PR - Approval") && !PurchaseRequestDisable;
-  const PurchaseRequestReject = selectedCheckboxes.some((item) => item.value === "PR - Reject") && !PurchaseRequestDisable;
+  const PurchaseRequestAdd =
+    selectedCheckboxes.some((item) => item.value === "PR - Add") &&
+    !PurchaseRequestDisable;
+  const PurchaseRequestEdit =
+    selectedCheckboxes.some((item) => item.value === "PR - Edit") &&
+    !PurchaseRequestDisable;
+  const PurchaseRequestApproval =
+    selectedCheckboxes.some((item) => item.value === "PR - Approval") &&
+    !PurchaseRequestDisable;
+  const PurchaseRequestReject =
+    selectedCheckboxes.some((item) => item.value === "PR - Reject") &&
+    !PurchaseRequestDisable;
 
-  const PurchaseOrder = selectedCheckboxes.some((item) => item.value === "PO - View");
+  const PurchaseOrder = selectedCheckboxes.some(
+    (item) => item.value === "PO - View"
+  );
   const PurchaseOrderDisable = !PurchaseOrder;
-  const PurchaseOrderApproval = selectedCheckboxes.some((item) => item.value === "PO - Approval") && !PurchaseOrderDisable;
-  const PurchaseOrderReject = selectedCheckboxes.some((item) => item.value === "PO - Reject") && !PurchaseOrderDisable;
+  const PurchaseOrderApproval =
+    selectedCheckboxes.some((item) => item.value === "PO - Approval") &&
+    !PurchaseOrderDisable;
+  const PurchaseOrderReject =
+    selectedCheckboxes.some((item) => item.value === "PO - Reject") &&
+    !PurchaseOrderDisable;
 
-  const Receiving = selectedCheckboxes.some((item) => item.value === "Receiving - View");
+  const Receiving = selectedCheckboxes.some(
+    (item) => item.value === "Receiving - View"
+  );
   const ReceivingDisable = !Receiving;
-  const ReceivingApproval = selectedCheckboxes.some((item) => item.value === "Receiving - Approval") && !ReceivingDisable;
-  const ReceivingReject = selectedCheckboxes.some((item) => item.value === "Receiving - Reject") && !ReceivingDisable;
+  const ReceivingApproval =
+    selectedCheckboxes.some((item) => item.value === "Receiving - Approval") &&
+    !ReceivingDisable;
+  const ReceivingReject =
+    selectedCheckboxes.some((item) => item.value === "Receiving - Reject") &&
+    !ReceivingDisable;
 
-  const StockTransfer = selectedCheckboxes.some((item) => item.value === "Stock Management - View");
+  const StockTransfer = selectedCheckboxes.some(
+    (item) => item.value === "Stock Management - View"
+  );
   const StockTransferDisable = !StockTransfer;
-  const StockTransferAdd = selectedCheckboxes.some((item) => item.value === "Stock Management - Add") && !StockTransferDisable;
-  const StockTransferApproval = selectedCheckboxes.some((item) => item.value === "Stock Management - Approval") && !StockTransferDisable;
-  const StockTransferReject = selectedCheckboxes.some((item) => item.value === "Stock Management - Reject") && !StockTransferDisable;
+  const StockTransferAdd =
+    selectedCheckboxes.some(
+      (item) => item.value === "Stock Management - Add"
+    ) && !StockTransferDisable;
+  const StockTransferApproval =
+    selectedCheckboxes.some(
+      (item) => item.value === "Stock Management - Approval"
+    ) && !StockTransferDisable;
+  const StockTransferReject =
+    selectedCheckboxes.some(
+      (item) => item.value === "Stock Management - Reject"
+    ) && !StockTransferDisable;
 
   return (
     <div className="main-of-containers">
@@ -536,14 +704,16 @@ function Create_role() {
                 <p>Role Profile</p>
               </div>
 
-              <div className="button-create-side">
-              </div>
+              <div className="button-create-side"></div>
             </div>
           </div>
           <div className="table-containss">
             <div className="main-of-all-tables">
               <form className="w-100 mt-3" onSubmit={handleSubmit}>
-                <Form style={{ marginLeft: "50px" }}>
+                <Form
+                  // style={{ marginLeft: "50px" }}
+                  className="form-createRole"
+                >
                   <div className="row">
                     <div className="col-6">
                       <Form.Group controlId="exampleForm.ControlInput1">
@@ -590,7 +760,10 @@ function Create_role() {
                   </div>
                 </Form>
 
-                <div className="d-flex" style={{ marginLeft: "50px" }}>
+                <div
+                  className="d-flex form-createRole-selectAll"
+                  // style={{ marginLeft: "50px" }}
+                >
                   <Button
                     variant="warning"
                     style={{
@@ -598,18 +771,23 @@ function Create_role() {
                       marginRight: "10px",
                       fontSize: "1.5rem",
                     }}
-                    onClick={handleSelectAll}>
+                    onClick={handleSelectAll}
+                  >
                     Select All
                   </Button>
                   <Button
                     variant="warning"
                     style={{ width: "100px", fontSize: "1.5rem" }}
-                    onClick={handleUnselectAll}>
+                    onClick={handleUnselectAll}
+                  >
                     Unselect All
                   </Button>
                 </div>
 
-                <div className="w-100 mt-1" style={{ marginLeft: "50px" }}>
+                <div
+                  className="w-100 mt-1 form-createRole"
+                  // style={{ marginLeft: "50px" }}
+                >
                   <table class="table">
                     <thead className="rbacthead">
                       <tr>
@@ -623,19 +801,17 @@ function Create_role() {
                       </tr>
                     </thead>
                     <tbody>
-
-
-                     {/* --------------------------------------BREAK ------------------------------*/}
-
-                     <td>
+                      {/* --------------------------------------BREAK ------------------------------*/}
+                      <td>
                         <h3 className="role-head">Dashboard</h3>
                       </td>
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
-                              Dashboard
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
+                            Dashboard
                           </td>
                         </td>
 
@@ -655,7 +831,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Dashboard - View"></label>
+                              htmlFor="Dashboard - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -676,7 +853,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Dashboard - Add"></label>
+                              htmlFor="Dashboard - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -697,7 +875,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Dashboard - Edit"></label>
+                              htmlFor="Dashboard - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -718,7 +897,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Dashboard - Delete"></label>
+                              htmlFor="Dashboard - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -739,7 +919,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Dashboard - Approval"></label>
+                              htmlFor="Dashboard - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -760,13 +941,12 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Dashboard - Reject"></label>
+                              htmlFor="Dashboard - Reject"
+                            ></label>
                           </div>
                         </td>
                       </tr>
-
                       {/* --------------------------------------BREAK ------------------------------*/}
-
                       <td>
                         <h3 className="role-head">Administrator</h3>
                       </td>
@@ -774,7 +954,8 @@ function Create_role() {
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Master List
                           </td>
                         </td>
@@ -793,7 +974,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Master List - View"></label>
+                              htmlFor="Master List - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -812,7 +994,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Master List - Add"></label>
+                              htmlFor="Master List - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -831,7 +1014,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Master List - Edit"></label>
+                              htmlFor="Master List - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -850,7 +1034,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Master List - Delete"></label>
+                              htmlFor="Master List - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -863,7 +1048,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Master List - Aprroval"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Master List - Aprroval"
+                                (item) =>
+                                  item.value === "Master List - Aprroval"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Master List - Aprroval")
@@ -871,7 +1057,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Master List - Aprroval"></label>
+                              htmlFor="Master List - Aprroval"
+                            ></label>
                           </div>
                         </td>
                         <td>
@@ -891,18 +1078,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Master List - Reject"></label>
+                              htmlFor="Master List - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             User Access Role
                           </td>
                         </td>
@@ -921,7 +1107,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="User Access Role - View"></label>
+                              htmlFor="User Access Role - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -940,7 +1127,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="User Access Role - Add"></label>
+                              htmlFor="User Access Role - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -959,7 +1147,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="User Access Role - Edit"></label>
+                              htmlFor="User Access Role - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -980,7 +1169,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="User Access Role - Delete"></label>
+                              htmlFor="User Access Role - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -1004,7 +1194,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="User Access Role - Aprroval"></label>
+                              htmlFor="User Access Role - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -1028,21 +1219,18 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="User Access Role - Reject"></label>
+                              htmlFor="User Access Role - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
-
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
-                              Department
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
+                            Department
                           </td>
                         </td>
 
@@ -1060,7 +1248,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Department - View"></label>
+                              htmlFor="Department - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -1079,7 +1268,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Department - Add"></label>
+                              htmlFor="Department - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -1098,7 +1288,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Department - Edit"></label>
+                              htmlFor="Department - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -1117,7 +1308,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Department - Delete"></label>
+                              htmlFor="Department - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -1138,7 +1330,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Department - Aprroval"></label>
+                              htmlFor="Department - Aprroval"
+                            ></label>
                           </div>
                         </td>
                         <td>
@@ -1158,18 +1351,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Department - Reject"></label>
+                              htmlFor="Department - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Product List
                           </td>
                         </td>
@@ -1188,14 +1380,15 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product List - View"></label>
+                              htmlFor="Product List - View"
+                            ></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
-                            disabled={ProductListDisable}
+                              disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Add"
                               name="vehicle1"
@@ -1207,14 +1400,15 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product List - Add"></label>
+                              htmlFor="Product List - Add"
+                            ></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
-                            disabled={ProductListDisable}
+                              disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Edit"
                               name="vehicle1"
@@ -1226,14 +1420,15 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product List - Edit"></label>
+                              htmlFor="Product List - Edit"
+                            ></label>
                           </div>
                         </td>
 
                         <td>
                           <div className="input-group">
                             <input
-                            disabled={ProductListDisable}
+                              disabled={ProductListDisable}
                               type="checkbox"
                               id="Product List - Delete"
                               name="vehicle1"
@@ -1245,7 +1440,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product List - Delete"></label>
+                              htmlFor="Product List - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -1258,7 +1454,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Product List - Aprroval"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Product List - Aprroval"
+                                (item) =>
+                                  item.value === "Product List - Aprroval"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Product List - Aprroval")
@@ -1266,7 +1463,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product List - Aprroval"></label>
+                              htmlFor="Product List - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -1287,13 +1485,11 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product List - Reject"></label>
+                              htmlFor="Product List - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       {/* <tr>
                         <td>
                           <td
@@ -1422,7 +1618,6 @@ function Create_role() {
 
 
                       </tr> */}
-
                       {/* <tr>
                         <td>
                           <td
@@ -1550,7 +1745,6 @@ function Create_role() {
                         </td>
 
                       </tr> */}
-
                       {/* <tr>
                         <td>
                           <td
@@ -1679,12 +1873,12 @@ function Create_role() {
 
 
                       </tr> */}
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Product Categories
                           </td>
                         </td>
@@ -1705,7 +1899,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Categories - View"></label>
+                              htmlFor="Product Categories - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -1724,7 +1919,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Categories - Add"></label>
+                              htmlFor="Product Categories - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -1745,7 +1941,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Categories - Edit"></label>
+                              htmlFor="Product Categories - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -1766,7 +1963,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Categories - Delete"></label>
+                              htmlFor="Product Categories - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -1790,7 +1988,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Categories - Aprroval"></label>
+                              htmlFor="Product Categories - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -1814,18 +2013,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Categories - Reject"></label>
+                              htmlFor="Product Categories - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Product Manufacturer
                           </td>
                         </td>
@@ -1846,7 +2044,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Manufacturer - View"></label>
+                              htmlFor="Product Manufacturer - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -1867,7 +2066,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Manufacturer - Add"></label>
+                              htmlFor="Product Manufacturer - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -1888,7 +2088,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Manufacturer - Edit"></label>
+                              htmlFor="Product Manufacturer - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -1909,10 +2110,10 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Manufacturer - Delete"></label>
+                              htmlFor="Product Manufacturer - Delete"
+                            ></label>
                           </div>
                         </td>
-
 
                         <td>
                           <div className="input-group">
@@ -1924,7 +2125,8 @@ function Create_role() {
                               value="Product Manufacturer - Aprroval"
                               checked={selectedCheckboxes.some(
                                 (item) =>
-                                  item.value === "Product Manufacturer - Aprroval"
+                                  item.value ===
+                                  "Product Manufacturer - Aprroval"
                               )}
                               onChange={() =>
                                 handleCheckboxChange(
@@ -1934,7 +2136,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Manufacturer - Aprroval"></label>
+                              htmlFor="Product Manufacturer - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -1958,17 +2161,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Product Manufacturer - Reject"></label>
+                              htmlFor="Product Manufacturer - Reject"
+                            ></label>
                           </div>
                         </td>
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Bin Location
                           </td>
                         </td>
@@ -1987,7 +2190,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Bin Location - View"></label>
+                              htmlFor="Bin Location - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -2006,7 +2210,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Bin Location - Add"></label>
+                              htmlFor="Bin Location - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -2025,7 +2230,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Bin Location - Edit"></label>
+                              htmlFor="Bin Location - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -2044,7 +2250,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Bin Location - Delete"></label>
+                              htmlFor="Bin Location - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2057,7 +2264,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Bin Location - Aprroval"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Bin Location - Aprroval"
+                                (item) =>
+                                  item.value === "Bin Location - Aprroval"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Bin Location - Aprroval")
@@ -2065,7 +2273,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Bin Location - Aprroval"></label>
+                              htmlFor="Bin Location - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2086,22 +2295,20 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Bin Location - Reject"></label>
+                              htmlFor="Bin Location - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Cost Centre
                           </td>
                         </td>
-
 
                         <td>
                           <div className="input-group">
@@ -2117,7 +2324,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Cost Centre - View"></label>
+                              htmlFor="Cost Centre - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -2136,7 +2344,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Cost Centre - Add"></label>
+                              htmlFor="Cost Centre - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -2155,7 +2364,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Cost Centre - Edit"></label>
+                              htmlFor="Cost Centre - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -2174,7 +2384,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Cost Centre - Delete"></label>
+                              htmlFor="Cost Centre - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2187,7 +2398,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Cost Centre - Aprroval"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Cost Centre - Aprroval"
+                                (item) =>
+                                  item.value === "Cost Centre - Aprroval"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Cost Centre - Aprroval")
@@ -2195,7 +2407,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Cost Centre - Aprroval"></label>
+                              htmlFor="Cost Centre - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2216,17 +2429,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Cost Centre - Reject"></label>
+                              htmlFor="Cost Centre - Reject"
+                            ></label>
                           </div>
                         </td>
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Supplier
                           </td>
                         </td>
@@ -2245,7 +2458,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Supplier - View"></label>
+                              htmlFor="Supplier - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -2264,7 +2478,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Supplier - Add"></label>
+                              htmlFor="Supplier - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -2283,7 +2498,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Supplier - Edit"></label>
+                              htmlFor="Supplier - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -2302,7 +2518,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Supplier - Delete"></label>
+                              htmlFor="Supplier - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2323,7 +2540,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Supplier - Aprroval"></label>
+                              htmlFor="Supplier - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2344,22 +2562,20 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Supplier - Reject"></label>
+                              htmlFor="Supplier - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Warehouse
                           </td>
                         </td>
-
 
                         <td>
                           <div className="input-group">
@@ -2375,7 +2591,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Warehouses - View"></label>
+                              htmlFor="Warehouses - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -2394,7 +2611,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Warehouses - Add"></label>
+                              htmlFor="Warehouses - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -2413,7 +2631,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Warehouses - Edit"></label>
+                              htmlFor="Warehouses - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -2432,7 +2651,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Warehouses - Delete"></label>
+                              htmlFor="Warehouses - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2453,7 +2673,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Warehouses - Aprroval"></label>
+                              htmlFor="Warehouses - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2474,25 +2695,24 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Warehouses - Reject"></label>
+                              htmlFor="Warehouses - Reject"
+                            ></label>
                           </div>
                         </td>
-
-                      </tr> {/*Warehouses*/}
-
+                      </tr>{" "}
+                      {/*Warehouses*/}
                       <td>
                         <h3 className="role-head">Inventory</h3>
                       </td>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Inventory Access
                           </td>
                         </td>
-
 
                         <td>
                           <div className="input-group">
@@ -2508,7 +2728,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - View"></label>
+                              htmlFor="Inventory - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -2527,7 +2748,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Add"></label>
+                              htmlFor="Inventory - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -2546,8 +2768,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Edit">
-                            </label>
+                              htmlFor="Inventory - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -2560,8 +2782,7 @@ function Create_role() {
                               name="vehicle1"
                               value="Inventory - Delete"
                               checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "Inventory - Delete"
+                                (item) => item.value === "Inventory - Delete"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Inventory - Delete")
@@ -2569,7 +2790,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Delete"></label>
+                              htmlFor="Inventory - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2588,7 +2810,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Approval"></label>
+                              htmlFor="Inventory - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2607,12 +2830,11 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Inventory - Reject"></label>
+                              htmlFor="Inventory - Reject"
+                            ></label>
                           </div>
                         </td>
-
                       </tr>
-
                       <td>
                         <h3 className="role-head">Purchase Order Interface</h3>
                       </td>
@@ -2620,7 +2842,8 @@ function Create_role() {
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Purchase Request
                           </td>
                         </td>
@@ -2633,13 +2856,9 @@ function Create_role() {
                               name="vehicle1"
                               value="PR - View"
                               checked={PurchaseRequest}
-                              onChange={() =>
-                                handleCheckboxChange("PR - View")
-                              }
+                              onChange={() => handleCheckboxChange("PR - View")}
                             />
-                            <label
-                              className="p-3"
-                              htmlFor="PR - View"></label>
+                            <label className="p-3" htmlFor="PR - View"></label>
                           </div>
                         </td>
 
@@ -2652,13 +2871,9 @@ function Create_role() {
                               name="vehicle1"
                               value="PR - Add"
                               checked={PurchaseRequestAdd}
-                              onChange={() =>
-                                handleCheckboxChange("PR - Add")
-                              }
+                              onChange={() => handleCheckboxChange("PR - Add")}
                             />
-                            <label
-                              className="p-3"
-                              htmlFor="PR - Add"></label>
+                            <label className="p-3" htmlFor="PR - Add"></label>
                           </div>
                         </td>
 
@@ -2671,13 +2886,9 @@ function Create_role() {
                               name="vehicle1"
                               value="PR - Edit"
                               checked={PurchaseRequestEdit}
-                              onChange={() =>
-                                handleCheckboxChange("PR - Edit")
-                              }
+                              onChange={() => handleCheckboxChange("PR - Edit")}
                             />
-                            <label
-                              className="p-3"
-                              htmlFor="PR - Edit"></label>
+                            <label className="p-3" htmlFor="PR - Edit"></label>
                           </div>
                         </td>
 
@@ -2690,8 +2901,7 @@ function Create_role() {
                               name="vehicle1"
                               value="PR - Delete"
                               checked={selectedCheckboxes.some(
-                                (item) =>
-                                  item.value === "PR - Delete"
+                                (item) => item.value === "PR - Delete"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("PR - Delete")
@@ -2699,7 +2909,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="PR - Delete"></label>
+                              htmlFor="PR - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2718,7 +2929,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="PR - Approval"></label>
+                              htmlFor="PR - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2737,18 +2949,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="PR - Reject"></label>
+                              htmlFor="PR - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Purchase Order
                           </td>
                         </td>
@@ -2761,13 +2972,9 @@ function Create_role() {
                               name="vehicle1"
                               value="PO - View"
                               checked={PurchaseOrder}
-                              onChange={() =>
-                                handleCheckboxChange("PO - View")
-                              }
+                              onChange={() => handleCheckboxChange("PO - View")}
                             />
-                            <label
-                              className="p-3"
-                              htmlFor="PO - View"></label>
+                            <label className="p-3" htmlFor="PO - View"></label>
                           </div>
                         </td>
 
@@ -2782,13 +2989,9 @@ function Create_role() {
                               checked={selectedCheckboxes.some(
                                 (item) => item.value === "PO - Add"
                               )}
-                              onChange={() =>
-                                handleCheckboxChange("PO - Add")
-                              }
+                              onChange={() => handleCheckboxChange("PO - Add")}
                             />
-                            <label
-                              className="p-3"
-                              htmlFor="PO - Add"></label>
+                            <label className="p-3" htmlFor="PO - Add"></label>
                           </div>
                         </td>
 
@@ -2803,13 +3006,9 @@ function Create_role() {
                               checked={selectedCheckboxes.some(
                                 (item) => item.value === "PO - Edit"
                               )}
-                              onChange={() =>
-                                handleCheckboxChange("PO - Edit")
-                              }
+                              onChange={() => handleCheckboxChange("PO - Edit")}
                             />
-                            <label
-                              className="p-3"
-                              htmlFor="PO - Edit"></label>
+                            <label className="p-3" htmlFor="PO - Edit"></label>
                           </div>
                         </td>
 
@@ -2830,7 +3029,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="PO - Delete"></label>
+                              htmlFor="PO - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2849,7 +3049,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="PO - Approval"></label>
+                              htmlFor="PO - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -2868,26 +3069,23 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="PO - Reject"></label>
+                              htmlFor="PO - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
                       <td>
                         <h3 className="role-head">Warehouse</h3>
                       </td>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Receiving
                           </td>
                         </td>
-
 
                         <td>
                           <div className="input-group">
@@ -2903,7 +3101,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Receiving - View"></label>
+                              htmlFor="Receiving - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -2924,7 +3123,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Receiving - Add"></label>
+                              htmlFor="Receiving - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -2945,7 +3145,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Receiving - Edit"></label>
+                              htmlFor="Receiving - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -2966,7 +3167,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Receiving - Delete"></label>
+                              htmlFor="Receiving - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -2985,7 +3187,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Receiving - Approval"></label>
+                              htmlFor="Receiving - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -3004,17 +3207,17 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Receiving - Reject"></label>
+                              htmlFor="Receiving - Reject"
+                            ></label>
                           </div>
                         </td>
-
                       </tr>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Stock Transfer
                           </td>
                         </td>
@@ -3033,7 +3236,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - View"></label>
+                              htmlFor="Stock Management - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -3052,7 +3256,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - Add"></label>
+                              htmlFor="Stock Management - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -3074,7 +3279,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - Edit"></label>
+                              htmlFor="Stock Management - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -3098,7 +3304,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - Delete"></label>
+                              htmlFor="Stock Management - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -3119,7 +3326,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - Aprroval"></label>
+                              htmlFor="Stock Management - Aprroval"
+                            ></label>
                           </div>
                         </td>
 
@@ -3140,23 +3348,20 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Stock Management - Reject"></label>
+                              htmlFor="Stock Management - Reject"
+                            ></label>
                           </div>
                         </td>
-
-
                       </tr>
-
-
                       <td>
                         <h3 className="role-head">Report</h3>
                       </td>
-
                       <tr>
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Generate Report
                           </td>
                         </td>
@@ -3177,7 +3382,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Report - View"></label>
+                              htmlFor="Report - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -3198,7 +3404,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Report - Add"></label>
+                              htmlFor="Report - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -3219,7 +3426,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Report - Edit"></label>
+                              htmlFor="Report - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -3240,7 +3448,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Report - Delete"></label>
+                              htmlFor="Report - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -3261,7 +3470,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Report - Approval"></label>
+                              htmlFor="Report - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -3282,12 +3492,11 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Report - Reject"></label>
+                              htmlFor="Report - Reject"
+                            ></label>
                           </div>
                         </td>
                       </tr>
-
-
                       <td>
                         <h3 className="role-head">Activity Module</h3>
                       </td>
@@ -3295,7 +3504,8 @@ function Create_role() {
                         <td>
                           <td
                             className="role"
-                            style={{ border: "0px", fontSize: "15px" }}>
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
                             Activity Log
                           </td>
                         </td>
@@ -3316,7 +3526,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Logs - View"></label>
+                              htmlFor="Activity Logs - View"
+                            ></label>
                           </div>
                         </td>
 
@@ -3337,7 +3548,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Logs - Add"></label>
+                              htmlFor="Activity Logs - Add"
+                            ></label>
                           </div>
                         </td>
 
@@ -3358,7 +3570,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Logs - Edit"></label>
+                              htmlFor="Activity Logs - Edit"
+                            ></label>
                           </div>
                         </td>
 
@@ -3371,7 +3584,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Activity Logs - Delete"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Logs - Delete"
+                                (item) =>
+                                  item.value === "Activity Logs - Delete"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Activity Logs - Delete")
@@ -3379,7 +3593,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Logs - Delete"></label>
+                              htmlFor="Activity Logs - Delete"
+                            ></label>
                           </div>
                         </td>
 
@@ -3392,7 +3607,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Activity Logs - Approval"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Logs - Approval"
+                                (item) =>
+                                  item.value === "Activity Logs - Approval"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Activity Logs - Approval")
@@ -3400,7 +3616,8 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Logs - Approval"></label>
+                              htmlFor="Activity Logs - Approval"
+                            ></label>
                           </div>
                         </td>
 
@@ -3413,7 +3630,8 @@ function Create_role() {
                               name="vehicle1"
                               value="Activity Logs - Reject"
                               checked={selectedCheckboxes.some(
-                                (item) => item.value === "Activity Logs - Reject"
+                                (item) =>
+                                  item.value === "Activity Logs - Reject"
                               )}
                               onChange={() =>
                                 handleCheckboxChange("Activity Logs - Reject")
@@ -3421,23 +3639,23 @@ function Create_role() {
                             />
                             <label
                               className="p-3"
-                              htmlFor="Activity Logs - Reject"></label>
+                              htmlFor="Activity Logs - Reject"
+                            ></label>
                           </div>
                         </td>
                       </tr>
-
-
                     </tbody>
                   </table>
 
-                  <div className="d-flex flex-row mt-4">
+                  <div className="d-flex flex-row mt-4 createRole-btn-container">
                     <Row>
                       <Col>
                         <div>
                           <Link
                             style={{ fontSize: "1.5rem" }}
                             to="/userRole"
-                            className=" btn_saveCancel btn btn-danger align-right">
+                            className=" btn_saveCancel btn btn-danger align-right"
+                          >
                             Back
                           </Link>
                         </div>
@@ -3449,7 +3667,8 @@ function Create_role() {
                             type="submit"
                             className="btn_saveCancel"
                             variant="warning"
-                            disabled={selectedCheckboxes.length === 0}>
+                            disabled={selectedCheckboxes.length === 0}
+                          >
                             Save
                           </Button>
                         </div>

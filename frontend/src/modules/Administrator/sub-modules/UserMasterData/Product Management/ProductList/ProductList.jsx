@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
-import NoData from '../../../../../../assets/image/NoData.png';
-import NoAccess from '../../../../../../assets/image/NoAccess.png';
-import NoProduct from '../../../../../../assets/image/product-none.jpg';
+import ReactLoading from "react-loading";
+import NoData from "../../../../../../assets/image/NoData.png";
+import NoAccess from "../../../../../../assets/image/NoAccess.png";
+import NoProduct from "../../../../../../assets/image/product-none.jpg";
 import "../../../../../../assets/global/style.css";
 import "../../../../../styles/react-style.css";
 import { Link } from "react-router-dom";
@@ -17,12 +17,12 @@ import {
   ArrowsClockwise,
 } from "@phosphor-icons/react";
 import deleteProduct from "../../../../../Archiving Delete/product_delete";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Pagination from 'react-bootstrap/Pagination'
+import Pagination from "react-bootstrap/Pagination";
 
 import "../../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -59,31 +59,31 @@ function ProductList({ authrztn }) {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [showChangeStatusButton, setShowChangeStatusButton] = useState(false);
   const [showhistorical, setshowhistorical] = useState(false);
-  const [Dropdownstatus, setDropdownstatus] = useState(['Active', 'Inactive']);
+  const [Dropdownstatus, setDropdownstatus] = useState(["Active", "Inactive"]);
   const [selectedStatus, setSelectedStatus] = useState("Active");
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userId, setuserId] = useState('');
+  const [Fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userId, setuserId] = useState("");
   const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/product/fetchTable")
-      .then((res) => {
-        setproduct(res.data)
-        setCloneProduct(res.data)
-        setIsLoading(false);
-        setTableLoading(false); 
-      })
-      .catch((err) => {
-        console.log(err)
-        setIsLoading(false);
-        setTableLoading(false); 
-      });
+      axios
+        .get(BASE_URL + "/product/fetchTable")
+        .then((res) => {
+          setproduct(res.data);
+          setCloneProduct(res.data);
+          setIsLoading(false);
+          setTableLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setTableLoading(false);
+        });
     }, 1000);
 
     return () => clearTimeout(delay);
@@ -94,36 +94,36 @@ function ProductList({ authrztn }) {
   }, []);
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   const handledropdownstatus = (event) => {
     const value = event.target.value;
     setTableLoading(true);
-    if (value === 'All Status') {
-      setDropdownstatus(['Active', 'Inactive', 'Archive']);
+    if (value === "All Status") {
+      setDropdownstatus(["Active", "Inactive", "Archive"]);
     } else {
       setDropdownstatus([value]);
     }
-    setClearFilterDisabled(value === '');
-    reloadTable()
-  }
-  
+    setClearFilterDisabled(value === "");
+    reloadTable();
+  };
+
   const clearFilter = () => {
-    setDropdownstatus(['Active', 'Inactive']);
+    setDropdownstatus(["Active", "Inactive"]);
     setClearFilterDisabled(true);
-  }
+  };
 
   const totalPages = Math.ceil(product.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
@@ -154,20 +154,20 @@ function ProductList({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
   };
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
-  
+
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
@@ -179,7 +179,7 @@ function ProductList({ authrztn }) {
         data.product_status.toLowerCase().includes(searchTerm)
       );
     });
-  
+
     setproduct(filteredData);
   };
 
@@ -191,17 +191,17 @@ function ProductList({ authrztn }) {
 
   const handlepricehistory = (product_id) => {
     axios
-    .get(BASE_URL + "/productpricehistoy/fetchPriceHistory", {
-      params: {
-        product_id
-      }
-    })
-    .then((res) => {
-      sethistorypricemodal(res.data);
-      handlehistoricalShow();
-    })
-    .catch((err) => console.log(err));
-  }
+      .get(BASE_URL + "/productpricehistoy/fetchPriceHistory", {
+        params: {
+          product_id,
+        },
+      })
+      .then((res) => {
+        sethistorypricemodal(res.data);
+        handlehistoricalShow();
+      })
+      .catch((err) => console.log(err));
+  };
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -231,8 +231,6 @@ function ProductList({ authrztn }) {
     }
   };
 
-
-
   //Main table
   function formatDate(isoDate) {
     const date = new Date(isoDate);
@@ -252,7 +250,6 @@ function ProductList({ authrztn }) {
       date.getSeconds()
     )}`;
   }
-
 
   function padZero(num) {
     return num.toString().padStart(2, "0");
@@ -346,7 +343,7 @@ function ProductList({ authrztn }) {
   };
 
   //This section when user click the checkbox in th, should check all the checkbox in td
-  
+
   const handleCheckboxChange = (productId) => {
     const updatedCheckboxes = [...selectedCheckboxes];
 
@@ -362,12 +359,12 @@ function ProductList({ authrztn }) {
 
   const handleSelectAllChange = () => {
     const allProductIds = product.map((data) => data.product_id);
-  
+
     if (allProductIds.length === 0) {
       // No data, disable the checkbox
       return;
     }
-  
+
     if (selectedCheckboxes.length === allProductIds.length) {
       setSelectedCheckboxes([]);
       setShowChangeStatusButton(false);
@@ -375,13 +372,14 @@ function ProductList({ authrztn }) {
       setSelectedCheckboxes(allProductIds);
       setShowChangeStatusButton(true);
     }
-  
+
     setSelectAllChecked(selectedCheckboxes.length !== allProductIds.length);
-  
-    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allProductIds.length);
+
+    $("input[type='checkbox']").prop(
+      "checked",
+      selectedCheckboxes.length !== allProductIds.length
+    );
   };
-
-
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -404,9 +402,9 @@ function ProductList({ authrztn }) {
           }).then(() => {
             handleClose();
             reloadTable();
-            setSelectAllChecked(false)
-            setSelectedCheckboxes([])
-            setShowChangeStatusButton(false)
+            setSelectAllChecked(false);
+            setSelectedCheckboxes([]);
+            setShowChangeStatusButton(false);
           });
         }
       })
@@ -414,10 +412,6 @@ function ProductList({ authrztn }) {
         console.error(err);
       });
   };
-
-
-
-
 
   useEffect(() => {
     // Initialize DataTable when role data is available
@@ -432,7 +426,7 @@ function ProductList({ authrztn }) {
       $("#order-listing1").DataTable();
     }
   }, [historypricemodal]);
-  
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Active":
@@ -442,74 +436,88 @@ function ProductList({ authrztn }) {
       case "Inactive":
         return "red";
       default:
-        return "transparent"; 
+        return "transparent";
     }
   };
 
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Product List - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>Product List</p>
                 </div>
-              ) : (
-                authrztn.includes('Product List - View') ? (
-        <div className="right-body-contents">
 
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Product List</p>
-              </div>
-
-              <div className="button-create-side">
-              <Form.Select aria-label="item status"
-                  style={{height: '40px', fontSize: '15px', marginBottom: '15px', fontFamily: 'Poppins, Source Sans Pro', cursor: 'pointer', width: '500px'}}
-                  onChange={handledropdownstatus}
-                  value={Dropdownstatus.length === 1 ? Dropdownstatus[0] : ''}>
-                    <option value="" disabled>
-                      Select Status
-                    </option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <option value="Archive">Archive</option>
-                </Form.Select>  
-                <button className={`Filterclear ${clearFilterDisabled ? 'Filterdisabled-button' : ''}`}
-                  style={{ width: '150px'}}
-                  disabled={clearFilterDisabled}
-                  onClick={clearFilter}>
-                  Clear Filter
-                </button>
-                { authrztn.includes('Product List - Add') && (
-                  showChangeStatusButton ? (
-                  <div className="Buttonmodal-change">
-                    <button className="buttonchanges" onClick={handleShow}>
-                      <span style={{}}>
-                      <ArrowsClockwise size={25} />
-                      </span>
-                      Change Status
+                <div className="button-create-side">
+                  <div className="prod-filt-cont">
+                    <Form.Select
+                      aria-label="item status"
+                      style={{
+                        height: "40px",
+                        fontSize: "15px",
+                        marginBottom: "15px",
+                        fontFamily: "Poppins, Source Sans Pro",
+                        cursor: "pointer",
+                        width: "500px",
+                      }}
+                      onChange={handledropdownstatus}
+                      className="product-list-select"
+                      value={
+                        Dropdownstatus.length === 1 ? Dropdownstatus[0] : ""
+                      }
+                    >
+                      <option value="" disabled>
+                        Select Status
+                      </option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Archive">Archive</option>
+                    </Form.Select>
+                    <button
+                      className={`Filterclear ${
+                        clearFilterDisabled ? "Filterdisabled-button" : ""
+                      }`}
+                      style={{ width: "150px" }}
+                      disabled={clearFilterDisabled}
+                      onClick={clearFilter}
+                    >
+                      Clear Filter
                     </button>
                   </div>
-                ) : (
-                  <div className="Buttonmodal-new">
-                    <Link to="/createProduct" className="button">
-                      <span style={{}}>
-                        <Plus size={25} />
-                      </span>
-                      New Product
-                    </Link>
-                  </div>
-                  )
-                )}
-                
+
+                  {authrztn.includes("Product List - Add") &&
+                    (showChangeStatusButton ? (
+                      <div className="Buttonmodal-change">
+                        <button className="buttonchanges" onClick={handleShow}>
+                          <span style={{}}>
+                            <ArrowsClockwise size={25} />
+                          </span>
+                          Change Status
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="Buttonmodal-new">
+                        <Link to="/createProduct" className="button">
+                          <span style={{}}>
+                            <Plus size={25} />
+                          </span>
+                          New Product
+                        </Link>
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
-          </div>
 
-
-          <div className="textfieldandselectAll">
+            <div className="textfieldandselectAll">
               <div className="select-all-checkbox">
                 <span onClick={handleSelectAllChange}>Select All</span>
                 <input
@@ -525,216 +533,303 @@ function ProductList({ authrztn }) {
                 <TextField
                   label="Search"
                   variant="outlined"
-                  style={{ marginBottom: '10px', 
-                  float: 'right',
-                  }}
+                  style={{ marginBottom: "10px", float: "right" }}
                   InputLabelProps={{
-                    style: { fontSize: '14px'},
+                    style: { fontSize: "14px" },
                   }}
                   InputProps={{
-                    style: { fontSize: '14px', width: '250px', height: '50px' },
+                    style: { fontSize: "14px", width: "250px", height: "50px" },
                   }}
-                  onChange={handleSearch}/>
-                </div>
+                  onChange={handleSearch}
+                />
+              </div>
             </div>
 
-          <div className="table-containss">
-          {product.length > 0 ? (
-             <div className="product-rectangle-containers">
-              {currentItems
-                  .filter((data) => Dropdownstatus.includes('All Status') || Dropdownstatus.includes(data.product_status))
-                  .map((data, i) => (
-                <div className="list-rectangle-container" key={i}>
-                  <div className="left-rectangle-containers">
-                    <div className="checkbox-sections">
-                      <input
-                        type="checkbox"
-                        className="checkboxStatus"
-                        checked={selectedCheckboxes.includes(data.product_id)}
-                        onChange={() => handleCheckboxChange(data.product_id)}
-                      />
-                    </div>
-
-                    <div className="dots-three-sec">
-                    {isVertical[data.product_id] ? (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircleVertical
-                            color="beige"
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.product_id);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.product_id) && (
-                              <div className="choices">
-                              { authrztn.includes('Product List - Edit') && (
-                              <Link
-                                to={`/updateProduct/${data.product_id}`}
-                                style={{ fontSize: "15px", fontWeight: '700' }}
-                                className="btn">
-                                Update
-                              </Link>
+            <div className="table-containss">
+              {product.length > 0 ? (
+                <div className="product-rectangle-containers">
+                  {currentItems
+                    .filter(
+                      (data) =>
+                        Dropdownstatus.includes("All Status") ||
+                        Dropdownstatus.includes(data.product_status)
+                    )
+                    .map((data, i) => (
+                      <div className="list-rectangle-container" key={i}>
+                        <div className="left-rectangle-containers">
+                          <div className="checkbox-sections">
+                            <input
+                              type="checkbox"
+                              className="checkboxStatus"
+                              checked={selectedCheckboxes.includes(
+                                data.product_id
                               )}
+                              onChange={() =>
+                                handleCheckboxChange(data.product_id)
+                              }
+                            />
+                          </div>
 
-                              { authrztn.includes('Product List - View') && (
-                              <button
-                                className="btn"
-                                type="button"
-                                onClick={() => {
-                                  handlepricehistory(data.product_id);
-                                  closeVisibleButtons();
-                                }}>
-                                Price History
-                              </button>
-                              )}
+                          <div className="dots-three-sec">
+                            {isVertical[data.product_id] ? (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircleVertical
+                                  color="beige"
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.product_id);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.product_id) && (
+                                    <div className="choices">
+                                      {authrztn.includes(
+                                        "Product List - Edit"
+                                      ) && (
+                                        <Link
+                                          to={`/updateProduct/${data.product_id}`}
+                                          style={{
+                                            fontSize: "15px",
+                                            fontWeight: "700",
+                                          }}
+                                          className="btn"
+                                        >
+                                          Update
+                                        </Link>
+                                      )}
 
-                              { authrztn.includes('Product List - View') && (
-                              <button
-                                className="btn"
-                                type="button"
-                                onClick={() =>
-                                  navigate(`/productSupplier/${data.product_id}`)
-                                }>
-                                View
-                              </button>
-                              )}
+                                      {authrztn.includes(
+                                        "Product List - View"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          type="button"
+                                          onClick={() => {
+                                            handlepricehistory(data.product_id);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Price History
+                                        </button>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Product List - View"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          type="button"
+                                          onClick={() =>
+                                            navigate(
+                                              `/productSupplier/${data.product_id}`
+                                            )
+                                          }
+                                        >
+                                          View
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircle
+                                  size={32}
+                                  className="dots-icon"
+                                  color="beige"
+                                  onClick={() => {
+                                    toggleButtons(data.product_id);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.product_id) && (
+                                    <div className="choices">
+                                      {authrztn.includes(
+                                        "Product List - Edit"
+                                      ) && (
+                                        <Link
+                                          to={`/updateProduct/${data.product_id}`}
+                                          style={{ fontSize: "12px" }}
+                                          className="btn"
+                                        >
+                                          Update
+                                        </Link>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Product List - View"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          type="button"
+                                          onClick={() => {
+                                            handlepricehistory(data.product_id);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Price History
+                                        </button>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Product List - View"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          type="button"
+                                          onClick={() =>
+                                            navigate(
+                                              `/productSupplier/${data.product_id}`
+                                            )
+                                          }
+                                        >
+                                          View
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
                         </div>
-                      ) : (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            color="beige"
-                            onClick={() => {
-                              toggleButtons(data.product_id);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.product_id) && (
-                              <div className="choices">
-                              { authrztn.includes('Product List - Edit') && (
-                              <Link
-                                to={`/updateProduct/${data.product_id}`}
-                                style={{ fontSize: "12px" }}
-                                className="btn">
-                                Update
-                              </Link>
-                              )}
 
-                              { authrztn.includes('Product List - View') && (
-                              <button
-                                className="btn"
-                                type="button"
-                                onClick={() => {
-                                  handlepricehistory(data.product_id);
-                                  closeVisibleButtons();
-                                }}>
-                                Price History
-                              </button>
-                              )}
-
-                              { authrztn.includes('Product List - View') && (
-                              <button
-                                className="btn"
-                                type="button"
-                                onClick={() =>
-                                  navigate(`/productSupplier/${data.product_id}`)
-                                }>
-                                View
-                              </button>
-                              )}
-                              </div>
+                        <div className="mid-rectangle-product-containers">
+                          <div className="profile-product-containers">
+                            {data.product_images.length > 0 ? (
+                              <img
+                                src={`data:image/png;base64,${data.product_images[0].product_image}`}
+                                alt={`Latest Image`}
+                              />
+                            ) : (
+                              <img src={NoProduct} alt="" />
                             )}
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
 
-                  <div className="mid-rectangle-product-containers">
-                    <div className="profile-product-containers">
-                      {data.product_images.length > 0 ? (
-                          <img src={`data:image/png;base64,${data.product_images[0].product_image}`} alt={`Latest Image`} />
-                        ) : (
-                          <img src={NoProduct} alt="" />
-                      )}
-                    </div>
-                  </div>
+                        <div className="right-rectangle-containers">
+                          <div className="right-angle-content">
+                            <div
+                              className="statuses-section"
+                              style={{
+                                backgroundColor: getStatusColor(
+                                  data.product_status
+                                ),
+                              }}
+                            >
+                              {data.product_status}
+                            </div>
 
-                  <div className="right-rectangle-containers">
-                    <div className="right-angle-content">
-                      <div className="statuses-section" style={{ backgroundColor: getStatusColor(data.product_status)}}>
-                          {data.product_status}
-                      </div>
-
-                      <div className="active-icon-with-prodname">
-                        <div className="products-Name">
-                          {data.product_name}
+                            <div className="active-icon-with-prodname">
+                              <div className="products-Name">
+                                {data.product_name}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    ))}
                 </div>
-                ))}
-             </div>
-            ) : (
-            <div className="no-data">
-              <img src={NoData} alt="NoData" className="no-data-img" />
-              <h3>
-                No Data Found
-              </h3>
+              ) : (
+                <div className="no-data">
+                  <img src={NoData} alt="NoData" className="no-data-img" />
+                  <h3>No Data Found</h3>
+                </div>
+              )}
             </div>
-          )}
-          </div>
 
-          <nav style={{ marginTop: '15px' }}>
-            <ul className="pagination" style={{ float: "right" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  type="button"
-                  style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                 >
-                  Previous
-                </button>
-              </li>
-              {generatePages().map((page, index) => (
-                <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
                   <button
+                    type="button"
                     style={{
-                      fontSize: '14px',
-                      width: '25px',
-                      background: currentPage === page ? '#FFA500' : 'white',
-                      color: currentPage === page ? '#FFFFFF' : '#000000',
-                      border: 'none',
-                      height: '28px',
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
                     }}
-                    className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
-                    onClick={() => handlePageClick(page)}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
                   >
-                    {page}
+                    Previous
                   </button>
                 </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                {generatePages().map((page, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      style={{
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
+                      }}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
                 >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
 
-{/* <div className="paginationsReact" style={{ background: 'green' }}>
+            {/* <div className="paginationsReact" style={{ background: 'green' }}>
    <Pagination >
     <Pagination.First />
     <Pagination.Prev />
@@ -747,17 +842,13 @@ function ProductList({ authrztn }) {
     <Pagination.Last />
   </Pagination> 
 </div> */}
-
-        </div>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
 
       {/* Modal for updating status*/}
@@ -766,7 +857,8 @@ function ProductList({ authrztn }) {
         show={show}
         onHide={handleClose}
         backdrop="static"
-        animation={false}>
+        animation={false}
+      >
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: "24px" }}>Change Status</Modal.Title>
         </Modal.Header>
@@ -776,7 +868,8 @@ function ProductList({ authrztn }) {
             <Form.Select
               style={{ height: "40px", fontSize: "15px" }}
               onChange={handleStatusChange}
-              value={selectedStatus}>
+              value={selectedStatus}
+            >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
               <option value="Archive">Archive</option>
@@ -787,13 +880,15 @@ function ProductList({ authrztn }) {
           <Button
             variant="outline-warning"
             onClick={handleSave}
-            style={{ fontSize: "20px" }}>
+            style={{ fontSize: "20px" }}
+          >
             Save
           </Button>
           <Button
             variant="outline-secondary"
             onClick={handleClose}
-            style={{ fontSize: "20px" }}>
+            style={{ fontSize: "20px" }}
+          >
             Close
           </Button>
         </Modal.Footer>
@@ -807,9 +902,11 @@ function ProductList({ authrztn }) {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title 
-          style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}
-          >Historical Price</Modal.Title>
+          <Modal.Title
+            style={{ fontSize: "26px", fontFamily: "Poppins, Source Sans Pro" }}
+          >
+            Historical Price
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div>
@@ -824,18 +921,20 @@ function ProductList({ authrztn }) {
               <tbody>
                 {historypricemodal.map((pricehistory, i) => (
                   <tr key={i}>
-                    <td className="priceHB">{pricehistory.supplier.supplier_name}</td>
+                    <td className="priceHB">
+                      {pricehistory.supplier.supplier_name}
+                    </td>
                     <td className="priceHB">{pricehistory.product_price}</td>
-                    <td className="priceHB">{ModalformatDate(pricehistory.createdAt)}</td>
+                    <td className="priceHB">
+                      {ModalformatDate(pricehistory.createdAt)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>                        
+          </div>
         </Modal.Body>
-        <Modal.Footer>
-
-        </Modal.Footer>
+        <Modal.Footer></Modal.Footer>
       </Modal>
     </div>
   );

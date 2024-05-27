@@ -78,6 +78,7 @@ import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
 import ActivityLog from "./modules/ActivityModule/ActivityLog";
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
+import useStore from "./stores/useStore.js";
 
 import Roles from "./hooks/roles";
 import { List } from "@phosphor-icons/react";
@@ -90,16 +91,18 @@ function App() {
     setActiveTab(key);
   };
 
-  const [showSidebar, setShowSidebar] = useState(false);
+  // const [showSidebar, setShowSidebar] = useState(false);
 
-  const handleToggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-  };
+  // const handleToggleSidebar = () => {
+  //   setShowSidebar(!showSidebar);
+  // };
 
-  const handleCloseSidebar = () => {
-    setShowSidebar(false);
-  };
+  // const handleCloseSidebar = () => {
+  //   setShowSidebar(false);
+  // };
 
+  const toggleSidebar = useStore((state) => state.toggleSidebar);
+  const showSidebar = useStore((state) => state.showSidebar);
   return (
     <Router>
       <div className="app">
@@ -143,10 +146,7 @@ function App() {
 
               <div className="mid-of-main-containers"></div>
 
-              <div
-                className="right-of-main-container"
-                onClick={handleCloseSidebar}
-              >
+              <div className="right-of-main-container">
                 <Header />
 
                 <Routes>
@@ -155,13 +155,19 @@ function App() {
                     element={<Dashboard setActiveTab={setActiveTab} />}
                   /> */}
 
-                    <Route path="/dashboard" element={
+                  <Route
+                    path="/dashboard"
+                    element={
                       <Roles>
-                        {(authrztn) => <Dashboard 
-                        setActiveTab={setActiveTab}
-                        authrztn={authrztn} />}
+                        {(authrztn) => (
+                          <Dashboard
+                            setActiveTab={setActiveTab}
+                            authrztn={authrztn}
+                          />
+                        )}
                       </Roles>
-                    } />
+                    }
+                  />
 
                   <Route path="/systemSettings" element={<SystemSettings />} />
 
@@ -172,23 +178,32 @@ function App() {
 
                   {/* User Master Data */}
 
-                  <Route path="/userRole" element={
+                  <Route
+                    path="/userRole"
+                    element={
                       <Roles>
                         {(authrztn) => <Rbac authrztn={authrztn} />}
                       </Roles>
-                    }/>
+                    }
+                  />
 
-                  <Route path="/createRole" element={
+                  <Route
+                    path="/createRole"
+                    element={
                       <Roles>
                         {(authrztn) => <CreateRole authrztn={authrztn} />}
                       </Roles>
-                    } />
+                    }
+                  />
 
-                  <Route path="/editRole/:id" element={
+                  <Route
+                    path="/editRole/:id"
+                    element={
                       <Roles>
                         {(authrztn) => <EditRole authrztn={authrztn} />}
                       </Roles>
-                    } />
+                    }
+                  />
 
                   <Route
                     path="/masterList"
@@ -309,7 +324,7 @@ function App() {
                       </Roles>
                     }
                   />
-                  
+
                   {/* <Route
                     path="/subParts"
                     element={
@@ -414,7 +429,7 @@ function App() {
                       </Roles>
                     }
                   /> */}
-                  
+
                   <Route
                     path="/costCenter"
                     element={
@@ -542,7 +557,7 @@ function App() {
                       </Roles>
                     }
                   />
-                   <Route
+                  <Route
                     path="/purchaseRequestPreview/:id"
                     element={
                       <Roles>
@@ -556,13 +571,14 @@ function App() {
                     path="/purchaseRequestPreview/:id"
                     element={<PurchaseRequestPreview />}
                   /> */}
-                  <Route 
-                    path="/PRredirect/:id" 
+                  <Route
+                    path="/PRredirect/:id"
                     element={
                       <Roles>
                         {(authrztn) => <PRNotification authrztn={authrztn} />}
                       </Roles>
-                    } />
+                    }
+                  />
 
                   <Route
                     path="/forCanvass/:id"
@@ -647,7 +663,7 @@ function App() {
                       </Roles>
                     }
                   />
-                   <Route
+                  <Route
                     path="/receivingIntransit/:id"
                     element={
                       <Roles>
@@ -657,13 +673,11 @@ function App() {
                       </Roles>
                     }
                   />
-                    <Route
+                  <Route
                     path="/receivingPreview/:id"
                     element={
                       <Roles>
-                        {(authrztn) => (
-                          <ReceivingPreview authrztn={authrztn} />
-                        )}
+                        {(authrztn) => <ReceivingPreview authrztn={authrztn} />}
                       </Roles>
                     }
                   />
@@ -714,21 +728,21 @@ function App() {
                       </Roles>
                     }
                   />
-                  <Route path="/BIS" element={
-                      <Roles>
-                        {(authrztn) => (
-                          <BIS authrztn={authrztn} />
-                        )}
-                      </Roles>
-                    } />
+                  <Route
+                    path="/BIS"
+                    element={
+                      <Roles>{(authrztn) => <BIS authrztn={authrztn} />}</Roles>
+                    }
+                  />
 
-                  <Route path="/SummaryBIS" element={
+                  <Route
+                    path="/SummaryBIS"
+                    element={
                       <Roles>
-                        {(authrztn) => (
-                          <BIS_Summary authrztn={authrztn} />
-                        )}
+                        {(authrztn) => <BIS_Summary authrztn={authrztn} />}
                       </Roles>
-                    } />
+                    }
+                  />
 
                   <Route path="/stockTransfer" element={<StockTransfer />} />
 

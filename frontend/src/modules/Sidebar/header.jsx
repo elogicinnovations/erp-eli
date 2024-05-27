@@ -13,7 +13,8 @@ import {
   Moped,
   AlignLeft,
   ShoppingCart,
-  Scales  
+  Scales,
+  List,
 } from "@phosphor-icons/react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -21,6 +22,7 @@ import BASE_URL from "../../assets/global/url";
 import "../styles/react-style.css";
 import { jwtDecode } from "jwt-decode";
 import swal from "sweetalert";
+import useStore from "../../stores/useStore";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -30,7 +32,8 @@ const Header = () => {
   const profileRef = useRef(null);
   const [prhistory, setprhistory] = useState([]);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [unreadLowStockNotifications, setunreadLowStockNotifications] = useState(0);
+  const [unreadLowStockNotifications, setunreadLowStockNotifications] =
+    useState(0);
   const [lowStocknotif, setlowStocknotif] = useState([]);
   const [noMovementStatus, setNoMovementStatus] = useState([]);
   //code for fetching the user login info
@@ -54,7 +57,6 @@ const Header = () => {
   useEffect(() => {
     decodeToken();
   }, []);
-
 
   // useEffect(() => {
   //   const handleUnload = () => {
@@ -146,7 +148,7 @@ const Header = () => {
       })
       .catch((err) => console.log(err));
   }, []);
-  
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/PR_history/LowOnstockProduct")
@@ -184,11 +186,11 @@ const Header = () => {
           content: "The Purchase Request is Moved into For-Canvassing",
         };
       case "On-Canvass":
-      return {
-        icon: <ShoppingCart size={32} style={{ color: "blue" }} />,
-        notification: "Product On-Canvass",
-        content: "The Purchase Request is Moved into On-Canvass",
-      };
+        return {
+          icon: <ShoppingCart size={32} style={{ color: "blue" }} />,
+          notification: "Product On-Canvass",
+          content: "The Purchase Request is Moved into On-Canvass",
+        };
       case "For-Approval (PO)":
         return {
           icon: <UserList size={32} style={{ color: "blue" }} />,
@@ -303,31 +305,39 @@ const Header = () => {
     //       Math.max(0, prevUnreadNotifications - 1)
     //     );
 
-        // Navigate based on typeofProduct
-        switch (typeofProduct) {
-          case 'product':
-            navigate(`/viewInventory/${invId}`);
-            break;
-          case 'assembly':
-            navigate(`/viewAssembly/${invId}`);
-            break;
-          case 'spare':
-            navigate(`/viewSpare/${invId}`);
-            break;
-          case 'subpart':
-            navigate(`/viewSubpart/${invId}`);
-            break;
-          default:
-            break;
-        }
-      // })
-      // .catch((err) => console.error(err));
+    // Navigate based on typeofProduct
+    switch (typeofProduct) {
+      case "product":
+        navigate(`/viewInventory/${invId}`);
+        break;
+      case "assembly":
+        navigate(`/viewAssembly/${invId}`);
+        break;
+      case "spare":
+        navigate(`/viewSpare/${invId}`);
+        break;
+      case "subpart":
+        navigate(`/viewSubpart/${invId}`);
+        break;
+      default:
+        break;
+    }
+    // })
+    // .catch((err) => console.error(err));
   };
-  
+  const toggleSidebar = useStore((state) => state.toggleSidebar);
+  const showSidebar = useStore((state) => state.showSidebar);
+
+  useEffect(() => {
+    console.log("Sidebar", showSidebar);
+  }, [showSidebar]);
   return (
     <div className="header-main">
       <div className="settings-search-master">
         <div className="dropdown-and-iconic">
+          <div className="menu-icon">
+            <List size={32} onClick={toggleSidebar} />
+          </div>
           <div className="iconic-side">
             <button
               onClick={() => navigate(`/SettingView/1`)}
@@ -336,30 +346,36 @@ const Header = () => {
               <Gear size={35} />
             </button>
             <div className="notification-wrapper" ref={notificationRef}>
-            <button className="notification" onClick={toggleNotifications}>
-              <Bell size={35} />
-              {/* {(unreadNotifications > 0 || unreadLowStockNotifications > 0) && (
+              <button className="notification" onClick={toggleNotifications}>
+                <Bell size={35} />
+                {/* {(unreadNotifications > 0 || unreadLowStockNotifications > 0) && (
                 <div className="notification-indicator">
                 </div>
               )} */}
-              {(unreadNotifications > 0 && (
-              <div className="notification-indicator">
-              </div>  
-            ))}
-            </button>
+                {unreadNotifications > 0 && (
+                  <div className="notification-indicator"></div>
+                )}
+              </button>
               {showNotifications && (
                 <div className="notification-drop-down">
                   <div className="notification-triangle"></div>
                   <div className="notification-header">Notifications</div>
                   <div className="notification-content">
-                    {prhistory.length === 0 && lowStocknotif.length === 0 && noMovementStatus.length === 0 ? (
-                      <div className="empty-notification" style={{ fontSize: "16px" }}>
+                    {prhistory.length === 0 &&
+                    lowStocknotif.length === 0 &&
+                    noMovementStatus.length === 0 ? (
+                      <div
+                        className="empty-notification"
+                        style={{ fontSize: "16px" }}
+                      >
                         No Notifications Yet
                       </div>
                     ) : (
                       <>
                         {prhistory.map((item, index) => {
-                          const statusNotification = getStatusNotification(item.status);
+                          const statusNotification = getStatusNotification(
+                            item.status
+                          );
                           if (statusNotification) {
                             return (
                               <div
@@ -371,22 +387,30 @@ const Header = () => {
                                 }}
                                 style={{ cursor: "pointer" }}
                               >
-                                <div className="notif-icon">{statusNotification.icon}</div>
+                                <div className="notif-icon">
+                                  {statusNotification.icon}
+                                </div>
                                 <div className="notif-container">
                                   <div
                                     className="notif"
                                     style={{
                                       color:
-                                        statusNotification.notification === "Request Rejustification" ||
-                                        statusNotification.notification === "Request Rejected"
+                                        statusNotification.notification ===
+                                          "Request Rejustification" ||
+                                        statusNotification.notification ===
+                                          "Request Rejected"
                                           ? "red"
                                           : "inherit",
                                     }}
                                   >
                                     {statusNotification.notification}
                                   </div>
-                                  <div className="notif-content">{statusNotification.content}</div>
-                                  <div className="notif-date">{formatDate(item.createdAt)}</div>
+                                  <div className="notif-content">
+                                    {statusNotification.content}
+                                  </div>
+                                  <div className="notif-date">
+                                    {formatDate(item.createdAt)}
+                                  </div>
                                 </div>
                                 <div className="notif-close"></div>
                               </div>
@@ -402,20 +426,23 @@ const Header = () => {
                             onClick={() => {
                               handleLowstockNotification(item.invId, item.type);
                             }}
-                            style={{ cursor: "pointer" }}>
+                            style={{ cursor: "pointer" }}
+                          >
                             <div className="notif-icon">
                               <WarningCircle size={32} color="#ff0000" />
                             </div>
                             <div className="notif-container">
                               <div className="notif">Low Stock Level</div>
                               <div className="notif-content">{`The stock for ${item.name} is low`}</div>
-                              <div className="notif-date">{formatDate(new Date())}</div>
+                              <div className="notif-date">
+                                {formatDate(new Date())}
+                              </div>
                             </div>
                             <div className="notif-close"></div>
                           </div>
                         ))}
 
-                          {noMovementStatus.map((item, index) => (
+                        {noMovementStatus.map((item, index) => (
                           <div
                             key={index}
                             className="notification-item"
@@ -423,14 +450,19 @@ const Header = () => {
                               // handleLowstockNotification(item.id);
                               navigate(`/PRredirect/${item.id}`);
                             }}
-                            style={{ cursor: "pointer" }}>
+                            style={{ cursor: "pointer" }}
+                          >
                             <div className="notif-icon">
                               <WarningCircle size={32} color="#ff0000" />
                             </div>
                             <div className="notif-container">
-                              <div className="notif">This Purchase Request has no update</div>
+                              <div className="notif">
+                                This Purchase Request has no update
+                              </div>
                               <div className="notif-content">{`The purchase request number ${item.pr_num} is no movement`}</div>
-                              <div className="notif-date">{formatDate(item.createdAt)}</div>
+                              <div className="notif-date">
+                                {formatDate(item.createdAt)}
+                              </div>
                             </div>
                             <div className="notif-close"></div>
                           </div>

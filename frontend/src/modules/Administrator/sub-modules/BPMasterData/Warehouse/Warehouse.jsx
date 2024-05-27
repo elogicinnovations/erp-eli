@@ -19,7 +19,7 @@ import ReactLoading from "react-loading";
 import NoData from "../../../../../assets/image/NoData.png";
 import NoAccess from "../../../../../assets/image/NoAccess.png";
 import { jwtDecode } from "jwt-decode";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 function Warehouse({ authrztn }) {
   const [warehousename, setWarehousename] = useState("");
@@ -41,7 +41,7 @@ function Warehouse({ authrztn }) {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, warehouses.length);
   const currentItems = warehouses.slice(startIndex, endIndex);
-  const MAX_PAGES = 5; 
+  const MAX_PAGES = 5;
 
   const generatePages = () => {
     const pages = [];
@@ -65,10 +65,10 @@ function Warehouse({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -77,7 +77,7 @@ function Warehouse({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -131,7 +131,7 @@ function Warehouse({ authrztn }) {
         data.location.toLowerCase().includes(searchTerm)
       );
     });
-  
+
     setWarehouses(filteredData);
   };
 
@@ -369,15 +369,13 @@ function Warehouse({ authrztn }) {
               title: "Delete Prohibited",
               text: "You cannot delete Warehouse that is used",
             });
-          } 
-          else if (response.status === 205) {
+          } else if (response.status === 205) {
             swal({
               icon: "error",
               title: "Delete Prohibited",
               text: "You cannot delete the main site",
             });
-          }
-          else {
+          } else {
             swal({
               icon: "error",
               title: "Something went wrong",
@@ -428,19 +426,24 @@ function Warehouse({ authrztn }) {
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-              <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: '10px', 
-                  float: 'right',
-                  }}
-                  InputLabelProps={{
-                    style: { fontSize: '14px'},
-                  }}
-                  InputProps={{
-                    style: { fontSize: '14px', width: '250px', height: '50px' },
-                  }}
-                onChange={handleSearch}/>
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
                 <table className="table-hover">
                   <thead>
                     <tr>
@@ -584,40 +587,62 @@ function Warehouse({ authrztn }) {
                 </table>
               </div>
             </div>
-            <nav style={{marginTop: '15px'}}>
+            <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
-                  type="button"
-                  style={{fontSize: '14px',
-                  cursor: 'pointer',
-                  color: '#000000',
-                  textTransform: 'capitalize',
-                }}
-                  className="page-link" 
-                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    type="button"
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                  >
+                    Previous
+                  </button>
                 </li>
                 {generatePages().map((page, index) => (
-                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
                     <button
                       style={{
-                        fontSize: '14px',
-                        width: '25px',
-                        background: currentPage === page ? '#FFA500' : 'white',
-                        color: currentPage === page ? '#FFFFFF' : '#000000',
-                        border: 'none',
-                        height: '28px',
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
                       }}
-                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
-                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >
