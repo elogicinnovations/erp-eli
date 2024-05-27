@@ -19,7 +19,7 @@ import {
   CalendarBlank,
   XCircle,
 } from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
 import "../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4.css";
@@ -48,7 +48,7 @@ function ReceivingManagement({ authrztn }) {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  
+
   const totalPagesPR = Math.ceil(searchPR.length / pageSize);
   const startIndexPR = (currentPage - 1) * pageSize;
   const endIndexPR = Math.min(startIndexPR + pageSize, searchPR.length);
@@ -56,11 +56,17 @@ function ReceivingManagement({ authrztn }) {
 
   const totalPagesReceiving = Math.ceil(searchReceivePO.length / pageSize);
   const startIndexReceiving = (currentPage - 1) * pageSize;
-  const endIndexReceiving = Math.min(startIndexReceiving + pageSize, searchReceivePO.length);
-  const currentItemsReceiving = searchReceivePO.slice(startIndexReceiving, endIndexReceiving);
+  const endIndexReceiving = Math.min(
+    startIndexReceiving + pageSize,
+    searchReceivePO.length
+  );
+  const currentItemsReceiving = searchReceivePO.slice(
+    startIndexReceiving,
+    endIndexReceiving
+  );
 
   const totalPages = Math.max(totalPagesPR, totalPagesReceiving);
-  const MAX_PAGES = 5; 
+  const MAX_PAGES = 5;
 
   const generatePages = () => {
     const pages = [];
@@ -84,10 +90,10 @@ function ReceivingManagement({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -96,7 +102,7 @@ function ReceivingManagement({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -106,7 +112,7 @@ function ReceivingManagement({ authrztn }) {
         .get(BASE_URL + "/PR/fetchTableToReceive")
         .then((res) => {
           setPurchaseRequest(res.data.prData);
-          setSearchPR(res.data.prData)
+          setSearchPR(res.data.prData);
           setReceivingPO(res.data.receiving_PO);
           setSearchReceivePO(res.data.receiving_PO);
           setFilteredPR(res.data.prData);
@@ -130,22 +136,30 @@ function ReceivingManagement({ authrztn }) {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     // Filter each inventory type separately
-    const filteredSearchPR = searchPR.filter((data) => (
-      data.pr_num.toLowerCase().includes(searchTerm) ||
-      data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
-      data.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
-      formatDatetime(data.date_approved).toLowerCase().includes(searchTerm) ||
-      data.status.toLowerCase().includes(searchTerm) ||
-      data.remarks.toLowerCase().includes(searchTerm)
-    ));
+    const filteredSearchPR = searchPR.filter(
+      (data) =>
+        data.pr_num.toLowerCase().includes(searchTerm) ||
+        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+        data.masterlist.department.department_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        formatDatetime(data.date_approved).toLowerCase().includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm) ||
+        data.remarks.toLowerCase().includes(searchTerm)
+    );
     setPurchaseRequest(filteredSearchPR);
-  
-    const filteredSearchReceivingPO = searchReceivePO.filter((data) => (
-      data.purchase_req.pr_num.toLowerCase().includes(searchTerm) ||
-      data.purchase_req.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
-      data.purchase_req.masterlist.department.department_name.toLowerCase().includes(searchTerm) ||
-      data.status.toLowerCase().includes(searchTerm)
-    ));
+
+    const filteredSearchReceivingPO = searchReceivePO.filter(
+      (data) =>
+        data.purchase_req.pr_num.toLowerCase().includes(searchTerm) ||
+        data.purchase_req.masterlist.col_Fname
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.purchase_req.masterlist.department.department_name
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.status.toLowerCase().includes(searchTerm)
+    );
     setReceivingPO(filteredSearchReceivingPO);
   };
 
@@ -195,7 +209,6 @@ function ReceivingManagement({ authrztn }) {
     setStartDate(null);
     setEndDate(null);
     setSelectedStatus("");
-
     reloadTable();
   };
 
@@ -362,6 +375,7 @@ function ReceivingManagement({ authrztn }) {
                     }}
                     required
                     title="Status is required"
+                    className="receive-select"
                   >
                     <option value="" disabled selected>
                       Select Status
@@ -386,19 +400,25 @@ function ReceivingManagement({ authrztn }) {
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-              <TextField
-                label="Search"
-                variant="outlined"
-                style={{ marginBottom: '10px', 
-                float: 'right',
-                }}
-                InputLabelProps={{
-                  style: { fontSize: '14px'},
-                }}
-                InputProps={{
-                  style: { fontSize: '14px', width: '250px', height: '50px' },
-                }}
-                onChange={handleSearch}/>
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
+
                 <table className="table-hover">
                   <thead>
                     <tr>
@@ -441,7 +461,9 @@ function ReceivingManagement({ authrztn }) {
                               navigate(`/viewToReceive/${data.id}`)
                             }
                           >
-                            {data.status === 'To-Receive (Partial)' ? 'To-Receive' : data.status}
+                            {data.status === "To-Receive (Partial)"
+                              ? "To-Receive"
+                              : data.status}
                           </td>
                           <td
                             onClick={() =>
@@ -508,9 +530,8 @@ function ReceivingManagement({ authrztn }) {
                           <td
                             onClick={() =>
                               data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`) 
-                              )
-                              : data.status === "In-transit" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
                               ) : (
                                 <></>
@@ -557,44 +578,62 @@ function ReceivingManagement({ authrztn }) {
                 </table>
               </div>
             </div>
-            <nav style={{marginTop: '15px'}}>
-            <ul className="pagination" style={{ float: "right" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  type="button"
-                  style={{
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    color: '#000000',
-                    textTransform: 'capitalize',
-                  }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                 >
-                  Previous
-                </button>
-              </li>
+                  <button
+                    type="button"
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                  >
+                    Previous
+                  </button>
+                </li>
                 {generatePages().map((page, index) => (
-                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
                     <button
                       style={{
-                        fontSize: '14px',
-                        width: '25px',
-                        background: currentPage === page ? '#FFA500' : 'white',
-                        color: currentPage === page ? '#FFFFFF' : '#000000',
-                        border: 'none',
-                        height: '28px',
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
                       }}
-                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
-                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >

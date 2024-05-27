@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../assets/global/style.css";
 import "../styles/react-style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -10,6 +10,7 @@ import {
   Warehouse,
   ChartLineUp,
   Scroll,
+  X,
 } from "@phosphor-icons/react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 // import Drawer from '@mui/material/Drawer';
@@ -24,6 +25,7 @@ import "../../assets/image/SBF.png";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import BASE_URL from "../../assets/global/url";
+import useStore from "../../stores/useStore";
 
 function Sidebar({ authrztn }) {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -110,6 +112,12 @@ function Sidebar({ authrztn }) {
   };
 
   const location = useLocation();
+
+  const closeSidebar = useStore((state) => state.closeSidebar);
+
+  useEffect(() => {
+    closeSidebar();
+  }, [location.pathname, closeSidebar]);
 
   useEffect(() => {
     const path = location.pathname;
@@ -209,6 +217,9 @@ function Sidebar({ authrztn }) {
     ["Receiving - View", "Stock Management - View"].includes(permission)
   );
 
+  const showSidebar = useStore((state) => state.showSidebar);
+  const toggleSidebar = useStore((state) => state.toggleSidebar);
+
   return (
     <div className="containers-of-sidebard">
       <div className="sidebar-main-content">
@@ -220,7 +231,15 @@ function Sidebar({ authrztn }) {
               alt="SBF Logo"
             />
           </div>
+          <div className="x-icon">
+            {showSidebar ? (
+              <>
+                <X size={32} onClick={toggleSidebar} />
+              </>
+            ) : null}
+          </div>
         </div>
+
         <List>
           <NavLink
             to="/dashboard"
@@ -818,9 +837,7 @@ function Sidebar({ authrztn }) {
               <ListItem
                 button
                 className={`adminsub-menu ${
-                  location.pathname.startsWith("/BIS")
-                    ? "active"
-                    : ""
+                  location.pathname.startsWith("/BIS") ? "active" : ""
                 }`}
               >
                 <ListItemText primary="BIS Detailed" />
@@ -835,9 +852,7 @@ function Sidebar({ authrztn }) {
               <ListItem
                 button
                 className={`adminsub-menu ${
-                  location.pathname.startsWith("/SummaryBIS")
-                    ? "active"
-                    : ""
+                  location.pathname.startsWith("/SummaryBIS") ? "active" : ""
                 }`}
               >
                 <ListItemText primary="BIS Summary" />

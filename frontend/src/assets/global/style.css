@@ -10569,7 +10569,7 @@
   .table-responsive {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      padding-top: 50px;
+      /* padding-top: 50px; */
   }
   
   @media (max-width: 575.98px) {

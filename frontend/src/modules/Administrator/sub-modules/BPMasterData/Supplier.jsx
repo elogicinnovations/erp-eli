@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
-import NoData from '../../../../assets/image/NoData.png';
-import NoAccess from '../../../../assets/image/NoAccess.png';
+import ReactLoading from "react-loading";
+import NoData from "../../../../assets/image/NoData.png";
+import NoAccess from "../../../../assets/image/NoAccess.png";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../../Sidebar/sidebar";
 import axios from "axios";
@@ -11,9 +11,9 @@ import {
   Plus,
   DotsThreeCircle,
   DotsThreeCircleVertical,
-  ArrowsClockwise
+  ArrowsClockwise,
 } from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/esm/Button";
@@ -29,11 +29,9 @@ import "../../../../assets/skydash/vendors/datatables.net/jquery.dataTables";
 import "../../../../assets/skydash/vendors/datatables.net-bs4/dataTables.bootstrap4";
 import "../../../../assets/skydash/js/off-canvas";
 
-import * as $ from 'jquery';
+import * as $ from "jquery";
 
 import { jwtDecode } from "jwt-decode";
-
-
 
 function Supplier({ authrztn }) {
   const [supplier, setsupplier] = useState([]);
@@ -50,7 +48,7 @@ function Supplier({ authrztn }) {
     Array(supplier.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -82,10 +80,10 @@ function Supplier({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -94,21 +92,21 @@ function Supplier({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -140,21 +138,21 @@ function Supplier({ authrztn }) {
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-    .get(BASE_URL + "/supplier/fetchTable")
-    .then((res) => {
-      setsupplier(res.data);
-      setSearchSupplier(res.data)
-      setIsLoading(false);
-    })
-    .catch((err) => {
-      console.log(err);
-      setIsLoading(false);
-    });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/supplier/fetchTable")
+        .then((res) => {
+          setsupplier(res.data);
+          setSearchSupplier(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
-};
+    return () => clearTimeout(delay);
+  };
   useEffect(() => {
     reloadTable();
   }, []);
@@ -182,19 +180,20 @@ function Supplier({ authrztn }) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchSupplier.filter((data) => {
       return (
-        (data.supplier_code?.toLowerCase() || '').includes(searchTerm) ||
-        (data.supplier_name?.toLowerCase() || '').includes(searchTerm) ||
-        (formatDate(data.createdAt)?.toLowerCase() || '').includes(searchTerm) ||
-        (data.supplier_contactPerson?.toLowerCase() || '').includes(searchTerm) ||
-        (data.supplier_status?.toLowerCase() || '').includes(searchTerm) 
+        (data.supplier_code?.toLowerCase() || "").includes(searchTerm) ||
+        (data.supplier_name?.toLowerCase() || "").includes(searchTerm) ||
+        (formatDate(data.createdAt)?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data.supplier_contactPerson?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data.supplier_status?.toLowerCase() || "").includes(searchTerm)
       );
     });
-    
-  
+
     setsupplier(filteredData);
   };
-
-
 
   function formatDate(datetime) {
     const options = {
@@ -318,12 +317,12 @@ function Supplier({ authrztn }) {
 
   const handleSelectAllChange = () => {
     const allSuppliercode = supplier.map((data) => data.supplier_code);
-  
+
     if (allSuppliercode.length === 0) {
       // No data, disable the checkbox
       return;
     }
-  
+
     if (selectedCheckboxes.length === allSuppliercode.length) {
       setSelectedCheckboxes([]);
       setShowChangeStatusButton(false);
@@ -331,10 +330,13 @@ function Supplier({ authrztn }) {
       setSelectedCheckboxes(allSuppliercode);
       setShowChangeStatusButton(true);
     }
-  
+
     setSelectAllChecked(selectedCheckboxes.length !== allSuppliercode.length);
-  
-    $("input[type='checkbox']").prop("checked", selectedCheckboxes.length !== allSuppliercode.length);
+
+    $("input[type='checkbox']").prop(
+      "checked",
+      selectedCheckboxes.length !== allSuppliercode.length
+    );
   };
 
   const handleStatusChange = (event) => {
@@ -349,7 +351,7 @@ function Supplier({ authrztn }) {
       .put(BASE_URL + "/supplier/statusupdate", {
         supplierCode: selectedCheckboxes,
         status: selectedStatus,
-        userId
+        userId,
       })
       .then((res) => {
         if (res.status === 200) {
@@ -363,7 +365,7 @@ function Supplier({ authrztn }) {
             reloadTable();
             setSelectAllChecked(false);
             setSelectedCheckboxes([]);
-            setShowChangeStatusButton(false)
+            setShowChangeStatusButton(false);
           });
         }
       })
@@ -372,272 +374,393 @@ function Supplier({ authrztn }) {
       });
   };
 
-    const navigate = useNavigate();
-    return(
-
-        <div className="main-of-containers">
-          <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+  const navigate = useNavigate();
+  return (
+    <div className="main-of-containers">
+      <div className="right-of-main-containers">
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Supplier - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>Supplier</p>
                 </div>
-              ) : (
-                authrztn.includes('Supplier - View') ? (
-                  <div className="right-body-contents">
-                    <div className="Employeetext-button">
-                      <div className="employee-and-button">
-                        <div className="emp-text-side">
-                          <p>Supplier</p>
-                        </div>
 
-                            <div className="button-create-side">
-
-                            {authrztn?.includes('Supplier - Add') && (
-                            showChangeStatusButton ? (
-                              <div className="Buttonmodal-change">
-                                <button className="buttonchanges" onClick={handleShowStatus}>
-                                  <span style={{}}>
-                                  <ArrowsClockwise size={25} />
-                                  </span>
-                                  Change Status
-                                </button>
-                              </div>
-                            ) : (
-                            <div className="Buttonmodal-new">
-                              <Link to="/CreateSupplier" className="button">
-                                <span style={{}}>
-                                  <Plus size={25} />
-                                </span>
-                                  Create New
-                              </Link>
-                            </div>
-                            )
-                            )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="table-containss">
-                        <div className="main-of-all-tables">
-                        <TextField
-                            label="Search"
-                            variant="outlined"
-                            style={{ marginBottom: '10px', 
-                            float: 'right',
-                            }}
-                            InputLabelProps={{
-                              style: { fontSize: '14px'},
-                            }}
-                            InputProps={{
-                              style: { fontSize: '14px', width: '250px', height: '50px' },
-                            }}
-                          onChange={handleSearch}/>
-                            <table className='table-hover'>
-                                    <thead>
-                                    <tr>
-                                      <th className="tableh" id="check">
-                                          <input
-                                            type="checkbox"
-                                            checked={selectAllChecked}
-                                            onChange={handleSelectAllChange}
-                                            disabled={supplier.length === 0}
-                                          />
-                                        </th>
-                                        <th className='tableh'>Supplier Code</th>
-                                        <th className='tableh'>Supplier NAME</th>
-                                        <th className='tableh'>Contact</th>
-                                        <th className='tableh'>Status</th>
-                                        <th className='tableh'>Date Created</th>
-                                        <th className='tableh'>Date Modified</th>
-                                        <th className='tableh'>Action</th>
-                                    </tr>
-                                    </thead>
-                                    {supplier.length > 0 ? (
-                                    <tbody>
-                                        {currentItems.map((data,i) =>(
-                                            <tr key={i}>
-                                                <td>
-                                                <input
-                                                  type="checkbox"
-                                                  checked={selectedCheckboxes.includes(data.supplier_code)}
-                                                  onChange={() => handleCheckboxChange(data.supplier_code)}
-                                                />
-                                              </td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_code}</td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_name}</td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{data.supplier_contactPerson}</td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>
-                                                  <div className="colorstatus"
-                                                  style={{
-                                                    backgroundColor:
-                                                      data.supplier_status === "Active"
-                                                        ? "green"
-                                                        : "red",
-                                                    color: "white",
-                                                    padding: "5px",
-                                                    borderRadius: "5px",
-                                                    textAlign: "center",
-                                                    width: "80px",
-                                                  }}>
-                                                    {data.supplier_status}
-                                                  </div>
-                                                </td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.createdAt)}</td>
-                                                <td onClick={() => navigate(`/viewSupplier/${data.supplier_code}`)}>{formatDate(data.updatedAt)}</td>
-                                                <td>
-                                                {isVertical[data.supplier_code] ? (
-                                                  <div style={{ position: 'relative', display: 'inline-block' }}>
-                                                    <DotsThreeCircleVertical
-                                                      size={32}
-                                                      className="dots-icon"
-                                                      onClick={() => {
-                                                        toggleButtons(data.supplier_code);
-                                                      }}
-                                                    />
-                                                    <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                                                      {setButtonVisibles(data.supplier_code) && (
-                                                        <div className="choices">
-                                                        { authrztn.includes('Supplier - Edit') && (
-                                                          <button className='btn'  type='button' >
-                                                              <Link to={`/editSupp/${data.supplier_code}`} 
-                                                              style={{textDecoration:'none', color:'#252129'}}>Update</Link>
-                                                          </button>
-                                                        )}
-
-                                                      { authrztn.includes('Supplier - Delete') && (
-                                                        <button className='btn' 
-                                                                type='button' 
-                                                                onClick={() => {
-                                                                  handleDelete(data.supplier_code)
-                                                                  closeVisibleButtons();
-                                                                }}>
-                                                            Delete
-                                                        </button>
-                                                      )}
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                ) : (
-                                                  <div style={{ position: 'relative', display: 'inline-block' }}>
-                                                    <DotsThreeCircle
-                                                      size={32}
-                                                      className="dots-icon"
-                                                      onClick={() => {
-                                                        toggleButtons(data.supplier_code);
-                                                      }}
-                                                    />
-                                                    <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                                                      {setButtonVisibles(data.supplier_code) && (
-                                                        <div className="choices">
-                                                        { authrztn.includes('Supplier - Edit') && (
-                                                          <button className='btn'  type='button' >
-                                                              <Link to={`/editSupp/${data.supplier_code}`} 
-                                                              style={{textDecoration:'none', color:'#252129'}}>Update</Link>
-                                                          </button>
-                                                        )}
-
-                                                      { authrztn.includes('Supplier - Delete') && (
-                                                        <button className='btn' 
-                                                                type='button' 
-                                                                onClick={() => {
-                                                                  handleDelete(data.supplier_code)
-                                                                  closeVisibleButtons();
-                                                                }}>
-                                                            Delete
-                                                        </button>
-                                                      )}
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                      ) : (
-                                        <div className="no-data">
-                                          <img src={NoData} alt="NoData" className="no-data-img" />
-                                          <h3>
-                                            No Data Found
-                                          </h3>
-                                        </div>
-                                    )}
-                                </table>
-                            </div>
-                        </div>
-                        <nav style={{marginTop: '15px'}}>
-                          <ul className="pagination" style={{ float: "right" }}>
-                            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                              <button
-                              type="button"
-                              style={{fontSize: '14px',
-                              cursor: 'pointer',
-                              color: '#000000',
-                              textTransform: 'capitalize',
-                            }}
-                              className="page-link" 
-                              onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-                            </li>
-                          {generatePages().map((page, index) => (
-                          <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
-                            <button
-                              style={{
-                                fontSize: '14px',
-                                width: '25px',
-                                background: currentPage === page ? '#FFA500' : 'white',
-                                color: currentPage === page ? '#FFFFFF' : '#000000',
-                                border: 'none',
-                                height: '28px',
-                              }}
-                              className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
-                              onClick={() => handlePageClick(page)}
-                            >
-                              {page}
-                            </button>
-                          </li>
-                        ))}
-                        <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                          <button
-                            style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                            className="page-link"
-                            onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
-                          >
-                            Next
-                          </button>
-                        </li>
-                      </ul>
-                    </nav>
+                <div className="button-create-side">
+                  {authrztn?.includes("Supplier - Add") &&
+                    (showChangeStatusButton ? (
+                      <div className="Buttonmodal-change">
+                        <button
+                          className="buttonchanges"
+                          onClick={handleShowStatus}
+                        >
+                          <span style={{}}>
+                            <ArrowsClockwise size={25} />
+                          </span>
+                          Change Status
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="Buttonmodal-new">
+                        <Link to="/CreateSupplier" className="button">
+                          <span style={{}}>
+                            <Plus size={25} />
+                          </span>
+                          Create New
+                        </Link>
+                      </div>
+                    ))}
                 </div>
-                ) : (
-                  <div className="no-access">
-                    <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-                    <h3>
-                      You don't have access to this function.
-                    </h3>
-                  </div>
-                )
-              )}
+              </div>
             </div>
 
-            <Modal
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
+
+                <table className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh" id="check">
+                        <input
+                          type="checkbox"
+                          checked={selectAllChecked}
+                          onChange={handleSelectAllChange}
+                          disabled={supplier.length === 0}
+                        />
+                      </th>
+                      <th className="tableh">Supplier Code</th>
+                      <th className="tableh">Supplier NAME</th>
+                      <th className="tableh">Contact</th>
+                      <th className="tableh">Status</th>
+                      <th className="tableh">Date Created</th>
+                      <th className="tableh">Date Modified</th>
+                      <th className="tableh">Action</th>
+                    </tr>
+                  </thead>
+                  {supplier.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr key={i}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedCheckboxes.includes(
+                                data.supplier_code
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange(data.supplier_code)
+                              }
+                            />
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewSupplier/${data.supplier_code}`)
+                            }
+                          >
+                            {data.supplier_code}
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewSupplier/${data.supplier_code}`)
+                            }
+                          >
+                            {data.supplier_name}
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewSupplier/${data.supplier_code}`)
+                            }
+                          >
+                            {data.supplier_contactPerson}
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewSupplier/${data.supplier_code}`)
+                            }
+                          >
+                            <div
+                              className="colorstatus"
+                              style={{
+                                backgroundColor:
+                                  data.supplier_status === "Active"
+                                    ? "green"
+                                    : "red",
+                                color: "white",
+                                padding: "5px",
+                                borderRadius: "5px",
+                                textAlign: "center",
+                                width: "80px",
+                              }}
+                            >
+                              {data.supplier_status}
+                            </div>
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewSupplier/${data.supplier_code}`)
+                            }
+                          >
+                            {formatDate(data.createdAt)}
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewSupplier/${data.supplier_code}`)
+                            }
+                          >
+                            {formatDate(data.updatedAt)}
+                          </td>
+                          <td>
+                            {isVertical[data.supplier_code] ? (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircleVertical
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.supplier_code);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.supplier_code) && (
+                                    <div className="choices">
+                                      {authrztn.includes("Supplier - Edit") && (
+                                        <button className="btn" type="button">
+                                          <Link
+                                            to={`/editSupp/${data.supplier_code}`}
+                                            style={{
+                                              textDecoration: "none",
+                                              color: "#252129",
+                                            }}
+                                          >
+                                            Update
+                                          </Link>
+                                        </button>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Supplier - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          type="button"
+                                          onClick={() => {
+                                            handleDelete(data.supplier_code);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircle
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.supplier_code);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.supplier_code) && (
+                                    <div className="choices">
+                                      {authrztn.includes("Supplier - Edit") && (
+                                        <button className="btn" type="button">
+                                          <Link
+                                            to={`/editSupp/${data.supplier_code}`}
+                                            style={{
+                                              textDecoration: "none",
+                                              color: "#252129",
+                                            }}
+                                          >
+                                            Update
+                                          </Link>
+                                        </button>
+                                      )}
+
+                                      {authrztn.includes(
+                                        "Supplier - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          type="button"
+                                          onClick={() => {
+                                            handleDelete(data.supplier_code);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>No Data Found</h3>
+                    </div>
+                  )}
+                </table>
+              </div>
+            </div>
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                  >
+                    Previous
+                  </button>
+                </li>
+                {generatePages().map((page, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      style={{
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
+                      }}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
+        )}
+      </div>
+
+      <Modal
         size="md"
         show={showStatusmodal}
         onHide={handleCloseStatus}
         backdrop="static"
-        animation={false}>
+        animation={false}
+      >
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}>Change Status</Modal.Title>
+          <Modal.Title
+            style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
+          >
+            Change Status
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group controlId="exampleForm.ControlInput2">
-            <Form.Label style={{ fontSize: "20px", fontFamily: "Poppins, Source Sans Pro" }}>Status</Form.Label>
+            <Form.Label
+              style={{
+                fontSize: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              Status
+            </Form.Label>
             <Form.Select
               style={{ height: "40px", fontSize: "15px" }}
               onChange={handleStatusChange}
-              value={selectedStatus}>
+              value={selectedStatus}
+            >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
               {/* <option value="Archive">Archive</option> */}
@@ -648,19 +771,21 @@ function Supplier({ authrztn }) {
           <Button
             variant="outline-warning"
             onClick={handleSave}
-            style={{ fontSize: "20px" }}>
+            style={{ fontSize: "20px" }}
+          >
             Save
           </Button>
           <Button
             variant="outline-secondary"
             onClick={handleCloseStatus}
-            style={{ fontSize: "20px" }}>
+            style={{ fontSize: "20px" }}
+          >
             Close
           </Button>
         </Modal.Footer>
       </Modal>
-        </div>
-    );
+    </div>
+  );
 }
 
 export default Supplier;

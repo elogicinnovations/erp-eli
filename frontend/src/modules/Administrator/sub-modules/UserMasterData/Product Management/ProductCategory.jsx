@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 import Sidebar from "../../../../Sidebar/sidebar";
 import "../../../../../assets/global/style.css";
 import "../../../../styles/react-style.css";
 import axios from "axios";
 import BASE_URL from "../../../../../assets/global/url";
-import NoData from '../../../../../assets/image/NoData.png';
-import NoAccess from '../../../../../assets/image/NoAccess.png';
+import NoData from "../../../../../assets/image/NoData.png";
+import NoAccess from "../../../../../assets/image/NoAccess.png";
 import Button from "react-bootstrap/Button";
 import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
@@ -16,7 +16,7 @@ import {
   DotsThreeCircle,
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import "../../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -33,7 +33,7 @@ import * as $ from "jquery";
 import Header from "../../../../../partials/header";
 import { jwtDecode } from "jwt-decode";
 
-function ProductCategory({authrztn}) {
+function ProductCategory({ authrztn }) {
   const [category, setcategory] = useState([]);
   const [searchCategory, setSearchCategory] = useState([]);
   const [validated, setValidated] = useState(false);
@@ -45,17 +45,17 @@ function ProductCategory({authrztn}) {
   const [categoryCode, setcategoryCode] = useState("");
   const [categoryName, setcategoryName] = useState("");
   const [categoryRemarks, setcategoryRemarks] = useState("");
-  const [nextCategoryCode, setNextCategoryCode] = useState('');
+  const [nextCategoryCode, setNextCategoryCode] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [rotatedIcons, setRotatedIcons] = useState(
     Array(category.length).fill(false)
   );
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userId, setuserId] = useState('');
+  const [Fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userId, setuserId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -87,10 +87,10 @@ function ProductCategory({authrztn}) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -99,39 +99,39 @@ function ProductCategory({authrztn}) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
-  
-  const decodeToken = () => { 
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+
+  const decodeToken = () => {
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchCategory.filter((data) => {
       return (
-        (data.category_code?.toLowerCase() || '').includes(searchTerm) ||
-        (data.category_name?.toLowerCase() || '').includes(searchTerm) ||
-        (formatDate(data.createdAt)?.toLowerCase() || '').includes(searchTerm) ||
-        (data.category_remarks?.toLowerCase() || '').includes(searchTerm)
+        (data.category_code?.toLowerCase() || "").includes(searchTerm) ||
+        (data.category_name?.toLowerCase() || "").includes(searchTerm) ||
+        (formatDate(data.createdAt)?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data.category_remarks?.toLowerCase() || "").includes(searchTerm)
       );
     });
-    
-    
-  
+
     setcategory(filteredData);
   };
 
@@ -163,38 +163,35 @@ function ProductCategory({authrztn}) {
     }
   };
 
-
-const reloadTable = () => {
-  
-
-  const delay = setTimeout(() => {
-  axios
-  .get(BASE_URL + "/category/fetchTable")
-  .then((res) => {
-    setcategory(res.data)
-    setSearchCategory(res.data)
-    setIsLoading(false);
-  })
-  .catch((err) => {
-    console.log(err)
-    setIsLoading(false);
-  });
-
-
-  // Fetch next category code when the component mounts
-  axios.get(BASE_URL + '/category/getNextCategoryCode')
-        .then(response => {
-            setNextCategoryCode(response.data.nextCategoryCode);
+  const reloadTable = () => {
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/category/fetchTable")
+        .then((res) => {
+          setcategory(res.data);
+          setSearchCategory(res.data);
+          setIsLoading(false);
         })
-        .catch(error => {
-            console.error('Error fetching next category code:', error);
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
         });
-}, 1000);
 
-return () => clearTimeout(delay);
-};
+      // Fetch next category code when the component mounts
+      axios
+        .get(BASE_URL + "/category/getNextCategoryCode")
+        .then((response) => {
+          setNextCategoryCode(response.data.nextCategoryCode);
+        })
+        .catch((error) => {
+          console.error("Error fetching next category code:", error);
+        });
+    }, 1000);
+
+    return () => clearTimeout(delay);
+  };
   useEffect(() => {
-      reloadTable()
+    reloadTable();
   }, []);
 
   function formatDate(datetime) {
@@ -226,7 +223,7 @@ return () => clearTimeout(delay);
           categoryCode,
           categoryName,
           categoryRemarks,
-          userId
+          userId,
         })
         .then((response) => {
           if (response.status === 200) {
@@ -235,9 +232,8 @@ return () => clearTimeout(delay);
               text: "The new product category has been added successfully.",
               icon: "success",
               button: "OK",
-              
             }).then(() => {
-              reloadTable()
+              reloadTable();
               const newId = response.data.category_code;
               // console.log(newId)
               setcategory((prev) => [
@@ -290,7 +286,7 @@ return () => clearTimeout(delay);
               icon: "success",
               button: "OK",
             }).then(() => {
-              reloadTable()
+              reloadTable();
             });
           } else if (response.status === 202) {
             swal({
@@ -308,7 +304,7 @@ return () => clearTimeout(delay);
         } catch (err) {
           console.log(err);
         }
-      } 
+      }
     });
   };
 
@@ -369,7 +365,8 @@ return () => clearTimeout(delay);
     try {
       const updaemasterID = updateFormData.category_code;
       const response = await axios.put(
-        BASE_URL + `/category/update/${updateFormData.category_code}?userId=${userId}`,
+        BASE_URL +
+          `/category/update/${updateFormData.category_code}?userId=${userId}`,
         {
           category_name: updateFormData.category_name,
           category_remarks: updateFormData.category_remarks,
@@ -384,7 +381,7 @@ return () => clearTimeout(delay);
           button: "OK",
         }).then(() => {
           handleModalToggle();
-          reloadTable()
+          reloadTable();
         });
       } else if (response.status === 202) {
         swal({
@@ -457,282 +454,356 @@ return () => clearTimeout(delay);
 
   return (
     <div className="main-of-containers">
-
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("Product Categories - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>Product Category</p>
                 </div>
-              ) : (
-                authrztn.includes('Product Categories - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Product Category</p>
-              </div>
 
-              <div className="button-create-side">
-                <div className="Buttonmodal-new">
-                  { authrztn?.includes('Product Categories - Add') && (
-                  <button onClick={handleShow}>
-                    <span style={{}}>
-                      <Plus size={25} />
-                    </span>
-                    Create New
-                  </button>
-                  )}
-
+                <div className="button-create-side">
+                  <div className="Buttonmodal-new">
+                    {authrztn?.includes("Product Categories - Add") && (
+                      <button onClick={handleShow}>
+                        <span style={{}}>
+                          <Plus size={25} />
+                        </span>
+                        Create New
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-            <TextField
-              label="Search"
-              variant="outlined"
-              style={{ marginBottom: '10px', 
-              float: 'right',
-              }}
-              InputLabelProps={{
-                style: { fontSize: '14px'},
-              }}
-              InputProps={{
-                style: { fontSize: '14px', width: '250px', height: '50px' },
-              }}
-              onChange={handleSearch}/>
-              <table className="table-hover">
-                <thead>
-                  <tr>
-                    <th className="tableh">Category Code</th>
-                    <th className="tableh">Category Name</th>
-                    <th className="tableh">Description</th>
-                    <th className="tableh">Date Added</th>
-                    <th className="tableh">Date Modified</th>
-                    <th className="tableh">Action</th>
-                  </tr>
-                </thead>
-                {category.length > 0 ? (
-                <tbody>
-                  {currentItems.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.category_code}</td>
-                      <td>{data.category_name}</td>
-                      <td className="autho">{data.category_remarks}</td>
-                      <td>{formatDate(data.createdAt)}</td>
-                      <td>{formatDate(data.updatedAt)}</td>
-                      <td>
-                      {isVertical[data.category_code] ? (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircleVertical
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.category_code);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.category_code) && (
-                              <div className="choices">
-                                { authrztn?.includes('Product Categories - Edit') && (
-                                <button
-                                  className="btn"
-                                  onClick={() => {
-                                    handleModalToggle(data);
-                                    closeVisibleButtons();
-                                  }}>
-                                  Update
-                                </button>
-                                )}
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
 
-                                { authrztn?.includes('Product Categories - Delete') && (
-                                <button
-                                  className="btn"
-                                  onClick={() => {
-                                    handleDelete(data.category_code);
-                                    closeVisibleButtons();
-                                  }}>
-                                  Delete
-                                </button>
-                              )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.category_code);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.category_code) && (
-                              <div className="choices">
-
-                              { authrztn?.includes('Product Categories - Edit') && (
-                              <button
-                                className="btn"
-                                onClick={() => {
-                                  handleModalToggle(data);
-                                  closeVisibleButtons();
-                                }}>
-                                Update
-                              </button>
-                              )}
-
-                                { authrztn?.includes('Product Categories - Delete') && (
-                                <button
-                                  className="btn"
-                                  onClick={() => {
-                                    handleDelete(data.category_code);
-                                    closeVisibleButtons();
-                                  }}>
-                                  Delete
-                                </button>
-                              )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      </td>
+                <table className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Category Code</th>
+                      <th className="tableh">Category Name</th>
+                      <th className="tableh">Description</th>
+                      <th className="tableh">Date Added</th>
+                      <th className="tableh">Date Modified</th>
+                      <th className="tableh">Action</th>
                     </tr>
-                  ))}
-                </tbody>
+                  </thead>
+                  {category.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.category_code}</td>
+                          <td>{data.category_name}</td>
+                          <td className="autho">{data.category_remarks}</td>
+                          <td>{formatDate(data.createdAt)}</td>
+                          <td>{formatDate(data.updatedAt)}</td>
+                          <td>
+                            {isVertical[data.category_code] ? (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircleVertical
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.category_code);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.category_code) && (
+                                    <div className="choices">
+                                      {authrztn?.includes(
+                                        "Product Categories - Edit"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleModalToggle(data);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Update
+                                        </button>
+                                      )}
+
+                                      {authrztn?.includes(
+                                        "Product Categories - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(data.category_code);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircle
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.category_code);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.category_code) && (
+                                    <div className="choices">
+                                      {authrztn?.includes(
+                                        "Product Categories - Edit"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleModalToggle(data);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Update
+                                        </button>
+                                      )}
+
+                                      {authrztn?.includes(
+                                        "Product Categories - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(data.category_code);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
+                      <h3>No Data Found</h3>
                     </div>
-                )}
-              </table>
+                  )}
+                </table>
+              </div>
             </div>
-          </div>
-          <nav style={{marginTop: '15px'}}>
-            <ul className="pagination" style={{ float: "right" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                type="button"
-                style={{fontSize: '14px',
-                cursor: 'pointer',
-                color: '#000000',
-                textTransform: 'capitalize',
-              }}
-                className="page-link" 
-                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-              </li>
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                  >
+                    Previous
+                  </button>
+                </li>
                 {generatePages().map((page, index) => (
-                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
                     <button
                       style={{
-                        fontSize: '14px',
-                        width: '25px',
-                        background: currentPage === page ? '#FFA500' : 'white',
-                        color: currentPage === page ? '#FFFFFF' : '#000000',
-                        border: 'none',
-                        height: '28px',
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
                       }}
-                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
-                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >
                     Next
                   </button>
                 </li>
-            </ul>
-          </nav>
-        </div>
+              </ul>
+            </nav>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
-      <Modal 
-        show={showModal} 
-         onHide={handleClose}
-           backdrop="static"
-            keyboard={false}
-             size="lg">
-
-          <Modal.Header closeButton>
-            <Modal.Title style={{fontSize: '24px',
-                fontFamily: 'Poppins, Source Sans Pro'}}>
-                  Create Category
-              </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+      <Modal
+        show={showModal}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
+          >
+            Create Category
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
             <div className="row">
               <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px",
-                      fontFamily: 'Poppins, Source Sans Pro'}}>
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
                     Category Code:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
-                  value={nextCategoryCode}
-                  disabled
-                />
-              </Form.Group>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    value={nextCategoryCode}
+                    disabled
+                  />
+                </Form.Group>
               </div>
               <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" ,
-                              fontFamily: 'Poppins, Source Sans Pro'}}>
-                  Category Name:{" "}
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  value={categoryName}
-                  style={{ height: "40px", fontSize: "15px", fontFamily: 'Poppins, Source Sans Pro' }}
-                  onChange={(e) => setcategoryName(e.target.value)}
-                  required
-                />
-              </Form.Group>
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
+                    Category Name:{" "}
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={categoryName}
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    onChange={(e) => setcategoryName(e.target.value)}
+                    required
+                  />
+                </Form.Group>
               </div>
             </div>
 
             <div className="mt-3">
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}>
+                <Form.Label
+                  style={{
+                    fontSize: "20px",
+                    fontFamily: "Poppins, Source Sans Pro",
+                  }}
+                >
                   Category Remarks:{" "}
                 </Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
                   style={{
-                  fontFamily: 'Poppins, Source Sans Pro',
-                  fontSize: "16px",
-                  height: "200px",
-                  maxHeight: "200px",
-                  resize: "none",
-                  overflowY: "auto",
+                    fontFamily: "Poppins, Source Sans Pro",
+                    fontSize: "16px",
+                    height: "200px",
+                    maxHeight: "200px",
+                    resize: "none",
+                    overflowY: "auto",
                   }}
                   onChange={(e) => setcategoryRemarks(e.target.value)}
                 />
@@ -743,45 +814,56 @@ return () => clearTimeout(delay);
                 type="submit"
                 variant="warning"
                 size="md"
-                style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+              >
                 Save
               </Button>
               <Button
                 variant="secondary"
                 size="md"
                 onClick={handleClose}
-                style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+              >
                 Cancel
               </Button>
             </div>
-            </Form>
-          </Modal.Body>
+          </Form>
+        </Modal.Body>
       </Modal>
 
-      <Modal 
-       show={updateModalShow} 
+      <Modal
+        show={updateModalShow}
         onHide={() => handleModalToggle()}
-         backdrop="static"
-          keyboard={false}
-            size="lg">
-        
-          <Modal.Header closeButton>
-            <Modal.Title  style={{fontSize: '24px',
-                fontFamily: 'Poppins, Source Sans Pro'}}>
-              Update Category
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title
+            style={{ fontSize: "24px", fontFamily: "Poppins, Source Sans Pro" }}
+          >
+            Update Category
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate validated={validated} onSubmit={handleUpdateSubmit}>
             <div className="row">
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px",
-                                fontFamily: 'Poppins, Source Sans Pro'}}>
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
                     Category Code:{" "}
                   </Form.Label>
                   <Form.Control
@@ -789,9 +871,11 @@ return () => clearTimeout(delay);
                     value={updateFormData.category_code}
                     onChange={handleUpdateFormChange}
                     name="category_code"
-                    style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
                     required
                     readOnly
                   />
@@ -799,8 +883,12 @@ return () => clearTimeout(delay);
               </div>
               <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px",
-                                fontFamily: 'Poppins, Source Sans Pro'}}>
+                  <Form.Label
+                    style={{
+                      fontSize: "20px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  >
                     Category Name:{" "}
                   </Form.Label>
                   <Form.Control
@@ -808,9 +896,11 @@ return () => clearTimeout(delay);
                     value={updateFormData.category_name}
                     onChange={handleUpdateFormChange}
                     name="category_name"
-                    style={{ height: "40px", 
-                            fontSize: "15px", 
-                            fontFamily: 'Poppins, Source Sans Pro' }}
+                    style={{
+                      height: "40px",
+                      fontSize: "15px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
                     required
                   />
                 </Form.Group>
@@ -819,25 +909,29 @@ return () => clearTimeout(delay);
 
             <div>
               <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px",
-                        fontFamily: 'Poppins, Source Sans Pro'}}>
+                <Form.Label
+                  style={{
+                    fontSize: "20px",
+                    fontFamily: "Poppins, Source Sans Pro",
+                  }}
+                >
                   Category Remarks:{" "}
                 </Form.Label>
                 <Form.Control
                   type="text"
                   value={updateFormData.category_remarks}
-                    onChange={handleUpdateFormChange}
-                    name="category_remarks"
-                      as="textarea"
-                      rows={3}
-                      style={{
-                      fontFamily: 'Poppins, Source Sans Pro',
-                      fontSize: "16px",
-                      height: "200px",
-                      maxHeight: "200px",
-                      resize: "none",
-                      overflowY: "auto",
-                      }}
+                  onChange={handleUpdateFormChange}
+                  name="category_remarks"
+                  as="textarea"
+                  rows={3}
+                  style={{
+                    fontFamily: "Poppins, Source Sans Pro",
+                    fontSize: "16px",
+                    height: "200px",
+                    maxHeight: "200px",
+                    resize: "none",
+                    overflowY: "auto",
+                  }}
                   required
                 />
               </Form.Group>
@@ -847,26 +941,30 @@ return () => clearTimeout(delay);
                 type="submit"
                 variant="warning"
                 size="md"
-                style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+              >
                 Update
               </Button>
               <Button
                 variant="secondary"
                 size="md"
                 onClick={() => setUpdateModalShow(!updateModalShow)}
-                style={{ fontSize: "20px",
-                    fontFamily: 'Poppins, Source Sans Pro',
-                    margin: "0px 5px"}}>
+                style={{
+                  fontSize: "20px",
+                  fontFamily: "Poppins, Source Sans Pro",
+                  margin: "0px 5px",
+                }}
+              >
                 Close
               </Button>
             </div>
-            </Form>
-          </Modal.Body>
-        
+          </Form>
+        </Modal.Body>
       </Modal>
-
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 import Sidebar from "../../../Sidebar/sidebar";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../../../assets/global/style.css";
-import NoData from '../../../../assets/image/NoData.png';
-import NoAccess from '../../../../assets/image/NoAccess.png';
+import NoData from "../../../../assets/image/NoData.png";
+import NoAccess from "../../../../assets/image/NoAccess.png";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import swal from "sweetalert";
@@ -18,7 +18,7 @@ import {
   DotsThreeCircleVertical,
 } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import "../../../../assets/skydash/vendors/feather/feather.css";
 import "../../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -42,11 +42,13 @@ function UserRole({ authrztn }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userId, setuserId] = useState('');
-  const [rotatedIcons, setRotatedIcons] = useState(Array(role.length).fill(false));
+  const [Fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userId, setuserId] = useState("");
+  const [rotatedIcons, setRotatedIcons] = useState(
+    Array(role.length).fill(false)
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
@@ -78,10 +80,10 @@ function UserRole({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -90,25 +92,24 @@ function UserRole({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
-
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   const toggleDropdown = (event, index) => {
     // Check if the clicked icon is already open, close it
@@ -140,17 +141,17 @@ function UserRole({ authrztn }) {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/userRole/fetchuserrole")
-      .then((res) => {
-        setRole(res.data);
-        setSearchRole(res.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err)
-        setIsLoading(false);
-      });
+      axios
+        .get(BASE_URL + "/userRole/fetchuserrole")
+        .then((res) => {
+          setRole(res.data);
+          setSearchRole(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }, 1000);
 
     return () => clearTimeout(delay);
@@ -171,17 +172,16 @@ function UserRole({ authrztn }) {
     const filteredData = searchRole.filter((data) => {
       return (
         data.col_rolename.toLowerCase().includes(searchTerm) ||
-        (typeof data.col_authorization === 'string' && data.col_authorization.toLowerCase().includes(searchTerm)) ||
+        (typeof data.col_authorization === "string" &&
+          data.col_authorization.toLowerCase().includes(searchTerm)) ||
         formatDate(data.createdAt).toLowerCase().includes(searchTerm) ||
         formatDate(data.updatedAt).toLowerCase().includes(searchTerm) ||
         data.col_desc.toLowerCase().includes(searchTerm)
       );
     });
-  
+
     setRole(filteredData);
   };
-  
-
 
   function formatDate(datetime) {
     const options = {
@@ -211,7 +211,7 @@ function UserRole({ authrztn }) {
           if (response.status === 200) {
             swal({
               title: "User Access Role Deleted Successfully!",
-            text: "The user access role has been deleted successfully.",
+              text: "The user access role has been deleted successfully.",
               icon: "success",
               button: "OK",
             }).then(() => {
@@ -243,7 +243,6 @@ function UserRole({ authrztn }) {
   //     $("#order-listing").DataTable();
   //   }
   // }, [$("#order-listing"), role]);
-
 
   const [visibleButtons, setVisibleButtons] = useState({}); // Initialize as an empty object
   const [isVertical, setIsVertical] = useState({}); // Initialize as an empty object
@@ -292,219 +291,279 @@ function UserRole({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
+          </div>
+        ) : authrztn.includes("User Access Role - View") ? (
+          <div className="right-body-contents">
+            {/*Setting search*/}
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>User Role</p>
                 </div>
-              ) : (
-                authrztn.includes('User Access Role - View') ? (
-        <div className="right-body-contents">
-          {/*Setting search*/}
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>User Role</p>
-              </div>
 
-              { authrztn.includes('User Access Role - Add') && (
-              <div className="button-create-side">
-                <div className="Buttonmodal-new">
-                  <Link to="/createRole" className="button">
-                    <span style={{}}>
-                      <Plus size={25} />
-                    </span>
-                    Create New
-                  </Link>
-                </div>
+                {authrztn.includes("User Access Role - Add") && (
+                  <div className="button-create-side">
+                    <div className="Buttonmodal-new">
+                      <Link to="/createRole" className="button">
+                        <span style={{}}>
+                          <Plus size={25} />
+                        </span>
+                        Create New
+                      </Link>
+                    </div>
+                  </div>
+                )}
               </div>
-              )}
-            </div>
-          </div>{" "}
-          {/*Employeetext-button*/}
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-            <TextField
-              label="Search"
-              variant="outlined"
-              style={{ marginBottom: '10px', 
-              float: 'right',
-              }}
-              InputLabelProps={{
-                style: { fontSize: '14px'},
-              }}
-              InputProps={{
-                style: { fontSize: '14px', width: '250px', height: '50px' },
-              }}
-              onChange={handleSearch}/>
-              <table id="order-listing">
-                <thead>
-                  <tr>
-                    <th className="tableh">Role Name</th>
-                    <th className="tableh">Features</th>
-                    <th className="tableh"> Description</th>
-                    <th className="tableh">Date Created</th>
-                    <th className="tableh">Date Modified</th>
-                    <th className="tableh">Action</th>
-                  </tr>
-                </thead>
-                {role.length > 0 ? (
-                <tbody>
-                  {currentItems.map((data, i) => (
-                    <tr
-                      key={i}
-                      className={i % 2 === 0 ? "even-row" : "odd-row"}>
-                      <td>{data.col_rolename}</td>
-                      <td className="autho">{data.col_authorization}</td>
-                      <td>{data.col_desc}</td>
-                      <td>{formatDate(data.createdAt)}</td>
-                      <td>{formatDate(data.updatedAt)}</td>
-                      <td>
-                      {isVertical[data.col_id] ? (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircleVertical
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.col_id);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-125px', top: '0' }}>
-                            {setButtonVisibles(data.col_id) && (
-                              <div className="choices">
-                                  <button>
-                                  { authrztn.includes('User Access Role - Edit') && (
-                                  <Link
-                                    to={`/editRole/${data.col_id}`}
-                                    style={{
-                                      color: "black",
-                                      textDecoration: "none",
-                                    }}>
-                                    Update
-                                  </Link>
-                                   )}
-                                  </button>
-                                  { authrztn?.includes('User Access Role - Delete') && (
-                                  <button
-                                    className="btn"
-                                    onClick={() => {
-                                      handleDelete(data.col_id);
-                                      closeVisibleButtons();
-                                    }}>
-                                    Delete
-                                  </button>
-                                  )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <div style={{ position: 'relative', display: 'inline-block' }}>
-                          <DotsThreeCircle
-                            size={32}
-                            className="dots-icon"
-                            onClick={() => {
-                              toggleButtons(data.col_id);
-                            }}
-                          />
-                          <div className="float" style={{ position: 'absolute', left: '-50px', top: '0' }}>
-                            {setButtonVisibles(data.col_id) && (
-                              <div className="choices">
-                                  <button>
-                                  { authrztn.includes('User Access Role - Edit') && (
-                                  <Link
-                                    to={`/editRole/${data.col_id}`}
-                                    style={{
-                                      color: "black",
-                                      textDecoration: "none",
-                                    }}>
-                                    Update
-                                  </Link>
-                                   )}
-                                  </button>
-                                  {authrztn.includes('User Access Role - Delete') && (
-                                  <button
-                                  className="btn"
-                                  onClick={() => {
-                                    handleDelete(data.col_id);
-                                    closeVisibleButtons();
-                                  }}>
-                                    Delete
-                                  </button>
-                                   )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      </td>
+            </div>{" "}
+            {/*Employeetext-button*/}
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    className="main-search"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
+
+                <table id="order-listing">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Role Name</th>
+                      <th className="tableh">Features</th>
+                      <th className="tableh"> Description</th>
+                      <th className="tableh">Date Created</th>
+                      <th className="tableh">Date Modified</th>
+                      <th className="tableh">Action</th>
                     </tr>
-                  ))}
-                </tbody>
+                  </thead>
+                  {role.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr
+                          key={i}
+                          className={i % 2 === 0 ? "even-row" : "odd-row"}
+                        >
+                          <td>{data.col_rolename}</td>
+                          <td className="autho">{data.col_authorization}</td>
+                          <td>{data.col_desc}</td>
+                          <td>{formatDate(data.createdAt)}</td>
+                          <td>{formatDate(data.updatedAt)}</td>
+                          <td>
+                            {isVertical[data.col_id] ? (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircleVertical
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.col_id);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-125px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.col_id) && (
+                                    <div className="choices">
+                                      <button>
+                                        {authrztn.includes(
+                                          "User Access Role - Edit"
+                                        ) && (
+                                          <Link
+                                            to={`/editRole/${data.col_id}`}
+                                            style={{
+                                              color: "black",
+                                              textDecoration: "none",
+                                            }}
+                                          >
+                                            Update
+                                          </Link>
+                                        )}
+                                      </button>
+                                      {authrztn?.includes(
+                                        "User Access Role - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(data.col_id);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  position: "relative",
+                                  display: "inline-block",
+                                }}
+                              >
+                                <DotsThreeCircle
+                                  size={32}
+                                  className="dots-icon"
+                                  onClick={() => {
+                                    toggleButtons(data.col_id);
+                                  }}
+                                />
+                                <div
+                                  className="float"
+                                  style={{
+                                    position: "absolute",
+                                    left: "-50px",
+                                    top: "0",
+                                  }}
+                                >
+                                  {setButtonVisibles(data.col_id) && (
+                                    <div className="choices">
+                                      <button>
+                                        {authrztn.includes(
+                                          "User Access Role - Edit"
+                                        ) && (
+                                          <Link
+                                            to={`/editRole/${data.col_id}`}
+                                            style={{
+                                              color: "black",
+                                              textDecoration: "none",
+                                            }}
+                                          >
+                                            Update
+                                          </Link>
+                                        )}
+                                      </button>
+                                      {authrztn.includes(
+                                        "User Access Role - Delete"
+                                      ) && (
+                                        <button
+                                          className="btn"
+                                          onClick={() => {
+                                            handleDelete(data.col_id);
+                                            closeVisibleButtons();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
+                      <h3>No Data Found</h3>
                     </div>
-                )}
-              </table>
+                  )}
+                </table>
+              </div>
             </div>
-          </div>
-          <nav style={{marginTop: '15px'}}>
-            <ul className="pagination" style={{ float: "right" }}>
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                type="button"
-                style={{fontSize: '14px',
-                cursor: 'pointer',
-                color: '#000000',
-                textTransform: 'capitalize',
-              }}
-                className="page-link" 
-                onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
-              </li>
-
-            {generatePages().map((page, index) => (
-                <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
+                    type="button"
                     style={{
-                      fontSize: '14px',
-                      width: '25px',
-                      background: currentPage === page ? '#FFA500' : 'white',
-                      color: currentPage === page ? '#FFFFFF' : '#000000',
-                      border: 'none',
-                      height: '28px',
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
                     }}
-                    className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
-                    onClick={() => handlePageClick(page)}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
                   >
-                    {page}
+                    Previous
                   </button>
                 </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+
+                {generatePages().map((page, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      style={{
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
+                      }}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
                 >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-            ) : (
-              <div className="no-access">
-                <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-                <h3>
-                  You don't have access to this function.
-                </h3>
-              </div>
-            )
-          )}
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
+        )}
       </div>
     </div>
   );

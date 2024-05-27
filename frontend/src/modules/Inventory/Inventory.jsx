@@ -23,7 +23,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [issuance, setIssuance] = useState([]);
   const [searchIssuance, setSearchIssuance] = useState([]);
   const [inventory, setInventory] = useState([]);
-  const [inventoryFilter, setInventoryFilter] = useState('All');
+  const [inventoryFilter, setInventoryFilter] = useState("All");
   const [searchInventory, setSearchInventory] = useState([]);
   const [assembly, setAssembly] = useState([]);
   const [searchAssembly, setSearchAssembly] = useState([]);
@@ -228,47 +228,46 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     reloadTable_inventory();
   }, []);
 
-const handleSearch = (event) => {
-  setCurrentPage(1);
-  const searchTerm = event.target.value.toLowerCase();
+  const handleSearch = (event) => {
+    setCurrentPage(1);
+    const searchTerm = event.target.value.toLowerCase();
 
-  // Helper function to safely check and convert strings to lowercase
-  const safeToLowerCase = (str) => (str ? str.toLowerCase() : '');
+    // Helper function to safely check and convert strings to lowercase
+    const safeToLowerCase = (str) => (str ? str.toLowerCase() : "");
 
-  // Filter each inventory type separately
-  const filteredInventory = searchInventory.filter(
-    (data) =>
-      safeToLowerCase(data.product_code).includes(searchTerm) ||
-      safeToLowerCase(data.product_name).includes(searchTerm) ||
-      safeToLowerCase(data.manufacturer).includes(searchTerm)
-  );
-  setInventory(filteredInventory);
+    // Filter each inventory type separately
+    const filteredInventory = searchInventory.filter(
+      (data) =>
+        safeToLowerCase(data.product_code).includes(searchTerm) ||
+        safeToLowerCase(data.product_name).includes(searchTerm) ||
+        safeToLowerCase(data.manufacturer).includes(searchTerm)
+    );
+    setInventory(filteredInventory);
 
-  const filteredAssembly = searchAssembly.filter(
-    (data) =>
-      safeToLowerCase(data.product_code).includes(searchTerm) ||
-      safeToLowerCase(data.product_name).includes(searchTerm) ||
-      safeToLowerCase(data.manufacturer).includes(searchTerm)
-  );
-  setAssembly(filteredAssembly);
+    const filteredAssembly = searchAssembly.filter(
+      (data) =>
+        safeToLowerCase(data.product_code).includes(searchTerm) ||
+        safeToLowerCase(data.product_name).includes(searchTerm) ||
+        safeToLowerCase(data.manufacturer).includes(searchTerm)
+    );
+    setAssembly(filteredAssembly);
 
-  const filteredSpare = searchSpare.filter(
-    (data) =>
-      safeToLowerCase(data.product_code).includes(searchTerm) ||
-      safeToLowerCase(data.product_name).includes(searchTerm) ||
-      safeToLowerCase(data.manufacturer).includes(searchTerm)
-  );
-  setSpare(filteredSpare);
+    const filteredSpare = searchSpare.filter(
+      (data) =>
+        safeToLowerCase(data.product_code).includes(searchTerm) ||
+        safeToLowerCase(data.product_name).includes(searchTerm) ||
+        safeToLowerCase(data.manufacturer).includes(searchTerm)
+    );
+    setSpare(filteredSpare);
 
-  const filteredSubpart = searchSub.filter(
-    (data) =>
-      safeToLowerCase(data.product_code).includes(searchTerm) ||
-      safeToLowerCase(data.product_name).includes(searchTerm) ||
-      safeToLowerCase(data.manufacturer).includes(searchTerm)
-  );
-  setSubpart(filteredSubpart);
-};
-
+    const filteredSubpart = searchSub.filter(
+      (data) =>
+        safeToLowerCase(data.product_code).includes(searchTerm) ||
+        safeToLowerCase(data.product_name).includes(searchTerm) ||
+        safeToLowerCase(data.manufacturer).includes(searchTerm)
+    );
+    setSubpart(filteredSubpart);
+  };
 
   const handleSearchIssuance = (event) => {
     setCurrentPageIssuance(1);
@@ -291,13 +290,12 @@ const handleSearch = (event) => {
   const isReturnButtonDisabled = (createdAt) => {
     const currentDate = new Date();
     const createdDate = new Date(createdAt);
-  
+
     const differenceInTime = currentDate - createdDate;
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-  
+
     return differenceInDays >= 5;
   };
-  
 
   // Get Issuance
   useEffect(() => {
@@ -589,19 +587,19 @@ const handleSearch = (event) => {
   const handleFilter = (e) => {
     setIsLoading(true);
 
-    const value = e.target.value
+    const value = e.target.value;
 
-    setInventoryFilter(value)
+    setInventoryFilter(value);
 
-    if(value === 'All'){
-      reloadTable_inventory()
-    }else {
+    if (value === "All") {
+      reloadTable_inventory();
+    } else {
       const delay = setTimeout(() => {
         axios
           .get(BASE_URL + "/inventory/fetchInventory_group_filter", {
-            params:{
-              value
-            }
+            params: {
+              value,
+            },
           })
           .then((res) => {
             setInventory(res.data);
@@ -613,13 +611,10 @@ const handleSearch = (event) => {
             setIsLoading(false);
           });
       }, 1000);
-  
+
       return () => clearTimeout(delay);
     }
-
-   
-
-  }
+  };
 
   // useEffect(() => {
   //   // Initialize DataTable when role data is available
@@ -698,9 +693,10 @@ const handleSearch = (event) => {
                     <h1>Inventory</h1>
                   </div>
                   <div className="row">
-                    <div className="col-6 d-flex justify-content-start">
+                    <div className="col-6 d-flex justify-content-md-start justify-content-sm-center justify-content-center">
                       <Form.Select
                         aria-label="item status"
+                        className="select-inv"
                         onChange={(e) => handleFilter(e)}
                         style={{
                           width: "274px",
@@ -716,7 +712,8 @@ const handleSearch = (event) => {
                         <option value={"OTS"}>Out of Stock</option>
                       </Form.Select>
                     </div>
-                    <div className="col-6 d-flex justify-content-end">
+
+                    <div className="col-6 d-flex justify-content-md-end justify-content-center justify-content-sm-center form-inv-search">
                       <TextField
                         label="Search"
                         variant="outlined"
@@ -911,7 +908,7 @@ const handleSearch = (event) => {
                     </span>
                   }
                 >
-                  <div className="tab-titles">
+                  <div className="tab-titles issuance-tab">
                     <h1>Issuance</h1>
                     <div>
                       {authrztn.includes("Inventory - Add") && (
@@ -926,26 +923,28 @@ const handleSearch = (event) => {
                   </div>
                   <div className="table-containss">
                     <div className="main-of-all-tables">
-                      <TextField
-                        label="Search"
-                        variant="outlined"
-                        style={{ marginBottom: "10px", float: "right" }}
-                        InputLabelProps={{
-                          style: { fontSize: "14px" },
-                        }}
-                        InputProps={{
-                          style: {
-                            fontSize: "14px",
-                            width: "250px",
-                            height: "50px",
-                          },
-                        }}
-                        onChange={handleSearchIssuance}
-                      />
+                      <div className="main-table-search">
+                        <TextField
+                          label="Search"
+                          variant="outlined"
+                          style={{ marginBottom: "10px", float: "right" }}
+                          InputLabelProps={{
+                            style: { fontSize: "14px" },
+                          }}
+                          InputProps={{
+                            style: {
+                              fontSize: "14px",
+                              width: "250px",
+                              height: "50px",
+                            },
+                          }}
+                          onChange={handleSearchIssuance}
+                        />
+                      </div>
                       <table className="table-hover" title="View Information">
                         <thead>
                           <tr>
-                            <th className='tableh'>BIS #</th>
+                            <th className="tableh">BIS #</th>
                             <th className="tableh">Issued To</th>
                             <th className="tableh">Origin Site</th>
                             <th className="tableh">MRS #</th>
@@ -956,47 +955,93 @@ const handleSearch = (event) => {
                         </thead>
                         {issuance.length > 0 ? (
                           <tbody>
-                          {currentItemsIssuance.map((data, i) => (
-                            <tr key={i}>
-                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>{data.issuance_id}</td>
-                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
-                                {data.cost_center.name}
-                              </td>
-                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
-                                {data.warehouse.warehouse_name}
-                              </td>
-                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
-                                {data.mrs}
-                              </td>
-                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
-                                {data.masterlist.col_Fname}
-                              </td>
-                              <td onClick={() => navigate(`/approvalIssuance/${data.issuance_id}`)}>
-                                {formatDatetime(data.createdAt)}
-                              </td>
-                              <td>
-                                <Button
-                                  onClick={() => {
-                                    if (data.status === "Approved") {
-                                      navigate(`/returnForm/${data.issuance_id}`);
-                                    }
-                                  }}
-                                  style={{
-                                    fontSize: "12px",
-                                    color: "black",
-                                    cursor: data.status !== "Approved" || isReturnButtonDisabled(data.date_approved)
-                                      ? "not-allowed"
-                                      : "pointer",
-                                  }}
-                                  variant="outline-secondary"
-                                  disabled={isReturnButtonDisabled(data.date_approved)}
+                            {currentItemsIssuance.map((data, i) => (
+                              <tr key={i}>
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/approvalIssuance/${data.issuance_id}`
+                                    )
+                                  }
                                 >
-                                  Return
-                                </Button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
+                                  {data.issuance_id}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/approvalIssuance/${data.issuance_id}`
+                                    )
+                                  }
+                                >
+                                  {data.cost_center.name}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/approvalIssuance/${data.issuance_id}`
+                                    )
+                                  }
+                                >
+                                  {data.warehouse.warehouse_name}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/approvalIssuance/${data.issuance_id}`
+                                    )
+                                  }
+                                >
+                                  {data.mrs}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/approvalIssuance/${data.issuance_id}`
+                                    )
+                                  }
+                                >
+                                  {data.masterlist.col_Fname}
+                                </td>
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/approvalIssuance/${data.issuance_id}`
+                                    )
+                                  }
+                                >
+                                  {formatDatetime(data.createdAt)}
+                                </td>
+                                <td>
+                                  <Button
+                                    onClick={() => {
+                                      if (data.status === "Approved") {
+                                        navigate(
+                                          `/returnForm/${data.issuance_id}`
+                                        );
+                                      }
+                                    }}
+                                    style={{
+                                      fontSize: "12px",
+                                      color: "black",
+                                      cursor:
+                                        data.status !== "Approved" ||
+                                        isReturnButtonDisabled(
+                                          data.date_approved
+                                        )
+                                          ? "not-allowed"
+                                          : "pointer",
+                                    }}
+                                    variant="outline-secondary"
+                                    disabled={isReturnButtonDisabled(
+                                      data.date_approved
+                                    )}
+                                  >
+                                    Return
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
                         ) : (
                           <div className="no-data">
                             <img
@@ -1109,22 +1154,24 @@ const handleSearch = (event) => {
                   </div>
                   <div className="table-containss">
                     <div className="main-of-all-tables">
-                      <TextField
-                        label="Search"
-                        variant="outlined"
-                        style={{ marginBottom: "10px", float: "right" }}
-                        InputLabelProps={{
-                          style: { fontSize: "14px" },
-                        }}
-                        InputProps={{
-                          style: {
-                            fontSize: "14px",
-                            width: "250px",
-                            height: "50px",
-                          },
-                        }}
-                        onChange={handleSearchReturn}
-                      />
+                      <div className="main-table-search">
+                        <TextField
+                          label="Search"
+                          variant="outlined"
+                          style={{ marginBottom: "10px", float: "right" }}
+                          InputLabelProps={{
+                            style: { fontSize: "14px" },
+                          }}
+                          InputProps={{
+                            style: {
+                              fontSize: "14px",
+                              width: "250px",
+                              height: "50px",
+                            },
+                          }}
+                          onChange={handleSearchReturn}
+                        />
+                      </div>
                       <table id="order2-listing" className="table-responsive">
                         <thead>
                           <tr>
@@ -1148,9 +1195,7 @@ const handleSearch = (event) => {
                           <tbody>
                             {currentItemsReturnProd.map((data, i) => (
                               <tr key={i}>
-                                <td>
-                                  {data.issuance.issuance_id}
-                                </td>
+                                <td>{data.issuance.issuance_id}</td>
                                 <td>
                                   {
                                     data.inventory_prd.product_tag_supplier
@@ -1172,49 +1217,52 @@ const handleSearch = (event) => {
                                   {formatDatetime(data.issuance.date_approved)}
                                 </td>
                                 <td>{data.status}</td>
-                                <td >
+                                <td>
                                   <div className="">
                                     <div className="text-center">
-                                    <Button
-                                    style={{ fontSize: "12px", width: '130px', marginBottom: '2px' }}
-                                    className="btn "
-                                    onClick={() =>
-                                      handleMoveToInventory(
-                                        data.id,
-                                        data.inventory_prd.inventory_id,
-                                        data.quantity,
-                                        "product"
-                                      )
-                                    }
-                                    disabled={
-                                      data.status === "Retained" ||
-                                      data.status === "Returned"
-                                    }
-                                  >
-                                    move to inventory
-                                  </Button>
-                                    
+                                      <Button
+                                        style={{
+                                          fontSize: "12px",
+                                          width: "130px",
+                                          marginBottom: "2px",
+                                        }}
+                                        className="btn "
+                                        onClick={() =>
+                                          handleMoveToInventory(
+                                            data.id,
+                                            data.inventory_prd.inventory_id,
+                                            data.quantity,
+                                            "product"
+                                          )
+                                        }
+                                        disabled={
+                                          data.status === "Retained" ||
+                                          data.status === "Returned"
+                                        }
+                                      >
+                                        move to inventory
+                                      </Button>
                                     </div>
-                                    <div className="text-center" >
-                                    <Button
-
-                                    variant='secondary'
-                                    style={{ fontSize: "12px", width: '130px' }}
-                                    className="btn"
-                                    onClick={() =>
-                                      handleRetain(data.id, "product")
-                                    }
-                                    disabled={
-                                      data.status === "Retained" ||
-                                      data.status === "Returned"
-                                    }
-                                  >
-                                    Retain
-                                  </Button>
+                                    <div className="text-center">
+                                      <Button
+                                        variant="secondary"
+                                        style={{
+                                          fontSize: "12px",
+                                          width: "130px",
+                                        }}
+                                        className="btn"
+                                        onClick={() =>
+                                          handleRetain(data.id, "product")
+                                        }
+                                        disabled={
+                                          data.status === "Retained" ||
+                                          data.status === "Returned"
+                                        }
+                                      >
+                                        Retain
+                                      </Button>
                                     </div>
                                   </div>
-                                 
-                                  
                                 </td>
                               </tr>
                             ))}

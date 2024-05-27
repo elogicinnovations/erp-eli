@@ -89,17 +89,17 @@ function MasterList({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
   };
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -147,7 +147,7 @@ function MasterList({ authrztn }) {
     cname: "",
     caddress: "",
     cnum: "09",
-    cemail: "" ,
+    cemail: "",
     cuname: "",
     crole: "",
     cdept: "",
@@ -244,16 +244,16 @@ function MasterList({ authrztn }) {
     setShowModal(false);
     // Clear the form fields
     setFormData({
-     cname: "",
-    caddress: "",
-    cnum: "09",
-    cemail: "" ,
-    cuname: "",
-    crole: "",
-    cdept: "",
-    cpass: "",
-    cpass2: "",
-    cstatus: true,
+      cname: "",
+      caddress: "",
+      cnum: "09",
+      cemail: "",
+      cuname: "",
+      crole: "",
+      cdept: "",
+      cpass: "",
+      cpass2: "",
+      cstatus: true,
     });
   };
 
@@ -274,7 +274,7 @@ function MasterList({ authrztn }) {
         ustatus: updateData.col_status === "Active",
         updateId: updateData.col_id,
       });
-      setIsAccount(updateData.user_type === "Standard User" ? true : false) 
+      setIsAccount(updateData.user_type === "Standard User" ? true : false);
     } else {
       setUpdateFormData({
         uaname: "",
@@ -537,7 +537,7 @@ function MasterList({ authrztn }) {
             cname: "",
             caddress: "",
             cnum: "09",
-            cemail: "" ,
+            cemail: "",
             cuname: "",
             crole: "",
             cdept: "",
@@ -545,7 +545,7 @@ function MasterList({ authrztn }) {
             cpass2: "",
             cstatus: true,
           });
-          setIsAccount(false)
+          setIsAccount(false);
 
           setValidated(false);
         });
@@ -733,7 +733,7 @@ function MasterList({ authrztn }) {
                 onChange={handleSearch}
               />
             </div>
-            
+
             <div className="table-containss">
               {masterListt.length > 0 ? (
                 <div className="users-box-main-containers">
@@ -748,7 +748,8 @@ function MasterList({ authrztn }) {
                           )}
                         </div>
 
-                        {(authrztn?.includes("Master List - Edit") || authrztn?.includes("Master List - Delete")) && (
+                        {(authrztn?.includes("Master List - Edit") ||
+                          authrztn?.includes("Master List - Delete")) && (
                           <div className="three-dots-section">
                             {isVertical[data.col_id] ? (
                               <div
@@ -900,7 +901,9 @@ function MasterList({ authrztn }) {
 
             <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
                     type="button"
                     style={{
@@ -916,28 +919,43 @@ function MasterList({ authrztn }) {
                   </button>
                 </li>
 
-
-                  {generatePages().map((page, index) => (
-                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                {generatePages().map((page, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
                     <button
                       style={{
-                        fontSize: '14px',
-                        width: '25px',
-                        background: currentPage === page ? '#FFA500' : 'white',
-                        color: currentPage === page ? '#FFFFFF' : '#000000',
-                        border: 'none',
-                        height: '28px',
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
                       }}
-                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
-                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >
@@ -959,15 +977,9 @@ function MasterList({ authrztn }) {
       <Modal show={showModal} onHide={handleClose} size="xl">
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: "24px" }}>
-            {isAccount === true ? (
-              <>Add New User</>
-            ) : (
-              <>Add New Employee</>
-            )} 
-
-
+            {isAccount === true ? <>Add New User</> : <>Add New Employee</>}
           </Modal.Title>
-          <div className="form-group d-flex flex-row ">
+          <div className="form-group d-flex master-toggle">
             <React.Fragment>
               <label className="userstatus">User Status</label>
               <input
@@ -992,7 +1004,7 @@ function MasterList({ authrztn }) {
                 style={{
                   position: "absolute",
                   height: "0.5px",
-                  width: "78%",
+                  width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "65%",
                   left: "18rem",
@@ -1047,8 +1059,7 @@ function MasterList({ authrztn }) {
                     value={formData.cnum}
                     onChange={handleFormChange}
                     onKeyDown={(e) => {
-                      ["e", "E", "-"].includes(e.key) &&
-                        e.preventDefault();
+                      ["e", "E", "-"].includes(e.key) && e.preventDefault();
                     }}
                     name="cnum"
                     required
@@ -1100,9 +1111,10 @@ function MasterList({ authrztn }) {
               className="gen-info"
               style={{ fontSize: "20px", position: "relative" }}
             >
-              <input 
-              type="checkbox"
-              onChange={(e) => setIsAccount(!isAccount)}
+              <input
+                className="me-1"
+                type="checkbox"
+                onChange={(e) => setIsAccount(!isAccount)}
               />
               Account Access
               <span
@@ -1110,199 +1122,201 @@ function MasterList({ authrztn }) {
                 style={{
                   position: "absolute",
                   height: "0.5px",
-                  width: "82%",
+                  width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "65%",
                   left: "16rem",
                   transform: "translateY(-50%)",
                 }}
               ></span>
-              
             </div>
 
-              {isAccount === true ? (
-                <>
-                  <div className="row mt-3">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Username:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter your username"
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={formData.cuname}
-                    onChange={handleFormChange}
-                    name="cuname"
-                    
-                  />
-                  {/* <input type="text" style={{height: '40px', fontSize: '15px'}} placeholder="Complete Name" className="form-control" value={formData.cname} onChange={handleFormChange} name="cname" required /> */}
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Role Type:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label="Default select example"
-                    name="crole"
-                    value={formData.crole}
-                    onChange={handleFormChange}
-                    
-                    style={{ height: "40px", fontSize: "15px" }}
-                  >
-                    <option disabled value="">
-                      Role
-                    </option>
-                    {roles.map((role) => (
-                      <option key={role.col_id} value={role.col_id}>
-                        {role.col_rolename}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
+            {isAccount === true ? (
+              <>
+                <div className="row mt-3">
+                  <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput1">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Username:{" "}
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter your username"
+                        style={{ height: "40px", fontSize: "15px" }}
+                        value={formData.cuname}
+                        onChange={handleFormChange}
+                        name="cuname"
+                      />
+                      {/* <input type="text" style={{height: '40px', fontSize: '15px'}} placeholder="Complete Name" className="form-control" value={formData.cname} onChange={handleFormChange} name="cname" required /> */}
+                    </Form.Group>
                   </div>
-
-                  <div className="row">
-                    <div className="col-6">
-                      <Form.Group controlId="exampleForm.ControlInput1">
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Password:{" "}
-                        </Form.Label>
-                        <Form.Control
-                          type={showPassword ? "text" : "password"}
-                          value={formData.cpass}
-                          onChange={handleFormChange}
-                          required={
-                            formData.cuname != "" && formData.crole != "" && formData.cemail != ""
-                          }
-                          name="cpass"
-                          placeholder="Enter your password"
-                          style={{ height: "40px", fontSize: "15px" }}
-                        />
-                        <div className="show">
-                          {showPassword ? (
-                            <EyeSlash
-                              size={32}
-                              color="#1a1a1a"
-                              weight="light"
-                              // className="eye"
-                              onClick={togglePasswordVisibility}
-                            />
-                          ) : (
-                            <Eye
-                              size={32}
-                              color="#1a1a1a"
-                              weight="light"
-                              // className="eye"
-                              onClick={togglePasswordVisibility}
-                            />
-                          )}
-                        </div>
-                      </Form.Group>
-                    </div>
-                    <div className="col-6">
-                      <Form.Group controlId="exampleForm.ControlInput2">
-                        <Form.Label style={{ fontSize: "20px" }}>
-                          Confirm Password:{" "}
-                        </Form.Label>
-                        <Form.Control
-                          type={showConfirmPassword ? "text" : "password"}
-                          value={formData.cpass2}
-                          onChange={handleFormChange}
-                          required={
-                            formData.cuname != "" && formData.crole != "" && formData.cemail != ""
-                          }
-                          name="cpass2"
-                          placeholder="Confirm your password"
-                          style={{ height: "40px", fontSize: "15px" }}
-                        />
-                        <div className="show">
-                          {showConfirmPassword ? (
-                            <EyeSlash
-                              size={32}
-                              color="#1a1a1a"
-                              weight="light"
-                              // className="eye"
-                              onClick={toggleConfirmPasswordVisibility}
-                            />
-                          ) : (
-                            <Eye
-                              size={32}
-                              color="#1a1a1a"
-                              weight="light"
-                              // className="eye"
-                              onClick={toggleConfirmPasswordVisibility}
-                            />
-                          )}
-                        </div>
-                      </Form.Group>
-                    </div>
-
-                    {formData.cpass !== "" && (
-                      <>
-                        {!validatePassword(formData.cpass) && (
-                          <ul
-                            style={{
-                              color: "red",
-                              fontSize: "12px",
-                              marginTop: "5px",
-                              listStyleType: "disc",
-                            }}
-                          >
-                            <li>Password must contain at least 8 length.</li>
-                            <li>
-                              Password must contain at least one capital letter.
-                            </li>
-                            <li>Password must contain at least one small letter.</li>
-                            <li>Password must contain at least one number.</li>
-                            <li>
-                              Password must contain at least one special character
-                              [!@#$%^&*()_+]
-                            </li>
-                          </ul>
-                        )}
-                      </>
-                    )}
-                    {formData.cpass !== "" && formData.cpass2 !== "" && (
-                      <>
-                        {passwordsMatch ? (
-                          <p
-                            style={{
-                              color: "green",
-                              fontSize: "12px",
-                              marginTop: "5px",
-                            }}
-                          >
-                            Passwords match!
-                          </p>
-                        ) : (
-                          <p
-                            style={{
-                              color: "red",
-                              fontSize: "12px",
-                              marginTop: "5px",
-                            }}
-                          >
-                            Passwords do not match!
-                          </p>
-                        )}
-                      </>
-                    )}
+                  <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Role Type:{" "}
+                      </Form.Label>
+                      <Form.Select
+                        aria-label="Default select example"
+                        name="crole"
+                        value={formData.crole}
+                        onChange={handleFormChange}
+                        style={{ height: "40px", fontSize: "15px" }}
+                      >
+                        <option disabled value="">
+                          Role
+                        </option>
+                        {roles.map((role) => (
+                          <option key={role.col_id} value={role.col_id}>
+                            {role.col_rolename}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
                   </div>
-                </>
-              ) : (
-                <div className="text-center">
-                  <h3 class="text-danger mt-2">
-                    (Click the Checkbox beside the "Account Access" for User Account creation)
-                  </h3>
                 </div>
-              )}
 
-            
+                <div className="row">
+                  <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput1">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Password:{" "}
+                      </Form.Label>
+                      <Form.Control
+                        type={showPassword ? "text" : "password"}
+                        value={formData.cpass}
+                        onChange={handleFormChange}
+                        required={
+                          formData.cuname != "" &&
+                          formData.crole != "" &&
+                          formData.cemail != ""
+                        }
+                        name="cpass"
+                        placeholder="Enter your password"
+                        style={{ height: "40px", fontSize: "15px" }}
+                      />
+                      <div className="show">
+                        {showPassword ? (
+                          <EyeSlash
+                            size={32}
+                            color="#1a1a1a"
+                            weight="light"
+                            // className="eye"
+                            onClick={togglePasswordVisibility}
+                          />
+                        ) : (
+                          <Eye
+                            size={32}
+                            color="#1a1a1a"
+                            weight="light"
+                            // className="eye"
+                            onClick={togglePasswordVisibility}
+                          />
+                        )}
+                      </div>
+                    </Form.Group>
+                  </div>
+                  <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Confirm Password:{" "}
+                      </Form.Label>
+                      <Form.Control
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={formData.cpass2}
+                        onChange={handleFormChange}
+                        required={
+                          formData.cuname != "" &&
+                          formData.crole != "" &&
+                          formData.cemail != ""
+                        }
+                        name="cpass2"
+                        placeholder="Confirm your password"
+                        style={{ height: "40px", fontSize: "15px" }}
+                      />
+                      <div className="show">
+                        {showConfirmPassword ? (
+                          <EyeSlash
+                            size={32}
+                            color="#1a1a1a"
+                            weight="light"
+                            // className="eye"
+                            onClick={toggleConfirmPasswordVisibility}
+                          />
+                        ) : (
+                          <Eye
+                            size={32}
+                            color="#1a1a1a"
+                            weight="light"
+                            // className="eye"
+                            onClick={toggleConfirmPasswordVisibility}
+                          />
+                        )}
+                      </div>
+                    </Form.Group>
+                  </div>
+
+                  {formData.cpass !== "" && (
+                    <>
+                      {!validatePassword(formData.cpass) && (
+                        <ul
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "5px",
+                            listStyleType: "disc",
+                          }}
+                        >
+                          <li>Password must contain at least 8 length.</li>
+                          <li>
+                            Password must contain at least one capital letter.
+                          </li>
+                          <li>
+                            Password must contain at least one small letter.
+                          </li>
+                          <li>Password must contain at least one number.</li>
+                          <li>
+                            Password must contain at least one special character
+                            [!@#$%^&*()_+]
+                          </li>
+                        </ul>
+                      )}
+                    </>
+                  )}
+                  {formData.cpass !== "" && formData.cpass2 !== "" && (
+                    <>
+                      {passwordsMatch ? (
+                        <p
+                          style={{
+                            color: "green",
+                            fontSize: "12px",
+                            marginTop: "5px",
+                          }}
+                        >
+                          Passwords match!
+                        </p>
+                      ) : (
+                        <p
+                          style={{
+                            color: "red",
+                            fontSize: "12px",
+                            marginTop: "5px",
+                          }}
+                        >
+                          Passwords do not match!
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="text-center">
+                <h3 class="text-danger mt-2">
+                  (Click the Checkbox beside the "Account Access" for User
+                  Account creation)
+                </h3>
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -1311,9 +1325,11 @@ function MasterList({ authrztn }) {
               size="md"
               style={{ fontSize: "20px" }}
               disabled={
-                (formData.cuname != "" && formData.crole != "" && formData.cemail != "") ? (
-                  !passwordsMatch || !validatePassword(formData.cpass)
-                ) : false
+                formData.cuname != "" &&
+                formData.crole != "" &&
+                formData.cemail != ""
+                  ? !passwordsMatch || !validatePassword(formData.cpass)
+                  : false
               }
             >
               Add
@@ -1419,8 +1435,7 @@ function MasterList({ authrztn }) {
                     value={updateFormData.uanum}
                     onChange={handleUpdateFormChange}
                     onKeyDown={(e) => {
-                      ["e", "E", "-"].includes(e.key) &&
-                        e.preventDefault();
+                      ["e", "E", "-"].includes(e.key) && e.preventDefault();
                     }}
                     name="uanum"
                     required
@@ -1474,10 +1489,10 @@ function MasterList({ authrztn }) {
               className="gen-info"
               style={{ fontSize: "20px", position: "relative" }}
             >
-               <input 
-              type="checkbox"
-              checked={isAccount === true}
-              onChange={(e) => setIsAccount(!isAccount)}
+              <input
+                type="checkbox"
+                checked={isAccount === true}
+                onChange={(e) => setIsAccount(!isAccount)}
               />
               Account Access
               <span
@@ -1495,200 +1510,212 @@ function MasterList({ authrztn }) {
             </div>
 
             {isAccount === true ? (
-                <>
-                     <div className="row mt-3">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Username:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={updateFormData.uauname}
-                    onChange={handleUpdateFormChange}
-                    name="uauname"
-                    required
-                    placeholder="Enter your name"
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Role Type:{" "}
-                  </Form.Label>
-                  <Form.Select
-                    aria-label="Default select example"
-                    name="uarole"
-                    value={updateFormData.uarole === null ? "" : updateFormData.uarole}
-                    onChange={handleUpdateFormChange}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                  >
-                    <option disabled value="">
-                      No Role Selected
-                    </option>
-                    {roles.map((role) => (
-                      <option key={role.col_roleID} value={role.col_id}>
-                        {role.col_rolename}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
-            </div>
-
-            {!changePass && (
-              <div className="change-pass">
-                <button
-                  className="change-password"
-                  type="button"
-                  onClick={handleToggleChangePass}
-                >
-                  Change Password
-                </button>
-              </div>
-            )}
-
-            {changePass && (
-              <div className="row">
-                <div className="col-6"></div>
-
-                <div className="col-6"></div>
-
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput1">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      New Password:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type={showPassword ? "text" : "password"}
-                      onChange={handleUpdateFormChange}
-                      placeholder="Enter your password"
-                      name="uapass"
-                      style={{ height: "40px", fontSize: "15px" }}
-                      required={
-                        updateFormData.uapass != "" && updateFormData.uarole != "" && updateFormData.uaemail != ""
-                      }
-                    />
-                    <div className="show">
-                      {showPassword ? (
-                        <EyeSlash
-                          size={32}
-                          color="#1a1a1a"
-                          weight="light"
-                          onClick={togglePasswordVisibility}
-                        />
-                      ) : (
-                        <Eye
-                          size={32}
-                          color="#1a1a1a"
-                          weight="light"
-                          onClick={togglePasswordVisibility}
-                        />
-                      )}
-                    </div>
-                  </Form.Group>
+              <>
+                <div className="row mt-3">
+                  <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput1">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Username:{" "}
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={updateFormData.uauname}
+                        onChange={handleUpdateFormChange}
+                        name="uauname"
+                        required
+                        placeholder="Enter your name"
+                        style={{ height: "40px", fontSize: "15px" }}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-6">
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Role Type:{" "}
+                      </Form.Label>
+                      <Form.Select
+                        aria-label="Default select example"
+                        name="uarole"
+                        value={
+                          updateFormData.uarole === null
+                            ? ""
+                            : updateFormData.uarole
+                        }
+                        onChange={handleUpdateFormChange}
+                        required
+                        style={{ height: "40px", fontSize: "15px" }}
+                      >
+                        <option disabled value="">
+                          No Role Selected
+                        </option>
+                        {roles.map((role) => (
+                          <option key={role.col_roleID} value={role.col_id}>
+                            {role.col_rolename}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
                 </div>
-                <div className="col-6">
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Confirm Password:{" "}
-                    </Form.Label>
-                    <Form.Control
-                      type={showConfirmPassword ? "text" : "password"}
-                      onChange={handleUpdateFormChange}
-                      name="confirmPassword"
-                      placeholder="Confirm your password"
-                      style={{ height: "40px", fontSize: "15px" }}
-                      required={
-                        updateFormData.uapass != "" && updateFormData.uarole != "" && updateFormData.uaemail != ""
-                      }
-                    />
-                    <div className="show">
-                      {showConfirmPassword ? (
-                        <EyeSlash
-                          size={32}
-                          color="#1a1a1a"
-                          weight="light"
-                          onClick={toggleConfirmPasswordVisibility}
+
+                {!changePass && (
+                  <div className="change-pass">
+                    <button
+                      className="change-password"
+                      type="button"
+                      onClick={handleToggleChangePass}
+                    >
+                      Change Password
+                    </button>
+                  </div>
+                )}
+
+                {changePass && (
+                  <div className="row">
+                    <div className="col-6"></div>
+
+                    <div className="col-6"></div>
+
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          New Password:{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type={showPassword ? "text" : "password"}
+                          onChange={handleUpdateFormChange}
+                          placeholder="Enter your password"
+                          name="uapass"
+                          style={{ height: "40px", fontSize: "15px" }}
+                          required={
+                            updateFormData.uapass != "" &&
+                            updateFormData.uarole != "" &&
+                            updateFormData.uaemail != ""
+                          }
                         />
-                      ) : (
-                        <Eye
-                          size={32}
-                          color="#1a1a1a"
-                          weight="light"
-                          onClick={toggleConfirmPasswordVisibility}
-                        />
-                      )}
-                    </div>
-                  </Form.Group>
-                </div>
-                {updateFormData.uapass !== "" &&
-                  updateFormData.confirmPassword !== "" && (
-                    <>
-                      {UpdatevalidatePassword(updateFormData.uapass) ? (
-                        <>
-                          {UpdatepasswordsMatch ? (
-                            <p
-                              style={{
-                                color: "green",
-                                fontSize: "12px",
-                                marginTop: "5px",
-                              }}
-                            >
-                              Passwords match!
-                            </p>
+                        <div className="show">
+                          {showPassword ? (
+                            <EyeSlash
+                              size={32}
+                              color="#1a1a1a"
+                              weight="light"
+                              onClick={togglePasswordVisibility}
+                            />
                           ) : (
-                            <p
+                            <Eye
+                              size={32}
+                              color="#1a1a1a"
+                              weight="light"
+                              onClick={togglePasswordVisibility}
+                            />
+                          )}
+                        </div>
+                      </Form.Group>
+                    </div>
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Confirm Password:{" "}
+                        </Form.Label>
+                        <Form.Control
+                          type={showConfirmPassword ? "text" : "password"}
+                          onChange={handleUpdateFormChange}
+                          name="confirmPassword"
+                          placeholder="Confirm your password"
+                          style={{ height: "40px", fontSize: "15px" }}
+                          required={
+                            updateFormData.uapass != "" &&
+                            updateFormData.uarole != "" &&
+                            updateFormData.uaemail != ""
+                          }
+                        />
+                        <div className="show">
+                          {showConfirmPassword ? (
+                            <EyeSlash
+                              size={32}
+                              color="#1a1a1a"
+                              weight="light"
+                              onClick={toggleConfirmPasswordVisibility}
+                            />
+                          ) : (
+                            <Eye
+                              size={32}
+                              color="#1a1a1a"
+                              weight="light"
+                              onClick={toggleConfirmPasswordVisibility}
+                            />
+                          )}
+                        </div>
+                      </Form.Group>
+                    </div>
+                    {updateFormData.uapass !== "" &&
+                      updateFormData.confirmPassword !== "" && (
+                        <>
+                          {UpdatevalidatePassword(updateFormData.uapass) ? (
+                            <>
+                              {UpdatepasswordsMatch ? (
+                                <p
+                                  style={{
+                                    color: "green",
+                                    fontSize: "12px",
+                                    marginTop: "5px",
+                                  }}
+                                >
+                                  Passwords match!
+                                </p>
+                              ) : (
+                                <p
+                                  style={{
+                                    color: "red",
+                                    fontSize: "12px",
+                                    marginTop: "5px",
+                                  }}
+                                >
+                                  Passwords do not match!
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <ul
                               style={{
                                 color: "red",
                                 fontSize: "12px",
                                 marginTop: "5px",
+                                listStyleType: "disc",
                               }}
                             >
-                              Passwords do not match!
-                            </p>
+                              <li>
+                                Password must contain at least 8 characters.
+                              </li>
+                              <li>
+                                Password must contain at least one capital
+                                letter.
+                              </li>
+                              <li>
+                                Password must contain at least one small letter.
+                              </li>
+                              <li>
+                                Password must contain at least one number.
+                              </li>
+                              <li>
+                                Password must contain at least one special
+                                character [!@#$%^&*()_+]
+                              </li>
+                            </ul>
                           )}
                         </>
-                      ) : (
-                        <ul
-                          style={{
-                            color: "red",
-                            fontSize: "12px",
-                            marginTop: "5px",
-                            listStyleType: "disc",
-                          }}
-                        >
-                          <li>Password must contain at least 8 characters.</li>
-                          <li>
-                            Password must contain at least one capital letter.
-                          </li>
-                          <li>
-                            Password must contain at least one small letter.
-                          </li>
-                          <li>Password must contain at least one number.</li>
-                          <li>
-                            Password must contain at least one special character
-                            [!@#$%^&*()_+]
-                          </li>
-                        </ul>
                       )}
-                    </>
-                  )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center">
+                <h3 class="text-danger mt-2">
+                  (Click the Checkbox beside the "Account Access" for User
+                  Account creation)
+                </h3>
               </div>
             )}
-                </>
-              ) : (
-                <div className="text-center">
-                  <h3 class="text-danger mt-2">
-                    (Click the Checkbox beside the "Account Access" for User Account creation)
-                  </h3>
-                </div>
-              )}
-
-           
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -1697,10 +1724,13 @@ function MasterList({ authrztn }) {
               className=""
               style={{ fontSize: "20px" }}
               disabled={
-                (updateFormData.uauname != null && updateFormData.uarole != null && updateFormData.uaemail != "") ? (
-                  (!UpdatepasswordsMatch && (changePass || !isFormModified)) ||
-                  !UpdatevalidatePassword(updateFormData.uapass)
-                ) : false
+                updateFormData.uauname != null &&
+                updateFormData.uarole != null &&
+                updateFormData.uaemail != ""
+                  ? (!UpdatepasswordsMatch &&
+                      (changePass || !isFormModified)) ||
+                    !UpdatevalidatePassword(updateFormData.uapass)
+                  : false
               }
             >
               Update
