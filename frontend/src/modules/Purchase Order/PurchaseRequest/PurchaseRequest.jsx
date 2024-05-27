@@ -67,7 +67,7 @@ function PurchaseRequest({ authrztn }) {
   const [showRejustify, setshowRejustify] = useState(false);
   const [Rejustifyremarks, setRejustifyremarks] = useState("");
   const [rejustifyFileURL, setRejustifyFileURL] = useState("");
-  const [department, setDepartment] = useState('');
+  const [department, setDepartment] = useState("");
   const [RejustifyFile, setRejustifyFile] = useState([]);
   const handleCloseRejustify = () => setshowRejustify(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +79,7 @@ function PurchaseRequest({ authrztn }) {
       var decoded = jwtDecode(token);
 
       // console.log(decoded)
-      setDepartment(decoded.department_id)
+      setDepartment(decoded.department_id);
       setuserId(decoded.id);
     }
   };
@@ -116,10 +116,10 @@ function PurchaseRequest({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -128,7 +128,7 @@ function PurchaseRequest({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -625,8 +625,8 @@ function PurchaseRequest({ authrztn }) {
                                     data.status === "For-Canvassing"
                                       ? navigate(`/forCanvass/${data.id}`)
                                       : data.status === "On-Canvass"
-                                        ? navigate(`/onCanvass/${data.id}`)
-                                        : navigate(
+                                      ? navigate(`/onCanvass/${data.id}`)
+                                      : navigate(
                                           `/purchaseRequestPreview/${data.id}`
                                         )
                                   }
@@ -638,8 +638,8 @@ function PurchaseRequest({ authrztn }) {
                                     data.status === "For-Canvassing"
                                       ? navigate(`/forCanvass/${data.id}`)
                                       : data.status === "On-Canvass"
-                                        ? navigate(`/onCanvass/${data.id}`)
-                                        : navigate(
+                                      ? navigate(`/onCanvass/${data.id}`)
+                                      : navigate(
                                           `/purchaseRequestPreview/${data.id}`
                                         )
                                   }
@@ -651,8 +651,8 @@ function PurchaseRequest({ authrztn }) {
                                     data.status === "For-Canvassing"
                                       ? navigate(`/forCanvass/${data.id}`)
                                       : data.status === "On-Canvass"
-                                        ? navigate(`/onCanvass/${data.id}`)
-                                        : navigate(
+                                      ? navigate(`/onCanvass/${data.id}`)
+                                      : navigate(
                                           `/purchaseRequestPreview/${data.id}`
                                         )
                                   }
@@ -664,8 +664,8 @@ function PurchaseRequest({ authrztn }) {
                                     data.status === "For-Canvassing"
                                       ? navigate(`/forCanvass/${data.id}`)
                                       : data.status === "On-Canvass"
-                                        ? navigate(`/onCanvass/${data.id}`)
-                                        : navigate(
+                                      ? navigate(`/onCanvass/${data.id}`)
+                                      : navigate(
                                           `/purchaseRequestPreview/${data.id}`
                                         )
                                   }
@@ -683,12 +683,16 @@ function PurchaseRequest({ authrztn }) {
                                           width: "105px",
                                         }}
                                       >
-                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'Pending PR' : data.status}
+                                        {data.status === "For-Rejustify"
+                                          ? "Rejustified"
+                                          : data.status === "On-Canvass"
+                                          ? "Pending PR"
+                                          : data.status}
                                       </div>
                                     </>
                                   ) : (
                                     <>
-                                       <div
+                                      <div
                                         style={{
                                           backgroundColor: "#5C636A",
                                           fontSize: "10px",
@@ -699,19 +703,22 @@ function PurchaseRequest({ authrztn }) {
                                           width: "105px",
                                         }}
                                       >
-                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
+                                        {data.status === "For-Rejustify"
+                                          ? "Rejustified"
+                                          : data.status === "On-Canvass"
+                                          ? "For-PO"
+                                          : data.status}
                                       </div>
                                     </>
                                   )}
-                                  
                                 </td>
                                 <td
                                   onClick={() =>
                                     data.status === "For-Canvassing"
                                       ? navigate(`/forCanvass/${data.id}`)
                                       : data.status === "On-Canvass"
-                                        ? navigate(`/onCanvass/${data.id}`)
-                                        : navigate(
+                                      ? navigate(`/onCanvass/${data.id}`)
+                                      : navigate(
                                           `/purchaseRequestPreview/${data.id}`
                                         )
                                   }
@@ -724,8 +731,8 @@ function PurchaseRequest({ authrztn }) {
                                     data.status === "For-Canvassing"
                                       ? navigate(`/forCanvass/${data.id}`)
                                       : data.status === "On-Canvass"
-                                        ? navigate(`/onCanvass/${data.id}`)
-                                        : navigate(
+                                      ? navigate(`/onCanvass/${data.id}`)
+                                      : navigate(
                                           `/purchaseRequestPreview/${data.id}`
                                         )
                                   }
@@ -733,10 +740,11 @@ function PurchaseRequest({ authrztn }) {
                                   {data.remarks}
                                 </td>
                                 <td>
-                                  {department === data.masterlist.department_id ? (
+                                  {userId ===
+                                  data.masterlist_id ? (
                                     <>
                                       <div className="d-flex flex-direction-row align-items-center">
-                                        {authrztn.includes("PR - Reject") &&
+                                        {
                                           data.status !== "Cancelled" &&
                                           data.status !== "Rejected" &&
                                           data.status !== "For-Rejustify" &&
@@ -748,7 +756,10 @@ function PurchaseRequest({ authrztn }) {
                                             <button
                                               className="btn btn-danger"
                                               onClick={() =>
-                                                CancelRequest(data.id, data.status)
+                                                CancelRequest(
+                                                  data.id,
+                                                  data.status
+                                                )
                                               }
                                             >
                                               Cancel
@@ -759,7 +770,6 @@ function PurchaseRequest({ authrztn }) {
                                   ) : (
                                     <></>
                                   )}
-
                                 </td>
                               </tr>
                               <tr>
@@ -799,6 +809,15 @@ function PurchaseRequest({ authrztn }) {
                                               fontWeight: "bold",
                                             }}
                                           >
+                                            Remarks
+                                          </th>
+                                          <th
+                                            style={{
+                                              backgroundColor: "inherit",
+                                              fontFamily: "Arial, sans-serif",
+                                              fontWeight: "bold",
+                                            }}
+                                          >
                                             Date
                                           </th>
                                         </tr>
@@ -806,12 +825,14 @@ function PurchaseRequest({ authrztn }) {
                                       <tbody>
                                         {specificPR.map((history, i) => (
                                           <tr key={i}>
-                                            {history.status === "For-Rejustify" ? (
+                                            {/* {history.status ===
+                                            "For-Rejustify" ? (
                                               <td
                                                 style={{
                                                   fontSize: "14px",
                                                   padding: "10px",
-                                                  fontFamily: "Arial, sans-serif",
+                                                  fontFamily:
+                                                    "Arial, sans-serif",
                                                 }}
                                                 onClick={() => {
                                                   handleRejustify(
@@ -831,7 +852,10 @@ function PurchaseRequest({ authrztn }) {
                                                     backgroundColor: "red",
                                                   }}
                                                 >
-                                                  {history.status === "For-Rejustify" ? 'Rejustified' : history.status}
+                                                  {history.status ===
+                                                  "For-Rejustify"
+                                                    ? "Rejustified"
+                                                    : history.status}
                                                 </div>
                                               </td>
                                             ) : (
@@ -839,12 +863,13 @@ function PurchaseRequest({ authrztn }) {
                                                 style={{
                                                   fontSize: "14px",
                                                   padding: "10px",
-                                                  fontFamily: "Arial, sans-serif",
+                                                  fontFamily:
+                                                    "Arial, sans-serif",
                                                 }}
                                               >
                                                 {history.status}
                                               </td>
-                                            )}
+                                            )} */}
                                             <td
                                               style={{
                                                 fontSize: "14px",
@@ -852,7 +877,30 @@ function PurchaseRequest({ authrztn }) {
                                                 fontFamily: "Arial, sans-serif",
                                               }}
                                             >
-                                              {formatDatetime(history.createdAt)}
+                                              {history.status === "On-Canvass"
+                                                ? "For-PO"
+                                                : history.status}
+                                            </td>
+
+                                            <td
+                                              style={{
+                                                fontSize: "14px",
+                                                padding: "10px",
+                                                fontFamily: "Arial, sans-serif",
+                                              }}
+                                            >
+                                              {history.remarks === null ? "N/A" : history.remarks}
+                                            </td>
+                                            <td
+                                              style={{
+                                                fontSize: "14px",
+                                                padding: "10px",
+                                                fontFamily: "Arial, sans-serif",
+                                              }}
+                                            >
+                                              {formatDatetime(
+                                                history.createdAt
+                                              )}
                                             </td>
                                           </tr>
                                         ))}
@@ -889,8 +937,8 @@ function PurchaseRequest({ authrztn }) {
                                         data.status === "For-Canvassing"
                                           ? navigate(`/forCanvass/${data.id}`)
                                           : data.status === "On-Canvass"
-                                            ? navigate(`/onCanvass/${data.id}`)
-                                            : navigate(
+                                          ? navigate(`/onCanvass/${data.id}`)
+                                          : navigate(
                                               `/purchaseRequestPreview/${data.id}`
                                             )
                                       }
@@ -902,8 +950,8 @@ function PurchaseRequest({ authrztn }) {
                                         data.status === "For-Canvassing"
                                           ? navigate(`/forCanvass/${data.id}`)
                                           : data.status === "On-Canvass"
-                                            ? navigate(`/onCanvass/${data.id}`)
-                                            : navigate(
+                                          ? navigate(`/onCanvass/${data.id}`)
+                                          : navigate(
                                               `/purchaseRequestPreview/${data.id}`
                                             )
                                       }
@@ -915,67 +963,77 @@ function PurchaseRequest({ authrztn }) {
                                         data.status === "For-Canvassing"
                                           ? navigate(`/forCanvass/${data.id}`)
                                           : data.status === "On-Canvass"
-                                            ? navigate(`/onCanvass/${data.id}`)
-                                            : navigate(
+                                          ? navigate(`/onCanvass/${data.id}`)
+                                          : navigate(
                                               `/purchaseRequestPreview/${data.id}`
                                             )
                                       }
                                     >
-                                      {data.masterlist.department.department_name}
+                                      {
+                                        data.masterlist.department
+                                          .department_name
+                                      }
                                     </td>
                                     <td
                                       onClick={() =>
                                         data.status === "For-Canvassing"
                                           ? navigate(`/forCanvass/${data.id}`)
                                           : data.status === "On-Canvass"
-                                            ? navigate(`/onCanvass/${data.id}`)
-                                            : navigate(
+                                          ? navigate(`/onCanvass/${data.id}`)
+                                          : navigate(
                                               `/purchaseRequestPreview/${data.id}`
                                             )
                                       }
                                     >
                                       {data.isPRcomplete === false ? (
-                                    <>
-                                      <div
-                                        style={{
-                                          backgroundColor: "#5C636A",
-                                          fontSize: "10px",
-                                          color: "white",
-                                          padding: "5px",
-                                          borderRadius: "5px",
-                                          textAlign: "center",
-                                          width: "105px",
-                                        }}
-                                      >
-                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'Pending PR' : data.status}
-                                      </div>
-                                    </>
-                                  ) : (
-                                    <>
-                                       <div
-                                        style={{
-                                          backgroundColor: "#5C636A",
-                                          fontSize: "10px",
-                                          color: "white",
-                                          padding: "5px",
-                                          borderRadius: "5px",
-                                          textAlign: "center",
-                                          width: "105px",
-                                        }}
-                                      >
-                                        {data.status === 'For-Rejustify' ? 'Rejustified' : data.status === "On-Canvass" ? 'For-PO' : data.status}
-                                      </div>
-                                    </>
-                                  )}
-                                  
+                                        <>
+                                          <div
+                                            style={{
+                                              backgroundColor: "#5C636A",
+                                              fontSize: "10px",
+                                              color: "white",
+                                              padding: "5px",
+                                              borderRadius: "5px",
+                                              textAlign: "center",
+                                              width: "105px",
+                                            }}
+                                          >
+                                            {data.status === "For-Rejustify"
+                                              ? "Rejustified"
+                                              : data.status === "On-Canvass"
+                                              ? "Pending PR"
+                                              : data.status}
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div
+                                            style={{
+                                              backgroundColor: "#5C636A",
+                                              fontSize: "10px",
+                                              color: "white",
+                                              padding: "5px",
+                                              borderRadius: "5px",
+                                              textAlign: "center",
+                                              width: "105px",
+                                            }}
+                                          >
+                                            {data.status === "For-Rejustify"
+                                              ? "Rejustified"
+                                              : data.status === "On-Canvass"
+                                              ? "For-PO"
+                                              : data.status}
+                                          </div>
+                                        </>
+                                      )}
                                     </td>
                                     <td
                                       onClick={() =>
                                         data.status === "For-Canvassing"
                                           ? navigate(`/forCanvass/${data.id}`)
                                           : data.status === "On-Canvass"
-                                            ? navigate(`/onCanvass/${data.id}`)
-                                            : navigate(
+                                          ? navigate(`/onCanvass/${data.id}`)
+                                          : navigate(
                                               `/purchaseRequestPreview/${data.id}`
                                             )
                                       }
@@ -988,8 +1046,8 @@ function PurchaseRequest({ authrztn }) {
                                         data.status === "For-Canvassing"
                                           ? navigate(`/forCanvass/${data.id}`)
                                           : data.status === "On-Canvass"
-                                            ? navigate(`/onCanvass/${data.id}`)
-                                            : navigate(
+                                          ? navigate(`/onCanvass/${data.id}`)
+                                          : navigate(
                                               `/purchaseRequestPreview/${data.id}`
                                             )
                                       }
@@ -997,22 +1055,28 @@ function PurchaseRequest({ authrztn }) {
                                       {data.remarks}
                                     </td>
                                     <td>
-                                      {department === data.masterlist.department_id ? (
+                                      {userId ===
+                                      data.masterlist_id ? (
                                         <>
                                           <div className="d-flex flex-direction-row align-items-center">
-                                            {authrztn.includes("PR - Reject") &&
+                                            {
                                               data.status !== "Cancelled" &&
                                               data.status !== "Rejected" &&
                                               data.status !== "For-Rejustify" &&
-                                              data.status !== "For-Canvassing" &&
+                                              data.status !==
+                                                "For-Canvassing" &&
                                               data.status !== "On-Canvass" &&
-                                              data.status !== "For-Approval (PO)" &&
+                                              data.status !==
+                                                "For-Approval (PO)" &&
                                               data.status !== "To-Receive" &&
                                               data.status !== "Delivered" && (
                                                 <button
                                                   className="btn btn-danger"
                                                   onClick={() =>
-                                                    CancelRequest(data.id, data.status)
+                                                    CancelRequest(
+                                                      data.id,
+                                                      data.status
+                                                    )
                                                   }
                                                 >
                                                   Cancel
@@ -1023,7 +1087,6 @@ function PurchaseRequest({ authrztn }) {
                                       ) : (
                                         <></>
                                       )}
-
                                     </td>
                                   </tr>
                                   <tr>
@@ -1050,7 +1113,8 @@ function PurchaseRequest({ authrztn }) {
                                               <th
                                                 style={{
                                                   backgroundColor: "inherit",
-                                                  fontFamily: "Arial, sans-serif",
+                                                  fontFamily:
+                                                    "Arial, sans-serif",
                                                   fontWeight: "bold",
                                                 }}
                                               >
@@ -1059,7 +1123,18 @@ function PurchaseRequest({ authrztn }) {
                                               <th
                                                 style={{
                                                   backgroundColor: "inherit",
-                                                  fontFamily: "Arial, sans-serif",
+                                                  fontFamily:
+                                                    "Arial, sans-serif",
+                                                  fontWeight: "bold",
+                                                }}
+                                              >
+                                                Remarks
+                                              </th>
+                                              <th
+                                                style={{
+                                                  backgroundColor: "inherit",
+                                                  fontFamily:
+                                                    "Arial, sans-serif",
                                                   fontWeight: "bold",
                                                 }}
                                               >
@@ -1070,7 +1145,7 @@ function PurchaseRequest({ authrztn }) {
                                           <tbody>
                                             {specificPR.map((history, i) => (
                                               <tr key={i}>
-                                                {history.status === "For-Rejustify" ? (
+                                                {/* {history.status === "For-Rejustify" ? (
                                                   <td
                                                     style={{
                                                       fontSize: "14px",
@@ -1099,24 +1174,42 @@ function PurchaseRequest({ authrztn }) {
                                                     </div>
                                                   </td>
                                                 ) : (
-                                                  <td
-                                                    style={{
-                                                      fontSize: "14px",
-                                                      padding: "10px",
-                                                      fontFamily: "Arial, sans-serif",
-                                                    }}
-                                                  >
-                                                    {history.status}
-                                                  </td>
-                                                )}
+                                                  
+                                                )} */}
                                                 <td
                                                   style={{
                                                     fontSize: "14px",
                                                     padding: "10px",
-                                                    fontFamily: "Arial, sans-serif",
+                                                    fontFamily:
+                                                      "Arial, sans-serif",
                                                   }}
                                                 >
-                                                  {formatDatetime(history.createdAt)}
+                                                  {history.status ===
+                                                  "On-Canvass"
+                                                    ? "For-PO"
+                                                    : history.status}
+                                                </td>
+                                                <td
+                                                  style={{
+                                                    fontSize: "14px",
+                                                    padding: "10px",
+                                                    fontFamily:
+                                                      "Arial, sans-serif",
+                                                  }}
+                                                >
+                                                  {history.remarks}
+                                                </td>
+                                                <td
+                                                  style={{
+                                                    fontSize: "14px",
+                                                    padding: "10px",
+                                                    fontFamily:
+                                                      "Arial, sans-serif",
+                                                  }}
+                                                >
+                                                  {formatDatetime(
+                                                    history.createdAt
+                                                  )}
                                                 </td>
                                               </tr>
                                             ))}
@@ -1127,15 +1220,10 @@ function PurchaseRequest({ authrztn }) {
                                   </tr>
                                 </>
                               ) : (
-                                <>
-
-                                </>
+                                <></>
                               )}
-
                             </>
                           )}
-
-
                         </React.Fragment>
                       ))}
                     </tbody>
@@ -1150,8 +1238,9 @@ function PurchaseRequest({ authrztn }) {
                 <nav style={{ marginTop: "15px" }}>
                   <ul className="pagination" style={{ float: "right" }}>
                     <li
-                      className={`page-item ${currentPage === 1 ? "disabled" : ""
-                        }`}
+                      className={`page-item ${
+                        currentPage === 1 ? "disabled" : ""
+                      }`}
                     >
                       <button
                         type="button"
@@ -1170,28 +1259,47 @@ function PurchaseRequest({ authrztn }) {
                       </button>
                     </li>
                     {generatePages().map((page, index) => (
-                      <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                      <li
+                        key={index}
+                        className={`page-item ${
+                          currentPage === page ? "active" : ""
+                        }`}
+                      >
                         <button
                           style={{
-                            fontSize: '14px',
-                            width: '25px',
-                            background: currentPage === page ? '#FFA500' : 'white',
-                            color: currentPage === page ? '#FFFFFF' : '#000000',
-                            border: 'none',
-                            height: '28px',
+                            fontSize: "14px",
+                            width: "25px",
+                            background:
+                              currentPage === page ? "#FFA500" : "white",
+                            color: currentPage === page ? "#FFFFFF" : "#000000",
+                            border: "none",
+                            height: "28px",
                           }}
-                          className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                          className={`page-link ${
+                            currentPage === page ? "gold-bg" : ""
+                          }`}
                           onClick={() => handlePageClick(page)}
                         >
                           {page}
                         </button>
                       </li>
                     ))}
-                    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                    <li
+                      className={`page-item ${
+                        currentPage === totalPages ? "disabled" : ""
+                      }`}
+                    >
                       <button
-                        style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                        style={{
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          color: "#000000",
+                          textTransform: "capitalize",
+                        }}
                         className="page-link"
-                        onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                        onClick={() =>
+                          setCurrentPage((prevPage) => prevPage + 1)
+                        }
                       >
                         Next
                       </button>

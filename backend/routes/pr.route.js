@@ -20,6 +20,7 @@ const {
   ProductTAGSupplier,
   PO_REJECT,
   PR_REJECT,
+  Supplier,
 } = require("../db/models/associations");
 const session = require("express-session");
 
@@ -62,100 +63,9 @@ router.route("/fetchTable").get(async (req, res) => {
   }
 });
 
-router.route("/fetchTableToReceive").get(async (req, res) => {
-  try {
-    const pr_data = await PR.findAll({
-      include: [
-        {
-          model: MasterList,
-          required: true,
-          include: [
-            {
-              model: Department,
-              required: true,
-            },
-          ],
-        },
-      ],
-      where: {
-        status: {
-          [Op.or]: ["To-Receive", "Delivered", "To-Receive (Partial)"],
-        },
-      },
-    });
 
-    const ReceivingPO = await Receiving_PO.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          include: [
-            {
-              model: MasterList,
-              required: true,
-              include: [
-                {
-                  model: Department,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      where: {
-        status: {
-          [Op.or]: ["For Approval", "In-transit"],
-        },
-      },
-    });
 
-    return res.json({
-      prData: pr_data,
-      receiving_PO: ReceivingPO,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
 
-//View Receiving
-router.route("/viewToReceive").get(async (req, res) => {
-  try {
-    const data = await PR.findAll({
-      include: [
-        {
-          model: MasterList,
-          required: true,
-          include: [
-            {
-              model: Department,
-              required: true,
-            },
-          ],
-        },
-      ],
-      where: {
-        id: req.query.id,
-      },
-      // ,
-      // include: {
-      //   model: MasterList, required: true
-      // }
-    });
-
-    if (!data) {
-      // No record found
-      return res.status(404).json({ message: "PR not found" });
-    }
-    // console.log(data)
-    return res.json(data);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "An error occurred" });
-  }
-});
 
 router.route("/fetchTable_PO").get(async (req, res) => {
   try {
@@ -178,6 +88,14 @@ router.route("/fetchTable_PO").get(async (req, res) => {
             },
           ],
         },
+        {
+          model: ProductTAGSupplier,
+          required: true,
+            include: [{
+              model: Supplier,
+              required: true
+            }]
+        }
       ],
       // where: {
       //   [Op.or]: [
@@ -476,47 +394,45 @@ router.route("/reject").post(async (req, res) => {
 router.route("/fetchRejectHistory").get(async (req, res) => {
   try {
     const {pr_id} = req.query
-    const prRejectData = await PR_REJECT.findAll({
-      where: {
-        pr_id: pr_id
-      },
-      include: [{
-        model: MasterList,
-        required: true
-      }]
-    });
+    // Fetch the data
+const prRejectData = await PR_REJECT.findAll({
+  where: { pr_id: pr_id },
+  include: [{ model: MasterList, required: true }]
+});
 
-    const prRejustifyData = await PR_Rejustify.findAll({
-      where: {
-        pr_id: pr_id
-      },
-      include: [{
-        model: MasterList,
-        required: true
-      }]
-    });
+const poRejectData = await PO_REJECT.findAll({
+  where: { pr_id: pr_id },
+  include: [{ model: MasterList, required: true }]
+});
 
-    // console.log(poRejectData)
+const prRejustifyData = await PR_Rejustify.findAll({
+  where: { pr_id: pr_id },
+  include: [{ model: MasterList, required: true }]
+});
 
+// Extract the dataValues from each result and add a source field
+const prRejectValues = prRejectData.map(item => ({
+  ...item.dataValues,
+  source: 'REJECTION'
+}));
 
-   // Extract the dataValues from each result
-   const prRejectValues = prRejectData.map(item => ({
-    ...item.dataValues,
-    source: 'REJECTION'
-  }));
-  const prRejustifyValues = prRejustifyData.map(item => ({
-    ...item.dataValues,
-    source: 'REJUSTIFICATION'
-  }));
+const poRejectValues = poRejectData.map(item => ({
+  ...item.dataValues,
+  source: `REJECTION (PO# ${item.po_id})`
+}));
+
+const prRejustifyValues = prRejustifyData.map(item => ({
+  ...item.dataValues,
+  source: item.po_id === null ? `REJUSTIFICATION` : `REJUSTIFICATION (PO# ${item.po_id})` 
+}));
+
 // Combine the dataValues into one array
-const combinedData = [...prRejectValues, ...prRejustifyValues];
+const combinedData = [...prRejectValues, ...poRejectValues, ...prRejustifyValues];
 
-// Sort the combined data by createdAt column in descending order
-combinedData.sort((a, b) =>  new Date(a.createdAt) - new Date(b.createdAt));
+// Sort the combined data by createdAt column in ascending order
+combinedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-// console.log(combinedData);
-
-// If you want to send the sorted data as a response
+// Send the sorted data as a response
 res.json(combinedData);
 
    

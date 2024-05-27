@@ -96,7 +96,7 @@ function PurchaseOrderListPreview() {
         setProducts(res.data)
         const modifiedData = res.data.map(row => ({
           id: row.id,
-          isPO: row.isPO,
+          isPO: row.isPO === null ? false : row.isPO,
         }));
         setSelected_PR_Prod_array(modifiedData)
         console.log(modifiedData)

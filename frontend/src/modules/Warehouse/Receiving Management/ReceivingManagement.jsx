@@ -54,12 +54,12 @@ function ReceivingManagement({ authrztn }) {
   const endIndexPR = Math.min(startIndexPR + pageSize, searchPR.length);
   const currentItemsPR = searchPR.slice(startIndexPR, endIndexPR);
 
-  const totalPagesReceiving = Math.ceil(searchReceivePO.length / pageSize);
-  const startIndexReceiving = (currentPage - 1) * pageSize;
-  const endIndexReceiving = Math.min(startIndexReceiving + pageSize, searchReceivePO.length);
-  const currentItemsReceiving = searchReceivePO.slice(startIndexReceiving, endIndexReceiving);
+  // const totalPagesReceiving = Math.ceil(searchReceivePO.length / pageSize);
+  // const startIndexReceiving = (currentPage - 1) * pageSize;
+  // const endIndexReceiving = Math.min(startIndexReceiving + pageSize, searchReceivePO.length);
+  // const currentItemsReceiving = searchReceivePO.slice(startIndexReceiving, endIndexReceiving);
 
-  const totalPages = Math.max(totalPagesPR, totalPagesReceiving);
+  const totalPages = Math.max(totalPagesPR);
   const MAX_PAGES = 5; 
 
   const generatePages = () => {
@@ -103,7 +103,7 @@ function ReceivingManagement({ authrztn }) {
   const reloadTable = () => {
     const delay = setTimeout(() => {
       axios
-        .get(BASE_URL + "/PR/fetchTableToReceive")
+        .get(BASE_URL + "/receiving/fetchTableToReceive")
         .then((res) => {
           setPurchaseRequest(res.data.prData);
           setSearchPR(res.data.prData)
@@ -402,65 +402,66 @@ function ReceivingManagement({ authrztn }) {
                 <table className="table-hover">
                   <thead>
                     <tr>
+                      <th className="tableh">PO NO.</th>
                       <th className="tableh">PR NO.</th>
                       <th className="tableh">Requestor</th>
                       <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
-                      <th className="tableh">PR Approved Date</th>
-                      <th className="tableh">Remarks</th>
+                      <th className="tableh">PO Approved Date</th>
                     </tr>
                   </thead>
-                  {PurchaseRequest.length > 0 || receivingPO > 0 ? (
+                  {PurchaseRequest.length > 0 ? (
                     <tbody>
                       {currentItemsPR.map((data, i) => (
                         <tr key={i}>
                           <td
                             onClick={() =>
-                              navigate(`/viewToReceive/${data.id}`)
+                              navigate(`/viewToReceive/${data.po_id}`)
                             }
                           >
-                            {data.pr_num}
+                            {data.po_id}
                           </td>
                           <td
                             onClick={() =>
-                              navigate(`/viewToReceive/${data.id}`)
+                              navigate(`/viewToReceive/${data.po_id}`)
                             }
                           >
-                            {data.masterlist.col_Fname}
+                            {data.purchase_req.pr_num}
+                          </td>
+                          <td
+                            onClick={() =>
+                              navigate(`/viewToReceive/${data.po_id}`)
+                            }
+                          >
+                            {data.purchase_req.masterlist.col_Fname}
                           </td>
 
                           <td
                             onClick={() =>
-                              navigate(`/viewToReceive/${data.id}`)
+                              navigate(`/viewToReceive/${data.po_id}`)
                             }
                           >
-                            {data.masterlist.department.department_name}
+                            {data.purchase_req.masterlist.department.department_name}
                           </td>
                           <td
                             onClick={() =>
-                              navigate(`/viewToReceive/${data.id}`)
+                              navigate(`/viewToReceive/${data.po_id}`)
                             }
                           >
-                            {data.status === 'To-Receive (Partial)' ? 'To-Receive' : data.status}
+                            {data.status}
                           </td>
                           <td
                             onClick={() =>
-                              navigate(`/viewToReceive/${data.id}`)
+                              navigate(`/viewToReceive/${data.po_id}`)
                             }
                           >
                             {formatDatetime(data.date_approved)}
                           </td>
-                          <td
-                            onClick={() =>
-                              navigate(`/viewToReceive/${data.id}`)
-                            }
-                          >
-                            {data.remarks}
-                          </td>
+                          
                         </tr>
                       ))}
 
-                      {currentItemsReceiving.map((data, i) => (
+                      {/* {currentItemsReceiving.map((data, i) => (
                         <tr key={i}>
                           <td
                             onClick={() =>
@@ -546,7 +547,7 @@ function ReceivingManagement({ authrztn }) {
                             N/A
                           </td>
                         </tr>
-                      ))}
+                      ))} */}
                     </tbody>
                   ) : (
                     <div className="no-data">

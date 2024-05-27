@@ -493,8 +493,9 @@ function PurchaseOrderList({ authrztn }) {
                 <table className="table-hover">
                   <thead>
                     <tr>
-                      <th className="tableh"></th>
+                      {/* <th className="tableh"></th> */}
                       <th className="tableh">PO No.</th>
+                      <th className="tableh">Supplier Name</th>
                       <th className="tableh">PR No.</th>
                       <th className="tableh">Requestor</th>
                       <th className="tableh">Department</th>
@@ -510,7 +511,7 @@ function PurchaseOrderList({ authrztn }) {
                           {department === 1 ? (
                             <>
                               <tr>
-                                <td>
+                                {/* <td>
                                   <IconButton
                                     aria-label="expand row"
                                     size="small"
@@ -526,7 +527,7 @@ function PurchaseOrderList({ authrztn }) {
                                       />
                                     )}
                                   </IconButton>
-                                </td>
+                                </td> */}
                                 <td
                                    onClick={() =>
                                     navigate(
@@ -535,6 +536,16 @@ function PurchaseOrderList({ authrztn }) {
                                     }
                                 >
                                   {data.po_id}
+                                </td>
+
+                                <td
+                                   onClick={() =>
+                                    navigate(
+                                        `/PO_approvalRejustify/${data.po_id}`
+                                      )
+                                    }
+                                >
+                                  {data.product_tag_supplier.supplier.supplier_name}
                                 </td>
 
                                 <td
@@ -737,7 +748,7 @@ function PurchaseOrderList({ authrztn }) {
                               data.purchase_req.masterlist.department_id ? (
                                 <>
                               <tr>
-                                <td>
+                                {/* <td>
                                   <IconButton
                                     aria-label="expand row"
                                     size="small"
@@ -753,7 +764,7 @@ function PurchaseOrderList({ authrztn }) {
                                       />
                                     )}
                                   </IconButton>
-                                </td>
+                                </td> */}
                                 <td
                                    onClick={() =>
                                     navigate(
@@ -762,6 +773,16 @@ function PurchaseOrderList({ authrztn }) {
                                     }
                                 >
                                   {data.po_id}
+                                </td>
+
+                                <td
+                                   onClick={() =>
+                                    navigate(
+                                        `/PO_approvalRejustify/${data.po_id}`
+                                      )
+                                    }
+                                >
+                                  {data.product_tag_supplier.supplier.supplier_name}
                                 </td>
 
                                 <td

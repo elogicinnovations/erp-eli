@@ -742,8 +742,8 @@ function PurchaseRequestPreview({ authrztn }) {
               ) : (
                 <></>
               )}
-
-              {status !== "For-Approval" ? (
+ 
+              {status !== "For-Approval" && status !== "Cancelled" ? (
                 <>
                   <Button
                     onClick={handleReject_history}
@@ -994,7 +994,7 @@ function PurchaseRequestPreview({ authrztn }) {
               <Modal.Body>
                 {rejustifyHistory.map((data, index) => (
                   <React.Fragment key={index}>
-                    <span className="h2">{`${data.source}`}</span>
+                    <span className="h2">{`${data.source} `}</span>
                     <div className="d-flex w-100 border-bottom justify-content-center align-items-center">
                       <Note size={55} className="mr-3" color="#066ff9" />
 

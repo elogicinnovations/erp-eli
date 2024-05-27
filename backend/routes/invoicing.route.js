@@ -561,108 +561,6 @@ router.route("/fetchPOarray").get(async (req, res) => {
       where: { po_id: po_id },
     });
 
-    // const prPoAsmblyData = await PR_PO_asmbly.findAll({
-    //   include: [
-    //     {
-    //       model: Assembly_Supplier,
-    //       required: true,
-    //       attributes: [
-    //         ["id", "id"],
-    //         ["assembly_id", "assembly_id"],
-    //         ["supplier_code", "supplier_code"],
-    //         ["supplier_price", "price"],
-    //         ["createdAt", "createdAt"],
-    //         ["updatedAt", "updatedAt"],
-    //       ],
-    //       include: [
-    //         {
-    //           model: Assembly,
-    //           required: true,
-    //           attributes: [
-    //             ["assembly_code", "code"],
-    //             ["assembly_name", "name"],
-    //             ["assembly_unitMeasurement", "uom"],
-    //           ],
-    //         },
-    //         {
-    //           model: Supplier,
-    //           required: true,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   where: { po_id: po_id },
-    // });
-
-    // const prPoSpareData = await PR_PO_spare.findAll({
-    //   include: [
-    //     {
-    //       model: SparePart_Supplier,
-    //       required: true,
-
-    //       attributes: [
-    //         ["id", "id"],
-    //         ["sparePart_id", "sparePart_id"],
-    //         ["supplier_code", "supplier_code"],
-    //         ["supplier_price", "price"],
-    //         ["createdAt", "createdAt"],
-    //         ["updatedAt", "updatedAt"],
-    //       ],
-
-    //       include: [
-    //         {
-    //           model: SparePart,
-    //           required: true,
-    //           attributes: [
-    //             ["spareParts_code", "code"],
-    //             ["spareParts_name", "name"],
-    //             ["spareParts_unitMeasurement", "uom"],
-    //           ],
-    //         },
-    //         {
-    //           model: Supplier,
-    //           required: true,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   where: { po_id: po_id },
-    // });
-
-    // const prPoSubpartData = await PR_PO_subpart.findAll({
-    //   include: [
-    //     {
-    //       model: Subpart_supplier,
-    //       required: true,
-    //       attributes: [
-    //         ["id", "id"],
-    //         ["subpart_id", "subpart_id"],
-    //         ["supplier_code", "supplier_code"],
-    //         ["supplier_price", "price"],
-    //         ["createdAt", "createdAt"],
-    //         ["updatedAt", "updatedAt"],
-    //       ],
-    //       include: [
-    //         {
-    //           model: SubPart,
-    //           required: true,
-    //           attributes: [
-    //             ["subPart_code", "code"],
-    //             ["subPart_name", "name"],
-    //             ["subPart_unitMeasurement", "uom"],
-    //           ],
-    //         },
-    //         {
-    //           model: Supplier,
-    //           required: true,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   where: { po_id: po_id },
-    // });
-
-    // Consolidate data into an object with po_id as keys
     const consolidatedObject = {};
 
     prPoData.forEach((item) => {
@@ -679,57 +577,12 @@ router.route("/fetchPOarray").get(async (req, res) => {
       });
     });
 
-    // prPoAsmblyData.forEach((item) => {
-    //   const po_id = item.po_id;
-    //   consolidatedObject[po_id] = consolidatedObject[po_id] || {
-    //     title: `${po_id}`,
-    //     items: [],
-    //   };
-    //   consolidatedObject[po_id].items.push({
-    //     item,
-    //     supp_tag: item.assembly_supplier.assembly,
-    //     suppliers: item.assembly_supplier.supplier,
-    //     suppPrice: item.assembly_supplier,
-    //   });
-    // });
-
-    // prPoSpareData.forEach((item) => {
-    //   const po_id = item.po_id;
-    //   consolidatedObject[po_id] = consolidatedObject[po_id] || {
-    //     title: `${po_id}`,
-    //     items: [],
-    //   };
-    //   consolidatedObject[po_id].items.push({
-    //     item,
-    //     supp_tag: item.sparepart_supplier.sparePart,
-    //     suppliers: item.sparepart_supplier.supplier,
-    //     suppPrice: item.sparepart_supplier,
-    //   });
-    // });
-
-    // prPoSubpartData.forEach((item) => {
-    //   const po_id = item.po_id;
-    //   consolidatedObject[po_id] = consolidatedObject[po_id] || {
-    //     title: `${po_id}`,
-    //     items: [],
-    //   };
-    //   consolidatedObject[po_id].items.push({
-    //     item,
-    //     supp_tag: item.subpart_supplier.subPart,
-    //     suppliers: item.subpart_supplier.supplier,
-    //     suppPrice: item.subpart_supplier,
-    //   });
-    // });
+    
 
     // Convert the object values back to an array
     const consolidatedArray = Object.values(consolidatedObject);
 
-    // Sort the consolidated array by po_id
-    // consolidatedArray.forEach(group => {
-    //   group.items.sort((a, b) => a.po_id.localeCompare(b.po_id));
-    // });
-
-    // console.log(consolidatedArray);
+    
 
     res.status(200).json(consolidatedArray);
   } catch (err) {
@@ -826,7 +679,7 @@ router.route("/approve_PO").post(async (req, res) => {
 
     const PO_Approved = await PR_PO.update(
       {
-        status: "Approved",
+        status: "To-Receive",
         date_approved: formattedDateApproved,
       },
       {

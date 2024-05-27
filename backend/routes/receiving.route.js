@@ -37,6 +37,107 @@ const {
 const session = require("express-session");
 const moment = require('moment-timezone');
 
+//View Receiving
+router.route("/viewToReceive").get(async (req, res) => {
+  try {
+    const data = await PR_PO.findAll({
+      include: [{
+        model: PR,
+        required: true,
+          include: [
+          {
+            model: MasterList,
+            required: true,
+            include: [
+              {
+                model: Department,
+                required: true,
+              },
+            ],
+          },
+        ],
+      }],
+      where: {
+        po_id: req.query.po_id,
+      },
+    });
+
+    if (!data) {
+      // No record found
+      return res.status(404).json({ message: "PR not found" });
+    }
+    // console.log(data)
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+});
+
+router.route("/fetchTableToReceive").get(async (req, res) => {
+  try {
+    const pr_data = await PR_PO.findAll({
+      include: [
+        {
+         model: PR,
+         required: true,
+
+          include: [{
+            model: MasterList,
+            required: true,
+            include: [
+              {
+                model: Department,
+                required: true,
+              },
+            ],
+          }]
+        },
+      ],
+      where: {
+        // status: {
+        //   [Op.or]: ["To-Receive", "Delivered", "To-Receive (Partial)"],
+        // },
+        status: "To-Receive"
+      },
+    }); 
+
+    // const ReceivingPO = await Receiving_PO.findAll({
+    //   include: [
+    //     {
+    //       model: PR,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: MasterList,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: Department,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    //   where: {
+    //     status: {
+    //       [Op.or]: ["For Approval", "In-transit"],
+    //     },
+    //   },
+    // });
+
+    return res.json({
+      prData: pr_data,
+      // receiving_PO: ReceivingPO,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 router.route("/insertReceived").post(async (req, res) => {
   const currentDate = new Date();
   const options = {

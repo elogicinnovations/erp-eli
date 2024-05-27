@@ -38,11 +38,11 @@ const PR = sequelize.define('purchase_req', {
   },
   isPRcomplete: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false
+    allowNull: true
   },
   isPOcomplete: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false
+    allowNull: true
   }
 });
 

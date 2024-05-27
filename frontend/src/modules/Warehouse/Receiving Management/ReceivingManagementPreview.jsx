@@ -99,20 +99,20 @@ function ReceivingManagementPreview({ authrztn }) {
   useEffect(() => {
     const delay = setTimeout(() => {
       axios
-        .get(BASE_URL + "/PR/viewToReceive", {
+        .get(BASE_URL + "/receiving/viewToReceive", {
           params: {
-            id: id,
+            po_id: id,
           },
         })
         .then((res) => {
-          setPrNumber(res.data[0].pr_num);
-          setDateNeeded(res.data[0].date_needed);
-          setUsedFor(res.data[0].used_for);
-          setRemarks(res.data[0].remarks);
-          setDepartment(res.data[0].masterlist.department.department_name);
-          setRequestedBy(res.data[0].masterlist.col_Fname);
+          setPrNumber(res.data[0].purchase_req.pr_num);
+          setDateNeeded(res.data[0].purchase_req.date_needed);
+          setUsedFor(res.data[0].purchase_req.used_for);
+          setRemarks(res.data[0].purchase_req.emarks);
+          setDepartment(res.data[0].purchase_req.masterlist.department.department_name);
+          setRequestedBy(res.data[0].purchase_req.masterlist.col_Fname);
           setStatus(res.data[0].status);
-          setDateCreated(res.data[0].createdAt);
+          setDateCreated(res.data[0].purchase_req.createdAt);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -130,7 +130,7 @@ function ReceivingManagementPreview({ authrztn }) {
     axios
       .get(BASE_URL + "/invoice/fetchPOarray", {
         params: {
-          id: id,
+          po_id: id,
         },
       })
       .then((res) => setPOarray(res.data))
@@ -670,7 +670,7 @@ function ReceivingManagementPreview({ authrztn }) {
             </div>
 
             <div className="row">
-              <div className="col-6 ">
+              <div className="col-12 ">
                 <Form.Label
                   style={{
                     fontSize: "20px",
@@ -698,7 +698,7 @@ function ReceivingManagementPreview({ authrztn }) {
                       <div className="receiving_list_right d-flex flex-direction-column">
                         <ul>
                           <li>
-                            <p>{`Requested date: ${formatDatetime(
+                            <p className="h4">{`Requested date: ${formatDatetime(
                               dateCreated
                             )}`}</p>
                           </li>
@@ -712,7 +712,7 @@ function ReceivingManagementPreview({ authrztn }) {
                                 color="green"
                                 style={{ margin: "10px" }}
                               />
-                              <p style={{ margin: "10px", fontSize: 24 }}>
+                              <p className="h3" style={{ margin: "10px", fontSize: 24 }}>
                                 {status}
                               </p>
                             </div>
@@ -723,7 +723,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   </div>
                 </div>
               </div>
-              <div className="col-6">
+              {/* <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label
                     style={{
@@ -749,7 +749,7 @@ function ReceivingManagementPreview({ authrztn }) {
                     }}
                   />
                 </Form.Group>
-              </div>
+              </div> */}
             </div>
 
             <div
