@@ -305,7 +305,7 @@ function UserRole({ authrztn }) {
                   <p>User Role</p>
                 </div>
 
-                {authrztn.includes("User Access Role - Add") && (
+                {/* {authrztn.includes("User Access Role - Add") && (
                   <div className="button-create-side">
                     <div className="Buttonmodal-new">
                       <Link to="/createRole" className="button">
@@ -316,13 +316,48 @@ function UserRole({ authrztn }) {
                       </Link>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
-            </div>{" "}
+            </div>
             {/*Employeetext-button*/}
+
+            <div className="btn-and-search">
+              {authrztn.includes("User Access Role - Add") && (
+                <div className="button-create-side">
+                  <div className="Buttonmodal-new">
+                    <Link to="/createRole" className="button">
+                      <span style={{}}>
+                        <Plus size={25} />
+                      </span>
+                      Create New
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              <div className="main-table-search">
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  className="main-search act-search cus-btm"
+                  style={{ marginBottom: "10px", float: "right" }}
+                  InputLabelProps={{
+                    style: { fontSize: "14px" },
+                  }}
+                  InputProps={{
+                    style: {
+                      fontSize: "14px",
+                      // width: "250px",
+                      height: "50px",
+                    },
+                  }}
+                  onChange={handleSearch}
+                />
+              </div>
+            </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <div className="main-table-search">
+                {/* <div className="main-table-search">
                   <TextField
                     label="Search"
                     variant="outlined"
@@ -340,7 +375,7 @@ function UserRole({ authrztn }) {
                     }}
                     onChange={handleSearch}
                   />
-                </div>
+                </div> */}
 
                 <table id="order-listing">
                   <thead>

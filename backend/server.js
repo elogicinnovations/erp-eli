@@ -12,7 +12,6 @@ app.use(
   cors({
     // origin: "http://localhost:3000",
     // origin: "http://192.168.0.108:3000",
-
     origin: "http://180.232.37.193:3000",
     allowedHeaders: ["Content-Type", "Authorization"],
   })

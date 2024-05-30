@@ -60,7 +60,7 @@ function ReceivingManagement({ authrztn }) {
   // const currentItemsReceiving = searchReceivePO.slice(startIndexReceiving, endIndexReceiving);
 
   const totalPages = Math.max(totalPagesPR);
-  const MAX_PAGES = 5; 
+  const MAX_PAGES = 5;
 
   const generatePages = () => {
     const pages = [];
@@ -384,7 +384,10 @@ function ReceivingManagement({ authrztn }) {
                   <button className="goesButton" onClick={handleGoButtonClick}>
                     FILTER
                   </button>
-                  <button className="Filterclear" onClick={clearFilters}>
+                  <button
+                    className="Filterclear cus-filt-clear"
+                    onClick={clearFilters}
+                  >
                     Clear Filter
                   </button>
 
@@ -455,7 +458,10 @@ function ReceivingManagement({ authrztn }) {
                               navigate(`/viewToReceive/${data.po_id}`)
                             }
                           >
-                            {data.purchase_req.masterlist.department.department_name}
+                            {
+                              data.purchase_req.masterlist.department
+                                .department_name
+                            }
                           </td>
                           <td
                             onClick={() =>
@@ -471,7 +477,6 @@ function ReceivingManagement({ authrztn }) {
                           >
                             {formatDatetime(data.date_approved)}
                           </td>
-                          
                         </tr>
                       ))}
 

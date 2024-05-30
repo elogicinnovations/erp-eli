@@ -465,12 +465,18 @@ function PurchaseOrderList({ authrztn }) {
                     <option value="To-Received">To-Received</option>
                     <option value="Cancelled">Cancelled</option>
                   </Form.Select>
-                  <button className="goesButton" onClick={handleGoButtonClick}>
-                    FILTER
-                  </button>
-                  <button className="Filterclear" onClick={clearFilters}>
-                    Clear Filter
-                  </button>
+                  <div className="pur-filt-container">
+                    <button
+                      className="goesButton"
+                      onClick={handleGoButtonClick}
+                    >
+                      FILTER
+                    </button>
+                    <button className="Filterclear" onClick={clearFilters}>
+                      Clear Filter
+                    </button>
+                  </div>
+
                   <div className="Buttonmodal-new"></div>
                 </div>
               </div>
@@ -478,18 +484,25 @@ function PurchaseOrderList({ authrztn }) {
 
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: "10px", float: "right" }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                  InputProps={{
-                    style: { fontSize: "14px", width: "250px", height: "50px" },
-                  }}
-                  onChange={handleSearch}
-                />
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
+
                 <table className="table-hover">
                   <thead>
                     <tr>
@@ -529,31 +542,34 @@ function PurchaseOrderList({ authrztn }) {
                                   </IconButton>
                                 </td> */}
                                 <td
-                                   onClick={() =>
+                                  onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
                                   {data.po_id}
                                 </td>
 
                                 <td
-                                   onClick={() =>
+                                  onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
-                                  {data.product_tag_supplier.supplier.supplier_name}
+                                  {
+                                    data.product_tag_supplier.supplier
+                                      .supplier_name
+                                  }
                                 </td>
 
                                 <td
-                                   onClick={() =>
+                                  onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
                                   {data.purchase_req.pr_num}
                                 </td>
@@ -561,9 +577,9 @@ function PurchaseOrderList({ authrztn }) {
                                 <td
                                   onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
                                   {data.purchase_req.masterlist.col_Fname}
                                 </td>
@@ -595,11 +611,11 @@ function PurchaseOrderList({ authrztn }) {
                                 </td>
 
                                 <td
-                                   onClick={() =>
+                                  onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
                                   <button
                                     className="btn btn-secondary"
@@ -620,19 +636,19 @@ function PurchaseOrderList({ authrztn }) {
                                 <td
                                   onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
                                   {formatDatetime(data.updatedAt)}
                                 </td>
 
                                 <td
-                                   onClick={() =>
+                                  onClick={() =>
                                     navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
                                 >
                                   {data.remarks}
                                 </td>
@@ -747,8 +763,8 @@ function PurchaseOrderList({ authrztn }) {
                               {department ===
                               data.purchase_req.masterlist.department_id ? (
                                 <>
-                              <tr>
-                                {/* <td>
+                                  <tr>
+                                    {/* <td>
                                   <IconButton
                                     aria-label="expand row"
                                     size="small"
@@ -765,220 +781,227 @@ function PurchaseOrderList({ authrztn }) {
                                     )}
                                   </IconButton>
                                 </td> */}
-                                <td
-                                   onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  {data.po_id}
-                                </td>
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {data.po_id}
+                                    </td>
 
-                                <td
-                                   onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  {data.product_tag_supplier.supplier.supplier_name}
-                                </td>
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {
+                                        data.product_tag_supplier.supplier
+                                          .supplier_name
+                                      }
+                                    </td>
 
-                                <td
-                                   onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  {data.purchase_req.pr_num}
-                                </td>
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {data.purchase_req.pr_num}
+                                    </td>
 
-                                <td
-                                  onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  {data.purchase_req.masterlist.col_Fname}
-                                </td>
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {data.purchase_req.masterlist.col_Fname}
+                                    </td>
 
-                                <td
-                                  onClick={() =>
-                                    // data.status === null
-                                    //   ? navigate(
-                                    //       `/PO_approvalRejustify/${data.po_id}`
-                                    //     )
-                                    //   : data.status === "Rejected"
-                                    //   ? navigate(
-                                    //       `/PO_approvalRejustify/${data.po_id}`
-                                    //     )
-                                    //   : data.status === "To-Receive"
-                                    //   ? navigate(`/PO_approvalRejustify/${data.po_id}`)
-                                    //   : navigate(
-                                    //       `/purchaseOrderListPreview/${data.po_id}`
-                                    //     )
-                                    navigate(
-                                      `/PO_approvalRejustify/${data.po_id}`
-                                    )
-                                  }
-                                >
-                                  {
-                                    data.purchase_req.masterlist.department
-                                      .department_name
-                                  }
-                                </td>
+                                    <td
+                                      onClick={() =>
+                                        // data.status === null
+                                        //   ? navigate(
+                                        //       `/PO_approvalRejustify/${data.po_id}`
+                                        //     )
+                                        //   : data.status === "Rejected"
+                                        //   ? navigate(
+                                        //       `/PO_approvalRejustify/${data.po_id}`
+                                        //     )
+                                        //   : data.status === "To-Receive"
+                                        //   ? navigate(`/PO_approvalRejustify/${data.po_id}`)
+                                        //   : navigate(
+                                        //       `/purchaseOrderListPreview/${data.po_id}`
+                                        //     )
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {
+                                        data.purchase_req.masterlist.department
+                                          .department_name
+                                      }
+                                    </td>
 
-                                <td
-                                   onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  <button
-                                    className="btn btn-secondary"
-                                    style={{ fontSize: "12px" }}
-                                  >
-                                    {data.status === null
-                                      ? "For Approval"
-                                      : data.status === "For-Approval (PO)"
-                                      ? "For Approval"
-                                      : data.status === "For-Rejustify (PO)"
-                                      ? "For Rejustify"
-                                      : data.status === "To-Receive (Partial)"
-                                      ? "For Approval"
-                                      : data.status}
-                                  </button>
-                                </td>
-
-                                <td
-                                  onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  {formatDatetime(data.updatedAt)}
-                                </td>
-
-                                <td
-                                   onClick={() =>
-                                    navigate(
-                                        `/PO_approvalRejustify/${data.po_id}`
-                                      )
-                                    }
-                                >
-                                  {data.remarks}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td
-                                  style={{
-                                    paddingBottom: 0,
-                                    paddingTop: 0,
-                                    backgroundColor: "#F5EFED",
-                                  }}
-                                  colSpan="7"
-                                >
-                                  <Collapse
-                                    in={openRows === data.id}
-                                    timeout="auto"
-                                    unmountOnExit
-                                  >
-                                    <div style={{ width: "95%" }}>
-                                      <thead
-                                        style={{
-                                          borderBottom: "1px solid #CECECE",
-                                        }}
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      <button
+                                        className="btn btn-secondary"
+                                        style={{ fontSize: "12px" }}
                                       >
-                                        <tr>
-                                          <th
+                                        {data.status === null
+                                          ? "For Approval"
+                                          : data.status === "For-Approval (PO)"
+                                          ? "For Approval"
+                                          : data.status === "For-Rejustify (PO)"
+                                          ? "For Rejustify"
+                                          : data.status ===
+                                            "To-Receive (Partial)"
+                                          ? "For Approval"
+                                          : data.status}
+                                      </button>
+                                    </td>
+
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {formatDatetime(data.updatedAt)}
+                                    </td>
+
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {data.remarks}
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td
+                                      style={{
+                                        paddingBottom: 0,
+                                        paddingTop: 0,
+                                        backgroundColor: "#F5EFED",
+                                      }}
+                                      colSpan="7"
+                                    >
+                                      <Collapse
+                                        in={openRows === data.id}
+                                        timeout="auto"
+                                        unmountOnExit
+                                      >
+                                        <div style={{ width: "95%" }}>
+                                          <thead
                                             style={{
-                                              backgroundColor: "inherit",
-                                              fontFamily: "Arial, sans-serif",
-                                              fontWeight: "bold",
+                                              borderBottom: "1px solid #CECECE",
                                             }}
                                           >
-                                            Status
-                                          </th>
-                                          <th
-                                            style={{
-                                              backgroundColor: "inherit",
-                                              fontFamily: "Arial, sans-serif",
-                                              fontWeight: "bold",
-                                            }}
-                                          >
-                                            Date
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {specificPR.map((history, i) => (
-                                          <tr key={i}>
-                                            {history.status ===
-                                            "For-Rejustify (PO)" ? (
-                                              <td
+                                            <tr>
+                                              <th
                                                 style={{
-                                                  fontSize: "14px",
-                                                  padding: "10px",
+                                                  backgroundColor: "inherit",
                                                   fontFamily:
                                                     "Arial, sans-serif",
-                                                }}
-                                                onClick={() => {
-                                                  handleRejustify(
-                                                    history.pr_id,
-                                                    history.createdAt
-                                                  );
+                                                  fontWeight: "bold",
                                                 }}
                                               >
-                                                <div
-                                                  className="for-rejustify"
+                                                Status
+                                              </th>
+                                              <th
+                                                style={{
+                                                  backgroundColor: "inherit",
+                                                  fontFamily:
+                                                    "Arial, sans-serif",
+                                                  fontWeight: "bold",
+                                                }}
+                                              >
+                                                Date
+                                              </th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {specificPR.map((history, i) => (
+                                              <tr key={i}>
+                                                {history.status ===
+                                                "For-Rejustify (PO)" ? (
+                                                  <td
+                                                    style={{
+                                                      fontSize: "14px",
+                                                      padding: "10px",
+                                                      fontFamily:
+                                                        "Arial, sans-serif",
+                                                    }}
+                                                    onClick={() => {
+                                                      handleRejustify(
+                                                        history.pr_id,
+                                                        history.createdAt
+                                                      );
+                                                    }}
+                                                  >
+                                                    <div
+                                                      className="for-rejustify"
+                                                      style={{
+                                                        color: "white",
+                                                        padding: "5px",
+                                                        borderRadius: "5px",
+                                                        textAlign: "center",
+                                                        width: "130px",
+                                                        backgroundColor: "red",
+                                                      }}
+                                                    >
+                                                      {history.status}
+                                                    </div>
+                                                  </td>
+                                                ) : (
+                                                  <td
+                                                    style={{
+                                                      fontSize: "14px",
+                                                      padding: "10px",
+                                                      fontFamily:
+                                                        "Arial, sans-serif",
+                                                    }}
+                                                  >
+                                                    {history.status}
+                                                  </td>
+                                                )}
+                                                <td
                                                   style={{
-                                                    color: "white",
-                                                    padding: "5px",
-                                                    borderRadius: "5px",
-                                                    textAlign: "center",
-                                                    width: "130px",
-                                                    backgroundColor: "red",
+                                                    fontSize: "14px",
+                                                    padding: "10px",
+                                                    fontFamily:
+                                                      "Arial, sans-serif",
                                                   }}
                                                 >
-                                                  {history.status}
-                                                </div>
-                                              </td>
-                                            ) : (
-                                              <td
-                                                style={{
-                                                  fontSize: "14px",
-                                                  padding: "10px",
-                                                  fontFamily:
-                                                    "Arial, sans-serif",
-                                                }}
-                                              >
-                                                {history.status}
-                                              </td>
-                                            )}
-                                            <td
-                                              style={{
-                                                fontSize: "14px",
-                                                padding: "10px",
-                                                fontFamily: "Arial, sans-serif",
-                                              }}
-                                            >
-                                              {formatDatetime(
-                                                history.createdAt
-                                              )}
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </div>
-                                  </Collapse>
-                                </td>
-                              </tr>
-                            </>
+                                                  {formatDatetime(
+                                                    history.createdAt
+                                                  )}
+                                                </td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </div>
+                                      </Collapse>
+                                    </td>
+                                  </tr>
+                                </>
                               ) : (
                                 <></>
                               )}

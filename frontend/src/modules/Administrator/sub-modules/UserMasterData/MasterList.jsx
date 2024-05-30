@@ -702,7 +702,7 @@ function MasterList({ authrztn }) {
                 </div>
 
                 <div className="button-create-side">
-                  <div className="Buttonmodal-new">
+                  {/* <div className="Buttonmodal-new">
                     {authrztn?.includes("Master List - Add") && (
                       <button onClick={handleShow}>
                         <span>
@@ -711,11 +711,45 @@ function MasterList({ authrztn }) {
                         New User
                       </button>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
-            <div className="textfield">
+            <div className="btn-and-search">
+              {authrztn?.includes("Master List - Add") && (
+                <div className="button-create-side">
+                  <div className="Buttonmodal-new">
+                    <button onClick={handleShow}>
+                      <span>
+                        <Plus size={25} />
+                      </span>
+                      New User
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="main-table-search">
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  className="main-search act-search cus-btm"
+                  style={{
+                    marginBottom: "10px",
+                    // marginRight: "20px",
+                    float: "right",
+                  }}
+                  InputLabelProps={{
+                    style: { fontSize: "14px" },
+                  }}
+                  InputProps={{
+                    style: { fontSize: "14px", height: "50px" },
+                  }}
+                  onChange={handleSearch}
+                />
+              </div>
+            </div>
+            {/* <div className="textfield">
               <TextField
                 label="Search"
                 variant="outlined"
@@ -732,7 +766,7 @@ function MasterList({ authrztn }) {
                 }}
                 onChange={handleSearch}
               />
-            </div>
+            </div> */}
 
             <div className="table-containss">
               {masterListt.length > 0 ? (
@@ -1381,7 +1415,7 @@ function MasterList({ authrztn }) {
                 style={{
                   position: "absolute",
                   height: "0.5px",
-                  width: "78%",
+                  width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "65%",
                   left: "18rem",
@@ -1500,7 +1534,7 @@ function MasterList({ authrztn }) {
                 style={{
                   position: "absolute",
                   height: "0.5px",
-                  width: "82%",
+                  width: "-webkit-fill-available",
                   background: "#FFA500",
                   top: "65%",
                   left: "14rem",

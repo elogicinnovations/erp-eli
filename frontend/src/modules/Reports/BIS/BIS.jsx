@@ -1,6 +1,6 @@
 //test test
 import React, { useEffect, useState, useRef } from "react";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 import Sidebar from "../../Sidebar/sidebar";
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
@@ -15,7 +15,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { CalendarBlank, Export, XCircle } from "@phosphor-icons/react";
 import NoData from "../../../../src/assets/image/NoData.png";
-import NoAccess from '../../../../src/assets/image/NoAccess.png';
+import NoAccess from "../../../../src/assets/image/NoAccess.png";
 import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import "../../../assets/skydash/vendors/feather/feather.css";
@@ -101,7 +101,7 @@ function BIS({ authrztn }) {
     totalPagesBISsubpart
   );
 
-  const MAX_PAGES = 5; 
+  const MAX_PAGES = 5;
 
   const generatePages = () => {
     const pages = [];
@@ -125,10 +125,10 @@ function BIS({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -137,7 +137,7 @@ function BIS({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -167,23 +167,23 @@ function BIS({ authrztn }) {
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/report_BIS/content_fetch")
-      .then((res) => {
-        setBisContent(res.data.prd);
-        setSearchBIS(res.data.prd);
-        setBisContent_asm(res.data.asm);
-        setSearchBISasm(res.data.asm);
-        setBisContent_spare(res.data.spare);
-        setSearchBISspare(res.data.spare);
-        setBisContent_subpart(res.data.subpart);
-        setSearchBISsub(res.data.subpart);
-        setIsLoading(false);
-      })
-      .catch((err) => {console.log(err)
-        setIsLoading(false);
-      });
- 
+      axios
+        .get(BASE_URL + "/report_BIS/content_fetch")
+        .then((res) => {
+          setBisContent(res.data.prd);
+          setSearchBIS(res.data.prd);
+          setBisContent_asm(res.data.asm);
+          setSearchBISasm(res.data.asm);
+          setBisContent_spare(res.data.spare);
+          setSearchBISspare(res.data.spare);
+          setBisContent_subpart(res.data.subpart);
+          setSearchBISsub(res.data.subpart);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }, 1000);
     return () => clearTimeout(delay);
   };
@@ -219,8 +219,6 @@ function BIS({ authrztn }) {
       })
       .catch((err) => console.log(err));
   };
-
-
 
   const handleSearch = (event) => {
     setCurrentPage(1);
@@ -434,7 +432,6 @@ function BIS({ authrztn }) {
       );
     });
     setBisContent_spare(filteredSearchBISspare);
-    
 
     const filteredSearchBISsub = searchBISsub.filter((data) => {
       return (
@@ -795,161 +792,190 @@ function BIS({ authrztn }) {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-      {isLoading ? (
+        {isLoading ? (
           <div className="loading-container">
-            <ReactLoading className="react-loading" type={'bubbles'}/>
+            <ReactLoading className="react-loading" type={"bubbles"} />
             Loading Data...
           </div>
-        ) : (
-        authrztn.includes('Report - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>BIS REPORT</p>
-              </div>
-              <div className="button-create-side">
-                <div className="filtering-section">
-                  <div className="date-section-filter">
-                    <div style={{ position: "relative", marginBottom: "15px" }}>
-                      <DatePicker
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        placeholderText="Choose Date From"
-                        dateFormat="yyyy-MM-dd"
-                        wrapperClassName="custom-datepicker-wrapper"
-                        popperClassName="custom-popper"
-                        style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                      />
-                      <CalendarBlank
-                        size={20}
-                        weight="thin"
-                        style={{
-                          position: "absolute",
-                          left: "8px",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          cursor: "pointer",
-                        }}
-                      />
-                      {startDate && (
-                        <XCircle
-                          size={16}
-                          weight="thin"
-                          style={{
-                            position: "absolute",
-                            right: "19px",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            cursor: "pointer",
-                          }}
-                          onClick={handleXCircleClick}
-                        />
-                      )}
-                    </div>
-                    <div className="">
-                      <Form.Select
-                        aria-label="item status"
-                        onChange={(e) => setSelectedDepartment(e.target.value)}
-                        style={{
-                          width: "274px",
-                          height: "40px",
-                          fontSize: "15px",
-                          marginBottom: "15px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                        value={selectedDepartment}
-                      >
-                        <option disabled value="" selected>
-                          Select Department
-                        </option>
-                        <option value={"All"}>All</option>
-                        {department.map((dept) => (
-                          <option key={dept.id} value={dept.id}>
-                            {dept.department_name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </div>
-                  </div>
+        ) : authrztn.includes("Report - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side">
+                  <p>BIS REPORT</p>
+                </div>
+                <div className="">
+                  <div className="filtering-section">
+                    <div className="filter-sec">
+                      <div className="date-section-filter">
+                        <div
+                          style={{ position: "relative", marginBottom: "15px" }}
+                        >
+                          <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            placeholderText="Choose Date From"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {startDate && (
+                            <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleXCircleClick}
+                            />
+                          )}
+                        </div>
 
-                  <div className="warehouse-product-filter">
-                    <div style={{ position: "relative", marginBottom: "15px" }}>
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        placeholderText="Choose Date To"
-                        dateFormat="yyyy-MM-dd"
-                        wrapperClassName="custom-datepicker-wrapper"
-                        popperClassName="custom-popper"
-                        style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                      />
-                      <CalendarBlank
-                        size={20}
-                        weight="thin"
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        style={{
-                          position: "absolute",
-                          left: "8px",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          cursor: "pointer",
-                        }}
-                      />
-                      {endDate && (
-                        <XCircle
-                          size={16}
-                          weight="thin"
-                          style={{
-                            position: "absolute",
-                            right: "19px",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            cursor: "pointer",
-                          }}
-                          onClick={handleXClick}
-                        />
-                      )}
-                    </div>
-                    <div className="">
-                      <Form.Select
-                        aria-label="item status"
-                        onChange={(e) => setSelectedCostcenter(e.target.value)}
-                        style={{
-                          width: "284px",
-                          height: "40px",
-                          fontSize: "15px",
-                          marginBottom: "15px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                        value={selectedCostcenter}
-                      >
-                        <option disabled value="" selected>
-                          Select Cost Center
-                        </option>
-                        <option value={"All"}>All</option>
-                        {costCenter.map((cost) => (
-                          <option key={cost.id} value={cost.id}>
-                            {cost.name}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </div>
-                  </div>
+                        <div
+                          style={{ position: "relative", marginBottom: "15px" }}
+                        >
+                          <DatePicker
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            placeholderText="Choose Date To"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {endDate && (
+                            <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleXClick}
+                            />
+                          )}
+                        </div>
+                      </div>
 
-                  <div className="button-filter-section">
-                    <div className="btnfilter">
+                      <div className="warehouse-product-filter">
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) =>
+                              setSelectedDepartment(e.target.value)
+                            }
+                            style={{
+                              width: "274px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            className="select-inv-rep"
+                            value={selectedDepartment}
+                          >
+                            <option disabled value="" selected>
+                              Select Department
+                            </option>
+                            <option value={"All"}>All</option>
+                            {department.map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.department_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div>
+
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) =>
+                              setSelectedCostcenter(e.target.value)
+                            }
+                            style={{
+                              width: "284px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            className="select-inv-rep"
+                            value={selectedCostcenter}
+                          >
+                            <option disabled value="" selected>
+                              Select Cost Center
+                            </option>
+                            <option value={"All"}>All</option>
+                            {costCenter.map((cost) => (
+                              <option key={cost.id} value={cost.id}>
+                                {cost.name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className="button-filter-section">
+                      <div className="btnfilter">
+                        <button
+                          className="actualbtnfilter"
+                          onClick={handleGenerate}
+                        >
+                          FILTER
+                        </button>
+                      </div>
+                      <div className="clearbntfilter">
+                        <button
+                          className="actualclearfilter"
+                          onClick={clearFilters}
+                        >
+                          Clear Filter
+                        </button>
+                      </div>
+                    </div> */}
+
+                    <div className="pur-filt-container my-4 cus-wid">
                       <button
-                        className="actualbtnfilter"
                         onClick={handleGenerate}
+                        className="goesButton cust-height"
                       >
                         FILTER
                       </button>
-                    </div>
-                    <div className="clearbntfilter">
                       <button
-                        className="actualclearfilter"
+                        className="actualclearfilter Filterclear  cust-height"
                         onClick={clearFilters}
                       >
                         Clear Filter
@@ -959,333 +985,346 @@ function BIS({ authrztn }) {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-              <div className="searchandexport">
-                <div className="exportfield">
-                  <button className="export" onClick={exportToCSV}>
-                    <Export size={20} weight="bold" /> <p1>Export</p1>
-                  </button>
-                </div>
-                <div className="searchfield">
-                  <TextField
-                    label="Search"
-                    variant="outlined"
-                    style={{
-                      float: "right",
-                    }}
-                    InputLabelProps={{
-                      style: { fontSize: "14px" },
-                    }}
-                    InputProps={{
-                      style: {
-                        fontSize: "14px",
-                        width: "250px",
-                        height: "50px",
-                      },
-                    }}
-                    onChange={handleSearch}
-                  />
-                </div>
-              </div>
-
-              <table ref={tableRef} className="table-hover">
-                <thead>
-                  <tr>
-                    <th className="tableh">Doc Date</th>
-                    <th className="tableh">BIS#</th>
-                    <th className="tableh">MRS</th>
-                    <th className="tableh">Category</th>
-                    <th className="tableh">Product Code</th>
-                    <th className="tableh">Product Name</th>
-                    <th className="tableh">Issued Quantity</th>
-                    <th className="tableh">UOM</th>
-                    <th className="tableh">Unit Price</th>
-                    <th className="tableh">Freight Cost</th>
-                    <th className="tableh">Custom Cost</th>
-                    <th className="tableh">Landed Cost</th>
-                    <th className="tableh">Total</th>
-                  </tr>
-                </thead>
-                {bisContent.length > 0 ||
-                bisContent_asm.length > 0 ||
-                bisContent_spare.length > 0 ||
-                bisContent_subpart.length > 0 ? (
-                  <tbody>
-                    {currentItemsBISprod.map((data, i) => (
-                      <tr key={i}>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                        <td>{data.issuance.issuance_id}</td>
-                        <td>{data.issuance.mrs}</td>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .category.category_name
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .product_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .product_name
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          {
-                            data.inventory_prd.product_tag_supplier.product
-                              .product_unitMeasurement
-                          }
-                        </td>
-                        <td>{data.inventory_prd.price}</td>
-                        <td>{data.inventory_prd.freight_cost}</td>
-                        <td>{data.inventory_prd.custom_cost}</td>
-                        <td>
-                          {(
-                            data.inventory_prd.price +
-                            data.inventory_prd.freight_cost +
-                            data.inventory_prd.custom_cost
-                          ).toFixed(2)}
-                        </td>
-                        <td>
-                          {(
-                            (data.inventory_prd.price +
-                              data.inventory_prd.freight_cost +
-                              data.inventory_prd.custom_cost) *
-                            data.quantity
-                          ).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-
-                    {currentItemsBISasm.map((data, i) => (
-                      <tr key={i}>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                        <td>{data.issuance.issuance_id}</td>
-                        <td>{data.issuance.mrs}</td>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .category.category_name
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .assembly_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .assembly_name
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          {
-                            data.inventory_assembly.assembly_supplier.assembly
-                              .assembly_unitMeasurement
-                          }
-                        </td>
-
-                        <td>{data.inventory_assembly.price}</td>
-                        <td>{data.inventory_assembly.freight_cost}</td>
-                        <td>{data.inventory_assembly.custom_cost}</td>
-                        <td>
-                          {(
-                            data.inventory_assembly.price +
-                            data.inventory_assembly.freight_cost +
-                            data.inventory_assembly.custom_cost
-                          ).toFixed(2)}
-                        </td>
-                        <td>
-                          {(
-                            (data.inventory_assembly.price +
-                              data.inventory_assembly.freight_cost +
-                              data.inventory_assembly.custom_cost) *
-                            data.quantity
-                          ).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-
-                    {currentItemsBISspare.map((data, i) => (
-                      <tr key={i}>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                        <td>{data.issuance.issuance_id}</td>
-                        <td>{data.issuance.mrs}</td>
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .category.category_name
-                          }
-                        </td>
-
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .spareParts_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .spareParts_name
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          {
-                            data.inventory_spare.sparepart_supplier.sparePart
-                              .spareParts_unitMeasurement
-                          }
-                        </td>
-                        <td>{data.inventory_spare.price}</td>
-                        <td>{data.inventory_spare.freight_cost}</td>
-                        <td>{data.inventory_spare.custom_cost}</td>
-                        <td>
-                          {(
-                            data.inventory_spare.price +
-                            data.inventory_spare.freight_cost +
-                            data.inventory_spare.custom_cost
-                          ).toFixed(2)}
-                        </td>
-                        <td>
-                          {(
-                            (data.inventory_spare.price +
-                              data.inventory_spare.freight_cost +
-                              data.inventory_spare.custom_cost) *
-                            data.quantity
-                          ).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
-                    
-                    {currentItemsBISsubpart.map((data, i) => (
-                      <tr key={i}>
-                        <td>{formatDatetime(data.createdAt)}</td>
-                        <td>{data.issuance.issuance_id}</td>
-                        <td>{data.issuance.mrs}</td>
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .category.category_name
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .subPart_code
-                          }
-                        </td>
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .subPart_name
-                          }
-                        </td>
-                        <td>{data.quantity}</td>
-                        <td>
-                          {
-                            data.inventory_subpart.subpart_supplier.subPart
-                              .subPart_unitMeasurement
-                          }
-                        </td>
-
-                        <td>{data.inventory_subpart.price}</td>
-                        <td>{data.inventory_subpart.freight_cost}</td>
-                        <td>{data.inventory_subpart.custom_cost}</td>
-                        <td>
-                          {(
-                            data.inventory_subpart.price +
-                            data.inventory_subpart.freight_cost +
-                            data.inventory_subpart.custom_cost
-                          ).toFixed(2)}
-                        </td>
-                        <td>
-                          {(
-                            (data.inventory_subpart.price +
-                              data.inventory_subpart.freight_cost +
-                              data.inventory_subpart.custom_cost) *
-                            data.quantity
-                          ).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))} 
-                  </tbody>
-                ) : (
-                  <div className="no-data">
-                    <img src={NoData} alt="NoData" className="no-data-img" />
-                    <h3>No Data Found</h3>
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <div className="searchandexport">
+                  <div className="exportfield">
+                    <button className="export" onClick={exportToCSV}>
+                      <Export size={20} weight="bold" /> <p1>Export</p1>
+                    </button>
                   </div>
-                )}
-              </table>
+                  <div className="searchfield">
+                    <TextField
+                      label="Search"
+                      variant="outlined"
+                      style={{
+                        float: "right",
+                      }}
+                      InputLabelProps={{
+                        style: { fontSize: "14px" },
+                      }}
+                      InputProps={{
+                        style: {
+                          fontSize: "14px",
+                          // width: "250px",
+                          height: "50px",
+                        },
+                      }}
+                      className="act-search"
+                      onChange={handleSearch}
+                    />
+                  </div>
+                </div>
+
+                <table ref={tableRef} className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Doc Date</th>
+                      <th className="tableh">BIS#</th>
+                      <th className="tableh">MRS</th>
+                      <th className="tableh">Category</th>
+                      <th className="tableh">Product Code</th>
+                      <th className="tableh">Product Name</th>
+                      <th className="tableh">Issued Quantity</th>
+                      <th className="tableh">UOM</th>
+                      <th className="tableh">Unit Price</th>
+                      <th className="tableh">Freight Cost</th>
+                      <th className="tableh">Custom Cost</th>
+                      <th className="tableh">Landed Cost</th>
+                      <th className="tableh">Total</th>
+                    </tr>
+                  </thead>
+                  {bisContent.length > 0 ||
+                  bisContent_asm.length > 0 ||
+                  bisContent_spare.length > 0 ||
+                  bisContent_subpart.length > 0 ? (
+                    <tbody>
+                      {currentItemsBISprod.map((data, i) => (
+                        <tr key={i}>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                          <td>{data.issuance.issuance_id}</td>
+                          <td>{data.issuance.mrs}</td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .category.category_name
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_unitMeasurement
+                            }
+                          </td>
+                          <td>{data.inventory_prd.price}</td>
+                          <td>{data.inventory_prd.freight_cost}</td>
+                          <td>{data.inventory_prd.custom_cost}</td>
+                          <td>
+                            {(
+                              data.inventory_prd.price +
+                              data.inventory_prd.freight_cost +
+                              data.inventory_prd.custom_cost
+                            ).toFixed(2)}
+                          </td>
+                          <td>
+                            {(
+                              (data.inventory_prd.price +
+                                data.inventory_prd.freight_cost +
+                                data.inventory_prd.custom_cost) *
+                              data.quantity
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+
+                      {currentItemsBISasm.map((data, i) => (
+                        <tr key={i}>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                          <td>{data.issuance.issuance_id}</td>
+                          <td>{data.issuance.mrs}</td>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .category.category_name
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .assembly_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .assembly_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_assembly.assembly_supplier.assembly
+                                .assembly_unitMeasurement
+                            }
+                          </td>
+
+                          <td>{data.inventory_assembly.price}</td>
+                          <td>{data.inventory_assembly.freight_cost}</td>
+                          <td>{data.inventory_assembly.custom_cost}</td>
+                          <td>
+                            {(
+                              data.inventory_assembly.price +
+                              data.inventory_assembly.freight_cost +
+                              data.inventory_assembly.custom_cost
+                            ).toFixed(2)}
+                          </td>
+                          <td>
+                            {(
+                              (data.inventory_assembly.price +
+                                data.inventory_assembly.freight_cost +
+                                data.inventory_assembly.custom_cost) *
+                              data.quantity
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+
+                      {currentItemsBISspare.map((data, i) => (
+                        <tr key={i}>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                          <td>{data.issuance.issuance_id}</td>
+                          <td>{data.issuance.mrs}</td>
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .category.category_name
+                            }
+                          </td>
+
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .spareParts_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .spareParts_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_spare.sparepart_supplier.sparePart
+                                .spareParts_unitMeasurement
+                            }
+                          </td>
+                          <td>{data.inventory_spare.price}</td>
+                          <td>{data.inventory_spare.freight_cost}</td>
+                          <td>{data.inventory_spare.custom_cost}</td>
+                          <td>
+                            {(
+                              data.inventory_spare.price +
+                              data.inventory_spare.freight_cost +
+                              data.inventory_spare.custom_cost
+                            ).toFixed(2)}
+                          </td>
+                          <td>
+                            {(
+                              (data.inventory_spare.price +
+                                data.inventory_spare.freight_cost +
+                                data.inventory_spare.custom_cost) *
+                              data.quantity
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+
+                      {currentItemsBISsubpart.map((data, i) => (
+                        <tr key={i}>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                          <td>{data.issuance.issuance_id}</td>
+                          <td>{data.issuance.mrs}</td>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .category.category_name
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .subPart_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .subPart_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>
+                            {
+                              data.inventory_subpart.subpart_supplier.subPart
+                                .subPart_unitMeasurement
+                            }
+                          </td>
+
+                          <td>{data.inventory_subpart.price}</td>
+                          <td>{data.inventory_subpart.freight_cost}</td>
+                          <td>{data.inventory_subpart.custom_cost}</td>
+                          <td>
+                            {(
+                              data.inventory_subpart.price +
+                              data.inventory_subpart.freight_cost +
+                              data.inventory_subpart.custom_cost
+                            ).toFixed(2)}
+                          </td>
+                          <td>
+                            {(
+                              (data.inventory_subpart.price +
+                                data.inventory_subpart.freight_cost +
+                                data.inventory_subpart.custom_cost) *
+                              data.quantity
+                            ).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
+                    <div className="no-data">
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>No Data Found</h3>
+                    </div>
+                  )}
+                </table>
+              </div>
             </div>
-          </div>
-          <nav style={{ marginTop: "15px" }}>
-            <ul className="pagination" style={{ float: "right" }}>
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-              >
-                <button
-                  type="button"
-                  style={{
-                    fontSize: "14px",
-                    cursor: "pointer",
-                    color: "#000000",
-                    textTransform: "capitalize",
-                  }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+            <nav style={{ marginTop: "15px" }}>
+              <ul className="pagination" style={{ float: "right" }}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                 >
-                  Previous
-                </button>
-              </li>
-              {generatePages().map((page, index) => (
-                <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
                   <button
+                    type="button"
                     style={{
-                      fontSize: '14px',
-                      width: '25px',
-                      background: currentPage === page ? '#FFA500' : 'white',
-                      color: currentPage === page ? '#FFFFFF' : '#000000',
-                      border: 'none',
-                      height: '28px',
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
                     }}
-                    className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
-                    onClick={() => handlePageClick(page)}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
                   >
-                    {page}
+                    Previous
                   </button>
                 </li>
-              ))}
-              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-                <button
-                  style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
-                  className="page-link"
-                  onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                {generatePages().map((page, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
+                    <button
+                      style={{
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
+                      }}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
+                      onClick={() => handlePageClick(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
                 >
-                  Next
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-          ) : (
-            <div className="no-access">
-              <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-              <h3>
-                You don't have access to this function.
-              </h3>
-            </div>
-          )
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+                  >
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
         )}
       </div>
     </div>
