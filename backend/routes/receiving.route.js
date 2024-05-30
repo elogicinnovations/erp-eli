@@ -37,6 +37,47 @@ const {
 const session = require("express-session");
 const moment = require('moment-timezone');
 
+
+
+router.route("/generateRefCodess").get(async (req, res) => {
+  try {
+    const currentDate = moment().tz("Asia/Manila").toDate();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const currentMonth = `${year}-${month}`;
+
+    // Fetch the latest ref_code
+    const latestReceiving = await Receiving_PO.findOne({
+      where: {
+        ref_code: {
+          [Op.like]: `${currentMonth}%`
+        }
+      },
+      order: [['createdAt', 'DESC']]
+    });
+
+    let newRefCode;
+    if (latestReceiving && latestReceiving.ref_code) {
+      const latestRefCode = latestReceiving.ref_code;
+      const refCodeParts = latestRefCode.split('-');
+      if (refCodeParts.length === 3 && !isNaN(refCodeParts[2])) {
+        const latestSequence = parseInt(refCodeParts[2], 10);
+        const newSequence = String(latestSequence + 1).padStart(5, '0');
+        newRefCode = `${currentMonth}-${newSequence}`;
+      } else {
+        // If the refCode doesn't split correctly or sequence is not a number
+        newRefCode = `${currentMonth}-00001`;
+      }
+    } else {
+      newRefCode = `${currentMonth}-00001`;
+    }
+
+    res.json({ refCode: newRefCode });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+});
 //View Receiving
 router.route("/viewToReceive").get(async (req, res) => {
   try {
@@ -59,6 +100,42 @@ router.route("/viewToReceive").get(async (req, res) => {
       }],
       where: {
         po_id: req.query.po_id,
+      },
+    });
+
+    if (!data) {
+      // No record found
+      return res.status(404).json({ message: "PR not found" });
+    }
+    // console.log(data)
+    return res.json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+});
+
+router.route("/viewToReceiveIntransit").get(async (req, res) => {
+  try {
+    const data = await Receiving_PO.findAll({
+      include: [{
+        model: PR,
+        required: true,
+          include: [
+          {
+            model: MasterList,
+            required: true,
+            include: [
+              {
+                model: Department,
+                required: true,
+              },
+            ],
+          },
+        ],
+      }],
+      where: {
+        id: req.query.id,
       },
     });
 
@@ -102,40 +179,129 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
       },
     }); 
 
-    // const ReceivingPO = await Receiving_PO.findAll({
-    //   include: [
-    //     {
-    //       model: PR,
-    //       required: true,
-    //       include: [
-    //         {
-    //           model: MasterList,
-    //           required: true,
-    //           include: [
-    //             {
-    //               model: Department,
-    //               required: true,
-    //             },
-    //           ],
-    //         },
-    //       ],
-    //     },
-    //   ],
-    //   where: {
-    //     status: {
-    //       [Op.or]: ["For Approval", "In-transit"],
-    //     },
-    //   },
-    // });
+    // Create a map to keep track of unique po_ids
+    const uniquePoMap = new Map();
+
+    // Filter data to ensure only unique po_ids
+    const uniqueDataPR = pr_data.filter((item) => {
+      if (!uniquePoMap.has(item.po_id)) {
+        uniquePoMap.set(item.po_id, true);
+        return true;
+      }
+      return false;
+    });
+
+    const ReceivingPO = await Receiving_PO.findAll({
+      include: [
+        {
+          model: PR,
+          required: true,
+          include: [
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      where: {
+        status: {
+          [Op.or]: ["For Approval", "In-transit"],
+        },
+      },
+    });
+
+    const po = uniqueDataPR.map(item => ({
+      ...item.dataValues,
+      source: 'PO'
+    }));
+    const po_receive = ReceivingPO.map(item => ({
+      ...item.dataValues,
+      source: 'ReceivingPO'
+    }));
+  // Combine the dataValues into one array
+  const combinedData = [...po, ...po_receive];
+  
+  // Sort the combined data by createdAt column in descending order
+  combinedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return res.json({
-      prData: pr_data,
-      // receiving_PO: ReceivingPO,
+      prData: combinedData,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
   }
+});
+
+
+router.route("/PO_products_primary").get(async (req, res) => { // pinakaunang na received selection if from davao or main agad
+  try {
+      const po_id = req.query.po_id;
+      // Fetch data from all four tables with the specified pr_id
+      const prPoData = await PR_PO.findAll({
+        include: [{
+          model: ProductTAGSupplier,
+          required: true,
+
+            include: [{
+              model: Product,
+              required: true,
+              attributes: [
+                ['product_code', 'code'],
+                ['product_name', 'name'],
+                ['UOM_set', 'isSubUnit'],
+                ['product_unitMeasurement', 'UOM']
+              ],
+            
+            },
+            {
+              model: Supplier,
+              required: true
+            }] 
+        }],
+        where: { 
+          po_id: po_id
+       },
+      });
+  
+     
+      // Consolidate data into an object with po_id as keys
+      const consolidatedObject = {};
+  
+      prPoData.forEach(item => {
+        const po_id = item.po_id;
+        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
+        consolidatedObject[po_id].items.push({item, supp_tag: item.product_tag_supplier.product, suppliers: item.product_tag_supplier.supplier, type: 'Product'});
+      });
+  
+      // Convert the object values back to an array
+      const consolidatedArray = Object.values(consolidatedObject);
+  
+
+      const Image = await Receiving_Image.findAll({
+        where: {
+            // pr_id: pr_id,
+            po_num: po_id
+        },
+      });
+
+      // console.log(Image)
+  
+      res.status(200).json({
+        consolidatedArray: consolidatedArray,
+        image_receiving: Image
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json("Error");
+    }
 });
 
 router.route("/insertReceived").post(async (req, res) => {
@@ -160,16 +326,19 @@ router.route("/insertReceived").post(async (req, res) => {
   const customFee = req.body.customFee === "" ? null : req.body.customFee;
   const receving_site = req.body.suppReceving;
   const productImages = req.body.productImages;
-  const pr_id = req.body.id;
+  const pr_id = req.body.pr_id;
   const po_id = req.body.po_id;
   const userId = req.body.userId;
   const refCode = req.body.refCode;
 
   let status = "";
   let totalReceived = 0;
+  let totalReceived_toCompute = 0;
   let totalRemaining = 0;
   let freighCost;
   let initialReceiveStatus = "";
+  let isComplete = false
+  
   // let finalSF;
 
   // if (shippingFee === "") {
@@ -180,6 +349,7 @@ router.route("/insertReceived").post(async (req, res) => {
 
   if (receving_site === "Davao City") {
     status = "In-transit";
+    isComplete
   } else if (receving_site === "Agusan Del Sur") {
     status = "For Approval";
   }
@@ -190,403 +360,196 @@ router.route("/insertReceived").post(async (req, res) => {
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
       totalReceived += parseInt(child.Received_quantity || 0);
+      totalReceived_toCompute += parseInt((child.Received_quantity * child.set_quantity) || 0);
       totalRemaining += parseInt(child.Remaining_quantity);
       // console.log(`child.Received_quantity ${child.Received_quantity}`)
     }
   }
   if (totalRemaining === 0) {
     initialReceiveStatus = "Complete";
+    isComplete = true
   } else {
     initialReceiveStatus = "Incomplete";
+    isComplete = false
   }
 
-  freighCost = (shippingFee / totalReceived).toFixed(2);
 
-  const received_PO = await Receiving_PO.create({
-    pr_id: pr_id,
-    po_id: po_id,
-    freight_cost: freighCost === 0 ? null : freighCost,
-    customFee: customFee,
-    totalReceived: totalReceived,
-    ref_code: refCode,
-    status: status,
-    initialReceive:
-      receving_site === "Davao City" ? initialReceiveStatus : null,
-  });
 
-  // console.log('dwadwa' + received_PO.id)
+  freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
 
-  if (receving_site === "Agusan Del Sur") {
-    for (const parent of parentArray) {
-      for (const child of parent.serializedArray) {
-        const receivedQuantity = parseInt(child.Received_quantity);
-        // console.log(child);
-        if (!isNaN(receivedQuantity)) {
-          let productName;
 
-          if (child.type === "Product") {
-            const update = PR_PO.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_Prd.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                // freight_cost: freighCost,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `PRD-${formattedDate}`,
-                // status: status,
-              });
-
-              const getProdName = await PR_PO.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: ProductTAGSupplier,
-                    required: true,
-
-                      include: [{
-                        model: Product,
-                        required: true
-                      }]
-                  }],
-              });
-
-              productName = getProdName.product_tag_supplier.product.product_name;
-              // console.log("PRODUCT NAME AGUSAN" + productName)
-            }
-          } else if (child.type === "Product Assembly") {
-            const update = PR_PO_asmbly.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_Asm.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                // freight_cost: freighCost,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `ASM-${formattedDate}`,
-                // status: status,
-              });
-
-              const getAssemblyName = await PR_PO_asmbly.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: Assembly_Supplier,
-                    required: true,
-                       include:[{
-                          model: Assembly,
-                          required: true
-                       }]
-                  }],
-              });
-
-              productName = getAssemblyName.assembly_supplier.assembly.assembly_name;
-              // console.log("ASSEMBLY NAME AGUSAN" + productName)
-            }
-          } else if (child.type === "Product Part") {
-            const update = PR_PO_spare.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_Spare.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                // freight_cost: freighCost,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `SPR-${formattedDate}`,
-                // status: status,
-              });
-
-              const getSpareName = await PR_PO_spare.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: SparePart_Supplier,
-                    required: true,
-                      include: [{
-                        model: SparePart,
-                        required: true
-                      }]
-                  }],
-              });
-
-              productName = getSpareName.sparepart_supplier.sparePart.spareParts_name;
-              // console.log("SPARE NAME AGUSAN" + productName)
-            }
-          } else if (child.type === "Product Subpart") {
-            // console.log(`Subpart ${freighCost}`)
-
-            const update = PR_PO_subpart.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_Subpart.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                // freight_cost: freighCost,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `SBP-${formattedDate}`,
-                // status: status,
-              });
-
-              const getSubName = await PR_PO_subpart.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: Subpart_supplier,
-                    required: true,
-                      include: [{
-                        model: SubPart,
-                        required: true,
-                      }]
-                  }],
-              });
-
-              productName = getSubName.subpart_supplier.subPart.subPart_name;
-              // console.log("SUBPART NAME AGUSAN" + productName)
-            }
-          } else {
-            console.log(`Not a Product`);
-          }
-
-          await Activity_Log.create({
-            masterlist_id: userId,
-            action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-          });
-        }
-      }
-    }
-  } else {
-    for (const parent of parentArray) {
-      for (const child of parent.serializedArray) {
-        const receivedQuantity = parseInt(child.Received_quantity);
-        // console.log(child);
-        if (!isNaN(receivedQuantity)) {
-          let productName;
-
-          if (child.type === "Product") {
-            const update = PR_PO.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_initial_prd.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              });
-
-              const getProdName = await PR_PO.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: ProductTAGSupplier,
-                    required: true,
-
-                      include: [{
-                        model: Product,
-                        required: true
-                      }]
-                  }],
-              });
-
-              productName = getProdName.product_tag_supplier.product.product_name;
-              // console.log("PRODUCT NAME DAVAO" + productName)
-            }
-          } else if (child.type === "Product Assembly") {
-            const update = PR_PO_asmbly.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_initial_asm.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              });
-
-              const getAssemblyName = await PR_PO_asmbly.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: Assembly_Supplier,
-                    required: true,
-                       include:[{
-                          model: Assembly,
-                          required: true
-                       }]
-                  }],
-              });
-
-              productName = getAssemblyName.assembly_supplier.assembly.assembly_name;
-              // console.log("ASSEMBLY NAME DAVAO" + productName)
-            }
-          } else if (child.type === "Product Part") {
-            const update = PR_PO_spare.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_initial_spare.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              });
-
-              const getSpareName = await PR_PO_spare.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: SparePart_Supplier,
-                    required: true,
-                      include: [{
-                        model: SparePart,
-                        required: true
-                      }]
-                  }],
-              });
-
-              productName = getSpareName.sparepart_supplier.sparePart.spareParts_name;
-              // console.log("SPARE NAME DAVAO" + productName)
-            }
-          } else if (child.type === "Product Subpart") {
-            // console.log(`Subpart ${freighCost}`)
-
-            const update = PR_PO_subpart.update(
-              {
-                quantity: child.ordered_quantity - child.Received_quantity,
-              },
-              {
-                where: { id: child.canvassed_ID },
-              }
-            );
-
-            if (update) {
-              Receiving_initial_subpart.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              });
-
-              const getSubName = await PR_PO_subpart.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: Subpart_supplier,
-                    required: true,
-                      include: [{
-                        model: SubPart,
-                        required: true,
-                      }]
-                  }],
-              });
-
-              productName = getSubName.subpart_supplier.subPart.subPart_name;
-              // console.log("SUBPART NAME DAVAO" + productName)
-            }
-          } else {
-            console.log(`Not a Product`);
-          }
-
-            await Activity_Log.create({
-              masterlist_id: userId,
-              action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-            });
-        }
-      }
-    }
-  }
-
-  const deleteproductImage = Receiving_Image.destroy({
-    where: {
-      pr_id: pr_id,
-      po_num: po_id,
+  const updateReceivingPOS = await PR_PO.update(
+    {
+      status: isComplete === true ? 'Received' : 'To-Receive',
     },
-  });
-
-  if (deleteproductImage) {
-    if (productImages && productImages.length > 0) {
-      productImages.forEach(async (i) => {
-        await Receiving_Image.create({
-          pr_id: pr_id,
-          po_num: po_id,
-          image: i.image,
-        });
-      });
+    {
+      where: { po_id: po_id },
     }
-  } else {
-    console.log("adwjkd");
+  );
+
+  if(updateReceivingPOS){
+    const received_PO = await Receiving_PO.create({
+      pr_id: pr_id,
+      po_id: po_id,
+      freight_cost: freighCost === '0.00' ? null : freighCost,
+      customFee: customFee,
+      totalReceived: totalReceived,
+      ref_code: refCode,
+      status: status,
+      receivedSite: receving_site,
+      initialReceive: initialReceiveStatus,
+    });
+  
+    // console.log('dwadwa' + received_PO.id)
+  
+    if (receving_site === "Agusan Del Sur") {
+      for (const parent of parentArray) {
+        for (const child of parent.serializedArray) {
+          const receivedQuantity = parseInt(child.Received_quantity);
+          // console.log(child);
+          if (!isNaN(receivedQuantity)) {
+            let productName;
+  
+            if (child.type === "Product") {
+  
+              if(child.Received_quantity !== '0'){
+  
+                const update = PR_PO.update(
+                  {
+                    quantity: child.ordered_quantity - child.Received_quantity,
+                  },
+                  {
+                    where: { id: child.canvassed_ID },
+                  }
+                );
+    
+                if (update) {
+                  
+                    Receiving_Prd.create({
+                      receiving_po_id: received_PO.id,
+                      canvassed_id: child.canvassed_ID,
+                      set_quantity: child.set_quantity,
+                      received_quantity: child.Received_quantity,
+                      remaining_quantity: child.Remaining_quantity,
+                    });
+      
+                    const getProdName = await PR_PO.findOne({
+                      where: {
+                        id: child.canvassed_ID
+                      },
+                      include: [{
+                          model: ProductTAGSupplier,
+                          required: true,
+      
+                            include: [{
+                              model: Product,
+                              required: true
+                            }]
+                        }],
+                    });
+      
+                    productName = getProdName.product_tag_supplier.product.product_name;
+                  
+                }
+              }
+    
+              await Activity_Log.create({
+                masterlist_id: userId,
+                action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+              });
+              }
+              
+          }
+        }
+      }
+    } else {
+      for (const parent of parentArray) {
+        for (const child of parent.serializedArray) {
+          const receivedQuantity = parseInt(child.Received_quantity);
+          // console.log(child);
+          if (!isNaN(receivedQuantity)) {
+            let productName;
+  
+            if (child.type === "Product") {
+              if(child.Received_quantity !== '0'){
+                const update = PR_PO.update(
+                  {
+                    quantity: child.ordered_quantity - child.Received_quantity,
+                  },
+                  {
+                    where: { id: child.canvassed_ID },
+                  }
+                );
+    
+                if (update) {
+    
+                  
+                    Receiving_initial_prd.create({
+                      receiving_po_id: received_PO.id,
+                      canvassed_id: child.canvassed_ID,
+                      set_quantity: child.set_quantity || 0,
+                      received_quantity: child.Received_quantity,
+                      remaining_quantity: child.Remaining_quantity,
+                    });
+      
+                    const getProdName = await PR_PO.findOne({
+                      where: {
+                        id: child.canvassed_ID
+                      },
+                      include: [{
+                          model: ProductTAGSupplier,
+                          required: true,
+      
+                            include: [{
+                              model: Product,
+                              required: true
+                            }]
+                        }],
+                    });
+      
+                    productName = getProdName.product_tag_supplier.product.product_name;  
+                  
+                }
+              } 
+    
+                await Activity_Log.create({
+                  masterlist_id: userId,
+                  action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+                });
+              }
+              
+          }
+        }
+      }
+    }
+  
+    const deleteproductImage = Receiving_Image.destroy({
+      where: {
+        pr_id: pr_id,
+        po_num: po_id,
+      },
+    });
+  
+    if (deleteproductImage) {
+      if (productImages && productImages.length > 0) {
+        productImages.forEach(async (i) => {
+          await Receiving_Image.create({
+            pr_id: pr_id,
+            po_num: po_id,
+            image: i.image,
+          });
+        });
+      }
+    } else {
+      console.log("adwjkd");
+    }
+  
+    // console.log(`Total Received: ${totalReceived}`);
+    // console.log(`Fr ${freighCost}`);
+  
+    return res.status(200).json();
   }
-
-  // console.log(`Total Received: ${totalReceived}`);
-  // console.log(`Fr ${freighCost}`);
-
-  return res.status(200).json();
+  
 });
 
 router.route("/insertReceived_Intransit").post(async (req, res) => {
@@ -621,9 +584,11 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
 
   let status = "";
   let totalReceived = 0;
+  let totalReceived_toCompute = 0;
   let totalRemaining = 0;
   let freighCost;
   let initialReceiveStatus = "";
+  let isComplete = false;
   // let finalSF;
 
   // if (shippingFee === "") {
@@ -643,22 +608,28 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
 
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
-      totalReceived += parseInt(child.Received_quantity || 0);
+      totalReceived += parseInt(child.Received_quantity  || 0);
+      totalReceived_toCompute += parseInt((child.Received_quantity * child.set_quantity) || 0);
       totalRemaining += parseInt(child.Remaining_quantity);
       // console.log(`child.Received_quantity ${child.Received_quantity}`)
     }
   }
   if (totalRemaining === 0) {
     initialReceiveStatus = "Complete";
+    status = "In-transit (Complete)";
+    isComplete = true
   } else {
     initialReceiveStatus = "Incomplete";
+    status = "In-transit";
+    isComplete = false
   }
 
-  freighCost = (shippingFee / totalReceived).toFixed(2);
+  freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
 
   const updateReceivingPOS = Receiving_PO.update(
     {
-      status: "In-transit (Complete)",
+      status: status,
+      isComplete: isComplete,
     },
     {
       where: { id: receivingPOS_ID },
@@ -669,13 +640,13 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
     const received_PO = await Receiving_PO.create({
       pr_id: pr_id,
       po_id: po_id,
-      freight_cost: freighCost === 0 ? null : freighCost,
+      freight_cost: freighCost === '0.00' ? null : freighCost,
       customFee: customFee,
       totalReceived: totalReceived,
       ref_code: refCodes,
-      status: status,
-      initialReceive:
-        receving_site === "Davao City" ? initialReceiveStatus : null,
+      status: 'For Approval',
+      initialReceive: initialReceiveStatus,
+      receivedSite: receving_site
     });
 
     for (const parent of parentArray) {
@@ -686,178 +657,58 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
           let productName;
 
           if (child.type === "Product") {
-            const update = Receiving_initial_prd.update(
-              {
-                received_quantity:
-                  child.ordered_quantity - child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              },
-              {
-                where: { id: child.initialTB_id },
-              }
-            );
-
-            if (update) {
-              Receiving_Prd.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                transfered_quantity: child.ordered_quantity,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `PRD-${formattedDate}`,
-                // status: status,
-              });
-
-              const getProdName = await PR_PO.findOne({
-                where: {
-                  id: child.canvassed_ID
+            if(child.Received_quantity !== '0'){
+              const update = Receiving_initial_prd.update(
+                {
+                  received_quantity:
+                    child.ordered_quantity - child.Received_quantity,
+                  remaining_quantity: child.Remaining_quantity,
                 },
-                include: [{
-                    model: ProductTAGSupplier,
-                    required: true,
-
-                      include: [{
-                        model: Product,
-                        required: true
-                      }]
-                  }],
-              });
-
-              productName = getProdName.product_tag_supplier.product.product_name;
-              // console.log("PRODUCT NAME AGUSAN" + productName)
-            }
-          } else if (child.type === "Product Assembly") {
-            const update = Receiving_initial_asm.update(
-              {
-                received_quantity:
-                  child.ordered_quantity - child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              },
-              {
-                where: { id: child.initialTB_id },
-              }
-            );
-
-            if (update) {
-              Receiving_Asm.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                transfered_quantity: child.ordered_quantity,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `ASM-${formattedDate}`,
-                // status: status,
-              });
-
-              const getAssemblyName = await PR_PO_asmbly.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: Assembly_Supplier,
-                    required: true,
-                       include:[{
-                          model: Assembly,
+                {
+                  where: { id: child.initialTB_id },
+                }
+              );
+  
+              if (update) {
+                Receiving_Prd.create({
+                  receiving_po_id: received_PO.id,
+                  canvassed_id: child.canvassed_ID,
+                  set_quantity: child.set_quantity || 0,
+                  transfered_quantity: child.ordered_quantity,
+                  received_quantity: child.Received_quantity,
+                  remaining_quantity: child.Remaining_quantity,
+                  // ref_code: `PRD-${formattedDate}`,
+                  // status: status,
+                });
+  
+                const getProdName = await PR_PO.findOne({
+                  where: {
+                    id: child.canvassed_ID
+                  },
+                  include: [{
+                      model: ProductTAGSupplier,
+                      required: true,
+  
+                        include: [{
+                          model: Product,
                           required: true
-                       }]
-                  }],
-              });
-
-              productName = getAssemblyName.assembly_supplier.assembly.assembly_name;
-              // console.log("ASSEMBLY NAME AGUSAN" + productName)
-            }
-          } else if (child.type === "Product Part") {
-            const update = Receiving_initial_spare.update(
-              {
-                received_quantity:
-                  child.ordered_quantity - child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              },
-              {
-                where: { id: child.initialTB_id },
+                        }]
+                    }],
+                });
+  
+                productName = getProdName.product_tag_supplier.product.product_name;
+                // console.log("PRODUCT NAME AGUSAN" + productName)
               }
-            );
-
-            if (update) {
-              Receiving_Spare.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                transfered_quantity: child.ordered_quantity,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `SPR-${formattedDate}`,
-                // status: status,
+  
+              await Activity_Log.create({
+                masterlist_id: userId,
+                action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
               });
-
-              const getSpareName = await PR_PO_spare.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: SparePart_Supplier,
-                    required: true,
-                      include: [{
-                        model: SparePart,
-                        required: true
-                      }]
-                  }],
-              });
-
-              productName = getSpareName.sparepart_supplier.sparePart.spareParts_name;
-              // console.log("SPARE NAME AGUSAN" + productName)
             }
-          } else if (child.type === "Product Subpart") {
-            const update = Receiving_initial_subpart.update(
-              {
-                received_quantity:
-                  child.ordered_quantity - child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-              },
-              {
-                where: { id: child.initialTB_id },
-              }
-            );
+            
+          } 
 
-            if (update) {
-              Receiving_Subpart.create({
-                receiving_po_id: received_PO.id,
-                canvassed_id: child.canvassed_ID,
-                set_quantity: child.set_quantity || 0,
-                transfered_quantity: child.ordered_quantity,
-                received_quantity: child.Received_quantity,
-                remaining_quantity: child.Remaining_quantity,
-                // ref_code: `SBP-${formattedDate}`,
-                // status: status,
-              });
-
-              const getSubName = await PR_PO_subpart.findOne({
-                where: {
-                  id: child.canvassed_ID
-                },
-                include: [{
-                    model: Subpart_supplier,
-                    required: true,
-                      include: [{
-                        model: SubPart,
-                        required: true,
-                      }]
-                  }],
-              });
-
-              productName = getSubName.subpart_supplier.subPart.subPart_name;
-              // console.log("SUBPART NAME AGUSAN" + productName)
-            }
-          } else {
-            console.log(`Not a Product`);
-          }
-
-          await Activity_Log.create({
-            masterlist_id: userId,
-            action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-          });
+          
         }
       }
     }
@@ -1549,7 +1400,7 @@ router.route("/viewToReceive").get(async (req, res) => {
 });
 router.route("/fetchPOarray").post(async (req, res) => {
   try {
-    const receivingPO_id = req.query.id;
+    const receivingPO_id = req.query.po_id;
 
     // Fetch data from all four tables with the specified pr_id
     const prPoData = await Receiving_initial_prd.findAll({
@@ -1581,6 +1432,7 @@ router.route("/fetchPOarray").post(async (req, res) => {
                     ["product_code", "code"],
                     ["product_name", "name"],
                     ["product_unitMeasurement", "uom"],
+                    ["part_number", "part_number"],
                   ],
                 },
                 {
@@ -1594,126 +1446,6 @@ router.route("/fetchPOarray").post(async (req, res) => {
       ],
     });
 
-    const prPoAsmblyData = await Receiving_initial_asm.findAll({
-      where: { receiving_po_id: receivingPO_id },
-      include: [
-        {
-          model: PR_PO_asmbly,
-          required: true,
-
-          include: [
-            {
-              model: Assembly_Supplier,
-              required: true,
-              attributes: [
-                ["id", "id"],
-                ["assembly_id", "assembly_id"],
-                ["supplier_code", "supplier_code"],
-                ["supplier_price", "price"],
-                ["createdAt", "createdAt"],
-                ["updatedAt", "updatedAt"],
-              ],
-              include: [
-                {
-                  model: Assembly,
-                  required: true,
-                  attributes: [
-                    ["assembly_code", "code"],
-                    ["assembly_name", "name"],
-                    ["assembly_unitMeasurement", "uom"],
-                  ],
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
-
-    const prPoSpareData = await Receiving_initial_spare.findAll({
-      where: { receiving_po_id: receivingPO_id },
-
-      include: [
-        {
-          model: PR_PO_spare,
-          required: true,
-          include: [
-            {
-              model: SparePart_Supplier,
-              required: true,
-
-              attributes: [
-                ["id", "id"],
-                ["sparePart_id", "sparePart_id"],
-                ["supplier_code", "supplier_code"],
-                ["supplier_price", "price"],
-                ["createdAt", "createdAt"],
-                ["updatedAt", "updatedAt"],
-              ],
-
-              include: [
-                {
-                  model: SparePart,
-                  required: true,
-                  attributes: [
-                    ["spareParts_code", "code"],
-                    ["spareParts_name", "name"],
-                    ["spareParts_unitMeasurement", "uom"],
-                  ],
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
-
-    const prPoSubpartData = await Receiving_initial_subpart.findAll({
-      where: { receiving_po_id: receivingPO_id },
-      include: [
-        {
-          model: PR_PO_subpart,
-          required: true,
-          include: [
-            {
-              model: Subpart_supplier,
-              required: true,
-              attributes: [
-                ["id", "id"],
-                ["subpart_id", "subpart_id"],
-                ["supplier_code", "supplier_code"],
-                ["supplier_price", "price"],
-                ["createdAt", "createdAt"],
-                ["updatedAt", "updatedAt"],
-              ],
-              include: [
-                {
-                  model: SubPart,
-                  required: true,
-                  attributes: [
-                    ["subPart_code", "code"],
-                    ["subPart_name", "name"],
-                    ["subPart_unitMeasurement", "uom"],
-                  ],
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
 
     // Consolidate data into an object with po_id as keys
     const consolidatedObject = {};
@@ -1733,61 +1465,10 @@ router.route("/fetchPOarray").post(async (req, res) => {
       });
     });
 
-    prPoAsmblyData.forEach((item) => {
-      const po_id = item.purchase_req_canvassed_asmbly.po_id;
-      consolidatedObject[po_id] = consolidatedObject[po_id] || {
-        title: `${po_id}`,
-        items: [],
-      };
-      consolidatedObject[po_id].items.push({
-        item,
-        supp_tag: item.purchase_req_canvassed_asmbly.assembly_supplier.assembly,
-        suppliers:
-          item.purchase_req_canvassed_asmbly.assembly_supplier.supplier,
-        suppPrice: item.purchase_req_canvassed_asmbly.assembly_supplier,
-      });
-    });
 
-    prPoSpareData.forEach((item) => {
-      const po_id = item.purchase_req_canvassed_spare.po_id;
-      consolidatedObject[po_id] = consolidatedObject[po_id] || {
-        title: `${po_id}`,
-        items: [],
-      };
-      consolidatedObject[po_id].items.push({
-        item,
-        supp_tag:
-          item.purchase_req_canvassed_spare.sparepart_supplier.sparePart,
-        suppliers:
-          item.purchase_req_canvassed_spare.sparepart_supplier.supplier,
-        suppPrice: item.purchase_req_canvassed_spare.sparepart_supplier,
-      });
-    });
-
-    prPoSubpartData.forEach((item) => {
-      const po_id = item.purchase_req_canvassed_subpart.po_id;
-      consolidatedObject[po_id] = consolidatedObject[po_id] || {
-        title: `${po_id}`,
-        items: [],
-      };
-      consolidatedObject[po_id].items.push({
-        item,
-        supp_tag: item.purchase_req_canvassed_subpart.subpart_supplier.subPart,
-        suppliers:
-          item.purchase_req_canvassed_subpart.subpart_supplier.supplier,
-        suppPrice: item.subpart_supplier,
-      });
-    });
 
     // Convert the object values back to an array
     const consolidatedArray = Object.values(consolidatedObject);
-
-    // Sort the consolidated array by po_id
-    // consolidatedArray.forEach(group => {
-    //   group.items.sort((a, b) => a.po_id.localeCompare(b.po_id));
-    // });
-
-    // console.log(consolidatedArray);
 
     res.status(200).json(consolidatedArray);
   } catch (err) {
@@ -1823,6 +1504,8 @@ router.route("/PO_products").get(async (req, res) => {
                   attributes: [
                     ["product_code", "code"],
                     ["product_name", "name"],
+                    ['UOM_set', 'isSubUnit'],
+                    ['product_unitMeasurement', 'UOM']
                   ],
                 },
                 {
@@ -1840,214 +1523,7 @@ router.route("/PO_products").get(async (req, res) => {
       ],
     });
 
-    // const prPoData = await PR_PO.findAll({
-    //   include: [{
-    //     model: ProductTAGSupplier,
-    //     required: true,
-
-    //       include: [{
-    //         model: Product,
-    //         required: true,
-    //         attributes: [
-    //           ['product_code', 'code'],
-    //           ['product_name', 'name'],
-    //         ],
-    //       },
-    //       {
-    //         model: Supplier,
-    //         required: true
-    //       }]
-    //   }],
-    //   where: {
-    //     pr_id: pr_id,
-    //     po_id: po_num
-    //  },
-    // });
-
-    const prPoAsmblyData = await Receiving_initial_asm.findAll({
-      where: {
-        receiving_po_id: id,
-      },
-      include: [
-        {
-          model: PR_PO_asmbly,
-          required: true,
-
-          include: [
-            {
-              model: Assembly_Supplier,
-              required: true,
-              include: [
-                {
-                  model: Assembly,
-                  required: true,
-                  attributes: [
-                    ["assembly_code", "code"],
-                    ["assembly_name", "name"],
-                  ],
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
-
-    // const prPoAsmblyData = await PR_PO_asmbly.findAll({
-    //   include: [{
-    //     model: Assembly_Supplier,
-    //     required: true,
-
-    //       include: [{
-    //         model: Assembly,
-    //         required: true,
-    //         attributes: [
-    //           ['assembly_code', 'code'],
-    //           ['assembly_name', 'name'],
-    //         ],
-    //       },
-    //       {
-    //         model: Supplier,
-    //         required: true
-    //       }
-    //     ]
-    //   }],
-    //   where: {
-    //     pr_id: pr_id,
-    //     po_id: po_num
-    //  },
-    // });
-
-    const prPoSpareData = await Receiving_initial_spare.findAll({
-      where: {
-        receiving_po_id: id,
-      },
-      include: [
-        {
-          model: PR_PO_spare,
-          required: true,
-
-          include: [
-            {
-              model: SparePart_Supplier,
-              required: true,
-              include: [
-                {
-                  model: SparePart,
-                  required: true,
-                  attributes: [
-                    ["spareParts_code", "code"],
-                    ["spareParts_name", "name"],
-                  ],
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
-
-    // const prPoSpareData = await PR_PO_spare.findAll({
-    //   include: [{
-    //     model: SparePart_Supplier,
-    //     required: true,
-
-    //       include: [{
-    //         model: SparePart,
-    //         required: true,
-    //         attributes: [
-    //           ['spareParts_code', 'code'],
-    //           ['spareParts_name', 'name'],
-    //         ],
-    //       },
-    //       {
-    //         model: Supplier,
-    //         required: true
-    //       }]
-    //   }],
-    //   where: {
-    //     pr_id: pr_id,
-    //     po_id: po_num
-    //  },
-    // });
-
-    const prPoSubpartData = await Receiving_initial_subpart.findAll({
-      where: {
-        receiving_po_id: id,
-      },
-      include: [
-        {
-          model: PR_PO_subpart,
-          required: true,
-
-          include: [
-            {
-              model: Subpart_supplier,
-              required: true,
-              include: [
-                {
-                  model: SubPart,
-                  required: true,
-                  attributes: [
-                    ["subPart_code", "code"],
-                    ["subPart_name", "name"],
-                  ],
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
-
-    // const prPoSubpartData = await PR_PO_subpart.findAll({
-    //   include: [{
-    //     model: Subpart_supplier,
-    //     required: true,
-
-    //       include: [{
-    //         model: SubPart,
-    //         required: true,
-    //         attributes: [
-    //           ['subPart_code', 'code'],
-    //           ['subPart_name', 'name'],
-    //         ],
-    //       },
-    //       {
-    //         model: Supplier,
-    //         required: true
-    //       }]
-    //   }],
-    //   where: {
-    //     pr_id: pr_id,
-    //     po_id: po_num
-    //  },
-    // });
-
+  
     // Consolidate data into an object with po_id as keys
     const consolidatedObject = {};
 
@@ -2066,51 +1542,7 @@ router.route("/PO_products").get(async (req, res) => {
       });
     });
 
-    prPoAsmblyData.forEach((item) => {
-      const po_id = item.receiving_po.po_id;
-      consolidatedObject[po_id] = consolidatedObject[po_id] || {
-        title: `${po_id}`,
-        items: [],
-      };
-      consolidatedObject[po_id].items.push({
-        item,
-        supp_tag: item.purchase_req_canvassed_asmbly.assembly_supplier.assembly,
-        suppliers:
-          item.purchase_req_canvassed_asmbly.assembly_supplier.supplier,
-        type: "Product Assembly",
-      });
-    });
 
-    prPoSpareData.forEach((item) => {
-      const po_id = item.receiving_po.po_id;
-      consolidatedObject[po_id] = consolidatedObject[po_id] || {
-        title: `${po_id}`,
-        items: [],
-      };
-      consolidatedObject[po_id].items.push({
-        item,
-        supp_tag:
-          item.purchase_req_canvassed_spare.sparepart_supplier.sparePart,
-        suppliers:
-          item.purchase_req_canvassed_spare.sparepart_supplier.supplier,
-        type: "Product Part",
-      });
-    });
-
-    prPoSubpartData.forEach((item) => {
-      const po_id = item.receiving_po.po_id;
-      consolidatedObject[po_id] = consolidatedObject[po_id] || {
-        title: `${po_id}`,
-        items: [],
-      };
-      consolidatedObject[po_id].items.push({
-        item,
-        supp_tag: item.purchase_req_canvassed_subpart.subpart_supplier.subPart,
-        suppliers:
-          item.purchase_req_canvassed_subpart.subpart_supplier.supplier,
-        type: "Product Subpart",
-      });
-    });
 
     // Convert the object values back to an array
     const consolidatedArray = Object.values(consolidatedObject);
@@ -2144,9 +1576,6 @@ router.route("/PO_products").get(async (req, res) => {
 router.route("/approval").post(async (req, res) => {
   const receiving_po_id = req.query.id;
   const productsArray = req.query.prod;
-  const assemblyArray = req.query.asm;
-  const spareArray = req.query.spr;
-  const subpartArray = req.query.sbp;
 
 
   const manilaTimezone = "Asia/Manila";
@@ -2160,13 +1589,13 @@ const currentDateTimeInManila = moment();
 
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
-      if(product.freight_cost === '0' && product.customFee === '0'){
+      if(product.freight_cost === '' && product.customFee === ''){
         final_status = 'Delivered (Lack of Cost)'
       }
-      else if (product.freight_cost === '0' ){
+      else if (product.freight_cost === '' ){
         final_status = 'Delivered (Lack of FreightCost)'
       }
-      else if (product.customFee === '0'){
+      else if (product.customFee === ''){
         final_status = 'Delivered (Lack of CustomCost)'
       }
       else{
@@ -2174,61 +1603,12 @@ const currentDateTimeInManila = moment();
       }
     }
   }
-  else if(assemblyArray && assemblyArray.length > 0){
-    for (const product of assemblyArray) {
-      if(product.freight_cost === '0' && product.customFee === '0'){
-        final_status = 'Delivered (Lack of Cost)'
-      }
-      else if (product.freight_cost === '0' ){
-        final_status = 'Delivered (Lack of FreightCost)'
-      }
-      else if (product.customFee === '0'){
-        final_status = 'Delivered (Lack of CustomCost)'
-      }
-      else{
-        final_status = 'Delivered'
-      }
-    }
-  }
-  else if(spareArray && spareArray.length > 0){
-    for (const product of spareArray) {
-      if(product.freight_cost === '0' && product.customFee === '0'){
-        final_status = 'Delivered (Lack of Cost)'
-      }
-      else if (product.freight_cost === '0' ){
-        final_status = 'Delivered (Lack of FreightCost)'
-      }
-      else if (product.customFee === '0'){
-        final_status = 'Delivered (Lack of CustomCost)'
-      }
-      else{
-        final_status = 'Delivered'
-      }
-    }
-  }
-  else if (subpartArray && subpartArray.length > 0) {
-    for (const product of subpartArray) {
-      if(product.freight_cost === '0' && product.customFee === '0'){
-        final_status = 'Delivered (Lack of Cost)'
-      }
-      else if (product.freight_cost === '0' ){
-        final_status = 'Delivered (Lack of FreightCost)'
-      }
-      else if (product.customFee === '0'){
-        final_status = 'Delivered (Lack of CustomCost)'
-      }
-      else{
-        final_status = 'Delivered'
-      }
-    }
-  }
+
 
 
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
       let set_quantity;
-  
-    
   
       if (product.set_quantity === "0") {
         set_quantity = 1;
@@ -2251,90 +1631,7 @@ const currentDateTimeInManila = moment();
       });
     }
   }
-  if (assemblyArray && assemblyArray.length > 0) {
-    for (const product of assemblyArray) {
-      let set_quantity;
-  
-      if (product.set_quantity === "0") {
-        set_quantity = 1;
-      } else {
-        set_quantity = product.set_quantity;
-      }
-  
-      const finalQuantity = product.Base_quantity * set_quantity;
-  
-      // console.log(finalQuantity)
-      await Inventory_Assembly.create({
-        assembly_tag_supp_id: product.product_tag_id,
-        reference_number: product.ref_code,
-        static_quantity: finalQuantity,
-        quantity: finalQuantity,
-        price: product.price,
-        warehouse_id: 1,
-        freight_cost: product.freight_cost,
-        custom_cost: product.customFee,
-      });
-    }
-  
-  }
 
-  if (spareArray && spareArray.length > 0) {
-    for (const product of spareArray) {
-      let set_quantity;
-  
-      if (product.set_quantity === "0") {
-        set_quantity = 1;
-      } else {
-        set_quantity = product.set_quantity;
-      }
-  
-      const finalQuantity = product.Base_quantity * set_quantity;
-  
-      // console.log(finalQuantity)
-      await Inventory_Spare.create({
-        spare_tag_supp_id: product.product_tag_id,
-        reference_number: product.ref_code,
-        static_quantity: finalQuantity,
-        quantity: finalQuantity,
-        price: product.price,
-        warehouse_id: 1,
-        freight_cost: product.freight_cost,
-        custom_cost: product.customFee,
-      });
-    }
-  }
-
-
-
-  if (subpartArray && subpartArray.length > 0) {
-    for (const product of subpartArray) {
-      let set_quantity;
-  
-      if (product.set_quantity === "0") {
-        set_quantity = 1;
-      } else {
-        set_quantity = product.set_quantity;
-      }
-  
-      const finalQuantity = product.Base_quantity * set_quantity;
-  
-      // console.log(finalQuantity)
-      await Inventory_Subpart.create({
-        subpart_tag_supp_id: product.product_tag_id,
-        reference_number: product.ref_code,
-        static_quantity: finalQuantity,
-        quantity: finalQuantity,
-        price: product.price,
-        warehouse_id: 1,
-        freight_cost: product.freight_cost,
-        custom_cost: product.customFee,
-      });
-    }
-  
-
-  }
-
-  
   const update = Receiving_PO.update(
     {
       status: final_status,

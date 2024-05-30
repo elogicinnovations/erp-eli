@@ -35,6 +35,8 @@ import Checkbox from "@mui/material/Checkbox";
 import { fontStyle } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
 import { jwtDecode } from "jwt-decode";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 function ReceivingPreview({ authrztn }) {
   const navigate = useNavigate();
@@ -107,138 +109,180 @@ function ReceivingPreview({ authrztn }) {
     });
   };
 
-  const prepareCsvData = () => {
-    // Add JSX content data
-    const jsxContentData = [
-        ["SBF PHILIPPINES DRILLING RESOURCES CORPORATION"],
-        ["Padigusan, Sta.Cruz, Rosario, Agusan del sur"],
-        [`Date: ${formattedDate}`],
-        [`Request Date: ${formatDatetime(requestPr)}`],
-        [`PR Number: ${prNumber} => PO Number: ${poNum}`],
-        [`Reference Number: ${refnum}`],
-        [`PO Date: ${formatDatetime(approvedPRDate)}`],
-        [`Vendor Code: ${supplierCode} `],
-        [`Vendor: ${supplierName} `],
-        [`Terms: ${supplierTerms}`],
-        [""],
-        [""],
-        [""],
-    ];
+  // const exportToExcel = () => {
+  //   const table = document.getElementById('order-listings');
+  //   const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+  //   const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  //   saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'products.xlsx');
+  // };
 
-    // Initialize CSV data with header row
-    const formattedData = [
-        [
-            "Code",
-            "Product",
-            "UOM",
-            "Initial Received",
-            "Received",
-            "Set",
-            "Unit Price",
-            "Freight Cost",
-            "Duties & Customs Cost",
-            "Total"
-        ]
-    ];
+  const exportToExcel = () => {
+    const table = document.getElementById('order-listings');
+    const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
 
-    // Populate data rows for products
-    products.forEach((data) => {
-        formattedData.push([
-            data.purchase_req_canvassed_prd.product_tag_supplier.product.product_code,
-            data.purchase_req_canvassed_prd.product_tag_supplier.product.product_name,
-            data.purchase_req_canvassed_prd.product_tag_supplier.product.product_unitMeasurement,
-            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
-            data.received_quantity,
-            data.set_quantity === 0 ? "N/A" : data.set_quantity,
-            data.purchase_req_canvassed_prd.product_tag_supplier.product_price,
-            data.receiving_po.freight_cost,
-            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
-            (data.purchase_req_canvassed_prd.product_tag_supplier.product_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
-        ]);
-    });
+    // Get worksheet
+    const ws = wb.Sheets['Sheet1'];
 
-    // Populate data rows for assembly
-    assembly.forEach((data) => {
-        formattedData.push([
-            data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_code,
-            data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_name,
-            data.purchase_req_canvassed_asmbly.assembly_supplier.assembly.assembly_unitMeasurement,
-            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
-            data.received_quantity,
-            data.set_quantity === 0 ? "N/A" : data.set_quantity,
-            data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price,
-            data.receiving_po.freight_cost,
-            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
-            (data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
-        ]);
-    });
+    // Apply styles to header row
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_cell({ c: C, r: 0 });
+        if (!ws[address]) continue;
+        ws[address].s = {
+            font: {
+                bold: true,
+                color: { rgb: "FFFFFF" },
+            },
+            fill: {
+                fgColor: { rgb: "4F81BD" }
+            },
+            border: {
+                top: { style: "thin", color: { rgb: "000000" } },
+                bottom: { style: "thin", color: { rgb: "000000" } },
+                left: { style: "thin", color: { rgb: "000000" } },
+                right: { style: "thin", color: { rgb: "000000" } }
+            },
+            alignment: {
+                vertical: "center",
+                horizontal: "center"
+            }
+        };
+    }
 
-    // Populate data rows for spare
-    spare.forEach((data) => {
-        formattedData.push([
-            data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_code,
-            data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_name,
-            data.purchase_req_canvassed_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement,
-            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
-            data.received_quantity,
-            data.set_quantity === 0 ? "N/A" : data.set_quantity,
-            data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price,
-            data.receiving_po.freight_cost,
-            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
-            (data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
-        ]);
-    });
+    // Apply formatting to cells
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const address = XLSX.utils.encode_cell({ c: C, r: R });
+            if (!ws[address]) continue;
+            ws[address].s = {
+                border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                },
+                alignment: {
+                    vertical: "center",
+                    horizontal: "center"
+                }
+            };
+        }
+    }
 
-    // Populate data rows for subpart
-    subpart.forEach((data) => {
-        formattedData.push([
-            data.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_code,
-            data.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_name,
-            data.purchase_req_canvassed_subpart.subpart_supplier.subPart.subPart_unitMeasurement,
-            data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
-            data.received_quantity,
-            data.set_quantity === 0 ? "N/A" : data.set_quantity,
-            data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price,
-            data.receiving_po.freight_cost,
-            data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
-            (data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price * data.received_quantity) + ((data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee) + data.receiving_po.freight_cost)
-        ]);
-    });
-
-      // Add totals row after processing all data
-      const totalsRow = [
-        "Overall Total:",
-        "",
-        "",
-        totalTransferProducts + totalTransferAssembly + totalTransferSpare + totalTransferSubpart,
-        totalReceivedProducts + totalReceivedAssembly + totalReceivedSpare + totalReceivedSubpart,
-        Settotal,
-        totalPriceProducts + totalPriceAssembly + totalPriceSpare + totalPriceSubpart,
-        totalFRProducts + totalFRAssembly + totalFRSpare + totalFRSubpart,
-        totalDCProducts + totalDCAssembly + totalDCSpare + totalDCSubpart,
-        total
-    ];
-    formattedData.push(totalsRow);
-
-    // Merge JSX content data with formatted data
-    const mergedData = jsxContentData.concat(formattedData);
-
-    // Convert data to CSV format
-    const csvContent = mergedData.map(row => row.join(",")).join("\n");
-
-    // Create a Blob object with CSV data
-    const blob = new Blob([csvContent], { type: "text/csv" });
-
-    // Create a temporary link element
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = `Receiving Report (PR: ${prNumber} / PO: ${poNum})`;
-
-    // Trigger the download
-    link.click();
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([wbout], { type: 'application/octet-stream' }), `${poNum}_${refnum}.xlsx`);
 };
 
 
+
+  // const prepareCsvData = () => {
+  //   // Add JSX content data
+  //   const jsxContentData = [
+  //     ["SBF PHILIPPINES DRILLING RESOURCES CORPORATION"],
+  //     ["Padigusan, Sta.Cruz, Rosario, Agusan del sur"],
+  //     [`Date: ${formattedDate}`],
+  //     [`Request Date: ${formatDatetime(requestPr)}`],
+  //     [`PR Number: ${prNumber} => PO Number: ${poNum}`],
+  //     [`Reference Number: ${refnum}`],
+  //     [`PO Date: ${formatDatetime(approvedPRDate)}`],
+  //     [`Vendor Code: ${supplierCode} `],
+  //     [`Vendor: ${supplierName} `],
+  //     [`Terms: ${supplierTerms}`],
+  //     [""],
+  //     [""],
+  //     [""],
+  //   ];
+
+  //   // Initialize CSV data with header row
+  //   const formattedData = [
+  //     [
+  //       "Code",
+  //       "Product",
+  //       "UOM",
+  //       "Initial Received",
+  //       "Received",
+  //       "Set",
+  //       "Purchased Price (UOM)",
+  //       "Unit Price (/qty)",
+  //       "Freight Cost (/qty)",
+  //       "Duties & Customs Cost (/qty)",
+  //       "Total",
+  //     ],
+  //   ];
+
+  //   // Populate data rows for products
+  //   products.forEach((data) => {
+  //     formattedData.push([
+  //       data.purchase_req_canvassed_prd.product_tag_supplier.product
+  //         .product_code,
+  //       data.purchase_req_canvassed_prd.product_tag_supplier.product
+  //         .product_name,
+  //       data.purchase_req_canvassed_prd.product_tag_supplier.product
+  //         .product_unitMeasurement,
+  //       data.transfered_quantity === null ? "N/A" : data.transfered_quantity,
+  //       data.received_quantity,
+  //       data.set_quantity === 1 ? "N/A" : data.set_quantity,
+  //       data.purchase_req_canvassed_prd.purchase_price,
+  //       data.purchase_req_canvassed_prd.product_tag_supplier.product.UOM_set ===
+  //       true
+  //         ? (data.received_quantity * data.set_quantity) /
+  //           data.purchase_req_canvassed_prd.purchase_price
+  //         : data.purchase_req_canvassed_prd.purchase_price,
+  //       data.receiving_po.freight_cost,
+  //       data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee,
+  //       data.purchase_req_canvassed_prd.product_tag_supplier.product.UOM_set ===
+  //       true
+  //         ? data.received_quantity *
+  //           data.set_quantity *
+  //           ((data.received_quantity * data.set_quantity) /
+  //             data.purchase_req_canvassed_prd.purchase_price +
+  //             (data.receiving_po.customFee === null
+  //               ? 0
+  //               : data.receiving_po.customFee) +
+  //             data.receiving_po.freight_cost)
+  //         : data.received_quantity *
+  //           data.set_quantity *
+  //           (data.purchase_req_canvassed_prd.purchase_price +
+  //             (data.receiving_po.customFee === null
+  //               ? 0
+  //               : data.receiving_po.customFee) +
+  //             data.receiving_po.freight_cost),
+  //     ]);
+  //   });
+
+  //   // Add totals row after processing all data
+  //   const totalsRow = [
+  //     "Overall Total:",
+  //     "",
+  //     "",
+  //     // totalTransferProducts,
+  //     // totalReceivedProducts,
+  //     // Settotal,
+  //     // totalPriceProducts,
+  //     // totalPrice_qty,
+  //     // totalFRProducts,
+  //     // totalDCProducts,
+  //     // total,
+  //   ];
+  //   formattedData.push(totalsRow);
+
+  //   // Merge JSX content data with formatted data
+  //   const mergedData = jsxContentData.concat(formattedData);
+
+  //   // Convert data to CSV format
+  //   const csvContent = mergedData.map((row) => row.join(",")).join("\n");
+
+  //   // Create a Blob object with CSV data
+  //   const blob = new Blob([csvContent], { type: "text/csv" });
+
+  //   // Create a temporary link element
+  //   const link = document.createElement("a");
+  //   link.href = window.URL.createObjectURL(blob);
+  //   link.download = `Receiving Report (PR: ${prNumber} / PO: ${poNum})`;
+
+  //   // Trigger the download
+  //   link.click();
+  // };
 
   // -------------------- fetch data value --------------------- //
   useEffect(() => {
@@ -250,7 +294,7 @@ function ReceivingPreview({ authrztn }) {
           },
         })
         .then((res) => {
-          setReceivingID(res.data.primary.id)
+          setReceivingID(res.data.primary.id);
           setPrNumber(res.data.primary.purchase_req.pr_num);
           setUsedFor(res.data.primary.purchase_req.used_for);
           setRemarks(res.data.primary.purchase_req.remarks);
@@ -261,9 +305,9 @@ function ReceivingPreview({ authrztn }) {
           setStatus(res.data.primary.status);
           setDateCreated(res.data.primary.createdAt);
           setPoNum(res.data.primary.po_id);
-          setRefnum(res.data.primary.ref_code)
+          setRefnum(res.data.primary.ref_code);
           setRequestPr(res.data.primary.purchase_req.createdAt);
-          
+
           setApproveddate(res.data.primary.purchase_req.date_approved);
 
           setIsLoading(false);
@@ -279,7 +323,6 @@ function ReceivingPreview({ authrztn }) {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-
       // console.log(`receivingID ${receivingID}`)
       axios
         .get(BASE_URL + "/receiving/secondaryData", {
@@ -289,26 +332,24 @@ function ReceivingPreview({ authrztn }) {
         })
         .then((res) => {
           setproducts(res.data.product);
-          setassembly(res.data.assembly);
-          setspare(res.data.spare);
-          setsubpart(res.data.subpart);
 
-          const mapping = res.data.product[0] ? res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier 
-                          : res.data.assembly[0] ? res.data.assembly[0].purchase_req_canvassed_asmbly.assembly_supplier 
-                          : res.data.spare[0] ? res.data.spare[0].purchase_req_canvassed_spare.sparepart_supplier 
-                          : res.data.subpart[0].purchase_req_canvassed_subpart.subpart_supplier 
+          // const mapping = res.data.product[0] ? res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+          //                 : res.data.assembly[0] ? res.data.assembly[0].purchase_req_canvassed_asmbly.assembly_supplier
+          //                 : res.data.spare[0] ? res.data.spare[0].purchase_req_canvassed_spare.sparepart_supplier
+          //                 : res.data.subpart[0].purchase_req_canvassed_subpart.subpart_supplier
 
-          
-
-          console.log(mapping)
+          // console.log(mapping)
           setSupplierCode(
-            mapping.supplier.supplier_code
+            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+              .supplier.supplier_code
           );
           setSupplierName(
-            mapping.supplier.supplier_name
+            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+              .supplier.supplier_name
           );
           setSupplierTerms(
-            mapping.supplier.supplier_terms
+            res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
+              .supplier.supplier_terms
           );
           setIsLoading(false);
         })
@@ -330,77 +371,41 @@ function ReceivingPreview({ authrztn }) {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
-        const response = await axios.post(BASE_URL + "/receiving/approval", null, {
-          params: {
-            id: id,
-            prod: products.map((data) => ({
-              product_tag_id:
-                data.purchase_req_canvassed_prd.product_tag_supplier.id,
-              Base_quantity: data.received_quantity,
-              set_quantity: data.set_quantity,
-              ref_code: data.receiving_po.ref_code,
-              price:
-                data.purchase_req_canvassed_prd.product_tag_supplier
-                  .product_price,
-              freight_cost: data.receiving_po.freight_cost,
-              customFee: data.receiving_po.customFee === null
-              ? 0
-              : data.receiving_po.customFee,
-            })),
-            asm: assembly.map((data) => ({
-              product_tag_id:
-                data.purchase_req_canvassed_asmbly.assembly_supplier.id,
-              Base_quantity: data.received_quantity,
-              set_quantity: data.set_quantity,
-              ref_code: data.receiving_po.ref_code,
-              price:
-                data.purchase_req_canvassed_asmbly.assembly_supplier
-                  .supplier_price,
-              freight_cost: data.receiving_po.freight_cost,
-              customFee: data.receiving_po.customFee === null
-              ? 0
-              : data.receiving_po.customFee,
-            })),
-            spr: spare.map((data) => ({
-              product_tag_id:
-                data.purchase_req_canvassed_spare.sparepart_supplier.id,
-              Base_quantity: data.received_quantity,
-              set_quantity: data.set_quantity,
-              ref_code: data.receiving_po.ref_code,
-              price:
-                data.purchase_req_canvassed_spare.sparepart_supplier
-                  .supplier_price,
-              freight_cost: data.receiving_po.freight_cost,
-              customFee: data.receiving_po.customFee === null
-              ? 0
-              : data.receiving_po.customFee,
-            })),
-            sbp: subpart.map((data) => ({
-              product_tag_id:
-                data.purchase_req_canvassed_subpart.subpart_supplier.id,
-              Base_quantity: data.received_quantity,
-              set_quantity: data.set_quantity,
-              ref_code: data.receiving_po.ref_code,
-              price:
-                data.purchase_req_canvassed_subpart.subpart_supplier
-                  .supplier_price,
-              freight_cost: data.receiving_po.freight_cost,
-              customFee: data.receiving_po.customFee === null
-              ? 0
-              : data.receiving_po.customFee,
-            })),
-          },
-        });
+        const response = await axios.post(
+          BASE_URL + "/receiving/approval",
+          null,
+          {
+            params: {
+              id: id,
+              prod: products.map((data) => ({
+                product_tag_id:
+                  data.purchase_req_canvassed_prd.product_tag_supplier.id,
+                Base_quantity: data.received_quantity,
+                set_quantity: data.set_quantity,
+                ref_code: data.receiving_po.ref_code,
+                price:
+                  data.purchase_req_canvassed_prd.purchase_price,
+                freight_cost: data.receiving_po.freight_cost === null
+                ? 0
+                : data.receiving_po.freight_cost,
+                customFee:
+                  data.receiving_po.customFee === null
+                    ? 0
+                    : data.receiving_po.customFee,
+              })),
+              
+            },
+          }
+        );
 
         if (response.status === 200) {
           swal({
             title: "Approved Successfully",
             text: "",
             icon: "success",
-          
           }).then(() => {
-            navigate('/receivingManagement')
-          })
+            navigate("/receivingManagement");
+          });
         }
       }
     });
@@ -417,7 +422,6 @@ function ReceivingPreview({ authrztn }) {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
-
 
   // currentDAte
   const currentDate = new Date();
@@ -441,203 +445,94 @@ function ReceivingPreview({ authrztn }) {
   //   }
   // }, [Transaction_prd]);
   // For Total initial Received in agusan del sur
-  const totalTransferProducts = products.reduce(
-    (total, data) => total + data.transfered_quantity,
-    0
-  );
-  const totalTransferAssembly = assembly.reduce(
-    (total, data) => total + data.transfered_quantity,
-    0
-  );
-  const totalTransferSpare = spare.reduce(
-    (total, data) => total + data.transfered_quantity,
-    0
-  );
-  const totalTransferSubpart = subpart.reduce(
-    (total, data) => total + data.transfered_quantity,
-    0
-  );
-  const totalTransfer =
-    totalTransferProducts +
-    totalTransferAssembly +
-    totalTransferSpare +
-    totalTransferSubpart;
+  // const totalTransferProducts = products.reduce(
+  //   (total, data) => total + data.transfered_quantity,
+  //   0
+  // );
+  // const totalTransfer = totalTransferProducts;
 
-  // For Total Price
-  const totalPriceProducts = products.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_prd.product_tag_supplier.product_price,
-    0
-  );
-  const totalPriceAssembly = assembly.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price,
-    0
-  );
-  const totalPriceSpare = spare.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price,
-    0
-  );
-  const totalPriceSubpart = subpart.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price,
-    0
-  );
-  const totalPrice =
-    totalPriceProducts +
-    totalPriceAssembly +
-    totalPriceSpare +
-    totalPriceSubpart;
+  // // For Total Purchased Price (UOM)
+  // const totalPriceProducts = products.reduce(
+  //   (total, data) => total + data.purchase_req_canvassed_prd.purchase_price,
+  //   0
+  // );
+  // const totalPrice = totalPriceProducts;
 
-  // For Total Received in agusan del sur
-  const totalReceivedProducts = products.reduce(
-    (total, data) => total + data.received_quantity,
-    0
-  );
-  const totalReceivedAssembly = assembly.reduce(
-    (total, data) => total + data.received_quantity,
-    0
-  );
-  const totalReceivedSpare = spare.reduce(
-    (total, data) => total + data.received_quantity,
-    0
-  );
-  const totalReceivedSubpart = subpart.reduce(
-    (total, data) => total + data.received_quantity,
-    0
-  );
-  // Calculate total received for products + assembly
-  const totalReceived =
-    totalReceivedProducts +
-    totalReceivedAssembly +
-    totalReceivedSpare +
-    totalReceivedSubpart;
+  // // For Total Purchased Price (/qty)
+  // const totalPriceProducts_qty = products.reduce(
+  //   (total, data) => {
+  //     if (
+  //       data.purchase_req_canvassed_prd.product_tag_supplier.product.UOM_set ===
+  //       true
+  //     ) {
+  //       return (
+  //         total +
+  //         (data.received_quantity * data.set_quantity) /
+  //           data.purchase_req_canvassed_prd.purchase_price
+  //       );
+  //     } else {
+  //       return total + data.purchase_req_canvassed_prd.purchase_price;
+  //     }
+  //   },
+  //   0 // Initial value of total
+  // );
 
-  // FOr Total Freight Cost
+  // const totalPrice_qty = totalPriceProducts_qty;
 
-  const totalFRProducts = products.reduce(
-    (total, data) => total + data.receiving_po.freight_cost,
-    0
-  );
-  const totalFRAssembly = assembly.reduce(
-    (total, data) => total + data.receiving_po.freight_cost,
-    0
-  );
-  const totalFRSpare = spare.reduce(
-    (total, data) => total + data.receiving_po.freight_cost,
-    0
-  );
-  const totalFRSubpart = subpart.reduce(
-    (total, data) => total + data.receiving_po.freight_cost,
-    0
-  );
-  // Calculate total received for products + assembly
-  const totalFR =
-    totalFRProducts + totalFRAssembly + totalFRSpare + totalFRSubpart;
+  // // For Total Received in agusan del sur
+  // const totalReceivedProducts = products.reduce(
+  //   (total, data) => total + data.received_quantity,
+  //   0
+  // );
+  // // Calculate total received for products + assembly
+  // const totalReceived = totalReceivedProducts;
 
-  // FOr Total Duties Cost
+  // // FOr Total Freight Cost
 
-  const totalDCProducts = products.reduce(
-    (total, data) =>
-      total +
-      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
-    0
-  );
-  const totalDCAssembly = assembly.reduce(
-    (total, data) =>
-      total +
-      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
-    0
-  );
-  const totalDCSpare = spare.reduce(
-    (total, data) =>
-      total +
-      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
-    0
-  );
-  const totalDCSubpart = subpart.reduce(
-    (total, data) =>
-      total +
-      (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
-    0
-  );
-  // Calculate total received for products + assembly
-  const totalDC =
-    totalDCProducts + totalDCAssembly + totalDCSpare + totalDCSubpart;
+  // const totalFRProducts = products.reduce(
+  //   (total, data) => total + data.receiving_po.freight_cost,
+  //   0
+  // );
+  // // Calculate total received for products + assembly
+  // const totalFR = totalFRProducts;
 
-  const totalSetProducts = products.reduce(
-    (total, data) => total + data.set_quantity,
-    0
-  );
-  const totalSetAssembly = assembly.reduce(
-    (total, data) => total + data.set_quantity,
-    0
-  );
-  const totalSetSpare = spare.reduce(
-    (total, data) => total + data.set_quantity,
-    0
-  );
-  const totalSetSubpart = subpart.reduce(
-    (total, data) => total + data.set_quantity,
-    0
-  );
-  // Calculate total received for products + assembly
-  const Settotal =
-    totalSetProducts + totalSetAssembly + totalSetSpare + totalSetSubpart;
+  // // FOr Total Duties Cost
 
-  // FOr Total total quantity andprice
+  // const totalDCProducts = products.reduce(
+  //   (total, data) =>
+  //     total +
+  //     (data.receiving_po.customFee === null ? 0 : data.receiving_po.customFee),
+  //   0
+  // );
 
-  const totalProducts = products.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_prd.product_tag_supplier.product_price *
-        data.received_quantity +
-      ((data.receiving_po.customFee === null
-        ? 0
-        : data.receiving_po.customFee) +
-        data.receiving_po.freight_cost),
-    0
-  );
-  const totalAssembly = assembly.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_asmbly.assembly_supplier.supplier_price *
-        data.received_quantity +
-      ((data.receiving_po.customFee === null
-        ? 0
-        : data.receiving_po.customFee) +
-        data.receiving_po.freight_cost),
-    0
-  );
-  const totalSpare = spare.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_spare.sparepart_supplier.supplier_price *
-        data.received_quantity +
-      ((data.receiving_po.customFee === null
-        ? 0
-        : data.receiving_po.customFee) +
-        data.receiving_po.freight_cost),
-    0
-  );
-  const totalSubpart = subpart.reduce(
-    (total, data) =>
-      total +
-      data.purchase_req_canvassed_subpart.subpart_supplier.supplier_price *
-        data.received_quantity +
-      ((data.receiving_po.customFee === null
-        ? 0
-        : data.receiving_po.customFee) +
-        data.receiving_po.freight_cost),
-    0
-  );
-  // Calculate total received for products + assembly
-  const total = totalProducts + totalAssembly + totalSpare + totalSubpart;
+  // // Calculate total received for products + assembly
+  // const totalDC = totalDCProducts;
+
+  // const totalSetProducts = products.reduce(
+  //   (total, data) => total + data.set_quantity,
+  //   0
+  // );
+
+  // // Calculate total received for products + assembly
+  // const Settotal = totalSetProducts;
+
+  // // FOr Total total quantity andprice
+
+  // const totalProducts = products.reduce(
+  //   (total, data) =>
+  //     total +
+  //     data.purchase_req_canvassed_prd.purchase_price *
+  //       data.received_quantity *
+  //       data.set_quantity +
+  //     ((data.receiving_po.customFee === null
+  //       ? 0
+  //       : data.receiving_po.customFee) +
+  //       data.receiving_po.freight_cost),
+  //   0
+  // );
+
+  // // Calculate total received for products + assembly
+  // const total = totalProducts;
 
   return (
     <div className="main-of-containers">
@@ -813,10 +708,7 @@ function ReceivingPreview({ authrztn }) {
                       <th className="tableh">Duties & Customs Cost </th>
                     </tr>
                   </thead>
-                  {(products && products.length > 0) ||
-                  (assembly && assembly.length > 0) ||
-                  (spare && spare.length > 0) ||
-                  (subpart && subpart.length > 0) ? (
+                  {products && products.length > 0 ? (
                     <tbody>
                       {products.map((data, i) => (
                         <tr key={i}>
@@ -855,126 +747,13 @@ function ReceivingPreview({ authrztn }) {
                           </td>
                         </tr>
                       ))}
-
-                      {assembly.map((data, i) => (
-                        <tr key={i}>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_asmbly
-                                .assembly_supplier.assembly.assembly_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_asmbly
-                                .assembly_supplier.assembly.assembly_name
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_asmbly
-                                .assembly_supplier.assembly
-                                .assembly_unitMeasurement
-                            }
-                          </td>
-                          <td>{data.received_quantity}</td>
-
-                          <td>
-                            {
-                              data.purchase_req_canvassed_asmbly
-                                .assembly_supplier.supplier_price
-                            }
-                          </td>
-                          <td>{data.receiving_po.freight_cost}</td>
-                          <td>
-                            {data.receiving_po.customFee === null
-                              ? 0
-                              : data.receiving_po.customFee}
-                          </td>
-                        </tr>
-                      ))}
-                      {spare.map((data, i) => (
-                        <tr key={i}>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_spare
-                                .sparepart_supplier.sparePart.spareParts_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_spare
-                                .sparepart_supplier.sparePart.spareParts_name
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_spare
-                                .sparepart_supplier.sparePart
-                                .spareParts_unitMeasurement
-                            }
-                          </td>
-                          <td>{data.received_quantity}</td>
-
-                          <td>
-                            {
-                              data.purchase_req_canvassed_spare
-                                .sparepart_supplier.supplier_price
-                            }
-                          </td>
-                          <td>{data.receiving_po.freight_cost}</td>
-                          <td>
-                            {data.receiving_po.customFee === null
-                              ? 0
-                              : data.receiving_po.customFee}
-                          </td>
-                        </tr>
-                      ))}
-
-                      {subpart.map((data, i) => (
-                        <tr key={i}>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_subpart
-                                .subpart_supplier.subPart.subPart_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_subpart
-                                .subpart_supplier.subPart.subPart_name
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.purchase_req_canvassed_subpart
-                                .subpart_supplier.subPart
-                                .subPart_unitMeasurement
-                            }
-                          </td>
-                          <td>{data.received_quantity}</td>
-
-                          <td>
-                            {
-                              data.purchase_req_canvassed_subpart
-                                .subpart_supplier.supplier_price
-                            }
-                          </td>
-                          <td>{data.receiving_po.freight_cost}</td>
-                          <td>
-                            {data.receiving_po.customFee === null
-                              ? 0
-                              : data.receiving_po.customFee}
-                          </td>
-                        </tr>
-                      ))}
                     </tbody>
-                   ) : (
+                  ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
                       <h3>No Data Found</h3>
                     </div>
-                  )}  
+                  )}
                 </table>
               </div>
 
@@ -997,7 +776,12 @@ function ReceivingPreview({ authrztn }) {
         )}
       </div>
 
-      <Modal show={show} onHide={handleClose} backdrop="static" size="xl">
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        dialogClassName="custom-modal_ReceivingPreview"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Generation of report</Modal.Title>
         </Modal.Header>
@@ -1076,7 +860,7 @@ function ReceivingPreview({ authrztn }) {
               <div className="content mt-5">
                 <div className="table-containss">
                   <div className="main-of-all-tables">
-                    <table className="table-hover" id="order-listing">
+                    <table className="table-hover" id="order-listings">
                       <thead>
                         <tr>
                           <th className="tableh">Code</th>
@@ -1085,95 +869,161 @@ function ReceivingPreview({ authrztn }) {
                           <th className="tableh">Initial Received</th>
                           <th className="tableh">Received</th>
                           <th className="tableh">Set</th>
-                          <th className="tableh">Unit Price</th>
-                          <th className="tableh">Freight Cost</th>
-                          <th className="tableh">Duties & Customs Cost </th>
-                          <th className="tableh">Total</th>
+                          <th className="tableh">Purchased Price (UOM)</th>
+                          <th className="tableh">Total Price (UOM)</th>
+                          <th className="tableh">Freight Cost (/qty)</th>
+                          <th className="tableh">
+                            Duties & Customs Cost (/qty)
+                          </th>
+                          <th className="tableh">Landed Cost (qty)</th>
+                          <th className="tableh">Total Landed Cost</th>
                         </tr>
                       </thead>
-                      {/* {products.length > 0 &&
-                      assembly.length > 0 &&
-                      spare.length > 0 &&
-                      subpart.length > 0 ? ( */}
-                        <tbody>
-                          {products.map((data, i) => (
-                            <tr key={i}>
+                      <tbody>
+                        {(() => {
+                          // Initialize totals
+                          let totalInitialReceived = 0;
+                          let totalReceived = 0;
+                          let totalSet = 0;
+                          let totalPurchasedPrice = 0;
+                          let totalTotalPrice = 0;
+                          let totalFreightCost = 0;
+                          let totalCustomFee = 0;
+                          let totalLandedCostOverAll = 0;
+                          let totalTotalLandedCost = 0;
+
+                          // Map through products and calculate totals
+                          const rows = products.map((data, i) => {
+                            const {
+                              purchase_req_canvassed_prd: {
+                                product_tag_supplier: { product },
+                                purchase_price,
+                              },
+                              transfered_quantity,
+                              received_quantity,
+                              set_quantity,
+                              receiving_po: { freight_cost, customFee },
+                            } = data;
+
+                            const customFeeValue =
+                              customFee === null ? 0 : customFee;
+                            const unitCost = product.UOM_set
+                              ? purchase_price / set_quantity +
+                                freight_cost +
+                                customFeeValue
+                              : purchase_price + freight_cost + customFeeValue;
+
+                            const totalLandedCost = product.UOM_set
+                              ? unitCost * set_quantity * received_quantity
+                              : unitCost * received_quantity;
+
+                            // Update totals
+                            totalInitialReceived += transfered_quantity || 0;
+                            totalReceived += received_quantity || 0;
+                            totalSet += set_quantity === 1 ? 0 : set_quantity;
+                            totalPurchasedPrice += purchase_price || 0;
+                            totalTotalPrice +=
+                              received_quantity * purchase_price || 0;
+                            totalFreightCost += freight_cost || 0;
+                            totalCustomFee += customFeeValue || 0;
+                            totalLandedCostOverAll += unitCost || 0;
+                            totalTotalLandedCost += totalLandedCost || 0;
+
+                            return (
+                              <tr key={i}>
+                                <td>{product.product_code}</td>
+                                <td>{product.product_name}</td>
+                                <td>{product.product_unitMeasurement}</td>
+                                <td>
+                                  {transfered_quantity === null
+                                    ? "N/A"
+                                    : transfered_quantity}
+                                </td>
+                                <td>{received_quantity}</td>
+                                <td>
+                                  {set_quantity === 1 ? "N/A" : set_quantity}
+                                </td>
+                                <td>
+                                  {purchase_price.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {(
+                                    received_quantity * purchase_price
+                                  ).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {freight_cost.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {customFeeValue.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {unitCost.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {totalLandedCost.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                              </tr>
+                            );
+                          });
+
+                          // Add the totals row
+                          rows.push(
+                            <tr key="totals" className="bg-body-secondary">
+                              <td colSpan="3">Overall Total:</td>
+                              <td>{totalInitialReceived}</td>
+                              <td>{totalReceived}</td>
+                              <td>{totalSet}</td>
                               <td>
-                                {
-                                  data.purchase_req_canvassed_prd
-                                    .product_tag_supplier.product.product_code
-                                }
+                                {totalPurchasedPrice.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                })}
                               </td>
                               <td>
-                                {
-                                  data.purchase_req_canvassed_prd
-                                    .product_tag_supplier.product.product_name
-                                }
+                                {totalTotalPrice.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                })}
                               </td>
                               <td>
-                                {
-                                  data.purchase_req_canvassed_prd
-                                    .product_tag_supplier.product
-                                    .product_unitMeasurement
-                                }
+                                {totalFreightCost.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                })}
                               </td>
                               <td>
-                                {data.transfered_quantity === null
-                                  ? "N/A"
-                                  : data.transfered_quantity}
-                              </td>
-                              <td>{data.received_quantity}</td>
-                              <td>
-                                {data.set_quantity === 0
-                                  ? "N/A"
-                                  : data.set_quantity}
+                                {totalCustomFee.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                })}
                               </td>
                               <td>
-                                {
-                                  data.purchase_req_canvassed_prd
-                                    .product_tag_supplier.product_price
-                                }
-                              </td>
-                              <td>{data.receiving_po.freight_cost}</td>
-                              <td>
-                                {data.receiving_po.customFee === null
-                                  ? 0
-                                  : data.receiving_po.customFee}
+                                {totalLandedCostOverAll.toLocaleString(
+                                  undefined,
+                                  { minimumFractionDigits: 2 }
+                                )}
                               </td>
                               <td>
-                                {data.purchase_req_canvassed_prd
-                                  .product_tag_supplier.product_price *
-                                  data.received_quantity +
-                                  ((data.receiving_po.customFee === null
-                                    ? 0
-                                    : data.receiving_po.customFee) +
-                                    data.receiving_po.freight_cost)}
+                                {totalTotalLandedCost.toLocaleString(
+                                  undefined,
+                                  { minimumFractionDigits: 2 }
+                                )}
                               </td>
                             </tr>
-                          ))}
+                          );
 
-
-                          <tr className="bg-body-secondary">
-                            <td colSpan="3">Overall Total:</td>
-                            <td>{totalTransfer}</td>
-                            <td>{totalReceived}</td>
-                            <td>{Settotal}</td>
-                            <td>{totalPrice}</td>
-                            <td>{totalFR}</td>
-                            <td>{totalDC}</td>
-                            <td>{total}</td>
-                          </tr>
-                        </tbody>
-                      {/* // ) : (
-                      //   <div className="no-data">
-                      //     <img
-                      //       src={NoData}
-                      //       alt="NoData"
-                      //       className="no-data-img"
-                      //     />
-                      //     <h3>No Data Found</h3>
-                      //   </div>
-                      // )} */}
+                          return rows;
+                        })()}
+                      </tbody>
                     </table>
                   </div>
                 </div>
@@ -1186,7 +1036,7 @@ function ReceivingPreview({ authrztn }) {
             Approve
           </Button>
           <Button onClick={exportToPDF}>Export to PDF</Button>
-          <Button onClick={prepareCsvData}>Download CSV</Button>
+          <Button onClick={exportToExcel}>Download Excel</Button>
         </Modal.Footer>
       </Modal>
     </div>

@@ -5553,6 +5553,16 @@ span:nth-child(5) {
     width: 40px;
   }
 }
+/* styles.css */
+.custom-modal_ReceivingPreview {
+  max-width: 80% !important; /* Adjust width as needed */
+  height: 80vh; /* Adjust height as needed */
+}
+
+.custom-modal_ReceivingPreview .modal-content_ReceivingPreview {
+  height: 100%; /* Ensure content takes full height */
+}
+
 
 /* Fra */
 

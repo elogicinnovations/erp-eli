@@ -32,23 +32,28 @@ const fs = require("fs");
 
 router.route("/lastPONumber").get(async (req, res) => {
   try {
-    const maxValues = await Promise.all([
-      PR_PO.max("po_id"),
-      PR_PO_asmbly.max("po_id"),
-      PR_PO_spare.max("po_id"),
-      PR_PO_subpart.max("po_id"),
-    ]);
+ 
 
-    const maxNumber = Math.max(...maxValues);
+    const maxPo = await PR_PO.findOne({
+      attributes: [
+        [sequelize.fn('MAX', sequelize.col('po_id')), 'maxPoId']
+      ],
+      raw: true, // Ensure raw output
+    });
 
-    // Increment the maxNumber by 1 for a new entry
-    const nextNumber = (maxNumber !== null ? parseInt(maxNumber, 10) : 0) + 1;
+    console.log('Fetched maxPo:', maxPo);
 
-    // Format the nextNumber to have leading zeros
-    const formattedNumber = nextNumber.toString().padStart(8, "0");
+    // Extract the max po_id and increment it by 1
+    let maxPoId = maxPo.maxPoId || '00000000';
+    console.log('maxPoId:', maxPoId);
 
-    // Return the formatted nextNumber
-    return res.json(formattedNumber);
+    let nextPoId = (parseInt(maxPoId, 10) + 1).toString().padStart(8, '0');
+    console.log('nextPoId:', nextPoId);
+
+    res.json({ nextPoId });
+
+
+    
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
@@ -70,6 +75,7 @@ router.route("/save").post(async (req, res) => {
         const quantity = child.quantity;
         const type = child.type;
         const prod_supp_id = child.prod_supplier;
+        const prod_supp_price = child.prod_supplier_price;
         const FromDays = child.daysfrom;
         const ToDays = child.daysto;
 
@@ -81,33 +87,8 @@ router.route("/save").post(async (req, res) => {
             product_tag_supplier_ID: prod_supp_id,
             days_from: FromDays,
             days_to: ToDays,
-          });
-        } else if (type === "assembly") {
-          PR_PO_asmbly.create({
-            pr_id: PR_id,
-            po_id: po_number,
-            quantity: quantity,
-            assembly_suppliers_ID: prod_supp_id,
-            days_from: FromDays,
-            days_to: ToDays,
-          });
-        } else if (type === "spare") {
-          PR_PO_spare.create({
-            pr_id: PR_id,
-            po_id: po_number,
-            quantity: quantity,
-            spare_suppliers_ID: prod_supp_id,
-            days_from: FromDays,
-            days_to: ToDays,
-          });
-        } else if (type === "subpart") {
-          PR_PO_subpart.create({
-            pr_id: PR_id,
-            po_id: po_number,
-            quantity: quantity,
-            subpart_suppliers_ID: prod_supp_id,
-            days_from: FromDays,
-            days_to: ToDays,
+            static_quantity: quantity,
+            purchase_price: prod_supp_price
           });
         }
       }
@@ -426,14 +407,6 @@ router.route("/fetchRejectHistory").get(async (req, res) => {
         model: MasterList,
         required: true
       }]
-      // attributes: [
-      //   ["remarks", "remarks"],
-      //   ["file", null]
-      //   ["mimeType", null],
-      //   ["fileExtension", null]
-      //   ["createdAt", "createdAt"],
-      //   ["type", "Reject"]
-      // ]
     });
 
     const prRejustifyData = await PR_Rejustify.findAll({
@@ -445,14 +418,6 @@ router.route("/fetchRejectHistory").get(async (req, res) => {
         model: MasterList,
         required: true
       }]
-      // attributes: [
-      //   ["remarks", "remarks"],
-      //   ["file", "file"],
-      //   ["mimeType", "mimeType"],
-      //   ["fileExtension", "fileExtension"],
-      //   ["createdAt", "createdAt"],
-      //   ["type", "Rejustify"]
-      // ]
     });
 
     // console.log(poRejectData)

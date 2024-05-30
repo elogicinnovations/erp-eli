@@ -170,17 +170,15 @@ function PurchaseOrderListPreview() {
     axios
       .get(BASE_URL + "/invoice/lastPONumber")
       .then((res) => {
-        const PO_increment =
-          res.data !== null ? res.data.toString().padStart(8, "0") : "00000000";
-        setLatestCount(PO_increment);
+        setLatestCount(res.data.nextPoId);
       })
       .catch((err) => console.log(err));
   }, []);
 
-  // console.log(latestCount)
+  console.log(latestCount)
 
   const [parentArray, setParentArray] = useState([]);
-  const [titleCounter, setTitleCounter] = useState(1);
+  const [titleCounter, setTitleCounter] = useState(0);
   const [addPObackend, setAddPObackend] = useState([]);
   const [quantityInputs, setQuantityInputs] = useState({});
   const [daysInputs, setDaysInputs] = useState({});
@@ -295,18 +293,20 @@ function PurchaseOrderListPreview() {
           quantity: quantityInputs[`${title}_${item.type}_${item.product.id}`] || "",
           type: item.type,
           prod_supplier: item.product.id,
+          prod_supplier_price: item.product.product_price,
           daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
           daysto: daysInputs[`${title}`]?.DaysTo || "",
         })),
       };
     });
     setAddPObackend(serializedParent);
-    console.log("Selected Products:", serializedParent);
+    // console.log("Products:", parentArray);
+    // console.log("Selected Products:", serializedParent);
   };
   
   useEffect(() => {
     updateAddPOBackend();
-  }, [quantityInputs, daysInputs]);
+  }, [quantityInputs, daysInputs, selected_PR_Prod_array]);
 
 
 
@@ -317,6 +317,7 @@ function PurchaseOrderListPreview() {
         item.id === selected_PR_Prod ? { ...item, isPO: true } : item
       )
     );
+    
 
     setProductArrays((prevArrays) => {
       const supplierCode = product.supplier.supplier_code;
@@ -359,6 +360,7 @@ function PurchaseOrderListPreview() {
         } else {
           // If the container doesn't exist, create a new one
           const newTitle = (parseInt(latestCount, 10) + titleCounter)
+          // const newTitle = (parseInt(latestCount, 10))
             .toString()
             .padStart(8, "0");
           const newParentArray = [
@@ -391,8 +393,8 @@ function PurchaseOrderListPreview() {
   };
 
   // useEffect(() => {
-  //   console.log(`selected_PR_Prod_array`)
-  //   console.log(selected_PR_Prod_array)
+  //   // console.log(`selected_PR_Prod_array`)
+  //   // console.log(selected_PR_Prod_array)
   // }, [selected_PR_Prod_array]);
 
   const handleEditPrice = (index) => {

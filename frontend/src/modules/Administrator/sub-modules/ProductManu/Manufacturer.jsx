@@ -291,8 +291,8 @@ function Productvariants({ authrztn }) {
         }
       } else {
         swal({
-          title: "Oops! Something Went Wrong",
-          text: "Please contact our support team for assistance.",
+          title: "Cancelled",
+          text: "",
           icon: "warning",
         });
       }

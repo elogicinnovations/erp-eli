@@ -283,10 +283,18 @@ function PurchaseRequest({ authrztn }) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = allPR.filter((data) => {
       return (
-        data.pr_num.toLowerCase().includes(searchTerm) ||
-        data.status.toLowerCase().includes(searchTerm) ||
-        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-        data.remarks.toLowerCase().includes(searchTerm)
+        (data?.pr_num?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.masterlist?.col_Fname?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (
+          data?.masterlist?.department?.department_name?.toLowerCase() || ""
+        ).includes(searchTerm) ||
+        (data?.status?.toLowerCase() || "").includes(searchTerm) ||
+        (formatDatetime(data?.createdAt)?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data?.remarks?.toLowerCase() || "").includes(searchTerm)
       );
     });
 
@@ -303,32 +311,60 @@ function PurchaseRequest({ authrztn }) {
       return;
     }
 
-    const filteredData = allPR.filter((data) => {
-      const createdAt = new Date(data.createdAt);
+    setIsLoading(true);
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/PR/PRfilter", {
+          params: {
+            strDate: startDate,
+            enDate: endDate,
+            selectedStatus,
+          },
+        })
+        .then((res) => {
+          setAllPR(res.data);
+          setFilteredPR(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-      console.log("startDate:", startDate);
-      console.log("endDate:", endDate);
-      console.log("createdAt:", createdAt);
+    return () => clearTimeout(delay);
 
-      const isWithinDateRange =
-        (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
-        (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
+    // const filteredData = allPR.filter((data) => {
+    //   const createdAt = new Date(data.createdAt);
 
-      const isMatchingStatus =
-        selectedStatus === "All Status" || data.status === selectedStatus;
+    //   console.log("startDate:", startDate);
+    //   console.log("endDate:", endDate);
+    //   console.log("createdAt:", createdAt);
 
-      return isWithinDateRange && isMatchingStatus;
-    });
+    //   const isWithinDateRange =
+    //     (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
+    //     (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
 
-    setFilteredPR(filteredData);
+    //   const isMatchingStatus =
+    //     selectedStatus === "All Status" || data.status === selectedStatus;
+
+    //   return isWithinDateRange && isMatchingStatus;
+    // });
+
+    // setFilteredPR(filteredData);
   };
 
   const clearFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setSelectedStatus("");
+    setIsLoading(true);
+    const delay = setTimeout(() => {
+      setStartDate(null);
+      setEndDate(null);
+      setSelectedStatus("");
 
-    reloadTable();
+      reloadTable();
+    }, 1000);
+
+    return () => clearTimeout(delay);
   };
 
   const CancelRequest = async (row_id, row_status) => {
@@ -539,12 +575,17 @@ function PurchaseRequest({ authrztn }) {
                       <option value="" disabled selected>
                         Select Status
                       </option>
-                      <option value="All Status">All Status</option>
+                      <option value="All">All Status</option>
                       <option value="For-Approval">For-Approval</option>
-                      <option value="For-Rejustify">For-Rejustify</option>
-                      <option value="For-Canvassing">For-Canvassing</option>
-                      <option value="To-Receive">To Receive</option>
                       <option value="Cancelled">Cancelled</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Rejustified">Rejustified</option>
+                      <option value="For-Canvassing">For-Canvassing</option>
+                      <option value="On-Canvass">For-PO</option>
+                      <option value="For-Approval (PO)">
+                        For-Approval (PO)
+                      </option>
+                      <option value="Ordered">Ordered</option>
                     </Form.Select>
                     <button
                       className="goesButton"
@@ -740,12 +781,10 @@ function PurchaseRequest({ authrztn }) {
                                   {data.remarks}
                                 </td>
                                 <td>
-                                  {userId ===
-                                  data.masterlist_id ? (
+                                  {userId === data.masterlist_id ? (
                                     <>
                                       <div className="d-flex flex-direction-row align-items-center">
-                                        {
-                                          data.status !== "Cancelled" &&
+                                        {data.status !== "Cancelled" &&
                                           data.status !== "Rejected" &&
                                           data.status !== "For-Rejustify" &&
                                           data.status !== "For-Canvassing" &&
@@ -889,7 +928,9 @@ function PurchaseRequest({ authrztn }) {
                                                 fontFamily: "Arial, sans-serif",
                                               }}
                                             >
-                                              {history.remarks === null ? "N/A" : history.remarks}
+                                              {history.remarks === null
+                                                ? "N/A"
+                                                : history.remarks}
                                             </td>
                                             <td
                                               style={{
@@ -1055,12 +1096,10 @@ function PurchaseRequest({ authrztn }) {
                                       {data.remarks}
                                     </td>
                                     <td>
-                                      {userId ===
-                                      data.masterlist_id ? (
+                                      {userId === data.masterlist_id ? (
                                         <>
                                           <div className="d-flex flex-direction-row align-items-center">
-                                            {
-                                              data.status !== "Cancelled" &&
+                                            {data.status !== "Cancelled" &&
                                               data.status !== "Rejected" &&
                                               data.status !== "For-Rejustify" &&
                                               data.status !==

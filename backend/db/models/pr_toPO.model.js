@@ -32,11 +32,11 @@ const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  quantity_received: {
-    type: DataTypes.INTEGER,
+  purchase_price: {
+    type: DataTypes.FLOAT,
     allowNull: true,
   },
-  quality_assurance: {
+  static_quantity: {
     type: DataTypes.STRING,
     allowNull: true,
   },

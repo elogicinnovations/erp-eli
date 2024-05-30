@@ -138,25 +138,24 @@ function ReceivingIntransit({ authrztn }) {
   useEffect(() => {
     const delay = setTimeout(() => {
       axios
-        .get(BASE_URL + "/receiving/viewToReceive", {
+        .get(BASE_URL + "/receiving/viewToReceiveIntransit", {
           params: {
-            id: id,
+            id,
           },
         })
         .then((res) => {
-          setprID(res.data.primary.pr_id);
-          setpoID(res.data.primary.po_id);
-          setPrNumber(res.data.primary.purchase_req.pr_num);
-          setPrNumber(res.data.primary.purchase_req.pr_num);
-          setDateNeeded(res.data.primary.purchase_req.date_needed);
-          setUsedFor(res.data.primary.purchase_req.used_for);
-          setRemarks(res.data.primary.purchase_req.remarks);
+          setprID(res.data[0].pr_id);
+          setpoID(res.data[0].po_id);
+          setPrNumber(res.data[0].purchase_req.pr_num);
+          setDateNeeded(res.data[0].purchase_req.date_needed);
+          setUsedFor(res.data[0].purchase_req.used_for);
+          setRemarks(res.data[0].purchase_req.remarks);
           setDepartment(
-            res.data.primary.purchase_req.masterlist.department.department_name
+            res.data[0].purchase_req.masterlist.department.department_name
           );
-          setRequestedBy(res.data.primary.purchase_req.masterlist.col_Fname);
-          setStatus(res.data.primary.status);
-          setDateCreated(res.data.primary.purchase_req.createdAt);
+          setRequestedBy(res.data[0].purchase_req.masterlist.col_Fname);
+          setStatus(res.data[0].status);
+          setDateCreated(res.data[0].createdAt); // kung kelan na received sa davao
           setIsLoading(false);
         })
         .catch((err) => {
@@ -171,12 +170,10 @@ function ReceivingIntransit({ authrztn }) {
 
   const [POarray, setPOarray] = useState([]);
   useEffect(() => {
-    const po_id = poID;
-    const pr_id = prID;
     axios
       .post(BASE_URL + "/receiving/fetchPOarray", null, {
         params: {
-          id,
+          po_id: id,
         },
       })
       .then((res) => setPOarray(res.data))
@@ -202,7 +199,7 @@ function ReceivingIntransit({ authrztn }) {
   const [prod_name, setProd_name] = useState([]);
   const [refCodes, setRefCodes] = useState("");
 
-  const handleReceived = (po_number) => {
+  const handleReceived = () => {
     setIsLoading(true);
     setShow(true);
     axios
@@ -416,48 +413,61 @@ function ReceivingIntransit({ authrztn }) {
         text: "Please fill the red text fields",
       });
     } else {
-      try {
-        const response = await axios.post(
-          BASE_URL + "/receiving/insertReceived_Intransit",
-          {
-            addReceivebackend,
-            productImages,
-            customFee,
-            shippingFee,
-            suppReceving,
-            refCodes,
-            poID,
-            prID,
-            id,
-            userId,
-          }
-        );
 
-        if (response.status === 200) {
-          swal({
-            title: "Purchase Request Add Succesful!",
-            text: "The Purchase Request has been Added Successfully.",
-            icon: "success",
-            button: "OK",
-          }).then(() => {
-            handleClose();
-          });
-        } else {
-          swal({
-            icon: "error",
-            title: "Something went wrong",
-            text: "Please contact our support",
-          });
-        }
-      } catch (error) {
-        console.error(error);
-        // Handle request error
-        swal({
-          icon: "error",
-          title: "Something went wrong",
-          text: "Please contact our support",
-        });
-      }
+      swal({
+        title: `Are you sure want to received this transitted product/s?`,
+        text: "This action cannot be undone.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (approve) => {
+        if (approve) {
+
+          try {
+            const response = await axios.post(
+              BASE_URL + "/receiving/insertReceived_Intransit",
+              {
+                addReceivebackend,
+                productImages,
+                customFee,
+                shippingFee,
+                suppReceving,
+                refCodes,
+                poID,
+                prID,
+                id,
+                userId,
+              }
+            );
+    
+            if (response.status === 200) {
+              swal({
+                title: "Purchase Request Add Succesful!",
+                text: "The Purchase Request has been Added Successfully.",
+                icon: "success",
+                button: "OK",
+              }).then(() => {
+                handleClose();
+                navigate('/receivingManagement')
+              });
+            } else {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please contact our support",
+              });
+            }
+          } catch (error) {
+            console.error(error);
+            // Handle request error
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        }})
+     
     }
 
     setValidated(true); // for validations
@@ -662,7 +672,7 @@ function ReceivingIntransit({ authrztn }) {
             </div>
 
             <div className="row">
-              <div className="col-6 ">
+            <div className="col-12 ">
                 <Form.Label
                   style={{
                     fontSize: "20px",
@@ -672,41 +682,6 @@ function ReceivingIntransit({ authrztn }) {
                   Information{" "}
                 </Form.Label>
                 <div className="receive-container">
-                  {/* <div className="PR-num">
-                          <p>{`PR #: ${prNumber}`}</p>
-                        </div>
-
-                        <div className="createdNdate-container">
-                          <div className="statusanddate-content">
-                            <div className="status-receive">
-                              <div style={{ display: "flex", alignItems: "center" }}>
-                                  <Circle
-                                    weight="fill"
-                                    size={17}
-                                    color="green"
-                                    style={{ margin: "10px" }}
-                                  />
-                                  <p style={{ margin: "10px" }}>{status}</p>
-                                </div>
-                              </div>
-                              <div className="request-date">
-                                <p>{`Requested date: ${formatDatetime(dateCreated)}`}</p>
-                              </div>
-                          </div>
-                        </div>
-
-                      <div className="destination-container">
-                        <div className="contentof-request">
-                          <div className="destination-content">
-                            <p>{`To be used for: ${usedFor}`}</p>
-                            </div>
-
-                            <div className="requestdiv">
-                              <p>{`Requested by: ${requestedBy}`}</p>
-                            </div>
-                        </div>
-                      </div>
-                       */}
                   <div className="row">
                     <div className="col-6">
                       <div className="receiving_list d-flex flex-direction-column">
@@ -724,7 +699,7 @@ function ReceivingIntransit({ authrztn }) {
                       <div className="receiving_list_right d-flex flex-direction-column">
                         <ul>
                           <li>
-                            <p>{`Requested date: ${formatDatetime(
+                            <p className="h4">{`Received in Davao: ${formatDatetime(
                               dateCreated
                             )}`}</p>
                           </li>
@@ -738,7 +713,10 @@ function ReceivingIntransit({ authrztn }) {
                                 color="green"
                                 style={{ margin: "10px" }}
                               />
-                              <p style={{ margin: "10px", fontSize: 24 }}>
+                              <p
+                                className="h3"
+                                style={{ margin: "10px", fontSize: 24 }}
+                              >
                                 {status}
                               </p>
                             </div>
@@ -748,34 +726,6 @@ function ReceivingIntransit({ authrztn }) {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label
-                    style={{
-                      fontSize: "20px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
-                  >
-                    Remarks{" "}
-                  </Form.Label>
-                  <Form.Control
-                    readOnly
-                    onChange={(e) => setRemarks(e.target.value)}
-                    placeholder="Enter details name"
-                    value={remarks}
-                    as="textarea"
-                    rows={3}
-                    style={{
-                      fontFamily: "Poppins, Source Sans Pro",
-                      fontSize: "16px",
-                      height: "225px",
-                      maxHeight: "225px",
-                      resize: "none",
-                      overflowY: "auto",
-                    }}
-                  />
-                </Form.Group>
               </div>
             </div>
 
@@ -858,80 +808,58 @@ function ReceivingIntransit({ authrztn }) {
 
       <Modal show={show} onHide={handleClose} backdrop="static" size="xl">
         <Form noValidate validated={validated} onSubmit={add}>
-          <Modal.Header closeButton>
-            <Modal.Title>
-              <div className="row" style={{ width: "1100px" }}>
-                <div className="col-6">{`PO Number: ${po_id}`}</div>
-                <div className="col-6">
-                  <div
-                    className="d-flex flex-direction-row align-items-center justify-content-center"
-                    style={{ marginTop: "-20px" }}
-                  >
-                    <label className="" style={{ fontSize: 12 }}>
-                      Receiving Area:{" "}
-                    </label>
-                    <div class="">
-                      <Form.Control
+        <Modal.Header closeButton style={{ width: "100%", padding: 0 }}>
+          <Modal.Title style={{ width: "100%" }}>
+            <div className="d-flex w-100">
+                <div className="w-50">
+                  <span className="h2">{`PO Number: ${po_id}`}</span>
+                </div>
+                <div className="w-50 d-flex">
+                  <span className="h3">Receiving Area: </span>   
+                  <Form.Control
                         required
-                        style={{
-                          fontSize: 13,
-                          width: "200px",
-                          marginRight: 10,
-                        }}
+                        className="w-50 fs-3"
                         value={suppReceving}
                         readOnly
-                      ></Form.Control>
-                    </div>
-                  </div>
+                      ></Form.Control>                    
                 </div>
               </div>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="row">
-              <div className="col-6">
-                <h2 className="mb-5">
-                  {`Supplier: ${supplier_code} - ${supplier_name}`}
-                </h2>
-
-                <div style={{ width: "100%" }}>
-                  <Form.Label style={{ fontSize: "15px" }}>
-                    Reference Code: 
-                  </Form.Label>
-                  <Form.Control
-                    readOnly
-                    style={{
-                      height: "35px",
-                      width: "200px",
-                      fontSize: "14px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                      marginLeft: "5px",
-                    }}
-                    value={refCodes}
-                  />
+             <div className="row p-0">
+              <div className="col-6 align-items-center">
+                <div className="d-flex w-100">
+                  <div className="d-flex flex-column w-100">
+                    <span className="h2 mb-3">
+                      {`Supplier: ${supplier_code} - ${supplier_name}`}
+                    </span>
+                    <span className="h2">
+                      Reference Code:{" "}
+                      <span className="text-decoration-underline">
+                        {refCodes}
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {suppReceving === "Davao City" ? (
-                <div></div>
-              ) : suppReceving === "Agusan Del Sur" ? (
-                <div className="col-6 ">
-                  <div className="d-flex flex-direction-column justify-content-center align-items-center">
-                    <div
-                      className="d-flex flex-direction-row justify-content-center align-items-center "
-                      style={{ float: "right", marginTop: "-20px" }}
-                    >
-                      <Form.Label style={{ fontSize: "15px" }}>
+              {suppReceving === "Agusan Del Sur" ? (
+                <div className="col-6">
+                  <div className="d-flex w-100">
+                    <div className="w-50" style={{ float: "right" }}>
+                      <Form.Label className="h4">
                         Duties & Custom Fee:
                       </Form.Label>
                       <Form.Control
                         type="number"
+                        className="w-100"
                         style={{
-                          height: "35px",
-                          width: "100px",
-                          fontSize: "14px",
+                          // height: "35px",
+                          // width: "100px",
+                          // fontSize: "14px",
+
                           fontFamily: "Poppins, Source Sans Pro",
-                          marginLeft: "5px",
                         }}
                         onChange={(e) => setcustomFee(e.target.value)}
                         onKeyDown={(e) => {
@@ -940,19 +868,15 @@ function ReceivingIntransit({ authrztn }) {
                         }}
                       />
                     </div>
-                    <div
-                      className="d-flex flex-direction-row justify-content-center align-items-center ml-5"
-                      style={{ float: "right", marginTop: "-20px" }}
-                    >
-                      <Form.Label style={{ fontSize: "15px" }}>
-                        Shipping Fee:
-                      </Form.Label>
+                    <div className="w-50" style={{ float: "right" }}>
+                      <Form.Label className="h4">Shipping Fee:</Form.Label>
                       <Form.Control
                         type="number"
+                        className="w-100"
                         style={{
-                          height: "35px",
-                          width: "100px",
-                          fontSize: "14px",
+                          // height: "35px",
+                          // width: "100px",
+                          // fontSize: "14px",
                           fontFamily: "Poppins, Source Sans Pro",
                           marginLeft: "5px",
                         }}
@@ -968,7 +892,7 @@ function ReceivingIntransit({ authrztn }) {
                   </div>
                 </div>
               ) : (
-                <></>
+                <div className="col-6"></div>
               )}
             </div>
 
@@ -1007,52 +931,45 @@ function ReceivingIntransit({ authrztn }) {
             {products_receive.map((parent, parentIndex) =>
               parent.items.map((child, childIndex) => (
                 <div
-                  className="row mb-5"
+                  className="row"
                   style={{
-                    display: "d-flex flex-direction-row align-items-center",
+                    // display: "d-flex flex-direction-row align-items-center",
                     border: "1px solid #DEDEDE",
                   }}
                   key={`${parentIndex}-${childIndex}`}
                 >
-                  <div className="col-3">
+                  <div className="col-2">
                     <Form.Group controlId="exampleForm.ControlInput2">
                       <Form.Label style={{ fontSize: "15px" }}>
                         {`${child.type} : `}
                       </Form.Label>
-                      <label className="fs-4">
+                      <p className="h4">
                         {`${child.supp_tag.code} - ${child.supp_tag.name}`}
-                      </label>
+                      </p>
                     </Form.Group>
                   </div>
 
-                  <div className="col-3 d-flex flex-direction-row">
-                    <div className="row" style={{ marginTop: "-40px" }}>
-                      <div className="col-4">
-                        <Form.Group controlId="exampleForm.ControlInput2">
-                          <Form.Label style={{ fontSize: "15px" }}>
-                            Received{" "}
+                  <div className="col-10">
+                    <div className="d-flex w-100">
+                      <div className="w-25">
+                        <Form.Group className="w-100">
+                          <Form.Label className="h4">
+                            {`Transitted ${child.supp_tag.UOM}`}
                           </Form.Label>
                           <Form.Control
                             value={child.item.received_quantity}
-                            // readOnly={
-                            //   checkedRows[parentIndex]?.[childIndex]
-                            // }
+                            className="w-100"
                             readOnly
                             style={{
-                              height: "35px",
-                              width: "100px",
-                              fontSize: "14px",
                               fontFamily: "Poppins, Source Sans Pro",
                             }}
                           />
                         </Form.Group>
                       </div>
-                      <div className="col-4">
+                      <div className="w-25">
                         {/* {checkedRows[parentIndex]?.[childIndex] && ( */}
-                        <Form.Group controlId="exampleForm.ControlInput2">
-                          <Form.Label style={{ fontSize: "15px" }}>
-                            /pcs:{" "}
-                          </Form.Label>
+                        <Form.Group className="w-100">
+                          <Form.Label className="h4">/pcs:</Form.Label>
                           <Form.Control
                             type="number"
                             readOnly
@@ -1067,7 +984,7 @@ function ReceivingIntransit({ authrztn }) {
                                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                               ]?.Squantity || child.item.set_quantity
                             }
-                            // value={child.item.set_quantity}
+
                             onChange={(e) =>
                               handleInputChange(
                                 e.target.value,
@@ -1076,136 +993,112 @@ function ReceivingIntransit({ authrztn }) {
                                 child.item.received_quantity
                               )
                             }
+
+                            className="w-100"
                             style={{
-                              height: "35px",
-                              width: "100px",
-                              fontSize: "14px",
+                              // height: "35px",
+                              // width: "100px",
+                              // fontSize: "14px",
                               fontFamily: "Poppins, Source Sans Pro",
                             }}
                           />
                         </Form.Group>
-                        {/* )}  */}
+                        {/* )} */}
                       </div>
-                      <div className="col-4">
-                        {/* <label
-                          className="userstatus"
-                          style={{
-                            fontSize: 15,
-                            marginLeft: 15,
-                            marginTop: "10px",
-                          }}
-                        >
-                          Set
-                        </label>
-                        <input
-                          style={{
-                            marginLeft: 20,
-                          }}
-                          disabled={child.item.quantity === 0}
-                          type="checkbox"
-                          className="toggle-switch"
-                          checked={checkedRows[parentIndex]?.[childIndex]}
-                          onClick={(e) =>
-                            handleCheckbox(e, parentIndex, childIndex)
-                          }
-                          // style={{ marginTop: "25px" }}
-                        /> */}
+
+                      <div className="w-25">
+                        <Form.Group className="w-100">
+                          <Form.Label className="h4">
+                            {`Received (${child.supp_tag.UOM})`}
+                          </Form.Label>
+                          <Form.Control
+                            type="number"
+                            required
+                            readOnly={child.item.quantity === 0}
+                            value={
+                              inputValues[
+                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              ]?.Rquantity || ""
+                            }
+                            onChange={(e) =>
+                              handleInputChange(
+                                e.target.value,
+                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                "Rquantity",
+                                child.item.received_quantity
+                              )
+                            }
+                            className="w-100"
+                            style={{
+                              // height: "35px",
+                              // width: "100px",
+                              // fontSize: "14px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            onKeyDown={(e) => {
+                              ["e", "E", "+", "-"].includes(e.key) &&
+                                e.preventDefault();
+                            }}
+                          />
+                        </Form.Group>
+                      </div>
+                      <div className="w-25">
+                        <Form.Group className="w-100">
+                          <Form.Label className="h4">
+                            {`Remaining (${child.supp_tag.UOM})`}
+                          </Form.Label>
+                          <Form.Control
+                            type="number"
+                            placeholder="Quantity"
+                            required
+                            readOnly
+                            className="w-100"
+                            style={{
+                              // height: "35px",
+                              // width: "100px",
+                              // fontSize: "14px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                              pointerEvents: "none",
+                            }}
+                            onChange={(e) =>
+                              handleInputChange(
+                                e.target.value,
+                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
+                                "Tquantity",
+                                child.item.received_quantity
+                              )
+                            }
+                            value={
+                              child.item.received_quantity - (inputValues[
+                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              ]?.Rquantity || "")
+                              // inputValues[
+                              //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              // ]?.Tquantity || ""
+                              // (inputValues[
+                              //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              // ]?.Squantity
+                              //   ? inputValues[
+                              //       `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              //     ]?.Squantity *
+                              //       child.item.quantity -
+                              //     inputValues[
+                              //       `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              //     ]?.Rquantity *
+                              //       inputValues[
+                              //         `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              //       ]?.Squantity
+                              //   : child.item.quantity -
+                              //     inputValues[
+                              //       `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                              //     ]?.Rquantity) || 0
+                            }
+                          />
+                        </Form.Group>
                       </div>
                     </div>
                   </div>
 
-                  <div className="col-3">
-                    <div className="d-flex flex-direction-row">
-                      <Form.Group
-                        style={{
-                          marginTop: "-30px",
-                          marginRight: "10px",
-                        }}
-                        controlId="exampleForm.ControlInput2"
-                      >
-                        <Form.Label style={{ fontSize: "15px" }}>
-                          Delivered :{" "}
-                        </Form.Label>
-                        <Form.Control
-                          type="number"
-                          required
-                          readOnly={child.item.quantity === 0}
-                          value={
-                            inputValues[
-                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                            ]?.Rquantity || ""
-                          }
-                          onChange={(e) =>
-                            handleInputChange(
-                              e.target.value,
-                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                              "Rquantity",
-                              child.item.received_quantity
-                            )
-                          }
-                          onKeyDown={(e) =>
-                            ["e", "E", "+", "-"].includes(e.key) &&
-                            e.preventDefault()
-                          }
-                          style={{
-                            height: "35px",
-                            width: "100px",
-                            fontSize: "14px",
-                            fontFamily: "Poppins, Source Sans Pro",
-                          }}
-                        />
-                      </Form.Group>
-
-                      <Form.Group
-                        style={{ marginTop: "-30px" }}
-                        controlId="exampleForm.ControlInput2"
-                      >
-                        <Form.Label style={{ fontSize: "15px" }}>
-                          Remaining :{" "}
-                        </Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="Quantity"
-                          required
-                          readOnly
-                          style={{
-                            height: "35px",
-                            width: "100px",
-                            fontSize: "14px",
-                            fontFamily: "Poppins, Source Sans Pro",
-                            pointerEvents: "none",
-                          }}
-                          onChange={(e) =>
-                            handleInputChange(
-                              e.target.value,
-                              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`,
-                              "Tquantity",
-                              child.item.received_quantity
-                            )
-                          }
-                          value={
-                            // inputValues[
-                            //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                            // ]?.Tquantity || ""
-                            (child.item.set_quantity
-                              ? child.item.set_quantity *
-                                  child.item.received_quantity -
-                                inputValues[
-                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                ]?.Rquantity *
-                                child.item.set_quantity
-                              : 
-                              child.item.received_quantity -
-                                inputValues[
-                                  `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                                ]?.Rquantity) || child.item.received_quantity - child.item.received_quantity
-                          }
-                        />
-                      </Form.Group>
-                    </div>
-                  </div>
-
-                  <div className="col-3"></div>
                 </div>
               ))
             )}

@@ -816,7 +816,7 @@ function POApprovalRejustify({ authrztn }) {
                 let vat = group.items[0].suppliers.supplier_vat;
 
                 group.items.forEach((item, index) => {
-                  totalSum += item.suppPrice.price * item.item.quantity;
+                  totalSum += item.item.purchase_price * item.item.quantity;
                 });
 
                 vatAmount = totalSum * (vat / 100);
@@ -982,8 +982,7 @@ function POApprovalRejustify({ authrztn }) {
                               {" "}
                               {group.items.map((item, index) => (
                                 <div key={index}>
-                                  <label>{`${item.suppPrice.price}`}</label>
-                                  {/* <label>{`${item.suppPrice.price}`}</label> */}
+                                  <label>{`${item.item.purchase_price}`}</label>
                                   <br />
                                 </div>
                               ))}
@@ -994,10 +993,9 @@ function POApprovalRejustify({ authrztn }) {
                               {" "}
                               {group.items.map((item, index) => (
                                 <div key={index}>
-                                  {/* <label>{(item.suppPrice.price * item.item.quantity).toLocaleString()}</label> */}
                                   <label>
                                     {(
-                                      item.suppPrice.price * item.item.quantity
+                                      item.item.purchase_price * item.item.quantity
                                     ).toLocaleString(undefined, {
                                       minimumFractionDigits: 2,
                                     })}

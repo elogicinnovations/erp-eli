@@ -4,8 +4,8 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const app = express();
 
-const port = 8083;
-// const port = 3306;
+// const port = 8083;
+const port = 3306;
 require("dotenv").config();
 
 app.use(

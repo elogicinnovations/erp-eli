@@ -63,9 +63,57 @@ router.route("/fetchTable").get(async (req, res) => {
   }
 });
 
+router.route("/PRfilter").get(async (req, res) => {
+  try {
+    const { strDate, enDate, selectedStatus } = req.query;
 
+    const startDates = new Date(strDate);
+    startDates.setDate(startDates.getDate() + 1);
+    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
 
+    const endDates = new Date(enDate);
+    endDates.setDate(endDates.getDate() + 1);
+    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
 
+    let whereClause = {
+      createdAt: {
+        [Op.between]: [startDate, endDate],
+      },
+    };
+
+    if (selectedStatus !== "All") {
+      whereClause["$purchase_req.status$"] = selectedStatus;
+    }
+
+    const data = await PR.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: MasterList,
+          required: true,
+
+          include: [
+            {
+              model: Department,
+              required: true,
+            },
+          ],
+        },
+      ],
+      order: [["createdAt", "ASC"]],
+    });
+
+    if (data) {
+      // console.log(data);
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
 
 router.route("/fetchTable_PO").get(async (req, res) => {
   try {
@@ -91,27 +139,99 @@ router.route("/fetchTable_PO").get(async (req, res) => {
         {
           model: ProductTAGSupplier,
           required: true,
-            include: [{
+          include: [
+            {
               model: Supplier,
-              required: true
-            }]
-        }
+              required: true,
+            },
+          ],
+        },
       ],
-      // where: {
-      //   [Op.or]: [
-      //     { status: "To-Receive (Partial)" },
-      //     { status: "For-Approval (PO)" },
-      //     { status: "For-Rejustify (PO)" },
-      //     { status: "To-Receive" },
-      //   ],
-      // },
     });
 
     if (data) {
-      // Create a map to keep track of unique po_ids
       const uniquePoMap = new Map();
 
-      // Filter data to ensure only unique po_ids
+      // Filter data to ensure only unique po_ids and exclude those with status "Received"
+      const uniqueData = data.filter((item) => {
+        if (item.status !== "Received" && !uniquePoMap.has(item.po_id)) {
+          uniquePoMap.set(item.po_id, true);
+          return true;
+        }
+        return false;
+      });
+
+      return res.json(uniqueData);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+
+router.route("/PO_filter").get(async (req, res) => {
+  try {
+
+    const { strDate, enDate, selectedStatus } = req.query;
+
+    const startDates = new Date(strDate);
+    startDates.setDate(startDates.getDate() + 1);
+    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+
+    const endDates = new Date(enDate);
+    endDates.setDate(endDates.getDate() + 1);
+    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+
+    let whereClause = {
+      createdAt: {
+        [Op.between]: [startDate, endDate],
+      },
+    };
+
+    if (selectedStatus !== "All") {
+      whereClause["$purchase_req_canvassed_prd.status$"] = selectedStatus === "null" ? null : selectedStatus;
+    }
+
+    const data = await PR_PO.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: PR,
+          required: true,
+
+          include: [
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: ProductTAGSupplier,
+          required: true,
+          include: [
+            {
+              model: Supplier,
+              required: true,
+            },
+          ],
+        },
+      ],
+    });
+
+    if (data) {
+      const uniquePoMap = new Map();
+
+      // Filter data to ensure only unique po_ids and exclude those with status "Received"
       const uniqueData = data.filter((item) => {
         if (!uniquePoMap.has(item.po_id)) {
           uniquePoMap.set(item.po_id, true);
@@ -240,7 +360,7 @@ router.route("/create").post(async (req, res) => {
           product_id: prod_value,
           quantity: prod_quantity,
           description: prod_desc,
-          isPO: false
+          isPO: false,
         });
       } else if (prod_type === "Assembly") {
         await PR_assembly.create({
@@ -393,50 +513,54 @@ router.route("/reject").post(async (req, res) => {
 });
 router.route("/fetchRejectHistory").get(async (req, res) => {
   try {
-    const {pr_id} = req.query
+    const { pr_id } = req.query;
     // Fetch the data
-const prRejectData = await PR_REJECT.findAll({
-  where: { pr_id: pr_id },
-  include: [{ model: MasterList, required: true }]
-});
+    const prRejectData = await PR_REJECT.findAll({
+      where: { pr_id: pr_id },
+      include: [{ model: MasterList, required: true }],
+    });
 
-const poRejectData = await PO_REJECT.findAll({
-  where: { pr_id: pr_id },
-  include: [{ model: MasterList, required: true }]
-});
+    const poRejectData = await PO_REJECT.findAll({
+      where: { pr_id: pr_id },
+      include: [{ model: MasterList, required: true }],
+    });
 
-const prRejustifyData = await PR_Rejustify.findAll({
-  where: { pr_id: pr_id },
-  include: [{ model: MasterList, required: true }]
-});
+    const prRejustifyData = await PR_Rejustify.findAll({
+      where: { pr_id: pr_id },
+      include: [{ model: MasterList, required: true }],
+    });
 
-// Extract the dataValues from each result and add a source field
-const prRejectValues = prRejectData.map(item => ({
-  ...item.dataValues,
-  source: 'REJECTION'
-}));
+    // Extract the dataValues from each result and add a source field
+    const prRejectValues = prRejectData.map((item) => ({
+      ...item.dataValues,
+      source: "REJECTION",
+    }));
 
-const poRejectValues = poRejectData.map(item => ({
-  ...item.dataValues,
-  source: `REJECTION (PO# ${item.po_id})`
-}));
+    const poRejectValues = poRejectData.map((item) => ({
+      ...item.dataValues,
+      source: `REJECTION (PO# ${item.po_id})`,
+    }));
 
-const prRejustifyValues = prRejustifyData.map(item => ({
-  ...item.dataValues,
-  source: item.po_id === null ? `REJUSTIFICATION` : `REJUSTIFICATION (PO# ${item.po_id})` 
-}));
+    const prRejustifyValues = prRejustifyData.map((item) => ({
+      ...item.dataValues,
+      source:
+        item.po_id === null
+          ? `REJUSTIFICATION`
+          : `REJUSTIFICATION (PO# ${item.po_id})`,
+    }));
 
-// Combine the dataValues into one array
-const combinedData = [...prRejectValues, ...poRejectValues, ...prRejustifyValues];
+    // Combine the dataValues into one array
+    const combinedData = [
+      ...prRejectValues,
+      ...poRejectValues,
+      ...prRejustifyValues,
+    ];
 
-// Sort the combined data by createdAt column in ascending order
-combinedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    // Sort the combined data by createdAt column in ascending order
+    combinedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-// Send the sorted data as a response
-res.json(combinedData);
-
-   
-  
+    // Send the sorted data as a response
+    res.json(combinedData);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
