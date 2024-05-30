@@ -509,7 +509,7 @@ function BinLocation({ authrztn }) {
                   <p>Bin Location</p>
                 </div>
 
-                <div className="button-create-side">
+                {/* <div className="button-create-side">
                   <div className="Buttonmodal-new">
                     {authrztn?.includes("Bin Location - Add") && (
                       <button onClick={handleShow}>
@@ -520,30 +520,46 @@ function BinLocation({ authrztn }) {
                       </button>
                     )}
                   </div>
+                </div> */}
+              </div>
+            </div>
+
+            <div className="btn-and-search">
+              {authrztn?.includes("Bin Location - Add") && (
+                <div className="button-create-side">
+                  <div className="Buttonmodal-new">
+                    <button onClick={handleShow}>
+                      <span style={{}}>
+                        <Plus size={25} />
+                      </span>
+                      Create New
+                    </button>
+                  </div>
                 </div>
+              )}
+
+              <div className="main-table-search">
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  style={{ marginBottom: "10px", float: "right" }}
+                  InputLabelProps={{
+                    style: { fontSize: "14px" },
+                  }}
+                  InputProps={{
+                    style: {
+                      fontSize: "14px",
+                      // width: "250px",
+                      height: "50px",
+                    },
+                  }}
+                  className="act-search"
+                  onChange={handleSearch}
+                />
               </div>
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <div className="main-table-search">
-                  <TextField
-                    label="Search"
-                    variant="outlined"
-                    style={{ marginBottom: "10px", float: "right" }}
-                    InputLabelProps={{
-                      style: { fontSize: "14px" },
-                    }}
-                    InputProps={{
-                      style: {
-                        fontSize: "14px",
-                        width: "250px",
-                        height: "50px",
-                      },
-                    }}
-                    onChange={handleSearch}
-                  />
-                </div>
-
                 <table className="table-hover">
                   <thead>
                     <tr>

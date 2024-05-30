@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 import "../../../assets/global/style.css";
 import "../../styles/react-style.css";
 import axios from "axios";
@@ -11,14 +11,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import {
-  CalendarBlank,
-  Export,
-  XCircle,
-} from "@phosphor-icons/react";
-import { TextField } from '@mui/material';
-import NoData from '../../../../src/assets/image/NoData.png';
-import NoAccess from '../../../../src/assets/image/NoAccess.png';
+import { CalendarBlank, Export, XCircle } from "@phosphor-icons/react";
+import { TextField } from "@mui/material";
+import NoData from "../../../../src/assets/image/NoData.png";
+import NoAccess from "../../../../src/assets/image/NoAccess.png";
 
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -42,7 +38,7 @@ function POTransactionReports({ authrztn }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [requestsPR, setRequestsPR] = useState([]);
-  const [searchRequestPR, setSearchRequestPR] = useState([])
+  const [searchRequestPR, setSearchRequestPR] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,10 +72,10 @@ function POTransactionReports({ authrztn }) {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -88,7 +84,7 @@ function POTransactionReports({ authrztn }) {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
@@ -113,7 +109,6 @@ function POTransactionReports({ authrztn }) {
       return;
     }
 
-
     axios
       .get(BASE_URL + "/report_PO/requestPRFiltered", {
         params: {
@@ -131,16 +126,17 @@ function POTransactionReports({ authrztn }) {
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
-    axios
-    .get(BASE_URL + "/report_PO/requestPR")
-    .then((res) => {
-      setRequestsPR(res.data);
-      setSearchRequestPR(res.data);
-      setIsLoading(false);
-    })
-    .catch((err) => {console.log(err)
-      setIsLoading(false);
-    });
+      axios
+        .get(BASE_URL + "/report_PO/requestPR")
+        .then((res) => {
+          setRequestsPR(res.data);
+          setSearchRequestPR(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     }, 1000);
 
     return () => clearTimeout(delay);
@@ -208,7 +204,6 @@ function POTransactionReports({ authrztn }) {
     reloadTable();
   }, []);
 
-  
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
@@ -220,12 +215,13 @@ function POTransactionReports({ authrztn }) {
         data.date_needed.toLowerCase().includes(searchTerm) ||
         data.used_for.toLowerCase().includes(searchTerm) ||
         data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.masterlist.department.department_name.toLowerCase().includes(searchTerm)
+        data.masterlist.department.department_name
+          .toLowerCase()
+          .includes(searchTerm)
       );
     });
-  
+
     setRequestsPR(filteredData);
-    
   };
 
   //date format
@@ -256,26 +252,25 @@ function POTransactionReports({ authrztn }) {
     reloadTable();
   };
 
-
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-      {isLoading ? (
+        {isLoading ? (
           <div className="loading-container">
-            <ReactLoading className="react-loading" type={'bubbles'}/>
+            <ReactLoading className="react-loading" type={"bubbles"} />
             Loading Data...
           </div>
-        ) : (
-        authrztn.includes('Report - View') ? (
-        <div className="right-body-contents">
-          <div className="Employeetext-button">
-            <div className="employee-and-button">
-              <div className="emp-text-side">
-                <p>Purchase Requests Report</p>
-              </div>
+        ) : authrztn.includes("Report - View") ? (
+          <div className="right-body-contents">
+            <div className="Employeetext-button">
+              <div className="employee-and-button">
+                <div className="emp-text-side ">
+                  <p className="potr-text">Purchase Requests Report</p>
+                </div>
 
-              <div className="button-create-side" style={{marginTop: '5px'}}>
-                <div className="filtering-section">
+                <div className="" style={{ marginTop: "5px" }}>
+                  {/* Orig */}
+                  {/* <div className="filtering-section">
                     <div className="date-section-filter">
                         <div style={{ position: "relative", marginBottom: "15px" }}>
                             <DatePicker
@@ -432,14 +427,224 @@ function POTransactionReports({ authrztn }) {
                         </div>
                     </div>
 
-                </div>
+                </div> */}
 
+                  <div className="filtering-section">
+                    <div className="filter-sect">
+                      <div className="date-section-filter">
+                        <div
+                          style={{ position: "relative", marginBottom: "15px" }}
+                        >
+                          <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            placeholderText="Choose Date From"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {startDate && (
+                            <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleXCircleClick}
+                            />
+                          )}
+                        </div>
+
+                        <div
+                          style={{ position: "relative", marginBottom: "15px" }}
+                        >
+                          <DatePicker
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            placeholderText="Choose Date To"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {endDate && (
+                            <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleXClick}
+                            />
+                          )}
+                        </div>
+                        {/* <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) =>
+                              setSelectedDepartment(e.target.value)
+                            }
+                            value={selectedDepartment}
+                            style={{
+                              width: "274px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                          >
+                            <option disabled value="" selected>
+                              Select Department
+                            </option>
+                            <option value={"All"}>All</option>
+                            {department.map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.department_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div> */}
+                      </div>
+
+                      <div className="warehouse-product-filter">
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) =>
+                              setSelectedDepartment(e.target.value)
+                            }
+                            value={selectedDepartment}
+                            style={{
+                              width: "274px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            className="select-inv-rep"
+                          >
+                            <option disabled value="" selected>
+                              Select Department
+                            </option>
+                            <option value={"All"}>All</option>
+                            {department.map((dept) => (
+                              <option key={dept.id} value={dept.id}>
+                                {dept.department_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div>
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            style={{
+                              width: "284px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            className="select-inv-rep"
+                            value={selectedStatus}
+                          >
+                            <option value="" disabled selected>
+                              Select Status
+                            </option>
+                            <option value={"All"}>All</option>
+                            <option value="For-Approval">For-Approval</option>
+
+                            <option value="For-Rejustify">For-Rejustify</option>
+
+                            <option value="For-Canvassing">
+                              For-Canvassing
+                            </option>
+
+                            <option value="On-Canvass">On-Canvass</option>
+
+                            <option value="For-Approval (PO)">
+                              For-Approval (PO)
+                            </option>
+                            <option value="For-Rejustify (PO)">
+                              For-Rejustify (PO)
+                            </option>
+                          </Form.Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className="button-filter-section">
+                      <div className="btnfilter">
+                        <button
+                          onClick={handleGenerate}
+                          className="actualbtnfilter"
+                        >
+                          FILTER
+                        </button>
+                      </div>
+                      <div className="clearbntfilter">
+                        <button
+                          className="actualclearfilter"
+                          onClick={clearFilters}
+                        >
+                          Clear Filter
+                        </button>
+                      </div>qe
+                    </div> */}
+                    <div className="pur-filt-container my-4 cus-wid">
+                      <button
+                        onClick={handleGenerate}
+                        className="goesButton cust-height"
+                      >
+                        FILTER
+                      </button>
+                      <button
+                        className="actualclearfilter Filterclear  cust-height"
+                        onClick={clearFilters}
+                      >
+                        Clear Filter
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="table-containss">
-            <div className="main-of-all-tables">
-              <div className="searchandexport">
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <div className="searchandexport">
                   <div className="exportfield">
                     <button className="export" onClick={exportToCSV}>
                       <Export size={20} weight="bold" /> <p1>Export</p1>
@@ -449,187 +654,213 @@ function POTransactionReports({ authrztn }) {
                     <TextField
                       label="Search"
                       variant="outlined"
-                      style={{ 
-                      float: 'right',
+                      style={{
+                        float: "right",
                       }}
                       InputLabelProps={{
-                        style: { fontSize: '14px'},
+                        style: { fontSize: "14px" },
                       }}
                       InputProps={{
-                        style: { fontSize: '14px', width: '250px', height: '50px' },
+                        style: {
+                          fontSize: "14px",
+                          // width: "250px",
+                          height: "50px",
+                        },
                       }}
-                      onChange={handleSearch}/>
+                      className="act-search"
+                      onChange={handleSearch}
+                    />
                   </div>
-              </div>
-              <table ref={tableRef} className="table-hover">
-                <thead>
-                  <tr>
-                    <th className="tableh">PR Number</th>
-                    <th className="tableh">Requested Date</th>
-                    <th className="tableh">Date Needed</th>
-                    <th className="tableh">Used For</th>
-                    <th className="tableh">Requested by</th>
-                    <th className="tableh">Requested Department</th>
-                    <th className="tableh">Status</th>
-                  </tr>
-                </thead>
-                {requestsPR.length > 0 ? (
-                <tbody>
-                  {currentItems.map((data, i) => (
-                    <tr key={i}>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {data.pr_num}
-                      </td>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {formatDatetime(data.createdAt)}
-                      </td>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {data.date_needed}
-                      </td>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {data.used_for}
-                      </td>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {data.masterlist.col_Fname}
-                      </td>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {data.masterlist.department.department_name}
-                      </td>
-                      <td
-                        onClick={() =>
-                          data.status === "For-Canvassing"
-                            ? navigate(`/forCanvass/${data.id}`)
-                            : data.status === "On-Canvass"
-                            ? navigate(`/onCanvass/${data.id}`)
-                            : data.status === "For-Approval (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : data.status === "For-Rejustify (PO)"
-                            ? navigate(`/PO_approvalRejustify/${data.id}`)
-                            : navigate(`/purchaseRequestPreview/${data.id}`)
-                        }
-                      >
-                        {data.status}
-                      </td>
+                </div>
+                <table ref={tableRef} className="table-hover">
+                  <thead>
+                    <tr>
+                      <th className="tableh">PR Number</th>
+                      <th className="tableh">Requested Date</th>
+                      <th className="tableh">Date Needed</th>
+                      <th className="tableh">Used For</th>
+                      <th className="tableh">Requested by</th>
+                      <th className="tableh">Requested Department</th>
+                      <th className="tableh">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-                ) : (
+                  </thead>
+                  {requestsPR.length > 0 ? (
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr key={i}>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {data.pr_num}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {formatDatetime(data.createdAt)}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {data.date_needed}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {data.used_for}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {data.masterlist.col_Fname}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {data.masterlist.department.department_name}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.status === "For-Canvassing"
+                                ? navigate(`/forCanvass/${data.id}`)
+                                : data.status === "On-Canvass"
+                                ? navigate(`/onCanvass/${data.id}`)
+                                : data.status === "For-Approval (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : data.status === "For-Rejustify (PO)"
+                                ? navigate(`/PO_approvalRejustify/${data.id}`)
+                                : navigate(`/purchaseRequestPreview/${data.id}`)
+                            }
+                          >
+                            {data.status}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
-                      <h3>
-                        No Data Found
-                      </h3>
+                      <h3>No Data Found</h3>
                     </div>
-                )}
-              </table>
+                  )}
+                </table>
+              </div>
             </div>
-          </div>
-            <nav style={{marginTop: '15px'}}>
+            <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
-                  type="button"
-                  style={{fontSize: '14px',
-                  cursor: 'pointer',
-                  color: '#000000',
-                  textTransform: 'capitalize',
-                }}
-                  className="page-link" 
-                  onClick={() => setCurrentPage((prevPage) => prevPage - 1)}>Previous</button>
+                    type="button"
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
+                    className="page-link"
+                    onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+                  >
+                    Previous
+                  </button>
                 </li>
                 {generatePages().map((page, index) => (
-                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
                     <button
                       style={{
-                        fontSize: '14px',
-                        width: '25px',
-                        background: currentPage === page ? '#FFA500' : 'white',
-                        color: currentPage === page ? '#FFFFFF' : '#000000',
-                        border: 'none',
-                        height: '28px',
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
                       }}
-                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
-                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >
@@ -638,15 +869,12 @@ function POTransactionReports({ authrztn }) {
                 </li>
               </ul>
             </nav>
-        </div>
-          ) : (
-            <div className="no-access">
-              <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-              <h3>
-                You don't have access to this function.
-              </h3>
-            </div>
-          )
+          </div>
+        ) : (
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
         )}
       </div>
     </div>

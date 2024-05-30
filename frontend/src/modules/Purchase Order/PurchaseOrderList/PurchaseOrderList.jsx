@@ -476,12 +476,18 @@ function PurchaseOrderList({ authrztn }) {
                     <option value="Rejustified">Rejustified</option>
                     <option value="Received">Received</option>
                   </Form.Select>
-                  <button className="goesButton" onClick={handleGoButtonClick}>
-                    FILTER
-                  </button>
-                  <button className="Filterclear" onClick={clearFilters}>
-                    Clear Filter
-                  </button>
+                  <div className="pur-filt-container">
+                    <button
+                      className="goesButton"
+                      onClick={handleGoButtonClick}
+                    >
+                      FILTER
+                    </button>
+                    <button className="Filterclear" onClick={clearFilters}>
+                      Clear Filter
+                    </button>
+                  </div>
+
                   <div className="Buttonmodal-new"></div>
                 </div>
               </div>
@@ -489,18 +495,25 @@ function PurchaseOrderList({ authrztn }) {
 
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: "10px", float: "right" }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                  InputProps={{
-                    style: { fontSize: "14px", width: "250px", height: "50px" },
-                  }}
-                  onChange={handleSearch}
-                />
+                <div className="main-table-search">
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    style={{ marginBottom: "10px", float: "right" }}
+                    InputLabelProps={{
+                      style: { fontSize: "14px" },
+                    }}
+                    InputProps={{
+                      style: {
+                        fontSize: "14px",
+                        width: "250px",
+                        height: "50px",
+                      },
+                    }}
+                    onChange={handleSearch}
+                  />
+                </div>
+
                 <table className="table-hover">
                   <thead>
                     <tr>

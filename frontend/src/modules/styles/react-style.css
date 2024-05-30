@@ -571,7 +571,7 @@ button.page-link:hover {
   padding: 10px 30px;
   margin-right: 5px;
   background-color: white;
-  border-radius: 15px;
+  border-radius: 10px;
 }
 
 .dropdown-side {
@@ -730,7 +730,8 @@ button.page-link:hover {
 .Filterclear {
   border: none;
   background-color: #ff5050;
-  width: 400px;
+  /* width: 400px; */
+  width: 120px;
   font-size: 14px;
   border-radius: 4px;
   cursor: pointer;
@@ -764,10 +765,14 @@ button.page-link:hover {
   padding: 10px 30px;
   background-color: #ffa500;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   color: white;
   font-size: 16px;
   font-family: Poppins, "Source Sans Pro";
+}
+
+.Buttonmodal-new a.button {
+  border-radius: 5px;
 }
 
 .Buttonmodal-new button:hover {
@@ -791,7 +796,7 @@ button.page-link:hover {
   padding: 10px 30px;
   background-color: #4d4d4d;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   color: white;
   font-size: 16px;
   font-family: Poppins, "Source Sans Pro";
@@ -843,7 +848,7 @@ button.page-link:hover {
 }
 
 .textfield {
-  display: grid;
+  display: flex;
   justify-content: end;
   width: 100%;
 }
@@ -1703,6 +1708,9 @@ input[type="number"]::-webkit-clear-button {
   color: white;
   font-weight: lighter;
 }
+.select-inv-rep {
+  width: 212px !important;
+}
 
 @media screen and (max-width: 480px) {
   .left-of-main-containers {
@@ -1915,6 +1923,14 @@ input[type="number"]::-webkit-clear-button {
     .main-of-containers {
       position: relative;
       width: -webkit-fill-available;
+    }
+
+    .date-section-filter,
+    .warehouse-product-filter {
+      flex-direction: column;
+    }
+    .filtering-section {
+      flex-direction: column;
     }
   }
 
@@ -2598,11 +2614,15 @@ button.genbutton {
 .filtering-section {
   width: 100%;
   display: flex;
-  flex-direction: row;
+  /* flex-direction: row; */
   height: auto;
+  margin-bottom: 10px;
+}
+.cust-height {
+  height: 40px;
 }
 
-.date-section-filter {
+/* .date-section-filter {
   display: flex;
   flex-direction: column;
   width: 22%;
@@ -2615,6 +2635,34 @@ button.genbutton {
   flex-direction: column;
   width: 22%;
   height: auto;
+} */
+
+/* Test */
+
+/* .filtering-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: auto;
+}
+.date-section-filter {
+  display: flex;
+  width: 22%;
+  height: auto;
+  padding-right: 10px;
+}
+
+.warehouse-product-filter {
+  display: flex;
+  width: 22%;
+  height: auto;
+  padding-right: 10px;
+} */
+
+.date-section-filter,
+.warehouse-product-filter {
+  display: flex;
+  gap: 5px;
 }
 
 .button-filter-section {
@@ -5154,9 +5202,11 @@ span:nth-child(5) {
   padding: 10px 30px;
   width: 100%;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   color: white;
   font-size: 16px;
+  position: relative;
+  top: -8px;
   font-family: Poppins, "Source Sans Pro";
 }
 
@@ -5535,7 +5585,7 @@ span:nth-child(5) {
 .emoji-mart {
   position: absolute;
   bottom: 120px; /* Adjust according to your layout */
-  left: 10px;    /* Adjust according to your layout */
+  left: 10px; /* Adjust according to your layout */
 }
 .userstatus {
   display: flex;
@@ -5585,7 +5635,22 @@ span:nth-child(5) {
   display: flex;
   gap: 10px;
 }
-
+.pur-filt-container {
+  display: flex;
+  gap: 10px;
+}
+.cus-filt-clear {
+  width: 400px;
+}
+.act-search {
+  width: 250px !important;
+}
+.select-inv-rep {
+  width: 212px !important;
+}
+.cus-wid {
+  margin-left: 1.5rem;
+}
 @media screen and (max-width: 1300px) {
   .menu-icon {
     display: block;
@@ -5597,9 +5662,23 @@ span:nth-child(5) {
   }
   .button-create-side {
     display: block;
+    margin-top: 10px;
+  }
+  .div-fade {
+    display: none;
   }
 }
-
+@media only screen and (max-width: 768px) {
+  .filtering-section {
+    flex-direction: column !important;
+  }
+  .select-inv-rep {
+    width: 100% !important;
+  }
+  .div-fade {
+    display: none;
+  }
+}
 @media only screen and (max-width: 576px) {
   /* Sidebar */
   .left-of-main-containers {
@@ -5632,7 +5711,9 @@ span:nth-child(5) {
     font-size: 28px;
   }
   .Buttonmodal-new {
-    justify-content: center;
+    justify-content: start;
+    position: relative;
+    top: -7px;
   }
   .textfield {
     justify-content: center;
@@ -5691,7 +5772,10 @@ span:nth-child(5) {
   /* .form-inv-search {
     justify-content: center !important;
   } */
-
+  .pur-filt-container {
+    gap: 0px;
+    justify-content: center;
+  }
   .issuance-tab {
     justify-content: center;
     flex-direction: column;
@@ -5713,13 +5797,68 @@ span:nth-child(5) {
   .receive-select {
     width: 220px !important;
   }
-  .Filterclear {
+  .cus-wid {
+    margin-left: 0;
+  }
+  .Filterclear,
+  .goesButton {
     height: 40px;
     margin: 20px 0 10px 0 !important;
+  }
+  .filtering-section {
+    flex-direction: column;
+  }
+  .act-search {
+    width: 180px !important;
+  }
+  .date-section-filter,
+  .warehouse-product-filter {
+    display: block;
+    width: 100%;
+  }
+  .select-inv-rep {
+    width: 100% !important;
+  }
+  .cus-btm {
+    margin-bottom: 0 !important;
+  }
+  .btn-and-search {
+    display: flex;
+    align-items: center;
+  }
+  .Buttonmodal-change {
+    justify-content: start;
+  }
+
+  .Buttonmodal-new a.button,
+  .Buttonmodal-new button,
+  .Buttonmodal-change button {
+    padding: 10px 8px;
+    font-size: 10px;
+  }
+
+  .div-fade {
+    display: none;
+  }
+  .stck-tranf {
+    font-size: 8px !important;
   }
 }
 @media only screen and (max-width: 1030px) {
   .Filterclear {
     width: 180px !important;
+  }
+}
+@media only screen and (max-width: 450px) {
+  .exportfield button {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+
+@media only screen and (max-width: 440px) {
+  .potr-text {
+    font-size: 20px !important;
+    text-align: center;
   }
 }

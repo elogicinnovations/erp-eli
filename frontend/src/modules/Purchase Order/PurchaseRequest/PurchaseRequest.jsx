@@ -587,24 +587,62 @@ function PurchaseRequest({ authrztn }) {
                       </option>
                       <option value="Ordered">Ordered</option>
                     </Form.Select>
-                    <button
-                      className="goesButton"
-                      onClick={handleGoButtonClick}
-                    >
-                      FILTER
-                    </button>
-                    <button className="Filterclear" onClick={clearFilters}>
-                      Clear Filter
-                    </button>
-                    <div className="Buttonmodal-new">
-                      {authrztn.includes("PR - Add") && (
+                    <div className="pur-filt-container">
+                      <button
+                        className="goesButton"
+                        onClick={handleGoButtonClick}
+                      >
+                        FILTER
+                      </button>
+                      <button className="Filterclear" onClick={clearFilters}>
+                        Clear Filter
+                      </button>
+                    </div>
+
+                    <div className="Buttonmodal-new div-fade">
+                      {/* {authrztn.includes("PR - Add") && (
                         <Link to="/createPurchaseRequest" className="button">
                           <span style={{}}>
                             <Plus size={25} />
                           </span>
                           New PR
                         </Link>
-                      )}
+                      )} */}
+                    </div>
+                  </div>
+
+                  <div className="btn-and-search">
+                    {authrztn.includes("PR - Add") && (
+                      <div className="button-create-side">
+                        <div className="Buttonmodal-new">
+                          <Link to="/createPurchaseRequest" className="button">
+                            <span style={{}}>
+                              <Plus size={25} />
+                            </span>
+                            New PR
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="main-table-search">
+                      <TextField
+                        label="Search"
+                        variant="outlined"
+                        style={{ marginBottom: "10px", float: "right" }}
+                        InputLabelProps={{
+                          style: { fontSize: "14px" },
+                        }}
+                        InputProps={{
+                          style: {
+                            fontSize: "14px",
+                            // width: "250px",
+                            height: "50px",
+                          },
+                        }}
+                        className="main-search act-search cus-btm"
+                        onChange={handleSearch}
+                      />
                     </div>
                   </div>
                 </div>
@@ -612,18 +650,6 @@ function PurchaseRequest({ authrztn }) {
             </div>
             <div className="table-containss">
               <div className="main-of-all-tables">
-                <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: "10px", float: "right" }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                  InputProps={{
-                    style: { fontSize: "14px", width: "250px", height: "50px" },
-                  }}
-                  onChange={handleSearch}
-                />
                 <table aria-label="collapsible table" className="table-hover">
                   <thead>
                     <tr>

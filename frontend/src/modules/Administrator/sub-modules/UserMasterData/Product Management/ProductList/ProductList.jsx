@@ -456,7 +456,7 @@ function ProductList({ authrztn }) {
                   <p>Product List</p>
                 </div>
 
-                <div className="button-create-side">
+                <div className="prod">
                   <div className="prod-filt-cont">
                     <Form.Select
                       aria-label="item status"
@@ -492,7 +492,9 @@ function ProductList({ authrztn }) {
                       Clear Filter
                     </button>
                   </div>
+                </div>
 
+                <div className="btn-and-search">
                   {authrztn.includes("Product List - Add") &&
                     (showChangeStatusButton ? (
                       <div className="Buttonmodal-change">
@@ -504,15 +506,37 @@ function ProductList({ authrztn }) {
                         </button>
                       </div>
                     ) : (
-                      <div className="Buttonmodal-new">
-                        <Link to="/createProduct" className="button">
-                          <span style={{}}>
-                            <Plus size={25} />
-                          </span>
-                          New Product
-                        </Link>
+                      <div className="button-create-side">
+                        <div className="Buttonmodal-new">
+                          <Link to="/createProduct" className="button">
+                            <span style={{}}>
+                              <Plus size={25} />
+                            </span>
+                            New Product
+                          </Link>
+                        </div>
                       </div>
                     ))}
+
+                  <div className="main-table-search">
+                    <TextField
+                      label="Search"
+                      variant="outlined"
+                      className="main-search act-search cus-btm"
+                      style={{ marginBottom: "10px", float: "right" }}
+                      InputLabelProps={{
+                        style: { fontSize: "14px" },
+                      }}
+                      InputProps={{
+                        style: {
+                          fontSize: "14px",
+                          // width: "250px",
+                          height: "50px",
+                        },
+                      }}
+                      onChange={handleSearch}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -529,7 +553,7 @@ function ProductList({ authrztn }) {
                 />
               </div>
 
-              <div className="textfield">
+              {/* <div className="textfield">
                 <TextField
                   label="Search"
                   variant="outlined"
@@ -542,7 +566,7 @@ function ProductList({ authrztn }) {
                   }}
                   onChange={handleSearch}
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="table-containss">

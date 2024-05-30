@@ -15,12 +15,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import {
-  CalendarBlank,
-  Export,
-  XCircle
-} from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination, } from '@mui/material';
+import { CalendarBlank, Export, XCircle } from "@phosphor-icons/react";
+import { IconButton, TextField, TablePagination } from "@mui/material";
 
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -61,26 +57,55 @@ function InventoryReports() {
 
   const totalPagesInventory = Math.ceil(invetory_prd.length / pageSize);
   const startIndexInventory = (currentPage - 1) * pageSize;
-  const endIndexInventory = Math.min(startIndexInventory + pageSize, invetory_prd.length);
-  const currentItemsInventory = invetory_prd.slice(startIndexInventory, endIndexInventory);
+  const endIndexInventory = Math.min(
+    startIndexInventory + pageSize,
+    invetory_prd.length
+  );
+  const currentItemsInventory = invetory_prd.slice(
+    startIndexInventory,
+    endIndexInventory
+  );
 
   const totalPagesAssembly = Math.ceil(invetory_assmbly.length / pageSize);
   const startIndexAssembly = (currentPage - 1) * pageSize;
-  const endIndexAssembly = Math.min(startIndexAssembly + pageSize, invetory_assmbly.length);
-  const currentItemsAssembly = invetory_assmbly.slice(startIndexAssembly, endIndexAssembly);
+  const endIndexAssembly = Math.min(
+    startIndexAssembly + pageSize,
+    invetory_assmbly.length
+  );
+  const currentItemsAssembly = invetory_assmbly.slice(
+    startIndexAssembly,
+    endIndexAssembly
+  );
 
   const totalPagesSpare = Math.ceil(invetory_spare.length / pageSize);
   const startIndexSpare = (currentPage - 1) * pageSize;
-  const endIndexSpare = Math.min(startIndexSpare + pageSize, invetory_spare.length);
-  const currentItemsSpare = invetory_spare.slice(startIndexSpare, endIndexSpare);
+  const endIndexSpare = Math.min(
+    startIndexSpare + pageSize,
+    invetory_spare.length
+  );
+  const currentItemsSpare = invetory_spare.slice(
+    startIndexSpare,
+    endIndexSpare
+  );
 
   const totalPagesSubpart = Math.ceil(invetory_subpart.length / pageSize);
   const startIndexSubpart = (currentPage - 1) * pageSize;
-  const endIndexSubpart = Math.min(startIndexSubpart + pageSize, invetory_subpart.length);
-  const currentItemsSubpart = invetory_subpart.slice(startIndexSubpart, endIndexSubpart);
+  const endIndexSubpart = Math.min(
+    startIndexSubpart + pageSize,
+    invetory_subpart.length
+  );
+  const currentItemsSubpart = invetory_subpart.slice(
+    startIndexSubpart,
+    endIndexSubpart
+  );
 
-  const totalPages = Math.max(totalPagesInventory, totalPagesAssembly, totalPagesSpare, totalPagesSubpart);
-  const MAX_PAGES = 5; 
+  const totalPages = Math.max(
+    totalPagesInventory,
+    totalPagesAssembly,
+    totalPagesSpare,
+    totalPagesSubpart
+  );
+  const MAX_PAGES = 5;
 
   const generatePages = () => {
     const pages = [];
@@ -104,10 +129,10 @@ function InventoryReports() {
     }
 
     if (startPage > 1) {
-      pages.unshift('...');
+      pages.unshift("...");
     }
     if (endPage < totalPages) {
-      pages.push('...');
+      pages.push("...");
     }
 
     return pages;
@@ -116,12 +141,11 @@ function InventoryReports() {
   //pagination end
 
   const handlePageClick = (page) => {
-    if (page === '...') return;
+    if (page === "...") return;
     setCurrentPage(page);
   };
 
   const reloadTable = () => {
-    
     const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/warehouses/fetchtableWarehouses")
@@ -146,7 +170,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventoryPRD")
         .then((res) => {
           setInvetory_prd(res.data);
-          setSearchInventory(res.data)
+          setSearchInventory(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -157,7 +181,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventoryASM")
         .then((res) => {
           setInvetory_assmbly(res.data);
-          setSearchAssembly(res.data)
+          setSearchAssembly(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -168,7 +192,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventorySPR")
         .then((res) => {
           setInvetory_spare(res.data);
-          setSearchSpare(res.data)
+          setSearchSpare(res.data);
         })
         .catch((err) => {
           console.log(err);
@@ -179,7 +203,7 @@ function InventoryReports() {
         .get(BASE_URL + "/report_inv/inventorySBP")
         .then((res) => {
           setInvetory_subpart(res.data);
-          setSearchSub(res.data)
+          setSearchSub(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -193,63 +217,92 @@ function InventoryReports() {
 
   useEffect(() => {
     reloadTable();
-
   }, []);
 
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
 
-    const filteredInventory = searchInventory.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.UOM.toLowerCase().includes(searchTerm) ||
-      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
-      data.warehouse_name.toLowerCase().includes(searchTerm)
-    ));
+    const filteredInventory = searchInventory.filter(
+      (data) =>
+        data.product_code.toLowerCase().includes(searchTerm) ||
+        data.product_name.toLowerCase().includes(searchTerm) ||
+        data.UOM.toLowerCase().includes(searchTerm) ||
+        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.price *
+          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.totalIssuedQuantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.totalPR_received_Quantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.warehouse_name.toLowerCase().includes(searchTerm)
+    );
     setInvetory_prd(filteredInventory);
-  
-    const filteredAssembly = searchAssembly.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.UOM.toLowerCase().includes(searchTerm) ||
-      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
-      data.warehouse_name.toLowerCase().includes(searchTerm)
-    ));
+
+    const filteredAssembly = searchAssembly.filter(
+      (data) =>
+        data.product_code.toLowerCase().includes(searchTerm) ||
+        data.product_name.toLowerCase().includes(searchTerm) ||
+        data.UOM.toLowerCase().includes(searchTerm) ||
+        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.price *
+          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.totalIssuedQuantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.totalPR_received_Quantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.warehouse_name.toLowerCase().includes(searchTerm)
+    );
     setInvetory_assmbly(filteredAssembly);
-  
-    const filteredSpare = searchSpare.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.UOM.toLowerCase().includes(searchTerm) ||
-      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
-      data.warehouse_name.toLowerCase().includes(searchTerm)
-    ));
+
+    const filteredSpare = searchSpare.filter(
+      (data) =>
+        data.product_code.toLowerCase().includes(searchTerm) ||
+        data.product_name.toLowerCase().includes(searchTerm) ||
+        data.UOM.toLowerCase().includes(searchTerm) ||
+        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.price *
+          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.totalIssuedQuantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.totalPR_received_Quantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.warehouse_name.toLowerCase().includes(searchTerm)
+    );
     setInvetory_spare(filteredSpare);
-  
-    const filteredSubpart = searchSub.filter((data) => (
-      data.product_code.toLowerCase().includes(searchTerm) ||
-      data.product_name.toLowerCase().includes(searchTerm) ||
-      data.UOM.toLowerCase().includes(searchTerm) ||
-      data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.price * data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalIssuedQuantity.toString().toLowerCase().includes(searchTerm) ||
-      data.totalPR_received_Quantity.toString().toLowerCase().includes(searchTerm) ||
-      data.warehouse_name.toLowerCase().includes(searchTerm)
-    ));
+
+    const filteredSubpart = searchSub.filter(
+      (data) =>
+        data.product_code.toLowerCase().includes(searchTerm) ||
+        data.product_name.toLowerCase().includes(searchTerm) ||
+        data.UOM.toLowerCase().includes(searchTerm) ||
+        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.price *
+          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
+        data.totalIssuedQuantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.totalPR_received_Quantity
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.warehouse_name.toLowerCase().includes(searchTerm)
+    );
     setInvetory_subpart(filteredSubpart);
   };
-
-
 
   const [modalshow, setmodalShow] = useState(false);
 
@@ -404,7 +457,7 @@ function InventoryReports() {
       });
       return;
     }
-      axios
+    axios
       .get(BASE_URL + "/report_inv/Filtered_prd", {
         params: {
           slctCategory,
@@ -414,11 +467,11 @@ function InventoryReports() {
         },
       })
       .then((res) => {
-        setInvetory_prd(res.data); 
+        setInvetory_prd(res.data);
       })
       .catch((err) => console.log(err));
 
-      axios
+    axios
       .get(BASE_URL + "/report_inv/Filtered_asm", {
         params: {
           slctCategory,
@@ -428,12 +481,11 @@ function InventoryReports() {
         },
       })
       .then((res) => {
-        setInvetory_assmbly(res.data); 
+        setInvetory_assmbly(res.data);
       })
       .catch((err) => console.log(err));
 
-
-      axios
+    axios
       .get(BASE_URL + "/report_inv/Filtered_spare", {
         params: {
           slctCategory,
@@ -443,11 +495,11 @@ function InventoryReports() {
         },
       })
       .then((res) => {
-        setInvetory_spare(res.data); 
+        setInvetory_spare(res.data);
       })
       .catch((err) => console.log(err));
 
-      axios
+    axios
       .get(BASE_URL + "/report_inv/Filtered_subpart", {
         params: {
           slctCategory,
@@ -457,7 +509,7 @@ function InventoryReports() {
         },
       })
       .then((res) => {
-        setInvetory_subpart(res.data); 
+        setInvetory_subpart(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -494,8 +546,9 @@ function InventoryReports() {
                   <p>Inventory Reports</p>
                 </div>
 
-                <div className="button-create-side" style={{marginTop: '5px'}}>
-                  <div className="filtering-section">
+                <div className="" style={{ marginTop: "5px" }}>
+                  {/* Orig */}
+                  {/* <div className="filtering-section">
                       <div className="date-section-filter">
                           <div style={{ position: "relative", marginBottom: "15px" }}>
                           <DatePicker
@@ -642,8 +695,172 @@ function InventoryReports() {
                               </button>
                         </div>
                       </div>
+                  </div> */}
+
+                  <div className="filtering-section">
+                    <div className="filter-sect">
+                      <div className="date-section-filter">
+                        <div
+                          style={{ position: "relative", marginBottom: "15px" }}
+                        >
+                          <DatePicker
+                            selected={startDate}
+                            onChange={(date) => setStartDate(date)}
+                            placeholderText="Choose Date From"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {startDate && (
+                            <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleXCircleClick}
+                            />
+                          )}
+                        </div>
+
+                        <div
+                          style={{ position: "relative", marginBottom: "15px" }}
+                        >
+                          <DatePicker
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            placeholderText="Choose Date To"
+                            dateFormat="yyyy-MM-dd"
+                            wrapperClassName="custom-datepicker-wrapper"
+                            popperClassName="custom-popper"
+                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
+                          />
+                          <CalendarBlank
+                            size={20}
+                            weight="thin"
+                            selected={endDate}
+                            onChange={(date) => setEndDate(date)}
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                            }}
+                          />
+                          {endDate && (
+                            <XCircle
+                              size={16}
+                              weight="thin"
+                              style={{
+                                position: "absolute",
+                                right: "19px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                cursor: "pointer",
+                              }}
+                              onClick={handleXClick}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <div className="warehouse-product-filter">
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            onChange={(e) => setSlctWarehouse(e.target.value)}
+                            style={{
+                              // width: "274px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            className="select-inv-rep"
+                            value={slctWarehouse}
+                          >
+                            <option value="" disabled selected>
+                              Select Site
+                            </option>
+                            <option value="All">All</option>
+                            {warehouse.map((warehouse) => (
+                              <option key={warehouse.id} value={warehouse.id}>
+                                {warehouse.warehouse_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div>
+
+                        <div className="">
+                          <Form.Select
+                            aria-label="item status"
+                            style={{
+                              // width: "284px",
+                              height: "40px",
+                              fontSize: "15px",
+                              marginBottom: "15px",
+                              fontFamily: "Poppins, Source Sans Pro",
+                            }}
+                            className="select-inv-rep"
+                            onChange={(e) => setSlctCategory(e.target.value)}
+                            value={slctCategory}
+                          >
+                            <option disabled selected value="">
+                              Select Category
+                            </option>
+
+                            <option value="All">All</option>
+                            {category.map((category) => (
+                              <option
+                                key={category.category_code}
+                                value={category.category_code}
+                              >
+                                {category.category_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* <div className="button-filter-section">
+                      <div className="btnfilter"> */}
+                    <div className="pur-filt-container my-4 cus-wid">
+                      <button
+                        onClick={handleGenerate}
+                        className="goesButton cust-height"
+                      >
+                        FILTER
+                      </button>
+                      <button
+                        className="actualclearfilter Filterclear  cust-height"
+                        onClick={clearFilters}
+                      >
+                        Clear Filter
+                      </button>
+                    </div>
+                    {/* <div className="clearbntfilter"> */}
+                    {/* </div> */}
                   </div>
-                  
+
+                  {/* </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -661,19 +878,24 @@ function InventoryReports() {
                       label="Search"
                       variant="outlined"
                       style={{
-                      float: 'right',
+                        float: "right",
                       }}
                       InputLabelProps={{
-                        style: { fontSize: '14px'},
+                        style: { fontSize: "14px" },
                       }}
                       InputProps={{
-                        style: { fontSize: '14px', width: '250px', height: '50px' },
+                        style: {
+                          fontSize: "14px",
+                          // width: "250px",
+                          height: "50px",
+                        },
                       }}
-                    onChange={handleSearch}/>
+                      className="act-search"
+                      onChange={handleSearch}
+                    />
                   </div>
-                
-              </div>
-              
+                </div>
+
                 <table className="table-hover">
                   <thead>
                     <tr>
@@ -714,7 +936,7 @@ function InventoryReports() {
                           <td>{data.totalPR_received_Quantity}</td>
                         </tr>
                       ))}
-                       {currentItemsAssembly.map((data, i) => (
+                      {currentItemsAssembly.map((data, i) => (
                         <tr key={i}>
                           <td>{data.product_code}</td>
                           <td>{data.product_name}</td>
@@ -786,16 +1008,18 @@ function InventoryReports() {
                 </table>
               </div>
             </div>
-            <nav style={{marginTop: '15px'}}> 
+            <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>
-                <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
                   <button
                     type="button"
                     style={{
-                      fontSize: '14px',
-                      cursor: 'pointer',
-                      color: '#000000',
-                      textTransform: 'capitalize',
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
                     }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
@@ -804,26 +1028,42 @@ function InventoryReports() {
                   </button>
                 </li>
                 {generatePages().map((page, index) => (
-                  <li key={index} className={`page-item ${currentPage === page ? "active" : ""}`}>
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === page ? "active" : ""
+                    }`}
+                  >
                     <button
                       style={{
-                        fontSize: '14px',
-                        width: '25px',
-                        background: currentPage === page ? '#FFA500' : 'white',
-                        color: currentPage === page ? '#FFFFFF' : '#000000',
-                        border: 'none',
-                        height: '28px',
+                        fontSize: "14px",
+                        width: "25px",
+                        background: currentPage === page ? "#FFA500" : "white",
+                        color: currentPage === page ? "#FFFFFF" : "#000000",
+                        border: "none",
+                        height: "28px",
                       }}
-                      className={`page-link ${currentPage === page ? "gold-bg" : ""}`}
+                      className={`page-link ${
+                        currentPage === page ? "gold-bg" : ""
+                      }`}
                       onClick={() => handlePageClick(page)}
                     >
                       {page}
                     </button>
                   </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
                   <button
-                    style={{ fontSize: '14px', cursor: 'pointer', color: '#000000', textTransform: 'capitalize' }}
+                    style={{
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      color: "#000000",
+                      textTransform: "capitalize",
+                    }}
                     className="page-link"
                     onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
                   >
