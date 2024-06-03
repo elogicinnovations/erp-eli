@@ -615,9 +615,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                     <span
                       style={{
                         ...tabStyle,
-                        fontSize: "20px",
+                        // fontSize: "20px",
                         overflowY: "auto",
                       }}
+                      className="inv-tab-btn"
                     >
                       Inventory
                     </span>
@@ -789,7 +790,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                 <Tab
                   eventKey="issuance"
                   title={
-                    <span style={{ ...tabStyle, fontSize: "20px" }}>
+                    <span
+                      style={{ ...tabStyle, fontSize: "20px" }}
+                      className="inv-tab-btn"
+                    >
                       Issuance
                     </span>
                   }
@@ -1030,7 +1034,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                 <Tab
                   eventKey="return"
                   title={
-                    <span style={{ ...tabStyle, fontSize: "20px" }}>
+                    <span
+                      style={{ ...tabStyle, fontSize: "20px" }}
+                      className="inv-tab-btn"
+                    >
                       Return
                     </span>
                   }

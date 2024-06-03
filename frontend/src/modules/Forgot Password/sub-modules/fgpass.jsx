@@ -14,7 +14,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 // input
 import Input from "@mui/material/Input";
 import Form from "react-bootstrap/Form";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 
 import { Button, buttonClasses } from "@mui/base/Button";
 import { styled } from "@mui/system";
@@ -121,7 +121,6 @@ const StyledInputElement = styled("input")(
 );
 
 function ForgotPass() {
-  
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -129,11 +128,10 @@ function ForgotPass() {
   const { setEmailPOst, setVerificationCode } = useDataContext();
 
   const sendEmail = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     axios
       .post(BASE_URL + "/masterList/emailForgotPass", { email })
       .then((response) => {
-
         if (response.status === 200) {
           const responseBody = response.data;
           const verificationcode = responseBody.code;
@@ -197,63 +195,75 @@ function ForgotPass() {
           href="https://fonts.googleapis.com/css?family=Radio+Canada%3A600"
         />
       </head>
-      <div className="blurbg-forgot"></div>
+      <div className="blurbg-forgot">
+        <div className="fgpass-lefts">
+          <div className="fg-logo"></div>
+        </div>
 
-      <div className="fgpass-lefts"></div>
-
-      <div className="fgpass-rights">
-        <div className="right-fg-content">
-          <div className="bglogo">
+        <div className="fgpass-rights">
+          <div className="right-fg-content">
+            {/* <div className="bglogo"> */}
             {/* <img className='slashlogo' src={Slash}/> */}
-          </div>
+            {/* </div> */}
 
-          <div className="forgot-text-question">Forgot Password?</div>
+            <div className="forgot-text-question">Forgot Password?</div>
 
-          <div className="emailandinput">
-            <div className="emailfonts">Email</div>
-            <div class="email-input">
-              <Form.Control
-                class=""
-                aria-label="Demo input"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{
-                  height: "50px",
-                  fontSize: "18px",
-                  fontFamily: "Poppins, Source Sans Pro",
-                }}
-                
-              />
-            </div>
-            {!isLoading ? (
-            <div onKeyDown={handleKeyPress} className="fg-submitbutton">
-              <button
-                className="button-pass"
-                onClick={sendEmail}
-                slots={{ root: "span" }}
-              >
-                Submit
-              </button>
-            </div>
-              ) : (
-                <>
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={"bubbles"} />
-                     Please Wait...
+            <div className="emailandinput">
+              <div className="emailfonts">Email: </div>
+              <div className="emailgroup">
+                <div class="email-input">
+                  <Form.Control
+                    class=""
+                    aria-label="Demo input"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{
+                      height: "50px",
+                      fontSize: "18px",
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                  />
                 </div>
-              </>
-            )}  
+                {!isLoading ? (
+                  <div onKeyDown={handleKeyPress} className="fg-submitbutton">
+                    <button
+                      className="button-pass"
+                      onClick={sendEmail}
+                      slots={{ root: "span" }}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="loading-container">
+                      <ReactLoading
+                        className="react-loading"
+                        type={"bubbles"}
+                      />
+                      Please Wait...
+                    </div>
+                  </>
+                )}
+              </div>
 
-            <div class="remembered-text">Remember Your Password?</div>
+              <div className="remebergroup">
+                <div class="remembered-text">Remember Your Password?</div>
 
-            <div class="back-login">
-              <Link
-                to="/"
-                style={{ display: "contents", fontSize: 20, color: "orange" }}
-              >
-                <FontAwesomeIcon icon={faArrowLeft} /> Back to login
-              </Link>
+                <div class="back-login">
+                  <Link
+                    to="/"
+                    style={{
+                      display: "contents",
+                      fontSize: 20,
+                      color: "orange",
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back to login
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
