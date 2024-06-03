@@ -358,6 +358,11 @@ button.page-link:hover {
   margin-bottom: 8px;
 }
 
+.emailgroup {
+  margin-left: 32px;
+  margin-bottom: 20px;
+}
+
 .emailinput {
   display: flex;
   align-items: center;
@@ -435,6 +440,9 @@ button.page-link:hover {
   width: max-content;
 }
 
+.inv-tab-btn {
+  font-size: 20px;
+}
 .rememberme {
   align-items: center;
 }
@@ -1163,7 +1171,7 @@ button.page-link:hover {
 }
 
 /*forgot password css*/
-.forgot-content-main {
+/* .forgot-content-main {
   height: 100vh;
   display: flex;
   position: relative;
@@ -1175,28 +1183,80 @@ button.page-link:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+} */
+
+.forgot-content-main {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  /* background-color: lightgray; */
+  background-color: #f5f5f5;
+  align-items: center;
 }
 
-.blurbg-forgot {
+/* Orig Forgot */
+/* .blurbg-forgot {
   width: 90%;
   height: 90%;
   position: absolute;
   background-color: rgba(187, 185, 185, 0.5);
   border-radius: 5vh;
+} */
+
+.blurbg-forgot {
+  width: 90%;
+  height: 90%;
+  position: absolute;
+  /* background-color: rgba(187, 185, 185, 0.5); */
+  background-color: #fff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  /* border-radius: 5vh; */
 }
 
 .fgpass-rights {
   width: 50%;
   position: absolute;
   height: 100%;
-  right: 2.5%;
+  /* right: 2.5%; */
+  right: 0%;
+  /* display: flex; */
+  /* align-items: center;
+  justify-content: center; */
+  top: 0px;
+  overflow-y: auto;
+}
+.fgpass-lefts {
+  width: 50%;
+  /* position: absolute; */
+  height: 100%;
+  /* left: 2.5%; */
   display: flex;
   align-items: center;
   justify-content: center;
-  top: 0px;
+  /* top: 0px; */
+  background-image: url("../../assets/icon/loginbg.png");
+  background-repeat: no-repeat;
+  /* margin-top: 25px; */
+  background-size: cover;
+}
+.fgpass-lefts::before {
+  content: "";
+  /* position: absolute;
+  top: 0;
+  left: 0; */
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .right-fg-content {
+  margin: 20px 60px 0 20px;
+}
+.button-pass {
+  width: 100%;
+}
+
+/* .right-fg-content {
   width: 80%;
   height: 80%;
   background-color: #ffffff;
@@ -1204,7 +1264,7 @@ button.page-link:hover {
   position: absolute;
   border-radius: 3vh;
   padding: 10vh;
-}
+} */
 
 .bglogo {
   display: flex;
@@ -1222,9 +1282,12 @@ button.page-link:hover {
   position: relative;
   font-size: 3.5rem;
   font-family: Poppins, "Source Sans Pro";
+  /* margin-bottom: 13rem; */
+  margin-top: 6rem;
 }
 
 .emailandinput {
+  margin-top: 10rem;
   position: relative;
   display: flex;
   height: 50vh;
@@ -5613,7 +5676,6 @@ span:nth-child(5) {
   height: 100%; /* Ensure content takes full height */
 }
 
-
 /* Fra */
 
 .menu-icon {
@@ -5677,6 +5739,18 @@ span:nth-child(5) {
   }
   .div-fade {
     display: none;
+  }
+
+  .forgot-content-main {
+    background-image: url("../../assets/icon/loginbg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .forgot-content-main::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
   }
 }
 @media only screen and (max-width: 576px) {
@@ -5843,6 +5917,59 @@ span:nth-child(5) {
   .stck-tranf {
     font-size: 8px !important;
   }
+  .emailgroup {
+    margin-left: 0;
+  }
+  .right-fg-content {
+    margin: 20px 20px 0 20px;
+  }
+
+  .right-fg-content {
+    padding: 0 !important;
+  }
+  .forgot-text-question {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+  .remembered-text {
+    font-size: 1.6rem;
+  }
+  .back-login a {
+    font-size: 15px !important;
+  }
+  .emailfonts {
+    font-size: 2rem;
+  }
+  .email-input input {
+    font-size: 13px !important;
+  }
+  .forgot-content-main {
+    background-image: url("../../assets/icon/loginbg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .forgot-content-main::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .inv-tab-btn {
+    font-size: 10px !important;
+  }
+  .right-login-container {
+    height: 98%;
+    margin-top: 0;
+  }
+  .Slashtext-contents {
+    display: none;
+  }
+  .logintextaccount {
+    margin-top: 20px;
+  }
+  .blurbg-forgot {
+    border-radius: 15px;
+  }
 }
 @media only screen and (max-width: 1030px) {
   .Filterclear {
@@ -5860,5 +5987,10 @@ span:nth-child(5) {
   .potr-text {
     font-size: 20px !important;
     text-align: center;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .fgpass-lefts {
+    display: none;
   }
 }

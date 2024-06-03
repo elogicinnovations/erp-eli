@@ -83,6 +83,7 @@ import useStore from "./stores/useStore.js";
 import Roles from "./hooks/roles";
 import { List } from "@phosphor-icons/react";
 import { CaretCircleLeft } from "@phosphor-icons/react/dist/ssr";
+import Layout from "./modules/layout/Layout.jsx";
 
 function App() {
   const [activeTab, setActiveTab] = useState("inventory");
