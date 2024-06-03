@@ -16,14 +16,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import subwarehouse from "../../../assets/global/subwarehouse";
 import * as $ from "jquery";
-
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import {
   ArrowCircleLeft,
-  Plus,
-  Paperclip,
-  NotePencil,
-  DotsThreeCircle,
-  CalendarBlank,
+  Smiley, Note
 } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
@@ -46,11 +43,11 @@ function StockTransferPreview({ authrztn }) {
 
   const [addProductbackend, setAddProductbackend] = useState([]);
   const [inputValues, setInputValues] = useState({});
-
-  const [showDropdown, setShowDropdown] = useState(false);
-
-  const [validated, setValidated] = useState(false);
-  const [isReadOnly, setReadOnly] = useState(false);
+  const [showModal_reject, setShowModal_reject] = useState(false);
+  const [showModal_remarks, setShowModal_remarks] = useState(false);
+  const [rejectRemarks, setRejectRemarks] = useState("");
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
+  const [rejustifyHistory, setRejustifyHistory] = useState([]);
 
   const [file, setFile] = useState(null);
   const [rejustifyRemarks, setRejustifyRemarks] = useState("");
@@ -71,6 +68,73 @@ function StockTransferPreview({ authrztn }) {
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
+
+  const handleRejected = async () => {
+    try {
+      axios
+        .post(`${BASE_URL}/StockTransfer/reject`, null, {
+          params: {
+            id: id,
+            userId: userId,
+            remarks: rejectRemarks
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.status === 200) {
+            swal({
+              title: "The Stock Transfer Rejected Successful!",
+              text: "The request for transferring stock has been rejected.",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/stockManagement");
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleReject = async () => {
+    swal({
+      title: "Confirm Reject",
+      text: "Are you sure you want to reject this purchase request?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        setShowModal_reject(true);
+      } else {
+        swal({
+          title: "Cancelled Successfully",
+          icon: "warning",
+        });
+      }
+    });
+  };
+
+  const handleReject_history = () => {
+    setShowModal_remarks(true);
+    axios
+      .get(BASE_URL + "/StockTransfer/fetchRejectHistory", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        setRejustifyHistory(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
 
   const handleApproveClick = () => {
     swal({
@@ -116,50 +180,87 @@ function StockTransferPreview({ authrztn }) {
     });
   };
 
-  
-  const handleRejectClick = () => {
-    swal({
-      title: "Are you sure?",
-      text: "You are attempting to reject this request",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (approve) => {
-      if (approve) {
-        try {
-          axios
-            .post(`${BASE_URL}/StockTransfer/reject`, null, {
-              params: {
-                id: id,
-                userId: userId,
-                remarks: remarks
-              },
-            })
-            .then((res) => {
-              console.log(res);
-              if (res.status === 200) {
-                swal({
-                  title: "The Stock Transfer Rejected Successful!",
-                  text: "The request for transferring stock has been rejected.",
-                  icon: "success",
-                  button: "OK",
-                }).then(() => {
-                  navigate("/stockManagement");
-                });
-              } else {
-                swal({
-                  icon: "error",
-                  title: "Something went wrong",
-                  text: "Please contact our support",
-                });
-              }
-            });
-        } catch (err) {
-          console.log(err);
-        }
+  const handleDownloadFile = async (file, mimeType, fileExtension) => {
+    try {
+      if (!file) {
+        console.error("No file available for download");
+        return;
       }
-    });
+
+      // Convert the array data into a Uint8Array
+      const uint8Array = new Uint8Array(file.data);
+
+      // Create a Blob object from the Uint8Array with the determined MIME type
+      const blob = new Blob([uint8Array], { type: mimeType });
+
+      // Create a URL for the Blob object
+      const url = window.URL.createObjectURL(blob);
+
+      // Set a default file name with the correct file extension
+      const fileName = `RejustifyFile.${fileExtension}`;
+
+      // Create a link element to trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+
+      // Trigger the download
+      a.click();
+
+      // Clean up resources
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+
+  
+  // const handleRejectClick = () => {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "You are attempting to reject this request",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //   }).then(async (approve) => {
+  //     if (approve) {
+  //       try {
+  //         axios
+  //           .post(`${BASE_URL}/StockTransfer/reject`, null, {
+  //             params: {
+  //               id: id,
+  //               userId: userId,
+  //               remarks: remarks
+  //             },
+  //           })
+  //           .then((res) => {
+  //             console.log(res);
+  //             if (res.status === 200) {
+  //               swal({
+  //                 title: "The Stock Transfer Rejected Successful!",
+  //                 text: "The request for transferring stock has been rejected.",
+  //                 icon: "success",
+  //                 button: "OK",
+  //               }).then(() => {
+  //                 navigate("/stockManagement");
+  //               });
+  //             } else {
+  //               swal({
+  //                 icon: "error",
+  //                 title: "Something went wrong",
+  //                 text: "Please contact our support",
+  //               });
+  //             }
+  //           });
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   });
+  // };
 
   const handleUploadRejustify = async () => {
     try {
@@ -210,9 +311,7 @@ function StockTransferPreview({ authrztn }) {
 
 
   const [prodFetch, setProdFetch] = useState([]);
-  const [asmFetch, setAsmFetch] = useState([]);
-  const [spareFetch, setSpareFetch] = useState([]);
-  const [subpartFetch, setSubpartFetch] = useState([]);
+
   useEffect(() => {
     axios
       .get(BASE_URL + "/StockTransfer/fetchProdutsPreview", {
@@ -223,126 +322,11 @@ function StockTransferPreview({ authrztn }) {
       .then((res) => {
         const data = res.data;
         setProdFetch(data.product_db);
-        setAsmFetch(data.asm_db);
-        setSpareFetch(data.spare_db);
-        setSubpartFetch(data.subpart_db);
 
-        // console.log(`ss ${data}`);
-        // setvaluePRassembly(selectedPRAssembly);
       })
       .catch((err) => console.log(err));
   }, [id]);
 
-  // //Where clause sa product PR
-  // useEffect(() => {
-  //   axios.get(BASE_URL + '/StockTransfer_prod/fetchStockTransferProduct', {
-  //     params: {
-  //       id: id
-  //     }
-  //   })
-  //     .then(res => {
-  //       const data = res.data;
-  //       setProductSelectedFetch(data);
-  //       const selectedPRproduct = data.map((row) => ({
-  //         value: row.product_id,
-  //         label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
-  //       }));
-  //       setvaluePRproduct(selectedPRproduct);
-  //     })
-  //     .catch(err => console.log(err));
-  // }, [id]);
-
-  // //Where clause ng assembly
-  // useEffect(() => {
-  //   axios.get(BASE_URL + '/StockTransfer_assembly/fetchStockTransferAssembly', {
-  //     params: {
-  //       id: id
-  //     }
-  //   })
-  //     .then(res => {
-  //       const data = res.data;
-  //       setAssemblySelectedFetch(data);
-  //       const selectedPRAssembly = data.map((row) => ({
-  //         value: row.id,
-  //         label: `Assembly Code: ${row.assembly.assembly_code} / Name: ${row.assembly.assembly_name}`,
-  //       }));
-  //       setvaluePRassembly(selectedPRAssembly);
-  //     })
-  //     .catch(err => console.log(err));
-  // }, [id]);
-
-  // //Where clause sa spare parts
-  // useEffect(() => {
-  //   axios.get(BASE_URL + '/StockTransfer_spare/fetchStockTransferSpare', {
-  //     params: {
-  //       id: id
-  //     }
-  //   })
-  //     .then(res => {
-  //       const data = res.data;
-  //       setSpareSelectedFetch(data);
-  //       const selectedPRspare = data.map((row) => ({
-  //         value: row.id,
-  //         label: `Spare Code: ${row.sparePart.spareParts_code} / Name: ${row.sparePart.spareParts_name}`,
-  //       }));
-  //       setvalueSpare(selectedPRspare);
-  //     })
-  //     .catch(err => console.log(err));
-  // }, [id]);
-
-  // //Where clause sa sub parts
-  // useEffect(() => {
-  //   axios.get(BASE_URL + '/StockTransfer_subpart/fetchStockTransferSubpart', {
-  //     params: {
-  //       id: id
-  //     }
-  //   })
-  //     .then(res => {
-  //       const data = res.data;
-  //       setSubPartSelectedFetch(data);
-  //       const selectedPRsub = data.map((row) => ({
-  //         value: row.id,
-  //         label: `SubPart Code: ${row.subPart.subPart_code} / Name: ${row.subPart.subPart_name}`,
-  //       }));
-  //       setvaluePRsub(selectedPRsub);
-  //     })
-  //     .catch(err => console.log(err));
-  // }, [id]);
-
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + "/PR/fetchView", {
-  //       params: {
-  //         id: id,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       setPrNum(res.data.pr_num);
-  //       setStatus(res.data.status);
-  //       setDateCreated(res.data.createdAt);
-  //       const parsedDate = new Date(res.data.date_needed);
-  //       setDateNeed(parsedDate);
-  //       setUseFor(res.data.used_for);
-  //       setRemarks(res.data.remarks);
-  //       setProduct(res.date.product_id);
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  // }, [id]);
-
-  useEffect(() => {
-    const serializedProducts = product.map((product) => ({
-      type: product.type,
-      value: product.values,
-      quantity: inputValues[product.value]?.quantity || "",
-      desc: inputValues[product.value]?.desc || "",
-    }));
-
-    setAddProductbackend(serializedProducts);
-
-    // console.log("Selected Products:", serializedProducts);
-  }, [inputValues, product]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -350,6 +334,8 @@ function StockTransferPreview({ authrztn }) {
 
   const handleClose = () => {
     setShowModal(false);
+    setShowModal_reject(false);
+    setShowModal_remarks(false);
   };
 
   //date format
@@ -466,10 +452,7 @@ function StockTransferPreview({ authrztn }) {
   useEffect(() => {
     if (
       $("#order-listing").length > 0 &&
-      prodFetch.length > 0 &&
-      asmFetch.length > 0 &&
-      spareFetch.length > 0 &&
-      subpartFetch.length > 0
+      prodFetch.length > 0 
     ) {
       $("#order-listing").DataTable();
     }
@@ -574,7 +557,7 @@ function StockTransferPreview({ authrztn }) {
                     Remarks:{" "}
                   </Form.Label>
                   <Form.Control
-                    readOnly={!isReadOnly}
+                    readOnly
                     onChange={(e) => setRemarks(e.target.value)}
                     value={remarks}
                     as="textarea"
@@ -626,10 +609,7 @@ function StockTransferPreview({ authrztn }) {
                       <th className="tableh">U/M</th>
                     </tr>
                   </thead>
-                  {prodFetch.length > 0 ||
-                  asmFetch.length > 0 ||
-                  spareFetch.length > 0 ||
-                  subpartFetch.length > 0 ? (
+                  {prodFetch.length > 0  ? (
                     <tbody>
                       {prodFetch.map((data, i) => (
                         <tr key={i}>
@@ -651,75 +631,7 @@ function StockTransferPreview({ authrztn }) {
                           </td>
                         </tr>
                       ))}
-                      {asmFetch.map((data, i) => (
-                        <tr key={i}>
-                          <td>
-                            {
-                              data.assembly
-                                .assembly_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.assembly
-                                .assembly_name
-                            }
-                          </td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.assembly
-                                .assembly_unitMeasurement
-                            }
-                          </td>
-                        </tr>
-                      ))}
-                      {spareFetch.map((data, i) => (
-                        <tr key={i}>
-                          <td>
-                            {
-                              data.sparePart
-                                .spareParts_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.sparePart
-                                .spareParts_name
-                            }
-                          </td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.sparePart
-                                .spareParts_unitMeasurement
-                            }
-                          </td>
-                        </tr>
-                      ))}
-                      {subpartFetch.map((data, i) => (
-                        <tr key={i}>
-                          <td>
-                            {
-                              data.subPart
-                                .subPart_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.subPart
-                                .subPart_name
-                            }
-                          </td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.subPart
-                                .subPart_unitMeasurement
-                            }
-                          </td>
-                        </tr>
-                      ))}
+                      
                     </tbody>
                   ) : (
                     <div className="no-data">
@@ -732,7 +644,7 @@ function StockTransferPreview({ authrztn }) {
             </div>
 
             <div className="save-cancel">
-              {status === "Pending" || status === "For-Rejustify (Stock Transfer)" ? (
+              {status === "Pending" || status === "Rejustified" ? (
                 <>
                   <Button
                     type="button"
@@ -746,7 +658,7 @@ function StockTransferPreview({ authrztn }) {
 
                   <Button
                     type="button"
-                    onClick={handleRejectClick}
+                    onClick={handleReject}
                     className="btn btn-danger"
                     size="md"
                     style={{ fontSize: "20px", margin: "0px 5px" }}
@@ -754,18 +666,24 @@ function StockTransferPreview({ authrztn }) {
                     Reject
                   </Button>
 
-                  <Button
-                       onClick={handleShow}
-                       className="btn btn-secondary btn-md"
-                       size="md"
-                       style={{ fontSize: "20px", margin: "0px 5px" }}
-                     >
-                       Rejustify
-                     </Button>
+                  
                 </>
               ) : (
-                <></>
+                <>
+                 
+                </>
               )}
+              {status !== "Pending" && (
+                <Button
+                onClick={handleReject_history}
+                className="btn btn-secondary btn-md"
+                size="md"
+                style={{ fontSize: "20px", margin: "0px 5px" }}
+              >
+                Reject History
+              </Button>
+              )}
+             
             </div>
           </div>
         ) : (
@@ -785,7 +703,7 @@ function StockTransferPreview({ authrztn }) {
                 </Modal.Header>
                 <Modal.Body>
                   <div className="row mt-3">
-                    <div className="col-4">
+                    <div className="col-12">
                       <Form.Group controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ fontSize: "20px" }}>
                           Reference
@@ -799,7 +717,12 @@ function StockTransferPreview({ authrztn }) {
                       </Form.Group>
                     </div>
                     
-                    <div className="col-4">
+                    
+                  </div>
+
+                  <div className="row">
+
+                  <div className="col-6">
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
                         className="datepick"
@@ -816,7 +739,7 @@ function StockTransferPreview({ authrztn }) {
                       </Form.Group>
                     </div>
 
-                    <div className="col-4">
+                    <div className="col-6">
                       <Form.Group
                         controlId="exampleForm.ControlInput2"
                         className="datepick"
@@ -868,7 +791,10 @@ function StockTransferPreview({ authrztn }) {
                   <Button
                     variant="secondary"
                     size="md"
-                    onClick={handleClose}
+                    onClick={() => {
+                      setShowModal(false);
+                      setShowModal_remarks(true);
+                    }}
                     style={{ fontSize: "20px" }}
                   >
                     Cancel
@@ -884,7 +810,246 @@ function StockTransferPreview({ authrztn }) {
                   </Button>
                 </Modal.Footer>
               </Form>
-            </Modal>
+      </Modal>
+
+
+      <Modal show={showModal_reject} onHide={handleClose}>
+            <Form>
+              <Modal.Header closeButton>
+                <Modal.Title style={{ fontSize: "24px" }}>
+                  Reject Form
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="row mt-3">
+                  <div className="col-12">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Reference
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={referenceCode}
+                          readOnly
+                          style={{ height: "40px", fontSize: "15px" }}
+                        />
+                      </Form.Group>
+                  </div>
+                 
+                </div>
+
+                <div className="row">
+
+<div className="col-6">
+    <Form.Group
+      controlId="exampleForm.ControlInput2"
+      className="datepick"
+    >
+      <Form.Label style={{ fontSize: "20px" }}>
+        Source
+      </Form.Label>
+      <Form.Control
+        type="text"
+        value={source}
+        readOnly
+        style={{ height: "40px", fontSize: "15px" }}
+      />
+    </Form.Group>
+  </div>
+
+  <div className="col-6">
+    <Form.Group
+      controlId="exampleForm.ControlInput2"
+      className="datepick"
+    >
+      <Form.Label style={{ fontSize: "20px" }}>
+        Destination
+      </Form.Label>
+      <Form.Control
+        type="text"
+        value={destination}
+        readOnly
+        style={{ height: "40px", fontSize: "15px" }}
+      />
+    </Form.Group>
+  </div>
+</div>
+
+                <div className="row">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Remarks:{" "}
+                    </Form.Label>
+
+                    <div style={{ position: "relative" }} className="">
+                      <Form.Control
+                        as="textarea"
+                        onChange={(e) => setRejectRemarks(e.target.value)}
+                        placeholder="Enter details"
+                        style={{
+                          height: "100px",
+                          fontSize: "15px",
+                          margin: 0,
+                          padding: 0,
+                        }}
+                        value={rejectRemarks}
+                      />
+
+                      <Button
+                        variant
+                        style={{
+                          position: "absolute",
+                          bottom: "3px",
+                          left: "3px",
+                        }}
+                        onClick={() => setIsPickerVisible(!isPickerVisible)}
+                        className="border border-radius"
+                      >
+                        <Smiley size={20} color="#161718" />
+                      </Button>
+                    </div>
+                  </Form.Group>
+
+                  {isPickerVisible === true ? (
+                    <>
+                      <Picker
+                        style={{ zIndex: 1 }}
+                        data={data}
+                        previewPosition="none"
+                        onEmojiSelect={(e) => {
+                          setRejectRemarks(
+                            (prevRemarks) => prevRemarks + e.native
+                          );
+                          setIsPickerVisible(!isPickerVisible);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={handleClose}
+                  style={{ fontSize: "20px" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleRejected}
+                  variant="warning"
+                  size="md"
+                  style={{ fontSize: "20px" }}
+                >
+                  Save
+                </Button>
+              </Modal.Footer>
+            </Form>
+          </Modal>
+
+          <Modal
+            show={showModal_remarks}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+            size="xl"
+          >
+            <Form>
+              <Modal.Header closeButton>
+                <Modal.Title style={{ fontSize: "24px" }}>
+                  Reject History
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {rejustifyHistory.map((data, index) => (
+                  <React.Fragment key={index}>
+                    <span className="h2">{`${data.source} `}</span>
+                    <div className="d-flex w-100 border-bottom justify-content-center align-items-center">
+                      <Note size={55} className="mr-3" color="#066ff9" />
+
+                      <div className="w-50">
+                        <div
+                          className="d-flex flex-column float-start"
+                          style={{ maxWidth: "100%" }}
+                        >
+                          <span
+                            className="h3 w-100"
+                            style={{
+                              wordWrap: "break-word",
+                              overflowWrap: "break-word",
+                            }}
+                          >{`"${data.remarks}"`}</span>
+                          <span className="h4 text-muted">{`BY: ${data.masterlist.col_Fname}`}</span>
+                        </div>
+                      </div>
+
+                      <div className="w-50">
+                        <div className="d-flex flex-column float-end">
+                          <span className="h3">{`(${formatDatetime(
+                            data.createdAt
+                          )})`}</span>
+                          {data.source === "REJUSTIFICATION" &&
+                          data.file !== null ? (
+                            <>
+                              <Button
+                                onClick={() =>
+                                  handleDownloadFile(
+                                    data.file,
+                                    data.mimeType,
+                                    data.fileExtension
+                                  )
+                                }
+                                className="fs-5"
+                                variant="link"
+                              >
+                                Download
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="h4 text-muted mt-2 text-end">{`No available file to download `}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                  </React.Fragment>
+                ))}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={handleClose}
+                  style={{ fontSize: "20px" }}
+                >
+                  Cancel
+                </Button>
+
+                {status === "Rejected" ? (
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setShowModal(true);
+                      setShowModal_remarks(false);
+                    }}
+                    variant="warning"
+                    size="md"
+                    style={{ fontSize: "20px" }}
+                  >
+                    Rejustify
+                  </Button>
+                ) : (
+                  <></>
+                )}
+              </Modal.Footer>
+            </Form>
+          </Modal>
     </div>
   );
 }

@@ -12,6 +12,10 @@ const Stock_Rejustify = sequelize.define('stock_transfer_rejustify', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  masterlist_id:{
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   file: {
     type: DataTypes.BLOB('long'),
     allowNull: true,

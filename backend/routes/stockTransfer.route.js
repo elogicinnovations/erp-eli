@@ -23,12 +23,13 @@ const {
   SparePart_Supplier,
   Subpart_supplier,
   Stock_Rejustify,
-  Stock_History
+  Stock_History,
+  ST_REJECT
 } = require("../db/models/associations");
 const session = require("express-session");
 const StockTransfer_subpart = require("../db/models/stockTransfer_subpart.model");
 const multer = require('multer');
-
+const moment = require('moment-timezone');
 // Multer configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -41,6 +42,48 @@ router.use(
   })
 );
 
+router.route("/generateRefCodess").get(async (req, res) => {
+  try {
+    const currentDate = moment().tz("Asia/Manila").toDate();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const currentMonth = `${year}-${month}`;
+
+    // Fetch the latest ref_code
+    const latestReceiving = await StockTransfer.findOne({
+      where: {
+        reference_code: {
+          [Op.like]: `${currentMonth}%`
+        }
+      },
+      order: [['createdAt', 'DESC']]
+    });
+
+    let newRefCode;
+    if (latestReceiving && latestReceiving.reference_code) {
+      const latestRefCode = latestReceiving.reference_code;
+      const refCodeParts = latestRefCode.split('-');
+      if (refCodeParts.length === 3 && !isNaN(refCodeParts[2])) {
+        const latestSequence = parseInt(refCodeParts[2], 10);
+        const newSequence = String(latestSequence + 1).padStart(5, '0');
+        newRefCode = `${currentMonth}-${newSequence}`;
+      } else {
+        // If the refCode doesn't split correctly or sequence is not a number
+        newRefCode = `${currentMonth}-00001`;
+      }
+    } else {
+      newRefCode = `${currentMonth}-00001`;
+    }
+
+
+    console.log(newRefCode)
+    res.json({ refCode: newRefCode });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+});
+
 router.route("/fetchTable").get(async (req, res) => {
   try {
     const data = await StockTransfer.findAll({
@@ -50,13 +93,22 @@ router.route("/fetchTable").get(async (req, res) => {
           as: "SourceWarehouse", // alias for the source warehouse
           attributes: ["warehouse_name"],
           foreignKey: "source",
+          required: true
         },
         {
           model: Warehouses,
           as: "DestinationWarehouse", // alias for the destination warehouse
           attributes: ["warehouse_name"],
           foreignKey: "destination",
+          required: true
         },
+        {
+          model: MasterList,
+          as: "requestor",
+          attributes: ["col_Fname"],
+          foreignKey: "col_id",
+          required: true
+        }
       ],
     });
 
@@ -83,13 +135,22 @@ router.route("/fetchTableReceiving").get(async (req, res) => {
           as: "SourceWarehouse", // alias for the source warehouse
           attributes: ["warehouse_name"],
           foreignKey: "source",
+          required: true
         },
         {
           model: Warehouses,
           as: "DestinationWarehouse", // alias for the destination warehouse
           attributes: ["warehouse_name"],
           foreignKey: "destination",
+          required: true
         },
+        {
+          model: MasterList,
+          as: "approver",
+          attributes: ["col_Fname"],
+          foreignKey: "masterlist_id",
+          required: true
+        }
       ],
     });
 
@@ -492,6 +553,9 @@ router.route("/viewToReceiveStockTransfer").get(async (req, res) => {
       include: [
         {
           model: MasterList,
+          as: "approver", 
+          attributes: ["col_Fname"],
+          foreignKey: "masterlist_id",
           required: true,
         },
         {
@@ -584,9 +648,17 @@ router.route("/receivedAssembly").post(async (req, res) => {
 
 router.route("/approve").post(async (req, res) => {
   try {
+    const manilaTimezone = "Asia/Manila";
+    moment.tz.setDefault(manilaTimezone);
+  
+  // Get the current datetime in Manila timezone
+  const currentDateTimeInManila = moment();
+
+
     const approve = await StockTransfer.update(
       {
         status: "To-Receive",
+        date_approved: currentDateTimeInManila
       },
       {
         where: { stock_id: req.query.id },
@@ -632,29 +704,88 @@ router.route("/reject").post(async (req, res) => {
       }
     );
 
-    await Stock_History.create({
-      stockTransfer_id: req.query.id,
-      status: "Rejected",
-      remarks: req.query.remarks
-    })
+    if (reject){
 
-    const findStock = await StockTransfer.findOne({
-      where: {
-        stock_id: req.query.id,
-      },
-    })
+      await ST_REJECT.create({
+        stocktransfer_id: req.query.id,
+        masterlist_id: req.query.userId,
+        status: "Rejected",
+        remarks: req.query.remarks
+      })
 
-    const stockRefcode = findStock.reference_code;
+      await Stock_History.create({
+        stockTransfer_id: req.query.id,
+        status: "Rejected",
+        remarks: req.query.remarks
+      })
 
+      const findStock = await StockTransfer.findOne({
+        where: {
+          stock_id: req.query.id,
+        },
+      })
   
-    await Activity_Log.create({
-      masterlist_id: req.query.userId,
-      action_taken: `Stock transfer: Rejected the stock transfer requested with the reference code of ${stockRefcode}`
-    });
-    res.status(200).json();
+      const stockRefcode = findStock.reference_code;
+  
+    
+      await Activity_Log.create({
+        masterlist_id: req.query.userId,
+        action_taken: `Stock transfer: Rejected the stock transfer requested with the reference code of ${stockRefcode}`
+      });
+      res.status(200).json();
+    }
+
+   
+
+   
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred");
+  }
+});
+
+
+router.route("/fetchRejectHistory").get(async (req, res) => {
+  try {
+    const { id } = req.query;
+    // Fetch the data
+    const RejectData = await ST_REJECT.findAll({
+      where: { stocktransfer_id: id },
+      include: [{ model: MasterList, required: true }],
+    });
+
+
+    const RejustifyData = await Stock_Rejustify.findAll({
+      where: { stockTransfer_id: id },
+      include: [{ model: MasterList, required: true }],
+    });
+
+    // Extract the dataValues from each result and add a source field
+    const RejectValues = RejectData.map((item) => ({
+      ...item.dataValues,
+      source: "REJECTION",
+    }));
+
+
+    const RejustifyValues = RejustifyData.map((item) => ({
+      ...item.dataValues,
+      source: `REJUSTIFICATION`,
+    }));
+
+    // Combine the dataValues into one array
+    const combinedData = [
+      ...RejectValues,
+      ...RejustifyValues,
+    ];
+
+    // Sort the combined data by createdAt column in ascending order
+    combinedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    // Send the sorted data as a response
+    res.json(combinedData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
   }
 });
 
@@ -669,6 +800,7 @@ router.post('/rejustifystock', upload.single('file'), async (req, res) => {
     const result = await Stock_Rejustify.create({
       file: file.buffer,
       stockTransfer_id: id,  
+      masterlist_id: userId,
       remarks: remarks, 
       mimeType: mimeType,
       fileExtension: fileExtension,
@@ -677,13 +809,13 @@ router.post('/rejustifystock', upload.single('file'), async (req, res) => {
     
     const stock_historical = await Stock_History.create({
       stockTransfer_id: id,
-      status: 'For-Rejustify (Stock Transfer)',
+      status: 'Rejustified',
       remarks: remarks
     });
 
 
     const stock_newData = await StockTransfer.update({
-      status: 'For-Rejustify (Stock Transfer)'
+      status: 'Rejustified'
     },
     {
       where: { 

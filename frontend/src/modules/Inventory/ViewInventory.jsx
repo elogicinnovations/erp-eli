@@ -288,8 +288,8 @@ function ViewInventory({ authrztn }) {
                             <td>{data.warehouse_name}</td>
                             <td>{data.totalQuantity}</td>                          
                             <td>{data.price}</td>
-                            <td>{data.freight_cost}</td>
-                            <td>{data.custom_cost}</td>
+                            <td>{data.freight_cost === null ? "Pending Cost" : data.freight_cost}</td>
+                            <td>{data.custom_cost === null ? "Pending Cost" : data.custom_cost}</td>
                             <td>{data.totalPrice}</td>
                             
                           </tr>

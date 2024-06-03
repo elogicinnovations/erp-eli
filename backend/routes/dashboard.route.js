@@ -2656,17 +2656,16 @@ router.route("/receivingOverView").get(async (req, res) => {
       }],
       where: {
         status: {
-          [Op.notIn]: [
-            "For Approval",
-            "In-transit",
-            "In-transit (Complete)",
-            "Delivered"
+          [Op.or]: [
+            "Delivered (Lack of Cost)",
+            "Delivered (Lack of FreightCost)",
+            "Delivered (Lack of CustomCost)",
           ],
         },
       }
     })
 
-    console.log(receiving_po)
+    // console.log(receiving_po)
     return res.json(receiving_po)
 })
 

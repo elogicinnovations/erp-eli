@@ -25,15 +25,8 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [inventory, setInventory] = useState([]);
   const [inventoryFilter, setInventoryFilter] = useState("All");
   const [searchInventory, setSearchInventory] = useState([]);
-  const [assembly, setAssembly] = useState([]);
-  const [searchAssembly, setSearchAssembly] = useState([]);
-  const [spare, setSpare] = useState([]);
-  const [searchSpare, setSearchSpare] = useState([]);
-  const [subpart, setSubpart] = useState([]);
-  const [searchSub, setSearchSub] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
-  const [warehouseInv, setwarehouseInv] = useState([]);
   const [currentPageissuance, setCurrentPageIssuance] = useState(1);
   const pageIssuanceSize = 10;
 
@@ -65,41 +58,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     endIndexInventory
   );
 
-  const totalPagesAssembly = Math.ceil(searchAssembly.length / pageSize);
-  const startIndexAssembly = (currentPage - 1) * pageSize;
-  const endIndexAssembly = Math.min(
-    startIndexAssembly + pageSize,
-    searchAssembly.length
-  );
-  const currentItemsAssembly = searchAssembly.slice(
-    startIndexAssembly,
-    endIndexAssembly
-  );
-
-  const totalPagesSpare = Math.ceil(searchSpare.length / pageSize);
-  const startIndexSpare = (currentPage - 1) * pageSize;
-  const endIndexSpare = Math.min(
-    startIndexSpare + pageSize,
-    searchSpare.length
-  );
-  const currentItemsSpare = searchSpare.slice(startIndexSpare, endIndexSpare);
-
-  const totalPagesSubpart = Math.ceil(searchSub.length / pageSize);
-  const startIndexSubpart = (currentPage - 1) * pageSize;
-  const endIndexSubpart = Math.min(
-    startIndexSubpart + pageSize,
-    searchSub.length
-  );
-  const currentItemsSubpart = searchSub.slice(
-    startIndexSubpart,
-    endIndexSubpart
-  );
+ 
 
   const maxTotalPages = Math.max(
-    totalPagesInventory,
-    totalPagesAssembly,
-    totalPagesSpare,
-    totalPagesSubpart
+    totalPagesInventory
   );
   const MAX_PAGES = 5;
 
@@ -207,12 +169,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         .then((res) => {
           setInventory(res.data.product);
           setSearchInventory(res.data.product);
-          setAssembly(res.data.assembly);
-          setSearchAssembly(res.data.assembly);
-          setSpare(res.data.spare);
-          setSearchSpare(res.data.spare);
-          setSubpart(res.data.subpart);
-          setSearchSub(res.data.subpart);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -244,29 +200,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     );
     setInventory(filteredInventory);
 
-    const filteredAssembly = searchAssembly.filter(
-      (data) =>
-        safeToLowerCase(data.product_code).includes(searchTerm) ||
-        safeToLowerCase(data.product_name).includes(searchTerm) ||
-        safeToLowerCase(data.manufacturer).includes(searchTerm)
-    );
-    setAssembly(filteredAssembly);
-
-    const filteredSpare = searchSpare.filter(
-      (data) =>
-        safeToLowerCase(data.product_code).includes(searchTerm) ||
-        safeToLowerCase(data.product_name).includes(searchTerm) ||
-        safeToLowerCase(data.manufacturer).includes(searchTerm)
-    );
-    setSpare(filteredSpare);
-
-    const filteredSubpart = searchSub.filter(
-      (data) =>
-        safeToLowerCase(data.product_code).includes(searchTerm) ||
-        safeToLowerCase(data.product_name).includes(searchTerm) ||
-        safeToLowerCase(data.manufacturer).includes(searchTerm)
-    );
-    setSubpart(filteredSubpart);
+   
   };
 
   const handleSearchIssuance = (event) => {
@@ -739,14 +673,12 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           <tr>
                             <th className="tableh">Product Code</th>
                             <th className="tableh">Product Name</th>
+                            <th className="tableh">UOM</th>
                             <th className="tableh">Category</th>
                             <th className="tableh">Quantity</th>
                           </tr>
                         </thead>
-                        {inventory.length > 0 ||
-                        assembly.length > 0 ||
-                        spare.length > 0 ||
-                        subpart.length > 0 ? (
+                        {inventory.length > 0 ? (
                           <tbody>
                             {currentItemsInventory.map((data, i) => (
                               <tr
@@ -759,58 +691,12 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                               >
                                 <td>{data.product_code}</td>
                                 <td>{data.product_name}</td>
+                                <td>{data.UOM}</td>
                                 <td>{data.Category}</td>
                                 <td>{data.totalQuantity}</td>
                               </tr>
                             ))}
 
-                            {currentItemsAssembly.map((data, i) => (
-                              <tr
-                                key={i}
-                                className="clickable_Table_row"
-                                title="View Information"
-                                onClick={() =>
-                                  navigate(`/viewAssembly/${data.productID}`)
-                                }
-                              >
-                                <td>{data.product_code}</td>
-                                <td>{data.product_name}</td>
-                                <td>{data.Category}</td>
-                                <td>{data.totalQuantity}</td>
-                              </tr>
-                            ))}
-
-                            {currentItemsSpare.map((data, i) => (
-                              <tr
-                                key={i}
-                                className="clickable_Table_row"
-                                title="View Information"
-                                onClick={() =>
-                                  navigate(`/viewSpare/${data.productID}`)
-                                }
-                              >
-                                <td>{data.product_code}</td>
-                                <td>{data.product_name}</td>
-                                <td>{data.Category}</td>
-                                <td>{data.totalQuantity}</td>
-                              </tr>
-                            ))}
-
-                            {currentItemsSubpart.map((data, i) => (
-                              <tr
-                                key={i}
-                                className="clickable_Table_row"
-                                title="View Information"
-                                onClick={() =>
-                                  navigate(`/viewSubpart/${data.productID}`)
-                                }
-                              >
-                                <td>{data.product_code}</td>
-                                <td>{data.product_name}</td>
-                                <td>{data.Category}</td>
-                                <td>{data.totalQuantity}</td>
-                              </tr>
-                            ))}
                           </tbody>
                         ) : (
                           <div className="no-data">

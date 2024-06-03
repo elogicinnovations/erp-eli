@@ -229,6 +229,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
       const productID = item.product_tag_supplier?.product?.product_id;
       const productCode = item.product_tag_supplier?.product?.product_code;
       const productName = item.product_tag_supplier?.product?.product_name;
+      const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
       const Category =
         item.product_tag_supplier?.product?.category?.category_name;
       const Price = item.price;
@@ -243,6 +244,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
             product_code: productCode,
             product_name: productName,
             Category: Category,
+            UOM: UOM,
             totalQuantity: 0,
             warehouse_name: warehouse_name,
             price: Price,
@@ -258,214 +260,8 @@ router.route("/fetchInventory_group").get(async (req, res) => {
     const finalResult_PRD = Object.values(groupedProductData);
     // console.log('Productdddfdsfd', JSON.stringify(finalResult, null, 2));
 
-    const assemblyData = await Inventory_Assembly.findAll({
-      include: [
-        {
-          model: Assembly_Supplier,
-          required: true,
-
-          include: [
-            {
-              model: Assembly,
-              required: true,
-
-              include: [
-                {
-                  model: Category,
-                  required: true,
-                },
-              ],
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
-
-    // Grouping the product data by warehouse_id
-    const groupedAsmData = {};
-    assemblyData.forEach((item) => {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.assembly_supplier?.assembly?.id;
-      const productCode = item.assembly_supplier?.assembly?.assembly_code;
-      const productName = item.assembly_supplier?.assembly?.assembly_name;
-      const Category =
-        item.assembly_supplier?.assembly?.category?.category_name;
-      const Price = item.price;
-      // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName) {
-        const key = `${productCode}_${productName}`;
-
-        if (!groupedAsmData[key]) {
-          groupedAsmData[key] = {
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
-            Category: Category,
-            totalQuantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
-
-        groupedAsmData[key].totalQuantity += item.quantity;
-        groupedAsmData[key].products.push(item);
-      }
-    });
-
-    const finalResult_asm = Object.values(groupedAsmData);
-
-    const spareData = await Inventory_Spare.findAll({
-      include: [
-        {
-          model: SparePart_Supplier,
-          required: true,
-
-          include: [
-            {
-              model: SparePart,
-              required: true,
-
-              include: [
-                {
-                  model: Category,
-                  required: true,
-                },
-              ],
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
-
-    // Grouping the product data by warehouse_id
-    const groupedSpareData = {};
-    spareData.forEach((item) => {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.sparepart_supplier?.sparePart?.id;
-      const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
-      const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
-      const Category =
-        item.sparepart_supplier?.sparePart?.category?.category_name;
-      const Price = item.price;
-      // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName) {
-        const key = `${productCode}_${productName}`;
-
-        if (!groupedSpareData[key]) {
-          groupedSpareData[key] = {
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
-            Category: Category,
-            totalQuantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
-
-        groupedSpareData[key].totalQuantity += item.quantity;
-        groupedSpareData[key].products.push(item);
-      }
-    });
-
-    const finalResult_spare = Object.values(groupedSpareData);
-
-    const subpartData = await Inventory_Subpart.findAll({
-      include: [
-        {
-          model: Subpart_supplier,
-          required: true,
-
-          include: [
-            {
-              model: SubPart,
-              required: true,
-
-              include: [
-                {
-                  model: Category,
-                  required: true,
-                },
-              ],
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
-
-    const groupedSubpartData = {};
-    subpartData.forEach((item) => {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.subpart_supplier?.subPart?.id;
-      const productCode = item.subpart_supplier?.subPart?.subPart_code;
-      const productName = item.subpart_supplier?.subPart?.subPart_name;
-      const Category =
-        item.subpart_supplier?.subPart?.category?.category_name;
-      const Price = item.price;
-      // Ensure that productCode and productName are truthy before using them
-      if (productCode && productName) {
-        const key = `${productCode}_${productName}`;
-
-        if (!groupedSubpartData[key]) {
-          groupedSubpartData[key] = {
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
-            Category: Category,
-            totalQuantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
-
-        groupedSubpartData[key].totalQuantity += item.quantity;
-        groupedSubpartData[key].products.push(item);
-      }
-    });
-
-    const finalResult_subpart = Object.values(groupedSubpartData);
-
-    // console.log(`djsanldnsaldnsaldn`)
-    // console.log(finalResult_PRD)
-
     return res.json({
-      product: finalResult_PRD,
-      assembly: finalResult_asm,
-      spare: finalResult_spare,
-      subpart: finalResult_subpart,
+      product: finalResult_PRD
     });
   } catch (err) {
     console.error(err);
@@ -564,264 +360,264 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
   }
 });
 
-router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
-  try {
-    const assemblyData = await Inventory_Assembly.findAll({
-      include: [
-        {
-          model: Assembly_Supplier,
-          required: true,
+// router.route("/fetchWarehouseInvetory_asm").get(async (req, res) => {
+//   try {
+//     const assemblyData = await Inventory_Assembly.findAll({
+//       include: [
+//         {
+//           model: Assembly_Supplier,
+//           required: true,
 
-          include: [
-            {
-              model: Assembly,
-              required: true,
+//           include: [
+//             {
+//               model: Assembly,
+//               required: true,
 
-              where: { id: req.query.id },
+//               where: { id: req.query.id },
 
-              include: [
-                {
-                  model: Category,
-                  required: true,
-                },
-              ],
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//               include: [
+//                 {
+//                   model: Category,
+//                   required: true,
+//                 },
+//               ],
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    // Grouping the product data by warehouse_id
-    const groupedAsmData = {};
-    assemblyData.forEach((item) => {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.assembly_supplier?.assembly?.id;
-      const productCode = item.assembly_supplier?.assembly?.assembly_code;
-      const productName = item.assembly_supplier?.assembly?.assembly_name;
-      const Category =
-        item.assembly_supplier?.assembly?.category?.category_name;
-      const Price = item.price;
-      const freight_cost = item.freight_cost;
-      const custom_cost = item.custom_cost;
-
-
-      const totalPrice = Price + freight_cost + custom_cost
-      // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && totalPrice) {
-        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
-
-        if (!groupedAsmData[key]) {
-          groupedAsmData[key] = {
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
-            Category: Category,
-            totalQuantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            freight_cost: freight_cost,
-            custom_cost: custom_cost,
-            totalPrice: totalPrice,
-            products: [],
-          };
-        }
-
-        groupedAsmData[key].totalQuantity += item.quantity;
-        groupedAsmData[key].products.push(item);
-      }
-    });
-
-    const finalResult_asm = Object.values(groupedAsmData);
-
-    return res.json(finalResult_asm);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
-
-router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
-  try {
-    const spareData = await Inventory_Spare.findAll({
-      include: [
-        {
-          model: SparePart_Supplier,
-          required: true,
-
-          include: [
-            {
-              model: SparePart,
-              required: true,
-
-              where: {
-                id: req.query.id,
-              },
-
-              include: [
-                {
-                  model: Category,
-                  required: true,
-                },
-              ],
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
-
-    // Grouping the product data by warehouse_id
-    const groupedSpareData = {};
-    spareData.forEach((item) => {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.sparepart_supplier?.sparePart?.id;
-      const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
-      const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
-      const Category =
-        item.sparepart_supplier?.sparePart?.category?.category_name;
-      const Price = item.price;
-
-      const freight_cost = item.freight_cost;
-      const custom_cost = item.custom_cost;
+//     // Grouping the product data by warehouse_id
+//     const groupedAsmData = {};
+//     assemblyData.forEach((item) => {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.assembly_supplier?.assembly?.id;
+//       const productCode = item.assembly_supplier?.assembly?.assembly_code;
+//       const productName = item.assembly_supplier?.assembly?.assembly_name;
+//       const Category =
+//         item.assembly_supplier?.assembly?.category?.category_name;
+//       const Price = item.price;
+//       const freight_cost = item.freight_cost;
+//       const custom_cost = item.custom_cost;
 
 
-      const totalPrice = Price + freight_cost + custom_cost
-      // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && totalPrice) {
-        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
+//       const totalPrice = Price + freight_cost + custom_cost
+//       // Ensure that productCode and productName are truthy before using them
+//       if (warehouseId && productCode && productName && totalPrice) {
+//         const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
 
-        if (!groupedSpareData[key]) {
-          groupedSpareData[key] = {
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
-            Category: Category,
-            totalQuantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            freight_cost: freight_cost,
-            custom_cost: custom_cost,
-            totalPrice: totalPrice,
-            products: [],
-          };
-        }
+//         if (!groupedAsmData[key]) {
+//           groupedAsmData[key] = {
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
+//             Category: Category,
+//             totalQuantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             freight_cost: freight_cost,
+//             custom_cost: custom_cost,
+//             totalPrice: totalPrice,
+//             products: [],
+//           };
+//         }
 
-        groupedSpareData[key].totalQuantity += item.quantity;
-        groupedSpareData[key].products.push(item);
-      }
-    });
+//         groupedAsmData[key].totalQuantity += item.quantity;
+//         groupedAsmData[key].products.push(item);
+//       }
+//     });
 
-    const finalResult_spare = Object.values(groupedSpareData);
+//     const finalResult_asm = Object.values(groupedAsmData);
 
-    return res.json(finalResult_spare);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_asm);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
-  try {
-    const subpartData = await Inventory_Subpart.findAll({
-      include: [
-        {
-          model: Subpart_supplier,
-          required: true,
+// router.route("/fetchWarehouseInvetory_spare").get(async (req, res) => {
+//   try {
+//     const spareData = await Inventory_Spare.findAll({
+//       include: [
+//         {
+//           model: SparePart_Supplier,
+//           required: true,
 
-          include: [
-            {
-              model: SubPart,
-              required: true,
+//           include: [
+//             {
+//               model: SparePart,
+//               required: true,
 
-              where:{id: req.query.id},
+//               where: {
+//                 id: req.query.id,
+//               },
 
-              include: [
-                {
-                  model: Category,
-                  required: true,
-                },
-              ],
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//               include: [
+//                 {
+//                   model: Category,
+//                   required: true,
+//                 },
+//               ],
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    const groupedSubpartData = {};
-    subpartData.forEach((item) => {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.subpart_supplier?.subPart?.id;
-      const productCode = item.subpart_supplier?.subPart?.subPart_code;
-      const productName = item.subpart_supplier?.subPart?.subPart_name;
-      const Category =
-        item.subpart_supplier?.subPart?.category?.category_name;
-      const Price = item.price;
-      const freight_cost = item.freight_cost;
-      const custom_cost = item.custom_cost;
+//     // Grouping the product data by warehouse_id
+//     const groupedSpareData = {};
+//     spareData.forEach((item) => {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.sparepart_supplier?.sparePart?.id;
+//       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
+//       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
+//       const Category =
+//         item.sparepart_supplier?.sparePart?.category?.category_name;
+//       const Price = item.price;
+
+//       const freight_cost = item.freight_cost;
+//       const custom_cost = item.custom_cost;
 
 
-      const totalPrice = Price + freight_cost + custom_cost
-      // Ensure that productCode and productName are truthy before using them
-      if (warehouseId && productCode && productName && totalPrice) {
-        const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
+//       const totalPrice = Price + freight_cost + custom_cost
+//       // Ensure that productCode and productName are truthy before using them
+//       if (warehouseId && productCode && productName && totalPrice) {
+//         const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
 
-        if (!groupedSubpartData[key]) {
-          groupedSubpartData[key] = {
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
-            Category: Category,
-            totalQuantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            freight_cost: freight_cost,
-            custom_cost: custom_cost,
-            totalPrice: totalPrice,
-            products: [],
-          };
-        }
+//         if (!groupedSpareData[key]) {
+//           groupedSpareData[key] = {
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
+//             Category: Category,
+//             totalQuantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             freight_cost: freight_cost,
+//             custom_cost: custom_cost,
+//             totalPrice: totalPrice,
+//             products: [],
+//           };
+//         }
 
-        groupedSubpartData[key].totalQuantity += item.quantity;
-        groupedSubpartData[key].products.push(item);
-      }
-    });
+//         groupedSpareData[key].totalQuantity += item.quantity;
+//         groupedSpareData[key].products.push(item);
+//       }
+//     });
 
-    const finalResult_subpart = Object.values(groupedSubpartData);
-    return res.json(finalResult_subpart);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     const finalResult_spare = Object.values(groupedSpareData);
+
+//     return res.json(finalResult_spare);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
+
+// router.route("/fetchWarehouseInvetory_subpart").get(async (req, res) => {
+//   try {
+//     const subpartData = await Inventory_Subpart.findAll({
+//       include: [
+//         {
+//           model: Subpart_supplier,
+//           required: true,
+
+//           include: [
+//             {
+//               model: SubPart,
+//               required: true,
+
+//               where:{id: req.query.id},
+
+//               include: [
+//                 {
+//                   model: Category,
+//                   required: true,
+//                 },
+//               ],
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
+
+//     const groupedSubpartData = {};
+//     subpartData.forEach((item) => {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.subpart_supplier?.subPart?.id;
+//       const productCode = item.subpart_supplier?.subPart?.subPart_code;
+//       const productName = item.subpart_supplier?.subPart?.subPart_name;
+//       const Category =
+//         item.subpart_supplier?.subPart?.category?.category_name;
+//       const Price = item.price;
+//       const freight_cost = item.freight_cost;
+//       const custom_cost = item.custom_cost;
+
+
+//       const totalPrice = Price + freight_cost + custom_cost
+//       // Ensure that productCode and productName are truthy before using them
+//       if (warehouseId && productCode && productName && totalPrice) {
+//         const key = `${warehouseId}_${productCode}_${productName}_${totalPrice}`;
+
+//         if (!groupedSubpartData[key]) {
+//           groupedSubpartData[key] = {
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
+//             Category: Category,
+//             totalQuantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             freight_cost: freight_cost,
+//             custom_cost: custom_cost,
+//             totalPrice: totalPrice,
+//             products: [],
+//           };
+//         }
+
+//         groupedSubpartData[key].totalQuantity += item.quantity;
+//         groupedSubpartData[key].products.push(item);
+//       }
+//     });
+
+//     const finalResult_subpart = Object.values(groupedSubpartData);
+//     return res.json(finalResult_subpart);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
 router.route("/fetchInventory").get(async (req, res) => {
   try {
@@ -991,94 +787,94 @@ router.route("/fetchView").get(async (req, res) => {
   }
 });
 
-router.route("/fetchView_assembly").get(async (req, res) => {
-  try {
-    const data = await Assembly.findAll({
-      where: {
-        id: req.query.id,
-      },
-      include: [
-        {
-          model: Category,
-          required: true,
-        },
-        {
-          model: BinLocation,
-          required: true,
-        },
-      ],
-    });
+// router.route("/fetchView_assembly").get(async (req, res) => {
+//   try {
+//     const data = await Assembly.findAll({
+//       where: {
+//         id: req.query.id,
+//       },
+//       include: [
+//         {
+//           model: Category,
+//           required: true,
+//         },
+//         {
+//           model: BinLocation,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    if (data) {
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     if (data) {
+//       // console.log(data);
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/fetchView_spare").get(async (req, res) => {
-  try {
-    const data = await SparePart.findAll({
-      where: {
-        id: req.query.id,
-      },
-      include: [
-        {
-          model: Category,
-          required: true,
-        },
-        {
-          model: BinLocation,
-          required: true,
-        },
-      ],
-    });
+// router.route("/fetchView_spare").get(async (req, res) => {
+//   try {
+//     const data = await SparePart.findAll({
+//       where: {
+//         id: req.query.id,
+//       },
+//       include: [
+//         {
+//           model: Category,
+//           required: true,
+//         },
+//         {
+//           model: BinLocation,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    if (data) {
-      // console.log(data);
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     if (data) {
+//       // console.log(data);
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/fetchView_subpart").get(async (req, res) => {
-  try {
-    const data = await SubPart.findAll({
-      where: {
-        id: req.query.id,
-      },
-      include: [
-        {
-          model: Category,
-          required: true,
-        },
-        {
-          model: BinLocation,
-          required: true,
-        },
-      ],
-    });
+// router.route("/fetchView_subpart").get(async (req, res) => {
+//   try {
+//     const data = await SubPart.findAll({
+//       where: {
+//         id: req.query.id,
+//       },
+//       include: [
+//         {
+//           model: Category,
+//           required: true,
+//         },
+//         {
+//           model: BinLocation,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    if (data) {
-      return res.json(data);
-    } else {
-      res.status(400);
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     if (data) {
+//       return res.json(data);
+//     } else {
+//       res.status(400);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
 router.route("/fetchToIssueProduct").get(async (req, res) => {
   // para sa pag fetch ng product for issuance

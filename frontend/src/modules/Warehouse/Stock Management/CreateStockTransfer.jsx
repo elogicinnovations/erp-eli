@@ -86,19 +86,16 @@ function CreateStockTransfer({ authrztn }) {
   };
   // console.log("HAHAHAHAHA" + destination);
 
+  const generateRandomCode = () => {
+    axios
+    .get(BASE_URL + "/StockTransfer/generateRefCodess")
+    .then((res) => {
+      setReferenceCode(res.data.refCode);
+    })
+  };
+
   useEffect(() => {
-    const generateReferenceCode = () => {
-      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let code = "";
-
-      for (let i = 0; i < 12; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        code += characters.charAt(randomIndex);
-      }
-
-      return code;
-    };
-    setReferenceCode(generateReferenceCode());
+    generateRandomCode()
   }, []);
 
   // useEffect(() => {

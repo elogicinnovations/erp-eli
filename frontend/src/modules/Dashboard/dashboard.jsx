@@ -883,7 +883,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                     onChange={(e) => setShippingFee(e.target.value)}
                     placeholder="0.00"
                     readOnly={shippingFeeBool}
-                    value={shippingFee === 0 ? '' : shippingFee}
+                    value={shippingFee === null ? '' : shippingFee}
                     style={{
                       fontFamily: "Poppins, Source Sans Pro",
                       fontSize: "16px",

@@ -23,7 +23,7 @@ const {
   Supplier,
 } = require("../db/models/associations");
 const session = require("express-session");
-
+const moment = require('moment-timezone');
 router.use(
   session({
     secret: "secret-key",
@@ -613,9 +613,15 @@ router.route("/approve").post(async (req, res) => {
   try {
     const { id, userId } = req.query;
 
+    const manilaTimezone = "Asia/Manila";
+    moment.tz.setDefault(manilaTimezone);
+    
+    // Get the current datetime in Manila timezone
+    const currentDateTimeInManila = moment();
     const PR_newData = await PR.update(
       {
         status: "For-Canvassing",
+        date_approved: currentDateTimeInManila.format("YYYY-MM-DD HH:mm:ss"),
       },
       {
         where: { id: id },

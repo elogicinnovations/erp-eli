@@ -49,6 +49,10 @@ const Receiving = sequelize.define("receiving_po", {
     allowNull: true,
     defaultValue: false
   },
+  masterlist_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   date_approved: {
     type: DataTypes.DATE,
     allowNull: true,

@@ -20,8 +20,16 @@ const StockTransfer = sequelize.define('stock_transfer', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  col_id: {
+  col_id: { // nag request na masterlist
     type: DataTypes.INTEGER,
+  },
+  masterlist_id: { // nag approve ng request
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  date_approved: {
+    type: DataTypes.DATE,
+    allowNull: true
   },
   remarks: {
     type: DataTypes.STRING,

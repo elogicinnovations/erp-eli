@@ -591,11 +591,13 @@ function StockManagement({ authrztn }) {
                     <tr>
                       <th className="tableh"></th>
                       {/* <th className='tableh'>Transfer ID</th> */}
-                      <th className="tableh">Description</th>
+                      <th className="tableh">Transfer ID</th>
+                      <th className="tableh">Reference #</th>
                       <th className="tableh">Source Warehouse</th>
                       <th className="tableh">Destination</th>
+                      <th className="tableh">Requested By:</th>
                       <th className="tableh">Status</th>
-                      <th className="tableh">Date Transfered</th>
+                      <th className="tableh">Date Requested</th>
                       <th className="tableh">Action</th>
                     </tr>
                   </thead>
@@ -629,7 +631,16 @@ function StockManagement({ authrztn }) {
                                 )
                               }
                             >
-                              {data.remarks}
+                              {data.stock_id}
+                            </td>
+                            <td
+                              onClick={() =>
+                                navigate(
+                                  `/stockManagementPreview/${data.stock_id}`
+                                )
+                              }
+                            >
+                              {data.reference_code}
                             </td>
                             <td
                               onClick={() =>
@@ -648,6 +659,15 @@ function StockManagement({ authrztn }) {
                               }
                             >
                               {data.DestinationWarehouse.warehouse_name}
+                            </td>
+                            <td
+                              onClick={() =>
+                                navigate(
+                                  `/stockManagementPreview/${data.stock_id}`
+                                )
+                              }
+                            >
+                              {data.requestor.col_Fname}
                             </td>
                             <td
                               onClick={() =>

@@ -208,7 +208,10 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
               ],
             },
           ],
-        },
+        },{
+          model: MasterList,
+          required: true
+        }
       ],
       where: {
         status: {
@@ -322,7 +325,7 @@ router.route("/insertReceived").post(async (req, res) => {
     .replace(/\s/g, "");
 
   const parentArray = req.body.addReceivebackend;
-  const shippingFee = req.body.shippingFee === "" ? null : req.body.shippingFee;
+  const shippingFee = req.body.shippingFee;
   const customFee = req.body.customFee === "" ? null : req.body.customFee;
   const receving_site = req.body.suppReceving;
   const productImages = req.body.productImages;
@@ -330,12 +333,15 @@ router.route("/insertReceived").post(async (req, res) => {
   const po_id = req.body.po_id;
   const userId = req.body.userId;
   const refCode = req.body.refCode;
+  const isSF_applicable = req.body.isSF_applicable;
+  const isD_C_applicable = req.body.isD_C_applicable;
 
   let status = "";
   let totalReceived = 0;
   let totalReceived_toCompute = 0;
   let totalRemaining = 0;
   let freighCost;
+  let custom_cost_value;
   let initialReceiveStatus = "";
   let isComplete = false
   
@@ -352,6 +358,8 @@ router.route("/insertReceived").post(async (req, res) => {
     isComplete
   } else if (receving_site === "Agusan Del Sur") {
     status = "For Approval";
+
+   
   }
 
   // Output the formatted current date and time in Manila time zone
@@ -373,9 +381,26 @@ router.route("/insertReceived").post(async (req, res) => {
     isComplete = false
   }
 
+  if(isD_C_applicable === false){
+    custom_cost_value = 0
+  }else{
+    custom_cost_value = customFee
+  }
 
+  if(isSF_applicable === false){
+    freighCost = 0
+  }else{
+    if (shippingFee === ''){
+      freighCost = null
+    }else{
+      freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
+    }
+  }
 
-  freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
+  // console.log(`customFee ${custom_cost_value}`)
+  // console.log(`customFee ${isD_C_applicable}`)
+  // console.log(`freighCost ${freighCost}`) 
+  // console.log(`freighCost ${isSF_applicable}`) 
 
 
   const updateReceivingPOS = await PR_PO.update(
@@ -391,13 +416,14 @@ router.route("/insertReceived").post(async (req, res) => {
     const received_PO = await Receiving_PO.create({
       pr_id: pr_id,
       po_id: po_id,
-      freight_cost: freighCost === '0.00' ? null : freighCost,
-      customFee: customFee,
+      freight_cost: freighCost,
+      customFee: custom_cost_value,
       totalReceived: totalReceived,
       ref_code: refCode,
       status: status,
       receivedSite: receving_site,
       initialReceive: initialReceiveStatus,
+      masterlist_id: userId
     });
   
     // console.log('dwadwa' + received_PO.id)
@@ -579,7 +605,8 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   const userId = req.body.userId;
 
   const refCodes = req.body.refCodes
-
+  const isSF_applicable = req.body.isSF_applicable;
+  const isD_C_applicable = req.body.isD_C_applicable;
   const receivingPOS_ID = req.body.id;
 
   let status = "";
@@ -587,6 +614,7 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   let totalReceived_toCompute = 0;
   let totalRemaining = 0;
   let freighCost;
+  let custom_cost_value;
   let initialReceiveStatus = "";
   let isComplete = false;
   // let finalSF;
@@ -624,7 +652,21 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
     isComplete = false
   }
 
-  freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
+  if(isD_C_applicable === false){
+    custom_cost_value = 0
+  }else{
+    custom_cost_value = customFee
+  }
+
+  if(isSF_applicable === false){
+    freighCost = 0
+  }else{
+    if (shippingFee === ''){
+      freighCost = null
+    }else{
+      freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
+    }
+  }
 
   const updateReceivingPOS = Receiving_PO.update(
     {
@@ -640,13 +682,14 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
     const received_PO = await Receiving_PO.create({
       pr_id: pr_id,
       po_id: po_id,
-      freight_cost: freighCost === '0.00' ? null : freighCost,
-      customFee: customFee,
+      freight_cost: freighCost,
+      customFee: custom_cost_value,
       totalReceived: totalReceived,
       ref_code: refCodes,
       status: 'For Approval',
       initialReceive: initialReceiveStatus,
-      receivedSite: receving_site
+      receivedSite: receving_site,
+      masterlist_id: userId
     });
 
     for (const parent of parentArray) {
@@ -1579,7 +1622,7 @@ router.route("/approval").post(async (req, res) => {
 
 
   const manilaTimezone = "Asia/Manila";
-moment.tz.setDefault(manilaTimezone);
+  moment.tz.setDefault(manilaTimezone);
 
 // Get the current datetime in Manila timezone
 const currentDateTimeInManila = moment();
@@ -1589,18 +1632,24 @@ const currentDateTimeInManila = moment();
 
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
-      if(product.freight_cost === '' && product.customFee === ''){
+      // console.log(`freight_cost ${product.freight_cost}`)
+      // console.log(`customFee ${product.customFee}`)
+
+    
+      if(product.freight_cost === undefined  && product.customFee === undefined ){
         final_status = 'Delivered (Lack of Cost)'
       }
-      else if (product.freight_cost === '' ){
+      else if (product.freight_cost === undefined  ){
         final_status = 'Delivered (Lack of FreightCost)'
       }
-      else if (product.customFee === ''){
+      else if (product.customFee === undefined ){
         final_status = 'Delivered (Lack of CustomCost)'
       }
       else{
         final_status = 'Delivered'
       }
+
+      // console.log(final_status)
     }
   }
 
@@ -1608,23 +1657,14 @@ const currentDateTimeInManila = moment();
 
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
-      let set_quantity;
-  
-      if (product.set_quantity === "0") {
-        set_quantity = 1;
-      } else {
-        set_quantity = product.set_quantity;
-      }
-  
-      const finalQuantity = product.Base_quantity * set_quantity;
-  
-      // console.log(finalQuantity)
+
       await Inventory.create({
-        product_tag_supp_id: product.product_tag_id,
+        product_tag_supp_id: product.product_tag_supp_id,
         reference_number: product.ref_code,
-        static_quantity: finalQuantity,
-        quantity: finalQuantity,
-        price: product.price,
+        static_quantity: product.quantity,
+        quantity: product.quantity,
+        set_quantity: product.set_quantity,
+        price: product.perPiece_price,
         warehouse_id: 1,
         freight_cost: product.freight_cost,
         custom_cost: product.customFee,

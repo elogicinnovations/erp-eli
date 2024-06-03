@@ -127,6 +127,17 @@ function ReceivingStockTransfer({ authrztn }) {
     setFilteredPR(filteredData);
   };
 
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
+
   const handleXCircleClick = () => {
     setStartDate(null);
   };
@@ -388,10 +399,11 @@ function ReceivingStockTransfer({ authrztn }) {
                   <thead>
                     <tr>
                       <th className="tableh">Transfer ID</th>
-                      <th className="tableh">Remarks</th>
-                      <th className="tableh">Source</th>
-                      <th className="tableh">Destination</th>
                       <th className="tableh">Reference #</th>
+                      <th className="tableh">Source Warehouse</th>
+                      <th className="tableh">Destination Warehouse</th>
+                      <th className="tableh">Approved BY:</th>
+                      <th className="tableh">Approved Date:</th>
                     </tr>
                   </thead>
                   {filteredPR.length > 0 ? (
@@ -414,7 +426,7 @@ function ReceivingStockTransfer({ authrztn }) {
                               )
                             }
                           >
-                            {data.remarks}
+                            {data.reference_code}
                           </td>
                           <td
                             onClick={() =>
@@ -441,8 +453,18 @@ function ReceivingStockTransfer({ authrztn }) {
                               )
                             }
                           >
-                            {data.reference_code}
+                            {data.approver.col_Fname}
                           </td>
+                          <td
+                            onClick={() =>
+                              navigate(
+                                `/viewToReceivingStockTransfer/${data.stock_id}`
+                              )
+                            }
+                          >
+                            {formatDatetime(data.date_approved)}
+                          </td>
+                          
                         </tr>
                       ))}
                     </tbody>

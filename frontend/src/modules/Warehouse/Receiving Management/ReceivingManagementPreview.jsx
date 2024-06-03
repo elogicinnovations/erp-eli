@@ -48,7 +48,8 @@ function ReceivingManagementPreview({ authrztn }) {
   const [remarks, setRemarks] = useState();
   const [status, setStatus] = useState();
   const [dateCreated, setDateCreated] = useState();
-
+  const [isSF_applicable, setIsSF_applicable] = useState(true);
+  const [isD_C_applicable, setIsD_C_applicable] = useState(true);
   const [refCode, setRefCode] = useState("");
 
   const [show, setShow] = useState(false);
@@ -275,11 +276,25 @@ function ReceivingManagementPreview({ authrztn }) {
   //   }));
   // };
 
-  const [shippingFee, setShippingFee] = useState("");
   const [customFee, setcustomFee] = useState("");
-  const handleInputChangeShipping = (value) => {
-    setShippingFee(value);
+  const [shippingFee, setShippingFee] = useState("");
+
+  const handleDutiesChange = () => {
+    setIsD_C_applicable(prevState => {
+      const newApplicable = !prevState;
+      setcustomFee(newApplicable ? "" : "0");
+      return newApplicable;
+    });
   };
+  
+  const handleShippingChange = () => {
+    setIsSF_applicable(prevState => {
+      const newApplicable = !prevState;
+      setShippingFee(newApplicable ? "" : "0");
+      return newApplicable;
+    });
+  };
+  
 
   const handleInputChange = (value, productValue, inputType, po_quantity) => {
     setInputValues((prevInputs) => {
@@ -361,6 +376,10 @@ function ReceivingManagementPreview({ authrztn }) {
   const [suppReceving, setsuppReceving] = useState("");
   const handleChangeReceiving = (event) => {
     setsuppReceving(event.target.value);
+    setShippingFee("")
+    setcustomFee("")
+    setIsD_C_applicable(true)
+    setIsSF_applicable(true)
   };
 
   const [addReceivebackend, setReceivebackend] = useState([]);
@@ -445,6 +464,8 @@ function ReceivingManagementPreview({ authrztn }) {
                 pr_id: prID,
                 userId,
                 refCode,
+                isSF_applicable,
+                isD_C_applicable
               }
             );
     
@@ -881,88 +902,86 @@ function ReceivingManagementPreview({ authrztn }) {
           </Modal.Header>
 
           <Modal.Body>
-            <div className="row p-0">
-              <div className="col-6 align-items-center">
-                <div className="d-flex w-100">
-                  <div className="d-flex flex-column w-100">
-                    <span className="h2 mb-3">
-                      {`Supplier: ${supplier_code} - ${supplier_name}`}
-                    </span>
-                    <span className="h2">
-                      Reference Code:{" "}
-                      <span className="text-decoration-underline">
-                        {refCode}
-                      </span>
-                    </span>
-                  </div>
-                </div>
-              </div>
+          <div className="row p-0">
+  <div className="col-6 align-items-center">
+    <div className="d-flex w-100">
+      <div className="d-flex flex-column w-100">
+        <span className="h2 mb-3">
+          {`Supplier: ${supplier_code} - ${supplier_name}`}
+        </span>
+        <span className="h2">
+          Reference Code:{" "}
+          <span className="text-decoration-underline">
+            {refCode}
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
 
-              {suppReceving === "Agusan Del Sur" ? (
-                <div className="col-6">
-                  <div className="d-flex w-100">
-                    <div className="w-50 d-flex flex-column" style={{ float: "right" }}>
-                      <Form.Label className="h4">
-                        Duties & Custom Fee:
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        className="w-100"
-                        style={{
-                          // height: "35px",
-                          // width: "100px",
-                          // fontSize: "14px",
-
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                        onChange={(e) => setcustomFee(e.target.value)}
-                        onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
-                            e.preventDefault();
-                        }}
-                      />
-                      
-                    </div>
-                    <div className="w-50 d-flex flex-column" style={{ float: "right" }}>
-                      <Form.Label className="h4">Shipping Fee:</Form.Label>
-                      <Form.Control
-                        type="number"
-                        className="w-100"
-                        style={{
-                          // height: "35px",
-                          // width: "100px",
-                          // fontSize: "14px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                        onChange={(e) =>
-                          handleInputChangeShipping(e.target.value)
-                        }
-                        onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
-                            e.preventDefault();
-                        }}
-                      />
-
-                    </div>
-                  </div>
-                  <div className="d-flex w-100">
-                    <div className="w-50">
-                      {/* <Form.Label className="h4">
-                        Duties & Custom Fee:
-                      </Form.Label> */}
-                      
-                     
-                    </div>
-                    <div className="w-50">
-                      {/* <Form.Label className="h4">Shipping Fee:</Form.Label> */}
-                      
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="col-6"></div>
-              )}
-            </div>
+  {suppReceving === "Agusan Del Sur" ? (
+     <div className="col-6">
+     <div className="d-flex w-100">
+       <div className="w-50" style={{ float: "right" }}>
+         <div className="d-flex align-items-center">
+           <Form.Label className="h4 mb-0">
+             Duties & Custom Fee:
+           </Form.Label>
+           <Form.Check
+             type="switch"
+             className="ml-3"
+             style={{ fontSize: "15px", color: "red" }}
+             checked={isD_C_applicable}
+             onClick={handleDutiesChange}
+           />
+         </div>
+         <Form.Control
+           type="number"
+           className="w-100"
+           readOnly={!isD_C_applicable}
+           value={isD_C_applicable ? customFee : "0"}
+           style={{
+             fontFamily: "Poppins, Source Sans Pro",
+           }}
+           onChange={(e) => setcustomFee(e.target.value)}
+           onKeyDown={(e) => {
+             ["e", "E", "+", "-"].includes(e.key) &&
+               e.preventDefault();
+           }}
+         />
+       </div>
+       <div className="w-50" style={{ float: "right" }}>
+         <div className="d-flex align-items-center">
+           <Form.Label className="h4 mb-0">Shipping Fee:</Form.Label>
+           <Form.Check
+             type="switch"
+             className="ml-3"
+             style={{ fontSize: "15px", color: "red" }}
+             checked={isSF_applicable}
+             onClick={handleShippingChange}
+           />
+         </div>
+         <Form.Control
+           type="number"
+           className="w-100"
+           readOnly={!isSF_applicable}
+           value={isSF_applicable ? shippingFee : "0"}
+           style={{
+             fontFamily: "Poppins, Source Sans Pro",
+           }}
+           onChange={(e) => setShippingFee(e.target.value)}
+           onKeyDown={(e) => {
+             ["e", "E", "+", "-"].includes(e.key) &&
+               e.preventDefault();
+           }}
+         />
+       </div>
+     </div>
+   </div>
+  ) : (
+    <div className="col-6"></div>
+  )}
+</div>
 
             <div className="row mb-5">
               {productImages.length > 0 && (

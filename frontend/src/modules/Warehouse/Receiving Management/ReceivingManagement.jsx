@@ -421,7 +421,8 @@ function ReceivingManagement({ authrztn }) {
                     <tr>
                       <th className="tableh">PO NO.</th>
                       <th className="tableh">PR NO.</th>
-                      <th className="tableh">Requestor</th>
+                      <th className="tableh">Received By:</th>
+                      <th className="tableh">Requestor</th>                     
                       <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
                       <th className="tableh">PO Approved Date</th>
@@ -486,9 +487,28 @@ function ReceivingManagement({ authrztn }) {
                              
                             }
                           >
-                            {data.purchase_req.masterlist.col_Fname}
+                             { data.source === 'PO' ? ('n/a') : (data.masterlist.col_Fname)}
+                            
                           </td>
+                          <td
+                             onClick={() =>
 
+                              data.source === 'PO' ? (
+                                navigate(`/viewToReceive/${data.po_id}`)
+                              ) : (
+                                data.status === "For Approval" ? (
+                                  navigate(`/receivingPreview/${data.id}`)
+                                ) : data.status === "In-transit" ? (
+                                  navigate(`/receivingIntransit/${data.id}`)
+                                ) : (
+                                  <></>
+                                )
+                              )
+                             
+                            }
+                          >
+                           {data.purchase_req.masterlist.col_Fname}
+                          </td>
                           <td
                             onClick={() =>
 

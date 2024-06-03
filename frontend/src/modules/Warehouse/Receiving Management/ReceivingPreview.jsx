@@ -332,13 +332,6 @@ function ReceivingPreview({ authrztn }) {
         })
         .then((res) => {
           setproducts(res.data.product);
-
-          // const mapping = res.data.product[0] ? res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
-          //                 : res.data.assembly[0] ? res.data.assembly[0].purchase_req_canvassed_asmbly.assembly_supplier
-          //                 : res.data.spare[0] ? res.data.spare[0].purchase_req_canvassed_spare.sparepart_supplier
-          //                 : res.data.subpart[0].purchase_req_canvassed_subpart.subpart_supplier
-
-          // console.log(mapping)
           setSupplierCode(
             res.data.product[0].purchase_req_canvassed_prd.product_tag_supplier
               .supplier.supplier_code
@@ -377,26 +370,31 @@ function ReceivingPreview({ authrztn }) {
           {
             params: {
               id: id,
-              prod: products.map((data) => ({
-                product_tag_id:
-                  data.purchase_req_canvassed_prd.product_tag_supplier.id,
-                Base_quantity: data.received_quantity,
-                set_quantity: data.set_quantity,
-                ref_code: data.receiving_po.ref_code,
-                price:
-                  data.purchase_req_canvassed_prd.purchase_price,
-                freight_cost: data.receiving_po.freight_cost === null
-                ? 0
-                : data.receiving_po.freight_cost,
-                customFee:
-                  data.receiving_po.customFee === null
-                    ? 0
-                    : data.receiving_po.customFee,
-              })),
-              
+              prod: products.map((data) => {
+                let purchase_price = data.purchase_req_canvassed_prd.purchase_price;
+                let Base_quantity = data.received_quantity;
+                let set_quantity = data.set_quantity;
+                let product_tag_id = data.purchase_req_canvassed_prd.product_tag_supplier.id;
+                let ref_code = data.receiving_po.ref_code;
+                let freight_cost = data.receiving_po.freight_cost;
+                let customFee = data.receiving_po.customFee;
+
+                let totalPurchasePrice = purchase_price * Base_quantity
+                let perPiece_price = totalPurchasePrice / (Base_quantity * set_quantity)
+                return {
+                  product_tag_supp_id: product_tag_id,
+                  quantity: Base_quantity * set_quantity,
+                  set_quantity: set_quantity,
+                  perPiece_price: perPiece_price,
+                  ref_code: ref_code,
+                  freight_cost: freight_cost,
+                  customFee: customFee
+                };
+              }),
             },
           }
         );
+        
 
         if (response.status === 200) {
           swal({
@@ -739,10 +737,12 @@ function ReceivingPreview({ authrztn }) {
                                 .product_tag_supplier.product_price
                             }
                           </td>
-                          <td>{data.receiving_po.freight_cost}</td>
+                          <td>{data.receiving_po.freight_cost === null
+                              ? 'Pending Cost'
+                              : data.receiving_po.freight_cost}</td>
                           <td>
                             {data.receiving_po.customFee === null
-                              ? 0
+                              ? 'Pending Cost'
                               : data.receiving_po.customFee}
                           </td>
                         </tr>
@@ -877,6 +877,7 @@ function ReceivingPreview({ authrztn }) {
                           </th>
                           <th className="tableh">Landed Cost (qty)</th>
                           <th className="tableh">Total Landed Cost</th>
+                          <th className="tableh">VAT</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -891,6 +892,8 @@ function ReceivingPreview({ authrztn }) {
                           let totalCustomFee = 0;
                           let totalLandedCostOverAll = 0;
                           let totalTotalLandedCost = 0;
+                          let totalVat = 0
+                    
 
                           // Map through products and calculate totals
                           const rows = products.map((data, i) => {
@@ -899,6 +902,11 @@ function ReceivingPreview({ authrztn }) {
                                 product_tag_supplier: { product },
                                 purchase_price,
                               },
+                          
+                                purchase_req_canvassed_prd: {
+                                  product_tag_supplier: { supplier },
+                                  
+                                },
                               transfered_quantity,
                               received_quantity,
                               set_quantity,
@@ -907,15 +915,24 @@ function ReceivingPreview({ authrztn }) {
 
                             const customFeeValue =
                               customFee === null ? 0 : customFee;
+                            const freight_cost_value =
+                              freight_cost === null ? 0 : freight_cost;
+
+                            const VAT =
+                              supplier.supplier_vat === null ? 0 : supplier.supplier_vat;
+
+
                             const unitCost = product.UOM_set
                               ? purchase_price / set_quantity +
-                                freight_cost +
+                              freight_cost_value +
                                 customFeeValue
-                              : purchase_price + freight_cost + customFeeValue;
+                              : purchase_price + freight_cost_value + customFeeValue;
 
                             const totalLandedCost = product.UOM_set
                               ? unitCost * set_quantity * received_quantity
                               : unitCost * received_quantity;
+
+                              const vatPrice = (totalLandedCost * (VAT / 100)) + totalLandedCost
 
                             // Update totals
                             totalInitialReceived += transfered_quantity || 0;
@@ -924,10 +941,12 @@ function ReceivingPreview({ authrztn }) {
                             totalPurchasedPrice += purchase_price || 0;
                             totalTotalPrice +=
                               received_quantity * purchase_price || 0;
-                            totalFreightCost += freight_cost || 0;
+                            totalFreightCost += freight_cost_value || 0;
                             totalCustomFee += customFeeValue || 0;
                             totalLandedCostOverAll += unitCost || 0;
                             totalTotalLandedCost += totalLandedCost || 0;
+                            
+                            totalVat += vatPrice
 
                             return (
                               <tr key={i}>
@@ -956,9 +975,10 @@ function ReceivingPreview({ authrztn }) {
                                   })}
                                 </td>
                                 <td>
-                                  {freight_cost.toLocaleString(undefined, {
+                                  {freight_cost_value.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
                                   })}
+                                  {/* {freight_cost_value} */}
                                 </td>
                                 <td>
                                   {customFeeValue.toLocaleString(undefined, {
@@ -972,6 +992,11 @@ function ReceivingPreview({ authrztn }) {
                                 </td>
                                 <td>
                                   {totalLandedCost.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </td>
+                                <td>
+                                  {vatPrice.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
                                   })}
                                 </td>
@@ -1014,6 +1039,12 @@ function ReceivingPreview({ authrztn }) {
                               </td>
                               <td>
                                 {totalTotalLandedCost.toLocaleString(
+                                  undefined,
+                                  { minimumFractionDigits: 2 }
+                                )}
+                              </td>
+                              <td>
+                                {totalVat.toLocaleString(
                                   undefined,
                                   { minimumFractionDigits: 2 }
                                 )}

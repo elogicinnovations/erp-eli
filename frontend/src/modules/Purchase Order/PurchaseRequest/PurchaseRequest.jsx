@@ -378,13 +378,12 @@ function PurchaseRequest({ authrztn }) {
       if (cancel) {
         try {
           if (
-            row_status !== "For-Approval" &&
-            row_status !== "For-Rejustification"
+            row_status !== "For-Approval" 
           ) {
             swal({
               icon: "error",
               title: "Cancel Prohibited",
-              text: 'You can only cancel a request that is "Pending" OR "For-Rejustification"',
+              text: 'You can only cancel a request that is "Pending"',
             });
           } else {
             const response = await axios.put(BASE_URL + `/PR/cancel`, {
@@ -583,9 +582,8 @@ function PurchaseRequest({ authrztn }) {
                       <option value="For-Canvassing">For-Canvassing</option>
                       <option value="On-Canvass">For-PO</option>
                       <option value="For-Approval (PO)">
-                        For-Approval (PO)
+                        PO
                       </option>
-                      <option value="Ordered">Ordered</option>
                     </Form.Select>
                     <div className="pur-filt-container">
                       <button
@@ -750,11 +748,9 @@ function PurchaseRequest({ authrztn }) {
                                           width: "105px",
                                         }}
                                       >
-                                        {data.status === "For-Rejustify"
-                                          ? "Rejustified"
-                                          : data.status === "On-Canvass"
+                                        {data.status === "On-Canvass"
                                           ? "Pending PR"
-                                          : data.status}
+                                          : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
                                       </div>
                                     </>
                                   ) : (
@@ -770,11 +766,9 @@ function PurchaseRequest({ authrztn }) {
                                           width: "105px",
                                         }}
                                       >
-                                        {data.status === "For-Rejustify"
-                                          ? "Rejustified"
-                                          : data.status === "On-Canvass"
+                                        {data.status === "On-Canvass"
                                           ? "For-PO"
-                                          : data.status}
+                                          : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
                                       </div>
                                     </>
                                   )}
@@ -812,7 +806,7 @@ function PurchaseRequest({ authrztn }) {
                                       <div className="d-flex flex-direction-row align-items-center">
                                         {data.status !== "Cancelled" &&
                                           data.status !== "Rejected" &&
-                                          data.status !== "For-Rejustify" &&
+                                          data.status !== "Rejustified" &&
                                           data.status !== "For-Canvassing" &&
                                           data.status !== "On-Canvass" &&
                                           data.status !== "For-Approval (PO)" &&
@@ -1065,11 +1059,9 @@ function PurchaseRequest({ authrztn }) {
                                               width: "105px",
                                             }}
                                           >
-                                            {data.status === "For-Rejustify"
-                                              ? "Rejustified"
-                                              : data.status === "On-Canvass"
+                                            {data.status === "On-Canvass"
                                               ? "Pending PR"
-                                              : data.status}
+                                              : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
                                           </div>
                                         </>
                                       ) : (
@@ -1085,11 +1077,9 @@ function PurchaseRequest({ authrztn }) {
                                               width: "105px",
                                             }}
                                           >
-                                            {data.status === "For-Rejustify"
-                                              ? "Rejustified"
-                                              : data.status === "On-Canvass"
+                                            {data.status === "On-Canvass"
                                               ? "For-PO"
-                                              : data.status}
+                                              : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
                                           </div>
                                         </>
                                       )}
@@ -1127,7 +1117,7 @@ function PurchaseRequest({ authrztn }) {
                                           <div className="d-flex flex-direction-row align-items-center">
                                             {data.status !== "Cancelled" &&
                                               data.status !== "Rejected" &&
-                                              data.status !== "For-Rejustify" &&
+                                              data.status !== "Rejustified" &&
                                               data.status !==
                                                 "For-Canvassing" &&
                                               data.status !== "On-Canvass" &&

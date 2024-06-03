@@ -94,6 +94,7 @@ const StockTransfer_prod = require("./stockTransfer_product.model");
 const StockTransfer_assembly = require("./stockTransfer_assembly.model");
 const StockTransfer_spare = require("./stockTransfer_spare.model");
 const StockTransfer_subpart = require("./stockTransfer_subpart.model");
+const ST_REJECT = require("./stockTransfer_reject.model");
 
 const Warehouses = require("./warehouse.model");
 
@@ -211,6 +212,9 @@ StockTransfer.belongsTo(Warehouses, { foreignKey: "destination", as: "Destinatio
 
 Warehouses.hasMany(StockTransfer, { foreignKey: "source", as: "SourceWarehouse" });
 StockTransfer.belongsTo(Warehouses, { foreignKey: "source", as: "SourceWarehouse" });
+
+
+
 
 // product_spareparts` table
 Product.hasMany(Product_Spareparts, { foreignKey: "product_id" });
@@ -465,12 +469,23 @@ Manufacturer.hasMany(Assembly, { foreignKey: "assembly_manufacturer" });
 Assembly.belongsTo(Manufacturer, { foreignKey: "assembly_manufacturer" });
 
 //--------------Stock Transfer Masterlist table
-MasterList.hasMany(StockTransfer, { foreignKey: "col_id" });
-StockTransfer.belongsTo(MasterList, { foreignKey: "col_id" });
+MasterList.hasMany(StockTransfer, { foreignKey: "col_id", as: "requestor" });
+StockTransfer.belongsTo(MasterList, { foreignKey: "col_id", as: "requestor" });
+
+MasterList.hasMany(StockTransfer, { foreignKey: "masterlist_id", as: "approver" });
+StockTransfer.belongsTo(MasterList, { foreignKey: "masterlist_id", as: "approver" });
+
+MasterList.hasMany(ST_REJECT, { foreignKey: "masterlist_id" });
+ST_REJECT.belongsTo(MasterList, { foreignKey: "masterlist_id" });
+
+StockTransfer.hasMany(ST_REJECT, { foreignKey: "stocktransfer_id" });
+ST_REJECT.belongsTo(StockTransfer, { foreignKey: "stocktransfer_id" });
 
 //--------------Stock Transfer Product table
 StockTransfer.hasMany(StockTransfer_prod, { foreignKey: "stockTransfer_id" });
 StockTransfer_prod.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+
+
 
 Product.hasMany(StockTransfer_prod, { foreignKey: "product_id" });
 StockTransfer_prod.belongsTo(Product, { foreignKey: "product_id" });
@@ -502,6 +517,9 @@ StockTransfer_subpart.belongsTo(SubPart, { foreignKey: "product_id" });
 //--------------Stock Transfer rejustify
 StockTransfer.hasMany(Stock_Rejustify, { foreignKey: "stockTransfer_id" });
 Stock_Rejustify.belongsTo(StockTransfer, { foreignKey: "stockTransfer_id" });
+
+MasterList.hasMany(Stock_Rejustify, { foreignKey: "masterlist_id" });
+Stock_Rejustify.belongsTo(MasterList, { foreignKey: "masterlist_id" });
 
 //--------------Stock Transfer history
 StockTransfer.hasMany(Stock_History, { foreignKey: "stockTransfer_id" });
@@ -585,6 +603,9 @@ Receiving_Subpart.belongsTo(PR_PO_subpart, { foreignKey: "canvassed_id" });
 
 Receiving_PO.hasMany(Receiving_Prd, { foreignKey: "receiving_po_id" });
 Receiving_Prd.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
+
+MasterList.hasMany(Receiving_PO, { foreignKey: "masterlist_id" });
+Receiving_PO.belongsTo(MasterList, { foreignKey: "masterlist_id" });
 
 Receiving_PO.hasMany(Receiving_Asm, { foreignKey: "receiving_po_id" });
 Receiving_Asm.belongsTo(Receiving_PO, { foreignKey: "receiving_po_id" });
@@ -728,6 +749,7 @@ module.exports = {
   StockTransfer_subpart,
   Stock_Rejustify,
   Stock_History,
+  ST_REJECT,
 
   Warehouses,
   Department,

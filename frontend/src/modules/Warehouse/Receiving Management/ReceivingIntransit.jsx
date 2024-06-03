@@ -282,8 +282,22 @@ function ReceivingIntransit({ authrztn }) {
 
   const [shippingFee, setShippingFee] = useState("");
   const [customFee, setcustomFee] = useState("");
-  const handleInputChangeShipping = (value) => {
-    setShippingFee(value);
+  const [isSF_applicable, setIsSF_applicable] = useState(true);
+  const [isD_C_applicable, setIsD_C_applicable] = useState(true);
+  const handleDutiesChange = () => {
+    setIsD_C_applicable(prevState => {
+      const newApplicable = !prevState;
+      setcustomFee(newApplicable ? "" : "0");
+      return newApplicable;
+    });
+  };
+  
+  const handleShippingChange = () => {
+    setIsSF_applicable(prevState => {
+      const newApplicable = !prevState;
+      setShippingFee(newApplicable ? "" : "0");
+      return newApplicable;
+    });
   };
 
   const handleInputChange = (value, productValue, inputType, po_quantity) => {
@@ -431,6 +445,8 @@ function ReceivingIntransit({ authrztn }) {
                 productImages,
                 customFee,
                 shippingFee,
+                isD_C_applicable,
+                isS_F_applicable,
                 suppReceving,
                 refCodes,
                 poID,
@@ -847,49 +863,61 @@ function ReceivingIntransit({ authrztn }) {
               {suppReceving === "Agusan Del Sur" ? (
                 <div className="col-6">
                   <div className="d-flex w-100">
-                    <div className="w-50" style={{ float: "right" }}>
-                      <Form.Label className="h4">
-                        Duties & Custom Fee:
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        className="w-100"
-                        style={{
-                          // height: "35px",
-                          // width: "100px",
-                          // fontSize: "14px",
-
-                          fontFamily: "Poppins, Source Sans Pro",
-                        }}
-                        onChange={(e) => setcustomFee(e.target.value)}
-                        onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
-                            e.preventDefault();
-                        }}
-                      />
-                    </div>
-                    <div className="w-50" style={{ float: "right" }}>
-                      <Form.Label className="h4">Shipping Fee:</Form.Label>
-                      <Form.Control
-                        type="number"
-                        className="w-100"
-                        style={{
-                          // height: "35px",
-                          // width: "100px",
-                          // fontSize: "14px",
-                          fontFamily: "Poppins, Source Sans Pro",
-                          marginLeft: "5px",
-                        }}
-                        onChange={(e) =>
-                          handleInputChangeShipping(e.target.value)
-                        }
-                        onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
-                            e.preventDefault();
-                        }}
-                      />
-                    </div>
-                  </div>
+       <div className="w-50" style={{ float: "right" }}>
+         <div className="d-flex align-items-center">
+           <Form.Label className="h4 mb-0">
+             Duties & Custom Fee:
+           </Form.Label>
+           <Form.Check
+             type="switch"
+             className="ml-3"
+             style={{ fontSize: "15px", color: "red" }}
+             checked={isD_C_applicable}
+             onClick={handleDutiesChange}
+           />
+         </div>
+         <Form.Control
+           type="number"
+           className="w-100"
+           readOnly={!isD_C_applicable}
+           value={isD_C_applicable ? customFee : "0"}
+           style={{
+             fontFamily: "Poppins, Source Sans Pro",
+           }}
+           onChange={(e) => setcustomFee(e.target.value)}
+           onKeyDown={(e) => {
+             ["e", "E", "+", "-"].includes(e.key) &&
+               e.preventDefault();
+           }}
+         />
+       </div>
+       <div className="w-50" style={{ float: "right" }}>
+         <div className="d-flex align-items-center">
+           <Form.Label className="h4 mb-0">Shipping Fee:</Form.Label>
+           <Form.Check
+             type="switch"
+             className="ml-3"
+             style={{ fontSize: "15px", color: "red" }}
+             checked={isSF_applicable}
+             onClick={handleShippingChange}
+           />
+         </div>
+         <Form.Control
+           type="number"
+           className="w-100"
+           readOnly={!isSF_applicable}
+           value={isSF_applicable ? shippingFee : "0"}
+           style={{
+             fontFamily: "Poppins, Source Sans Pro",
+           }}
+           onChange={(e) => setShippingFee(e.target.value)}
+           onKeyDown={(e) => {
+             ["e", "E", "+", "-"].includes(e.key) &&
+               e.preventDefault();
+           }}
+         />
+       </div>
+     </div>
                 </div>
               ) : (
                 <div className="col-6"></div>

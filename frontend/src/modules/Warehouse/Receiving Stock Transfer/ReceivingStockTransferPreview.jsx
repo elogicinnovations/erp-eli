@@ -74,10 +74,10 @@ function ReceivingStockTransferPreview({ authrztn }) {
           setDestination(res.data[0].DestinationWarehouse.warehouse_name);
           setDestination_id(res.data[0].DestinationWarehouse.id);
           setReferenceCode(res.data[0].reference_code);
-          setUsers(res.data[0].masterlist.col_Fname);
+          setUsers(res.data[0].approver.col_Fname);
           setRemarks(res.data[0].remarks);
           setStatus(res.data[0].status);
-          setDateCreated(res.data[0].createdAt);
+          setDateCreated(res.data[0].date_approved);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -918,14 +918,14 @@ function ReceivingStockTransferPreview({ authrztn }) {
                       </div>
 
                       <div className="transferby">
-                        <span>Transfer By</span>
+                        <span>Approved By</span>
                         <span><strong>{users}</strong></span>
                       </div>
                     </div>
 
                     <div className="dateandtoreceive">
                       <div className="datefields">
-                        <span>Date</span>
+                        <span>Date Approved</span>
                         <span>{formatDatetime(dateCreated)}</span>
                       </div>
                       <div className="toreceive">
@@ -944,6 +944,7 @@ function ReceivingStockTransferPreview({ authrztn }) {
                     <Form.Control
                       onChange={(e) => setRemarks(e.target.value)}
                       value={remarks}
+                      readOnly
                       as="textarea"
                       rows={3}
                       style={{
