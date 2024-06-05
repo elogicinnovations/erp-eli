@@ -27,7 +27,15 @@ const IssuedReturn = sequelize.define('return_prd', {
   },
   return_by: {
     type: DataTypes.INTEGER
-  } 
+  },
+  retained_by: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  date_retained: {
+    type: DataTypes.DATE,
+    allowNull: true
+  }  
 });
 
 module.exports = IssuedReturn;

@@ -3431,6 +3431,32 @@ td.autho {
   padding: 10px;
 }
 
+.printIssuance{
+  display: flex;
+}
+
+.printIssuance button{
+  background-color: #FFA500;
+  border: none;
+  width: 100px;
+  height: 40px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.printIssuance button:hover {
+  background-color: #fac840;
+}
+
+.printIssuance button:disabled {
+  cursor: not-allowed;
+  background-color: #FFA500;
+}
+
+.printIssuance button:disabled:hover {
+  background-color: #FFA500;
+}
+
 .tab-titles {
   display: flex;
   padding: 15px;

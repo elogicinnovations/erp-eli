@@ -42,7 +42,7 @@ const Inventory = require("./inventory.model");
 const Inventory_Assembly = require("./inventory_assembly.model");
 const Inventory_Spare = require("./inventory_spare.model");
 const Inventory_Subpart = require("./inventory_subpart.model");
-
+const Accountability = require("./accountability.model")
 const Issuance = require("./issuance.model");
 const IssuedProduct = require("./issued_product.model");
 const IssuedAssembly = require("./issued_assembly.model");
@@ -103,6 +103,12 @@ const Warehouses = require("./warehouse.model");
 
 UserRole.hasMany(MasterList, { foreignKey: "col_roleID" });
 MasterList.belongsTo(UserRole, { foreignKey: "col_roleID" });
+
+IssuedApproveProduct.hasMany(Accountability, {foreignKey: "issued_approve_prd_id"});
+Accountability.belongsTo(IssuedApproveProduct, {foreignKey: "issued_approve_prd_id"});
+
+// MasterList.hasMany(Accountability, { foreignKey: "masterlist_id" });
+// Accountability.belongsTo(MasterList, { foreignKey: "masterlist_id" });
 
 Department.hasMany(MasterList, { foreignKey: "department_id" });
 MasterList.belongsTo(Department, { foreignKey: "department_id" });
@@ -268,11 +274,11 @@ Inventory_Subpart.belongsTo(Subpart_supplier, {
   foreignKey: "subpart_tag_supp_id",
 });
 
-MasterList.hasMany(Issuance, { foreignKey: "received_by" });
-Issuance.belongsTo(MasterList, { foreignKey: "received_by" });
+MasterList.hasMany(Issuance, { foreignKey: "received_by", as: "receiver" });
+Issuance.belongsTo(MasterList, { foreignKey: "received_by", as: "receiver" });
 
-MasterList.hasMany(Issuance, { foreignKey: "transported_by" });
-Issuance.belongsTo(MasterList, { foreignKey: "transported_by" });
+MasterList.hasMany(Issuance, { foreignKey: "transported_by", as: "sender" });
+Issuance.belongsTo(MasterList, { foreignKey: "transported_by", as: "sender" });
 
 CostCenter.hasMany(Issuance, { foreignKey: "issued_to" });
 Issuance.belongsTo(CostCenter, { foreignKey: "issued_to" });
@@ -343,8 +349,11 @@ IssuedReturn.belongsTo(Inventory, { foreignKey: "inventory_id" });
 Issuance.hasMany(IssuedReturn, { foreignKey: "issued_id" });
 IssuedReturn.belongsTo(Issuance, { foreignKey: "issued_id" });
 
-MasterList.hasMany(IssuedReturn, { foreignKey: "return_by" });
-IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by" });
+MasterList.hasMany(IssuedReturn, { foreignKey: "return_by", as: "returnedBy" });
+IssuedReturn.belongsTo(MasterList, { foreignKey: "return_by", as: "returnedBy" });
+
+MasterList.hasMany(IssuedReturn, { foreignKey: "retained_by", as: "retainee" });
+IssuedReturn.belongsTo(MasterList, { foreignKey: "retained_by", as: "retainee" });
 
 //Issuance Return tab for Assmebly
 Inventory_Assembly.hasMany(IssuedReturn_asm, { foreignKey: "inventory_id" });
@@ -709,7 +718,7 @@ module.exports = {
   IssuedApproveAssembly,
   IssuedApproveSpare,
   IssuedApproveSubpart,
-
+  Accountability,
   IssuedReturn,
   IssuedReturn_asm,
   IssuedReturn_spare,

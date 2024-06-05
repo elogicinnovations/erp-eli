@@ -96,6 +96,7 @@ const costCenter = require("./routes/costCenter.route");
 
 const inventory = require("./routes/inventory.route");
 
+const accountability = require("./routes/accountability.route")
 const issuance = require("./routes/issuance.route");
 const issued_product = require("./routes/issued_product.route");
 const issued_return = require("./routes/issued_return.route");
@@ -131,7 +132,7 @@ const Report_inv = require("./routes/report_inventory.route");
 const Report_PO = require("./routes/report_PO.route");
 const Report_BIS = require("./routes/report_bis.route");
 const Report_BIS_Summary = require("./routes/report_bis_summary.route");
-
+const Retain_Report = require("./routes/retain.route")
 const Warehouse = require("./routes/warehouse.route");
 
 const authenticateToken = require("./middleware/token_authentication.middleware");
@@ -184,6 +185,7 @@ app.use("/assemblyImage", assembly_image);
 
 app.use("/inventory", inventory);
 
+app.use("/accountability", accountability)
 app.use("/issuance", issuance);
 app.use("/issued_product", issued_product);
 app.use("/issuedReturn", issued_return);
@@ -215,6 +217,7 @@ app.use("/report_inv", Report_inv);
 app.use("/report_PO", Report_PO);
 app.use("/report_BIS", Report_BIS);
 app.use("/report_BIS_Summary", Report_BIS_Summary);
+app.use("/retain", Retain_Report)
 
 app.use("/warehouses", Warehouse);
 

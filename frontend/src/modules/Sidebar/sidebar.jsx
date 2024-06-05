@@ -3,6 +3,7 @@ import "../../assets/global/style.css";
 import "../styles/react-style.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import {
+  UserCheck,
   SquaresFour,
   Users,
   Archive,
@@ -858,7 +859,41 @@ function Sidebar({ authrztn }) {
                 <ListItemText primary="BIS Summary" />
               </ListItem>
             </NavLink>
+
+            <NavLink
+              to="/retain"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`adminsub-menu ${
+                  location.pathname.startsWith("/retain") ? "active" : ""
+                }`}
+              >
+                <ListItemText primary="Retained" />
+              </ListItem>
+            </NavLink>
           </Collapse>
+
+          {authrztn.includes("Accountability - View") && (
+            <NavLink
+              to="/accountability"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`menu-item ${
+                  location.pathname === "/accountability" ? "active" : ""
+                }`}
+                onClick={toggleOff}
+              >
+                <UserCheck size={20} />
+                <ListItemText primary="Accountability" />
+              </ListItem>
+            </NavLink>
+          )}
 
           {authrztn.includes("Activity Logs - View") && (
             <NavLink

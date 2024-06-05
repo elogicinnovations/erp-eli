@@ -436,6 +436,7 @@ function Create_role() {
       "Stock Management - Approval",
       "Stock Management - Reject",
       "Report - View",
+      "Accountability - View",
       "Activity Logs - View",
     ];
 
@@ -3497,6 +3498,155 @@ function Create_role() {
                           </div>
                         </td>
                       </tr>
+
+                      <td>
+                        <h3 className="role-head">Accountability Module</h3>
+                      </td>
+                      <tr>
+                        <td>
+                          <td
+                            className="role"
+                            style={{ border: "0px", fontSize: "15px" }}
+                          >
+                            Accountability
+                          </td>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              type="checkbox"
+                              id="Accountability - View"
+                              name="vehicle1"
+                              value="Accountability - View"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Accountability - View"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Accountability - View")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Accountability - View"
+                            ></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Accountability - Add"
+                              name="vehicle1"
+                              value="Accountability - Add"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Accountability - Add"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Accountability - Add")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Accountability - Add"
+                            ></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Accountability - Edit"
+                              name="vehicle1"
+                              value="Accountability - Edit"
+                              checked={selectedCheckboxes.some(
+                                (item) => item.value === "Accountability - Edit"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Accountability - Edit")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Accountability - Edit"
+                            ></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Accountability - Delete"
+                              name="vehicle1"
+                              value="Accountability - Delete"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Accountability - Delete"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Accountability - Delete")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Accountability - Delete"
+                            ></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Accountability - Approval"
+                              name="vehicle1"
+                              value="Accountability - Approval"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Accountability - Approval"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Accountability - Approval")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Accountability - Approval"
+                            ></label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="input-group">
+                            <input
+                              disabled
+                              type="checkbox"
+                              id="Accountability - Reject"
+                              name="vehicle1"
+                              value="Accountability - Reject"
+                              checked={selectedCheckboxes.some(
+                                (item) =>
+                                  item.value === "Accountability - Reject"
+                              )}
+                              onChange={() =>
+                                handleCheckboxChange("Accountability - Reject")
+                              }
+                            />
+                            <label
+                              className="p-3"
+                              htmlFor="Accountability - Reject"
+                            ></label>
+                          </div>
+                        </td>
+                      </tr>
+
                       <td>
                         <h3 className="role-head">Activity Module</h3>
                       </td>

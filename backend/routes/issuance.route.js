@@ -27,6 +27,7 @@ const {
   SubPart,
   Warehouses,
   Activity_Log,
+  Accountability
 } = require("../db/models/associations");
 // const Issued_Product = require('../db/models/issued_product.model')
 // const Inventory = require('../db/models/issued_product.model')
@@ -38,7 +39,17 @@ router.route("/getIssuance").get(async (req, res) => {
       include: [
         {
           model: MasterList,
-          required: true,
+          as: "receiver", // Specify the alias for received_by association
+          attributes: ["col_Fname"],
+          foreignKey: "received_by", // Use the foreign key associated with received_by
+          required: true
+        },
+        {
+          model: MasterList,
+          as: "sender", // Specify the alias for transported_by association
+          attributes: ["col_Fname"],
+          foreignKey: "transported_by", // Use the foreign key associated with transported_by
+          required: true
         },
         {
           model: CostCenter,
@@ -285,6 +296,7 @@ router.route("/approval").post(async (req, res) => {
   const spare = req.query.fetchSpare;
   const subpart = req.query.fetchSubpart;
   const userId = req.query.userId;
+  const ReceivedBy = req.query.receivedBy
 
  // Get the current date and time in the Philippines time zone
  const currentDate = new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" });
@@ -301,9 +313,7 @@ router.route("/approval").post(async (req, res) => {
 
   )
   if(approve){
-    console.log('dedasadsadsad')
   if (product && product.length > 0) {
-    console.log('dedasadsadsad222')
     for (const prod of product) {
       let remainingQuantity = prod.quantity;
       const productName = prod.product.product_name;
@@ -334,7 +344,7 @@ router.route("/approval").post(async (req, res) => {
         ],
       });
 
-      checkPrd.forEach(inventory => {
+      checkPrd.forEach(async inventory => {
         console.log(
           `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
         );
@@ -346,12 +356,28 @@ router.route("/approval").post(async (req, res) => {
               where: { inventory_id: inventory.inventory_id }
           });
 
-           IssuedApproveProduct.create({
+          const getId = await IssuedApproveProduct.create({
             inventory_id: inventory.inventory_id,
             issuance_id: id,
             quantity: remainingQuantity
           })
           remainingQuantity = 0;
+
+          const ApprovedIssueProduct = getId.id
+
+          //for accountability
+          const checkAccountability = await Issuance.findOne({
+            where: {
+              issuance_id: id,
+              with_accountability: 'true'
+            },
+          })
+    
+          if(checkAccountability){
+            await Accountability.create({
+              issued_approve_prd_id: ApprovedIssueProduct,
+            })
+          }
         //   ; // Break the loop since remainingQuantity is now 0
         } else {
           console.log(
@@ -362,14 +388,31 @@ router.route("/approval").post(async (req, res) => {
               where: { inventory_id: inventory.inventory_id }
           });
 
-           IssuedApproveProduct.create({
+          const getId = await IssuedApproveProduct.create({
             inventory_id: inventory.inventory_id,
             issuance_id: id,
             quantity: inventory.quantity 
           })
+
+          const ApprovedIssueProduct = getId.id
+
+          //for accountability
+          const checkAccountability = await Issuance.findOne({
+            where: {
+              issuance_id: id,
+              with_accountability: 'true'
+            },
+          })
+    
+          if(checkAccountability){
+            await Accountability.create({
+              issued_approve_prd_id: ApprovedIssueProduct,
+            })
+          }
         }
       })
 
+      //for activity log
       const findIssuance = await Issuance.findOne({
         where: {
           issuance_id: id
@@ -385,265 +428,6 @@ router.route("/approval").post(async (req, res) => {
       await Activity_Log.create({
         masterlist_id: userId,
         action_taken: `Issuance: Approved the requested issued product ${productName} to ${nameCostcenter}`,
-      });
-    }
-  }
-
-  if (assembly && assembly.length > 0) {
-    for (const prod of assembly) {
-      let remainingQuantity = prod.quantity;
-      const AssemblyName = prod.assembly.assembly_name;
-      // console.log(`Assembly ${prod.assembly.assembly_name}`);
-      const checkPrd = await Inventory_Assembly.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: Assembly_Supplier,
-            required: true,
-
-            include: [
-              {
-                model: Assembly,
-                required: true,
-
-                where: {
-                  id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
-
-      checkPrd.forEach(inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-          Inventory_Assembly.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-           IssuedApproveAssembly.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-          Inventory_Assembly.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-          IssuedApproveAssembly.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-        }
-      })
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
-      
-      const nameCostcenter = findIssuance.cost_center.name;
-      
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the request issued product ${AssemblyName} to ${nameCostcenter}`,
-      });
-    }
-  }
-
-  if (spare && spare.length > 0) {
-    for (const prod of spare) {
-      let remainingQuantity = prod.quantity;
-      const spareName = prod.sparePart.spareParts_name
-      // console.log(`Spare part ${prod.sparePart.spareParts_name}`);
-      const checkPrd = await Inventory_Spare.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: SparePart_Supplier,
-            required: true,
-
-            include: [
-              {
-                model: SparePart,
-                required: true,
-
-                where: {
-                  id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
-
-      checkPrd.forEach(inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-          Inventory_Spare.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-           IssuedApproveSpare.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-          Inventory_Spare.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-          IssuedApproveSpare.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-        }
-      })
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
-      
-      const nameCostcenter = findIssuance.cost_center.name;
-      
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the requested issued product ${spareName} to ${nameCostcenter}`,
-      });
-    }
-  }
-
-  if (subpart && subpart.length > 0) {
-    for (const prod of subpart) {
-      let remainingQuantity = prod.quantity;
-      const subpartName = prod.subPart.subPart_name;
-      // console.log(`Subpart ${prod.subPart.subPart_name}`);
-      const checkPrd = await Inventory_Subpart.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: Subpart_supplier,
-            required: true,
-
-            include: [
-              {
-                model: SubPart,
-                required: true,
-
-                where: {
-                  id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
-
-      checkPrd.forEach(inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-          Inventory_Subpart.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-           IssuedApproveSubpart.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-          Inventory_Subpart.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-          IssuedApproveSubpart.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-        }
-      })
-
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
-      
-      const nameCostcenter = findIssuance.cost_center.name;
-      
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the requested issued product ${subpartName} to ${nameCostcenter}`,
       });
     }
   }
@@ -690,6 +474,16 @@ router.route("/approvalIssuance").get(async (req, res) => {
       include: [
         {
           model: MasterList,
+          as: "receiver",
+          attributes: ["col_Fname", "col_id"],
+          foreignKey: "received_by",
+          required: true,
+        },
+        {
+          model: MasterList,
+          as: "sender",
+          attributes: ["col_Fname", "col_id"],
+          foreignKey: "transported_by",
           required: true,
         },
         {

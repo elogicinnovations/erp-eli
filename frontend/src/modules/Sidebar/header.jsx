@@ -10,7 +10,7 @@ import {
   UserList,
   BookOpenText,
   ClipboardText,
-  Moped,
+  CheckCircle,
   AlignLeft,
   ShoppingCart,
   Scales,
@@ -190,6 +190,12 @@ const Header = () => {
           icon: <ShoppingCart size={32} style={{ color: "blue" }} />,
           notification: "Product On-Canvass",
           content: "The Purchase Request is Moved into On-Canvass",
+        };
+      case "Approved":
+        return {
+          icon: <CheckCircle size={32} style={{ color: "blue" }} />,
+          notification: "Purchase Request Approved",
+          content: "The Purchase Request is now for approval (PO)",
         };
       case "For-Approval (PO)":
         return {

@@ -349,6 +349,8 @@ function POApprovalRejustify({ authrztn }) {
         } catch (err) {
           console.log(err);
         }
+      } else {
+        setShowSignature(false)
       }
     });
   };
@@ -512,7 +514,10 @@ function POApprovalRejustify({ authrztn }) {
 
   const [showes, setShow] = useState(false);
 
-  const handleCloseses = () => setShow(false);
+  const handleCloseses = () => {
+    setShow(false);
+    setShowSignature(false)
+  }
   const handleShowses = () => setShow(true);
 
   //date format

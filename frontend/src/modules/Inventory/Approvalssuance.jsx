@@ -142,6 +142,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
               fetchSpare: fetchSpare_notApprove,
               fetchSubpart: fetchSubpart_notApprove,
               userId,
+              receivedBy,
             },
           })
           .then(() => {

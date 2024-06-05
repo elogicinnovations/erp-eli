@@ -67,6 +67,7 @@ import ReceivingPreview from "./modules/Warehouse/Receiving Management/Receiving
 import ReceivingStockTransferPreview from "./modules/Warehouse/Receiving Stock Transfer/ReceivingStockTransferPreview";
 import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
+import Retained from "./modules/Reports/RetainedReports/retained.jsx";
 import BIS from "./modules/Reports/BIS/BIS";
 import BIS_Summary from "./modules/Reports/BIS/BIS_Summary";
 import ReturnForm from "./modules/Inventory/ReturnForm";
@@ -76,7 +77,8 @@ import ProtectedRoutes from "./hooks/protectedRoute";
 import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
-import ActivityLog from "./modules/ActivityModule/ActivityLog";
+import ActivityLog from "./modules/ActivityModule/ActivityLog"
+import Accountability from "./modules/AccountabilityModule/accountability.jsx";
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
 import useStore from "./stores/useStore.js";
 
@@ -745,6 +747,13 @@ function App() {
                     }
                   />
 
+                <Route
+                    path="/retain"
+                    element={
+                      <Roles>{(authrztn) => <Retained authrztn={authrztn} />}</Roles>
+                    }
+                  />
+
                   <Route path="/stockTransfer" element={<StockTransfer />} />
 
                   <Route
@@ -760,6 +769,16 @@ function App() {
 
                   <Route path="/settingView/:id" element={<SystemSettings />} />
 
+                  
+
+                  <Route
+                    path="/accountability"
+                    element={
+                      <Roles>
+                        {(authrztn) => <Accountability authrztn={authrztn} />}
+                      </Roles>
+                    }
+                  />
                   <Route
                     path="/activityLogs"
                     element={

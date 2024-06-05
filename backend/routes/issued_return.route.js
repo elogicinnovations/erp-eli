@@ -14,7 +14,8 @@ const { Inventory, ProductTAGSupplier, Product, IssuedReturn,
         IssuedApproveProduct,
         IssuedApproveAssembly,
         IssuedApproveSubpart,
-        IssuedApproveSpare
+        IssuedApproveSpare,
+        MasterList
         } = require("../db/models/associations"); 
 const session = require('express-session')
 
@@ -108,6 +109,12 @@ router.route('/fetchReturn').get(async (req, res) => {
                 {
                     model: Issuance,
                     required: true
+                },{
+                    model: MasterList,
+                    as: "returnedBy",
+                    attributes: ["col_Fname", "col_id"],
+                    foreignKey: "return_by",
+                    required: true,
                 }
             ],
             where: {
@@ -137,6 +144,9 @@ router.route('/fetchReturn').get(async (req, res) => {
                 },
                 {
                     model: Issuance,
+                    required: true
+                },{
+                    model: MasterList,
                     required: true
                 }
             ],
@@ -168,6 +178,9 @@ router.route('/fetchReturn').get(async (req, res) => {
                 {
                     model: Issuance,
                     required: true
+                },{
+                    model: MasterList,
+                    required: true
                 }
             ],
             where: {
@@ -197,6 +210,9 @@ router.route('/fetchReturn').get(async (req, res) => {
                 },
                 {
                     model: Issuance,
+                    required: true
+                },{
+                    model: MasterList,
                     required: true
                 }
             ],
@@ -241,6 +257,7 @@ router.route('/issueReturn').post(async (req, res) => {
                 quantity: product.quantity,
                 status: status,
                 remarks: return_remarks,
+                return_by: userId
             });
                 // const productName = product.product.product_name; 
 
@@ -290,6 +307,7 @@ router.route('/issueReturn').post(async (req, res) => {
                         quantity: product.quantity,
                         status: status,
                         remarks: return_remarks,
+                        return_by: userId
                     });
 
                     // const AssemblyName = product.assembly.assembly_name;
@@ -339,6 +357,7 @@ router.route('/issueReturn').post(async (req, res) => {
                         quantity: product.quantity,
                         status: status,
                         remarks: return_remarks,
+                        return_by: userId
                     });
 
                     // const spareName = product.sparePart.spareParts_name
@@ -388,6 +407,7 @@ router.route('/issueReturn').post(async (req, res) => {
                 quantity: product.quantity,
                 status: status,
                 remarks: return_remarks,
+                return_by: userId
             });
 
             // const subpartName = product.subPart.subPart_name;
@@ -610,14 +630,15 @@ router.route('/moveToInventory').post(async (req, res) => {
 
 router.route('/retain').post(async (req, res) => {
     try {
-        const { types, primaryID } = req.body;
+        const { types, primaryID, userId, date_retained } = req.body;
 
 
         if(types === "product"){
             const prd_return = await IssuedReturn.update(
                 {
                     status: 'Retained',
-
+                    retained_by: userId,
+                    date_retained: date_retained
                 },
                 {
                     where: {

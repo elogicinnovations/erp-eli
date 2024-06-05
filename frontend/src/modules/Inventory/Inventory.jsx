@@ -13,7 +13,7 @@ import Form from "react-bootstrap/Form";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import { jwtDecode } from "jwt-decode";
-import { Plus } from "@phosphor-icons/react";
+import { Plus, Printer } from "@phosphor-icons/react";
 import { IconButton, TextField, TablePagination } from "@mui/material";
 import * as $ from "jquery";
 import Header from "../../partials/header";
@@ -26,6 +26,8 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [inventoryFilter, setInventoryFilter] = useState("All");
   const [searchInventory, setSearchInventory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setuserId] = useState("");
+  const [isPrintDisabled, setIsPrintDisabled] = useState(true);
   const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
   const [currentPageissuance, setCurrentPageIssuance] = useState(1);
   const pageIssuanceSize = 10;
@@ -97,8 +99,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     return pages;
   };
 
-  //pagination end
-
   const handlePageClick = (page) => {
     if (page === "...") return;
     setCurrentPage(page);
@@ -136,8 +136,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     return pages;
   };
 
-  //pagination end
-
   const handlePageClickIssuance = (page) => {
     if (page === "...") return;
     setCurrentPageIssuance(page);
@@ -158,6 +156,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         });
         setIssuanceExpirationStatus(expirationStatus);
         setIssuance(res.data);
+
+        const hasApproved = res.data.some(item => item.status === "Approved");
+        setIsPrintDisabled(!hasApproved);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -479,6 +480,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   };
 
   const handleRetain = (returnId, type) => {
+    const currentDate = new Date().toISOString();
     // Show confirmation SweetAlert
     swal({
       title: "Are you sure?",
@@ -494,6 +496,8 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
           .post(BASE_URL + `/issuedReturn/retain`, {
             primaryID,
             types,
+            userId,
+            date_retained: currentDate
           })
           .then(() => {
             // Show success SweetAlert
@@ -589,6 +593,18 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
+
+  const decodeToken = () => {
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
+    }
+  };
+
+  useEffect(() => {
+    decodeToken();
+  }, []);
 
   return (
     <div className="main-of-containers">
@@ -830,6 +846,14 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           }}
                           onChange={handleSearchIssuance}
                         />
+                          <div className="printIssuance">
+                            <button 
+                              disabled={isPrintDisabled} 
+                              style={{ cursor: isPrintDisabled ? 'not-allowed' : 'pointer' }}
+                            >
+                              Export
+                            </button>
+                          </div>
                       </div>
                       <table className="table-hover" title="View Information">
                         <thead>
@@ -890,7 +914,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                     )
                                   }
                                 >
-                                  {data.masterlist.col_Fname}
+                                  {data.receiver.col_Fname}
                                 </td>
                                 <td
                                   onClick={() =>
@@ -1101,7 +1125,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                       .product.product_name
                                   }
                                 </td>
-                                <td>{data.return_by}</td>
+                                <td>{data.returnedBy.col_Fname}</td>
                                 <td>{data.issuance.accountability_refcode}</td>
                                 <td>{data.issuance.mrs}</td>
                                 <td>{data.quantity}</td>
