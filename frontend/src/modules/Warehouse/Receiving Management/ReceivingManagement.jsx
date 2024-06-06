@@ -476,7 +476,7 @@ function ReceivingManagement({ authrztn }) {
                              
                             }
                           >
-                            {data.ref_code}
+                            {data.source === 'PO' ? "n/a" : data.ref_code}
                           </td>
                           <td
                              onClick={() =>
@@ -575,7 +575,7 @@ function ReceivingManagement({ authrztn }) {
                              
                             }
                           >
-                            {formatDatetime(data.createdAt)}
+                            {data.source === 'PO' ? "n/a" : formatDatetime(data.createdAt)}
                           </td>
                         </tr>
                       ))}

@@ -79,6 +79,7 @@ import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
 import ActivityLog from "./modules/ActivityModule/ActivityLog"
+import Checker from "./modules/Price_Checker/checker.jsx";
 import Accountability from "./modules/AccountabilityModule/accountability.jsx";
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
 import useStore from "./stores/useStore.js";
@@ -777,6 +778,15 @@ function App() {
                     element={
                       <Roles>
                         {(authrztn) => <Accountability authrztn={authrztn} />}
+                      </Roles>
+                    }
+                  />
+
+                  <Route
+                    path="/checker"
+                    element={
+                      <Roles>
+                        {(authrztn) => <Checker authrztn={authrztn} />}
                       </Roles>
                     }
                   />

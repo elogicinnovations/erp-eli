@@ -18,7 +18,7 @@ import { ArrowCircleLeft,
   NotePencil } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
 import { MultiSelect } from 'primereact/multiselect';
-
+import CameraComponent from "./../../../../../../assets/components/camera.jsx";
 function UpdateProduct({authrztn}) {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -618,10 +618,14 @@ useEffect(() => {
     fileInputRef.current.click();
     setIsSaveButtonDisabled(false);
   }
-  
+
   function onFileSelect(event) {
     const files = event.target.files;
     setIsSaveButtonDisabled(false);
+    handleFiles(files);
+  }
+
+  function handleFiles(files) {
     if (files.length + productImages.length > 5) {
       swal({
         icon: "error",
@@ -630,7 +634,7 @@ useEffect(() => {
       });
       return;
     }
-  
+
     for (let i = 0; i < files.length; i++) {
       if (!productImages.some((e) => e.name === files[i].name)) {
         const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
@@ -643,7 +647,7 @@ useEffect(() => {
           });
           return;
         }
-  
+
         if (files[i].size > 5 * 1024 * 1024) {
           swal({
             icon: "error",
@@ -652,6 +656,7 @@ useEffect(() => {
           });
           return;
         }
+
         const reader = new FileReader();
         reader.onload = (e) => {
           setproductImages((prevImages) => [
@@ -666,76 +671,50 @@ useEffect(() => {
       }
     }
   }
-  
-  
-  
-  function deleteImage(index){
+
+  function deleteImage(index) {
     const updatedImages = [...productImages];
     updatedImages.splice(index, 1);
     setproductImages(updatedImages);
     setIsSaveButtonDisabled(false);
   }
-  
-  function onDragOver(event){
+
+  function onDragOver(event) {
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
     setIsSaveButtonDisabled(false);
   }
+
   function onDragLeave(event) {
     event.preventDefault();
     setIsSaveButtonDisabled(false);
   }
-  
-  function onDropImages(event){
+
+  function onDropImages(event) {
     event.preventDefault();
     setIsSaveButtonDisabled(false);
     const files = event.dataTransfer.files;
-  
-    if (files.length + productImages.length > 5) {
+    handleFiles(files);
+  }
+
+  function handleCapture(image) {
+    if (productImages.length >= 5) {
       swal({
-        icon: "error",
-        title: "File Limit Exceeded",
-        text: "You can upload up to 5 images only.",
+        icon: 'error',
+        title: 'File Limit Exceeded',
+        text: 'You can upload up to 5 images only.',
       });
       return;
     }
-  
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-  
-        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
-        
-        if (!allowedFileTypes.includes(files[i].type)) {
-          swal({
-            icon: "error",
-            title: "Invalid File Type",
-            text: "Only JPEG, PNG, and WebP file types are allowed.",
-          });
-          return;
-        }
-  
-        if (files[i].size > 5 * 1024 * 1024) {
-          swal({
-            icon: "error",
-            title: "File Size Exceeded",
-            text: "Maximum file size is 5MB.",
-          });
-          return;
-        }
-  
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setproductImages((prevImages) => [
-            ...prevImages,
-            {
-              name: files[i].name,
-              product_image: e.target.result.split(',')[1],
-            },
-          ]);
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    }
+
+    setproductImages((prevImages) => [
+      ...prevImages,
+      {
+        name: image.name,
+        product_image: image.image,
+      },
+    ]);
+    setIsSaveButtonDisabled(false);
   }
 
   const update = async (e) => {
@@ -1270,41 +1249,55 @@ useEffect(() => {
 
               <div className="col-6">
               <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Image Upload:{" "}
-                  </Form.Label>
-                  <div className="card" onClick={selectFiles}>
-                      <div className="top">
-                        <p>Drag & Drop Image Upload</p>
-                      </div>
-                      <div className="drag-area" 
-                      disabled={!isReadOnly}
-                      onDragOver={onDragOver} 
-                      onDragLeave={onDragLeave} 
-                      onDrop={onDropImages}>
-                          <>
-                          Drag & Drop image here or {" "}
-                          <span  
-                          disabled={!isReadOnly}
-                          className="select" role="button" onClick={selectFiles}>
-                            Browse
-                          </span>
-                          </>
-                        <input
-                        name="file" type="file" className="file" multiple ref={fileInputRef}
-                        onChange={(e) => onFileSelect(e)}/>
-                      </div>
-                      <div className="ccontainerss">
-                        {productImages.map((image,index)=>(
-                        <div className="imagess" key={index}>
-                          <span className="delete" onClick={() => deleteImage(index)}>&times;</span>
-                          <img src={`data:image/png;base64,${image.product_image}`} 
-                          alt={`Sub Part ${image.product_id}`} />
-                        </div>
-                        ))}
-                      </div>
-                    </div> 
-                  </Form.Group>
+      <Form.Label style={{ fontSize: "20px" }}>
+        Image Upload:{" "}
+      </Form.Label>
+      <div className="card" onClick={selectFiles}>
+        <div className="top">
+          <p>Drag & Drop Image Upload</p>
+        </div>
+        <div
+          className="drag-area"
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDropImages}
+        >
+          <>
+            Drag & Drop image here or {" "}
+            <span className="select" role="button" onClick={selectFiles}>
+              Browse
+            </span>{" "}
+            | {" "}
+            <span className="select" role="button" onClick={selectFiles}>
+              Use Camera
+            </span>
+          </>
+          <input
+            name="file"
+            type="file"
+            className="file"
+            multiple
+            ref={fileInputRef}
+            onChange={(e) => onFileSelect(e)}
+            style={{ display: 'none' }}
+          />
+        </div>
+        <div className="ccontainerss">
+          {productImages.map((image, index) => (
+            <div className="imagess" key={index}>
+              <span className="delete" onClick={() => deleteImage(index)}>
+                &times;
+              </span>
+              <img
+                src={`data:image/png;base64,${image.product_image}`}
+                alt={`Sub Part ${image.product_id}`}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      <CameraComponent onCapture={handleCapture} />
+    </Form.Group>
               </div>
             </div>
 

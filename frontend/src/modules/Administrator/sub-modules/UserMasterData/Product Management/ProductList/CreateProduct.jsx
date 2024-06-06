@@ -19,7 +19,7 @@ import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import { jwtDecode } from "jwt-decode";
 import { MultiSelect } from "primereact/multiselect";
-
+import CameraComponent from "./../../../../../../assets/components/camera.jsx";
 function CreateProduct({ authrztn }) {
   const navigate = useNavigate();
   //try
@@ -356,9 +356,13 @@ function CreateProduct({ authrztn }) {
   function selectFiles() {
     fileInputRef.current.click();
   }
+
   function onFileSelect(event) {
     const files = event.target.files;
+    handleFiles(files);
+  }
 
+  function handleFiles(files) {
     if (files.length === 0) return;
 
     if (images.length + files.length > 5) {
@@ -425,8 +429,11 @@ function CreateProduct({ authrztn }) {
   function onDropImages(event) {
     event.preventDefault();
     const files = event.dataTransfer.files;
+    handleFiles(files);
+  }
 
-    if (images.length + files.length > 5) {
+  function handleCapture(image) {
+    if (images.length >= 5) {
       swal({
         icon: "error",
         title: "File Limit Exceeded",
@@ -435,43 +442,14 @@ function CreateProduct({ authrztn }) {
       return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      const fileType = files[i].type.split("/")[1].toLowerCase();
-      const fileSize = files[i].size / (1024 * 1024); // Convert size to MB
-
-      if (fileSize > 5) {
-        swal({
-          icon: "error",
-          title: "File Size Limit Exceeded",
-          text: "Each image must be up to 5MB in size.",
-        });
-        continue;
-      }
-
-      if (fileType !== "jpeg" && fileType !== "png" && fileType !== "webp") {
-        swal({
-          icon: "error",
-          title: "Invalid File Type",
-          text: "Only JPEG and PNG files are allowed.",
-        });
-        continue;
-      }
-
-      if (!images.some((e) => e.name === files[i].name)) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setImages((prevImages) => [
-            ...prevImages,
-            {
-              name: files[i].name,
-              url: URL.createObjectURL(files[i]),
-              base64Data: e.target.result.split(",")[1],
-            },
-          ]);
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    }
+    setImages((prevImages) => [
+      ...prevImages,
+      {
+        name: image.name,
+        url: `data:image/png;base64,${image.image}`,
+        base64Data: image.image,
+      },
+    ]);
   }
 
   const add = async (e) => {
@@ -809,35 +787,39 @@ function CreateProduct({ authrztn }) {
               <div className="row">
                 <div className="col-6">
                   <div>
-                  <Form.Group controlId="exampleForm.ControlInput2">
-                    <Form.Label style={{ fontSize: "20px" }}>
-                      Unit of Measurement:{" "}
-                    </Form.Label>
-                    <Form.Select
-                      aria-label=""
-                      style={{ height: "40px", fontSize: "15px" }}
-                      defaultValue=""
-                      onChange={handleChangeMeasurement}
-                      required
-                    >
-                      <option disabled value="">
-                        Select Unit Measurement
-                      </option>
-                      {cls_unitMeasurement.map((unitM, index) => (
-                        <option key={index} value={unitM}>
-                          {unitM}
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Unit of Measurement:{" "}
+                      </Form.Label>
+                      <Form.Select
+                        aria-label=""
+                        style={{ height: "40px", fontSize: "15px" }}
+                        defaultValue=""
+                        onChange={handleChangeMeasurement}
+                        required
+                      >
+                        <option disabled value="">
+                          Select Unit Measurement
                         </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
+                        {cls_unitMeasurement.map((unitM, index) => (
+                          <option key={index} value={unitM}>
+                            {unitM}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
                   </div>
                   <Form.Group className="mb-3">
-                    <Form.Check 
+                    <Form.Check
                       type="checkbox"
-                      style={{ fontSize: "15px", color: 'red' }} 
-                      onClick={() => setUOM_set(!UOM_set)} 
-                      label={UOM_set === true ? "Sub-Unit quantity is enabled" : "Check this to enable sub-unit quantity"}
-                      />
+                      style={{ fontSize: "15px", color: "red" }}
+                      onClick={() => setUOM_set(!UOM_set)}
+                      label={
+                        UOM_set === true
+                          ? "Sub-Unit quantity is enabled"
+                          : "Check this to enable sub-unit quantity"
+                      }
+                    />
                   </Form.Group>
                 </div>
                 <div className="col-6">
@@ -964,7 +946,7 @@ function CreateProduct({ authrztn }) {
                             onClick={selectFiles}
                           >
                             Browse
-                          </span>
+                          </span>{" "}
                         </>
                         <input
                           name="file"
@@ -973,10 +955,11 @@ function CreateProduct({ authrztn }) {
                           multiple
                           ref={fileInputRef}
                           onChange={onFileSelect}
+                          style={{ display: "none" }}
                         />
                       </div>
                       <div className="ccontainerss">
-                        {images.map((images, index) => (
+                        {images.map((image, index) => (
                           <div className="imagess" key={index}>
                             <span
                               className="delete"
@@ -984,12 +967,13 @@ function CreateProduct({ authrztn }) {
                             >
                               &times;
                             </span>
-                            <img src={images.url} alt={images.name} />
+                            <img src={image.url} alt={image.name} />
                           </div>
                         ))}
                       </div>
                     </div>
                   </Form.Group>
+                  <CameraComponent onCapture={handleCapture} />
                 </div>
               </div>
 

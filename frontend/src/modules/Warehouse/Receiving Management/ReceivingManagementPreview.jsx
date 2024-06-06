@@ -16,6 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import warehouse from "../../../assets/global/warehouse";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import CameraComponent from './../../../assets/components/camera.jsx';
 import {
   ArrowCircleLeft,
   Upload,
@@ -630,6 +631,18 @@ function ReceivingManagementPreview({ authrztn }) {
       }
     }
   }
+
+  const handleCapture = (imageData) => {
+    if (productImages.length >= 5) {
+      swal({
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
+      });
+      return;
+    }
+    setproductImages((prevImages) => [...prevImages, imageData]);
+  };
 
   function formatDatetime(datetime) {
     const options = {
@@ -1344,6 +1357,7 @@ function ReceivingManagementPreview({ authrztn }) {
                     onChange={(e) => onFileSelect(e)}
                   />
                 </div>
+                <CameraComponent  onCapture={handleCapture} />
                 <div
                   className="ccontainerss"
                   style={{

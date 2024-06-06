@@ -895,6 +895,25 @@ function Sidebar({ authrztn }) {
             </NavLink>
           )}
 
+          {authrztn.includes("Price Checker - View") && (
+            <NavLink
+              to="/checker"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`menu-item ${
+                  location.pathname === "/checker" ? "active" : ""
+                }`}
+                onClick={toggleOff}
+              >
+                <UserCheck size={20} />
+                <ListItemText primary="Price Checker" />
+              </ListItem>
+            </NavLink>
+          )}
+
           {authrztn.includes("Activity Logs - View") && (
             <NavLink
               to="/activityLogs"

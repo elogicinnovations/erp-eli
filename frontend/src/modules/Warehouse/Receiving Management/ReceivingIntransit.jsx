@@ -31,7 +31,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { fontStyle } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
 import { jwtDecode } from "jwt-decode";
-
+import CameraComponent from './../../../assets/components/camera.jsx';
 function ReceivingIntransit({ authrztn }) {
   const label_qa = { inputProps: { "aria-label": "Checkbox demo" } };
   const navigate = useNavigate();
@@ -612,6 +612,18 @@ function ReceivingIntransit({ authrztn }) {
     }
   }
 
+  const handleCapture = (imageData) => {
+    if (productImages.length >= 5) {
+      swal({
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
+      });
+      return;
+    }
+    setproductImages((prevImages) => [...prevImages, imageData]);
+  };
+
   function formatDatetime(datetime) {
     const options = {
       year: "numeric",
@@ -1158,6 +1170,7 @@ function ReceivingIntransit({ authrztn }) {
                     onChange={(e) => onFileSelect(e)}
                   />
                 </div>
+                <CameraComponent  onCapture={handleCapture} />
                 <div
                   className="ccontainerss"
                   style={{
