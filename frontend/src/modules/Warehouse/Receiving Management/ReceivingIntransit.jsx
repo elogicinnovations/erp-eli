@@ -65,7 +65,6 @@ function ReceivingIntransit({ authrztn }) {
   const [filteredSPR, setFilteredSPR] = useState([]);
   const [filteredSBP, setFilteredSBP] = useState([]);
 
-
   const handleViewTransaction = (po_number) => {
     setIsLoading(true);
     setShowTransaction(true);
@@ -105,7 +104,7 @@ function ReceivingIntransit({ authrztn }) {
     // return () => clearTimeout(delay);
   };
 
-  console.log(Transaction_prd_dv)
+  console.log(Transaction_prd_dv);
 
   const [show, setShow] = useState(false);
   const [showTransaction, setShowTransaction] = useState(false);
@@ -222,8 +221,7 @@ function ReceivingIntransit({ authrztn }) {
         setSupplier_code(firstItem.suppliers.supplier_code);
         setSupplier_name(firstItem.suppliers.supplier_name);
         setProd_name(res.data.consolidatedArray.items.supp_tag.name);
-        
-        
+
         setIsLoading(false);
       })
       .catch((err) => {
@@ -232,9 +230,9 @@ function ReceivingIntransit({ authrztn }) {
       });
   };
 
-//   useEffect(() => {
-//     console.log(`refCodes ${refCodes}`);
-// }, [refCodes]);
+  //   useEffect(() => {
+  //     console.log(`refCodes ${refCodes}`);
+  // }, [refCodes]);
 
   const [checkedRows, setCheckedRows] = useState({});
 
@@ -285,15 +283,15 @@ function ReceivingIntransit({ authrztn }) {
   const [isSF_applicable, setIsSF_applicable] = useState(true);
   const [isD_C_applicable, setIsD_C_applicable] = useState(true);
   const handleDutiesChange = () => {
-    setIsD_C_applicable(prevState => {
+    setIsD_C_applicable((prevState) => {
       const newApplicable = !prevState;
       setcustomFee(newApplicable ? "" : "0");
       return newApplicable;
     });
   };
-  
+
   const handleShippingChange = () => {
-    setIsSF_applicable(prevState => {
+    setIsSF_applicable((prevState) => {
       const newApplicable = !prevState;
       setShippingFee(newApplicable ? "" : "0");
       return newApplicable;
@@ -427,7 +425,6 @@ function ReceivingIntransit({ authrztn }) {
         text: "Please fill the red text fields",
       });
     } else {
-
       swal({
         title: `Are you sure want to received this transitted product/s?`,
         text: "This action cannot be undone.",
@@ -436,7 +433,6 @@ function ReceivingIntransit({ authrztn }) {
         dangerMode: true,
       }).then(async (approve) => {
         if (approve) {
-
           try {
             const response = await axios.post(
               BASE_URL + "/receiving/insertReceived_Intransit",
@@ -446,7 +442,7 @@ function ReceivingIntransit({ authrztn }) {
                 customFee,
                 shippingFee,
                 isD_C_applicable,
-                isS_F_applicable,
+                // isS_F_applicable,
                 suppReceving,
                 refCodes,
                 poID,
@@ -455,7 +451,7 @@ function ReceivingIntransit({ authrztn }) {
                 userId,
               }
             );
-    
+
             if (response.status === 200) {
               swal({
                 title: "Purchase Request Add Succesful!",
@@ -464,7 +460,7 @@ function ReceivingIntransit({ authrztn }) {
                 button: "OK",
               }).then(() => {
                 handleClose();
-                navigate('/receivingManagement')
+                navigate("/receivingManagement");
               });
             } else {
               swal({
@@ -482,8 +478,8 @@ function ReceivingIntransit({ authrztn }) {
               text: "Please contact our support",
             });
           }
-        }})
-     
+        }
+      });
     }
 
     setValidated(true); // for validations
@@ -688,7 +684,7 @@ function ReceivingIntransit({ authrztn }) {
             </div>
 
             <div className="row">
-            <div className="col-12 ">
+              <div className="col-12 ">
                 <Form.Label
                   style={{
                     fontSize: "20px",
@@ -824,26 +820,26 @@ function ReceivingIntransit({ authrztn }) {
 
       <Modal show={show} onHide={handleClose} backdrop="static" size="xl">
         <Form noValidate validated={validated} onSubmit={add}>
-        <Modal.Header closeButton style={{ width: "100%", padding: 0 }}>
-          <Modal.Title style={{ width: "100%" }}>
-            <div className="d-flex w-100">
+          <Modal.Header closeButton style={{ width: "100%", padding: 0 }}>
+            <Modal.Title style={{ width: "100%" }}>
+              <div className="d-flex w-100">
                 <div className="w-50">
                   <span className="h2">{`PO Number: ${po_id}`}</span>
                 </div>
                 <div className="w-50 d-flex">
-                  <span className="h3">Receiving Area: </span>   
+                  <span className="h3">Receiving Area: </span>
                   <Form.Control
-                        required
-                        className="w-50 fs-3"
-                        value={suppReceving}
-                        readOnly
-                      ></Form.Control>                    
+                    required
+                    className="w-50 fs-3"
+                    value={suppReceving}
+                    readOnly
+                  ></Form.Control>
                 </div>
               </div>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-             <div className="row p-0">
+            <div className="row p-0">
               <div className="col-6 align-items-center">
                 <div className="d-flex w-100">
                   <div className="d-flex flex-column w-100">
@@ -863,61 +859,63 @@ function ReceivingIntransit({ authrztn }) {
               {suppReceving === "Agusan Del Sur" ? (
                 <div className="col-6">
                   <div className="d-flex w-100">
-       <div className="w-50" style={{ float: "right" }}>
-         <div className="d-flex align-items-center">
-           <Form.Label className="h4 mb-0">
-             Duties & Custom Fee:
-           </Form.Label>
-           <Form.Check
-             type="switch"
-             className="ml-3"
-             style={{ fontSize: "15px", color: "red" }}
-             checked={isD_C_applicable}
-             onClick={handleDutiesChange}
-           />
-         </div>
-         <Form.Control
-           type="number"
-           className="w-100"
-           readOnly={!isD_C_applicable}
-           value={isD_C_applicable ? customFee : "0"}
-           style={{
-             fontFamily: "Poppins, Source Sans Pro",
-           }}
-           onChange={(e) => setcustomFee(e.target.value)}
-           onKeyDown={(e) => {
-             ["e", "E", "+", "-"].includes(e.key) &&
-               e.preventDefault();
-           }}
-         />
-       </div>
-       <div className="w-50" style={{ float: "right" }}>
-         <div className="d-flex align-items-center">
-           <Form.Label className="h4 mb-0">Shipping Fee:</Form.Label>
-           <Form.Check
-             type="switch"
-             className="ml-3"
-             style={{ fontSize: "15px", color: "red" }}
-             checked={isSF_applicable}
-             onClick={handleShippingChange}
-           />
-         </div>
-         <Form.Control
-           type="number"
-           className="w-100"
-           readOnly={!isSF_applicable}
-           value={isSF_applicable ? shippingFee : "0"}
-           style={{
-             fontFamily: "Poppins, Source Sans Pro",
-           }}
-           onChange={(e) => setShippingFee(e.target.value)}
-           onKeyDown={(e) => {
-             ["e", "E", "+", "-"].includes(e.key) &&
-               e.preventDefault();
-           }}
-         />
-       </div>
-     </div>
+                    <div className="w-50" style={{ float: "right" }}>
+                      <div className="d-flex align-items-center">
+                        <Form.Label className="h4 mb-0">
+                          Duties & Custom Fee:
+                        </Form.Label>
+                        <Form.Check
+                          type="switch"
+                          className="ml-3"
+                          style={{ fontSize: "15px", color: "red" }}
+                          checked={isD_C_applicable}
+                          onClick={handleDutiesChange}
+                        />
+                      </div>
+                      <Form.Control
+                        type="number"
+                        className="w-100"
+                        readOnly={!isD_C_applicable}
+                        value={isD_C_applicable ? customFee : "0"}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        onChange={(e) => setcustomFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                    <div className="w-50" style={{ float: "right" }}>
+                      <div className="d-flex align-items-center">
+                        <Form.Label className="h4 mb-0">
+                          Shipping Fee:
+                        </Form.Label>
+                        <Form.Check
+                          type="switch"
+                          className="ml-3"
+                          style={{ fontSize: "15px", color: "red" }}
+                          checked={isSF_applicable}
+                          onClick={handleShippingChange}
+                        />
+                      </div>
+                      <Form.Control
+                        type="number"
+                        className="w-100"
+                        readOnly={!isSF_applicable}
+                        value={isSF_applicable ? shippingFee : "0"}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        onChange={(e) => setShippingFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="col-6"></div>
@@ -1012,7 +1010,6 @@ function ReceivingIntransit({ authrztn }) {
                                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                               ]?.Squantity || child.item.set_quantity
                             }
-
                             onChange={(e) =>
                               handleInputChange(
                                 e.target.value,
@@ -1021,7 +1018,6 @@ function ReceivingIntransit({ authrztn }) {
                                 child.item.received_quantity
                               )
                             }
-
                             className="w-100"
                             style={{
                               // height: "35px",
@@ -1097,7 +1093,8 @@ function ReceivingIntransit({ authrztn }) {
                               )
                             }
                             value={
-                              child.item.received_quantity - (inputValues[
+                              child.item.received_quantity -
+                              (inputValues[
                                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                               ]?.Rquantity || "")
                               // inputValues[
@@ -1126,7 +1123,6 @@ function ReceivingIntransit({ authrztn }) {
                       </div>
                     </div>
                   </div>
-
                 </div>
               ))
             )}
@@ -1272,7 +1268,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1300,7 +1304,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1328,7 +1340,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1356,7 +1376,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1384,7 +1412,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1412,7 +1448,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1440,7 +1484,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
@@ -1468,7 +1520,15 @@ function ReceivingIntransit({ authrztn }) {
                               : data.receiving_po.customFee}
                           </td>
                           <td>{data.receiving_po.ref_code}</td>
-                          <td>{data.receiving_po.status === "In-transit" ? "Davao" : data.receiving_po.status === "For Approval" ? "Agusan Del Sur" : <></>}</td>
+                          <td>
+                            {data.receiving_po.status === "In-transit" ? (
+                              "Davao"
+                            ) : data.receiving_po.status === "For Approval" ? (
+                              "Agusan Del Sur"
+                            ) : (
+                              <></>
+                            )}
+                          </td>
                           <td>{formatDatetime(data.createdAt)}</td>
                         </tr>
                       ))}
