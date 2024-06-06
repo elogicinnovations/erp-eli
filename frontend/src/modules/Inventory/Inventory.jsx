@@ -65,11 +65,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
     endIndexInventory
   );
 
- 
-
-  const maxTotalPages = Math.max(
-    totalPagesInventory
-  );
+  const maxTotalPages = Math.max(totalPagesInventory);
   const MAX_PAGES = 5;
 
   //inventory pagination
@@ -205,8 +201,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         safeToLowerCase(data.manufacturer).includes(searchTerm)
     );
     setInventory(filteredInventory);
-
-   
   };
 
   const handleSearchIssuance = (event) => {
@@ -696,7 +690,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                     <h1>Inventory</h1>
                   </div>
                   <div className="row">
-                    <div className="col-6 d-flex justify-content-md-start justify-content-sm-center justify-content-center">
+                    <div className="col-6 d-flex justify-content-md-start justify-content-sm-center justify-content-center inv-div-sel">
                       <Form.Select
                         aria-label="item status"
                         className="select-inv"
@@ -765,7 +759,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <td>{data.totalQuantity}</td>
                               </tr>
                             ))}
-
                           </tbody>
                         ) : (
                           <div className="no-data">
@@ -866,12 +859,12 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                     </span>
                   }
                 >
-                  <div className="tab-titles issuance-tab">
+                  <div className="tab-titles iss-tab">
                     <h1>Issuance</h1>
                     <div>
                       {authrztn.includes("Inventory - Add") && (
                         <Link to={"/createIssuance"} className="issuance-btn">
-                          <span style={{ marginRight: "4px" }}>
+                          <span style={{}}>
                             <Plus size={20} />
                           </span>
                           Add Issuance
@@ -879,6 +872,40 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                       )}
                     </div>
                   </div>
+                  {/* <div className="btn-and-search">
+                    {authrztn.includes("Inventory - Add") && (
+                      <div className="button-create-side">
+                        <div className="Buttonmodal-new">
+                          <Link to={"/createIssuance"} className="issuance-btn">
+                            <span style={{}}>
+                              <Plus size={20} />
+                            </span>
+                            Add Issuance
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="main-table-search">
+                      <TextField
+                        label="Search"
+                        variant="outlined"
+                        className="main-search act-search cus-btm"
+                        style={{ marginBottom: "10px", float: "right" }}
+                        InputLabelProps={{
+                          style: { fontSize: "14px" },
+                        }}
+                        InputProps={{
+                          style: {
+                            fontSize: "14px",
+                            // width: "250px",
+                            height: "50px",
+                          },
+                        }}
+                        onChange={handleSearchIssuance}
+                      />
+                    </div>
+                  </div> */}
                   <div className="table-containss">
                     <div className="main-of-all-tables">
                       <div className="main-table-search">
