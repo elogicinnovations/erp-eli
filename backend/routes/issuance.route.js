@@ -622,4 +622,62 @@ router.route("/create").post(async (req, res) => {
   }
 });
 
+router.route("/fetchPreview").get(async (req, res) => {
+  try {
+    const data = await IssuedApproveProduct.findAll({
+      include: [{
+        model: Inventory,
+        required: true,
+          include: [{
+            model: ProductTAGSupplier,
+            required: true,
+              include: [{
+                model: Product,
+                required: true
+              }]
+          }]
+       },{
+        model: Issuance,
+        required: true,
+          where: {
+            status: 'Approved'
+          },
+          include: [
+            {
+              model: MasterList,
+              as: "receiver",
+              attributes: ["col_Fname", "col_id"],
+              foreignKey: "received_by",
+              required: true,
+            },
+            {
+              model: MasterList,
+              as: "sender",
+              attributes: ["col_Fname", "col_id"],
+              foreignKey: "transported_by",
+              required: true,
+            },
+            {
+              model: CostCenter,
+              required: true,
+            },
+            {
+              model: Warehouses,
+              required: true
+            }
+          ],
+       }]
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
 module.exports = router;

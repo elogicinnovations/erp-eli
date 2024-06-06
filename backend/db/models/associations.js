@@ -211,8 +211,7 @@ PR_sparePart.belongsTo(SparePart, { foreignKey: "spare_id" });
 SubPart.hasMany(PR_subPart, { foreignKey: "subPart_id" });
 PR_subPart.belongsTo(SubPart, { foreignKey: "subPart_id" });
 
-// Product.belongsToMany(Assembly, {through: Product_Assembly, foreignKey: "product_id"});
-// Assembly.belongsToMany(Product, {through: Product_Assembly, foreignKey: "assembly_id"});
+
 Warehouses.hasMany(StockTransfer, { foreignKey: "destination", as: "DestinationWarehouse" });
 StockTransfer.belongsTo(Warehouses, { foreignKey: "destination", as: "DestinationWarehouse" });
 

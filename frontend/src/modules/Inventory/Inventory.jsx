@@ -13,10 +13,13 @@ import Form from "react-bootstrap/Form";
 import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import { jwtDecode } from "jwt-decode";
-import { Plus, Printer } from "@phosphor-icons/react";
-import { IconButton, TextField, TablePagination } from "@mui/material";
-import * as $ from "jquery";
+import { Plus } from "@phosphor-icons/react";
+import { IconButton, TextField, } from "@mui/material";
+import SBFLOGO from "../../../src/assets/image/SBFLogo.jpg";
 import Header from "../../partials/header";
+import Table from "react-bootstrap/Table";
+import html2canvas from "html2canvas";
+import jsPDF from 'jspdf';
 
 const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const navigate = useNavigate();
@@ -29,6 +32,8 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [userId, setuserId] = useState("");
   const [isPrintDisabled, setIsPrintDisabled] = useState(true);
   const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
+  const [showPreview, setshowPreview] = useState(false);
+  const [ApprovedIssue, setApprovedIssue] = useState([])
   const [currentPageissuance, setCurrentPageIssuance] = useState(1);
   const pageIssuanceSize = 10;
 
@@ -575,6 +580,53 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   //   }
   // }, [returned_prd]);
 
+  const handlePreviewShow = async () => {
+    axios
+      .get(BASE_URL + "/issuance/fetchPreview")
+      .then((res) => {
+        setApprovedIssue(res.data);
+        setshowPreview(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleClosePreview = () => {
+    setshowPreview(false);
+  };
+
+  const handleExportPDF = () => {
+    const input = document.getElementById('content-to-pdf');
+    html2canvas(input)
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgWidth = 210; // A4 size width in mm
+        const pageHeight = 297; // A4 size height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+  
+        let position = 0;
+  
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+  
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+  
+        pdf.save('download.pdf');
+      })
+      .catch((error) => {
+        console.error('Error generating PDF: ', error);
+      });
+  };
+
+  
   const tabStyle = {
     padding: "10px 15px",
     margin: "0 10px",
@@ -848,10 +900,11 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                         />
                           <div className="printIssuance">
                             <button 
-                              disabled={isPrintDisabled} 
-                              style={{ cursor: isPrintDisabled ? 'not-allowed' : 'pointer' }}
+                                onClick={handlePreviewShow}
+                              // disabled={isPrintDisabled} 
+                              // style={{ cursor: isPrintDisabled ? 'not-allowed' : 'pointer' }}
                             >
-                              Export
+                              Preview
                             </button>
                           </div>
                       </div>
@@ -1460,6 +1513,131 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
           </div>
         )}
       </div>
+
+              <Modal
+                show={showPreview}
+                onHide={handleClosePreview}
+                backdrop="static"
+                keyboard={false}
+                size="xl"
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title></Modal.Title>
+                </Modal.Header>
+                    <Modal.Body id="content-to-pdf">
+                      <div
+                        className="canvassing-templates-container"
+                      >
+                        <div className="canvassing-content-templates">
+                          <div className="templates-header">
+                            <div className="template-logoes">
+                              <img src={SBFLOGO} alt="" />
+                            </div>
+                            <div className="SBFtextslogo">
+                              <span>
+                                SBF PHILIPPINES DRILLING RESOURCES CORP.
+                              </span>
+                              <span>
+                                Padiguan, Sta. Cruz, Rosario, Agusan Del Sur
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="templates-middle">
+                            <div className="Quotationdiv">
+                              <span>ISSUANCE</span>
+                            </div>
+                          </div>
+
+
+                          <div className="templates-table-section">
+                            <div className="templatestable-content">
+                              <Table>
+                                <thead>
+                                  <tr>
+                                    <th className="canvassth">PRODUCT CODE</th>
+                                    <th>QUANTITY</th>
+                                    <th>UOM</th>
+                                    <th>AUP</th>
+                                    <th>TOTAL</th>
+                                  </tr>
+                                </thead>
+                                  <tbody>
+                                  {ApprovedIssue.map((data, i) => {
+                                    // Destructure data for easier access and default null values to 0
+                                    const { inventory_prd, quantity } = data;
+                                    const { product_tag_supplier } = inventory_prd;
+                                    const { product_code, product_unitMeasurement } = product_tag_supplier.product;
+
+                                    const freight_cost = inventory_prd.freight_cost || 0;
+                                    const custom_cost = inventory_prd.custom_cost || 0;
+
+                                    const totalofCost = freight_cost + custom_cost;
+                                    const totalPrice = quantity * totalofCost
+                                    return (
+                                      <tr key={i}>
+                                        <td>{product_code}</td>
+                                        <td>{quantity}</td>
+                                        <td>{product_unitMeasurement}</td>
+                                        <td>{totalofCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                        <td>{totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                      </tr>
+                                    );
+                                  })}
+                                  </tbody>
+                                </Table>
+                            </div>
+                          </div>
+
+                          <div className="printed-signature-containers">
+                            <div className="name-signature-sections">
+                              <div className="labelofSignature">
+                                <p>Issued By:</p>
+                                <p>Received By:</p>
+                                <p>Approved By:</p>
+                              </div>
+
+                              <div className="signaturefield">
+                                <p></p>
+                                <p></p>
+                                <p></p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal.Body>
+                <Modal.Footer>
+                    <div>
+                        <Button
+                          type="button"
+                          className="btn btn-warning"
+                          size="md"
+                          style={{
+                            fontSize: "20px",
+                            margin: "0px 5px",
+                            fontFamily: "Poppins, Source Sans Pro",
+                          }}
+                          onClick={handleExportPDF}
+                        >
+                          Export
+                        </Button>
+                        <Button
+                          variant="seconday"
+                          size="md"
+                          style={{
+                            fontSize: "20px",
+                            margin: "0px 5px",
+                            fontFamily: "Poppins, Source Sans Pro",
+                          }}
+                          onClick={handleClosePreview}
+                        >
+                          Close
+                        </Button>
+                      </div>
+                </Modal.Footer>
+              </Modal>
     </div>
   );
 };
