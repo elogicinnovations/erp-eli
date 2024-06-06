@@ -97,6 +97,10 @@ const StockTransfer_subpart = require("./stockTransfer_subpart.model");
 const ST_REJECT = require("./stockTransfer_reject.model");
 
 const Warehouses = require("./warehouse.model");
+const Board = require("./board.model")
+const Board_to = require("./board_to.model")
+const Board_pic = require("./board_picture.model")
+const Board_reply = require("./board_reply.model")
 
 // const SparePart = require("./sparePart.model");
 // const Supplier_SparePart = require("./supplier_sparePart.model");
@@ -663,6 +667,25 @@ PR_Rejustify.belongsTo(PR, { foreignKey: "pr_id" });
 MasterList.hasMany(PR_Rejustify, { foreignKey: "masterlist_id" });
 PR_Rejustify.belongsTo(MasterList, { foreignKey: "masterlist_id" });
 
+MasterList.hasMany(Board, { foreignKey: "postBy", as: "postby" });
+Board.belongsTo(MasterList, { foreignKey: "postBy", as: "postby" });
+
+MasterList.hasMany(Board_to, { foreignKey: "user_to", as: "to" });
+Board_to.belongsTo(MasterList, { foreignKey: "user_to", as: "to" });
+
+Board.hasMany(Board_to, { foreignKey: "board_id" });
+Board_to.belongsTo(Board, { foreignKey: "board_id" });
+
+Board.hasMany(Board_pic, { foreignKey: "board_id"});
+Board_pic.belongsTo(Board, { foreignKey: "board_id"});
+
+Board.hasMany(Board_reply, { foreignKey: "board_id"});
+Board_reply.belongsTo(Board, { foreignKey: "board_id"});
+
+MasterList.hasMany(Board_reply, { foreignKey: "reply_by",  as: "replyfrom"});
+Board_reply.belongsTo(MasterList, { foreignKey: "reply_by",  as: "replyfrom"});
+
+
 module.exports = {
   MasterList,
   UserRole,
@@ -761,4 +784,8 @@ module.exports = {
 
   Warehouses,
   Department,
+  Board,
+  Board_to,
+  Board_pic,
+  Board_reply
 };

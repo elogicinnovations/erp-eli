@@ -112,13 +112,13 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
       })
       .then((res) => {
         setFetchProduct_notApprove(res.data.product_notApprove);
-        setFetchAssembly_notApprove(res.data.assembly_notApprove);
-        setFetchSpare_notApprove(res.data.spare_notApprove);
-        setFetchSubpart_notApprove(res.data.subpart_notApprove);
+        // setFetchAssembly_notApprove(res.data.assembly_notApprove);
+        // setFetchSpare_notApprove(res.data.spare_notApprove);
+        // setFetchSubpart_notApprove(res.data.subpart_notApprove);
         setFetchProduct(res.data.product);
-        setFetchAssembly(res.data.assembly);
-        setFetchSpare(res.data.spare);
-        setFetchSubpart(res.data.subpart);
+        // setFetchAssembly(res.data.assembly);
+        // setFetchSpare(res.data.spare);
+        // setFetchSubpart(res.data.subpart);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -138,9 +138,9 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
               id,
               fromSite,
               fetchProduct: fetchProduct_notApprove,
-              fetchAssembly: fetchAssembly_notApprove,
-              fetchSpare: fetchSpare_notApprove,
-              fetchSubpart: fetchSubpart_notApprove,
+              // fetchAssembly: fetchAssembly_notApprove,
+              // fetchSpare: fetchSpare_notApprove,
+              // fetchSubpart: fetchSubpart_notApprove,
               userId,
               receivedBy,
             },
@@ -422,6 +422,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
                             <th className="tableh">Landed Cost</th>
                           )}
                         <th className="tableh">UOM</th>
+                        <th className="tableh">Sub Unit</th>
                         <th className="tableh">Quantity</th>
                       </tr>
                     </thead>
@@ -456,108 +457,11 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
                                 }
                               </td>
                               <td>
-                                {data.quantity === 0
-                                  ? "returned"
-                                  : data.quantity}
-                              </td>
-                            </tr>
-                          ))}
-
-                          {fetchAssembly.map((data, i) => (
-                            <tr key={i}>
-                              <td>
                                 {
-                                  data.inventory_assembly.assembly_supplier
-                                    .assembly.assembly_code
-                                }
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_assembly.assembly_supplier
-                                    .assembly.assembly_name
-                                }
-                              </td>
-                              <td>
-                                {(
-                                  data.inventory_assembly.price +
-                                  data.inventory_assembly.freight_cost +
-                                  data.inventory_assembly.custom_cost
-                                ).toFixed(2)}
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_assembly.assembly_supplier
-                                    .assembly.assembly_unitMeasurement
-                                }
-                              </td>
-                              <td>
-                                {data.quantity === 0
-                                  ? "returned"
-                                  : data.quantity}
-                              </td>
-                            </tr>
-                          ))}
-
-                          {fetchSpare.map((data, i) => (
-                            <tr key={i}>
-                              <td>
-                                {
-                                  data.inventory_spare.sparepart_supplier
-                                    .sparePart.spareParts_code
-                                }
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_spare.sparepart_supplier
-                                    .sparePart.spareParts_name
-                                }
-                              </td>
-                              <td>
-                                {(
-                                  data.inventory_spare.price +
-                                  data.inventory_spare.freight_cost +
-                                  data.inventory_spare.custom_cost
-                                ).toFixed(2)}
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_spare.sparepart_supplier
-                                    .sparePart.spareParts_unitMeasurement
-                                }
-                              </td>
-                              <td>
-                                {data.quantity === 0
-                                  ? "returned"
-                                  : data.quantity}
-                              </td>
-                            </tr>
-                          ))}
-
-                          {fetchSubpart.map((data, i) => (
-                            <tr key={i}>
-                              <td>
-                                {
-                                  data.inventory_subpart.subpart_supplier
-                                    .subPart.subPart_code
-                                }
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_subpart.subpart_supplier
-                                    .subPart.subPart_name
-                                }
-                              </td>
-                              <td>
-                                {(
-                                  data.inventory_subpart.price +
-                                  data.inventory_subpart.freight_cost +
-                                  data.inventory_subpart.custom_cost
-                                ).toFixed(2)}
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_subpart.subpart_supplier
-                                    .subPart.subPart_unitMeasurement
+                                  data.inventory_prd.product_tag_supplier
+                                    .product.UOM_set === true ? `(qty of pcs inside ${data.inventory_prd.product_tag_supplier
+                                      .product.product_unitMeasurement})` : `(qty per ${data.inventory_prd.product_tag_supplier
+                                        .product.product_unitMeasurement})`
                                 }
                               </td>
                               <td>
@@ -576,39 +480,13 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
                             <tr key={i}>
                               <td>{data.product.product_code}</td>
                               <td>{data.product.product_name}</td>
-                              <td>{data.product.product_unitMeasurement}</td>
+                              <td>{data.product.product_unitMeasurement }</td>
+                              <td>{data.product.UOM_set === true ? `(qty of pcs inside ${data.product.product_unitMeasurement })` : `(qty per ${data.product.product_unitMeasurement })`}</td>
                               <td>{data.quantity}</td>
                             </tr>
                           ))}
 
-                          {fetchAssembly_notApprove.map((data, i) => (
-                            <tr key={i}>
-                              <td>{data.assembly.assembly_code}</td>
-                              <td>{data.assembly.assembly_name}</td>
-                              <td>{data.assembly.assembly_unitMeasurement}</td>
-                              <td>{data.quantity}</td>
-                            </tr>
-                          ))}
-
-                          {fetchSpare_notApprove.map((data, i) => (
-                            <tr key={i}>
-                              <td>{data.sparePart.spareParts_code}</td>
-                              <td>{data.sparePart.spareParts_name}</td>
-                              <td>
-                                {data.sparePart.spareParts_unitMeasurement}
-                              </td>
-                              <td>{data.quantity}</td>
-                            </tr>
-                          ))}
-
-                          {fetchSubpart_notApprove.map((data, i) => (
-                            <tr key={i}>
-                              <td>{data.subPart.subPart_code}</td>
-                              <td>{data.subPart.subPart_name}</td>
-                              <td>{data.subPart.subPart_unitMeasurement}</td>
-                              <td>{data.quantity}</td>
-                            </tr>
-                          ))}
+                
                         </tbody>
                       )}
                   </table>

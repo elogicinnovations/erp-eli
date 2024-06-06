@@ -1145,6 +1145,7 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
      const productCode = item.product_tag_supplier?.product?.product_code;
      const productName = item.product_tag_supplier?.product?.product_name;
      const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
+     const setUOM = item.product_tag_supplier?.product?.UOM_set;
      const createdAtt = item.product_tag_supplier?.product?.createdAt;
      const Category =
        item.product_tag_supplier?.product?.category?.category_name;
@@ -1157,6 +1158,7 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
          groupedProductData[key] = {
            createdAt: createdAtt,
            UOM: UOM,
+           setUOM: setUOM,
            inventory_id: inventory_id,
            productID: productID,
            warehouseId: warehouseId,
@@ -1176,7 +1178,7 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
    });
 
    const finalResult_PRD = Object.values(groupedProductData);
-   // console.log('Productdddfdsfd', JSON.stringify(finalResult, null, 2));
+   console.log('Productdddfdsfd', JSON.stringify(finalResult_PRD, null, 2));
 
    return res.json(finalResult_PRD);
   } catch (err) {

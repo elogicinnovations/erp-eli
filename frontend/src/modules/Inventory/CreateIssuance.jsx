@@ -652,6 +652,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                           <th className="tableh">Product Code</th>
                           <th className="tableh">Product Name</th>
                           <th className="tableh">UOM</th>
+                          <th className="tableh">Sub-Unit</th>
                           <th className="tableh">Availability</th>
                           <th className="tableh">Quantity</th>
                         </tr>
@@ -663,6 +664,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                               <td key={product.value}>{product.code}</td>
                               <td key={product.value}>{product.name}</td>
                               <td>{product.uom}</td>
+                              <td>{product.setUOM === true ? `(qty of pcs inside ${product.uom})` : `(qty per ${product.uom})`}</td>
                               <td>{product.quantity_available}</td>
                               <td>
                                 <div className="d-flex flex-direction-row align-items-center">
@@ -732,74 +734,75 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                               code: product.product_code,
                               name: product.product_name,
                               quantity_available: product.totalQuantity,
-                              uom: product.UOM
+                              uom: product.UOM,
+                              setUOM: product.setUOM
                             }))
-                            .concat(
-                              fetchAssembly.map((assembly) => ({
-                                value: `${assembly.productID}_${assembly.product_code}_Assembly`,
-                                label: (
-                                  <div>
-                                    Product Code:{" "}
-                                    <strong>{assembly.product_code}</strong> /
-                                    Product Name:{" "}
-                                    <strong>{assembly.product_name}</strong> /
-                                    Quantity:{" "}
-                                    <strong>{assembly.totalQuantity}</strong>
-                                  </div>
-                                ),
-                                type: "Assembly",
-                                inventory_id: assembly.inventory_id,
-                                product_id: assembly.productID,
-                                code: assembly.product_code,
-                                name: assembly.product_name,
-                                quantity_available: assembly.totalQuantity,
-                                uom: assembly.UOM
-                              }))
-                            )
-                            .concat(
-                              fetchSpare.map((spare) => ({
-                                value: `${spare.productID}_${spare.product_code}_Spare`,
-                                label: (
-                                  <div>
-                                    Product Code:{" "}
-                                    <strong>{spare.product_code}</strong> /
-                                    Product Name:{" "}
-                                    <strong>{spare.product_name}</strong> /
-                                    Quantity:{" "}
-                                    <strong>{spare.totalQuantity}</strong>
-                                  </div>
-                                ),
-                                type: "Spare",
-                                inventory_id: spare.inventory_id,
-                                product_id: spare.productID,
-                                code: spare.product_code,
-                                name: spare.product_name,
-                                quantity_available: spare.totalQuantity,
-                                uom: spare.UOM
-                              }))
-                            )
-                            .concat(
-                              fetchSubpart.map((subpart) => ({
-                                value: `${subpart.productID}_${subpart.product_code}_Subpart`,
-                                label: (
-                                  <div>
-                                    Product Code:{" "}
-                                    <strong>{subpart.product_code}</strong> /
-                                    Product Name:{" "}
-                                    <strong>{subpart.product_name}</strong> /
-                                    Quantity:{" "}
-                                    <strong>{subpart.totalQuantity}</strong>
-                                  </div>
-                                ),
-                                type: "Subpart",
-                                inventory_id: subpart.inventory_id,
-                                product_id: subpart.productID,
-                                code: subpart.product_code,
-                                name: subpart.product_name,
-                                quantity_available: subpart.totalQuantity,
-                                uom: subpart.UOM
-                              }))
-                            )
+                            // .concat(
+                            //   fetchAssembly.map((assembly) => ({
+                            //     value: `${assembly.productID}_${assembly.product_code}_Assembly`,
+                            //     label: (
+                            //       <div>
+                            //         Product Code:{" "}
+                            //         <strong>{assembly.product_code}</strong> /
+                            //         Product Name:{" "}
+                            //         <strong>{assembly.product_name}</strong> /
+                            //         Quantity:{" "}
+                            //         <strong>{assembly.totalQuantity}</strong>
+                            //       </div>
+                            //     ),
+                            //     type: "Assembly",
+                            //     inventory_id: assembly.inventory_id,
+                            //     product_id: assembly.productID,
+                            //     code: assembly.product_code,
+                            //     name: assembly.product_name,
+                            //     quantity_available: assembly.totalQuantity,
+                            //     uom: assembly.UOM
+                            //   }))
+                            // )
+                            // .concat(
+                            //   fetchSpare.map((spare) => ({
+                            //     value: `${spare.productID}_${spare.product_code}_Spare`,
+                            //     label: (
+                            //       <div>
+                            //         Product Code:{" "}
+                            //         <strong>{spare.product_code}</strong> /
+                            //         Product Name:{" "}
+                            //         <strong>{spare.product_name}</strong> /
+                            //         Quantity:{" "}
+                            //         <strong>{spare.totalQuantity}</strong>
+                            //       </div>
+                            //     ),
+                            //     type: "Spare",
+                            //     inventory_id: spare.inventory_id,
+                            //     product_id: spare.productID,
+                            //     code: spare.product_code,
+                            //     name: spare.product_name,
+                            //     quantity_available: spare.totalQuantity,
+                            //     uom: spare.UOM
+                            //   }))
+                            // )
+                            // .concat(
+                            //   fetchSubpart.map((subpart) => ({
+                            //     value: `${subpart.productID}_${subpart.product_code}_Subpart`,
+                            //     label: (
+                            //       <div>
+                            //         Product Code:{" "}
+                            //         <strong>{subpart.product_code}</strong> /
+                            //         Product Name:{" "}
+                            //         <strong>{subpart.product_name}</strong> /
+                            //         Quantity:{" "}
+                            //         <strong>{subpart.totalQuantity}</strong>
+                            //       </div>
+                            //     ),
+                            //     type: "Subpart",
+                            //     inventory_id: subpart.inventory_id,
+                            //     product_id: subpart.productID,
+                            //     code: subpart.product_code,
+                            //     name: subpart.product_name,
+                            //     quantity_available: subpart.totalQuantity,
+                            //     uom: subpart.UOM
+                            //   }))
+                            // )
                           }
                           onChange={handleSelectChange_Prod}
                         />

@@ -118,53 +118,53 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const asmData_notApprove = await IssuedAssembly.findAll({
-      include: [
-        {
-          model: Assembly,
-          required: true
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    // const asmData_notApprove = await IssuedAssembly.findAll({
+    //   include: [
+    //     {
+    //       model: Assembly,
+    //       required: true
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const spareData_notApprove = await IssuedSpare.findAll({
-      include: [
-        {
-          model: SparePart,
-          required: true
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    // const spareData_notApprove = await IssuedSpare.findAll({
+    //   include: [
+    //     {
+    //       model: SparePart,
+    //       required: true
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const subpartData_notApprove = await IssuedSubpart.findAll({
-      include: [
-        {
-          model: SubPart,
-          required: true
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    // const subpartData_notApprove = await IssuedSubpart.findAll({
+    //   include: [
+    //     {
+    //       model: SubPart,
+    //       required: true
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
 
 
@@ -194,93 +194,93 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const asmData = await IssuedApproveAssembly.findAll({
-      include: [
-        {
-          model: Inventory_Assembly,
-          required: true,
+    // const asmData = await IssuedApproveAssembly.findAll({
+    //   include: [
+    //     {
+    //       model: Inventory_Assembly,
+    //       required: true,
 
-            include: [{
-              model: Assembly_Supplier,
-              required: true,
-                include: [{
-                  model: Assembly,
-                  required: true
-                }]
+    //         include: [{
+    //           model: Assembly_Supplier,
+    //           required: true,
+    //             include: [{
+    //               model: Assembly,
+    //               required: true
+    //             }]
 
-            },]
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    //         },]
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const spareData = await IssuedApproveSpare.findAll({
-      include: [
-        {
-          model: Inventory_Spare,
-          required: true,
+    // const spareData = await IssuedApproveSpare.findAll({
+    //   include: [
+    //     {
+    //       model: Inventory_Spare,
+    //       required: true,
 
-            include: [{
-              model: SparePart_Supplier,
-              required: true,
-                include: [{
-                  model: SparePart,
-                  required: true
-                }]
+    //         include: [{
+    //           model: SparePart_Supplier,
+    //           required: true,
+    //             include: [{
+    //               model: SparePart,
+    //               required: true
+    //             }]
 
-            },]
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    //         },]
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const subpartData = await IssuedApproveSubpart.findAll({
-      include: [
-        {
-          model: Inventory_Subpart,
-          required: true,
+    // const subpartData = await IssuedApproveSubpart.findAll({
+    //   include: [
+    //     {
+    //       model: Inventory_Subpart,
+    //       required: true,
 
-            include: [{
-              model: Subpart_supplier,
-              required: true,
-                include: [{
-                  model: SubPart,
-                  required: true
-                }]
+    //         include: [{
+    //           model: Subpart_supplier,
+    //           required: true,
+    //             include: [{
+    //               model: SubPart,
+    //               required: true
+    //             }]
 
-            },]
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    //         },]
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
     return res.json({
       product_notApprove: productData_notApprove,
-      assembly_notApprove: asmData_notApprove,
-      spare_notApprove: spareData_notApprove,
-      subpart_notApprove: subpartData_notApprove,
+      // assembly_notApprove: asmData_notApprove,
+      // spare_notApprove: spareData_notApprove,
+      // subpart_notApprove: subpartData_notApprove,
       product: productData,
-      assembly: asmData,
-      spare: spareData,
-      subpart: subpartData,
+      // assembly: asmData,
+      // spare: spareData,
+      // subpart: subpartData,
     });
   } catch (err) {
     console.error(err);

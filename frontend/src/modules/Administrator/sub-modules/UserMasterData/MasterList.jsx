@@ -1069,7 +1069,7 @@ function MasterList({ authrztn }) {
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Slashtech, Valenzuela City 164"
+                    placeholder="Street, Brgy. City"
                     style={{ height: "40px", fontSize: "15px" }}
                     value={formData.caddress}
                     onChange={handleFormChange}

@@ -15,6 +15,7 @@ import {
   ShoppingCart,
   Scales,
   List,
+  Envelope
 } from "@phosphor-icons/react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -345,6 +346,12 @@ const Header = () => {
             <List size={32} onClick={toggleSidebar} />
           </div>
           <div className="iconic-side">
+          <button
+              onClick={() => navigate(`/board`)}
+              className="settings"
+            >
+              <Envelope size={35} />
+            </button>
             <button
               onClick={() => navigate(`/SettingView/1`)}
               className="settings"
