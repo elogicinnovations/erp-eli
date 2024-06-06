@@ -107,53 +107,53 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const asmData_notApprove = await IssuedAssembly.findAll({
-      include: [
-        {
-          model: Assembly,
-          required: true
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    // const asmData_notApprove = await IssuedAssembly.findAll({
+    //   include: [
+    //     {
+    //       model: Assembly,
+    //       required: true
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const spareData_notApprove = await IssuedSpare.findAll({
-      include: [
-        {
-          model: SparePart,
-          required: true
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    // const spareData_notApprove = await IssuedSpare.findAll({
+    //   include: [
+    //     {
+    //       model: SparePart,
+    //       required: true
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const subpartData_notApprove = await IssuedSubpart.findAll({
-      include: [
-        {
-          model: SubPart,
-          required: true
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    // const subpartData_notApprove = await IssuedSubpart.findAll({
+    //   include: [
+    //     {
+    //       model: SubPart,
+    //       required: true
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
 
 
@@ -183,93 +183,93 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    const asmData = await IssuedApproveAssembly.findAll({
-      include: [
-        {
-          model: Inventory_Assembly,
-          required: true,
+    // const asmData = await IssuedApproveAssembly.findAll({
+    //   include: [
+    //     {
+    //       model: Inventory_Assembly,
+    //       required: true,
 
-            include: [{
-              model: Assembly_Supplier,
-              required: true,
-                include: [{
-                  model: Assembly,
-                  required: true
-                }]
+    //         include: [{
+    //           model: Assembly_Supplier,
+    //           required: true,
+    //             include: [{
+    //               model: Assembly,
+    //               required: true
+    //             }]
 
-            },]
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    //         },]
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const spareData = await IssuedApproveSpare.findAll({
-      include: [
-        {
-          model: Inventory_Spare,
-          required: true,
+    // const spareData = await IssuedApproveSpare.findAll({
+    //   include: [
+    //     {
+    //       model: Inventory_Spare,
+    //       required: true,
 
-            include: [{
-              model: SparePart_Supplier,
-              required: true,
-                include: [{
-                  model: SparePart,
-                  required: true
-                }]
+    //         include: [{
+    //           model: SparePart_Supplier,
+    //           required: true,
+    //             include: [{
+    //               model: SparePart,
+    //               required: true
+    //             }]
 
-            },]
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    //         },]
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
-    const subpartData = await IssuedApproveSubpart.findAll({
-      include: [
-        {
-          model: Inventory_Subpart,
-          required: true,
+    // const subpartData = await IssuedApproveSubpart.findAll({
+    //   include: [
+    //     {
+    //       model: Inventory_Subpart,
+    //       required: true,
 
-            include: [{
-              model: Subpart_supplier,
-              required: true,
-                include: [{
-                  model: SubPart,
-                  required: true
-                }]
+    //         include: [{
+    //           model: Subpart_supplier,
+    //           required: true,
+    //             include: [{
+    //               model: SubPart,
+    //               required: true
+    //             }]
 
-            },]
-        },
-        {
-          model: Issuance,
-          required: true,
-        },
-      ],
-      where: {
-        issuance_id: req.query.id,
-      },
-    });
+    //         },]
+    //     },
+    //     {
+    //       model: Issuance,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     issuance_id: req.query.id,
+    //   },
+    // });
 
     return res.json({
       product_notApprove: productData_notApprove,
-      assembly_notApprove: asmData_notApprove,
-      spare_notApprove: spareData_notApprove,
-      subpart_notApprove: subpartData_notApprove,
+      // assembly_notApprove: asmData_notApprove,
+      // spare_notApprove: spareData_notApprove,
+      // subpart_notApprove: subpartData_notApprove,
       product: productData,
-      assembly: asmData,
-      spare: spareData,
-      subpart: subpartData,
+      // assembly: asmData,
+      // spare: spareData,
+      // subpart: subpartData,
     });
   } catch (err) {
     console.error(err);
@@ -389,264 +389,264 @@ router.route("/approval").post(async (req, res) => {
     }
   }
 
-  if (assembly && assembly.length > 0) {
-    for (const prod of assembly) {
-      let remainingQuantity = prod.quantity;
-      const AssemblyName = prod.assembly.assembly_name;
-      // console.log(`Assembly ${prod.assembly.assembly_name}`);
-      const checkPrd = await Inventory_Assembly.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: Assembly_Supplier,
-            required: true,
+  // if (assembly && assembly.length > 0) {
+  //   for (const prod of assembly) {
+  //     let remainingQuantity = prod.quantity;
+  //     const AssemblyName = prod.assembly.assembly_name;
+  //     // console.log(`Assembly ${prod.assembly.assembly_name}`);
+  //     const checkPrd = await Inventory_Assembly.findAll({
+  //       where: {
+  //         warehouse_id: warehouseId,
+  //       },
+  //       include: [
+  //         {
+  //           model: Assembly_Supplier,
+  //           required: true,
 
-            include: [
-              {
-                model: Assembly,
-                required: true,
+  //           include: [
+  //             {
+  //               model: Assembly,
+  //               required: true,
 
-                where: {
-                  id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
+  //               where: {
+  //                 id: prod.product_id,
+  //               },
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           model: Warehouses,
+  //           required: true,
+  //         },
+  //       ],
+  //     });
 
-      checkPrd.forEach(inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-          Inventory_Assembly.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
+  //     checkPrd.forEach(inventory => {
+  //       console.log(
+  //         `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
+  //       );
+  //       if (remainingQuantity <= inventory.quantity) {
+  //         console.log(
+  //           `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+  //         );
+  //         Inventory_Assembly.update({ quantity: inventory.quantity - remainingQuantity }, {
+  //             where: { inventory_id: inventory.inventory_id }
+  //         });
 
-           IssuedApproveAssembly.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-          Inventory_Assembly.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
+  //          IssuedApproveAssembly.create({
+  //           inventory_id: inventory.inventory_id,
+  //           issuance_id: id,
+  //           quantity: remainingQuantity
+  //         })
+  //         remainingQuantity = 0;
+  //       //   ; // Break the loop since remainingQuantity is now 0
+  //       } else {
+  //         console.log(
+  //           `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+  //         );
+  //         remainingQuantity -= inventory.quantity;
+  //         Inventory_Assembly.update({ quantity: 0 }, {
+  //             where: { inventory_id: inventory.inventory_id }
+  //         });
 
-          IssuedApproveAssembly.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-        }
-      })
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
+  //         IssuedApproveAssembly.create({
+  //           inventory_id: inventory.inventory_id,
+  //           issuance_id: id,
+  //           quantity: inventory.quantity 
+  //         })
+  //       }
+  //     })
+  //     const findIssuance = await Issuance.findOne({
+  //       where: {
+  //         issuance_id: id
+  //       },
+  //       include: [{
+  //         model: CostCenter,
+  //         required: true
+  //       }]
+  //     })
       
-      const nameCostcenter = findIssuance.cost_center.name;
+  //     const nameCostcenter = findIssuance.cost_center.name;
       
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the request issued product ${AssemblyName} to ${nameCostcenter}`,
-      });
-    }
-  }
+  //     await Activity_Log.create({
+  //       masterlist_id: userId,
+  //       action_taken: `Issuance: Approved the request issued product ${AssemblyName} to ${nameCostcenter}`,
+  //     });
+  //   }
+  // }
 
-  if (spare && spare.length > 0) {
-    for (const prod of spare) {
-      let remainingQuantity = prod.quantity;
-      const spareName = prod.sparePart.spareParts_name
-      // console.log(`Spare part ${prod.sparePart.spareParts_name}`);
-      const checkPrd = await Inventory_Spare.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: SparePart_Supplier,
-            required: true,
+  // if (spare && spare.length > 0) {
+  //   for (const prod of spare) {
+  //     let remainingQuantity = prod.quantity;
+  //     const spareName = prod.sparePart.spareParts_name
+  //     // console.log(`Spare part ${prod.sparePart.spareParts_name}`);
+  //     const checkPrd = await Inventory_Spare.findAll({
+  //       where: {
+  //         warehouse_id: warehouseId,
+  //       },
+  //       include: [
+  //         {
+  //           model: SparePart_Supplier,
+  //           required: true,
 
-            include: [
-              {
-                model: SparePart,
-                required: true,
+  //           include: [
+  //             {
+  //               model: SparePart,
+  //               required: true,
 
-                where: {
-                  id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
+  //               where: {
+  //                 id: prod.product_id,
+  //               },
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           model: Warehouses,
+  //           required: true,
+  //         },
+  //       ],
+  //     });
 
-      checkPrd.forEach(inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-          Inventory_Spare.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
+  //     checkPrd.forEach(inventory => {
+  //       console.log(
+  //         `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
+  //       );
+  //       if (remainingQuantity <= inventory.quantity) {
+  //         console.log(
+  //           `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+  //         );
+  //         Inventory_Spare.update({ quantity: inventory.quantity - remainingQuantity }, {
+  //             where: { inventory_id: inventory.inventory_id }
+  //         });
 
-           IssuedApproveSpare.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-          Inventory_Spare.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
+  //          IssuedApproveSpare.create({
+  //           inventory_id: inventory.inventory_id,
+  //           issuance_id: id,
+  //           quantity: remainingQuantity
+  //         })
+  //         remainingQuantity = 0;
+  //       //   ; // Break the loop since remainingQuantity is now 0
+  //       } else {
+  //         console.log(
+  //           `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+  //         );
+  //         remainingQuantity -= inventory.quantity;
+  //         Inventory_Spare.update({ quantity: 0 }, {
+  //             where: { inventory_id: inventory.inventory_id }
+  //         });
 
-          IssuedApproveSpare.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-        }
-      })
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
+  //         IssuedApproveSpare.create({
+  //           inventory_id: inventory.inventory_id,
+  //           issuance_id: id,
+  //           quantity: inventory.quantity 
+  //         })
+  //       }
+  //     })
+  //     const findIssuance = await Issuance.findOne({
+  //       where: {
+  //         issuance_id: id
+  //       },
+  //       include: [{
+  //         model: CostCenter,
+  //         required: true
+  //       }]
+  //     })
       
-      const nameCostcenter = findIssuance.cost_center.name;
+  //     const nameCostcenter = findIssuance.cost_center.name;
       
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the requested issued product ${spareName} to ${nameCostcenter}`,
-      });
-    }
-  }
+  //     await Activity_Log.create({
+  //       masterlist_id: userId,
+  //       action_taken: `Issuance: Approved the requested issued product ${spareName} to ${nameCostcenter}`,
+  //     });
+  //   }
+  // }
 
-  if (subpart && subpart.length > 0) {
-    for (const prod of subpart) {
-      let remainingQuantity = prod.quantity;
-      const subpartName = prod.subPart.subPart_name;
-      // console.log(`Subpart ${prod.subPart.subPart_name}`);
-      const checkPrd = await Inventory_Subpart.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: Subpart_supplier,
-            required: true,
+  // if (subpart && subpart.length > 0) {
+  //   for (const prod of subpart) {
+  //     let remainingQuantity = prod.quantity;
+  //     const subpartName = prod.subPart.subPart_name;
+  //     // console.log(`Subpart ${prod.subPart.subPart_name}`);
+  //     const checkPrd = await Inventory_Subpart.findAll({
+  //       where: {
+  //         warehouse_id: warehouseId,
+  //       },
+  //       include: [
+  //         {
+  //           model: Subpart_supplier,
+  //           required: true,
 
-            include: [
-              {
-                model: SubPart,
-                required: true,
+  //           include: [
+  //             {
+  //               model: SubPart,
+  //               required: true,
 
-                where: {
-                  id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
+  //               where: {
+  //                 id: prod.product_id,
+  //               },
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           model: Warehouses,
+  //           required: true,
+  //         },
+  //       ],
+  //     });
 
-      checkPrd.forEach(inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-          Inventory_Subpart.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
+  //     checkPrd.forEach(inventory => {
+  //       console.log(
+  //         `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
+  //       );
+  //       if (remainingQuantity <= inventory.quantity) {
+  //         console.log(
+  //           `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+  //         );
+  //         Inventory_Subpart.update({ quantity: inventory.quantity - remainingQuantity }, {
+  //             where: { inventory_id: inventory.inventory_id }
+  //         });
 
-           IssuedApproveSubpart.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-          Inventory_Subpart.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
+  //          IssuedApproveSubpart.create({
+  //           inventory_id: inventory.inventory_id,
+  //           issuance_id: id,
+  //           quantity: remainingQuantity
+  //         })
+  //         remainingQuantity = 0;
+  //       //   ; // Break the loop since remainingQuantity is now 0
+  //       } else {
+  //         console.log(
+  //           `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+  //         );
+  //         remainingQuantity -= inventory.quantity;
+  //         Inventory_Subpart.update({ quantity: 0 }, {
+  //             where: { inventory_id: inventory.inventory_id }
+  //         });
 
-          IssuedApproveSubpart.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-        }
-      })
+  //         IssuedApproveSubpart.create({
+  //           inventory_id: inventory.inventory_id,
+  //           issuance_id: id,
+  //           quantity: inventory.quantity 
+  //         })
+  //       }
+  //     })
 
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
+  //     const findIssuance = await Issuance.findOne({
+  //       where: {
+  //         issuance_id: id
+  //       },
+  //       include: [{
+  //         model: CostCenter,
+  //         required: true
+  //       }]
+  //     })
       
-      const nameCostcenter = findIssuance.cost_center.name;
+  //     const nameCostcenter = findIssuance.cost_center.name;
       
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the requested issued product ${subpartName} to ${nameCostcenter}`,
-      });
-    }
-  }
+  //     await Activity_Log.create({
+  //       masterlist_id: userId,
+  //       action_taken: `Issuance: Approved the requested issued product ${subpartName} to ${nameCostcenter}`,
+  //     });
+  //   }
+  // }
 
    res.status(200).json();
   }

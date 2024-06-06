@@ -161,7 +161,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
 
   
 
-  useEffect(() => {
+  useEffect( ()  => {
 
     // --------------ROW 1 ----------------------
     //issued Approve products  per month
@@ -567,7 +567,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                           setCustomFee(item.customFee)
                           setCustomFeeBool(item.customFee === null  ? false : true)
                           setShippingFee(item.freight_cost)
-                          setShippingFeeBool(item.freight_cost === 0  ? false : true)
+                          setShippingFeeBool(item.freight_cost === null  ? false : true)
                           setReceiving_id(item.id)
                           setRef_code(item.ref_code)
                           setPRnum(item.purchase_req.pr_num)
@@ -904,7 +904,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                       fontFamily: "Poppins, Source Sans Pro",
                     }}
                   >
-                    Duties & Custom Cost <span style={{fontSize: 12, color: 'red'}}>(type '0' if not applicable)</span>
+                    Duties & Custom Cost
                   </Form.Label>
                   <Form.Control
                     

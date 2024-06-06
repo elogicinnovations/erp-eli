@@ -130,9 +130,9 @@ function CostCenter({ authrztn }) {
     const filteredData = searchCostCenter.filter((data) => {
       return (
         data.name.toLowerCase().includes(searchTerm) ||
-        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
+        // data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
         formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-        data.masterlist.col_phone.toLowerCase().includes(searchTerm) ||
+        // data.masterlist.col_phone.toLowerCase().includes(searchTerm) ||
         data.status.toLowerCase().includes(searchTerm)
       );
     });
@@ -158,7 +158,6 @@ function CostCenter({ authrztn }) {
           name,
           masterList,
           description,
-          select_masterlist,
           status,
           userId,
         })
@@ -261,7 +260,7 @@ function CostCenter({ authrztn }) {
           `/costCenter/update/${updateFormData.updateId}?userId=${userId}`,
         {
           name: updateFormData.uname,
-          col_id: updateFormData.ucol_id,
+          // col_id: updateFormData.ucol_id,
           description: updateFormData.udescription,
           status: updateFormData.ustatus ? "Active" : "Inactive",
         }
@@ -415,9 +414,9 @@ function CostCenter({ authrztn }) {
       });
   }, []);
 
-  const handleFormChangeMasterList = (event) => {
-    setSelect_Masterlist(event.target.value);
-  };
+  // const handleFormChangeMasterList = (event) => {
+  //   setSelect_Masterlist(event.target.value);
+  // };
 
   const handleActiveStatus = (e) => {
     if (status === "Active") {
@@ -605,8 +604,7 @@ function CostCenter({ authrztn }) {
                         />
                       </th>
                       <th className="tableh">Name</th>
-                      <th className="tableh">Assigned User</th>
-                      <th className="tableh">Contact #</th>
+                      <th className="tableh">Description</th>
                       <th className="tableh">Status</th>
                       <th className="tableh">Date Created</th>
                       <th className="tableh">Date Modified</th>
@@ -642,14 +640,7 @@ function CostCenter({ authrztn }) {
                                 navigate(`/viewCostCenter/${data.id}`)
                               }
                             >
-                              {data.masterlist.col_Fname}
-                            </td>
-                            <td
-                              onClick={() =>
-                                navigate(`/viewCostCenter/${data.id}`)
-                              }
-                            >
-                              {data.masterlist.col_phone}
+                              {data.description}
                             </td>
                             <td
                               onClick={() =>
@@ -971,7 +962,7 @@ function CostCenter({ authrztn }) {
         <Modal.Body>
           <Form noValidate validated={validated} onSubmit={add}>
             <div className="row mt-3">
-              <div className="col-6">
+              <div className="col-12">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label
                     style={{
@@ -994,7 +985,7 @@ function CostCenter({ authrztn }) {
                   />
                 </Form.Group>
               </div>
-              <div className="col-6">
+              {/* <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Assign User:
@@ -1020,7 +1011,7 @@ function CostCenter({ authrztn }) {
                     ))}
                   </Form.Select>
                 </Form.Group>
-              </div>
+              </div> */}
             </div>
             <div className="row">
               <Form.Group controlId="exampleForm.ControlInput1">
@@ -1108,7 +1099,7 @@ function CostCenter({ authrztn }) {
           </Modal.Header>
           <Modal.Body>
             <div className="row mt-3">
-              <div className="col-6">
+              <div className="col-12">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label
                     style={{
@@ -1132,7 +1123,7 @@ function CostCenter({ authrztn }) {
                   />
                 </Form.Group>
               </div>
-              <div className="col-6">
+              {/* <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput2">
                   <Form.Label style={{ fontSize: "20px" }}>
                     Assign User:
@@ -1160,7 +1151,7 @@ function CostCenter({ authrztn }) {
                     ))}
                   </Form.Select>
                 </Form.Group>
-              </div>
+              </div> */}
             </div>
             <div className="row">
               <Form.Group controlId="exampleForm.ControlInput1">

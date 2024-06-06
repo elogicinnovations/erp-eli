@@ -35,9 +35,7 @@ router.route('/getCostCenter').get(async (req, res) =>
     try {
         const data = await CostCenter.findAll({
           order: [['createdAt', 'DESC']],
-          include: {
-            model: MasterList, 
-            required: true},
+        
           });
 
         if (data) {
@@ -67,7 +65,6 @@ router.route('/create').post(async (req, res) => {
       } else {
         const newData = await CostCenter.create({
           name: req.body.name,
-          col_id: req.body.select_masterlist,
           description: req.body.description,
           status: req.body.status
         });
@@ -93,9 +90,9 @@ router.route('/initUpdate').get(async (req, res) => {
           where: {
               id: req.query.id,
           },
-          include: {
-            model: MasterList, required: true
-          }
+          // include: {
+          //   model: MasterList, required: true
+          // }
           });
   
           if (!data) {
@@ -136,7 +133,7 @@ router.route('/initUpdate').get(async (req, res) => {
         const [affectedRows] = await CostCenter.update(
           {
             name: req.body.name,
-            col_id: req.body.col_id,
+            // col_id: req.body.col_id,
             description: req.body.description,
             status: req.body.status,
           },

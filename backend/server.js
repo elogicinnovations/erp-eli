@@ -4,15 +4,15 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const app = express();
 
-const port = 8083;
-// const port = 3306;
+// const port = 8083;
+const port = 3306;
 require("dotenv").config();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
     // origin: "http://192.168.0.108:3000",
-    // origin: "http://180.232.37.193:3000",
+    origin: "http://180.232.37.193:3000",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -27,9 +27,9 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   // res.header("Access-Control-Allow-Origin", "http://192.168.0.108:3000");
-  // res.header("Access-Control-Allow-Origin", "http://180.232.37.193:3000");
+  res.header("Access-Control-Allow-Origin", "http://180.232.37.193:3000");
   res.header(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
@@ -133,6 +133,7 @@ const Report_BIS = require("./routes/report_bis.route");
 const Report_BIS_Summary = require("./routes/report_bis_summary.route");
 
 const Warehouse = require("./routes/warehouse.route");
+const Board = require("./routes/board.route");
 
 const authenticateToken = require("./middleware/token_authentication.middleware");
 
@@ -215,6 +216,7 @@ app.use("/report_inv", Report_inv);
 app.use("/report_PO", Report_PO);
 app.use("/report_BIS", Report_BIS);
 app.use("/report_BIS_Summary", Report_BIS_Summary);
+app.use("/board", Board);
 
 app.use("/warehouses", Warehouse);
 

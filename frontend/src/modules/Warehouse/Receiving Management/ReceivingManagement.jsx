@@ -38,13 +38,13 @@ function ReceivingManagement({ authrztn }) {
   const navigate = useNavigate();
   const [PurchaseRequest, setPurchaseRequest] = useState([]);
   const [searchPR, setSearchPR] = useState([]);
-  const [receivingPO, setReceivingPO] = useState([]);
-  const [searchReceivePO, setSearchReceivePO] = useState([]);
+  // const [receivingPO, setReceivingPO] = useState([]);
+  // const [searchReceivePO, setSearchReceivePO] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [filteredPR, setFilteredPR] = useState([]);
-  const [filteredRR, setFilteredRR] = useState([]);
+  // const [filteredPR, setFilteredPR] = useState([]);
+  // const [filteredRR, setFilteredRR] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -107,10 +107,10 @@ function ReceivingManagement({ authrztn }) {
         .then((res) => {
           setPurchaseRequest(res.data.prData);
           setSearchPR(res.data.prData);
-          setReceivingPO(res.data.receiving_PO);
-          setSearchReceivePO(res.data.receiving_PO);
-          setFilteredPR(res.data.prData);
-          setFilteredRR(res.data.receivingPO);
+          // setReceivingPO(res.data.receiving_PO);
+          // setSearchReceivePO(res.data.receiving_PO);
+          // setFilteredPR(res.data.prData);
+          // setFilteredRR(res.data.receivingPO);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -125,36 +125,21 @@ function ReceivingManagement({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
-
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
-    // Filter each inventory type separately
-    const filteredSearchPR = searchPR.filter(
+    const filteredSearchPR = PurchaseRequest.filter(
       (data) =>
-        data.pr_num.toLowerCase().includes(searchTerm) ||
-        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.masterlist.department.department_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        formatDatetime(data.date_approved).toLowerCase().includes(searchTerm) ||
-        data.status.toLowerCase().includes(searchTerm) ||
-        data.remarks.toLowerCase().includes(searchTerm)
+        (data?.po_id?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.ref_code?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.purchase_req?.pr_num?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.masterlist?.col_Fname?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.purchase_req?.masterlist?.col_Fname?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.purchase_req?.masterlist?.department?.department_name?.toLowerCase() || "").includes(searchTerm) ||
+        (formatDatetime(data?.ref_code)?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.status?.toLowerCase() || "").includes(searchTerm)
     );
-    setPurchaseRequest(filteredSearchPR);
-
-    const filteredSearchReceivingPO = searchReceivePO.filter(
-      (data) =>
-        data.purchase_req.pr_num.toLowerCase().includes(searchTerm) ||
-        data.purchase_req.masterlist.col_Fname
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.purchase_req.masterlist.department.department_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.status.toLowerCase().includes(searchTerm)
-    );
-    setReceivingPO(filteredSearchReceivingPO);
+    setSearchPR(filteredSearchPR);
   };
 
   const handleXCircleClick = () => {
@@ -178,24 +163,29 @@ function ReceivingManagement({ authrztn }) {
       });
       return;
     }
+    setIsLoading(true);
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/receiving/fetchTableToReceive_filter", {
+          params: {
+            strDate: startDate,
+            enDate: endDate,
+            selectedStatus,
+          },
+        })
+        .then((res) => {
+          setPurchaseRequest(res.data.prData);
+          setSearchPR(res.data.prData)
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-    const filteredData = PurchaseRequest.filter((data) => {
-      const createdAt = new Date(data.createdAt);
-      // console.log("startDate:", startDate);
-      // console.log("endDate:", endDate);
-      // console.log("createdAt:", createdAt);
+    return () => clearTimeout(delay);
 
-      const isWithinDateRange =
-        (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
-        (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
-
-      const isMatchingStatus =
-        selectedStatus === "All Status" || data.status === selectedStatus;
-
-      return isWithinDateRange && isMatchingStatus;
-    });
-
-    setFilteredPR(filteredData);
   };
 
   //function when user click the clear filter button
@@ -234,8 +224,7 @@ function ReceivingManagement({ authrztn }) {
     // Initialize DataTable when role data is available
     if (
       $("#order-listing").length > 0 &&
-      PurchaseRequest.length > 0 &&
-      receivingPO.length > 0
+      PurchaseRequest.length > 0 
     ) {
       $("#order-listing").DataTable();
     }
@@ -375,11 +364,10 @@ function ReceivingManagement({ authrztn }) {
                       Select Status
                     </option>
                     <option value="All Status">All Status</option>
-                    <option value="For-Approval">For-Approval</option>
-                    <option value="For-Rejustify">For-Rejustify</option>
-                    <option value="For-Canvassing">For-Canvassing</option>
-                    <option value="To-Received">To-Received</option>
-                    <option value="Cancelled">Cancelled</option>
+                    <option value="To-Receive">To-Receive</option>
+                    <option value="In-Transit">In-Transit</option>
+                    <option value="For Approval">For Approval</option>
+                    <option value="Delivered">Delivered</option>
                   </Form.Select>
                   <button className="goesButton" onClick={handleGoButtonClick}>
                     FILTER
@@ -421,11 +409,12 @@ function ReceivingManagement({ authrztn }) {
                     <tr>
                       <th className="tableh">PO NO.</th>
                       <th className="tableh">PR NO.</th>
+                      <th className="tableh">Reference #</th>
                       <th className="tableh">Received By:</th>
                       <th className="tableh">Requestor</th>                     
                       <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
-                      <th className="tableh">PO Approved Date</th>
+                      <th className="tableh">Received Date</th>
                     </tr>
                   </thead>
                   {PurchaseRequest.length > 0 ? (
@@ -469,6 +458,25 @@ function ReceivingManagement({ authrztn }) {
                             }
                           >
                             {data.purchase_req.pr_num}
+                          </td>
+                          <td
+                            onClick={() =>
+
+                              data.source === 'PO' ? (
+                                navigate(`/viewToReceive/${data.po_id}`)
+                              ) : (
+                                data.status === "For Approval" ? (
+                                  navigate(`/receivingPreview/${data.id}`)
+                                ) : data.status === "In-transit" ? (
+                                  navigate(`/receivingIntransit/${data.id}`)
+                                ) : (
+                                  <></>
+                                )
+                              )
+                             
+                            }
+                          >
+                            {data.ref_code}
                           </td>
                           <td
                              onClick={() =>
@@ -567,7 +575,7 @@ function ReceivingManagement({ authrztn }) {
                              
                             }
                           >
-                            {formatDatetime(data.date_approved)}
+                            {formatDatetime(data.createdAt)}
                           </td>
                         </tr>
                       ))}

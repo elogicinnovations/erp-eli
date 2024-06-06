@@ -446,7 +446,7 @@ function ReceivingIntransit({ authrztn }) {
                 customFee,
                 shippingFee,
                 isD_C_applicable,
-                isS_F_applicable,
+                isSF_applicable,
                 suppReceving,
                 refCodes,
                 poID,

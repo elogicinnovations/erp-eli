@@ -244,6 +244,125 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
 });
 
 
+router.route("/fetchTableToReceive_filter").get(async (req, res) => {
+ const { strDate, enDate, selectedStatus } = req.query;
+
+    const startDates = new Date(strDate);
+    startDates.setDate(startDates.getDate() + 1);
+    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+
+    const endDates = new Date(enDate);
+    endDates.setDate(endDates.getDate() + 1);
+    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+
+    let whereClause = {
+      createdAt: {
+        [Op.between]: [startDate, endDate],
+      },
+      status: "To-Receive",
+    };
+
+    let whereClauseReceiving = {
+      createdAt: {
+        [Op.between]: [startDate, endDate],
+      },
+      status: {
+        [Op.or]: ["For Approval", "In-transit", "Delivered",]
+      },
+    };
+
+
+  try {
+    const pr_data = await PR_PO.findAll({
+      include: [
+        {
+         model: PR,
+         required: true,
+
+          include: [{
+            model: MasterList,
+            required: true,
+            include: [
+              {
+                model: Department,
+                required: true,
+              },
+            ],
+          }]
+        },
+      ],
+      where: whereClause
+    }); 
+
+    // Create a map to keep track of unique po_ids
+    const uniquePoMap = new Map();
+
+    // Filter data to ensure only unique po_ids
+    const uniqueDataPR = pr_data.filter((item) => {
+      if (!uniquePoMap.has(item.po_id)) {
+        uniquePoMap.set(item.po_id, true);
+        return true;
+      }
+      return false;
+    });
+
+    const ReceivingPO = await Receiving_PO.findAll({
+      include: [
+        {
+          model: PR,
+          required: true,
+          include: [
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },{
+          model: MasterList,
+          required: true
+        }
+      ],
+      where: whereClauseReceiving
+    });
+
+    const po = uniqueDataPR.map(item => ({
+      ...item.dataValues,
+      source: 'PO'
+    }));
+    const po_receive = ReceivingPO.map(item => ({
+      ...item.dataValues,
+      source: 'ReceivingPO'
+    }));
+   // Combine the dataValues into one array
+   const combinedData = [...po, ...po_receive];
+  
+   // Sort the combined data by createdAt column in descending order
+   combinedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+ 
+   // Filter the combined data based on the selectedStatus received from the client
+   let filteredData;
+   if (selectedStatus && selectedStatus !== "All Status") {
+     filteredData = combinedData.filter(item => item.status === selectedStatus);
+   } else {
+     filteredData = combinedData;
+   }
+ 
+   return res.json({
+     prData: filteredData,
+   });
+ } catch (err) {
+   console.error(err);
+   res.status(500).json("Error");
+ }
+});
+
+
 router.route("/PO_products_primary").get(async (req, res) => { // pinakaunang na received selection if from davao or main agad
   try {
       const po_id = req.query.po_id;

@@ -20,6 +20,7 @@ import ProductCategory from "./modules/Administrator/sub-modules/UserMasterData/
 import ProductManu from "./modules/Administrator/sub-modules/ProductManu/Manufacturer";
 import BinLocation from "./modules/Administrator/sub-modules/UserMasterData/Product Management/BinLocation";
 import ProductList from "./modules/Administrator/sub-modules/UserMasterData/Product Management/ProductList/ProductList";
+import WhiteBoard from "./modules/Messaging/whiteBoard.jsx";
 // import SubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/SubParts";
 // import UpdateSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/UpdateSubParts";
 // import ViewSubParts from "./modules/Administrator/sub-modules/UserMasterData/Product Management/SubParts/ViewSubParts";
@@ -759,6 +760,7 @@ function App() {
                   />
 
                   <Route path="/settingView/:id" element={<SystemSettings />} />
+                  <Route path="/board" element={<WhiteBoard />} />
 
                   <Route
                     path="/activityLogs"
