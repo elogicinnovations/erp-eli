@@ -54,17 +54,18 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const [userId, setuserId] = useState('');
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
+  }, []);
 
+  const reloadCode = () => {
     const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/issuance/lastAccRefCode")
@@ -79,7 +80,11 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
     }, 1000);
 
     return () => clearTimeout(delay);
-  }, [])
+  };
+
+  useEffect(() => {
+    reloadCode();
+  }, []);
 
   const handleAddProdClick = () => {
     setShowDropdown(true);
@@ -249,7 +254,6 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   //     .catch((err) => console.log(err));
   // }, []);
 
-  console.log(userId)
   //get warehouse
   useEffect(() => {
     axios

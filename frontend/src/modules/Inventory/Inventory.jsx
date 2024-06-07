@@ -574,9 +574,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   //   }
   // }, [returned_prd]);
 
-  const handlePreviewShow = async () => {
+  const handlePreviewShow = async (issuance_id) => {
     axios
-      .get(BASE_URL + "/issuance/fetchPreview")
+      .get(`${BASE_URL}/issuance/fetchPreview`, { params: { issuance_id } })
       .then((res) => {
         setApprovedIssue(res.data);
         setshowPreview(true);
@@ -585,6 +585,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         console.log(err);
       });
   };
+  
 
   const handleClosePreview = () => {
     setshowPreview(false);
@@ -613,7 +614,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
           heightLeft -= pageHeight;
         }
   
-        pdf.save('download.pdf');
+        pdf.save('ApprovedIssuance.pdf');
       })
       .catch((error) => {
         console.error('Error generating PDF: ', error);
@@ -925,15 +926,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           }}
                           onChange={handleSearchIssuance}
                         />
-                          <div className="printIssuance">
-                            <button 
-                                onClick={handlePreviewShow}
-                              // disabled={isPrintDisabled} 
-                              // style={{ cursor: isPrintDisabled ? 'not-allowed' : 'pointer' }}
-                            >
-                              Preview
-                            </button>
-                          </div>
                       </div>
                       <table className="table-hover" title="View Information">
                         <thead>
@@ -945,6 +937,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             <th className="tableh">Received By</th>
                             <th className="tableh">Date Created</th>
                             <th className="tableh">Action</th>
+                            <th className="tableh">Print</th>
                           </tr>
                         </thead>
                         {issuance.length > 0 ? (
@@ -1032,6 +1025,11 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                   >
                                     Return
                                   </Button>
+                                </td>
+                                <td>                            
+                                <Button onClick={() => handlePreviewShow(data.issuance_id)}>
+                                  Preview
+                                </Button>
                                 </td>
                               </tr>
                             ))}
@@ -1583,31 +1581,29 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                 <thead>
                                   <tr>
                                     <th className="canvassth">PRODUCT CODE</th>
+                                    <th>PRODUCT NAME</th>
                                     <th>QUANTITY</th>
                                     <th>UOM</th>
-                                    <th>AUP</th>
+                                    <th>LANDED COST</th>
                                     <th>TOTAL</th>
                                   </tr>
                                 </thead>
                                   <tbody>
                                   {ApprovedIssue.map((data, i) => {
-                                    // Destructure data for easier access and default null values to 0
-                                    const { inventory_prd, quantity } = data;
-                                    const { product_tag_supplier } = inventory_prd;
-                                    const { product_code, product_unitMeasurement } = product_tag_supplier.product;
+                                      const landedCost = (data.inventory_prd.freight_cost || 0) + 
+                                      (data.inventory_prd.custom_cost || 0) + 
+                                      data.inventory_prd.price;
 
-                                    const freight_cost = inventory_prd.freight_cost || 0;
-                                    const custom_cost = inventory_prd.custom_cost || 0;
-
-                                    const totalofCost = freight_cost + custom_cost;
-                                    const totalPrice = quantity * totalofCost
+                                      const TotalPrice = (data.quantity + landedCost)
+             
                                     return (
                                       <tr key={i}>
-                                        <td>{product_code}</td>
-                                        <td>{quantity}</td>
-                                        <td>{product_unitMeasurement}</td>
-                                        <td>{totalofCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                        <td>{totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                        <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
+                                        <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
+                                        <td>{data.quantity}</td>
+                                        <td>{data.inventory_prd.product_tag_supplier.product.product_unitMeasurement}</td>
+                                        <td>{landedCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                        <td>{TotalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                       </tr>
                                     );
                                   })}
