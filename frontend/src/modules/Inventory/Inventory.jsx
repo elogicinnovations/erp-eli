@@ -34,6 +34,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
   const [showPreview, setshowPreview] = useState(false);
   const [ApprovedIssue, setApprovedIssue] = useState([])
+  const [IssuedBy, setIssuedBy] = useState("")
+  const [ReceivedBy, setReceivedBy] = useState("")
+  const [ApprovedBy, setApprovedBy] = useState("")
   const [currentPageissuance, setCurrentPageIssuance] = useState(1);
   const pageIssuanceSize = 10;
 
@@ -579,6 +582,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
       .get(`${BASE_URL}/issuance/fetchPreview`, { params: { issuance_id } })
       .then((res) => {
         setApprovedIssue(res.data);
+        setIssuedBy(res.data[0].issuance.issuer.col_Fname)
+        setReceivedBy(res.data[0].issuance.receiver.col_Fname)
+        setApprovedBy(res.data[0].issuance.approvers.col_Fname)
         setshowPreview(true);
       })
       .catch((err) => {
@@ -1621,9 +1627,9 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                               </div>
 
                               <div className="signaturefield">
-                                <p></p>
-                                <p></p>
-                                <p></p>
+                                <p>{IssuedBy}</p>
+                                <p>{ReceivedBy}</p>
+                                <p>{ApprovedBy}</p>
                               </div>
 
                             </div>

@@ -530,7 +530,6 @@ function ProductList({ authrztn }) {
                       InputProps={{
                         style: {
                           fontSize: "14px",
-                          // width: "250px",
                           height: "50px",
                         },
                       }}
@@ -553,20 +552,9 @@ function ProductList({ authrztn }) {
                 />
               </div>
 
-              {/* <div className="textfield">
-                <TextField
-                  label="Search"
-                  variant="outlined"
-                  style={{ marginBottom: "10px", float: "right" }}
-                  InputLabelProps={{
-                    style: { fontSize: "14px" },
-                  }}
-                  InputProps={{
-                    style: { fontSize: "14px", width: "250px", height: "50px" },
-                  }}
-                  onChange={handleSearch}
-                />
-              </div> */}
+              <div className="buttonListStyle">
+                <Button variant="secondary">List Style</Button>
+              </div>
             </div>
 
             <div className="table-containss">

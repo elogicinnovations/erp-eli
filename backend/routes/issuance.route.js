@@ -666,6 +666,20 @@ router.route("/fetchPreview").get(async (req, res) => {
               required: true,
             },
             {
+              model: MasterList,
+              as: "issuer",
+              attributes: ["col_Fname", "col_id"],
+              foreignKey: "issued_by",
+              required: true,
+            },
+            {
+              model: MasterList,
+              as: "approvers",
+              attributes: ["col_Fname", "col_id"],
+              foreignKey: "approved_by",
+              required: true,
+            },
+            {
               model: CostCenter,
               required: true,
             },
