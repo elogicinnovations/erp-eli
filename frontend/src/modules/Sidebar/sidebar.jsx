@@ -12,6 +12,7 @@ import {
   ChartLineUp,
   Scroll,
   X,
+  Tag 
 } from "@phosphor-icons/react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 // import Drawer from '@mui/material/Drawer';
@@ -908,7 +909,7 @@ function Sidebar({ authrztn }) {
                 }`}
                 onClick={toggleOff}
               >
-                <UserCheck size={20} />
+                <Tag  size={20} />
                 <ListItemText primary="Price Checker" />
               </ListItem>
             </NavLink>

@@ -101,62 +101,33 @@ const Checker = ({ authrztn }) => {
   };
 
   //search section
-  const handleSearch = (event) => {
-    setCurrentPage(1);
-    const searchTerm = event.target.value.toLowerCase();
-    const filteredData = fetchCloneData.filter((data) => {
-      return (
-        data.issued_approve_prd.issuance.receiver.col_Fname
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.issued_approve_prd.issuance.receiver.department.department_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        formatDate(data.createdAt).toLowerCase().includes(searchTerm)
-      );
-    });
+  // const handleSearch = (event) => {
+  //   setCurrentPage(1);
+  //   const searchTerm = event.target.value.toLowerCase();
+  //   const filteredData = fetchCloneData.filter((data) => {
+  //     return (
+  //       data.issued_approve_prd.issuance.receiver.col_Fname
+  //         .toLowerCase()
+  //         .includes(searchTerm) ||
+  //       data.issued_approve_prd.issuance.receiver.department.department_name
+  //         .toLowerCase()
+  //         .includes(searchTerm) ||
+  //       formatDate(data.createdAt).toLowerCase().includes(searchTerm)
+  //     );
+  //   });
 
-    setFetchAccountability(filteredData);
-  };
+  //   setFetchAccountability(filteredData);
+  // };
 
-  const handleChangeProduct = (e) => {
-    setselecteduser(e.target.value);
-  };
 
   const clearFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setselecteduser("");
+    setSelectedProducts([])
+    setFetchTable([])
 
     reloadTable();
   };
 
-  const handleGoButtonClick = () => {
-    if (!startDate || !endDate || !selecteduser) {
-      swal({
-        icon: "error",
-        title: "Oops...",
-        text: "Please fill in all filter sections!",
-      });
-      return;
-    }
-
-    const filteredData = fetchCloneData.filter((data) => {
-      const createdAt = new Date(data.createdAt);
-
-      const isWithinDateRange =
-        (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
-        (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
-
-      const isMatchingUser =
-        selecteduser === "All User" ||
-        data.issued_approve_prd.issuance.receiver.col_Fname === selecteduser;
-
-      return isWithinDateRange && isMatchingUser;
-    });
-
-    setFetchAccountability(filteredData);
-  };
+ 
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -183,8 +154,6 @@ const Checker = ({ authrztn }) => {
     setExportOptionsVisible(!exportOptionsVisible);
   };
 
-  //fetching of masterlist in dropdown
-  useEffect(() => {}, []);
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
@@ -468,10 +437,10 @@ const Checker = ({ authrztn }) => {
                       className="goesButton"
                       onClick={handleSubmitProduct}
                     >
-                      FILTER
+                      Search
                     </button>
                     <button className="Filterclear" onClick={clearFilters}>
-                      Clear Filter
+                      Clear
                     </button>
                   </div>
 
@@ -483,15 +452,15 @@ const Checker = ({ authrztn }) => {
             <div className="table-containss">
               <div className="main-of-all-tables">
                 <div className="searchandexport">
-                  <div className="exportfield">
+                  {/* <div className="exportfield">
                     <button
                       className="export"
                       onClick={handleExportButtonClick}
                     >
                       <Export size={20} weight="bold" /> <span>Export</span>
                     </button>
-                  </div>
-                  <div className="searchfield">
+                  </div> */}
+                  {/* <div className="searchfield">
                     <TextField
                       label="Search"
                       variant="outlined"
@@ -511,13 +480,13 @@ const Checker = ({ authrztn }) => {
                       }}
                       onChange={handleSearch}
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <table className="table-hover" id="order-listing">
                   <thead>
                     <tr>
                     {Object.keys(fetchTable).length > 0 && (
-                      <th>Supplier</th>
+                      <th>Product Name</th>
                     )}
                       
                       {Object.keys(fetchTable).map((productName) => (
