@@ -304,6 +304,7 @@ router.route("/approval").post(async (req, res) => {
       {
           status: 'Approved',
           date_approved: new Date(currentDate),
+          approved_by: userId
       },
       {
           where:{
@@ -557,6 +558,7 @@ router.route("/create").post(async (req, res) => {
       mrs: req.body.mrs,
       remarks: req.body.remarks,
       status: "Pending",
+      issued_by: req.body.userId
     });
 
     const issuanceee_ID = Issue_newData.issuance_id;
@@ -625,6 +627,11 @@ router.route("/create").post(async (req, res) => {
 router.route("/fetchPreview").get(async (req, res) => {
   try {
     const data = await IssuedApproveProduct.findAll({
+      where: {
+        quantity: {
+          [Op.ne]: 0
+        }
+      },
       include: [{
         model: Inventory,
         required: true,
@@ -640,6 +647,7 @@ router.route("/fetchPreview").get(async (req, res) => {
         model: Issuance,
         required: true,
           where: {
+            issuance_id: req.query.issuance_id,
             status: 'Approved'
           },
           include: [
@@ -655,6 +663,20 @@ router.route("/fetchPreview").get(async (req, res) => {
               as: "sender",
               attributes: ["col_Fname", "col_id"],
               foreignKey: "transported_by",
+              required: true,
+            },
+            {
+              model: MasterList,
+              as: "issuer",
+              attributes: ["col_Fname", "col_id"],
+              foreignKey: "issued_by",
+              required: true,
+            },
+            {
+              model: MasterList,
+              as: "approvers",
+              attributes: ["col_Fname", "col_id"],
+              foreignKey: "approved_by",
               required: true,
             },
             {

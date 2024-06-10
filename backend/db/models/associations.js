@@ -283,6 +283,12 @@ Issuance.belongsTo(MasterList, { foreignKey: "received_by", as: "receiver" });
 MasterList.hasMany(Issuance, { foreignKey: "transported_by", as: "sender" });
 Issuance.belongsTo(MasterList, { foreignKey: "transported_by", as: "sender" });
 
+MasterList.hasMany(Issuance, { foreignKey: "issued_by", as: "issuer" });
+Issuance.belongsTo(MasterList, { foreignKey: "issued_by", as: "issuer" });
+
+MasterList.hasMany(Issuance, { foreignKey: "approved_by", as: "approvers" });
+Issuance.belongsTo(MasterList, { foreignKey: "approved_by", as: "approvers" });
+
 CostCenter.hasMany(Issuance, { foreignKey: "issued_to" });
 Issuance.belongsTo(CostCenter, { foreignKey: "issued_to" });
 
