@@ -135,6 +135,7 @@ const Report_BIS_Summary = require("./routes/report_bis_summary.route");
 const Warehouse = require("./routes/warehouse.route");
 const Board = require("./routes/board.route");
 const Checker = require("./routes/checker.route");
+const Accountability = require("./routes/accountability.route");
 
 const authenticateToken = require("./middleware/token_authentication.middleware");
 
@@ -219,6 +220,7 @@ app.use("/report_BIS", Report_BIS);
 app.use("/report_BIS_Summary", Report_BIS_Summary);
 app.use("/board", Board);
 app.use("/checker", Checker);
+app.use("/accountability", Accountability);
 app.use("/warehouses", Warehouse);
 
 app.listen(port, () => {
