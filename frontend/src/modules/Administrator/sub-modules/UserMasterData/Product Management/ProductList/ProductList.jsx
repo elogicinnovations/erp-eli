@@ -64,11 +64,26 @@ function ProductList({ authrztn }) {
   const [Fname, setFname] = useState("");
   const [username, setUsername] = useState("");
   const [userRole, setUserRole] = useState("");
+  const [displayMode, setDisplayMode] = useState('rectangle');
   const [userId, setuserId] = useState("");
   const [clearFilterDisabled, setClearFilterDisabled] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
+  useEffect(() => {
+    // Retrieve display mode from local storage if it exists
+    const savedDisplayMode = localStorage.getItem('displayMode');
+    if (savedDisplayMode) {
+      setDisplayMode(savedDisplayMode);
+    }
+  }, []);
+
+  const toggleDisplayMode = () => {
+    const newDisplayMode = displayMode === 'rectangle' ? 'table' : 'rectangle';
+    setDisplayMode(newDisplayMode);
+    localStorage.setItem('displayMode', newDisplayMode); // Save the new display mode in local storage
+  };
+  
   const reloadTable = () => {
     const delay = setTimeout(() => {
       axios
@@ -232,13 +247,15 @@ function ProductList({ authrztn }) {
   };
 
   //Main table
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-    return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(
-      date.getDate()
-    )} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(
-      date.getSeconds()
-    )}`;
+  function formatDate(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
   }
 
   //Modal table
@@ -254,51 +271,6 @@ function ProductList({ authrztn }) {
   function padZero(num) {
     return num.toString().padStart(2, "0");
   }
-
-  // const handleDelete = async (table_id) => {
-  //   swal({
-  //     title: "Are you sure?",
-  //     text: "Once deleted, you will not be able to recover this product data!",
-  //     icon: "warning",
-  //     buttons: true,
-  //     dangerMode: true,
-  //   }).then(async (willDelete) => {
-  //     if (willDelete) {
-  //       try {
-  //         const response = await axios.delete(
-  //           BASE_URL + `/product/delete/${table_id}`
-  //         );
-  //         if (response.status === 200) {
-  //           swal({
-  //             title: "Product List Delete Successful!",
-  //             text: "The Product List has been Deleted Successfully.",
-  //             icon: "success",
-  //             button: "OK",
-  //           }).then(() => {
-  //             setproduct((prev) =>
-  //               prev.filter((data) => data.product_code !== table_id)
-  //             );
-  //             reloadTable();
-  //           });
-  //         } else if (response.status === 202) {
-  //           swal({
-  //             icon: "error",
-  //             title: "Delete Prohibited",
-  //             text: "You cannot delete product that is used",
-  //           });
-  //         } else {
-  //           swal({
-  //             icon: "error",
-  //             title: "Something went wrong",
-  //             text: "Please contact our support",
-  //           });
-  //         }
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     }
-  //   });
-  // };
 
   const toggleButtons = (userId) => {
     setVisibleButtons((prevVisibleButtons) => {
@@ -535,246 +507,249 @@ function ProductList({ authrztn }) {
                       }}
                       onChange={handleSearch}
                     />
+              <div className="buttonListStyle">
+                <Button variant="secondary" onClick={toggleDisplayMode}>{displayMode === 'rectangle' ? 'List Style' : 'Box Style'}</Button>
+              </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="textfieldandselectAll">
-              <div className="select-all-checkbox">
-                <span onClick={handleSelectAllChange}>Select All</span>
-                <input
-                  type="checkbox"
-                  checked={selectAllChecked}
-                  onChange={handleSelectAllChange}
-                  disabled={product.length === 0}
-                  className="checkboxStatus"
-                />
-              </div>
+              {displayMode === 'rectangle' && (
+                <div className="select-all-checkbox">
+                  <span onClick={handleSelectAllChange}>Select All</span>
+                  <input
+                    type="checkbox"
+                    checked={selectAllChecked}
+                    onChange={handleSelectAllChange}
+                    disabled={product.length === 0}
+                    className="checkboxStatus"
+                  />
+                </div>
+              )}
 
-              <div className="buttonListStyle">
-                <Button variant="secondary">List Style</Button>
-              </div>
+
             </div>
 
             <div className="table-containss">
-              {product.length > 0 ? (
-                <div className="product-rectangle-containers">
-                  {currentItems
-                    .filter(
-                      (data) =>
-                        Dropdownstatus.includes("All Status") ||
-                        Dropdownstatus.includes(data.product_status)
-                    )
-                    .map((data, i) => (
-                      <div className="list-rectangle-container" key={i}>
-                        <div className="left-rectangle-containers">
-                          <div className="checkbox-sections">
-                            <input
-                              type="checkbox"
-                              className="checkboxStatus"
-                              checked={selectedCheckboxes.includes(
-                                data.product_id
-                              )}
-                              onChange={() =>
-                                handleCheckboxChange(data.product_id)
-                              }
-                            />
-                          </div>
-
-                          <div className="dots-three-sec">
-                            {isVertical[data.product_id] ? (
-                              <div
-                                style={{
-                                  position: "relative",
-                                  display: "inline-block",
-                                }}
-                              >
-                                <DotsThreeCircleVertical
-                                  color="beige"
-                                  size={32}
-                                  className="dots-icon"
-                                  onClick={() => {
-                                    toggleButtons(data.product_id);
-                                  }}
-                                />
-                                <div
-                                  className="float"
-                                  style={{
-                                    position: "absolute",
-                                    left: "-125px",
-                                    top: "0",
-                                  }}
-                                >
-                                  {setButtonVisibles(data.product_id) && (
-                                    <div className="choices">
-                                      {authrztn.includes(
-                                        "Product List - Edit"
-                                      ) && (
-                                        <Link
-                                          to={`/updateProduct/${data.product_id}`}
-                                          style={{
-                                            fontSize: "15px",
-                                            fontWeight: "700",
-                                          }}
-                                          className="btn"
-                                        >
-                                          Update
-                                        </Link>
-                                      )}
-
-                                      {authrztn.includes(
-                                        "Product List - View"
-                                      ) && (
-                                        <button
-                                          className="btn"
-                                          type="button"
-                                          onClick={() => {
-                                            handlepricehistory(data.product_id);
-                                            closeVisibleButtons();
-                                          }}
-                                        >
-                                          Price History
-                                        </button>
-                                      )}
-
-                                      {authrztn.includes(
-                                        "Product List - View"
-                                      ) && (
-                                        <button
-                                          className="btn"
-                                          type="button"
-                                          onClick={() =>
-                                            navigate(
-                                              `/productSupplier/${data.product_id}`
-                                            )
-                                          }
-                                        >
-                                          View
-                                        </button>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            ) : (
-                              <div
-                                style={{
-                                  position: "relative",
-                                  display: "inline-block",
-                                }}
-                              >
-                                <DotsThreeCircle
-                                  size={32}
-                                  className="dots-icon"
-                                  color="beige"
-                                  onClick={() => {
-                                    toggleButtons(data.product_id);
-                                  }}
-                                />
-                                <div
-                                  className="float"
-                                  style={{
-                                    position: "absolute",
-                                    left: "-125px",
-                                    top: "0",
-                                  }}
-                                >
-                                  {setButtonVisibles(data.product_id) && (
-                                    <div className="choices">
-                                      {authrztn.includes(
-                                        "Product List - Edit"
-                                      ) && (
-                                        <Link
-                                          to={`/updateProduct/${data.product_id}`}
-                                          style={{ fontSize: "12px" }}
-                                          className="btn"
-                                        >
-                                          Update
-                                        </Link>
-                                      )}
-
-                                      {authrztn.includes(
-                                        "Product List - View"
-                                      ) && (
-                                        <button
-                                          className="btn"
-                                          type="button"
-                                          onClick={() => {
-                                            handlepricehistory(data.product_id);
-                                            closeVisibleButtons();
-                                          }}
-                                        >
-                                          Price History
-                                        </button>
-                                      )}
-
-                                      {authrztn.includes(
-                                        "Product List - View"
-                                      ) && (
-                                        <button
-                                          className="btn"
-                                          type="button"
-                                          onClick={() =>
-                                            navigate(
-                                              `/productSupplier/${data.product_id}`
-                                            )
-                                          }
-                                        >
-                                          View
-                                        </button>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
+            {displayMode === 'rectangle' ? (
+            product.length > 0 ? (
+          <div className="product-rectangle-containers">
+            {currentItems
+              .filter(data => Dropdownstatus.includes("All Status") || Dropdownstatus.includes(data.product_status))
+              .map((data, i) => (
+                <div className="list-rectangle-container" key={i}>
+                  <div className="left-rectangle-containers">
+                    <div className="checkbox-sections">
+                      <input
+                        type="checkbox"
+                        className="checkboxStatus"
+                        checked={selectedCheckboxes.includes(data.product_id)}
+                        onChange={() => handleCheckboxChange(data.product_id)}
+                      />
+                    </div>
+                    <div className="dots-three-sec">
+                      {isVertical[data.product_id] ? (
+                        <div style={{ position: "relative", display: "inline-block" }}>
+                          <DotsThreeCircleVertical
+                            color="beige"
+                            size={32}
+                            className="dots-icon"
+                            onClick={() => { toggleButtons(data.product_id); }}
+                          />
+                          <div className="float" style={{ position: "absolute", left: "-125px", top: "0" }}>
+                            {setButtonVisibles(data.product_id) && (
+                              <div className="choices">
+                                {authrztn.includes("Product List - Edit") && (
+                                  <Link to={`/updateProduct/${data.product_id}`} style={{ fontSize: "15px", fontWeight: "700" }} className="btn">
+                                    Update
+                                  </Link>
+                                )}
+                                {authrztn.includes("Product List - View") && (
+                                  <button className="btn" type="button" onClick={() => { handlepricehistory(data.product_id); closeVisibleButtons(); }}>
+                                    Price History
+                                  </button>
+                                )}
+                                {authrztn.includes("Product List - View") && (
+                                  <button className="btn" type="button" onClick={() => navigate(`/productSupplier/${data.product_id}`)}>
+                                    View
+                                  </button>
+                                )}
                               </div>
                             )}
                           </div>
                         </div>
-
-                        <div className="mid-rectangle-product-containers">
-                          <div className="profile-product-containers">
-                            {data.product_images.length > 0 ? (
-                              <img
-                                src={`data:image/png;base64,${data.product_images[0].product_image}`}
-                                alt={`Latest Image`}
-                              />
-                            ) : (
-                              <img src={NoProduct} alt="" />
+                      ) : (
+                        <div style={{ position: "relative", display: "inline-block" }}>
+                          <DotsThreeCircle size={32} className="dots-icon" color="beige" onClick={() => { toggleButtons(data.product_id); }} />
+                          <div className="float" style={{ position: "absolute", left: "-125px", top: "0" }}>
+                            {setButtonVisibles(data.product_id) && (
+                              <div className="choices">
+                                {authrztn.includes("Product List - Edit") && (
+                                  <Link to={`/updateProduct/${data.product_id}`} style={{ fontSize: "12px" }} className="btn">
+                                    Update
+                                  </Link>
+                                )}
+                                {authrztn.includes("Product List - View") && (
+                                  <button className="btn" type="button" onClick={() => { handlepricehistory(data.product_id); closeVisibleButtons(); }}>
+                                    Price History
+                                  </button>
+                                )}
+                                {authrztn.includes("Product List - View") && (
+                                  <button className="btn" type="button" onClick={() => navigate(`/productSupplier/${data.product_id}`)}>
+                                    View
+                                  </button>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>
-
-                        <div className="right-rectangle-containers">
-                          <div className="right-angle-content">
-                            <div
-                              className="statuses-section"
-                              style={{
-                                backgroundColor: getStatusColor(
-                                  data.product_status
-                                ),
-                              }}
-                            >
-                              {data.product_status}
-                            </div>
-
-                            <div className="active-icon-with-prodname">
-                              <div className="products-Name">
-                                {data.product_name}
-                              </div>
-                            </div>
-                          </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mid-rectangle-product-containers">
+                    <div className="profile-product-containers">
+                      {data.product_images.length > 0 ? (
+                        <img src={`data:image/png;base64,${data.product_images[0].product_image}`} alt={`Latest Image`} />
+                      ) : (
+                        <img src={NoProduct} alt="" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="right-rectangle-containers">
+                    <div className="right-angle-content">
+                      <div className="statuses-section" style={{ backgroundColor: getStatusColor(data.product_status) }}>
+                        {data.product_status}
+                      </div>
+                      <div className="active-icon-with-prodname">
+                        <div className="products-Name">
+                          {data.product_name}
                         </div>
                       </div>
-                    ))}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="no-data">
-                  <img src={NoData} alt="NoData" className="no-data-img" />
-                  <h3>No Data Found</h3>
-                </div>
-              )}
-            </div>
+              ))}
+          </div>
+        ) : (
+          <div className="no-data">
+            <img src={NoData} alt="NoData" className="no-data-img" />
+            <h3>No Data Found</h3>
+          </div>
+        )
+      ) : (
+        <div className="main-of-all-tables">
+          <table className="table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={selectAllChecked}
+                    onChange={handleSelectAllChange}
+                    disabled={product.length === 0}
+                    className="checkboxStatus"
+                  />
+                </th>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Date Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            {product.length > 0 ? (
+              <tbody>
+                {currentItems.filter(data => Dropdownstatus.includes("All Status") || Dropdownstatus.includes(data.product_status)).map((data, i) => (
+                  <tr key={i}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        className="checkboxStatus"
+                        checked={selectedCheckboxes.includes(data.product_id)}
+                        onChange={() => handleCheckboxChange(data.product_id)}
+                      />
+                    </td>
+                    <td>{data.product_code}</td>
+                    <td>{data.product_name}</td>
+                    <td className="autho">{data.product_details}</td>
+                    <td>{data.product_status}</td>
+                    <td>{formatDate(data.createdAt)}</td>
+                    <td>
+                      <div className="dots-three-sec" >
+                        {isVertical[data.product_id] ? (
+                          <div style={{ position: "relative", display: "inline-block", marginRight: '25px' }}>
+                            <DotsThreeCircleVertical
+                              color="black"
+                              size={32}
+                              className="dots-icon"
+                              onClick={() => { toggleButtons(data.product_id); }}
+                            />
+                            <div className="float" style={{ position: "absolute", left: "-125px", top: "0" }}>
+                              {setButtonVisibles(data.product_id) && (
+                                <div className="choices">
+                                  {authrztn.includes("Product List - Edit") && (
+                                    <Link to={`/updateProduct/${data.product_id}`} style={{ fontSize: "15px", fontWeight: "700" }} className="btn">
+                                      Update
+                                    </Link>
+                                  )}
+                                  {authrztn.includes("Product List - View") && (
+                                    <button className="btn" type="button" onClick={() => { handlepricehistory(data.product_id); closeVisibleButtons(); }}>
+                                      Price History
+                                    </button>
+                                  )}
+                                  {authrztn.includes("Product List - View") && (
+                                    <button className="btn" type="button" onClick={() => navigate(`/productSupplier/${data.product_id}`)}>
+                                      View
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ position: "relative", display: "inline-block", marginRight: '25px' }}>
+                            <DotsThreeCircle size={32} className="dots-icon" color="black" onClick={() => { toggleButtons(data.product_id); }} />
+                            <div className="float" style={{ position: "absolute", left: "-125px", top: "0" }}>
+                              {setButtonVisibles(data.product_id) && (
+                                <div className="choices">
+                                  {authrztn.includes("Product List - Edit") && (
+                                    <Link to={`/updateProduct/${data.product_id}`} style={{ fontSize: "12px" }} className="btn">
+                                      Update
+                                    </Link>
+                                  )}
+                                  {authrztn.includes("Product List - View") && (
+                                    <button className="btn" type="button" onClick={() => { handlepricehistory(data.product_id); closeVisibleButtons(); }}>
+                                      Price History
+                                    </button>
+                                  )}
+                                  {authrztn.includes("Product List - View") && (
+                                    <button className="btn" type="button" onClick={() => navigate(`/productSupplier/${data.product_id}`)}>
+                                      View
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            ) : (
+              <div className="no-data">
+                <img src={NoData} alt="NoData" className="no-data-img" />
+                <h3>No Data Found</h3>
+              </div>
+            )}
+          </table>
+        </div>
+      )}
+    </div>
 
             <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>

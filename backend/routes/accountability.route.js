@@ -44,7 +44,6 @@ router.route('/fetchAccountability').get(async (req, res) => {
           }
           return false;
         });
-  
         return res.json(uniqueData);
       } else {
         res.status(400);
