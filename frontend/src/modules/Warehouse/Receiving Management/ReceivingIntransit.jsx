@@ -31,7 +31,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { fontStyle } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
 import { jwtDecode } from "jwt-decode";
-import CameraComponent from './../../../assets/components/camera.jsx';
+import CameraComponent from "./../../../assets/components/camera.jsx";
 function ReceivingIntransit({ authrztn }) {
   const label_qa = { inputProps: { "aria-label": "Checkbox demo" } };
   const navigate = useNavigate();
@@ -492,80 +492,27 @@ function ReceivingIntransit({ authrztn }) {
     fileInputRef.current.click();
   }
 
-  // console.log(JSON.stringify(productImages));
-
   function onFileSelect(event) {
-    const files = event.target.files;
-    if (files.length + productImages.length > 5) {
-      swal({
-        icon: "error",
-        title: "File Limit Exceeded",
-        text: "You can upload up to 5 images only.",
-      });
-      return;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-        const allowedFileTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/webp",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // Excel
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Word
-        ];
-
-        if (!allowedFileTypes.includes(files[i].type)) {
-          swal({
-            icon: "error",
-            title: "Invalid File Type",
-            text: "Only JPEG, PNG, and WebP file types are allowed.",
-          });
-          return;
-        }
-
-        if (files[i].size > 5 * 1024 * 1024) {
-          swal({
-            icon: "error",
-            title: "File Size Exceeded",
-            text: "Maximum file size is 5MB.",
-          });
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setproductImages((prevImages) => [
-            ...prevImages,
-            {
-              name: files[i].name,
-              image: e.target.result.split(",")[1],
-            },
-          ]);
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    }
-  }
-
-  function deleteImage(index) {
-    const updatedImages = [...productImages];
-    updatedImages.splice(index, 1);
-    setproductImages(updatedImages);
+    const files = Array.from(event.target.files);
+    handleFiles(files);
   }
 
   function onDragOver(event) {
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
   }
+
   function onDragLeave(event) {
     event.preventDefault();
   }
 
   function onDropImages(event) {
     event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    handleFiles(files);
+  }
 
-    const files = event.dataTransfer.files;
-
+  function handleFiles(files) {
     if (files.length + productImages.length > 5) {
       swal({
         icon: "error",
@@ -575,11 +522,11 @@ function ReceivingIntransit({ authrztn }) {
       return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+    const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
 
-        if (!allowedFileTypes.includes(files[i].type)) {
+    files.forEach((file) => {
+      if (!productImages.some((e) => e.name === file.name)) {
+        if (!allowedFileTypes.includes(file.type)) {
           swal({
             icon: "error",
             title: "Invalid File Type",
@@ -588,7 +535,7 @@ function ReceivingIntransit({ authrztn }) {
           return;
         }
 
-        if (files[i].size > 5 * 1024 * 1024) {
+        if (file.size > 5 * 1024 * 1024) {
           swal({
             icon: "error",
             title: "File Size Exceeded",
@@ -602,14 +549,20 @@ function ReceivingIntransit({ authrztn }) {
           setproductImages((prevImages) => [
             ...prevImages,
             {
-              name: files[i].name,
-              product_image: e.target.result.split(",")[1],
+              name: file.name,
+              image: e.target.result.split(",")[1],
             },
           ]);
         };
-        reader.readAsDataURL(files[i]);
+        reader.readAsDataURL(file);
       }
-    }
+    });
+  }
+
+  function deleteImage(index) {
+    const updatedImages = [...productImages];
+    updatedImages.splice(index, 1);
+    setproductImages(updatedImages);
   }
 
   const handleCapture = (imageData) => {
@@ -623,7 +576,6 @@ function ReceivingIntransit({ authrztn }) {
     }
     setproductImages((prevImages) => [...prevImages, imageData]);
   };
-
   function formatDatetime(datetime) {
     const options = {
       year: "numeric",
@@ -1149,14 +1101,14 @@ function ReceivingIntransit({ authrztn }) {
                   style={{ width: "70%" }}
                   onDragOver={onDragOver}
                   onDragLeave={onDragLeave}
-                  onDrop={(e) => onDropImages(e)}
+                  onDrop={onDropImages}
                 >
                   <p style={{ fontSize: 11 }}>
                     Drag & Drop image here or{" "}
                     <span
                       className="select"
                       role="button"
-                      onClick={() => selectFiles()}
+                      onClick={selectFiles}
                     >
                       <p style={{ fontSize: 11 }}>Browse</p>
                     </span>
@@ -1167,10 +1119,10 @@ function ReceivingIntransit({ authrztn }) {
                     className="file"
                     multiple
                     ref={fileInputRef}
-                    onChange={(e) => onFileSelect(e)}
+                    onChange={onFileSelect}
                   />
                 </div>
-                <CameraComponent  onCapture={handleCapture} />
+                <CameraComponent onCapture={handleCapture} />
                 <div
                   className="ccontainerss"
                   style={{
@@ -1179,7 +1131,7 @@ function ReceivingIntransit({ authrztn }) {
                   }}
                 >
                   {productImages.map((image, index) => (
-                    <div className="mt-2">
+                    <div key={index} className="mt-2">
                       <span
                         className="fs-3"
                         style={{ marginLeft: 20 }}

@@ -509,7 +509,7 @@ router.route("/insertReceived").post(async (req, res) => {
   if(isSF_applicable === false){
     freighCost = 0
   }else{
-    if (shippingFee === ''){
+    if (shippingFee === '' || shippingFee === null){
       freighCost = null
     }else{
       freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
@@ -780,12 +780,18 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   if(isSF_applicable === false){
     freighCost = 0
   }else{
-    if (shippingFee === ''){
+    if (shippingFee === '' || shippingFee === null){
       freighCost = null
     }else{
       freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
     }
   }
+
+  //  console.log(`customFee ${custom_cost_value}`)
+  // console.log(`customFee ${isD_C_applicable}`)
+  // console.log(`shippingFee ${shippingFee}`) 
+  // console.log(`freighCost ${freighCost}`) 
+  // console.log(`freighCost ${isSF_applicable}`) 
 
   const updateReceivingPOS = Receiving_PO.update(
     {

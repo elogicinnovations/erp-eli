@@ -658,7 +658,8 @@ router.route("/approve").post(async (req, res) => {
     const approve = await StockTransfer.update(
       {
         status: "To-Receive",
-        date_approved: currentDateTimeInManila
+        date_approved: currentDateTimeInManila,
+        masterlist_id: req.query.userId
       },
       {
         where: { stock_id: req.query.id },

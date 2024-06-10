@@ -16,7 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import warehouse from "../../../assets/global/warehouse";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import CameraComponent from './../../../assets/components/camera.jsx';
+import CameraComponent from "./../../../assets/components/camera.jsx";
 import {
   ArrowCircleLeft,
   Upload,
@@ -66,11 +66,9 @@ function ReceivingManagementPreview({ authrztn }) {
   };
 
   const generateRandomCode = () => {
-    axios
-    .get(BASE_URL + "/receiving/generateRefCodess")
-    .then((res) => {
+    axios.get(BASE_URL + "/receiving/generateRefCodess").then((res) => {
       setRefCode(res.data.refCode);
-    })
+    });
   };
 
   useEffect(() => {
@@ -100,7 +98,7 @@ function ReceivingManagementPreview({ authrztn }) {
           },
         })
         .then((res) => {
-          setPrID(res.data[0].purchase_req.id)
+          setPrID(res.data[0].purchase_req.id);
           setPrNumber(res.data[0].purchase_req.pr_num);
           setDateNeeded(res.data[0].purchase_req.date_needed);
           setUsedFor(res.data[0].purchase_req.used_for);
@@ -281,21 +279,20 @@ function ReceivingManagementPreview({ authrztn }) {
   const [shippingFee, setShippingFee] = useState("");
 
   const handleDutiesChange = () => {
-    setIsD_C_applicable(prevState => {
+    setIsD_C_applicable((prevState) => {
       const newApplicable = !prevState;
       setcustomFee(newApplicable ? "" : "0");
       return newApplicable;
     });
   };
-  
+
   const handleShippingChange = () => {
-    setIsSF_applicable(prevState => {
+    setIsSF_applicable((prevState) => {
       const newApplicable = !prevState;
       setShippingFee(newApplicable ? "" : "0");
       return newApplicable;
     });
   };
-  
 
   const handleInputChange = (value, productValue, inputType, po_quantity) => {
     setInputValues((prevInputs) => {
@@ -377,10 +374,10 @@ function ReceivingManagementPreview({ authrztn }) {
   const [suppReceving, setsuppReceving] = useState("");
   const handleChangeReceiving = (event) => {
     setsuppReceving(event.target.value);
-    setShippingFee("")
-    setcustomFee("")
-    setIsD_C_applicable(true)
-    setIsSF_applicable(true)
+    setShippingFee("");
+    setcustomFee("");
+    setIsD_C_applicable(true);
+    setIsSF_applicable(true);
   };
 
   const [addReceivebackend, setReceivebackend] = useState([]);
@@ -401,10 +398,11 @@ function ReceivingManagementPreview({ authrztn }) {
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
             ]?.Rquantity || "",
-          Remaining_quantity: 
-          child.item.quantity - (inputValues[
-            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-          ]?.Rquantity || ""),
+          Remaining_quantity:
+            child.item.quantity -
+            (inputValues[
+              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+            ]?.Rquantity || ""),
           // inputValues[
           //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
           // ]?.Squantity
@@ -466,10 +464,10 @@ function ReceivingManagementPreview({ authrztn }) {
                 userId,
                 refCode,
                 isSF_applicable,
-                isD_C_applicable
+                isD_C_applicable,
               }
             );
-    
+
             if (response.status === 200) {
               swal({
                 title: "Product Received Successful!",
@@ -478,7 +476,7 @@ function ReceivingManagementPreview({ authrztn }) {
                 button: "OK",
               }).then(() => {
                 handleClose();
-                navigate('/receivingManagement')
+                navigate("/receivingManagement");
               });
             } else {
               swal({
@@ -496,15 +494,11 @@ function ReceivingManagementPreview({ authrztn }) {
             });
           }
         }
-      })
-
-
-    
+      });
     }
 
     setValidated(true); // for validations
   };
-
   const [productImages, setproductImages] = useState([]);
   const fileInputRef = useRef(null);
 
@@ -512,80 +506,27 @@ function ReceivingManagementPreview({ authrztn }) {
     fileInputRef.current.click();
   }
 
-  // console.log(JSON.stringify(productImages));
-
   function onFileSelect(event) {
-    const files = event.target.files;
-    if (files.length + productImages.length > 5) {
-      swal({
-        icon: "error",
-        title: "File Limit Exceeded",
-        text: "You can upload up to 5 images only.",
-      });
-      return;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-        const allowedFileTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/webp",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // Excel
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Word
-        ];
-
-        if (!allowedFileTypes.includes(files[i].type)) {
-          swal({
-            icon: "error",
-            title: "Invalid File Type",
-            text: "Only JPEG, PNG, and WebP file types are allowed.",
-          });
-          return;
-        }
-
-        if (files[i].size > 5 * 1024 * 1024) {
-          swal({
-            icon: "error",
-            title: "File Size Exceeded",
-            text: "Maximum file size is 5MB.",
-          });
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setproductImages((prevImages) => [
-            ...prevImages,
-            {
-              name: files[i].name,
-              image: e.target.result.split(",")[1],
-            },
-          ]);
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    }
-  }
-
-  function deleteImage(index) {
-    const updatedImages = [...productImages];
-    updatedImages.splice(index, 1);
-    setproductImages(updatedImages);
+    const files = Array.from(event.target.files);
+    handleFiles(files);
   }
 
   function onDragOver(event) {
     event.preventDefault();
     event.dataTransfer.dropEffect = "copy";
   }
+
   function onDragLeave(event) {
     event.preventDefault();
   }
 
   function onDropImages(event) {
     event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    handleFiles(files);
+  }
 
-    const files = event.dataTransfer.files;
-
+  function handleFiles(files) {
     if (files.length + productImages.length > 5) {
       swal({
         icon: "error",
@@ -595,11 +536,11 @@ function ReceivingManagementPreview({ authrztn }) {
       return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
+    const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
 
-        if (!allowedFileTypes.includes(files[i].type)) {
+    files.forEach((file) => {
+      if (!productImages.some((e) => e.name === file.name)) {
+        if (!allowedFileTypes.includes(file.type)) {
           swal({
             icon: "error",
             title: "Invalid File Type",
@@ -608,7 +549,7 @@ function ReceivingManagementPreview({ authrztn }) {
           return;
         }
 
-        if (files[i].size > 5 * 1024 * 1024) {
+        if (file.size > 5 * 1024 * 1024) {
           swal({
             icon: "error",
             title: "File Size Exceeded",
@@ -622,14 +563,20 @@ function ReceivingManagementPreview({ authrztn }) {
           setproductImages((prevImages) => [
             ...prevImages,
             {
-              name: files[i].name,
-              product_image: e.target.result.split(",")[1],
+              name: file.name,
+              image: e.target.result.split(",")[1],
             },
           ]);
         };
-        reader.readAsDataURL(files[i]);
+        reader.readAsDataURL(file);
       }
-    }
+    });
+  }
+
+  function deleteImage(index) {
+    const updatedImages = [...productImages];
+    updatedImages.splice(index, 1);
+    setproductImages(updatedImages);
   }
 
   const handleCapture = (imageData) => {
@@ -915,86 +862,88 @@ function ReceivingManagementPreview({ authrztn }) {
           </Modal.Header>
 
           <Modal.Body>
-          <div className="row p-0">
-  <div className="col-6 align-items-center">
-    <div className="d-flex w-100">
-      <div className="d-flex flex-column w-100">
-        <span className="h2 mb-3">
-          {`Supplier: ${supplier_code} - ${supplier_name}`}
-        </span>
-        <span className="h2">
-          Reference Code:{" "}
-          <span className="text-decoration-underline">
-            {refCode}
-          </span>
-        </span>
-      </div>
-    </div>
-  </div>
+            <div className="row p-0">
+              <div className="col-6 align-items-center">
+                <div className="d-flex w-100">
+                  <div className="d-flex flex-column w-100">
+                    <span className="h2 mb-3">
+                      {`Supplier: ${supplier_code} - ${supplier_name}`}
+                    </span>
+                    <span className="h2">
+                      Reference Code:{" "}
+                      <span className="text-decoration-underline">
+                        {refCode}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-  {suppReceving === "Agusan Del Sur" ? (
-     <div className="col-6">
-     <div className="d-flex w-100">
-       <div className="w-50" style={{ float: "right" }}>
-         <div className="d-flex align-items-center">
-           <Form.Label className="h4 mb-0">
-             Duties & Custom Fee:
-           </Form.Label>
-           <Form.Check
-             type="switch"
-             className="ml-3"
-             style={{ fontSize: "15px", color: "red" }}
-             checked={isD_C_applicable}
-             onClick={handleDutiesChange}
-           />
-         </div>
-         <Form.Control
-           type="number"
-           className="w-100"
-           readOnly={!isD_C_applicable}
-           value={isD_C_applicable ? customFee : "0"}
-           style={{
-             fontFamily: "Poppins, Source Sans Pro",
-           }}
-           onChange={(e) => setcustomFee(e.target.value)}
-           onKeyDown={(e) => {
-             ["e", "E", "+", "-"].includes(e.key) &&
-               e.preventDefault();
-           }}
-         />
-       </div>
-       <div className="w-50" style={{ float: "right" }}>
-         <div className="d-flex align-items-center">
-           <Form.Label className="h4 mb-0">Shipping Fee:</Form.Label>
-           <Form.Check
-             type="switch"
-             className="ml-3"
-             style={{ fontSize: "15px", color: "red" }}
-             checked={isSF_applicable}
-             onClick={handleShippingChange}
-           />
-         </div>
-         <Form.Control
-           type="number"
-           className="w-100"
-           readOnly={!isSF_applicable}
-           value={isSF_applicable ? shippingFee : "0"}
-           style={{
-             fontFamily: "Poppins, Source Sans Pro",
-           }}
-           onChange={(e) => setShippingFee(e.target.value)}
-           onKeyDown={(e) => {
-             ["e", "E", "+", "-"].includes(e.key) &&
-               e.preventDefault();
-           }}
-         />
-       </div>
-     </div>
-   </div>
-  ) : (
-    <div className="col-6"></div>
-  )}
-</div>
+              {suppReceving === "Agusan Del Sur" ? (
+                <div className="col-6">
+                  <div className="d-flex w-100">
+                    <div className="w-50" style={{ float: "right" }}>
+                      <div className="d-flex align-items-center">
+                        <Form.Label className="h4 mb-0">
+                          Duties & Custom Fee:
+                        </Form.Label>
+                        <Form.Check
+                          type="switch"
+                          className="ml-3"
+                          style={{ fontSize: "15px", color: "red" }}
+                          checked={isD_C_applicable}
+                          onClick={handleDutiesChange}
+                        />
+                      </div>
+                      <Form.Control
+                        type="number"
+                        className="w-100"
+                        readOnly={!isD_C_applicable}
+                        value={isD_C_applicable ? customFee : "0"}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        onChange={(e) => setcustomFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                    <div className="w-50" style={{ float: "right" }}>
+                      <div className="d-flex align-items-center">
+                        <Form.Label className="h4 mb-0">
+                          Shipping Fee:
+                        </Form.Label>
+                        <Form.Check
+                          type="switch"
+                          className="ml-3"
+                          style={{ fontSize: "15px", color: "red" }}
+                          checked={isSF_applicable}
+                          onClick={handleShippingChange}
+                        />
+                      </div>
+                      <Form.Control
+                        type="number"
+                        className="w-100"
+                        readOnly={!isSF_applicable}
+                        value={isSF_applicable ? shippingFee : "0"}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        onChange={(e) => setShippingFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="col-6"></div>
+              )}
+            </div>
 
             <div className="row mb-5">
               {productImages.length > 0 && (
@@ -1072,7 +1021,10 @@ function ReceivingManagementPreview({ authrztn }) {
                           <Form.Label className="h4">/pcs:</Form.Label>
                           <Form.Control
                             type="number"
-                            readOnly={child.item.quantity === 0 || child.supp_tag.isSubUnit === 0}
+                            readOnly={
+                              child.item.quantity === 0 ||
+                              child.supp_tag.isSubUnit === 0
+                            }
                             placeholder="Quantity"
                             required
                             onKeyDown={(e) => {
@@ -1080,10 +1032,11 @@ function ReceivingManagementPreview({ authrztn }) {
                                 e.preventDefault();
                             }}
                             value={
-                              child.supp_tag.isSubUnit === 0 ? ('1') : (inputValues[
-                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                              ]?.Squantity || "")
-                              
+                              child.supp_tag.isSubUnit === 0
+                                ? "1"
+                                : inputValues[
+                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                  ]?.Squantity || ""
                             }
                             onChange={(e) =>
                               handleInputChange(
@@ -1168,7 +1121,8 @@ function ReceivingManagementPreview({ authrztn }) {
                               )
                             }
                             value={
-                              child.item.quantity - (inputValues[
+                              child.item.quantity -
+                              (inputValues[
                                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                               ]?.Rquantity || "")
                               // inputValues[
@@ -1336,14 +1290,14 @@ function ReceivingManagementPreview({ authrztn }) {
                   style={{ width: "70%" }}
                   onDragOver={onDragOver}
                   onDragLeave={onDragLeave}
-                  onDrop={(e) => onDropImages(e)}
+                  onDrop={onDropImages}
                 >
                   <p style={{ fontSize: 11 }}>
                     Drag & Drop image here or{" "}
                     <span
                       className="select"
                       role="button"
-                      onClick={() => selectFiles()}
+                      onClick={selectFiles}
                     >
                       <p style={{ fontSize: 11 }}>Browse</p>
                     </span>
@@ -1354,10 +1308,10 @@ function ReceivingManagementPreview({ authrztn }) {
                     className="file"
                     multiple
                     ref={fileInputRef}
-                    onChange={(e) => onFileSelect(e)}
+                    onChange={onFileSelect}
                   />
                 </div>
-                <CameraComponent  onCapture={handleCapture} />
+                <CameraComponent onCapture={handleCapture} />
                 <div
                   className="ccontainerss"
                   style={{
@@ -1366,7 +1320,7 @@ function ReceivingManagementPreview({ authrztn }) {
                   }}
                 >
                   {productImages.map((image, index) => (
-                    <div className="mt-2">
+                    <div key={index} className="mt-2">
                       <span
                         className="fs-3"
                         style={{ marginLeft: 20 }}
@@ -1398,12 +1352,7 @@ function ReceivingManagementPreview({ authrztn }) {
             >
               Close
             </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              size="lg"
-              className="fs-5"
-            >
+            <Button variant="primary" type="submit" size="lg" className="fs-5">
               Save
             </Button>
           </Modal.Footer>

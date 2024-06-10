@@ -15,7 +15,7 @@ import swal from "sweetalert";
 import Carousel from "react-bootstrap/Carousel";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import CameraComponent from './../../assets/components/camera.jsx';
+import CameraComponent from "./../../assets/components/camera.jsx";
 
 import {
   Plus,
@@ -89,7 +89,7 @@ function WhiteBoard() {
         .get(BASE_URL + "/board/fetchPost")
         .then((res) => {
           setPost(res.data);
-          setOriginalPost(res.data)
+          setOriginalPost(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -380,10 +380,27 @@ function WhiteBoard() {
     fileInputRef.current.click();
   }
 
-  // console.log(JSON.stringify(productImages));
-
   function onFileSelect(event) {
-    const files = event.target.files;
+    const files = Array.from(event.target.files);
+    handleFiles(files);
+  }
+
+  function onDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+  }
+
+  function onDragLeave(event) {
+    event.preventDefault();
+  }
+
+  function onDropImages(event) {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    handleFiles(files);
+  }
+
+  function handleFiles(files) {
     if (files.length + productImages.length > 5) {
       swal({
         icon: "error",
@@ -393,17 +410,11 @@ function WhiteBoard() {
       return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-        const allowedFileTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/webp",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // Excel
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Word
-        ];
+    const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
 
-        if (!allowedFileTypes.includes(files[i].type)) {
+    files.forEach((file) => {
+      if (!productImages.some((e) => e.name === file.name)) {
+        if (!allowedFileTypes.includes(file.type)) {
           swal({
             icon: "error",
             title: "Invalid File Type",
@@ -412,7 +423,7 @@ function WhiteBoard() {
           return;
         }
 
-        if (files[i].size > 5 * 1024 * 1024) {
+        if (file.size > 5 * 1024 * 1024) {
           swal({
             icon: "error",
             title: "File Size Exceeded",
@@ -420,19 +431,20 @@ function WhiteBoard() {
           });
           return;
         }
+
         const reader = new FileReader();
         reader.onload = (e) => {
           setproductImages((prevImages) => [
             ...prevImages,
             {
-              name: files[i].name,
+              name: file.name,
               image: e.target.result.split(",")[1],
             },
           ]);
         };
-        reader.readAsDataURL(files[i]);
+        reader.readAsDataURL(file);
       }
-    }
+    });
   }
 
   function deleteImage(index) {
@@ -441,64 +453,6 @@ function WhiteBoard() {
     setproductImages(updatedImages);
   }
 
-  function onDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "copy";
-  }
-  function onDragLeave(event) {
-    event.preventDefault();
-  }
-
-  function onDropImages(event) {
-    event.preventDefault();
-
-    const files = event.dataTransfer.files;
-
-    if (files.length + productImages.length > 5) {
-      swal({
-        icon: "error",
-        title: "File Limit Exceeded",
-        text: "You can upload up to 5 images only.",
-      });
-      return;
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      if (!productImages.some((e) => e.name === files[i].name)) {
-        const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
-
-        if (!allowedFileTypes.includes(files[i].type)) {
-          swal({
-            icon: "error",
-            title: "Invalid File Type",
-            text: "Only JPEG, PNG, and WebP file types are allowed.",
-          });
-          return;
-        }
-
-        if (files[i].size > 5 * 1024 * 1024) {
-          swal({
-            icon: "error",
-            title: "File Size Exceeded",
-            text: "Maximum file size is 5MB.",
-          });
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setproductImages((prevImages) => [
-            ...prevImages,
-            {
-              name: files[i].name,
-              product_image: e.target.result.split(",")[1],
-            },
-          ]);
-        };
-        reader.readAsDataURL(files[i]);
-      }
-    }
-  }
   const handleCapture = (imageData) => {
     if (productImages.length >= 5) {
       swal({
@@ -523,13 +477,14 @@ function WhiteBoard() {
         (data?.postby?.col_Fname?.toLowerCase() || "").includes(searchTerm) ||
         (data?.subject?.toLowerCase() || "").includes(searchTerm) ||
         (data?.message?.toLowerCase() || "").includes(searchTerm) ||
-        (formatDatetime(data?.createdAt)?.toLowerCase() || "").includes(searchTerm)
+        (formatDatetime(data?.createdAt)?.toLowerCase() || "").includes(
+          searchTerm
+        )
       );
     });
 
     setPost(filteredData);
   };
-
 
   function formatDatetime(datetime) {
     const options = {
@@ -569,7 +524,6 @@ function WhiteBoard() {
                     <Button
                       className="float-end pl-2 pr-2"
                       variant="light border border-body"
-                     
                     >
                       <MagnifyingGlass size={22} />
                       Search
@@ -818,16 +772,16 @@ function WhiteBoard() {
                             style={{ width: "70%" }}
                             onDragOver={onDragOver}
                             onDragLeave={onDragLeave}
-                            onDrop={(e) => onDropImages(e)}
+                            onDrop={onDropImages}
                           >
-                            <p className="fs-5">
-                              {/* Drag & Drop image here or{" "} */}
+                            <p style={{ fontSize: 11 }}>
+                              Drag & Drop image here or{" "}
                               <span
                                 className="select"
                                 role="button"
-                                onClick={() => selectFiles()}
+                                onClick={selectFiles}
                               >
-                                <p className="fs-5">Browse Picture</p>
+                                <p style={{ fontSize: 11 }}>Browse</p>
                               </span>
                             </p>
                             <input
@@ -836,10 +790,10 @@ function WhiteBoard() {
                               className="file"
                               multiple
                               ref={fileInputRef}
-                              onChange={(e) => onFileSelect(e)}
+                              onChange={onFileSelect}
                             />
                           </div>
-                          <CameraComponent  onCapture={handleCapture} />
+                          <CameraComponent onCapture={handleCapture} />
                           <div
                             className="ccontainerss"
                             style={{
@@ -848,7 +802,7 @@ function WhiteBoard() {
                             }}
                           >
                             {productImages.map((image, index) => (
-                              <div className="mt-2">
+                              <div key={index} className="mt-2">
                                 <span
                                   className="fs-3"
                                   style={{ marginLeft: 20 }}
