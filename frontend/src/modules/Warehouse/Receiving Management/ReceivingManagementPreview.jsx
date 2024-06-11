@@ -16,7 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import warehouse from "../../../assets/global/warehouse";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import CameraComponent from './../../../assets/components/camera.jsx';
+import CameraComponent from "./../../../assets/components/camera.jsx";
 import {
   ArrowCircleLeft,
   Upload,
@@ -66,11 +66,9 @@ function ReceivingManagementPreview({ authrztn }) {
   };
 
   const generateRandomCode = () => {
-    axios
-    .get(BASE_URL + "/receiving/generateRefCodess")
-    .then((res) => {
+    axios.get(BASE_URL + "/receiving/generateRefCodess").then((res) => {
       setRefCode(res.data.refCode);
-    })
+    });
   };
 
   useEffect(() => {
@@ -100,7 +98,7 @@ function ReceivingManagementPreview({ authrztn }) {
           },
         })
         .then((res) => {
-          setPrID(res.data[0].purchase_req.id)
+          setPrID(res.data[0].purchase_req.id);
           setPrNumber(res.data[0].purchase_req.pr_num);
           setDateNeeded(res.data[0].purchase_req.date_needed);
           setUsedFor(res.data[0].purchase_req.used_for);
@@ -281,21 +279,20 @@ function ReceivingManagementPreview({ authrztn }) {
   const [shippingFee, setShippingFee] = useState("");
 
   const handleDutiesChange = () => {
-    setIsD_C_applicable(prevState => {
+    setIsD_C_applicable((prevState) => {
       const newApplicable = !prevState;
       setcustomFee(newApplicable ? "" : "0");
       return newApplicable;
     });
   };
-  
+
   const handleShippingChange = () => {
-    setIsSF_applicable(prevState => {
+    setIsSF_applicable((prevState) => {
       const newApplicable = !prevState;
       setShippingFee(newApplicable ? "" : "0");
       return newApplicable;
     });
   };
-  
 
   const handleInputChange = (value, productValue, inputType, po_quantity) => {
     setInputValues((prevInputs) => {
@@ -377,10 +374,10 @@ function ReceivingManagementPreview({ authrztn }) {
   const [suppReceving, setsuppReceving] = useState("");
   const handleChangeReceiving = (event) => {
     setsuppReceving(event.target.value);
-    setShippingFee("")
-    setcustomFee("")
-    setIsD_C_applicable(true)
-    setIsSF_applicable(true)
+    setShippingFee("");
+    setcustomFee("");
+    setIsD_C_applicable(true);
+    setIsSF_applicable(true);
   };
 
   const [addReceivebackend, setReceivebackend] = useState([]);
@@ -401,10 +398,11 @@ function ReceivingManagementPreview({ authrztn }) {
             inputValues[
               `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
             ]?.Rquantity || "",
-          Remaining_quantity: 
-          child.item.quantity - (inputValues[
-            `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-          ]?.Rquantity || ""),
+          Remaining_quantity:
+            child.item.quantity -
+            (inputValues[
+              `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+            ]?.Rquantity || ""),
           // inputValues[
           //   `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
           // ]?.Squantity
@@ -466,10 +464,10 @@ function ReceivingManagementPreview({ authrztn }) {
                 userId,
                 refCode,
                 isSF_applicable,
-                isD_C_applicable
+                isD_C_applicable,
               }
             );
-    
+
             if (response.status === 200) {
               swal({
                 title: "Product Received Successful!",
@@ -478,7 +476,7 @@ function ReceivingManagementPreview({ authrztn }) {
                 button: "OK",
               }).then(() => {
                 handleClose();
-                navigate('/receivingManagement')
+                navigate("/receivingManagement");
               });
             } else {
               swal({
@@ -496,10 +494,7 @@ function ReceivingManagementPreview({ authrztn }) {
             });
           }
         }
-      })
-
-
-    
+      });
     }
 
     setValidated(true); // for validations
@@ -887,11 +882,11 @@ function ReceivingManagementPreview({ authrztn }) {
         <Form noValidate validated={validated} onSubmit={add}>
           <Modal.Header closeButton style={{ width: "100%", padding: 0 }}>
             <Modal.Title style={{ width: "100%" }}>
-              <div className="d-flex w-100">
-                <div className="w-50">
+              <div className="d-flex w-100 rmp-head">
+                <div className=" rmp-head-PO">
                   <span className="h2">{`PO Number: ${po_id}`}</span>
                 </div>
-                <div className="w-50 d-flex">
+                <div className="d-flex rmp-head-select">
                   <label className="h3">Select Receiving Area: </label>
                   <Form.Select
                     aria-label=""
@@ -915,86 +910,88 @@ function ReceivingManagementPreview({ authrztn }) {
           </Modal.Header>
 
           <Modal.Body>
-          <div className="row p-0">
-  <div className="col-6 align-items-center">
-    <div className="d-flex w-100">
-      <div className="d-flex flex-column w-100">
-        <span className="h2 mb-3">
-          {`Supplier: ${supplier_code} - ${supplier_name}`}
-        </span>
-        <span className="h2">
-          Reference Code:{" "}
-          <span className="text-decoration-underline">
-            {refCode}
-          </span>
-        </span>
-      </div>
-    </div>
-  </div>
+            <div className="row p-0">
+              <div className="col-6 align-items-center">
+                <div className="d-flex w-100 rmp-pad">
+                  <div className="d-flex flex-column w-100 rmp-pad">
+                    <span className="h2 mb-3">
+                      {`Supplier: ${supplier_code} - ${supplier_name}`}
+                    </span>
+                    <span className="h2">
+                      Reference Code:{" "}
+                      <span className="text-decoration-underline">
+                        {refCode}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-  {suppReceving === "Agusan Del Sur" ? (
-     <div className="col-6">
-     <div className="d-flex w-100">
-       <div className="w-50" style={{ float: "right" }}>
-         <div className="d-flex align-items-center">
-           <Form.Label className="h4 mb-0">
-             Duties & Custom Fee:
-           </Form.Label>
-           <Form.Check
-             type="switch"
-             className="ml-3"
-             style={{ fontSize: "15px", color: "red" }}
-             checked={isD_C_applicable}
-             onClick={handleDutiesChange}
-           />
-         </div>
-         <Form.Control
-           type="number"
-           className="w-100"
-           readOnly={!isD_C_applicable}
-           value={isD_C_applicable ? customFee : "0"}
-           style={{
-             fontFamily: "Poppins, Source Sans Pro",
-           }}
-           onChange={(e) => setcustomFee(e.target.value)}
-           onKeyDown={(e) => {
-             ["e", "E", "+", "-"].includes(e.key) &&
-               e.preventDefault();
-           }}
-         />
-       </div>
-       <div className="w-50" style={{ float: "right" }}>
-         <div className="d-flex align-items-center">
-           <Form.Label className="h4 mb-0">Shipping Fee:</Form.Label>
-           <Form.Check
-             type="switch"
-             className="ml-3"
-             style={{ fontSize: "15px", color: "red" }}
-             checked={isSF_applicable}
-             onClick={handleShippingChange}
-           />
-         </div>
-         <Form.Control
-           type="number"
-           className="w-100"
-           readOnly={!isSF_applicable}
-           value={isSF_applicable ? shippingFee : "0"}
-           style={{
-             fontFamily: "Poppins, Source Sans Pro",
-           }}
-           onChange={(e) => setShippingFee(e.target.value)}
-           onKeyDown={(e) => {
-             ["e", "E", "+", "-"].includes(e.key) &&
-               e.preventDefault();
-           }}
-         />
-       </div>
-     </div>
-   </div>
-  ) : (
-    <div className="col-6"></div>
-  )}
-</div>
+              {suppReceving === "Agusan Del Sur" ? (
+                <div className="col-6">
+                  <div className="d-flex w-100">
+                    <div className="w-50" style={{ float: "right" }}>
+                      <div className="d-flex align-items-center">
+                        <Form.Label className="h4 mb-0">
+                          Duties & Custom Fee:
+                        </Form.Label>
+                        <Form.Check
+                          type="switch"
+                          className="ml-3"
+                          style={{ fontSize: "15px", color: "red" }}
+                          checked={isD_C_applicable}
+                          onClick={handleDutiesChange}
+                        />
+                      </div>
+                      <Form.Control
+                        type="number"
+                        className="w-100"
+                        readOnly={!isD_C_applicable}
+                        value={isD_C_applicable ? customFee : "0"}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        onChange={(e) => setcustomFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                    <div className="w-50" style={{ float: "right" }}>
+                      <div className="d-flex align-items-center">
+                        <Form.Label className="h4 mb-0">
+                          Shipping Fee:
+                        </Form.Label>
+                        <Form.Check
+                          type="switch"
+                          className="ml-3"
+                          style={{ fontSize: "15px", color: "red" }}
+                          checked={isSF_applicable}
+                          onClick={handleShippingChange}
+                        />
+                      </div>
+                      <Form.Control
+                        type="number"
+                        className="w-100"
+                        readOnly={!isSF_applicable}
+                        value={isSF_applicable ? shippingFee : "0"}
+                        style={{
+                          fontFamily: "Poppins, Source Sans Pro",
+                        }}
+                        onChange={(e) => setShippingFee(e.target.value)}
+                        onKeyDown={(e) => {
+                          ["e", "E", "+", "-"].includes(e.key) &&
+                            e.preventDefault();
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="col-6"></div>
+              )}
+            </div>
 
             <div className="row mb-5">
               {productImages.length > 0 && (
@@ -1038,8 +1035,12 @@ function ReceivingManagementPreview({ authrztn }) {
                   }}
                   key={`${parentIndex}-${childIndex}`}
                 >
-                  <div className="col-2">
-                    <Form.Group controlId="exampleForm.ControlInput2">
+                  <div className="col-2 rmp-modal">
+                    {/* <div className="rmp-title"> */}
+                    <Form.Group
+                      controlId="exampleForm.ControlInput2"
+                      className="rmp-title"
+                    >
                       <Form.Label style={{ fontSize: "15px" }}>
                         {`${child.type} : `}
                       </Form.Label>
@@ -1047,13 +1048,14 @@ function ReceivingManagementPreview({ authrztn }) {
                         {`${child.supp_tag.code} - ${child.supp_tag.name}`}
                       </p>
                     </Form.Group>
+                    {/* </div> */}
                   </div>
 
-                  <div className="col-10">
+                  <div className="col-10 rmp-modal">
                     <div className="d-flex w-100">
                       <div className="w-25">
                         <Form.Group className="w-100">
-                          <Form.Label className="h4">
+                          <Form.Label className="h4 rmp-lbl">
                             {child.supp_tag.UOM}
                           </Form.Label>
                           <Form.Control
@@ -1069,10 +1071,13 @@ function ReceivingManagementPreview({ authrztn }) {
                       <div className="w-25">
                         {/* {checkedRows[parentIndex]?.[childIndex] && ( */}
                         <Form.Group className="w-100">
-                          <Form.Label className="h4">/pcs:</Form.Label>
+                          <Form.Label className="h4 rmp-lbl">/pcs:</Form.Label>
                           <Form.Control
                             type="number"
-                            readOnly={child.item.quantity === 0 || child.supp_tag.isSubUnit === 0}
+                            readOnly={
+                              child.item.quantity === 0 ||
+                              child.supp_tag.isSubUnit === 0
+                            }
                             placeholder="Quantity"
                             required
                             onKeyDown={(e) => {
@@ -1080,10 +1085,11 @@ function ReceivingManagementPreview({ authrztn }) {
                                 e.preventDefault();
                             }}
                             value={
-                              child.supp_tag.isSubUnit === 0 ? ('1') : (inputValues[
-                                `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
-                              ]?.Squantity || "")
-                              
+                              child.supp_tag.isSubUnit === 0
+                                ? "1"
+                                : inputValues[
+                                    `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
+                                  ]?.Squantity || ""
                             }
                             onChange={(e) =>
                               handleInputChange(
@@ -1168,7 +1174,8 @@ function ReceivingManagementPreview({ authrztn }) {
                               )
                             }
                             value={
-                              child.item.quantity - (inputValues[
+                              child.item.quantity -
+                              (inputValues[
                                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
                               ]?.Rquantity || "")
                               // inputValues[
@@ -1357,7 +1364,7 @@ function ReceivingManagementPreview({ authrztn }) {
                     onChange={(e) => onFileSelect(e)}
                   />
                 </div>
-                <CameraComponent  onCapture={handleCapture} />
+                <CameraComponent onCapture={handleCapture} className="mt-3" />
                 <div
                   className="ccontainerss"
                   style={{
@@ -1398,12 +1405,7 @@ function ReceivingManagementPreview({ authrztn }) {
             >
               Close
             </Button>
-            <Button
-              variant="primary"
-              type="submit"
-              size="lg"
-              className="fs-5"
-            >
+            <Button variant="primary" type="submit" size="lg" className="fs-5">
               Save
             </Button>
           </Modal.Footer>

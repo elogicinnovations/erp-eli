@@ -350,7 +350,7 @@ function POApprovalRejustify({ authrztn }) {
           console.log(err);
         }
       } else {
-        setShowSignature(false)
+        setShowSignature(false);
       }
     });
   };
@@ -449,10 +449,11 @@ function POApprovalRejustify({ authrztn }) {
     }
   };
 
-  const handleRemovePoProduct = async (PR_PO_primaryID, productName) => { // para if reject pwede mag remove ng prodduct
+  const handleRemovePoProduct = async (PR_PO_primaryID, productName) => {
+    // para if reject pwede mag remove ng prodduct
 
-    const primary_ID = PR_PO_primaryID
-    const product_name = productName
+    const primary_ID = PR_PO_primaryID;
+    const product_name = productName;
     swal({
       title: `Confirm removal of this product from purchase order #${id}?`,
       text: `${product_name}`,
@@ -461,41 +462,37 @@ function POApprovalRejustify({ authrztn }) {
       dangerMode: true,
     }).then(async (approve) => {
       if (approve) {
-      
-
         await axios
-        .post(BASE_URL + `/invoice/remove_productPO`, null, {
-          params: {
-            primary_ID,
-            po_id: id,
-            userId,
-            prNum,
-            prID,
-            product_name
-          }
-        })
-        .then((res) => {
-          if(res.status === 200){
-            swal({
-              icon: "success",
-              title: `Product ${product_name} has successfully removed from PO # ${id}`,
-              text: "Please contact our support",
-            })
-            .then(() => {
-              reloadTable()
-            })
-          }
-          else{
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          } 
-        })
+          .post(BASE_URL + `/invoice/remove_productPO`, null, {
+            params: {
+              primary_ID,
+              po_id: id,
+              userId,
+              prNum,
+              prID,
+              product_name,
+            },
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              swal({
+                icon: "success",
+                title: `Product ${product_name} has successfully removed from PO # ${id}`,
+                text: "Please contact our support",
+              }).then(() => {
+                reloadTable();
+              });
+            } else {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please contact our support",
+              });
+            }
+          });
       }
-    })
-  }
+    });
+  };
 
   // const [POPreview, setPOPreview] = useState([]);
   // const handlePreview = async (po_num) => {
@@ -516,8 +513,8 @@ function POApprovalRejustify({ authrztn }) {
 
   const handleCloseses = () => {
     setShow(false);
-    setShowSignature(false)
-  }
+    setShowSignature(false);
+  };
   const handleShowses = () => setShow(true);
 
   //date format
@@ -713,16 +710,22 @@ function POApprovalRejustify({ authrztn }) {
                                 {status === "Rejected" ? (
                                   <>
                                     <td>
-                                      <Button variant onClick={() => handleRemovePoProduct(item.item.id, item.supp_tag.name)} >
+                                      <Button
+                                        variant
+                                        onClick={() =>
+                                          handleRemovePoProduct(
+                                            item.item.id,
+                                            item.supp_tag.name
+                                          )
+                                        }
+                                      >
                                         <Trash size={32} />
                                       </Button>
-                                      
                                     </td>
                                   </>
                                 ) : (
                                   <></>
                                 )}
-                               
                               </tr>
                             )
                         )
@@ -842,7 +845,8 @@ function POApprovalRejustify({ authrztn }) {
 
                 return (
                   <Modal.Body
-                  // id={`content-to-capture-${group.title}`}
+                    // id={`content-to-capture-${group.title}`}
+                    className="po-rece-modal"
                   >
                     <div
                       id={`content-to-capture-${group.title}`}
@@ -857,11 +861,15 @@ function POApprovalRejustify({ authrztn }) {
                           <div className="sbftexts">
                             <span>SBF PHILIPPINES DRILLING </span>
                             <span>RESOURCES CORPORATION</span>
-                            <span>
+                            <span className="po-loc">
                               Padigusan, Sta.Cruz, Rosario, Agusan del sur
                             </span>
-                            <span>Landline No. 0920-949-3373</span>
-                            <span>Email Address: sbfpdrc@gmail.com</span>
+                            <span className="po-loc">
+                              Landline No. 0920-949-3373
+                            </span>
+                            <span className="po-loc">
+                              Email Address: sbfpdrc@gmail.com
+                            </span>
                           </div>
                           <div className="spacesbf"></div>
                         </div>
@@ -1000,7 +1008,8 @@ function POApprovalRejustify({ authrztn }) {
                                 <div key={index}>
                                   <label>
                                     {(
-                                      item.item.purchase_price * item.item.quantity
+                                      item.item.purchase_price *
+                                      item.item.quantity
                                     ).toLocaleString(undefined, {
                                       minimumFractionDigits: 2,
                                     })}
@@ -1164,7 +1173,7 @@ function POApprovalRejustify({ authrztn }) {
                     current_status === "Rejustified" ? (
                       <>
                         {!loadAprrove ? (
-                          <div className="save-cancel">
+                          <div className="save-cancel po-btn-modal">
                             {authrztn.includes("PO - Reject") && (
                               <Button
                                 onClick={() => {
