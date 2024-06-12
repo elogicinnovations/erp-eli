@@ -7,12 +7,14 @@ import NoAccess from "../../assets/image/NoAccess.png";
 import { Link, useParams } from "react-router-dom";
 import "../styles/react-style.css";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import BASE_URL from "../../assets/global/url";
 import axios from "axios";
-import { Trash } from "@phosphor-icons/react";
-
+import { PencilSimple } from "@phosphor-icons/react";
+import Modal from 'react-bootstrap/Modal';
 import * as $ from "jquery";
-
+import { jwtDecode } from "jwt-decode";
+import swal from "sweetalert";
 function ViewInventory({ authrztn }) {
   const { id } = useParams();
 
@@ -25,19 +27,119 @@ function ViewInventory({ authrztn }) {
   const [uM, setUm] = useState("");
   const [details, setDetails] = useState("");
   const [thresholds, setThresholds] = useState("");
-
   const [invetoryWarehouse, setInvetoryWarehouse] = useState([]);
-  // Get Issuance
+
+  const [updateQty, setUpdateQty] = useState("");
+  const [inventory_id, setInventory_id] = useState("");
+  const [warehouse_names, setWarehouse_names] = useState("");
+  const [show, setShow] = useState(false);
+  const [validated, setValidated] = useState(false);
+  const [userId, setuserId] = useState("");
+  const decodeToken = () => {
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
+    }
+  };
+
   useEffect(() => {
-    axios
-        .get(BASE_URL + "/inventory/fetchWarehouseInvetory", {
-          params: {
-            id: id,
-          },
-        })
-      .then(res => setInvetoryWarehouse(res.data))
-      .catch(err => console.log(err));
+    decodeToken();
+    reloadTable()
   }, []);
+
+  const handleClose = () => {
+    setShow(false)
+    setUpdateQty('')
+    setValidated(false)
+  };
+  const handleShow = (inv_id, warehouseName) => {
+    setShow(true)
+    setInventory_id(inv_id)
+    setWarehouse_names(warehouseName)
+  };
+
+    const handleUpdatePrice = async (e) => {
+      e.preventDefault();
+  
+      const form = e.currentTarget;
+      if (form.checkValidity() === false) {
+        e.preventDefault();
+        e.stopPropagation();
+        swal({
+          icon: "error",
+          title: "Fields are required",
+          text: "Please fill the red text fields",
+        });
+      } else {
+        swal({
+          title: "Are you sure?",
+          text: "This action will mark the request as approved.",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((confirmed) => {
+          if (confirmed) {
+            setIsLoading(true)
+            axios
+            .post(BASE_URL + "/inventory/updateQty", null,{
+              params: {
+                updateQty,
+                inventory_id,
+                userId,
+                name,
+                warehouse_names
+              },
+            })
+          .then(res => {
+            if (res.status === 200){
+              swal({
+                title: "Updated Successfully",
+                text: "",
+                icon: "success",
+                buttons: true,
+                dangerMode: true,
+              })
+              .then(() => {
+                reloadTable()
+                setIsLoading(false)
+                handleClose()
+              })
+            }else{
+              swal({
+                title: "Something Went Wrong",
+                text: "Please contact your support immediately",
+                icon: "success",
+                buttons: true,
+                dangerMode: true,
+              })
+              setIsLoading(false)
+              handleClose()
+            }
+          })
+          .catch(err => {
+            console.log(err)
+            setIsLoading(false)
+            handleClose()
+          });
+          }
+        })
+      }
+      setValidated(true); //for validations
+    
+  };
+
+  const reloadTable = () => {
+    axios
+    .get(BASE_URL + "/inventory/fetchWarehouseInvetory", {
+      params: {
+        id: id,
+      },
+    })
+  .then(res => setInvetoryWarehouse(res.data))
+  .catch(err => console.log(err));
+  }
 
 
   useEffect(() => {
@@ -278,7 +380,8 @@ function ViewInventory({ authrztn }) {
                       <th className="tableh">Unit Price</th>
                       <th className="tableh">Freight Cost </th>
                       <th className="tableh">Duties & Custom Cost </th>
-                      <th className="tableh">Total Price</th>                 
+                      <th className="tableh">Total Price</th>     
+                      <th className="tableh">Edit</th>             
                     </tr>
                   </thead>
                   {invetoryWarehouse.length > 0 ? (  
@@ -291,6 +394,11 @@ function ViewInventory({ authrztn }) {
                             <td>{data.freight_cost === null ? "Pending Cost" : data.freight_cost}</td>
                             <td>{data.custom_cost === null ? "Pending Cost" : data.custom_cost}</td>
                             <td>{data.totalPrice}</td>
+                            <td>
+                              <Button onClick={(e) => handleShow(data.inventory_id, data.warehouse_name)} variant>
+                                <PencilSimple size={22} />
+                              </Button>
+                            </td>
                             
                           </tr>
                         ))}
@@ -326,6 +434,43 @@ function ViewInventory({ authrztn }) {
           </div>
         )}
       </div>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+<Form noValidate validated={validated} onSubmit={handleUpdatePrice}>
+        
+        <Modal.Header closeButton>
+          <Modal.Title><label className="h2">{`${name} FROM ${warehouse_names}`}</label></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Label className="h3">
+            Enter Quantity
+          </Form.Label>
+          <Form.Control 
+            required
+            onChange={(e) => setUpdateQty(e.target.value)}
+            onKeyDown={(e) => {
+              ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+            }} 
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button type="button" variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button type="submit" variant="primary">Update</Button>
+        </Modal.Footer>
+
+        </Form>
+      </Modal>
+
+
+
+
     </div>
   );
 }

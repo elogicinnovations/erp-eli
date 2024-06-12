@@ -14,12 +14,12 @@ import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import { jwtDecode } from "jwt-decode";
 import { Plus } from "@phosphor-icons/react";
-import { IconButton, TextField, } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
 import SBFLOGO from "../../../src/assets/image/SBFLogo.jpg";
 import Header from "../../partials/header";
 import Table from "react-bootstrap/Table";
 import html2canvas from "html2canvas";
-import jsPDF from 'jspdf';
+import jsPDF from "jspdf";
 
 const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const navigate = useNavigate();
@@ -33,10 +33,10 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const [isPrintDisabled, setIsPrintDisabled] = useState(true);
   const [issuanceExpirationStatus, setIssuanceExpirationStatus] = useState({});
   const [showPreview, setshowPreview] = useState(false);
-  const [ApprovedIssue, setApprovedIssue] = useState([])
-  const [IssuedBy, setIssuedBy] = useState("")
-  const [ReceivedBy, setReceivedBy] = useState("")
-  const [ApprovedBy, setApprovedBy] = useState("")
+  const [ApprovedIssue, setApprovedIssue] = useState([]);
+  const [IssuedBy, setIssuedBy] = useState("");
+  const [ReceivedBy, setReceivedBy] = useState("");
+  const [ApprovedBy, setApprovedBy] = useState("");
   const [currentPageissuance, setCurrentPageIssuance] = useState(1);
   const pageIssuanceSize = 10;
 
@@ -161,7 +161,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         setIssuanceExpirationStatus(expirationStatus);
         setIssuance(res.data);
 
-        const hasApproved = res.data.some(item => item.status === "Approved");
+        const hasApproved = res.data.some((item) => item.status === "Approved");
         setIsPrintDisabled(!hasApproved);
       })
       .catch((err) => console.log(err));
@@ -499,7 +499,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
             primaryID,
             types,
             userId,
-            date_retained: currentDate
+            date_retained: currentDate,
           })
           .then(() => {
             // Show success SweetAlert
@@ -582,52 +582,50 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
       .get(`${BASE_URL}/issuance/fetchPreview`, { params: { issuance_id } })
       .then((res) => {
         setApprovedIssue(res.data);
-        setIssuedBy(res.data[0].issuance.issuer.col_Fname)
-        setReceivedBy(res.data[0].issuance.receiver.col_Fname)
-        setApprovedBy(res.data[0].issuance.approvers.col_Fname)
+        setIssuedBy(res.data[0].issuance.issuer.col_Fname);
+        setReceivedBy(res.data[0].issuance.receiver.col_Fname);
+        setApprovedBy(res.data[0].issuance.approvers.col_Fname);
         setshowPreview(true);
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  
 
   const handleClosePreview = () => {
     setshowPreview(false);
   };
 
   const handleExportPDF = () => {
-    const input = document.getElementById('content-to-pdf');
+    const input = document.getElementById("content-to-pdf");
     html2canvas(input)
       .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF();
         const imgWidth = 210; // A4 size width in mm
         const pageHeight = 297; // A4 size height in mm
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         let heightLeft = imgHeight;
-  
+
         let position = 0;
-  
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
-  
+
         while (heightLeft >= 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
         }
-  
-        pdf.save('ApprovedIssuance.pdf');
+
+        pdf.save("ApprovedIssuance.pdf");
       })
       .catch((error) => {
-        console.error('Error generating PDF: ', error);
+        console.error("Error generating PDF: ", error);
       });
   };
 
-  
   const tabStyle = {
     padding: "10px 15px",
     margin: "0 10px",
@@ -658,6 +656,73 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   useEffect(() => {
     decodeToken();
   }, []);
+
+  const [csvFile, setCsvFile] = useState(null);
+  // const [csvData, setCsvData] = useState([]);
+  const [warehouseID, setWarehouseID] = useState("");
+  const handleFileChange = (e) => {
+    setCsvFile(e.target.files[0]);
+  };
+
+  const readCsvFile = async () => {
+    if (warehouseID === "" || csvFile === null) {
+      swal(
+        "Error!",
+        "Please fill the empty fields for CSV and warehouse ID",
+        "error"
+      );
+    } else {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("csvFile", csvFile);
+      formData.append("warehouseID", warehouseID);
+  
+      try {
+        const response = await axios.post(
+          `${BASE_URL}/inventory/read_csv`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          swal(
+            "Success",
+            "Uploaded Successfully",
+            "success"
+          );
+          setIsLoading(false);
+        } else if (response.status === 500) {
+          const errorMessage = response.data.error;
+          if (errorMessage === 'Connection acquisition timeout') {
+            swal(
+              "Error!",
+              "Connection timeout. Please try again later.",
+              "error"
+            );
+          } else {
+            swal(
+              "Error!",
+              "Upload Data Stop. Please Try Again",
+              "error"
+            );
+          }
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error reading CSV file:", error);
+        swal(
+          "Error!",
+          "An unexpected error occurred. Please try again later.",
+          "error"
+        );
+        setIsLoading(false);
+      }
+    }
+  };
 
   return (
     <div className="main-of-containers">
@@ -695,6 +760,31 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                 >
                   <div className="tab-titles">
                     <h1>Inventory</h1>
+
+
+                    {userId === 1 && (
+                      <div className="row">
+                        <div className="col-4">
+                          <input
+                            type="file"
+                            accept=".csv"
+                            onChange={handleFileChange}
+                          />
+                        </div>
+                        <div className="col-4">
+                          <input
+                            type="number"
+                            placeholder="input thhe warehouse ID"
+                            className="border border-secondary fs-5 text-center"
+                            onChange={(e) => setWarehouseID(e.target.value)}
+                          />
+                        </div>
+                        <div className="col-4">
+                          <Button variant="primary" onClick={readCsvFile}><span className="h3">Upload CSV</span></Button>
+                        </div>
+                      </div>
+                    )}
+                    
                   </div>
                   <div className="row">
                     <div className="col-6 d-flex justify-content-md-start justify-content-sm-center justify-content-center inv-div-sel">
@@ -1032,10 +1122,14 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                     Return
                                   </Button>
                                 </td>
-                                <td>                            
-                                <Button onClick={() => handlePreviewShow(data.issuance_id)}>
-                                  Preview
-                                </Button>
+                                <td>
+                                  <Button
+                                    onClick={() =>
+                                      handlePreviewShow(data.issuance_id)
+                                    }
+                                  >
+                                    Preview
+                                  </Button>
                                 </td>
                               </tr>
                             ))}
@@ -1545,128 +1639,146 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         )}
       </div>
 
-              <Modal
-                show={showPreview}
-                onHide={handleClosePreview}
-                backdrop="static"
-                keyboard={false}
-                size="xl"
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title></Modal.Title>
-                </Modal.Header>
-                    <Modal.Body id="content-to-pdf">
-                      <div
-                        className="canvassing-templates-container"
-                      >
-                        <div className="canvassing-content-templates">
-                          <div className="templates-header">
-                            <div className="template-logoes">
-                              <img src={SBFLOGO} alt="" />
-                            </div>
-                            <div className="SBFtextslogo">
-                              <span>
-                                SBF PHILIPPINES DRILLING RESOURCES CORP.
-                              </span>
-                              <span>
-                                Padiguan, Sta. Cruz, Rosario, Agusan Del Sur
-                              </span>
-                            </div>
-                          </div>
+      <Modal
+        show={showPreview}
+        onHide={handleClosePreview}
+        backdrop="static"
+        keyboard={false}
+        size="xl"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+        <Modal.Body id="content-to-pdf">
+          <div className="canvassing-templates-container">
+            <div className="canvassing-content-templates">
+              <div className="templates-header">
+                <div className="template-logoes">
+                  <img src={SBFLOGO} alt="" />
+                </div>
+                <div className="SBFtextslogo">
+                  <span>SBF PHILIPPINES DRILLING RESOURCES CORP.</span>
+                  <span>Padiguan, Sta. Cruz, Rosario, Agusan Del Sur</span>
+                </div>
+              </div>
 
-                          <div className="templates-middle">
-                            <div className="Quotationdiv">
-                              <span>ISSUANCE</span>
-                            </div>
-                          </div>
+              <div className="templates-middle">
+                <div className="Quotationdiv">
+                  <span>ISSUANCE</span>
+                </div>
+              </div>
 
+              <div className="templates-table-section">
+                <div className="templatestable-content">
+                  <Table>
+                    <thead>
+                      <tr>
+                        <th className="canvassth">PRODUCT CODE</th>
+                        <th>PRODUCT NAME</th>
+                        <th>QUANTITY</th>
+                        <th>UOM</th>
+                        <th>LANDED COST</th>
+                        <th>TOTAL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ApprovedIssue.map((data, i) => {
+                        const landedCost =
+                          (data.inventory_prd.freight_cost || 0) +
+                          (data.inventory_prd.custom_cost || 0) +
+                          data.inventory_prd.price;
 
-                          <div className="templates-table-section">
-                            <div className="templatestable-content">
-                              <Table>
-                                <thead>
-                                  <tr>
-                                    <th className="canvassth">PRODUCT CODE</th>
-                                    <th>PRODUCT NAME</th>
-                                    <th>QUANTITY</th>
-                                    <th>UOM</th>
-                                    <th>LANDED COST</th>
-                                    <th>TOTAL</th>
-                                  </tr>
-                                </thead>
-                                  <tbody>
-                                  {ApprovedIssue.map((data, i) => {
-                                      const landedCost = (data.inventory_prd.freight_cost || 0) + 
-                                      (data.inventory_prd.custom_cost || 0) + 
-                                      data.inventory_prd.price;
+                        const TotalPrice = data.quantity + landedCost;
 
-                                      const TotalPrice = (data.quantity + landedCost)
-             
-                                    return (
-                                      <tr key={i}>
-                                        <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
-                                        <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
-                                        <td>{data.quantity}</td>
-                                        <td>{data.inventory_prd.product_tag_supplier.product.product_unitMeasurement}</td>
-                                        <td>{landedCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                        <td>{TotalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                      </tr>
-                                    );
-                                  })}
-                                  </tbody>
-                                </Table>
-                            </div>
-                          </div>
+                        return (
+                          <tr key={i}>
+                            <td>
+                              {
+                                data.inventory_prd.product_tag_supplier.product
+                                  .product_code
+                              }
+                            </td>
+                            <td>
+                              {
+                                data.inventory_prd.product_tag_supplier.product
+                                  .product_name
+                              }
+                            </td>
+                            <td>{data.quantity}</td>
+                            <td>
+                              {
+                                data.inventory_prd.product_tag_supplier.product
+                                  .product_unitMeasurement
+                              }
+                            </td>
+                            <td>
+                              {landedCost.toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                            <td>
+                              {TotalPrice.toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                </div>
+              </div>
 
-                          <div className="printed-signature-containers">
-                            <div className="name-signature-sections">
-                              <div className="labelofSignature">
-                                <p>Issued By:</p>
-                                <p>Received By:</p>
-                                <p>Approved By:</p>
-                              </div>
+              <div className="printed-signature-containers">
+                <div className="name-signature-sections">
+                  <div className="labelofSignature">
+                    <p>Issued By:</p>
+                    <p>Received By:</p>
+                    <p>Approved By:</p>
+                  </div>
 
-                              <div className="signaturefield">
-                                <p>{IssuedBy}</p>
-                                <p>{ReceivedBy}</p>
-                                <p>{ApprovedBy}</p>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Modal.Body>
-                <Modal.Footer>
-                    <div>
-                        <Button
-                          type="button"
-                          className="btn btn-warning"
-                          size="md"
-                          style={{
-                            fontSize: "20px",
-                            margin: "0px 5px",
-                            fontFamily: "Poppins, Source Sans Pro",
-                          }}
-                          onClick={handleExportPDF}
-                        >
-                          Export
-                        </Button>
-                        <Button
-                          variant="seconday"
-                          size="md"
-                          style={{
-                            fontSize: "20px",
-                            margin: "0px 5px",
-                            fontFamily: "Poppins, Source Sans Pro",
-                          }}
-                          onClick={handleClosePreview}
-                        >
-                          Close
-                        </Button>
-                      </div>
-                </Modal.Footer>
-              </Modal>
+                  <div className="signaturefield">
+                    <p>{IssuedBy}</p>
+                    <p>{ReceivedBy}</p>
+                    <p>{ApprovedBy}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div>
+            <Button
+              type="button"
+              className="btn btn-warning"
+              size="md"
+              style={{
+                fontSize: "20px",
+                margin: "0px 5px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+              onClick={handleExportPDF}
+            >
+              Export
+            </Button>
+            <Button
+              variant="seconday"
+              size="md"
+              style={{
+                fontSize: "20px",
+                margin: "0px 5px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+              onClick={handleClosePreview}
+            >
+              Close
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

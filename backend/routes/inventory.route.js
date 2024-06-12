@@ -1,6 +1,12 @@
 const router = require("express").Router();
 const { where, Op } = require("sequelize");
 const sequelize = require("../db/config/sequelize.config");
+const multer = require('multer');
+const csvParser = require('csv-parser');
+const { Readable } = require('stream');
+
+const upload = multer({ storage: multer.memoryStorage() });
+
 // const Assembly_SparePart = require('../db/models/assembly_spare.model')
 const {
   Inventory,
@@ -20,6 +26,7 @@ const {
   SparePart,
   SubPart,
   Warehouses,
+  Activity_Log
 } = require("../db/models/associations");
 
 const session = require("express-session");
@@ -224,6 +231,7 @@ router.route("/fetchInventory_group").get(async (req, res) => {
     // Grouping the product data by warehouse_id
     const groupedProductData = {};
     productData.forEach((item) => {
+      
       const warehouseId = item.warehouse_id;
       const warehouse_name = item.warehouse?.warehouse_name;
       const productID = item.product_tag_supplier?.product?.product_id;
@@ -309,6 +317,7 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
     // Grouping the product data by warehouse_id
     const groupedProductData = {};
     productData.forEach((item) => {
+      const invId = item.inventory_id;
       const warehouseId = item.warehouse_id;
       const warehouse_name = item.warehouse?.warehouse_name;
       const productID = item.product_tag_supplier?.product?.product_id;
@@ -330,6 +339,7 @@ router.route("/fetchWarehouseInvetory").get(async (req, res) => {
 
         if (!groupedProductData[key]) {
           groupedProductData[key] = {
+            inventory_id: invId,
             productID: productID,
             warehouseId: warehouseId,
             product_code: productCode,
@@ -1178,7 +1188,7 @@ router.route("/fetchInvetory_product_warehouse").get(async (req, res) => {
    });
 
    const finalResult_PRD = Object.values(groupedProductData);
-   console.log('Productdddfdsfd', JSON.stringify(finalResult_PRD, null, 2));
+  //  console.log('Productdddfdsfd', JSON.stringify(finalResult_PRD, null, 2));
 
    return res.json(finalResult_PRD);
   } catch (err) {
@@ -1342,7 +1352,186 @@ router.route("/fetchInvetory_subpart_warehouse").get(async (req, res) => {
   }
 });
 
+router.route("/read_csv").post(upload.single('csvFile'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  const warehouseID = req.body.warehouseID;
+  const batchSize = 500; // Adjust this value based on your requirements
+
+  const rows = [];
+  const rows_exist_in_Table = [];
+  const rows_NOT_exist_in_Table = [];
+  const readableStream = new Readable({
+    read() {
+      this.push(req.file.buffer);
+      this.push(null);
+    }
+  });
+
+  const parseStream = readableStream.pipe(csvParser());
+
+  const findProductInDatabase = async (productCode) => {
+    const suptag = await ProductTAGSupplier.findAll({
+      include: [{
+        model: Product,
+        required: true,
+        where: {
+          product_code: productCode
+        }
+      }]
+    });
+
+    if (suptag.length > 0) {
+      return suptag[0];
+    }
+    return null;
+  };
+
+  const processRowData = async (row) => {
+    const existingProduct = await findProductInDatabase(row.ProductCode);
+    if (existingProduct) {
+      const mergedRow = { ...existingProduct.dataValues, ...row };
+      rows_exist_in_Table.push(mergedRow);
+    } else {
+      rows_NOT_exist_in_Table.push(row);
+    }
+  };
+
+  const processRows = async () => {
+    for (let i = 0; i < rows.length; i += batchSize) {
+      const batchRows = rows.slice(i, i + batchSize);
+      const promises = batchRows.map(processRowData);
+      await Promise.all(promises);
+
+      const transaction = await sequelize.transaction();
+
+      try {
+        for (const data of rows_exist_in_Table) {
+          await Inventory.create({
+            product_tag_supp_id: data.id,
+            quantity: data.Count_Qty,
+            set_quantity: null,
+            static_quantity: data.Count_Qty,
+            price: data.Cost,
+            freight_cost: 0,
+            custom_cost: 0,
+            reference_number: null,
+            warehouse_id: warehouseID
+          }, { transaction });
+        }
+
+        for (const data1 of rows_NOT_exist_in_Table) {
+          const cat_id = await Category.findAll({
+            where: {
+              category_name: data1.Category
+            }
+          });
+
+          const prod = await Product.create({
+            product_code: data1.ProductCode,
+            product_name: data1.Description,
+            product_category: cat_id[0]?.category_code || null,
+            product_location: 1,
+            product_unitMeasurement: data1.UoM,
+            UOM_set: 0,
+            product_details: null,
+            product_threshold: 0,
+            product_manufacturer: null,
+            product_status: 'Active',
+            type: null,
+            part_number: null,
+            archive_date: null
+          }, { transaction });
+
+          if (prod) {
+            const prodtagSupp_id = await ProductTAGSupplier.create({
+              product_id: prod.product_id,
+              supplier_code: 'S00000',
+              product_price: 0,
+              status: 'Active'
+            }, { transaction });
+
+            if (prodtagSupp_id) {
+              await Inventory.create({
+                product_tag_supp_id: prodtagSupp_id.id,
+                quantity: data1.Count_Qty,
+                set_quantity: null,
+                static_quantity: data1.Count_Qty,
+                price: data1.Cost,
+                freight_cost: 0,
+                custom_cost: 0,
+                reference_number: null,
+                warehouse_id: warehouseID
+              }, { transaction });
+            }
+          }
+        }
+
+        await transaction.commit();
+      } catch (err) {
+        await transaction.rollback();
+        throw err;
+      }
+
+      rows_exist_in_Table.length = 0;
+      rows_NOT_exist_in_Table.length = 0;
+    }
+  };
+
+  parseStream.on('data', (row) => {
+    rows.push(row);
+  });
+
+  parseStream.on('error', (err) => {
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Error reading CSV file' });
+  });
+
+  parseStream.on('end', async () => {
+    try {
+      await processRows();
+      res.status(200).json({ message: 'CSV processing successful' });
+    } catch (err) {
+      if (err.name === 'ConnectionAcquireTimeoutError') {
+        console.error('Error:', err);
+        res.status(500).json({ error: 'Connection acquisition timeout' });
+      } else {
+        console.error('Error:', err);
+        res.status(500).json({ error: 'Error processing CSV file' });
+      }
+    }
+  });
+});
 
 
+router.route("/updateQty").post(async (req, res) => {
+  try {
+    const {updateQty, inventory_id, userId, name, warehouse_names} = req.query
 
+    // console.log(`updateQty ${updateQty} inventory_id ${inventory_id} userId ${userId} name ${name} warehouse_names ${warehouse_names}`)
+
+    const isUpdate = Inventory.update({
+      quantity: updateQty,
+      static_quantity: updateQty
+    },{
+      where: {
+        inventory_id: inventory_id
+      }
+    })
+
+    if(isUpdate){
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Updated the inventory product ${name} from site ${warehouse_names} to total qty ${updateQty}`,
+      });
+
+      return res.status(200).json()
+    }
+   } catch (err) {
+    console.error(err);
+    return res.status(500).json("Error");
+  }
+});
 module.exports = router;

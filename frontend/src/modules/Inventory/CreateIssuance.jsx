@@ -86,8 +86,22 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
     reloadCode();
   }, []);
 
+  const [searchInput, setSearchInput] = useState("");
+
   const handleAddProdClick = () => {
     setShowDropdown(true);
+    axios
+      .get(BASE_URL + "/inventory/fetchInvetory_product_warehouse", {
+        params: {
+          warehouse: fromSite,
+        },
+      })
+      .then((res) => {
+        setFetchProduct(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleSelectChange_Prod = (selectedOptions) => {
@@ -99,20 +113,12 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
     productValue,
     product_quantity_available
   ) => {
-    // Remove non-numeric characters and limit length to 10
     const cleanedValue = inputValue.replace(/\D/g, "").substring(0, 10);
-
-    // Convert cleanedValue to a number
     const numericValue = parseInt(cleanedValue, 10);
-
-    // Create a variable to store the corrected value
     let correctedValue = cleanedValue;
 
-    // Check if the numericValue is greater than the available quantity
     if (numericValue > product_quantity_available) {
-      // If greater, set the correctedValue to the maximum available quantity
       correctedValue = product_quantity_available.toString();
-
       swal({
         icon: "error",
         title: "Input value exceed",
@@ -126,7 +132,6 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
         [productValue]: correctedValue,
       };
 
-      // Use the updatedInputs directly to create the serializedProducts array
       const serializedProducts = addProduct.map((product) => ({
         quantity: updatedInputs[product.value] || "",
         type: product.type,
@@ -137,34 +142,76 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
       }));
 
       setAddProductbackend(serializedProducts);
-      console.log("Selected Products:", serializedProducts);
 
-      // Return the updatedInputs to be used as the new state
       return updatedInputs;
     });
   };
 
+  // Custom filter function to limit options to 10
+  const customFilterOption = (option, { inputValue }) => {
+    const searchInput = inputValue.toLowerCase();
+    const productCode = option.code ? option.code.toLowerCase() : '';
+    const productName = option.name ? option.name.toLowerCase() : '';
+    const productUOM = option.uom ? option.uom.toLowerCase() : '';
+  
+    return (
+      productCode.includes(searchInput) ||
+      productName.includes(searchInput) ||
+      productUOM.includes(searchInput)
+    );
+  };
 
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      axios
-        .get(BASE_URL + "/inventory/fetchInvetory_product_warehouse", {
-          params: {
-            warehouse: fromSite,
-          },
-        })
-        .then((res) => {
-          setFetchProduct(res.data);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          // setIsLoading(false);
-        });
-    }, 1000);
+  const handleInputChange = (inputValue) => {
+    setSearchInput(inputValue);
+  };
+  
+  const filteredOptions = fetchProduct
+    .map((product) => ({
+      value: `${product.productID}_${product.product_code}_Product`,
+      label: (
+        <div>
+          Product Code: <strong>{product.product_code}</strong> /
+          Product Name: <strong>{product.product_name}</strong> /
+          Quantity: <strong>{product.totalQuantity}</strong> /
+          UOM: <strong>{product.UOM}</strong>
+        </div>
+      ),
+      type: "Product",
+      inventory_id: product.inventory_id,
+      product_id: product.productID,
+      code: product.product_code,
+      name: product.product_name,
+      quantity_available: product.totalQuantity,
+      uom: product.UOM,
+      setUOM: product.setUOM,
+    }))
+    .filter((option) => {
+      const searchString = `${option.code.toLowerCase()} ${option.name.toLowerCase()} ${option.uom.toLowerCase()}`;
+      return searchString.includes(searchInput.toLowerCase());
+    })
+    .slice(0, 10);
+  
 
-    return () => clearTimeout(delay);
-  }, [fromSite]);
+  // useEffect(() => {
+  //   const delay = setTimeout(() => {
+  //     axios
+  //       .get(BASE_URL + "/inventory/fetchInvetory_product_warehouse", {
+  //         params: {
+  //           warehouse: fromSite,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         setFetchProduct(res.data);
+  //         setIsLoading(false);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         // setIsLoading(false);
+  //       });
+  //   }, 1000);
+
+  //   return () => clearTimeout(delay);
+  // }, [fromSite]);
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -714,102 +761,12 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                         )}
                       </tbody>
                       {showDropdown && (
-                        <Select
-                          isMulti
-                          // filterOption={({ label }, inputValue) =>
-                          //   label.props.children[1].props.children.toLowerCase().includes(inputValue.toLowerCase())
-                          // }
-                          options={
-                            fetchProduct.map((product) => ({
-                              value: `${product.productID}_${product.product_code}_Product`,
-                              label: (
-                                <div>
-                                  Product Code:{" "}
-                                  <strong>{product.product_code}</strong> /
-                                  Product Name:{" "}
-                                  <strong>{product.product_name}</strong> /
-                                  Quantity:{" "}
-                                  <strong>{product.totalQuantity}</strong>
-                                </div>
-                              ),
-                              type: "Product",
-                              inventory_id: product.inventory_id,
-                              product_id: product.productID,
-                              code: product.product_code,
-                              name: product.product_name,
-                              quantity_available: product.totalQuantity,
-                              uom: product.UOM,
-                              setUOM: product.setUOM
-                            }))
-                            // .concat(
-                            //   fetchAssembly.map((assembly) => ({
-                            //     value: `${assembly.productID}_${assembly.product_code}_Assembly`,
-                            //     label: (
-                            //       <div>
-                            //         Product Code:{" "}
-                            //         <strong>{assembly.product_code}</strong> /
-                            //         Product Name:{" "}
-                            //         <strong>{assembly.product_name}</strong> /
-                            //         Quantity:{" "}
-                            //         <strong>{assembly.totalQuantity}</strong>
-                            //       </div>
-                            //     ),
-                            //     type: "Assembly",
-                            //     inventory_id: assembly.inventory_id,
-                            //     product_id: assembly.productID,
-                            //     code: assembly.product_code,
-                            //     name: assembly.product_name,
-                            //     quantity_available: assembly.totalQuantity,
-                            //     uom: assembly.UOM
-                            //   }))
-                            // )
-                            // .concat(
-                            //   fetchSpare.map((spare) => ({
-                            //     value: `${spare.productID}_${spare.product_code}_Spare`,
-                            //     label: (
-                            //       <div>
-                            //         Product Code:{" "}
-                            //         <strong>{spare.product_code}</strong> /
-                            //         Product Name:{" "}
-                            //         <strong>{spare.product_name}</strong> /
-                            //         Quantity:{" "}
-                            //         <strong>{spare.totalQuantity}</strong>
-                            //       </div>
-                            //     ),
-                            //     type: "Spare",
-                            //     inventory_id: spare.inventory_id,
-                            //     product_id: spare.productID,
-                            //     code: spare.product_code,
-                            //     name: spare.product_name,
-                            //     quantity_available: spare.totalQuantity,
-                            //     uom: spare.UOM
-                            //   }))
-                            // )
-                            // .concat(
-                            //   fetchSubpart.map((subpart) => ({
-                            //     value: `${subpart.productID}_${subpart.product_code}_Subpart`,
-                            //     label: (
-                            //       <div>
-                            //         Product Code:{" "}
-                            //         <strong>{subpart.product_code}</strong> /
-                            //         Product Name:{" "}
-                            //         <strong>{subpart.product_name}</strong> /
-                            //         Quantity:{" "}
-                            //         <strong>{subpart.totalQuantity}</strong>
-                            //       </div>
-                            //     ),
-                            //     type: "Subpart",
-                            //     inventory_id: subpart.inventory_id,
-                            //     product_id: subpart.productID,
-                            //     code: subpart.product_code,
-                            //     name: subpart.product_name,
-                            //     quantity_available: subpart.totalQuantity,
-                            //     uom: subpart.UOM
-                            //   }))
-                            // )
-                          }
-                          onChange={handleSelectChange_Prod}
-                        />
+                      <Select
+                      isMulti
+                      options={filteredOptions}
+                      onChange={handleSelectChange_Prod}
+                      onInputChange={handleInputChange}
+                    />
                       )}
 
                       {fromSite ? (
