@@ -74,7 +74,7 @@ function ViewInventory({ authrztn }) {
       } else {
         swal({
           title: "Are you sure?",
-          text: "This action will mark the request as approved.",
+          text: "The quantity will override for this site",
           icon: "warning",
           buttons: true,
           dangerMode: true,
