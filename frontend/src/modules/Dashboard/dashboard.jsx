@@ -182,7 +182,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
       .then((res) => setStockValue(res.data))
       .catch((err) => console.log(err));
 
-    // count supplier per month
+    // count supplier 
     axios
       .get(BASE_URL + "/Dashboard/fetchCountSupplier")
       .then((res) => setSupplierCount(res.data))
@@ -324,12 +324,12 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
               <div className="tab-value">
                 <div className="tab-count">{productIssued}</div>
                 <div className="tab-percent">
-                  <TrendUp
+                  {/* <TrendUp
                     size={25}
                     weight="bold"
                     style={{ color: "#42eb42" }}
                   />
-                  <p1>25% </p1> vs last month
+                  <p1>25% </p1> vs last month */}
                 </div>
               </div>
             </Link>
@@ -346,14 +346,14 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                 <div className="title-tab">Inventory Count</div>
               </div>
               <div className="tab-value">
-                <div className="tab-count">{inventoryCount}</div>
+                <div className="tab-count">{inventoryCount.toFixed(2)}</div>
                 <div className="tab-percent">
-                  <TrendDown
+                  {/* <TrendDown
                     size={25}
                     weight="bold"
                     style={{ color: "red" }}
                   />
-                  <p1>25%</p1> vs last month
+                  <p1>25%</p1> vs last month */}
                 </div>
               </div>
             </Link>
@@ -370,14 +370,14 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                 <div className="title-tab">Stock Value</div>
               </div>
               <div className="tab-value">
-                <div className="tab-count">{`₱ ${stockValue}`}</div>
+                <div className="tab-count">{`₱ ${stockValue.toFixed(2)}`}</div>
                 <div className="tab-percent">
-                  <TrendDown
+                  {/* <TrendDown
                     size={25}
                     weight="bold"
                     style={{ color: "red" }}
                   />
-                  <p1>25%</p1> vs last month
+                  <p1>25%</p1> vs last month */}
                 </div>
               </div>
             </Link>
@@ -396,12 +396,12 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
               <div className="tab-value">
                 <div className="tab-count">{supplierCount}</div>
                 <div className="tab-percent">
-                  <TrendUp
+                  {/* <TrendUp
                     size={25}
                     weight="bold"
                     style={{ color: "#42eb42" }}
                   />
-                  <p1>25%</p1> vs last month
+                  <p1>25%</p1> vs last month */}
                 </div>
               </div>
             </Link>
@@ -668,12 +668,12 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                     <div className="tvalue">{orderedCount}</div>
                     <div className="tlabel">Ordered</div>
                     <div className="tcontent">
-                      <CaretUp
+                      {/* <CaretUp
                         size={20}
                         weight="fill"
                         style={{ color: "#42eb42" }}
                       />
-                      <p1>25% </p1> vs last month
+                      <p1>25% </p1> vs last month */}
                     </div>
                   </div>
                 </Link>
@@ -686,12 +686,12 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                     <div className="tvalue">{receivedCount}</div>
                     <div className="tlabel">Received</div>
                     <div className="tcontent">
-                      <CaretDown
+                      {/* <CaretDown
                         size={20}
                         weight="fill"
                         style={{ color: "red" }}
                       />
-                      <p1>25% </p1> vs last month
+                      <p1>25% </p1> vs last month */}
                     </div>
                   </div>
                 </Link>

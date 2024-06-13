@@ -572,12 +572,12 @@ router.route("/fetchCountSupplier").get(async (req, res) => {
     const countSupplier = await Supplier.count({
       where: {
         supplier_status: "Active",
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
+        // createdAt: {
+        //   [Op.between]: [
+        //     firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+        //     lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+        //   ],
+        // },
       },
     });
     res.json(countSupplier);
