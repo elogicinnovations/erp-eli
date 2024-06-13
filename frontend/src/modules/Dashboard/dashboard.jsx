@@ -370,7 +370,7 @@ const Dashboard = ({ setActiveTab, authrztn }) => {
                 <div className="title-tab">Stock Value</div>
               </div>
               <div className="tab-value">
-                <div className="tab-count">{`₱ ${stockValue.toFixed(2)}`}</div>
+                <div className="tab-count">{`₱ ${stockValue}`}</div>
                 <div className="tab-percent">
                   {/* <TrendDown
                     size={25}

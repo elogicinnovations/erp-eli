@@ -799,9 +799,9 @@ router.route("/fetchLowStock").get(async (req, res) => {
 
     // Display the accumulated quantities and check against thresholds
     for (const product_id in quantities) {
-      console.log(
-        `Accumulated quantity for product_id ${product_id}: ${quantities[product_id]}`
-      );
+      // console.log(
+      //   `Accumulated quantity for product_id ${product_id}: ${quantities[product_id]}`
+      // );
 
       const productThreshold = lowStockCount_prd.find(
         (item) => item.product_tag_supplier.product_id === parseInt(product_id)
@@ -940,9 +940,9 @@ router.route("/fetchLowStock").get(async (req, res) => {
     });
 
     for (const product_id in quantities_subpart) {
-      console.log(
-        `Accumulated quantity for product_id ${product_id}: ${quantities_subpart[product_id]}`
-      );
+      // console.log(
+      //   `Accumulated quantity for product_id ${product_id}: ${quantities_subpart[product_id]}`
+      // );
 
       const productThreshold = lowStockCount_subpart.find(
         (item) => item.subpart_supplier.subpart_id === parseInt(product_id)
@@ -1006,9 +1006,9 @@ router.route("/fetchInStock").get(async (req, res) => {
     });
 
     for (const product_id in quantities) {
-      console.log(
-        `Accumulated quantity for product_id ${product_id}: ${quantities[product_id]}`
-      );
+      // console.log(
+      //   `Accumulated quantity for product_id ${product_id}: ${quantities[product_id]}`
+      // );
 
       const productThreshold = StockCount_prd.find(
         (item) => item.product_tag_supplier.product_id === parseInt(product_id)
@@ -1144,9 +1144,9 @@ router.route("/fetchInStock").get(async (req, res) => {
       }
     });
     for (const product_id in quantities_subpart) {
-      console.log(
-        `Accumulated quantity for product_id ${product_id}: ${quantities_subpart[product_id]}`
-      );
+      // console.log(
+      //   `Accumulated quantity for product_id ${product_id}: ${quantities_subpart[product_id]}`
+      // );
 
       const productThreshold = StockCount_subpart.find(
         (item) => item.subpart_supplier.subpart_id === parseInt(product_id)
@@ -1212,9 +1212,9 @@ router.route("/fetchOutStock").get(async (req, res) => {
     });
 
     for (const product_id in quantities) {
-      console.log(
-        `Accumulated quantity for product_id ${product_id}: ${quantities[product_id]}`
-      );
+      // console.log(
+      //   `Accumulated quantity for product_id ${product_id}: ${quantities[product_id]}`
+      // );
 
       if (quantities[product_id] === 0) {
         countStock_Product += 1;
@@ -1328,9 +1328,9 @@ router.route("/fetchOutStock").get(async (req, res) => {
     });
 
     for (const product_id in quantities_subpart) {
-      console.log(
-        `Accumulated quantity for product_id ${product_id}: ${quantities_subpart[product_id]}`
-      );
+      // console.log(
+      //   `Accumulated quantity for product_id ${product_id}: ${quantities_subpart[product_id]}`
+      // );
 
       if (quantities_subpart[product_id] === 0) {
         countStock_Subpart += 1;
