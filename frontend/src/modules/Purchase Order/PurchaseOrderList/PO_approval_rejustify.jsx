@@ -861,15 +861,11 @@ function POApprovalRejustify({ authrztn }) {
                           <div className="sbftexts">
                             <span>SBF PHILIPPINES DRILLING </span>
                             <span>RESOURCES CORPORATION</span>
-                            <span className="po-loc">
+                            <span>
                               Padigusan, Sta.Cruz, Rosario, Agusan del sur
                             </span>
-                            <span className="po-loc">
-                              Landline No. 0920-949-3373
-                            </span>
-                            <span className="po-loc">
-                              Email Address: sbfpdrc@gmail.com
-                            </span>
+                            <span>Landline No. 0920-949-3373</span>
+                            <span>Email Address: sbfpdrc@gmail.com</span>
                           </div>
                           <div className="spacesbf"></div>
                         </div>

@@ -6180,6 +6180,9 @@ span:nth-child(5) {
   .rmp-lbl {
     margin-bottom: 20px !important;
   }
+  .rmp-lbl-trans {
+    margin-bottom: 22px !important;
+  }
   .rmp-pad {
     padding: 0 !important;
   }
@@ -6191,34 +6194,18 @@ span:nth-child(5) {
   }
 
   /* Form PO */
-  /* .spacesbf {
-    width: 0%;
-  }
-  .sbflogoes {
-    width: 48%;
+
+  .rcv-logoes {
+    width: 180%;
     height: 50%;
+    position: relative;
+    top: 2rem;
   }
-  .receipt-header {
-    justify-content: center;
-  }
-  .blank {
-    width: 0%;
-  }
-  .shippedto {
-    width: 0%;
-    height: 0px;
-    border: none;
-  }
-  .po-content {
+  .rcv-date {
     width: 100% !important;
+    margin: 20px 0;
+    padding: 0;
   }
-  .leftsecondrows {
-    width: 0%;
-    border-left: none;
-  }
-  .rightsecondrows {
-    width: 40%;
-  } */
 
   /* For Landscape */
   /* .receipt-content {
@@ -6235,9 +6222,6 @@ span:nth-child(5) {
     height: 50%;
     bottom: 10rem;
   }
-  .sbftexts {
-    /* display: none; */
-  }
 
   /* .save-cancel {
     position: fixed;
@@ -6247,6 +6231,11 @@ span:nth-child(5) {
     /* transform: rotate(90deg);
     min-width: 900px; */
     overflow: auto !important;
+  }
+
+  .bodyHead li {
+    font-size: 15px !important;
+    text-align: start;
   }
 }
 
@@ -6261,13 +6250,19 @@ span:nth-child(5) {
   width: 50%;
 }
 
-/* @media only screen and (max-width: 412px) {
+@media only screen and (max-width: 412px) {
   .po-loc {
     position: relative;
     right: 140%;
     width: 100rem;
   }
-} */
+}
+
+@media only screen and(max-width: 380px) {
+  .ship-in-trans {
+    margin-bottom: 16px !important;
+  }
+}
 @media only screen and (max-width: 1030px) {
   .Filterclear {
     width: 180px !important;

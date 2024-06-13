@@ -35,8 +35,8 @@ import Checkbox from "@mui/material/Checkbox";
 import { fontStyle } from "@mui/system";
 import Carousel from "react-bootstrap/Carousel";
 import { jwtDecode } from "jwt-decode";
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 function ReceivingPreview({ authrztn }) {
   const navigate = useNavigate();
@@ -117,63 +117,64 @@ function ReceivingPreview({ authrztn }) {
   // };
 
   const exportToExcel = () => {
-    const table = document.getElementById('order-listings');
-    const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+    const table = document.getElementById("order-listings");
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
 
     // Get worksheet
-    const ws = wb.Sheets['Sheet1'];
+    const ws = wb.Sheets["Sheet1"];
 
     // Apply styles to header row
-    const range = XLSX.utils.decode_range(ws['!ref']);
+    const range = XLSX.utils.decode_range(ws["!ref"]);
     for (let C = range.s.c; C <= range.e.c; ++C) {
-        const address = XLSX.utils.encode_cell({ c: C, r: 0 });
-        if (!ws[address]) continue;
-        ws[address].s = {
-            font: {
-                bold: true,
-                color: { rgb: "FFFFFF" },
-            },
-            fill: {
-                fgColor: { rgb: "4F81BD" }
-            },
-            border: {
-                top: { style: "thin", color: { rgb: "000000" } },
-                bottom: { style: "thin", color: { rgb: "000000" } },
-                left: { style: "thin", color: { rgb: "000000" } },
-                right: { style: "thin", color: { rgb: "000000" } }
-            },
-            alignment: {
-                vertical: "center",
-                horizontal: "center"
-            }
-        };
+      const address = XLSX.utils.encode_cell({ c: C, r: 0 });
+      if (!ws[address]) continue;
+      ws[address].s = {
+        font: {
+          bold: true,
+          color: { rgb: "FFFFFF" },
+        },
+        fill: {
+          fgColor: { rgb: "4F81BD" },
+        },
+        border: {
+          top: { style: "thin", color: { rgb: "000000" } },
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } },
+        },
+        alignment: {
+          vertical: "center",
+          horizontal: "center",
+        },
+      };
     }
 
     // Apply formatting to cells
     for (let R = range.s.r; R <= range.e.r; ++R) {
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-            const address = XLSX.utils.encode_cell({ c: C, r: R });
-            if (!ws[address]) continue;
-            ws[address].s = {
-                border: {
-                    top: { style: "thin", color: { rgb: "000000" } },
-                    bottom: { style: "thin", color: { rgb: "000000" } },
-                    left: { style: "thin", color: { rgb: "000000" } },
-                    right: { style: "thin", color: { rgb: "000000" } }
-                },
-                alignment: {
-                    vertical: "center",
-                    horizontal: "center"
-                }
-            };
-        }
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_cell({ c: C, r: R });
+        if (!ws[address]) continue;
+        ws[address].s = {
+          border: {
+            top: { style: "thin", color: { rgb: "000000" } },
+            bottom: { style: "thin", color: { rgb: "000000" } },
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } },
+          },
+          alignment: {
+            vertical: "center",
+            horizontal: "center",
+          },
+        };
+      }
     }
 
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([wbout], { type: 'application/octet-stream' }), `${poNum}_${refnum}.xlsx`);
-};
-
-
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    saveAs(
+      new Blob([wbout], { type: "application/octet-stream" }),
+      `${poNum}_${refnum}.xlsx`
+    );
+  };
 
   // const prepareCsvData = () => {
   //   // Add JSX content data
@@ -371,16 +372,19 @@ function ReceivingPreview({ authrztn }) {
             params: {
               id: id,
               prod: products.map((data) => {
-                let purchase_price = data.purchase_req_canvassed_prd.purchase_price;
+                let purchase_price =
+                  data.purchase_req_canvassed_prd.purchase_price;
                 let Base_quantity = data.received_quantity;
                 let set_quantity = data.set_quantity;
-                let product_tag_id = data.purchase_req_canvassed_prd.product_tag_supplier.id;
+                let product_tag_id =
+                  data.purchase_req_canvassed_prd.product_tag_supplier.id;
                 let ref_code = data.receiving_po.ref_code;
                 let freight_cost = data.receiving_po.freight_cost;
                 let customFee = data.receiving_po.customFee;
 
-                let totalPurchasePrice = purchase_price * Base_quantity
-                let perPiece_price = totalPurchasePrice / (Base_quantity * set_quantity)
+                let totalPurchasePrice = purchase_price * Base_quantity;
+                let perPiece_price =
+                  totalPurchasePrice / (Base_quantity * set_quantity);
                 return {
                   product_tag_supp_id: product_tag_id,
                   quantity: Base_quantity * set_quantity,
@@ -388,13 +392,12 @@ function ReceivingPreview({ authrztn }) {
                   perPiece_price: perPiece_price,
                   ref_code: ref_code,
                   freight_cost: freight_cost,
-                  customFee: customFee
+                  customFee: customFee,
                 };
               }),
             },
           }
         );
-        
 
         if (response.status === 200) {
           swal({
@@ -613,7 +616,7 @@ function ReceivingPreview({ authrztn }) {
                       <div className="receiving_list_right d-flex flex-direction-column">
                         <ul>
                           <li>
-                            <p>{`Received date: ${formatDatetime(
+                            <p className="h4">{`Received date: ${formatDatetime(
                               dateCreated
                             )}`}</p>
                           </li>
@@ -737,12 +740,14 @@ function ReceivingPreview({ authrztn }) {
                                 .product_tag_supplier.product_price
                             }
                           </td>
-                          <td>{data.receiving_po.freight_cost === null
-                              ? 'Pending Cost'
-                              : data.receiving_po.freight_cost}</td>
+                          <td>
+                            {data.receiving_po.freight_cost === null
+                              ? "Pending Cost"
+                              : data.receiving_po.freight_cost}
+                          </td>
                           <td>
                             {data.receiving_po.customFee === null
-                              ? 'Pending Cost'
+                              ? "Pending Cost"
                               : data.receiving_po.customFee}
                           </td>
                         </tr>
@@ -761,7 +766,7 @@ function ReceivingPreview({ authrztn }) {
                 variant="warning"
                 type="submit"
                 size="lg"
-                className="fs-5 lg"
+                className="fs-5 lg mt-3"
                 onClick={(e) => setShow(true)}
               >
                 Preview
@@ -786,25 +791,30 @@ function ReceivingPreview({ authrztn }) {
           <Modal.Title>Generation of report</Modal.Title>
         </Modal.Header>
         <Modal.Body id="modal-body">
-          <div className="receipt-content">
+          {/* receipt-content */}
+          <div className="">
             <div className="row">
               <div className="col-9">
                 <div className="receipt-header">
-                  <div className="sbflogoes">
+                  <div className="sbflogoes rcv-logoes">
                     <img src={SBFLOGO} alt="" />
                   </div>
                   <div className="sbftexts">
                     <span>SBF PHILIPPINES DRILLING </span>
                     <span>RESOURCES CORPORATION</span>
-                    <span>Padigusan, Sta.Cruz, Rosario, Agusan del sur</span>
-                    <span>Landline No. 0920-949-3373</span>
-                    <span>Email Address: sbfpdrc@gmail.com</span>
+                    <span className="po-loc">
+                      Padigusan, Sta.Cruz, Rosario, Agusan del sur
+                    </span>
+                    <span className="po-loc">Landline No. 0920-949-3373</span>
+                    <span className="po-loc">
+                      Email Address: sbfpdrc@gmail.com
+                    </span>
                   </div>
                   <div className="spacesbf"></div>
                 </div>
               </div>
 
-              <div className="col-3">
+              <div className="col-3 rcv-date">
                 <li className="fs-3">{`Date: ${formattedDate}`} </li>
                 <li className="fs-3">
                   {`Request Date: ${formatDatetime(requestPr)}`}{" "}
@@ -892,8 +902,7 @@ function ReceivingPreview({ authrztn }) {
                           let totalCustomFee = 0;
                           let totalLandedCostOverAll = 0;
                           let totalTotalLandedCost = 0;
-                          let totalVat = 0
-                    
+                          let totalVat = 0;
 
                           // Map through products and calculate totals
                           const rows = products.map((data, i) => {
@@ -902,11 +911,10 @@ function ReceivingPreview({ authrztn }) {
                                 product_tag_supplier: { product },
                                 purchase_price,
                               },
-                          
-                                purchase_req_canvassed_prd: {
-                                  product_tag_supplier: { supplier },
-                                  
-                                },
+
+                              purchase_req_canvassed_prd: {
+                                product_tag_supplier: { supplier },
+                              },
                               transfered_quantity,
                               received_quantity,
                               set_quantity,
@@ -919,20 +927,24 @@ function ReceivingPreview({ authrztn }) {
                               freight_cost === null ? 0 : freight_cost;
 
                             const VAT =
-                              supplier.supplier_vat === null ? 0 : supplier.supplier_vat;
-
+                              supplier.supplier_vat === null
+                                ? 0
+                                : supplier.supplier_vat;
 
                             const unitCost = product.UOM_set
                               ? purchase_price / set_quantity +
-                              freight_cost_value +
+                                freight_cost_value +
                                 customFeeValue
-                              : purchase_price + freight_cost_value + customFeeValue;
+                              : purchase_price +
+                                freight_cost_value +
+                                customFeeValue;
 
                             const totalLandedCost = product.UOM_set
                               ? unitCost * set_quantity * received_quantity
                               : unitCost * received_quantity;
 
-                              const vatPrice = (totalLandedCost * (VAT / 100)) + totalLandedCost
+                            const vatPrice =
+                              totalLandedCost * (VAT / 100) + totalLandedCost;
 
                             // Update totals
                             totalInitialReceived += transfered_quantity || 0;
@@ -945,8 +957,8 @@ function ReceivingPreview({ authrztn }) {
                             totalCustomFee += customFeeValue || 0;
                             totalLandedCostOverAll += unitCost || 0;
                             totalTotalLandedCost += totalLandedCost || 0;
-                            
-                            totalVat += vatPrice
+
+                            totalVat += vatPrice;
 
                             return (
                               <tr key={i}>
@@ -975,9 +987,12 @@ function ReceivingPreview({ authrztn }) {
                                   })}
                                 </td>
                                 <td>
-                                  {freight_cost_value.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                  })}
+                                  {freight_cost_value.toLocaleString(
+                                    undefined,
+                                    {
+                                      minimumFractionDigits: 2,
+                                    }
+                                  )}
                                   {/* {freight_cost_value} */}
                                 </td>
                                 <td>
@@ -1044,10 +1059,9 @@ function ReceivingPreview({ authrztn }) {
                                 )}
                               </td>
                               <td>
-                                {totalVat.toLocaleString(
-                                  undefined,
-                                  { minimumFractionDigits: 2 }
-                                )}
+                                {totalVat.toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                })}
                               </td>
                             </tr>
                           );
