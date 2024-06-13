@@ -786,11 +786,11 @@ function ReceivingIntransit({ authrztn }) {
         <Form noValidate validated={validated} onSubmit={add}>
           <Modal.Header closeButton style={{ width: "100%", padding: 0 }}>
             <Modal.Title style={{ width: "100%" }}>
-              <div className="d-flex w-100">
-                <div className="w-50">
+              <div className="d-flex w-100 rmp-head">
+                <div className=" rmp-head-PO">
                   <span className="h2">{`PO Number: ${po_id}`}</span>
                 </div>
-                <div className="w-50 d-flex">
+                <div className="d-flex rmp-head-select">
                   <span className="h3">Receiving Area: </span>
                   <Form.Control
                     required
@@ -852,8 +852,8 @@ function ReceivingIntransit({ authrztn }) {
                       />
                     </div>
                     <div className="w-50" style={{ float: "right" }}>
-                      <div className="d-flex align-items-center">
-                        <Form.Label className="h4 mb-0">
+                      <div className="d-flex align-items-center ship-in-trans">
+                        <Form.Label className="h4 mb-0 ">
                           Shipping Fee:
                         </Form.Label>
                         <Form.Check
@@ -928,8 +928,11 @@ function ReceivingIntransit({ authrztn }) {
                   }}
                   key={`${parentIndex}-${childIndex}`}
                 >
-                  <div className="col-2">
-                    <Form.Group controlId="exampleForm.ControlInput2">
+                  <div className="col-2 rmp-modal">
+                    <Form.Group
+                      controlId="exampleForm.ControlInput2"
+                      className="rmp-title"
+                    >
                       <Form.Label style={{ fontSize: "15px" }}>
                         {`${child.type} : `}
                       </Form.Label>
@@ -939,7 +942,7 @@ function ReceivingIntransit({ authrztn }) {
                     </Form.Group>
                   </div>
 
-                  <div className="col-10">
+                  <div className="col-10 rmp-modal">
                     <div className="d-flex w-100">
                       <div className="w-25">
                         <Form.Group className="w-100">
@@ -959,7 +962,9 @@ function ReceivingIntransit({ authrztn }) {
                       <div className="w-25">
                         {/* {checkedRows[parentIndex]?.[childIndex] && ( */}
                         <Form.Group className="w-100">
-                          <Form.Label className="h4">/pcs:</Form.Label>
+                          <Form.Label className="h4  rmp-lbl-trans">
+                            /pcs:
+                          </Form.Label>
                           <Form.Control
                             type="number"
                             readOnly

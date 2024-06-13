@@ -834,11 +834,11 @@ function ReceivingManagementPreview({ authrztn }) {
         <Form noValidate validated={validated} onSubmit={add}>
           <Modal.Header closeButton style={{ width: "100%", padding: 0 }}>
             <Modal.Title style={{ width: "100%" }}>
-              <div className="d-flex w-100">
-                <div className="w-50">
+              <div className="d-flex w-100 rmp-head">
+                <div className=" rmp-head-PO">
                   <span className="h2">{`PO Number: ${po_id}`}</span>
                 </div>
-                <div className="w-50 d-flex">
+                <div className="d-flex rmp-head-select">
                   <label className="h3">Select Receiving Area: </label>
                   <Form.Select
                     aria-label=""
@@ -864,8 +864,8 @@ function ReceivingManagementPreview({ authrztn }) {
           <Modal.Body>
             <div className="row p-0">
               <div className="col-6 align-items-center">
-                <div className="d-flex w-100">
-                  <div className="d-flex flex-column w-100">
+                <div className="d-flex w-100 rmp-pad">
+                  <div className="d-flex flex-column w-100 rmp-pad">
                     <span className="h2 mb-3">
                       {`Supplier: ${supplier_code} - ${supplier_name}`}
                     </span>
@@ -987,8 +987,12 @@ function ReceivingManagementPreview({ authrztn }) {
                   }}
                   key={`${parentIndex}-${childIndex}`}
                 >
-                  <div className="col-2">
-                    <Form.Group controlId="exampleForm.ControlInput2">
+                  <div className="col-2 rmp-modal">
+                    {/* <div className="rmp-title"> */}
+                    <Form.Group
+                      controlId="exampleForm.ControlInput2"
+                      className="rmp-title"
+                    >
                       <Form.Label style={{ fontSize: "15px" }}>
                         {`${child.type} : `}
                       </Form.Label>
@@ -996,13 +1000,14 @@ function ReceivingManagementPreview({ authrztn }) {
                         {`${child.supp_tag.code} - ${child.supp_tag.name}`}
                       </p>
                     </Form.Group>
+                    {/* </div> */}
                   </div>
 
-                  <div className="col-10">
+                  <div className="col-10 rmp-modal">
                     <div className="d-flex w-100">
                       <div className="w-25">
                         <Form.Group className="w-100">
-                          <Form.Label className="h4">
+                          <Form.Label className="h4 rmp-lbl">
                             {child.supp_tag.UOM}
                           </Form.Label>
                           <Form.Control
@@ -1018,7 +1023,7 @@ function ReceivingManagementPreview({ authrztn }) {
                       <div className="w-25">
                         {/* {checkedRows[parentIndex]?.[childIndex] && ( */}
                         <Form.Group className="w-100">
-                          <Form.Label className="h4">/pcs:</Form.Label>
+                          <Form.Label className="h4 rmp-lbl">/pcs:</Form.Label>
                           <Form.Control
                             type="number"
                             readOnly={
@@ -1311,7 +1316,7 @@ function ReceivingManagementPreview({ authrztn }) {
                     onChange={onFileSelect}
                   />
                 </div>
-                <CameraComponent onCapture={handleCapture} />
+                <CameraComponent onCapture={handleCapture} className="mt-3" />
                 <div
                   className="ccontainerss"
                   style={{

@@ -132,11 +132,22 @@ function ReceivingManagement({ authrztn }) {
       (data) =>
         (data?.po_id?.toLowerCase() || "").includes(searchTerm) ||
         (data?.ref_code?.toLowerCase() || "").includes(searchTerm) ||
-        (data?.purchase_req?.pr_num?.toLowerCase() || "").includes(searchTerm) ||
-        (data?.masterlist?.col_Fname?.toLowerCase() || "").includes(searchTerm) ||
-        (data?.purchase_req?.masterlist?.col_Fname?.toLowerCase() || "").includes(searchTerm) ||
-        (data?.purchase_req?.masterlist?.department?.department_name?.toLowerCase() || "").includes(searchTerm) ||
-        (formatDatetime(data?.ref_code)?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.purchase_req?.pr_num?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data?.masterlist?.col_Fname?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (
+          data?.purchase_req?.masterlist?.col_Fname?.toLowerCase() || ""
+        ).includes(searchTerm) ||
+        (
+          data?.purchase_req?.masterlist?.department?.department_name?.toLowerCase() ||
+          ""
+        ).includes(searchTerm) ||
+        (formatDatetime(data?.ref_code)?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
         (data?.status?.toLowerCase() || "").includes(searchTerm)
     );
     setSearchPR(filteredSearchPR);
@@ -175,7 +186,7 @@ function ReceivingManagement({ authrztn }) {
         })
         .then((res) => {
           setPurchaseRequest(res.data.prData);
-          setSearchPR(res.data.prData)
+          setSearchPR(res.data.prData);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -185,7 +196,6 @@ function ReceivingManagement({ authrztn }) {
     }, 1000);
 
     return () => clearTimeout(delay);
-
   };
 
   //function when user click the clear filter button
@@ -222,10 +232,7 @@ function ReceivingManagement({ authrztn }) {
 
   useEffect(() => {
     // Initialize DataTable when role data is available
-    if (
-      $("#order-listing").length > 0 &&
-      PurchaseRequest.length > 0 
-    ) {
+    if ($("#order-listing").length > 0 && PurchaseRequest.length > 0) {
       $("#order-listing").DataTable();
     }
   }, [PurchaseRequest]);
@@ -268,7 +275,7 @@ function ReceivingManagement({ authrztn }) {
             <div className="Employeetext-button">
               <div className="employee-and-button">
                 <div className="emp-text-side">
-                  <p>Receiving Management</p>
+                  <p className="potr-text">Receiving Management</p>
                 </div>
                 <div className="button-create-side">
                   <div style={{ position: "relative", marginBottom: "15px" }}>
@@ -358,7 +365,7 @@ function ReceivingManagement({ authrztn }) {
                     }}
                     required
                     title="Status is required"
-                    className="receive-select"
+                    // className="receive-select"
                   >
                     <option value="" disabled selected>
                       Select Status
@@ -369,15 +376,18 @@ function ReceivingManagement({ authrztn }) {
                     <option value="For Approval">For Approval</option>
                     <option value="Delivered">Delivered</option>
                   </Form.Select>
-                  <button className="goesButton" onClick={handleGoButtonClick}>
-                    FILTER
-                  </button>
-                  <button
-                    className="Filterclear cus-filt-clear"
-                    onClick={clearFilters}
-                  >
-                    Clear Filter
-                  </button>
+
+                  <div className="pur-filt-container">
+                    <button
+                      className="goesButton"
+                      onClick={handleGoButtonClick}
+                    >
+                      FILTER
+                    </button>
+                    <button className="Filterclear" onClick={clearFilters}>
+                      Clear Filter
+                    </button>
+                  </div>
 
                   <div className="Buttonmodal-new"></div>
                 </div>
@@ -411,7 +421,7 @@ function ReceivingManagement({ authrztn }) {
                       <th className="tableh">PR NO.</th>
                       <th className="tableh">Reference #</th>
                       <th className="tableh">Received By:</th>
-                      <th className="tableh">Requestor</th>                     
+                      <th className="tableh">Requestor</th>
                       <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
                       <th className="tableh">Received Date</th>
@@ -423,115 +433,92 @@ function ReceivingManagement({ authrztn }) {
                         <tr key={i}>
                           <td
                             onClick={() =>
-
-                              data.source === 'PO' ? (
+                              data.source === "PO" ? (
                                 navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
                               ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
+                                <></>
                               )
-                             
                             }
                           >
                             {data.po_id}
                           </td>
                           <td
                             onClick={() =>
-
-                              data.source === 'PO' ? (
+                              data.source === "PO" ? (
                                 navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
                               ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
+                                <></>
                               )
-                             
                             }
                           >
                             {data.purchase_req.pr_num}
                           </td>
                           <td
                             onClick={() =>
-
-                              data.source === 'PO' ? (
+                              data.source === "PO" ? (
                                 navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
                               ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
+                                <></>
                               )
-                             
                             }
                           >
-                            {data.source === 'PO' ? "n/a" : data.ref_code}
-                          </td>
-                          <td
-                             onClick={() =>
-
-                              data.source === 'PO' ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
-                              )
-                             
-                            }
-                          >
-                             { data.source === 'PO' ? ('n/a') : (data.masterlist.col_Fname)}
-                            
-                          </td>
-                          <td
-                             onClick={() =>
-
-                              data.source === 'PO' ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
-                              )
-                             
-                            }
-                          >
-                           {data.purchase_req.masterlist.col_Fname}
+                            {data.source === "PO" ? "n/a" : data.ref_code}
                           </td>
                           <td
                             onClick={() =>
-
-                              data.source === 'PO' ? (
+                              data.source === "PO" ? (
                                 navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
                               ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
+                                <></>
                               )
-                             
+                            }
+                          >
+                            {data.source === "PO"
+                              ? "n/a"
+                              : data.masterlist.col_Fname}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.source === "PO" ? (
+                                navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
+                            }
+                          >
+                            {data.purchase_req.masterlist.col_Fname}
+                          </td>
+                          <td
+                            onClick={() =>
+                              data.source === "PO" ? (
+                                navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
+                              ) : (
+                                <></>
+                              )
                             }
                           >
                             {
@@ -540,42 +527,36 @@ function ReceivingManagement({ authrztn }) {
                             }
                           </td>
                           <td
-                             onClick={() =>
-
-                              data.source === 'PO' ? (
+                            onClick={() =>
+                              data.source === "PO" ? (
                                 navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
                               ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
+                                <></>
                               )
-                             
                             }
                           >
                             {data.status}
                           </td>
                           <td
-                             onClick={() =>
-
-                              data.source === 'PO' ? (
+                            onClick={() =>
+                              data.source === "PO" ? (
                                 navigate(`/viewToReceive/${data.po_id}`)
+                              ) : data.status === "For Approval" ? (
+                                navigate(`/receivingPreview/${data.id}`)
+                              ) : data.status === "In-transit" ? (
+                                navigate(`/receivingIntransit/${data.id}`)
                               ) : (
-                                data.status === "For Approval" ? (
-                                  navigate(`/receivingPreview/${data.id}`)
-                                ) : data.status === "In-transit" ? (
-                                  navigate(`/receivingIntransit/${data.id}`)
-                                ) : (
-                                  <></>
-                                )
+                                <></>
                               )
-                             
                             }
                           >
-                            {data.source === 'PO' ? "n/a" : formatDatetime(data.createdAt)}
+                            {data.source === "PO"
+                              ? "n/a"
+                              : formatDatetime(data.createdAt)}
                           </td>
                         </tr>
                       ))}
