@@ -192,19 +192,23 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
-
-    // Helper function to safely check and convert strings to lowercase
-    const safeToLowerCase = (str) => (str ? str.toLowerCase() : "");
-
-    // Filter each inventory type separately
-    const filteredInventory = searchInventory.filter(
-      (data) =>
-        safeToLowerCase(data.product_code).includes(searchTerm) ||
-        safeToLowerCase(data.product_name).includes(searchTerm) ||
-        safeToLowerCase(data.manufacturer).includes(searchTerm)
-    );
-    setInventory(filteredInventory);
+  
+    if (searchTerm === '') {
+      setSearchInventory(inventory); // Reset to the original data when the search term is empty
+    } else {
+      const filtered = inventory.filter((data) => {
+        return (
+          (data.product_code?.toString().toLowerCase() || "").includes(searchTerm) ||
+          (data.product_name?.toString().toLowerCase() || "").includes(searchTerm) ||
+          (data.UOM?.toString().toLowerCase() || "").includes(searchTerm) ||
+          (data.Category?.toString().toLowerCase() || "").includes(searchTerm) ||
+          (data.totalQuantity?.toString().toLowerCase() || "").includes(searchTerm)
+        );
+      });
+      setSearchInventory(filtered);
+    }
   };
+  
 
   const handleSearchIssuance = (event) => {
     setCurrentPageIssuance(1);
