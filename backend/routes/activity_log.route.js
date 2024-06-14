@@ -27,7 +27,7 @@ router.route('/getlogged').get(async (req, res) => {
         }],
         attributes: [
           'masterlist_id',
-          [sequelize.fn('MAX', sequelize.col('Activity_Log.createdAt')), 'maxCreatedAt'],
+          [sequelize.fn('MAX', sequelize.col('activity_log.createdAt')), 'maxCreatedAt'],
         ],
         where: {
           masterlist_id: userIdtype,
