@@ -145,7 +145,7 @@ router.route("/fetchTable").get(async (req, res) => {
         model: Product_image,
         required: false,
         order: [["createdAt", "DESC"]], // Order by createdAt column in descending order
-        limit: 1, // Limit the result to only one image per subpart
+        // limit: 1, // Limit the result to only one image per subpart
       },
     });
 
