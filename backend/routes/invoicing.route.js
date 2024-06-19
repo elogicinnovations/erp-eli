@@ -32,28 +32,21 @@ const fs = require("fs");
 
 router.route("/lastPONumber").get(async (req, res) => {
   try {
- 
-
     const maxPo = await PR_PO.findOne({
-      attributes: [
-        [sequelize.fn('MAX', sequelize.col('po_id')), 'maxPoId']
-      ],
+      attributes: [[sequelize.fn("MAX", sequelize.col("po_id")), "maxPoId"]],
       raw: true, // Ensure raw output
     });
 
-    console.log('Fetched maxPo:', maxPo);
+    console.log("Fetched maxPo:", maxPo);
 
     // Extract the max po_id and increment it by 1
-    let maxPoId = maxPo.maxPoId || '00000000';
-    console.log('maxPoId:', maxPoId);
+    let maxPoId = maxPo.maxPoId || "00000000";
+    console.log("maxPoId:", maxPoId);
 
-    let nextPoId = (parseInt(maxPoId, 10) + 1).toString().padStart(8, '0');
-    console.log('nextPoId:', nextPoId);
+    let nextPoId = (parseInt(maxPoId, 10) + 1).toString().padStart(8, "0");
+    console.log("nextPoId:", nextPoId);
 
     res.json({ nextPoId });
-
-
-    
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
@@ -65,8 +58,7 @@ router.route("/save").post(async (req, res) => {
     const arrayPO = req.body.arrayPO;
     const PR_id = req.body.pr_id;
     const userId = req.body.userId;
-    const POarray_checker =  req.body.selected_PR_Prod_array; // array for checker if lahat ba ng product na gwan ng PO 
-
+    const POarray_checker = req.body.selected_PR_Prod_array; // array for checker if lahat ba ng product na gwan ng PO
 
     for (const parent of arrayPO) {
       const po_number = parent.title;
@@ -88,7 +80,7 @@ router.route("/save").post(async (req, res) => {
             days_from: FromDays,
             days_to: ToDays,
             static_quantity: quantity,
-            purchase_price: prod_supp_price
+            purchase_price: prod_supp_price,
           });
         }
       }
@@ -96,11 +88,11 @@ router.route("/save").post(async (req, res) => {
 
     let pr_status, prComplete;
 
-    const allTrue = POarray_checker.every(item => item.isPO === true);
+    const allTrue = POarray_checker.every((item) => item.isPO === true);
 
-    POarray_checker.forEach(data => {
-      console.log(data)
-       PR_product.update(
+    POarray_checker.forEach((data) => {
+      console.log(data);
+      PR_product.update(
         {
           isPO: data.isPO,
         },
@@ -111,17 +103,17 @@ router.route("/save").post(async (req, res) => {
     });
 
     if (allTrue) {
-      pr_status = 'For-Approval (PO)'
-      prComplete = true
+      pr_status = "For-Approval (PO)";
+      prComplete = true;
     } else {
-      pr_status = 'On-Canvass';
-      prComplete = false
+      pr_status = "On-Canvass";
+      prComplete = false;
     }
 
     const PR_update = await PR.update(
       {
         status: pr_status,
-        isPRcomplete: prComplete
+        isPRcomplete: prComplete,
       },
       {
         where: { id: PR_id },
@@ -140,12 +132,10 @@ router.route("/save").post(async (req, res) => {
       const PR_historical = PR_history.create({
         pr_id: PR_id,
         status: "Approved",
-        remarks: `Purchase Request # ${PRnum} is now approved`
+        remarks: `Purchase Request # ${PRnum} is now approved`,
       });
 
       if (PR_historical) {
-        
-
         await Activity_Log.create({
           masterlist_id: userId,
           action_taken: `Purchase Request # ${PRnum} is now approved`,
@@ -376,11 +366,13 @@ router.route("/fetchView_PO").get(async (req, res) => {
           model: ProductTAGSupplier,
           required: true,
 
-            include: [{
+          include: [
+            {
               model: Supplier,
-              required: true
-            }]
-        }
+              required: true,
+            },
+          ],
+        },
       ],
     });
 
@@ -397,91 +389,88 @@ router.route("/fetchView_PO").get(async (req, res) => {
 });
 router.route("/fetchRejectHistory").get(async (req, res) => {
   try {
-    const {po_id, pr_id} = req.query
+    const { po_id, pr_id } = req.query;
     const poRejectData = await PO_REJECT.findAll({
       where: {
         po_id: po_id,
-        pr_id: pr_id
+        pr_id: pr_id,
       },
-      include: [{
-        model: MasterList,
-        required: true
-      }]
+      include: [
+        {
+          model: MasterList,
+          required: true,
+        },
+      ],
     });
 
     const prRejustifyData = await PR_Rejustify.findAll({
       where: {
         po_id: po_id,
-        pr_id: pr_id
+        pr_id: pr_id,
       },
-      include: [{
-        model: MasterList,
-        required: true
-      }]
+      include: [
+        {
+          model: MasterList,
+          required: true,
+        },
+      ],
     });
 
     // console.log(poRejectData)
 
+    // Extract the dataValues from each result
+    const poRejectValues = poRejectData.map((item) => ({
+      ...item.dataValues,
+      source: "REJECTION",
+    }));
+    const prRejustifyValues = prRejustifyData.map((item) => ({
+      ...item.dataValues,
+      source: "REJUSTIFICATION",
+    }));
+    // Combine the dataValues into one array
+    const combinedData = [...poRejectValues, ...prRejustifyValues];
 
-   // Extract the dataValues from each result
-   const poRejectValues = poRejectData.map(item => ({
-    ...item.dataValues,
-    source: 'REJECTION'
-  }));
-  const prRejustifyValues = prRejustifyData.map(item => ({
-    ...item.dataValues,
-    source: 'REJUSTIFICATION'
-  }));
-// Combine the dataValues into one array
-const combinedData = [...poRejectValues, ...prRejustifyValues];
+    // Sort the combined data by createdAt column in descending order
+    combinedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-// Sort the combined data by createdAt column in descending order
-combinedData.sort((a, b) =>  new Date(a.createdAt) - new Date(b.createdAt));
+    // console.log(combinedData);
 
-// console.log(combinedData);
-
-// If you want to send the sorted data as a response
-res.json(combinedData);
-
-   
-  
+    // If you want to send the sorted data as a response
+    res.json(combinedData);
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
   }
 });
 
-
-
 router.route("/remove_productPO").post(async (req, res) => {
   try {
-    const {primary_ID, po_id, prID, userId, prNum, product_name} = req.query
-    
+    const { primary_ID, po_id, prID, userId, prNum, product_name } = req.query;
+
     const deletePO_product = await PR_PO.destroy({
       where: {
         id: primary_ID,
       },
     });
 
-  if(deletePO_product){
-    const PR_historical = await PR_history.create({
-      pr_id: prID,
-      status: "Rejected",
-      isRead: 1,
-      remarks: `The Product "${product_name}" has been removed from Purchase Order # ${po_id} with pr number ${prNum}`,
-    });
+    if (deletePO_product) {
+      const PR_historical = await PR_history.create({
+        pr_id: prID,
+        status: "Rejected",
+        isRead: 1,
+        remarks: `The Product "${product_name}" has been removed from Purchase Order # ${po_id} with pr number ${prNum}`,
+      });
 
-    await Activity_Log.create({
-      masterlist_id: userId,
-      action_taken: `The Product "${product_name}" has been removed from Purchase Order # ${po_id} with pr number ${prNum}`,
-    });
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `The Product "${product_name}" has been removed from Purchase Order # ${po_id} with pr number ${prNum}`,
+      });
 
-
-    res.status(200).json()
-  }
+      res.status(200).json();
+    }
   } catch (error) {
-    console.log(error)
-    res.status(500).json()
+    console.log(error);
+    res.status(500).json();
   }
 });
 
@@ -542,12 +531,8 @@ router.route("/fetchPOarray").get(async (req, res) => {
       });
     });
 
-    
-
     // Convert the object values back to an array
     const consolidatedArray = Object.values(consolidatedObject);
-
-    
 
     res.status(200).json(consolidatedArray);
   } catch (err) {

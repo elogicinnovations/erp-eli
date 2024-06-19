@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../Sidebar/sidebar";
 import "../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../styles/react-style.css";
 import Form from "react-bootstrap/Form";
-import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
-import Image from "react-bootstrap/Image";
-
+import { PDFDocument, rgb } from "pdf-lib";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -18,8 +15,6 @@ import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
 import SBFLOGO from "../../../assets/image/sbf_logoo_final.jpg";
-import TransactionIcon35 from "../../../assets/image/transactionIcon35.png";
-import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
 import html2canvas from "html2canvas";
 import ReactLoading from "react-loading";
@@ -30,7 +25,6 @@ import { Note, Smiley, Trash } from "@phosphor-icons/react";
 // import EmojiPicker from './../../../hooks/components/EmojiPicker';
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
-import zIndex from "@mui/material/styles/zIndex";
 
 function POApprovalRejustify({ authrztn }) {
   const { id } = useParams();
@@ -309,15 +303,31 @@ function POApprovalRejustify({ authrztn }) {
             `content-to-capture-${po_idApproval}`
           );
 
-          // const span = document.createElement('span');
-          // span.innerText = approvalTriggered ? dateApproved.toLocaleDateString('en-PH') : '';
-          // div.appendChild(span);
-
-          // console.log(div.appendChild(span))
-
           const canvas = await html2canvas(div);
           const imageData = canvas.toDataURL("image/png");
+          // Convert the image to a PDF
+          const pdfDoc = await PDFDocument.create();
+          const page = pdfDoc.addPage([canvas.width, canvas.height]);
+          const pngImage = await pdfDoc.embedPng(imageData);
+          page.drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height,
+            // width: 480,
+            // height: 700,
+          });
 
+          const pdfBytes = await pdfDoc.save();
+
+          // Download the PDF
+          const blob = new Blob([pdfBytes], { type: "application/pdf" });
+          const downloadLink = document.createElement("a");
+          downloadLink.href = URL.createObjectURL(blob);
+          downloadLink.download = `purchase_order_${po_idApproval}.pdf`;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             prID,
             POarray,
@@ -348,6 +358,59 @@ function POApprovalRejustify({ authrztn }) {
           }
         } catch (err) {
           console.log(err);
+        }
+      } else {
+        setShowSignature(false);
+      }
+    });
+  };
+
+  const handlePrint = async (po_idss) => {
+    const po_idApproval = po_idss;
+    swal({
+      title: `Are you sure want to download this purchase Order?`,
+      text: "This action cannot be undone.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          const div = document.getElementById(
+            `content-to-capture-${po_idApproval}`
+          );
+
+          const canvas = await html2canvas(div);
+          const imageData = canvas.toDataURL("image/png");
+          // Convert the image to a PDF
+          const pdfDoc = await PDFDocument.create();
+          const page = pdfDoc.addPage([canvas.width, canvas.height]);
+          const pngImage = await pdfDoc.embedPng(imageData);
+          page.drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height,
+            // width: 480,
+            // height: 700,
+          });
+
+          const pdfBytes = await pdfDoc.save();
+
+          // Download the PDF
+          const blob = new Blob([pdfBytes], { type: "application/pdf" });
+          const downloadLink = document.createElement("a");
+          downloadLink.href = URL.createObjectURL(blob);
+          downloadLink.download = `purchase_order_${po_idApproval}.pdf`;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+        } catch (err) {
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
         }
       } else {
         setShowSignature(false);
@@ -1211,6 +1274,21 @@ function POApprovalRejustify({ authrztn }) {
                           </>
                         )}
                       </>
+                    ) : current_status === "To-Receive" ||
+                      current_status === "Received" ? (
+                      <div className="save-cancel po-btn-modal">
+                        <Button
+                          type="button"
+                          className="btn btn-warning"
+                          size="md"
+                          style={{ fontSize: "20px", margin: "0px 5px" }}
+                          onClick={() => {
+                            handlePrint(group.title);
+                          }}
+                        >
+                          Print
+                        </Button>
+                      </div>
                     ) : (
                       <></>
                     )}
@@ -1295,8 +1373,8 @@ function POApprovalRejustify({ authrztn }) {
                     </Form.Group>
                     <div className="col-6">
                       {/* <Link variant="secondary" size="md" style={{ fontSize: '15px' }}>
-                                                  <Paperclip size={20} />Upload Attachment
-                                              </Link> */}
+                          <Paperclip size={20} />Upload Attachment
+                      </Link> */}
 
                       <Form.Group controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ fontSize: "20px" }}>

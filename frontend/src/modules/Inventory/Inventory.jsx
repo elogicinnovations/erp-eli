@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import NoData from "../../assets/image/NoData.png";
 import NoAccess from "../../assets/image/NoAccess.png";
-import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
-import Sidebar from "../Sidebar/sidebar";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import BASE_URL from "../../assets/global/url";
@@ -14,9 +13,8 @@ import swal from "sweetalert";
 import Button from "react-bootstrap/Button";
 import { jwtDecode } from "jwt-decode";
 import { Plus } from "@phosphor-icons/react";
-import { IconButton, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import SBFLOGO from "../../../src/assets/image/SBFLogo.jpg";
-import Header from "../../partials/header";
 import Table from "react-bootstrap/Table";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -192,23 +190,30 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
-  
-    if (searchTerm === '') {
+
+    if (searchTerm === "") {
       setSearchInventory(inventory); // Reset to the original data when the search term is empty
     } else {
       const filtered = inventory.filter((data) => {
         return (
-          (data.product_code?.toString().toLowerCase() || "").includes(searchTerm) ||
-          (data.product_name?.toString().toLowerCase() || "").includes(searchTerm) ||
+          (data.product_code?.toString().toLowerCase() || "").includes(
+            searchTerm
+          ) ||
+          (data.product_name?.toString().toLowerCase() || "").includes(
+            searchTerm
+          ) ||
           (data.UOM?.toString().toLowerCase() || "").includes(searchTerm) ||
-          (data.Category?.toString().toLowerCase() || "").includes(searchTerm) ||
-          (data.totalQuantity?.toString().toLowerCase() || "").includes(searchTerm)
+          (data.Category?.toString().toLowerCase() || "").includes(
+            searchTerm
+          ) ||
+          (data.totalQuantity?.toString().toLowerCase() || "").includes(
+            searchTerm
+          )
         );
       });
       setSearchInventory(filtered);
     }
   };
-  
 
   const handleSearchIssuance = (event) => {
     setCurrentPageIssuance(1);
@@ -680,7 +685,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
       const formData = new FormData();
       formData.append("csvFile", csvFile);
       formData.append("warehouseID", warehouseID);
-  
+
       try {
         const response = await axios.post(
           `${BASE_URL}/inventory/read_csv`,
@@ -691,28 +696,20 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
             },
           }
         );
-  
+
         if (response.status === 200) {
-          swal(
-            "Success",
-            "Uploaded Successfully",
-            "success"
-          );
+          swal("Success", "Uploaded Successfully", "success");
           setIsLoading(false);
         } else if (response.status === 500) {
           const errorMessage = response.data.error;
-          if (errorMessage === 'Connection acquisition timeout') {
+          if (errorMessage === "Connection acquisition timeout") {
             swal(
               "Error!",
               "Connection timeout. Please try again later.",
               "error"
             );
           } else {
-            swal(
-              "Error!",
-              "Upload Data Stop. Please Try Again",
-              "error"
-            );
+            swal("Error!", "Upload Data Stop. Please Try Again", "error");
           }
           setIsLoading(false);
         }
@@ -726,6 +723,19 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
         setIsLoading(false);
       }
     }
+  };
+
+  const getPhilippinesTime = () => {
+    const options = {
+      timeZone: "Asia/Manila",
+      hour12: true,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date().toLocaleString("en-US", options);
   };
 
   return (
@@ -765,7 +775,6 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                   <div className="tab-titles">
                     <h1>Inventory</h1>
 
-
                     {userId === 1 && (
                       <div className="row">
                         <div className="col-4">
@@ -784,11 +793,12 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                           />
                         </div>
                         <div className="col-4">
-                          <Button variant="primary" onClick={readCsvFile}><span className="h3">Upload CSV</span></Button>
+                          <Button variant="primary" onClick={readCsvFile}>
+                            <span className="h3">Upload CSV</span>
+                          </Button>
                         </div>
                       </div>
                     )}
-                    
                   </div>
                   <div className="row">
                     <div className="col-6 d-flex justify-content-md-start justify-content-sm-center justify-content-center inv-div-sel">
@@ -1037,7 +1047,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                             <th className="tableh">Received By</th>
                             <th className="tableh">Date Created</th>
                             <th className="tableh">Action</th>
-                            <th className="tableh">Print</th>
+                            {/* <th className="tableh">Print</th> */}
                           </tr>
                         </thead>
                         {issuance.length > 0 ? (
@@ -1099,41 +1109,51 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                                   {formatDatetime(data.createdAt)}
                                 </td>
                                 <td>
-                                  <Button
-                                    onClick={() => {
-                                      if (data.status === "Approved") {
-                                        navigate(
-                                          `/returnForm/${data.issuance_id}`
-                                        );
-                                      }
-                                    }}
-                                    style={{
-                                      fontSize: "12px",
-                                      color: "black",
-                                      cursor:
-                                        data.status !== "Approved" ||
-                                        isReturnButtonDisabled(
-                                          data.date_approved
-                                        )
-                                          ? "not-allowed"
-                                          : "pointer",
-                                    }}
-                                    variant="outline-secondary"
-                                    disabled={isReturnButtonDisabled(
-                                      data.date_approved
-                                    )}
-                                  >
-                                    Return
-                                  </Button>
-                                </td>
-                                <td>
-                                  <Button
-                                    onClick={() =>
-                                      handlePreviewShow(data.issuance_id)
-                                    }
-                                  >
-                                    Preview
-                                  </Button>
+                                  <>
+                                    <Button
+                                      onClick={() => {
+                                        if (data.status === "Approved") {
+                                          navigate(
+                                            `/returnForm/${data.issuance_id}`
+                                          );
+                                        }
+                                      }}
+                                      style={{
+                                        fontSize: "12px",
+                                        color: "black",
+                                        cursor:
+                                          data.status !== "Approved" ||
+                                          isReturnButtonDisabled(
+                                            data.date_approved
+                                          )
+                                            ? "not-allowed"
+                                            : "pointer",
+                                      }}
+                                      variant="outline-secondary"
+                                      disabled={isReturnButtonDisabled(
+                                        data.date_approved
+                                      )}
+                                    >
+                                      Return
+                                    </Button>
+                                  </>
+
+                                  {data.status === "Approved" && (
+                                    <>
+                                      <Button
+                                        onClick={() =>
+                                          handlePreviewShow(data.issuance_id)
+                                        }
+                                        variant="outline-primary"
+                                        style={{
+                                          fontSize: "12px",
+                                          color: "black",
+                                        }}
+                                      >
+                                        Preview
+                                      </Button>
+                                    </>
+                                  )}
                                 </td>
                               </tr>
                             ))}
@@ -1661,20 +1681,61 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                   <img src={SBFLOGO} alt="" />
                 </div>
                 <div className="SBFtextslogo">
-                  <span>SBF PHILIPPINES DRILLING RESOURCES CORP.</span>
+                  <span>SBF PHILIPPINES DRILLING</span>
+                  <span>RESOURCES CORP.</span>
                   <span>Padiguan, Sta. Cruz, Rosario, Agusan Del Sur</span>
                 </div>
               </div>
 
-              <div className="templates-middle">
-                <div className="Quotationdiv">
-                  <span>ISSUANCE</span>
-                </div>
+              <div className="row">
+                {ApprovedIssue.length > 0 && (
+                  <React.Fragment>
+                    <div className="col-6">
+                      <div className="d-flex flex-column w-100">
+                        <span className="h3 ">
+                          BIS #: {ApprovedIssue[0].issuance.issuance_id}
+                        </span>
+                        <span className="h3">
+                          Cost Center:{" "}
+                          {ApprovedIssue[0].issuance.cost_center.name}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="d-flex flex-column w-100">
+                        <span className="h3 text-end">
+                          Date: {getPhilippinesTime()}
+                        </span>
+                        <span className="h3 text-end">
+                          Date Approved:{" "}
+                          {formatDatetime(
+                            ApprovedIssue[0].issuance.date_approved
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                )}
               </div>
+              {ApprovedIssue.length > 0 && (
+                <React.Fragment>
+                  {ApprovedIssue[0].issuance.with_accountability === "true" && (
+                    <div className="text-center mb-2">
+                      <span className="h2">
+                        Accountable to:{" "}
+                        <span className="h2 text-decoration-underline">
+                          {ApprovedIssue[0].issuance.receiver.col_Fname}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                </React.Fragment>
+              )}
 
+              {/* table */}
               <div className="templates-table-section">
                 <div className="templatestable-content">
-                  <Table>
+                  <table className="table-responsive">
                     <thead>
                       <tr>
                         <th className="canvassth">PRODUCT CODE</th>
@@ -1731,7 +1792,7 @@ const Inventory = ({ activeTab, onSelect, authrztn }) => {
                         );
                       })}
                     </tbody>
-                  </Table>
+                  </table>
                 </div>
               </div>
 

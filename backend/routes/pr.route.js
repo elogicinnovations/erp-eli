@@ -23,7 +23,7 @@ const {
   Supplier,
 } = require("../db/models/associations");
 const session = require("express-session");
-const moment = require('moment-timezone');
+const moment = require("moment-timezone");
 router.use(
   session({
     secret: "secret-key",
@@ -171,10 +171,8 @@ router.route("/fetchTable_PO").get(async (req, res) => {
   }
 });
 
-
 router.route("/PO_filter").get(async (req, res) => {
   try {
-
     const { strDate, enDate, selectedStatus } = req.query;
 
     const startDates = new Date(strDate);
@@ -192,7 +190,8 @@ router.route("/PO_filter").get(async (req, res) => {
     };
 
     if (selectedStatus !== "All") {
-      whereClause["$purchase_req_canvassed_prd.status$"] = selectedStatus === "null" ? null : selectedStatus;
+      whereClause["$purchase_req_canvassed_prd.status$"] =
+        selectedStatus === "null" ? null : selectedStatus;
     }
 
     const data = await PR_PO.findAll({
@@ -615,7 +614,7 @@ router.route("/approve").post(async (req, res) => {
 
     const manilaTimezone = "Asia/Manila";
     moment.tz.setDefault(manilaTimezone);
-    
+
     // Get the current datetime in Manila timezone
     const currentDateTimeInManila = moment();
     const PR_newData = await PR.update(

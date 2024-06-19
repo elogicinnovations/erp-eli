@@ -20,13 +20,9 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
     setActiveTab(tabKey);
   };
   const [fetchProduct_notApprove, setFetchProduct_notApprove] = useState([]);
-  const [fetchAssembly_notApprove, setFetchAssembly_notApprove] = useState([]);
-  const [fetchSpare_notApprove, setFetchSpare_notApprove] = useState([]);
-  const [fetchSubpart_notApprove, setFetchSubpart_notApprove] = useState([]);
+
   const [fetchProduct, setFetchProduct] = useState([]);
-  const [fetchAssembly, setFetchAssembly] = useState([]);
-  const [fetchSpare, setFetchSpare] = useState([]);
-  const [fetchSubpart, setFetchSubpart] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
 
   const [fromSite, setFromSite] = useState();
@@ -112,13 +108,7 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
       })
       .then((res) => {
         setFetchProduct_notApprove(res.data.product_notApprove);
-        // setFetchAssembly_notApprove(res.data.assembly_notApprove);
-        // setFetchSpare_notApprove(res.data.spare_notApprove);
-        // setFetchSubpart_notApprove(res.data.subpart_notApprove);
         setFetchProduct(res.data.product);
-        // setFetchAssembly(res.data.assembly);
-        // setFetchSpare(res.data.spare);
-        // setFetchSubpart(res.data.subpart);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -138,9 +128,6 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
               id,
               fromSite,
               fetchProduct: fetchProduct_notApprove,
-              // fetchAssembly: fetchAssembly_notApprove,
-              // fetchSpare: fetchSpare_notApprove,
-              // fetchSubpart: fetchSubpart_notApprove,
               userId,
               receivedBy,
             },
@@ -419,76 +406,75 @@ const ApprovalIssuance = ({ setActiveTab, authrztn }) => {
                         <th className="tableh">Product Name</th>
                         {(IssueStatus === "Approved" ||
                           IssueStatus === "Rejected") && (
-                            <th className="tableh">Landed Cost</th>
-                          )}
+                          <th className="tableh">Landed Cost</th>
+                        )}
                         <th className="tableh">UOM</th>
                         <th className="tableh">Sub Unit</th>
                         <th className="tableh">Quantity</th>
                       </tr>
                     </thead>
-                    {(IssueStatus == "Approved" ||
-                      IssueStatus == "Rejected") && (
-                        <tbody>
-                          {fetchProduct.map((data, i) => (
-                            <tr key={i}>
-                              <td>
-                                {
-                                  data.inventory_prd.product_tag_supplier
-                                    .product.product_code
-                                }
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_prd.product_tag_supplier
-                                    .product.product_name
-                                }
-                              </td>
-                              <td>
-                                {(
-                                  data.inventory_prd.price +
-                                  data.inventory_prd.freight_cost +
-                                  data.inventory_prd.custom_cost
-                                ).toFixed(2)}
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_prd.product_tag_supplier
-                                    .product.product_unitMeasurement
-                                }
-                              </td>
-                              <td>
-                                {
-                                  data.inventory_prd.product_tag_supplier
-                                    .product.UOM_set === true ? `(qty of pcs inside ${data.inventory_prd.product_tag_supplier
-                                      .product.product_unitMeasurement})` : `(qty per ${data.inventory_prd.product_tag_supplier
-                                        .product.product_unitMeasurement})`
-                                }
-                              </td>
-                              <td>
-                                {data.quantity === 0
-                                  ? "returned"
-                                  : data.quantity}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      )}
-                    {(IssueStatus !== "Approved" ||
+                    {IssueStatus == "Approved" || IssueStatus == "Rejected" ? (
+                      <tbody>
+                        {fetchProduct.map((data, i) => (
+                          <tr key={i}>
+                            <td>
+                              {
+                                data.inventory_prd.product_tag_supplier.product
+                                  .product_code
+                              }
+                            </td>
+                            <td>
+                              {
+                                data.inventory_prd.product_tag_supplier.product
+                                  .product_name
+                              }
+                            </td>
+                            <td>
+                              {(
+                                data.inventory_prd.price +
+                                data.inventory_prd.freight_cost +
+                                data.inventory_prd.custom_cost
+                              ).toFixed(2)}
+                            </td>
+                            <td>
+                              {
+                                data.inventory_prd.product_tag_supplier.product
+                                  .product_unitMeasurement
+                              }
+                            </td>
+                            <td>
+                              {data.inventory_prd.product_tag_supplier.product
+                                .UOM_set === true
+                                ? `(qty of pcs inside ${data.inventory_prd.product_tag_supplier.product.product_unitMeasurement})`
+                                : `(qty per ${data.inventory_prd.product_tag_supplier.product.product_unitMeasurement})`}
+                            </td>
+                            <td>
+                              {data.quantity === 0 ? "returned" : data.quantity}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    ) : (
+                      <tbody>
+                        {fetchProduct_notApprove.map((data, i) => (
+                          <tr key={i}>
+                            <td>{data.product.product_code}</td>
+                            <td>{data.product.product_name}</td>
+                            <td>{data.product.product_unitMeasurement}</td>
+                            <td>
+                              {data.product.UOM_set === true
+                                ? `(qty of pcs inside ${data.product.product_unitMeasurement})`
+                                : `(qty per ${data.product.product_unitMeasurement})`}
+                            </td>
+                            <td>{data.quantity}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    )}
+                    {/* {(IssueStatus !== "Approved" ||
                       IssueStatus !== "Rejected") && (
-                        <tbody>
-                          {fetchProduct_notApprove.map((data, i) => (
-                            <tr key={i}>
-                              <td>{data.product.product_code}</td>
-                              <td>{data.product.product_name}</td>
-                              <td>{data.product.product_unitMeasurement }</td>
-                              <td>{data.product.UOM_set === true ? `(qty of pcs inside ${data.product.product_unitMeasurement })` : `(qty per ${data.product.product_unitMeasurement })`}</td>
-                              <td>{data.quantity}</td>
-                            </tr>
-                          ))}
-
-                
-                        </tbody>
-                      )}
+                    
+                    )} */}
                   </table>
                   {IssueStatus !== "Approved" && IssueStatus !== "Rejected" && (
                     <div className="save-cancel">

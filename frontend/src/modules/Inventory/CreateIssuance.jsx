@@ -51,7 +51,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const [transportedBy, setTransportedBy] = useState();
   const [mrs, setMrs] = useState();
   const [remarks, setRemarks] = useState();
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
@@ -150,10 +150,10 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   // Custom filter function to limit options to 10
   const customFilterOption = (option, { inputValue }) => {
     const searchInput = inputValue.toLowerCase();
-    const productCode = option.code ? option.code.toLowerCase() : '';
-    const productName = option.name ? option.name.toLowerCase() : '';
-    const productUOM = option.uom ? option.uom.toLowerCase() : '';
-  
+    const productCode = option.code ? option.code.toLowerCase() : "";
+    const productName = option.name ? option.name.toLowerCase() : "";
+    const productUOM = option.uom ? option.uom.toLowerCase() : "";
+
     return (
       productCode.includes(searchInput) ||
       productName.includes(searchInput) ||
@@ -164,16 +164,16 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const handleInputChange = (inputValue) => {
     setSearchInput(inputValue);
   };
-  
+
   const filteredOptions = fetchProduct
     .map((product) => ({
       value: `${product.productID}_${product.product_code}_Product`,
       label: (
         <div>
-          Product Code: <strong>{product.product_code}</strong> /
-          Product Name: <strong>{product.product_name}</strong> /
-          Quantity: <strong>{product.totalQuantity}</strong> /
-          UOM: <strong>{product.UOM}</strong>
+          Product Code: <strong>{product.product_code}</strong> / Product Name:{" "}
+          <strong>{product.product_name}</strong> / Quantity:{" "}
+          <strong>{product.totalQuantity}</strong> / UOM:{" "}
+          <strong>{product.UOM}</strong>
         </div>
       ),
       type: "Product",
@@ -189,8 +189,7 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
       const searchString = `${option.code.toLowerCase()} ${option.name.toLowerCase()} ${option.uom.toLowerCase()}`;
       return searchString.includes(searchInput.toLowerCase());
     })
-    .slice(0, 10);
-  
+    .slice(0, 5);
 
   // useEffect(() => {
   //   const delay = setTimeout(() => {
@@ -254,7 +253,6 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
 
     return () => clearTimeout(delay);
   }, [fromSite]);
-
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -715,7 +713,11 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                               <td key={product.value}>{product.code}</td>
                               <td key={product.value}>{product.name}</td>
                               <td>{product.uom}</td>
-                              <td>{product.setUOM === true ? `(qty of pcs inside ${product.uom})` : `(qty per ${product.uom})`}</td>
+                              <td>
+                                {product.setUOM === true
+                                  ? `(qty of pcs inside ${product.uom})`
+                                  : `(qty per ${product.uom})`}
+                              </td>
                               <td>{product.quantity_available}</td>
                               <td>
                                 <div className="d-flex flex-direction-row align-items-center">
@@ -723,7 +725,8 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                                     type="number"
                                     value={quantityInputs[product.value] || ""}
                                     onKeyDown={(e) => {
-                                      ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
+                                      ["e", "E", "+", "-"].includes(e.key) &&
+                                        e.preventDefault();
                                     }}
                                     onInput={(e) =>
                                       handleQuantityChange(
@@ -761,12 +764,12 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
                         )}
                       </tbody>
                       {showDropdown && (
-                      <Select
-                      isMulti
-                      options={filteredOptions}
-                      onChange={handleSelectChange_Prod}
-                      onInputChange={handleInputChange}
-                    />
+                        <Select
+                          isMulti
+                          options={filteredOptions}
+                          onChange={handleSelectChange_Prod}
+                          onInputChange={handleInputChange}
+                        />
                       )}
 
                       {fromSite ? (

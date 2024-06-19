@@ -27,7 +27,7 @@ const {
   SubPart,
   Warehouses,
   Activity_Log,
-  Accountability
+  Accountability,
 } = require("../db/models/associations");
 // const Issued_Product = require('../db/models/issued_product.model')
 // const Inventory = require('../db/models/issued_product.model')
@@ -42,14 +42,14 @@ router.route("/getIssuance").get(async (req, res) => {
           as: "receiver", // Specify the alias for received_by association
           attributes: ["col_Fname"],
           foreignKey: "received_by", // Use the foreign key associated with received_by
-          required: true
+          required: true,
         },
         {
           model: MasterList,
           as: "sender", // Specify the alias for transported_by association
           attributes: ["col_Fname"],
           foreignKey: "transported_by", // Use the foreign key associated with transported_by
-          required: true
+          required: true,
         },
         {
           model: CostCenter,
@@ -76,37 +76,35 @@ router.route("/getIssuance").get(async (req, res) => {
   }
 });
 
-router.route('/lastAccRefCode').get(async (req, res) => {
+router.route("/lastAccRefCode").get(async (req, res) => {
   try {
-  const lastCodes = await Issuance.findOne({
-    order: [['issuance_id', 'DESC']]
+    const lastCodes = await Issuance.findOne({
+      order: [["issuance_id", "DESC"]],
+    });
+
+    let nextCode;
+    if (lastCodes) {
+      const lastCode = lastCodes.accountability_refcode;
+      const lastNumber = parseInt(lastCode.substring(1), 10);
+      nextCode = (lastNumber + 1).toString().padStart(6, "0");
+    } else {
+      nextCode = "000001"; // Initial category code
+    }
+
+    res.json({ nextCode });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
 });
-
-let nextCode;
-if (lastCodes) {
-    const lastCode = lastCodes.accountability_refcode;
-    const lastNumber = parseInt(lastCode.substring(1), 10);
-    nextCode = (lastNumber + 1).toString().padStart(6, '0');
-} else {
-  nextCode = '000001'; // Initial category code
-}
-
-res.json({ nextCode });
-} catch (err) {
-console.error(err);
-res.status(500).json("Error");
-}
-});
-
 
 router.route("/fetchApprove").get(async (req, res) => {
   try {
-
     const productData_notApprove = await IssuedProduct.findAll({
       include: [
         {
           model: Product,
-          required: true
+          required: true,
         },
         {
           model: Issuance,
@@ -117,56 +115,6 @@ router.route("/fetchApprove").get(async (req, res) => {
         issuance_id: req.query.id,
       },
     });
-
-    // const asmData_notApprove = await IssuedAssembly.findAll({
-    //   include: [
-    //     {
-    //       model: Assembly,
-    //       required: true
-    //     },
-    //     {
-    //       model: Issuance,
-    //       required: true,
-    //     },
-    //   ],
-    //   where: {
-    //     issuance_id: req.query.id,
-    //   },
-    // });
-
-    // const spareData_notApprove = await IssuedSpare.findAll({
-    //   include: [
-    //     {
-    //       model: SparePart,
-    //       required: true
-    //     },
-    //     {
-    //       model: Issuance,
-    //       required: true,
-    //     },
-    //   ],
-    //   where: {
-    //     issuance_id: req.query.id,
-    //   },
-    // });
-
-    // const subpartData_notApprove = await IssuedSubpart.findAll({
-    //   include: [
-    //     {
-    //       model: SubPart,
-    //       required: true
-    //     },
-    //     {
-    //       model: Issuance,
-    //       required: true,
-    //     },
-    //   ],
-    //   where: {
-    //     issuance_id: req.query.id,
-    //   },
-    // });
-
-
 
     const productData = await IssuedApproveProduct.findAll({
       include: [
@@ -174,15 +122,18 @@ router.route("/fetchApprove").get(async (req, res) => {
           model: Inventory,
           required: true,
 
-            include: [{
+          include: [
+            {
               model: ProductTAGSupplier,
               required: true,
-                include: [{
+              include: [
+                {
                   model: Product,
-                  required: true
-                }]
-
-            },]
+                  required: true,
+                },
+              ],
+            },
+          ],
         },
         {
           model: Issuance,
@@ -194,93 +145,9 @@ router.route("/fetchApprove").get(async (req, res) => {
       },
     });
 
-    // const asmData = await IssuedApproveAssembly.findAll({
-    //   include: [
-    //     {
-    //       model: Inventory_Assembly,
-    //       required: true,
-
-    //         include: [{
-    //           model: Assembly_Supplier,
-    //           required: true,
-    //             include: [{
-    //               model: Assembly,
-    //               required: true
-    //             }]
-
-    //         },]
-    //     },
-    //     {
-    //       model: Issuance,
-    //       required: true,
-    //     },
-    //   ],
-    //   where: {
-    //     issuance_id: req.query.id,
-    //   },
-    // });
-
-    // const spareData = await IssuedApproveSpare.findAll({
-    //   include: [
-    //     {
-    //       model: Inventory_Spare,
-    //       required: true,
-
-    //         include: [{
-    //           model: SparePart_Supplier,
-    //           required: true,
-    //             include: [{
-    //               model: SparePart,
-    //               required: true
-    //             }]
-
-    //         },]
-    //     },
-    //     {
-    //       model: Issuance,
-    //       required: true,
-    //     },
-    //   ],
-    //   where: {
-    //     issuance_id: req.query.id,
-    //   },
-    // });
-
-    // const subpartData = await IssuedApproveSubpart.findAll({
-    //   include: [
-    //     {
-    //       model: Inventory_Subpart,
-    //       required: true,
-
-    //         include: [{
-    //           model: Subpart_supplier,
-    //           required: true,
-    //             include: [{
-    //               model: SubPart,
-    //               required: true
-    //             }]
-
-    //         },]
-    //     },
-    //     {
-    //       model: Issuance,
-    //       required: true,
-    //     },
-    //   ],
-    //   where: {
-    //     issuance_id: req.query.id,
-    //   },
-    // });
-
     return res.json({
       product_notApprove: productData_notApprove,
-      // assembly_notApprove: asmData_notApprove,
-      // spare_notApprove: spareData_notApprove,
-      // subpart_notApprove: subpartData_notApprove,
       product: productData,
-      // assembly: asmData,
-      // spare: spareData,
-      // subpart: subpartData,
     });
   } catch (err) {
     console.error(err);
@@ -292,148 +159,154 @@ router.route("/approval").post(async (req, res) => {
   const id = req.query.id;
   const warehouseId = req.query.fromSite;
   const product = req.query.fetchProduct;
-  const assembly = req.query.fetchAssembly;
-  const spare = req.query.fetchSpare;
-  const subpart = req.query.fetchSubpart;
   const userId = req.query.userId;
-  const ReceivedBy = req.query.receivedBy
+  const ReceivedBy = req.query.receivedBy;
 
- // Get the current date and time in the Philippines time zone
- const currentDate = new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" });
+  // Get the current date and time in the Philippines time zone
+  const currentDate = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Manila",
+  });
   const approve = await Issuance.update(
-      {
-          status: 'Approved',
-          date_approved: new Date(currentDate),
-          approved_by: userId
+    {
+      status: "Approved",
+      date_approved: new Date(currentDate),
+      approved_by: userId,
+    },
+    {
+      where: {
+        issuance_id: req.query.id,
       },
-      {
-          where:{
-              issuance_id: req.query.id
-          }
-      }
-
-  )
-  if(approve){
-  if (product && product.length > 0) {
-    for (const prod of product) {
-      let remainingQuantity = prod.quantity;
-      const productName = prod.product.product_name;
-      const checkPrd = await Inventory.findAll({
-        where: {
-          warehouse_id: warehouseId,
-        },
-        include: [
-          {
-            model: ProductTAGSupplier,
-            required: true,
-
-            include: [
-              {
-                model: Product,
-                required: true,
-
-                where: {
-                  product_id: prod.product_id,
-                },
-              },
-            ],
-          },
-          {
-            model: Warehouses,
-            required: true,
-          },
-        ],
-      });
-
-      checkPrd.forEach(async inventory => {
-        console.log(
-          `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
-        );
-        if (remainingQuantity <= inventory.quantity) {
-          console.log(
-            `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
-          );
-           Inventory.update({ quantity: inventory.quantity - remainingQuantity }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-          const getId = await IssuedApproveProduct.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: remainingQuantity
-          })
-          remainingQuantity = 0;
-
-          const ApprovedIssueProduct = getId.id
-
-          //for accountability
-          const checkAccountability = await Issuance.findOne({
-            where: {
-              issuance_id: id,
-              with_accountability: 'true'
-            },
-          })
-    
-          if(checkAccountability){
-            await Accountability.create({
-              issued_approve_prd_id: ApprovedIssueProduct,
-            })
-          }
-        //   ; // Break the loop since remainingQuantity is now 0
-        } else {
-          console.log(
-            `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
-          );
-          remainingQuantity -= inventory.quantity;
-           Inventory.update({ quantity: 0 }, {
-              where: { inventory_id: inventory.inventory_id }
-          });
-
-          const getId = await IssuedApproveProduct.create({
-            inventory_id: inventory.inventory_id,
-            issuance_id: id,
-            quantity: inventory.quantity 
-          })
-
-          const ApprovedIssueProduct = getId.id
-
-          //for accountability
-          const checkAccountability = await Issuance.findOne({
-            where: {
-              issuance_id: id,
-              with_accountability: 'true'
-            },
-          })
-    
-          if(checkAccountability){
-            await Accountability.create({
-              issued_approve_prd_id: ApprovedIssueProduct,
-            })
-          }
-        }
-      })
-
-      //for activity log
-      const findIssuance = await Issuance.findOne({
-        where: {
-          issuance_id: id
-        },
-        include: [{
-          model: CostCenter,
-          required: true
-        }]
-      })
-      
-      const nameCostcenter = findIssuance.cost_center.name;
-      
-      await Activity_Log.create({
-        masterlist_id: userId,
-        action_taken: `Issuance: Approved the requested issued product ${productName} to ${nameCostcenter}`,
-      });
     }
-  }
+  );
+  if (approve) {
+    if (product && product.length > 0) {
+      for (const prod of product) {
+        let remainingQuantity = prod.quantity;
+        const productName = prod.product.product_name;
+        const checkPrd = await Inventory.findAll({
+          where: {
+            warehouse_id: warehouseId,
+          },
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
 
-   res.status(200).json();
+              include: [
+                {
+                  model: Product,
+                  required: true,
+
+                  where: {
+                    product_id: prod.product_id,
+                  },
+                },
+              ],
+            },
+            {
+              model: Warehouses,
+              required: true,
+            },
+          ],
+        });
+
+        checkPrd.forEach(async (inventory) => {
+          console.log(
+            `Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`
+          );
+          if (remainingQuantity <= inventory.quantity) {
+            console.log(
+              `Enough inventory found in inventory ${inventory.inventory_id}. Deducting ${remainingQuantity}.`
+            );
+            Inventory.update(
+              { quantity: inventory.quantity - remainingQuantity },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+
+            const getId = await IssuedApproveProduct.create({
+              inventory_id: inventory.inventory_id,
+              issuance_id: id,
+              quantity: remainingQuantity,
+            });
+            remainingQuantity = 0;
+
+            const ApprovedIssueProduct = getId.id;
+
+            //for accountability
+            const checkAccountability = await Issuance.findOne({
+              where: {
+                issuance_id: id,
+                with_accountability: "true",
+              },
+            });
+
+            if (checkAccountability) {
+              await Accountability.create({
+                issued_approve_prd_id: ApprovedIssueProduct,
+              });
+            }
+            //   ; // Break the loop since remainingQuantity is now 0
+          } else {
+            console.log(
+              `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
+            );
+            remainingQuantity -= inventory.quantity;
+            Inventory.update(
+              { quantity: 0 },
+              {
+                where: { inventory_id: inventory.inventory_id },
+              }
+            );
+
+            const getId = await IssuedApproveProduct.create({
+              inventory_id: inventory.inventory_id,
+              issuance_id: id,
+              quantity: inventory.quantity,
+            });
+
+            const ApprovedIssueProduct = getId.id;
+
+            //for accountability
+            const checkAccountability = await Issuance.findOne({
+              where: {
+                issuance_id: id,
+                with_accountability: "true",
+              },
+            });
+
+            if (checkAccountability) {
+              await Accountability.create({
+                issued_approve_prd_id: ApprovedIssueProduct,
+              });
+            }
+          }
+        });
+
+        //for activity log
+        const findIssuance = await Issuance.findOne({
+          where: {
+            issuance_id: id,
+          },
+          include: [
+            {
+              model: CostCenter,
+              required: true,
+            },
+          ],
+        });
+
+        const nameCostcenter = findIssuance.cost_center.name;
+
+        await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Issuance: Approved the requested issued product ${productName} to ${nameCostcenter}`,
+        });
+      }
+    }
+
+    res.status(200).json();
   }
 });
 
@@ -451,16 +324,18 @@ router.route("/reject").post(async (req, res) => {
 
   const findIssuance = await Issuance.findOne({
     where: {
-      issuance_id: req.query.id
+      issuance_id: req.query.id,
     },
-    include: [{
-      model: CostCenter,
-      required: true
-    }]
-  })
-  
+    include: [
+      {
+        model: CostCenter,
+        required: true,
+      },
+    ],
+  });
+
   const nameCostcenter = findIssuance.cost_center.name;
-  
+
   await Activity_Log.create({
     masterlist_id: req.query.userId,
     action_taken: `Issuance: Rejected the requested issued product to ${nameCostcenter}`,
@@ -493,8 +368,8 @@ router.route("/approvalIssuance").get(async (req, res) => {
         },
         {
           model: Warehouses,
-          required: true
-        }
+          required: true,
+        },
       ],
       where: {
         issuance_id: req.query.id,
@@ -558,7 +433,7 @@ router.route("/create").post(async (req, res) => {
       mrs: req.body.mrs,
       remarks: req.body.remarks,
       status: "Pending",
-      issued_by: req.body.userId
+      issued_by: req.body.userId,
     });
 
     const issuanceee_ID = Issue_newData.issuance_id;
@@ -605,12 +480,12 @@ router.route("/create").post(async (req, res) => {
 
       const CostCentername = await CostCenter.findOne({
         where: {
-          id: req.body.issuedTo
-        }
-      })
+          id: req.body.issuedTo,
+        },
+      });
 
       const nameCostcenter = CostCentername.name;
-      
+
       await Activity_Log.create({
         masterlist_id: userId,
         action_taken: `Issuance: Issued a product ${Name} to ${nameCostcenter}`,
@@ -629,26 +504,32 @@ router.route("/fetchPreview").get(async (req, res) => {
     const data = await IssuedApproveProduct.findAll({
       where: {
         quantity: {
-          [Op.ne]: 0
-        }
+          [Op.ne]: 0,
+        },
       },
-      include: [{
-        model: Inventory,
-        required: true,
-          include: [{
-            model: ProductTAGSupplier,
-            required: true,
-              include: [{
-                model: Product,
-                required: true
-              }]
-          }]
-       },{
-        model: Issuance,
-        required: true,
+      include: [
+        {
+          model: Inventory,
+          required: true,
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+              include: [
+                {
+                  model: Product,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: Issuance,
+          required: true,
           where: {
             issuance_id: req.query.issuance_id,
-            status: 'Approved'
+            status: "Approved",
           },
           include: [
             {
@@ -685,10 +566,11 @@ router.route("/fetchPreview").get(async (req, res) => {
             },
             {
               model: Warehouses,
-              required: true
-            }
+              required: true,
+            },
           ],
-       }]
+        },
+      ],
     });
 
     if (data) {
