@@ -229,11 +229,15 @@ function MasterList({ authrztn }) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchMasterlist.filter((data) => {
       return (
-        data.userRole.col_rolename.toLowerCase().includes(searchTerm) ||
-        data.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.col_email.toLowerCase().includes(searchTerm) ||
-        data.department.department_name.toLowerCase().includes(searchTerm) ||
-        data.col_status.toLowerCase().includes(searchTerm)
+        (data.col_address?.toString().toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (data.col_Fname?.toString().toLowerCase() || "").includes(searchTerm) ||
+        (data.col_email?.toString().toLowerCase() || "").includes(searchTerm) ||
+        (
+          data.department.department_name?.toString().toLowerCase() || ""
+        ).includes(searchTerm) ||
+        (data.col_status?.toString().toLowerCase() || "").includes(searchTerm)
       );
     });
 

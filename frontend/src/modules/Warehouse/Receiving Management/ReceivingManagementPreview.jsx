@@ -344,7 +344,7 @@ function ReceivingManagementPreview({ authrztn }) {
       if (Received_quantity > po_quantity) {
         // Show SweetAlert popup message
         swal({
-          title: "Error",
+          title: "Oops",
           text: "Received Quantity cannot exceed the calculated maximum.",
           icon: "error",
         }).then(() => {
@@ -905,8 +905,17 @@ function ReceivingManagementPreview({ authrztn }) {
                         }}
                         onChange={(e) => setcustomFee(e.target.value)}
                         onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
+                          const invalidKeys = [
+                            "e",
+                            "E",
+                            "+",
+                            "-",
+                            "ArrowUp",
+                            "ArrowDown",
+                          ];
+                          if (invalidKeys.includes(e.key)) {
                             e.preventDefault();
+                          }
                         }}
                       />
                     </div>
@@ -933,8 +942,17 @@ function ReceivingManagementPreview({ authrztn }) {
                         }}
                         onChange={(e) => setShippingFee(e.target.value)}
                         onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
+                          const invalidKeys = [
+                            "e",
+                            "E",
+                            "+",
+                            "-",
+                            "ArrowUp",
+                            "ArrowDown",
+                          ];
+                          if (invalidKeys.includes(e.key)) {
                             e.preventDefault();
+                          }
                         }}
                       />
                     </div>
@@ -1036,6 +1054,14 @@ function ReceivingManagementPreview({ authrztn }) {
                               ["e", "E", "+", "-"].includes(e.key) &&
                                 e.preventDefault();
                             }}
+                            onInput={(e) => {
+                              e.preventDefault();
+                              const validInput = e.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              ); // Replace non-numeric characters
+                              e.target.value = validInput;
+                            }}
                             value={
                               child.supp_tag.isSubUnit === 0
                                 ? "1"
@@ -1096,6 +1122,14 @@ function ReceivingManagementPreview({ authrztn }) {
                               ["e", "E", "+", "-"].includes(e.key) &&
                                 e.preventDefault();
                             }}
+                            onInput={(e) => {
+                              e.preventDefault();
+                              const validInput = e.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              ); // Replace non-numeric characters
+                              e.target.value = validInput;
+                            }}
                           />
                         </Form.Group>
                       </div>
@@ -1116,6 +1150,14 @@ function ReceivingManagementPreview({ authrztn }) {
                               // fontSize: "14px",
                               fontFamily: "Poppins, Source Sans Pro",
                               pointerEvents: "none",
+                            }}
+                            onInput={(e) => {
+                              e.preventDefault();
+                              const validInput = e.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              ); // Replace non-numeric characters
+                              e.target.value = validInput;
                             }}
                             onChange={(e) =>
                               handleInputChange(

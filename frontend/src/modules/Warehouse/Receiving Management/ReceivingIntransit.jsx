@@ -846,8 +846,17 @@ function ReceivingIntransit({ authrztn }) {
                         }}
                         onChange={(e) => setcustomFee(e.target.value)}
                         onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
+                          const invalidKeys = [
+                            "e",
+                            "E",
+                            "+",
+                            "-",
+                            "ArrowUp",
+                            "ArrowDown",
+                          ];
+                          if (invalidKeys.includes(e.key)) {
                             e.preventDefault();
+                          }
                         }}
                       />
                     </div>
@@ -874,8 +883,17 @@ function ReceivingIntransit({ authrztn }) {
                         }}
                         onChange={(e) => setShippingFee(e.target.value)}
                         onKeyDown={(e) => {
-                          ["e", "E", "+", "-"].includes(e.key) &&
+                          const invalidKeys = [
+                            "e",
+                            "E",
+                            "+",
+                            "-",
+                            "ArrowUp",
+                            "ArrowDown",
+                          ];
+                          if (invalidKeys.includes(e.key)) {
                             e.preventDefault();
+                          }
                         }}
                       />
                     </div>
@@ -974,6 +992,14 @@ function ReceivingIntransit({ authrztn }) {
                               ["e", "E", "+", "-"].includes(e.key) &&
                                 e.preventDefault();
                             }}
+                            onInput={(e) => {
+                              e.preventDefault();
+                              const validInput = e.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              ); // Replace non-numeric characters
+                              e.target.value = validInput;
+                            }}
                             value={
                               inputValues[
                                 `${po_id}_${child.type}_${child.supp_tag.code}_${child.supp_tag.name}`
@@ -1031,6 +1057,14 @@ function ReceivingIntransit({ authrztn }) {
                             onKeyDown={(e) => {
                               ["e", "E", "+", "-"].includes(e.key) &&
                                 e.preventDefault();
+                            }}
+                            onInput={(e) => {
+                              e.preventDefault();
+                              const validInput = e.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              ); // Replace non-numeric characters
+                              e.target.value = validInput;
                             }}
                           />
                         </Form.Group>

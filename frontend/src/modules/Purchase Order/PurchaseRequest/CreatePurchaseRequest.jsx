@@ -101,12 +101,13 @@ function CreatePurchaseRequest() {
   const filteredOptions = fetchProduct
     .map((prod) => ({
       value: `${prod.product_id}_${prod.product_code}_Product`, // Indicate that it's a product
-      label: (
-        <div>
-          Product Code: <strong>{prod.product_code}</strong> / Product Name:{" "}
-          <strong>{prod.product_name}</strong> /
-        </div>
-      ),
+      // label: (
+      //   <div>
+      //     Product Code: <strong>{prod.product_code}</strong> / Product Name:{" "}
+      //     <strong>{prod.product_name}</strong> /
+      //   </div>
+      // ),
+      label: `(${prod.product_code}) - ${prod.product_name}`,
       type: "Product",
       values: prod.product_id,
       code: prod.product_code,

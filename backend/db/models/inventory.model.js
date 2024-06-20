@@ -1,7 +1,7 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const Inventory = sequelize.define('inventory_prd', {
+const Inventory = sequelize.define("inventory_prd", {
   inventory_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -10,35 +10,34 @@ const Inventory = sequelize.define('inventory_prd', {
   },
   product_tag_supp_id: {
     type: DataTypes.INTEGER,
-    allowNull: true, 
-    unique: false,
-  }, 
-  quantity: {
-    type: DataTypes.FLOAT,
     allowNull: true,
-    unique: false
+    unique: false,
+  },
+  quantity: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+    unique: false,
   },
   set_quantity: {
-    type: DataTypes.INTEGER, 
+    type: DataTypes.INTEGER,
     allowNull: true,
-    unique: false
+    unique: false,
   },
-  static_quantity: { // for dashboard count
-    type: DataTypes.FLOAT,
+  static_quantity: {
+    // for dashboard count
+    type: DataTypes.DOUBLE,
     allowNull: true,
-
   },
   price: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
-
   },
   freight_cost: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   custom_cost: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   reference_number: {
@@ -59,7 +58,7 @@ const Inventory = sequelize.define('inventory_prd', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW,
-  }
+  },
 });
 
 module.exports = Inventory;

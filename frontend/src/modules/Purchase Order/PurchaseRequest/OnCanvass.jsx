@@ -34,23 +34,23 @@ function PurchaseOrderListPreview() {
   const [useFor, setUseFor] = useState("");
   const [remarks, setRemarks] = useState("");
   const [status, setStatus] = useState("");
-  const [selected_PR_Prod, setSelected_PR_Prod] = useState("") // mag hold ng primary id ng na select na profduct sa table na purchase req product
-  const [selected_PR_Prod_array, setSelected_PR_Prod_array] = useState([]) // mag hold ng primary id pag naka select na ng supplier para pang check if maynakaligtaan na product wala pa na PO e insert ito sa table na purchase req product
+  const [selected_PR_Prod, setSelected_PR_Prod] = useState(""); // mag hold ng primary id ng na select na profduct sa table na purchase req product
+  const [selected_PR_Prod_array, setSelected_PR_Prod_array] = useState([]); // mag hold ng primary id pag naka select na ng supplier para pang check if maynakaligtaan na product wala pa na PO e insert ito sa table na purchase req product
   const [validated, setValidated] = useState(false);
   const [editMode, setEditMode] = useState({});
-  const [userId, setuserId] = useState('');
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
+  }, []);
 
   //para sa assembly data na e canvass
 
@@ -93,18 +93,18 @@ function PurchaseOrderListPreview() {
         },
       })
       .then((res) => {
-        setProducts(res.data)
-        const modifiedData = res.data.map(row => ({
+        setProducts(res.data);
+        const modifiedData = res.data.map((row) => ({
           id: row.id,
           isPO: row.isPO === null ? false : row.isPO,
         }));
-        setSelected_PR_Prod_array(modifiedData)
-        console.log(modifiedData)
+        setSelected_PR_Prod_array(modifiedData);
+        console.log(modifiedData);
       })
       .catch((err) => console.log(err));
   }, []);
-//   console.log(`selected_PR_Prod_array`)
-//  console.log(selected_PR_Prod_array)
+  //   console.log(`selected_PR_Prod_array`)
+  //  console.log(selected_PR_Prod_array)
 
   useEffect(() => {
     axios
@@ -175,7 +175,7 @@ function PurchaseOrderListPreview() {
       .catch((err) => console.log(err));
   }, []);
 
-  console.log(latestCount)
+  console.log(latestCount);
 
   const [parentArray, setParentArray] = useState([]);
   const [titleCounter, setTitleCounter] = useState(0);
@@ -254,7 +254,6 @@ function PurchaseOrderListPreview() {
       return updatedInputs;
     });
   };
-  
 
   const handleDaysFromChange = (title, value) => {
     setDaysInputs((prevInputs) => {
@@ -269,7 +268,7 @@ function PurchaseOrderListPreview() {
       return updatedInputs;
     });
   };
-  
+
   const handleDaysToChange = (title, value) => {
     setDaysInputs((prevInputs) => {
       const updatedInputs = {
@@ -283,41 +282,40 @@ function PurchaseOrderListPreview() {
       return updatedInputs;
     });
   };
-  
+
   const updateAddPOBackend = (supplierTitle) => {
-    const serializedParent = parentArray.map(({ title, supplierCode, array }) => {
-      return {
-        title,
-        supplierCode,
-        serializedArray: array.map((item) => ({
-          quantity: quantityInputs[`${title}_${item.type}_${item.product.id}`] || "",
-          type: item.type,
-          prod_supplier: item.product.id,
-          prod_supplier_price: item.product.product_price,
-          daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
-          daysto: daysInputs[`${title}`]?.DaysTo || "",
-        })),
-      };
-    });
+    const serializedParent = parentArray.map(
+      ({ title, supplierCode, array }) => {
+        return {
+          title,
+          supplierCode,
+          serializedArray: array.map((item) => ({
+            quantity:
+              quantityInputs[`${title}_${item.type}_${item.product.id}`] || "",
+            type: item.type,
+            prod_supplier: item.product.id,
+            prod_supplier_price: item.product.product_price,
+            daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
+            daysto: daysInputs[`${title}`]?.DaysTo || "",
+          })),
+        };
+      }
+    );
     setAddPObackend(serializedParent);
     // console.log("Products:", parentArray);
     // console.log("Selected Products:", serializedParent);
   };
-  
+
   useEffect(() => {
     updateAddPOBackend();
   }, [quantityInputs, daysInputs, selected_PR_Prod_array]);
 
-
-
   const handleAddToTable = (product, type, code, name, supp_email) => {
-
-    setSelected_PR_Prod_array(prevArray => 
-      prevArray.map(item => 
+    setSelected_PR_Prod_array((prevArray) =>
+      prevArray.map((item) =>
         item.id === selected_PR_Prod ? { ...item, isPO: true } : item
       )
     );
-    
 
     setProductArrays((prevArrays) => {
       const supplierCode = product.supplier.supplier_code;
@@ -360,7 +358,7 @@ function PurchaseOrderListPreview() {
         } else {
           // If the container doesn't exist, create a new one
           const newTitle = (parseInt(latestCount, 10) + titleCounter)
-          // const newTitle = (parseInt(latestCount, 10))
+            // const newTitle = (parseInt(latestCount, 10))
             .toString()
             .padStart(8, "0");
           const newParentArray = [
@@ -650,7 +648,7 @@ function PurchaseOrderListPreview() {
   //------------------------------------------------Product rendering data ------------------------------------------------//
 
   const handleCanvass = (primary_id, product_id, prd_code, prd_name) => {
-    setSelected_PR_Prod(primary_id)
+    setSelected_PR_Prod(primary_id);
     setShowModal(true);
     setSelectedProductname(`${prd_code} - ${prd_name}`);
     axios
@@ -668,17 +666,9 @@ function PurchaseOrderListPreview() {
     // console.log(product_id)
   };
   const handleAddToTablePO = (productId, code, name, supp_email) => {
-
-      
-
-  
     const product = suppProducts.find((data) => data.id === productId);
     handleAddToTable(product, "product", code, name, supp_email);
-
-
-
   };
-
 
   //------------------------------------------------Assembly rendering data ------------------------------------------------//
 
@@ -817,7 +807,7 @@ function PurchaseOrderListPreview() {
           arrayPO: addPObackend,
           pr_id: id,
           userId,
-          selected_PR_Prod_array
+          selected_PR_Prod_array,
         })
         .then((res) => {
           // console.log(res);
@@ -1002,33 +992,44 @@ function PurchaseOrderListPreview() {
                         <td>{data.product.product_name}</td>
                         <td>{data.description}</td>
                         <td>
-                          {
-                            data.isPO === true ? (
-                              <React.Fragment>
-                                <button
-                                  type="button"
-                                  onClick={() => handleCanvass(data.id, data.product_id, data.product.product_code, data.product.product_name)}
-                                  className="btn canvas"
-                                  disabled
-                                >
-                                  <ShoppingCart size={20} />
-                                  Purchase Ordered
-                                </button>
-                              </React.Fragment>
-                            ) : (
-                              <React.Fragment>
-                                <button
-                                  type="button"
-                                  onClick={() => handleCanvass(data.id, data.product_id, data.product.product_code, data.product.product_name)}
-                                  className="btn canvas"
-                                >
-                                  <ShoppingCart size={20} />
-                                  Canvas
-                                </button>
-                              </React.Fragment>
-                            )
-                          }
-                          
+                          {data.isPO === true ? (
+                            <React.Fragment>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleCanvass(
+                                    data.id,
+                                    data.product_id,
+                                    data.product.product_code,
+                                    data.product.product_name
+                                  )
+                                }
+                                className="btn canvas"
+                                disabled
+                              >
+                                <ShoppingCart size={20} />
+                                Purchase Ordered
+                              </button>
+                            </React.Fragment>
+                          ) : (
+                            <React.Fragment>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleCanvass(
+                                    data.id,
+                                    data.product_id,
+                                    data.product.product_code,
+                                    data.product.product_name
+                                  )
+                                }
+                                className="btn canvas"
+                              >
+                                <ShoppingCart size={20} />
+                                Canvas
+                              </button>
+                            </React.Fragment>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -1130,59 +1131,70 @@ function PurchaseOrderListPreview() {
                       <div className="canvass-supplier-content">
                         <div className="POand-daysDeliver">
                           <div className="PO-nums">
-                              <p>{`PO #: ${title}`}</p>
+                            <p>{`PO #: ${title}`}</p>
+                          </div>
+                          <div className="numberofday-deliver">
+                            <p>Estimated day(s) to deliver:</p>
+                            <div className="inputdays">
+                              <Form.Control
+                                type="number"
+                                required
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
+                                value={daysInputs[`${title}`]?.DaysFrom || ""}
+                                onChange={(e) => {
+                                  handleDaysFromChange(title, e.target.value);
+                                }}
+                                onInput={(e) => {
+                                  e.preventDefault();
+                                  const validInput = e.target.value.replace(
+                                    /[^0-9]/g,
+                                    ""
+                                  ); // Replace non-numeric characters
+                                  e.target.value = validInput;
+                                }}
+                                style={{
+                                  height: "25px",
+                                  width: "50px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                  marginTop: "2px",
+                                  fontSize: "12px",
+                                }}
+                              ></Form.Control>
+                              <p>To</p>
+                              <Form.Control
+                                type="number"
+                                required
+                                onKeyDown={(e) => {
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                    e.preventDefault();
+                                }}
+                                value={daysInputs[`${title}`]?.DaysTo || ""}
+                                onInput={(e) => {
+                                  e.preventDefault();
+                                  const validInput = e.target.value.replace(
+                                    /[^0-9]/g,
+                                    ""
+                                  ); // Replace non-numeric characters
+                                  e.target.value = validInput;
+                                }}
+                                onChange={(e) => {
+                                  handleDaysToChange(title, e.target.value);
+                                }}
+                                style={{
+                                  height: "25px",
+                                  width: "50px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                  marginTop: "2px",
+                                  fontSize: "12px",
+                                }}
+                              ></Form.Control>
                             </div>
-                            <div className="numberofday-deliver">
-                                <p>Estimated day(s) to deliver:</p>
-                                <div className="inputdays">
-                                  <Form.Control
-                                        type="number"
-                                        required
-                                        onKeyDown={(e) => {
-                                          ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
-                                        }}
-                                        value={
-                                          daysInputs[`${title}`]?.DaysFrom || ""
-                                        }
-                                        onChange={(e) => {
-                                          handleDaysFromChange(title, e.target.value);
-                                        }}
-                                        style={{
-                                          height: "25px",
-                                          width: "50px",
-                                          fontSize: "14px",
-                                          fontFamily: "Poppins, Source Sans Pro",
-                                          marginTop: "2px",
-                                          fontSize: "12px"
-                                        }}
-                                      >
-                                      </Form.Control>
-                                    <p>To</p>
-                                    <Form.Control
-                                  type="number"
-                                  required
-                                  onKeyDown={(e) => {
-                                    ["e", "E", "+", "-"].includes(e.key) &&
-                                      e.preventDefault();
-                                  }}
-                                  value={
-                                    daysInputs[`${title}`]?.DaysTo || ""
-                                  }
-                                  onChange={(e) => {
-                                    handleDaysToChange(title, e.target.value);
-                                  }}
-                                  style={{
-                                    height: "25px",
-                                    width: "50px",
-                                    fontSize: "14px",
-                                    fontFamily: "Poppins, Source Sans Pro",
-                                    marginTop: "2px",
-                                    fontSize: "12px"
-                                  }}
-                                >
-                                </Form.Control>
-                                </div>
-                            </div>
+                          </div>
                         </div>
 
                         {array.length > 0 && (
@@ -1195,49 +1207,54 @@ function PurchaseOrderListPreview() {
                         {array.map((item, index) => (
                           <div className="canvass-data-container" key={index}>
                             <div className="content-of-data-canvass">
-                                <div className="prodcode">
-                                      {`Product Code: `}
-                                      <strong>{item.code}</strong>
-                                </div>
-                                <div className="prodnames">
-                                  {`Product Name: `}
-                                  <strong>{item.name}</strong>
-                                </div>
-                                <div className="prodinputs">
-                                  <Form.Control
-                                    type="number"
-                                    placeholder="Quantity"
-                                    value={
-                                      quantityInputs[
-                                        `${title}_${item.type}_${item.product.id}`
-                                      ] || ""
-                                    }
-                                    onChange={(e) => {
-                                      handleQuantityChange(
-                                        title,
-                                        item.type,
-                                        item.product.id,
-                                        e.target.value
-                                      );
-                                    }}
-                                    required
-                                    onKeyDown={(e) => {
-                                      ["e", "E", "+", "-"].includes(e.key) &&
-                                        e.preventDefault();
-                                    }}
-                                    style={{
-                                      height: "35px",
-                                      width: "100px",
-                                      fontSize: "14px",
-                                      fontFamily: "Poppins, Source Sans Pro",
-                                      marginTop: "3%",
-                                    }}
-                                  />
-                                </div>
-                             </div> 
-
-
-
+                              <div className="prodcode">
+                                {`Product Code: `}
+                                <strong>{item.code}</strong>
+                              </div>
+                              <div className="prodnames">
+                                {`Product Name: `}
+                                <strong>{item.name}</strong>
+                              </div>
+                              <div className="prodinputs">
+                                <Form.Control
+                                  type="number"
+                                  placeholder="Quantity"
+                                  value={
+                                    quantityInputs[
+                                      `${title}_${item.type}_${item.product.id}`
+                                    ] || ""
+                                  }
+                                  onChange={(e) => {
+                                    handleQuantityChange(
+                                      title,
+                                      item.type,
+                                      item.product.id,
+                                      e.target.value
+                                    );
+                                  }}
+                                  onInput={(e) => {
+                                    e.preventDefault();
+                                    const validInput = e.target.value.replace(
+                                      /[^0-9]/g,
+                                      ""
+                                    ); // Replace non-numeric characters
+                                    e.target.value = validInput;
+                                  }}
+                                  required
+                                  onKeyDown={(e) => {
+                                    ["e", "E", "+", "-"].includes(e.key) &&
+                                      e.preventDefault();
+                                  }}
+                                  style={{
+                                    height: "35px",
+                                    width: "100px",
+                                    fontSize: "14px",
+                                    fontFamily: "Poppins, Source Sans Pro",
+                                    marginTop: "3%",
+                                  }}
+                                />
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>

@@ -168,14 +168,15 @@ const CreateIssuance = ({ setActiveTab, authrztn }) => {
   const filteredOptions = fetchProduct
     .map((product) => ({
       value: `${product.productID}_${product.product_code}_Product`,
-      label: (
-        <div>
-          Product Code: <strong>{product.product_code}</strong> / Product Name:{" "}
-          <strong>{product.product_name}</strong> / Quantity:{" "}
-          <strong>{product.totalQuantity}</strong> / UOM:{" "}
-          <strong>{product.UOM}</strong>
-        </div>
-      ),
+      // label: (
+      //   <div>
+      //     Product Code: <strong>{product.product_code}</strong> / Product Name:{" "}
+      //     <strong>{product.product_name}</strong> / Quantity:{" "}
+      //     <strong>{product.totalQuantity}</strong> / UOM:{" "}
+      //     <strong>{product.UOM}</strong>
+      //   </div>
+      // ),
+      label: `(${product.product_code}) - ${product.product_name} - ${product.UOM}`,
       type: "Product",
       inventory_id: product.inventory_id,
       product_id: product.productID,

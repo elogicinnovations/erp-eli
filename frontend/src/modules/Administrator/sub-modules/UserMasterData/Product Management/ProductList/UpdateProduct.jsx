@@ -6,20 +6,19 @@ import axios from "axios";
 import "../../../../../../assets/global/style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../../../../styles/react-style.css";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 // import NoData from '../../../../../../assets/image/NoData.png';
-import NoAccess from '../../../../../../assets/image/NoAccess.png';
+import NoAccess from "../../../../../../assets/image/NoAccess.png";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import cls_unitMeasurement from "../../../../../../assets/global/unitMeasurement";
 import Select from "react-select";
-import Carousel from 'react-bootstrap/Carousel';
-import { ArrowCircleLeft,
-  NotePencil } from "@phosphor-icons/react";
+import Carousel from "react-bootstrap/Carousel";
+import { ArrowCircleLeft, NotePencil } from "@phosphor-icons/react";
 import { jwtDecode } from "jwt-decode";
-import { MultiSelect } from 'primereact/multiselect';
+import { MultiSelect } from "primereact/multiselect";
 import CameraComponent from "./../../../../../../assets/components/camera.jsx";
-function UpdateProduct({authrztn}) {
+function UpdateProduct({ authrztn }) {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +56,9 @@ function UpdateProduct({authrztn}) {
   const [fetchProductSubAssemblies, setFetchProductSubAssembly] = useState([]);
   const [fetchProductSpareParts, setFetchProductSpareParts] = useState([]);
   const [specificProductAssembly, setSpecificProductAssembly] = useState([]);
-  const [specificProductSubAssembly, setSpecificProductSubAssembly] = useState([]);
+  const [specificProductSubAssembly, setSpecificProductSubAssembly] = useState(
+    []
+  );
   const [specificProductSpares, setSpecificProductSpares] = useState([]);
 
   const [price, setPrice] = useState("");
@@ -65,59 +66,58 @@ function UpdateProduct({authrztn}) {
 
   const [selectedDropdownOptions, setSelectedDropdownOptions] = useState([]);
   const [isSaveButtonDisabled, setIsSaveButtonDisabled] = useState(true);
+  const [isSubUnitChange, setIsSubUnitChange] = useState(false);
   const [productImages, setproductImages] = useState([]);
-  const [Fname, setFname] = useState('');
-  const [username, setUsername] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userId, setuserId] = useState('');
+  const [Fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
-    var token = localStorage.getItem('accessToken');
-    if(typeof token === 'string'){
-    var decoded = jwtDecode(token);
-    setUsername(decoded.username);
-    setFname(decoded.Fname);
-    setUserRole(decoded.userrole);
-    setuserId(decoded.id);
+    var token = localStorage.getItem("accessToken");
+    if (typeof token === "string") {
+      var decoded = jwtDecode(token);
+      setUsername(decoded.username);
+      setFname(decoded.Fname);
+      setUserRole(decoded.userrole);
+      setuserId(decoded.id);
     }
-  }
+  };
 
   useEffect(() => {
     decodeToken();
-  }, [])
-
+  }, []);
 
   //Fetch ang specific na product type assembly
   useEffect(() => {
     const delay = setTimeout(() => {
-    axios
-      .get(BASE_URL + "/productassm/fetchProductassembly", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        const data = res.data;
-        const selectedProductAssembly = data.map((row) => ({
-          value: row.tagged_product_assemblies.product_id,
-          label: row.tagged_product_assemblies.product_name,
-        }));
-        setSpecificProductAssembly(selectedProductAssembly);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }, 1000);
+      axios
+        .get(BASE_URL + "/productassm/fetchProductassembly", {
+          params: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          const data = res.data;
+          const selectedProductAssembly = data.map((row) => ({
+            value: row.tagged_product_assemblies.product_id,
+            label: row.tagged_product_assemblies.product_name,
+          }));
+          setSpecificProductAssembly(selectedProductAssembly);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-  return () => clearTimeout(delay);
+    return () => clearTimeout(delay);
   }, [id]);
 
-
-    //Fetch ang specific na product type sub-assembly
-    useEffect(() => {
-      const delay = setTimeout(() => {
+  //Fetch ang specific na product type sub-assembly
+  useEffect(() => {
+    const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/productsubAssm/fetchProductSubassembly", {
           params: {
@@ -138,64 +138,62 @@ function UpdateProduct({authrztn}) {
           setIsLoading(false);
         });
     }, 1000);
-  
+
     return () => clearTimeout(delay);
-    }, [id]);
+  }, [id]);
 
-        //Fetch ang specific na product type spare parts
-        useEffect(() => {
-          const delay = setTimeout(() => {
-          axios
-            .get(BASE_URL + "/productsparestag/fetchProductSpares", {
-              params: {
-                id: id,
-              },
-            })
-            .then((res) => {
-              const data = res.data;
-              const selectedProductSubAssembly = data.map((row) => ({
-                value: row.tag_product_spares.product_id,
-                label: row.tag_product_spares.product_name,
-              }));
-              setSpecificProductSpares(selectedProductSubAssembly);
-              setIsLoading(false);
-            })
-            .catch((err) => {
-              console.log(err);
-              setIsLoading(false);
-            });
-        }, 1000);
-      
-        return () => clearTimeout(delay);
-        }, [id]);
+  //Fetch ang specific na product type spare parts
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/productsparestag/fetchProductSpares", {
+          params: {
+            id: id,
+          },
+        })
+        .then((res) => {
+          const data = res.data;
+          const selectedProductSubAssembly = data.map((row) => ({
+            value: row.tag_product_spares.product_id,
+            label: row.tag_product_spares.product_name,
+          }));
+          setSpecificProductSpares(selectedProductSubAssembly);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
+    return () => clearTimeout(delay);
+  }, [id]);
 
+  //Product Assembly fetch
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/product/DropdownProductAssembly")
+        .then((res) => {
+          setFetchProductAssemblies(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-      //Product Assembly fetch
-      useEffect(() => {
-        const delay = setTimeout(() => {
-        axios
-          .get(BASE_URL + "/product/DropdownProductAssembly")
-          .then((res) => {
-            setFetchProductAssemblies(res.data)
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            setIsLoading(false);
-          });
-      }, 1000);
-    
-      return () => clearTimeout(delay);
-      }, []);
-    
-    //Product Sub-Assembly fetch
-    useEffect(() => {
-      const delay = setTimeout(() => {
+    return () => clearTimeout(delay);
+  }, []);
+
+  //Product Sub-Assembly fetch
+  useEffect(() => {
+    const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/product/DropdownProductSubAssembly")
         .then((res) => {
-          setFetchProductSubAssembly(res.data)
+          setFetchProductSubAssembly(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -203,17 +201,17 @@ function UpdateProduct({authrztn}) {
           setIsLoading(false);
         });
     }, 1000);
-  
+
     return () => clearTimeout(delay);
-    }, []);
-  
-    //Product Spare Parts fetch
-    useEffect(() => {
-      const delay = setTimeout(() => {
+  }, []);
+
+  //Product Spare Parts fetch
+  useEffect(() => {
+    const delay = setTimeout(() => {
       axios
         .get(BASE_URL + "/product/DropdownProductSpareParts")
         .then((res) => {
-          setFetchProductSpareParts(res.data)
+          setFetchProductSpareParts(res.data);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -221,40 +219,41 @@ function UpdateProduct({authrztn}) {
           setIsLoading(false);
         });
     }, 1000);
-  
+
     return () => clearTimeout(delay);
-    }, []);
+  }, []);
 
+  //for product type assembly handler
+  const handleMultiProductAssemblyChange = (e) => {
+    setSpecificProductAssembly(e.value.map((value) => ({ value, label: "" })));
+    setIsSaveButtonDisabled(false);
+  };
 
-    //for product type assembly handler
-    const handleMultiProductAssemblyChange = (e) => {
-      setSpecificProductAssembly(e.value.map(value => ({ value, label: "" })));
-      setIsSaveButtonDisabled(false);
-    };
+  //for product type sub assembly handler
+  const handleMultiProductSubAssemblyChange = (e) => {
+    setSpecificProductSubAssembly(
+      e.value.map((value) => ({ value, label: "" }))
+    );
+    setIsSaveButtonDisabled(false);
+  };
 
-    //for product type sub assembly handler
-    const handleMultiProductSubAssemblyChange = (e) => {
-      setSpecificProductSubAssembly(e.value.map(value => ({ value, label: "" })));
-      setIsSaveButtonDisabled(false);
-    };
+  //for product type spare parts handler
+  const handleMultiProductSpareChange = (e) => {
+    setSpecificProductSpares(e.value.map((value) => ({ value, label: "" })));
+    setIsSaveButtonDisabled(false);
+  };
 
-    //for product type spare parts handler
-    const handleMultiProductSpareChange = (e) => {
-      setSpecificProductSpares(e.value.map(value => ({ value, label: "" })));
-      setIsSaveButtonDisabled(false);
-    };
-
-    //for product type select
-    const handleSelectProductType = (event) => {
-      const selectedProductType = event.target.value;
-      setProductType(selectedProductType);
-      setIsSaveButtonDisabled(false);
-      if (selectedProductType === "N/A") {
-        setSpecificProductAssembly([]);
-        setSpecificProductSubAssembly([]);
-        setSpecificProductSpares([]);
-      }
-    };
+  //for product type select
+  const handleSelectProductType = (event) => {
+    const selectedProductType = event.target.value;
+    setProductType(selectedProductType);
+    setIsSaveButtonDisabled(false);
+    if (selectedProductType === "N/A") {
+      setSpecificProductAssembly([]);
+      setSpecificProductSubAssembly([]);
+      setSpecificProductSpares([]);
+    }
+  };
 
   //fetching of assembly in dropdown
   // useEffect(() => {
@@ -336,8 +335,6 @@ function UpdateProduct({authrztn}) {
 
   // return () => clearTimeout(delay);
   // }, [id]);
-
-
 
   //for onchange dropdown of spareparts
   // const handleMultiSparePartsSelectChange = (e) => {
@@ -428,31 +425,32 @@ function UpdateProduct({authrztn}) {
       })
       .catch((err) => console.log(err));
   }, [id]);
-  
-//-----------------------------fetching data for edit
-useEffect(() => {   
-  // console.log('code' + id)
-  axios.get(BASE_URL + '/product/fetchTableEdit', {
-      params: {
-        id: id
-      }
-    })
-  .then(res => {
-      setCode(res.data[0].product_code)
-      setProd_id(res.data[0].productsID)
-      setName(res.data[0].product_name);
-      setProductType(res.data[0].type);
-      setPartNumber(res.data[0].part_number);
-      setslct_category(res.data[0].product_category);
-      setslct_binLocation(res.data[0].product_location);
-      setunitMeasurement(res.data[0].product_unitMeasurement);
-      setUOM_set(res.data[0].UOM_set);
-      setslct_manufacturer(res.data[0].product_manufacturer);
-      setDetails(res.data[0].product_details);
-      setThresholds(res.data[0].product_threshold);
-  })
-    .catch(err => console.log(err));
-}, []);
+
+  //-----------------------------fetching data for edit
+  useEffect(() => {
+    // console.log('code' + id)
+    axios
+      .get(BASE_URL + "/product/fetchTableEdit", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        setCode(res.data[0].product_code);
+        setProd_id(res.data[0].productsID);
+        setName(res.data[0].product_name);
+        setProductType(res.data[0].type);
+        setPartNumber(res.data[0].part_number);
+        setslct_category(res.data[0].product_category);
+        setslct_binLocation(res.data[0].product_location);
+        setunitMeasurement(res.data[0].product_unitMeasurement);
+        setUOM_set(res.data[0].UOM_set);
+        setslct_manufacturer(res.data[0].product_manufacturer);
+        setDetails(res.data[0].product_details);
+        setThresholds(res.data[0].product_threshold);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   //fetching of Image
   useEffect(() => {
@@ -514,45 +512,43 @@ useEffect(() => {
   const handleItemcode = (event) => {
     setCode(event.target.value);
     setIsSaveButtonDisabled(false);
-  }
+  };
 
   // for Product ID input
   const handleProductID = (event) => {
     setProd_id(event.target.value);
     setIsSaveButtonDisabled(false);
-  }
+  };
 
   // for Item name input
   const handleItemName = (event) => {
     setName(event.target.value);
     setIsSaveButtonDisabled(false);
-  }
+  };
 
   const handlePartNumber = (event) => {
     setPartNumber(event.target.value);
     setIsSaveButtonDisabled(false);
-  }
+  };
 
   // for details name input
   const handledetails = (event) => {
     setDetails(event.target.value);
     setIsSaveButtonDisabled(false);
-  }
+  };
 
   // for threshold input
   const handlethreshold = (event) => {
-    if(event.target.value > 100){
-      setThresholds(100)
+    if (event.target.value > 100) {
+      setThresholds(100);
+    } else if (event.target.value === "0") {
+      setThresholds(1);
+    } else {
+      setThresholds(event.target.value);
     }
-    else if(event.target.value === '0'){
-      setThresholds(1)
-    }
-    else{
-      setThresholds(event.target.value)
-    }
-    
+
     setIsSaveButtonDisabled(false);
-  }
+  };
 
   // for Unit Measurement on change function
   const handleChangeMeasurement = (event) => {
@@ -611,7 +607,6 @@ useEffect(() => {
       });
   }, []);
 
-
   const fileInputRef = useRef(null);
 
   function selectFiles() {
@@ -638,7 +633,7 @@ useEffect(() => {
     for (let i = 0; i < files.length; i++) {
       if (!productImages.some((e) => e.name === files[i].name)) {
         const allowedFileTypes = ["image/jpeg", "image/png", "image/webp"];
-        
+
         if (!allowedFileTypes.includes(files[i].type)) {
           swal({
             icon: "error",
@@ -663,7 +658,7 @@ useEffect(() => {
             ...prevImages,
             {
               name: files[i].name,
-              product_image: e.target.result.split(',')[1],
+              product_image: e.target.result.split(",")[1],
             },
           ]);
         };
@@ -700,9 +695,9 @@ useEffect(() => {
   function handleCapture(image) {
     if (productImages.length >= 5) {
       swal({
-        icon: 'error',
-        title: 'File Limit Exceeded',
-        text: 'You can upload up to 5 images only.',
+        icon: "error",
+        title: "File Limit Exceeded",
+        text: "You can upload up to 5 images only.",
       });
       return;
     }
@@ -717,6 +712,12 @@ useEffect(() => {
     setIsSaveButtonDisabled(false);
   }
 
+  let titleText = isSubUnitChange === false ? "Are you sure?" : "Please Read";
+  let text =
+    isSubUnitChange === false
+      ? "Update product information?"
+      : "There may be a conflict in the purchase order if there is a pending for receiving. Do you still want to continue?";
+  let icon = isSubUnitChange === false ? "warning" : "error";
   const update = async (e) => {
     e.preventDefault();
 
@@ -730,61 +731,72 @@ useEffect(() => {
         text: "Please fill in the required text fields.",
       });
     } else {
-      axios
-        .post(`${BASE_URL}/product/update`,  {
-          id,
-          prod_id,
-          code,
-          name,
-          slct_category,
-          slct_binLocation,
-          unitMeasurement,
-          slct_manufacturer,
-          details,
-          thresholds,
-          selectProductType,
-          PartNumber,
-          // assembly,
-          // spareParts,
-          // subparting,
-          UOM_set,
-          specificProductAssembly,
-          specificProductSubAssembly,
-          specificProductSpares,
-          productTAGSuppliers,
-          productImages,
-          userId,
-        })
-        .then((res) => {
-          // console.log(res);
-          if (res.status === 200) {
-            swal({
-              title: "Product List Update Successful!",
-              text: "The product list has been updated successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate("/productList");
-              setIsSaveButtonDisabled(true);
+      swal({
+        title: titleText,
+        text: text,
+        icon: icon,
+        buttons: true,
+        dangerMode: true,
+      }).then(async (yes) => {
+        if (yes) {
+          axios
+            .post(`${BASE_URL}/product/update`, {
+              id,
+              prod_id,
+              code,
+              name,
+              slct_category,
+              slct_binLocation,
+              unitMeasurement,
+              slct_manufacturer,
+              details,
+              thresholds,
+              selectProductType,
+              PartNumber,
+              // assembly,
+              // spareParts,
+              // subparting,
+              UOM_set,
+              specificProductAssembly,
+              specificProductSubAssembly,
+              specificProductSpares,
+              productTAGSuppliers,
+              productImages,
+              userId,
+            })
+            .then((res) => {
+              // console.log(res);
+              if (res.status === 200) {
+                swal({
+                  title: "Product List Updated Successfully!",
+                  text: "The product list has been updated successfully.",
+                  icon: "success",
+                  button: "OK",
+                }).then(() => {
+                  navigate("/productList");
+                  setIsSaveButtonDisabled(true);
+                  setIsSubUnitChange(false);
+                });
+              } else if (res.status === 201) {
+                swal({
+                  icon: "error",
+                  title: "Product List Already Exists",
+                  text: "Please input a new product list",
+                });
+              } else {
+                swal({
+                  icon: "error",
+                  title: "Something went wrong",
+                  text: "Please contact our support",
+                });
+              }
             });
-          } else if (res.status === 201) {
-            swal({
-              icon: "error",
-              title: "Product List Already Exists",
-              text: "Please input a new product list",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        });
+        }
+      });
     }
     setValidated(true); //for validations
   };
-  
+
   // const update = async (e) => {
   //   e.preventDefault();
 
@@ -849,26 +861,30 @@ useEffect(() => {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-              {isLoading ? (
-                <div className="loading-container">
-                  <ReactLoading className="react-loading" type={'bubbles'}/>
-                  Loading Data...
-                </div>
-              ) : (
-                authrztn.includes('Product List - Edit') ? (
-        <div className="right-body-contentss">
-        <div className="arrowandtitle">
-          <Link to="/productList">
-              <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
-          </Link>
-              <div className="titletext">
-                  <h1>Update Product</h1>
-              </div>
+        {isLoading ? (
+          <div className="loading-container">
+            <ReactLoading className="react-loading" type={"bubbles"} />
+            Loading Data...
           </div>
+        ) : authrztn.includes("Product List - Edit") ? (
+          <div className="right-body-contentss">
+            <div className="arrowandtitle">
+              <Link to="/productList">
+                <ArrowCircleLeft size={45} color="#60646c" weight="fill" />
+              </Link>
+              <div className="titletext">
+                <h1>Update Product</h1>
+              </div>
+            </div>
 
-          <div className="row">
+            <div className="row">
               {productImages.length > 0 && (
-                <Carousel data-bs-theme="dark" interval={3000} wrap={true} className="custom-carousel">
+                <Carousel
+                  data-bs-theme="dark"
+                  interval={3000}
+                  wrap={true}
+                  className="custom-carousel"
+                >
                   {productImages.map((image, index) => (
                     <Carousel.Item key={index}>
                       <img
@@ -876,305 +892,329 @@ useEffect(() => {
                         src={`data:image/png;base64,${image.product_image}`}
                         alt={`subpart-img-${image.id}`}
                       />
-                      <Carousel.Caption>{/* Caption content */}</Carousel.Caption>
+                      <Carousel.Caption>
+                        {/* Caption content */}
+                      </Carousel.Caption>
                     </Carousel.Item>
                   ))}
                 </Carousel>
               )}
-          </div>
-
-          <div
-            className="gen-info"
-            style={{
-              fontSize: "20px",
-              position: "relative",
-              paddingTop: "20px",
-              fontFamily: "Poppins, Source Sans Pro"
-            }}>
-            General Information
-            <span
-              style={{
-                position: "absolute",
-                height: "0.5px",
-                width: "-webkit-fill-available",
-                background: "#FFA500",
-                top: "81%",
-                left: "21rem",
-                transform: "translateY(-50%)",
-              }}></span>
-          </div>
-
-          <Form noValidate validated={validated} onSubmit={update}>
-            <div className="row mt-3">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Code:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    disabled={!isReadOnly}
-                    required
-                    type="text"
-                    value={code}
-                    readOnly
-                    onChange={(e) => handleItemcode(e)}
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
-                </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Name:{" "}
-                  </Form.Label>
-                  <Form.Control
-                    disabled={!isReadOnly}
-                    required
-                    type="text"
-                    value={name}
-                    onChange={(e) => handleItemName(e)}
-                    placeholder="Enter item name"
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
-                </Form.Group>
-              </div>
             </div>
-            <div className="row">
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Type:
-                  </Form.Label>
-                  <Form.Select
-                    disabled={!isReadOnly}
-                    aria-label=""
-                    style={{ height: "40px", fontSize: "15px" }}
-                    defaultValue=""
-                    onChange={handleSelectProductType}
-                    value={selectProductType}
+
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              General Information
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "21rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+
+            <Form noValidate validated={validated} onSubmit={update}>
+              <div className="row mt-3">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product Code:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      disabled={!isReadOnly}
+                      required
+                      type="text"
+                      value={code}
+                      readOnly
+                      onChange={(e) => handleItemcode(e)}
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product Name:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      disabled={!isReadOnly}
+                      required
+                      type="text"
+                      value={name}
+                      onChange={(e) => handleItemName(e)}
+                      placeholder="Enter item name"
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Product Type:
+                    </Form.Label>
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      aria-label=""
+                      style={{ height: "40px", fontSize: "15px" }}
+                      defaultValue=""
+                      onChange={handleSelectProductType}
+                      value={selectProductType}
                     >
-                    <option disabled value="">
-                      Select Product Type
-                    </option>
+                      <option disabled value="">
+                        Select Product Type
+                      </option>
                       <option value="N/A">N/A</option>
                       <option value="Assembly">Assembly</option>
                       <option value="Sub-Assembly">Sub-Assembly</option>
                       <option value="SpareParts">SpareParts</option>
-                  </Form.Select>
-                </Form.Group>
-              </div>
+                    </Form.Select>
+                  </Form.Group>
+                </div>
 
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Part Number:
-                </Form.Label>
-                  <Form.Control
-                  disabled={!isReadOnly}
-                  type="text"
-                  placeholder="Enter Part Number"
-                  onChange={(e) => handlePartNumber(e)}
-                  style={{ height: "40px", fontSize: "15px" }}
-                  value={PartNumber}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-
-            {selectProductType !== "N/A" && (
-            <div className="row">
-              {(selectProductType === "Sub-Assembly" || selectProductType === "SpareParts") && (
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Assembly:
-                  </Form.Label>
-                  <MultiSelect
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Part Number:
+                    </Form.Label>
+                    <Form.Control
                       disabled={!isReadOnly}
-                      value={specificProductAssembly.map(item => item.value)}
-                      options={fetchProductAssemblies.map((assembly) => ({
-                        value: assembly.product_id,
-                        label: assembly.product_name,
-                      }))}
-                      onChange={handleMultiProductAssemblyChange}
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter
-                  />
-                </Form.Group>
+                      type="text"
+                      placeholder="Enter Part Number"
+                      onChange={(e) => handlePartNumber(e)}
+                      style={{ height: "40px", fontSize: "15px" }}
+                      value={PartNumber}
+                    />
+                  </Form.Group>
+                </div>
               </div>
+
+              {selectProductType !== "N/A" && (
+                <div className="row">
+                  {(selectProductType === "Sub-Assembly" ||
+                    selectProductType === "SpareParts") && (
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Product Assembly:
+                        </Form.Label>
+                        <MultiSelect
+                          disabled={!isReadOnly}
+                          value={specificProductAssembly.map(
+                            (item) => item.value
+                          )}
+                          options={fetchProductAssemblies.map((assembly) => ({
+                            value: assembly.product_id,
+                            label: assembly.product_name,
+                          }))}
+                          onChange={handleMultiProductAssemblyChange}
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+
+                  {(selectProductType === "Assembly" ||
+                    selectProductType === "SpareParts") && (
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          Product Sub-Assembly:
+                        </Form.Label>
+                        <MultiSelect
+                          disabled={!isReadOnly}
+                          value={specificProductSubAssembly.map(
+                            (item) => item.value
+                          )}
+                          options={fetchProductSubAssemblies.map((subAsm) => ({
+                            value: subAsm.product_id,
+                            label: subAsm.product_name,
+                          }))}
+                          onChange={handleMultiProductSubAssemblyChange}
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+
+                  {(selectProductType === "Assembly" ||
+                    selectProductType === "Sub-Assembly") && (
+                    <div className="col-6">
+                      <Form.Group controlId="exampleForm.ControlInput2">
+                        <Form.Label style={{ fontSize: "20px" }}>
+                          SpareParts
+                        </Form.Label>
+                        <MultiSelect
+                          disabled={!isReadOnly}
+                          value={specificProductSpares.map(
+                            (item) => item.value
+                          )}
+                          options={fetchProductSpareParts.map((spares) => ({
+                            value: spares.product_id,
+                            label: spares.product_name,
+                          }))}
+                          onChange={handleMultiProductSpareChange}
+                          maxSelectedLabels={3}
+                          className="w-full md:w-20rem"
+                          filter
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+                </div>
               )}
 
-              {(selectProductType === "Assembly" || selectProductType === "SpareParts") && (
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Product Sub-Assembly:
-                  </Form.Label>
-                  <MultiSelect
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Category:{" "}
+                    </Form.Label>
+
+                    <Form.Select
                       disabled={!isReadOnly}
-                      value={specificProductSubAssembly.map(item => item.value)}
-                      options={fetchProductSubAssemblies.map((subAsm) => ({
-                        value: subAsm.product_id,
-                        label: subAsm.product_name,
-                      }))}
-                      onChange={handleMultiProductSubAssemblyChange}
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter
-                  />
-                </Form.Group>
-              </div>
-              )}
-
-              {(selectProductType === "Assembly" || selectProductType === "Sub-Assembly") && (
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    SpareParts
-                  </Form.Label>
-                  <MultiSelect
-                      disabled={!isReadOnly}
-                      value={specificProductSpares.map(item => item.value)}
-                      options={fetchProductSpareParts.map((spares) => ({
-                          value: spares.product_id,
-                          label: spares.product_name,
-                      }))}
-                      onChange={handleMultiProductSpareChange}
-                      maxSelectedLabels={3}
-                      className="w-full md:w-20rem"
-                      filter
-                  />
-                </Form.Group>
-              </div>
-              )}
-            </div>
-            )}
-
-
-            <div className="row">
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Category:{" "}
-                  </Form.Label>
-
-                  <Form.Select
-                   disabled={!isReadOnly}
-                    aria-label=""
-                    onChange={handleFormChangeCategory}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={slct_category}>
-                    <option disabled value="">
-                      Select Category ...
-                    </option>
-                    {category.map((category) => (
-                      <option
-                        key={category.category_code}
-                        value={category.category_code}>
-                        {category.category_name}
+                      aria-label=""
+                      onChange={handleFormChangeCategory}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}
+                      value={slct_category}
+                    >
+                      <option disabled value="">
+                        Select Category ...
                       </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div>
+                      {category.map((category) => (
+                        <option
+                          key={category.category_code}
+                          value={category.category_code}
+                        >
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
 
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Bin Location:{" "}
-                  </Form.Label>
-                  <Form.Select
-                  disabled={!isReadOnly}
-                    aria-label=""
-                    onChange={handleFormChangeBinLocation}
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={slct_binLocation}>
-                    <option disabled value="">
-                      Select Bin Location ...
-                    </option>
-                    {binLocation.map((binLocation) => (
-                      <option
-                        key={binLocation.bin_id}
-                        value={binLocation.bin_id}>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Bin Location:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      aria-label=""
+                      onChange={handleFormChangeBinLocation}
+                      required
+                      style={{ height: "40px", fontSize: "15px" }}
+                      value={slct_binLocation}
+                    >
+                      <option disabled value="">
+                        Select Bin Location ...
+                      </option>
+                      {binLocation.map((binLocation) => (
+                        <option
+                          key={binLocation.bin_id}
+                          value={binLocation.bin_id}
+                        >
                           <strong>{binLocation.bin_name + "-"}</strong>
                           <strong>{binLocation.bin_subname}</strong>
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
               </div>
-            </div>
 
-            <div className="row">
-              <div className="col-6">
-               <div>
-               <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Unit of Measurment:{" "}
-                  </Form.Label>
-                  <Form.Select
-                  disabled={!isReadOnly}
-                    aria-label=""
-                    required
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={unitMeasurement}
-                    onChange={handleChangeMeasurement}>
-                    <option disabled value="">
-                      Select Unit Measurement ...
-                    </option>
-                    {cls_unitMeasurement.map((unitM, index) => (
-                      <option key={index} value={unitM}>
-                        {unitM}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-               </div>
+              <div className="row">
+                <div className="col-6">
+                  <div>
+                    <Form.Group controlId="exampleForm.ControlInput2">
+                      <Form.Label style={{ fontSize: "20px" }}>
+                        Unit of Measurment:{" "}
+                      </Form.Label>
+                      <Form.Select
+                        disabled={!isReadOnly}
+                        aria-label=""
+                        required
+                        style={{ height: "40px", fontSize: "15px" }}
+                        value={unitMeasurement}
+                        onChange={handleChangeMeasurement}
+                      >
+                        <option disabled value="">
+                          Select Unit Measurement ...
+                        </option>
+                        {cls_unitMeasurement.map((unitM, index) => (
+                          <option key={index} value={unitM}>
+                            {unitM}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
 
-                <Form.Group className="mb-3">
-                    <Form.Check 
+                  <Form.Group className="mb-3">
+                    <Form.Check
                       type="checkbox"
                       disabled={!isReadOnly}
-                      style={{ fontSize: "15px", color: 'red' }} 
+                      style={{ fontSize: "15px", color: "red" }}
                       checked={UOM_set === true}
-                      onClick={() => { setUOM_set(!UOM_set); setIsSaveButtonDisabled(false); }}
-                      label={UOM_set === true ? "Sub-Unit quantity is enabled" : "Check this to enable sub-unit quantity"}
-                      />
+                      onClick={() => {
+                        setUOM_set(!UOM_set);
+                        setIsSaveButtonDisabled(false);
+                        setIsSubUnitChange(!isSubUnitChange);
+                      }}
+                      label={
+                        UOM_set === true
+                          ? "Sub-Unit quantity is enabled"
+                          : "Check this to enable sub-unit quantity"
+                      }
+                    />
                   </Form.Group>
-              </div>
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput2">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Manufacturer:{" "}
-                  </Form.Label>
-                  <Form.Select
-                  disabled={!isReadOnly}
-                    aria-label=""
-                    onChange={handleFormChangeManufacturer}
-                    
-                    style={{ height: "40px", fontSize: "15px" }}
-                    value={slct_manufacturer || ''}>
-                    <option disabled value="">
-                      No Manufacturer Selected ...
-                    </option>
-                    {manufacturer.map((manufacturer) => (
-                      <option
-                        key={manufacturer.manufacturer_code}
-                        value={manufacturer.manufacturer_code}>
-                        {manufacturer.manufacturer_name}
+                </div>
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput2">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Manufacturer:{" "}
+                    </Form.Label>
+                    <Form.Select
+                      disabled={!isReadOnly}
+                      aria-label=""
+                      onChange={handleFormChangeManufacturer}
+                      style={{ height: "40px", fontSize: "15px" }}
+                      value={slct_manufacturer || ""}
+                    >
+                      <option disabled value="">
+                        No Manufacturer Selected ...
                       </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
+                      {manufacturer.map((manufacturer) => (
+                        <option
+                          key={manufacturer.manufacturer_code}
+                          value={manufacturer.manufacturer_code}
+                        >
+                          {manufacturer.manufacturer_name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                </div>
               </div>
-            </div>
 
-
-
-            {/* <div
+              {/* <div
               className="gen-info"
               style={{
                 fontSize: "20px",
@@ -1195,258 +1235,296 @@ useEffect(() => {
                 }}></span>
             </div> */}
 
-            <div className="row mt-3">
-              <div className="col-6">
-                <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label style={{ fontSize: "20px" }}>
-                    Critical Inventory Thresholds:{" "}
-                  </Form.Label>
-                  <Form.Control
-                  disabled={!isReadOnly}
-                    required
-                    value={thresholds}
-                    onChange={(e) => {
-                      handlethreshold(e);
-                    }}
-                    // onInput={handleKeyPress}
-                    onKeyDown={(e) => {
-                      ["e", "E", "+", "-"].includes(e.key) &&
-                        e.preventDefault();
-                    }}
-                    type="number"
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
-                </Form.Group>
+              <div className="row mt-3">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Critical Inventory Thresholds:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      disabled={!isReadOnly}
+                      required
+                      value={thresholds}
+                      onChange={(e) => {
+                        handlethreshold(e);
+                      }}
+                      // onInput={handleKeyPress}
+                      onKeyDown={(e) => {
+                        ["e", "E", "+", "-"].includes(e.key) &&
+                          e.preventDefault();
+                      }}
+                      type="number"
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-6"></div>
               </div>
-              <div className="col-6">
 
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label style={{ fontSize: "20px" }}>
-                  Details Here:{" "}
-                </Form.Label>
-                <Form.Control
-                disabled={!isReadOnly}
-                  value={details}
-                  onChange={(e) => handledetails(e)}
-                  as="textarea"
-                        rows={3}
-                        style={{
-                        fontFamily: 'Poppins, Source Sans Pro',
+              <div className="row">
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Details Here:{" "}
+                    </Form.Label>
+                    <Form.Control
+                      disabled={!isReadOnly}
+                      value={details}
+                      onChange={(e) => handledetails(e)}
+                      as="textarea"
+                      rows={3}
+                      style={{
+                        fontFamily: "Poppins, Source Sans Pro",
                         fontSize: "16px",
                         height: "227px",
                         maxHeight: "227px",
                         resize: "none",
                         overflowY: "auto",
                       }}
-                />
-              </Form.Group>
-              </div>
-
-              <div className="col-6">
-              <Form.Group controlId="exampleForm.ControlInput1">
-      <Form.Label style={{ fontSize: "20px" }}>
-        Image Upload:{" "}
-      </Form.Label>
-      <div className="card" onClick={selectFiles}>
-        <div className="top">
-          <p>Drag & Drop Image Upload</p>
-        </div>
-        <div
-          className="drag-area"
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          onDrop={onDropImages}
-        >
-          <>
-            Drag & Drop image here or {" "}
-            <span className="select" role="button" onClick={selectFiles}>
-              Browse
-            </span>{" "}
-            | {" "}
-            <span className="select" role="button" onClick={selectFiles}>
-              Use Camera
-            </span>
-          </>
-          <input
-            name="file"
-            type="file"
-            className="file"
-            multiple
-            ref={fileInputRef}
-            onChange={(e) => onFileSelect(e)}
-            style={{ display: 'none' }}
-          />
-        </div>
-        <div className="ccontainerss">
-          {productImages.map((image, index) => (
-            <div className="imagess" key={index}>
-              <span className="delete" onClick={() => deleteImage(index)}>
-                &times;
-              </span>
-              <img
-                src={`data:image/png;base64,${image.product_image}`}
-                alt={`Sub Part ${image.product_id}`}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      <CameraComponent onCapture={handleCapture} />
-    </Form.Group>
-              </div>
-            </div>
-
-            <div
-              className="gen-info"
-              style={{
-                fontSize: "20px",
-                position: "relative",
-                paddingTop: "30px",
-              }}>
-              Product Supplier
-              <p className="fs-15">Assigns product to supplier(s)</p>
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "-webkit-fill-available",
-                  background: "#FFA500",
-                  top: "65%",
-                  left: "15rem",
-                  transform: "translateY(-50%)",
-                }}></span>
-            </div>
-
-            <div className="main-of-all-tables">
-              <table>
-                <thead>
-                  <tr>
-                    <th className="tableh">Supplier Code</th>
-                    <th className="tableh">Name</th>
-                    <th className="tableh">Email</th>
-                    <th className="tableh">Contact</th>
-                    <th className="tableh">Address</th>
-                    <th className="tableh">Receiving Area</th>
-                    <th className="tableh">Price</th>
-                    <th className="tableh">VAT</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tablesupplier.length > 0 ? (
-                  tablesupplier.map((prod, i) => (
-                    <tr key={i}>
-                      <td>{prod.supplier.supplier_code}</td>
-                      <td>{prod.supplier.supplier_name}</td>
-                      <td>{prod.supplier.supplier_email}</td>
-                      <td>{prod.supplier.supplier_number}</td>
-                      <td>{prod.supplier.supplier_address}</td>
-                      <td>{prod.supplier.supplier_receiving}</td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <span style={{ fontSize: "20px", marginRight: "5px" }}>
-                            ₱
-                          </span>
-                          <Form.Control
-                            disabled={!isReadOnly}
-                            type="number"
-                            style={{ height: "35px", fontSize: '14px', fontFamily: 'Poppins, Source Sans Pro'}}
-                            value={prod.product_price || ""}
-                            onKeyDown={(e) =>
-                              ["e", "E", "+", "-"].includes(e.key) &&
-                              e.preventDefault()
-                            }
-                            onChange={(e) => handlePriceChange(i, e.target.value)}
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        {/* {(prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2)} */}
-                        {prod.supplier.supplier_vat
-                          ? (prod.supplier.supplier_vat / 100 * (prod.product_price || 0)).toFixed(2)
-                          : (productTAGSuppliers.find((option) => option.value === prod.supplier.supplier_code)?.vatable / 100 * (prod.product_price || 0)).toFixed(2)
-                        }
-                      </td>
-                    </tr>
-                  ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" style={{ textAlign: "center"}}>
-                        No Supplier selected
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-                {showDropdown && (
-                  <div className="dropdown mt-3">
-                    <Select
-                      isMulti
-                      options={fetchSupp.map((supplier) => ({
-                        value: supplier.supplier_code,
-                        label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
-                        suppcodes: supplier.supplier_code,
-                        email: supplier.supplier_email,
-                        number: supplier.supplier_number,
-                        address: supplier.supplier_address,
-                        receiving: supplier.supplier_receiving,
-                        vatable: supplier.supplier_vat
-                      }))}
-                      value={productTAGSuppliers}
-                      onChange={handleSelectChange}
                     />
-                  </div>
-                )}
+                  </Form.Group>
+                </div>
 
+                <div className="col-6">
+                  <Form.Group controlId="exampleForm.ControlInput1">
+                    <Form.Label style={{ fontSize: "20px" }}>
+                      Image Upload:{" "}
+                    </Form.Label>
+                    <div className="card" onClick={selectFiles}>
+                      <div className="top">
+                        <p>Drag & Drop Image Upload</p>
+                      </div>
+                      <div
+                        className="drag-area"
+                        onDragOver={onDragOver}
+                        onDragLeave={onDragLeave}
+                        onDrop={onDropImages}
+                      >
+                        <>
+                          Drag & Drop image here or{" "}
+                          <span
+                            className="select"
+                            role="button"
+                            onClick={selectFiles}
+                          >
+                            Browse
+                          </span>{" "}
+                          |{" "}
+                          <span
+                            className="select"
+                            role="button"
+                            onClick={selectFiles}
+                          >
+                            Use Camera
+                          </span>
+                        </>
+                        <input
+                          name="file"
+                          type="file"
+                          className="file"
+                          multiple
+                          ref={fileInputRef}
+                          onChange={(e) => onFileSelect(e)}
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                      <div className="ccontainerss">
+                        {productImages.map((image, index) => (
+                          <div className="imagess" key={index}>
+                            <span
+                              className="delete"
+                              onClick={() => deleteImage(index)}
+                            >
+                              &times;
+                            </span>
+                            <img
+                              src={`data:image/png;base64,${image.product_image}`}
+                              alt={`Sub Part ${image.product_id}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <CameraComponent onCapture={handleCapture} />
+                  </Form.Group>
+                </div>
+              </div>
+
+              <div
+                className="gen-info"
+                style={{
+                  fontSize: "20px",
+                  position: "relative",
+                  paddingTop: "30px",
+                }}
+              >
+                Product Supplier
+                <p className="fs-15">Assigns product to supplier(s)</p>
+                <span
+                  style={{
+                    position: "absolute",
+                    height: "0.5px",
+                    width: "-webkit-fill-available",
+                    background: "#FFA500",
+                    top: "65%",
+                    left: "15rem",
+                    transform: "translateY(-50%)",
+                  }}
+                ></span>
+              </div>
+
+              <div className="main-of-all-tables">
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="tableh">Supplier Code</th>
+                      <th className="tableh">Name</th>
+                      <th className="tableh">Email</th>
+                      <th className="tableh">Contact</th>
+                      <th className="tableh">Address</th>
+                      <th className="tableh">Receiving Area</th>
+                      <th className="tableh">Price</th>
+                      <th className="tableh">VAT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tablesupplier.length > 0 ? (
+                      tablesupplier.map((prod, i) => (
+                        <tr key={i}>
+                          <td>{prod.supplier.supplier_code}</td>
+                          <td>{prod.supplier.supplier_name}</td>
+                          <td>{prod.supplier.supplier_email}</td>
+                          <td>{prod.supplier.supplier_number}</td>
+                          <td>{prod.supplier.supplier_address}</td>
+                          <td>{prod.supplier.supplier_receiving}</td>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <span
+                                style={{ fontSize: "20px", marginRight: "5px" }}
+                              >
+                                ₱
+                              </span>
+                              <Form.Control
+                                disabled={!isReadOnly}
+                                type="number"
+                                style={{
+                                  height: "35px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                }}
+                                value={prod.product_price || ""}
+                                onKeyDown={(e) =>
+                                  ["e", "E", "+", "-"].includes(e.key) &&
+                                  e.preventDefault()
+                                }
+                                onChange={(e) =>
+                                  handlePriceChange(i, e.target.value)
+                                }
+                              />
+                            </div>
+                          </td>
+                          <td>
+                            {/* {(prod.supplier.supplier_vat / 100 * prod.product_price).toFixed(2)} */}
+                            {prod.supplier.supplier_vat
+                              ? (
+                                  (prod.supplier.supplier_vat / 100) *
+                                  (prod.product_price || 0)
+                                ).toFixed(2)
+                              : (
+                                  (productTAGSuppliers.find(
+                                    (option) =>
+                                      option.value ===
+                                      prod.supplier.supplier_code
+                                  )?.vatable /
+                                    100) *
+                                  (prod.product_price || 0)
+                                ).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8" style={{ textAlign: "center" }}>
+                          No Supplier selected
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                  {showDropdown && (
+                    <div className="dropdown mt-3">
+                      <Select
+                        isMulti
+                        options={fetchSupp.map((supplier) => ({
+                          value: supplier.supplier_code,
+                          label: `Supplier Code: ${supplier.supplier_code} / Name: ${supplier.supplier_name}`,
+                          suppcodes: supplier.supplier_code,
+                          email: supplier.supplier_email,
+                          number: supplier.supplier_number,
+                          address: supplier.supplier_address,
+                          receiving: supplier.supplier_receiving,
+                          vatable: supplier.supplier_vat,
+                        }))}
+                        value={productTAGSuppliers}
+                        onChange={handleSelectChange}
+                      />
+                    </div>
+                  )}
+
+                  {isReadOnly && (
+                    <Button
+                      variant="outline-warning"
+                      onClick={handleAddSupp}
+                      size="md"
+                      style={{ fontSize: "15px", marginTop: "10px" }}
+                    >
+                      Add Supplier
+                    </Button>
+                  )}
+                </table>
+              </div>
+
+              <div className="save-cancel">
                 {isReadOnly && (
-                <Button
-                  variant="outline-warning"
-                  onClick={handleAddSupp}
-                  size="md"
-                  style={{ fontSize: "15px", marginTop: "10px" }}>
-                  Add Supplier
-                </Button>
+                  <Button
+                    type="submit"
+                    variant="warning"
+                    size="md"
+                    style={{ fontSize: "20px" }}
+                    disabled={isSaveButtonDisabled}
+                  >
+                    Update
+                  </Button>
                 )}
-              </table>
-            </div>
 
-            <div className="save-cancel">
-              {isReadOnly && (
-              <Button
-                type="submit"
-                variant="warning"
-                size="md"
-                style={{ fontSize: "20px" }}
-                disabled={isSaveButtonDisabled}>
-                Update
-              </Button>
-              )}
-
-              {!isReadOnly && (
-                <Button type='Button' onClick={handleEditClick} className='btn btn-success' size="s" style={{ fontSize: '20px', margin: '0px 5px' }}><NotePencil/>Edit</Button>
-              )}
-              <Link
-                to="/productList"
-                className="btn btn-secondary btn-md"
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}>
-                Close
-              </Link>
-            </div>
-          </Form>
-        </div>
+                {!isReadOnly && (
+                  <Button
+                    type="Button"
+                    onClick={handleEditClick}
+                    className="btn btn-success"
+                    size="s"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                  >
+                    <NotePencil />
+                    Edit
+                  </Button>
+                )}
+                <Link
+                  to="/productList"
+                  className="btn btn-secondary btn-md"
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                >
+                  Close
+                </Link>
+              </div>
+            </Form>
+          </div>
         ) : (
           <div className="no-access">
-            <img src={NoAccess} alt="NoAccess" className="no-access-img"/>
-            <h3>
-              You don't have access to this function.
-            </h3>
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
           </div>
-        )
-              )}
+        )}
       </div>
     </div>
   );

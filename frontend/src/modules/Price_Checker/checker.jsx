@@ -9,14 +9,9 @@ import NoData from "../../assets/image/NoData.png";
 import NoAccess from "../../assets/image/NoAccess.png";
 import axios from "axios";
 import BASE_URL from "../../assets/global/url";
-import { jwtDecode } from "jwt-decode";
-import { CalendarBlank, XCircle, Export } from "@phosphor-icons/react";
-import DatePicker from "react-datepicker";
-import { IconButton, TextField } from "@mui/material";
-import swal from "sweetalert";
 import { jsPDF } from "jspdf";
 import { MultiSelect } from "primereact/multiselect";
-
+import Select from "react-select";
 const Checker = ({ authrztn }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchAccountability, setFetchAccountability] = useState([]);
@@ -28,7 +23,6 @@ const Checker = ({ authrztn }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selecteduser, setselecteduser] = useState("");
-  const [masterlistuser, setmasterListuser] = useState([]);
 
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -83,22 +77,22 @@ const Checker = ({ authrztn }) => {
     setCurrentPage(page);
   };
 
-  const CloseAccountabilityModal = () => setShowAccountabilityModal(false);
+  // const CloseAccountabilityModal = () => setShowAccountabilityModal(false);
 
-  const handleModalAccountability = (masterListId) => {
-    setShowAccountabilityModal(true);
-    const ApprovedId = masterListId;
-    axios
-      .get(BASE_URL + "/accountability/fetchSpecificProduct", {
-        params: {
-          ApprovedId,
-        },
-      })
-      .then((res) => {
-        setFetchIssuedProduct(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handleModalAccountability = (masterListId) => {
+  //   setShowAccountabilityModal(true);
+  //   const ApprovedId = masterListId;
+  //   axios
+  //     .get(BASE_URL + "/accountability/fetchSpecificProduct", {
+  //       params: {
+  //         ApprovedId,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setFetchIssuedProduct(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   //search section
   // const handleSearch = (event) => {
@@ -119,15 +113,12 @@ const Checker = ({ authrztn }) => {
   //   setFetchAccountability(filteredData);
   // };
 
-
   const clearFilters = () => {
-    setSelectedProducts([])
-    setFetchTable([])
+    setSelectedProducts([]);
+    setFetchTable([]);
 
     reloadTable();
   };
-
- 
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -153,7 +144,6 @@ const Checker = ({ authrztn }) => {
   const handleExportButtonClick = () => {
     setExportOptionsVisible(!exportOptionsVisible);
   };
-
 
   const reloadTable = () => {
     const delay = setTimeout(() => {
@@ -356,24 +346,30 @@ const Checker = ({ authrztn }) => {
       console.error(err);
     }
   };
-
-  const handleSelectionChange = (event) => {
-    console.log("Selected Options:", event);
-
-    const { value } = event;
-    if (Array.isArray(value)) {
-      const selectedValues = value.map((option) => option.value);
-      setSelectedProducts(selectedValues);
-    } else {
-      console.error("Expected an array, but got:", event);
-    }
+  const [searchInput, setSearchInput] = useState("");
+  const handleInputChange = (inputValue) => {
+    setSearchInput(inputValue);
   };
 
+  const filteredOptions = products
+    .map((data) => ({
+      value: data.product_id,
+      label: `(${data.product_code}) - ${data.product_name}`,
+      code: data.product_code,
+      name: data.product_name,
+    }))
+    .filter((option) => {
+      const searchString = `${option.code.toLowerCase()} ${option.name.toLowerCase()}`;
+      return searchString.includes(searchInput.toLowerCase());
+    })
+    .slice(0, 5);
+
   const handleSubmitProduct = () => {
+    console.log(selectedProducts);
     axios
       .get(BASE_URL + "/checker/checkProduct", {
         params: {
-          selectedValues: selectedProducts,
+          selectedValues: selectedProducts.map((product) => product.value),
         },
       })
       .then((res) => {
@@ -415,23 +411,20 @@ const Checker = ({ authrztn }) => {
                       </Button>
                     </div>
                   )}
-                  <MultiSelect
+                  <Select
                     aria-label="item user"
+                    isMulti
                     value={selectedProducts}
-                    options={products.map((data) => ({
-                      value: data.product_id,
-                      label: data.product_name,
-                    }))}
-                    style={{
-                      height: "40px",
-                      fontSize: "15px",
-                      marginBottom: "15px",
-                      fontFamily: "Poppins, Source Sans Pro",
-                    }}
+                    options={filteredOptions}
+                    onInputChange={handleInputChange}
+                    className="w-50 fs-5 fw-bold"
                     required
                     placeholder="Select Product"
-                    onChange={(e) => setSelectedProducts(e.value)}
+                    onChange={(selectedOptions) =>
+                      setSelectedProducts(selectedOptions)
+                    }
                   />
+
                   <div className="pur-filt-container">
                     <button
                       className="goesButton"
@@ -485,10 +478,10 @@ const Checker = ({ authrztn }) => {
                 <table className="table-hover" id="order-listing">
                   <thead>
                     <tr>
-                    {Object.keys(fetchTable).length > 0 && (
-                      <th>Product Name</th>
-                    )}
-                      
+                      {Object.keys(fetchTable).length > 0 && (
+                        <th>Product Name</th>
+                      )}
+
                       {Object.keys(fetchTable).map((productName) => (
                         <th key={productName}>{productName}</th>
                       ))}
@@ -515,9 +508,9 @@ const Checker = ({ authrztn }) => {
                     </tbody>
                   ) : (
                     <div className="no-data">
-                    <img src={NoData} alt="NoData" className="no-data-img" />
-                    <h3>No Data Found</h3>
-                  </div>
+                      <img src={NoData} alt="NoData" className="no-data-img" />
+                      <h3>No Data Found</h3>
+                    </div>
                   )}
                 </table>
 
@@ -603,7 +596,7 @@ const Checker = ({ authrztn }) => {
         )}
       </div>
 
-      <Modal
+      {/* <Modal
         show={showAccountabilityModal}
         onHide={CloseAccountabilityModal}
         backdrop="static"
@@ -656,7 +649,7 @@ const Checker = ({ authrztn }) => {
             </table>
           </div>
         </Modal.Body>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

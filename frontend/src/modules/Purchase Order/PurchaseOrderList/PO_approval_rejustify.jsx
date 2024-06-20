@@ -19,7 +19,8 @@ import { jwtDecode } from "jwt-decode";
 import html2canvas from "html2canvas";
 import ReactLoading from "react-loading";
 import NoAccess from "../../../assets/image/NoAccess.png";
-import ESignature from "../../../assets/image/e-signature.png";
+import sigDan from "../../../assets/image/sirDAN.png";
+import sigAllan from "../../../assets/image/sigAllan.jpg";
 import { Note, Smiley, Trash } from "@phosphor-icons/react";
 
 // import EmojiPicker from './../../../hooks/components/EmojiPicker';
@@ -891,14 +892,12 @@ function POApprovalRejustify({ authrztn }) {
                 });
 
                 vatAmount = totalSum * (vat / 100);
-                TotalAmount = vatAmount + totalSum;
+                TotalAmount = (vatAmount + totalSum).toFixed(2);
 
                 vatAmount = vatAmount.toFixed(2);
                 totalSum = totalSum.toFixed(2);
 
-                TotalAmount = parseFloat(TotalAmount).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                });
+                TotalAmount = parseFloat(TotalAmount).toLocaleString("en-US");
                 vatAmount = parseFloat(vatAmount).toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 });
@@ -1149,7 +1148,7 @@ function POApprovalRejustify({ authrztn }) {
                                 <span>Checked by: </span>
                                 <span>
                                   <img
-                                    src={ESignature}
+                                    src={sigAllan}
                                     alt="ESignature"
                                     className="signature-image"
                                   />
@@ -1201,7 +1200,7 @@ function POApprovalRejustify({ authrztn }) {
                                 <span>
                                   <span>
                                     <img
-                                      src={ESignature}
+                                      src={sigDan}
                                       alt="ESignature"
                                       className="signature-image"
                                     />
@@ -1212,9 +1211,13 @@ function POApprovalRejustify({ authrztn }) {
                                   {showSignature && (
                                     <span>
                                       <img
-                                        src={ESignature}
+                                        src={sigDan}
+                                        style={{
+                                          maxHeight: "75px",
+                                          maxWidth: "75px",
+                                        }}
                                         alt="ESignature"
-                                        className="signature-image"
+                                        className="signature-image img-fluid"
                                       />
                                     </span>
                                   )}

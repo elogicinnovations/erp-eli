@@ -391,12 +391,16 @@ router.route("/returnForm").get(async (req, res) => {
   try {
     const data = await Issuance.findAll({
       include: [
+        // {
+        //   model: MasterList,
+        //   required: true,
+        // },
         {
-          model: MasterList,
+          model: CostCenter,
           required: true,
         },
         {
-          model: CostCenter,
+          model: Warehouses,
           required: true,
         },
       ],

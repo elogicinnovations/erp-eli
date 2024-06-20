@@ -382,12 +382,12 @@ function CreateSupplier({ authrztn }) {
                       required
                       defaultValue=""
                     >
-                      <option disabled value="">
+                      <option disabled selected value="">
                         Select currency...
                       </option>
                       <option value="PHP">PHP (₱)</option>
                       <option value="USD">USD ($)</option>
-                      <option value="PHP/USD">PHP/USD</option>
+                      
                     </Form.Select>
                   </Col>
                   <Col></Col>

@@ -87,29 +87,46 @@ function CreateStockTransfer({ authrztn }) {
   // console.log("HAHAHAHAHA" + destination);
 
   const generateRandomCode = () => {
-    axios
-    .get(BASE_URL + "/StockTransfer/generateRefCodess")
-    .then((res) => {
+    axios.get(BASE_URL + "/StockTransfer/generateRefCodess").then((res) => {
       setReferenceCode(res.data.refCode);
-    })
+    });
   };
 
   useEffect(() => {
-    generateRandomCode()
+    generateRandomCode();
   }, []);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(BASE_URL + "/StockTransfer/latestRefcode")
-  //     .then((res) => {
-  //       const codes =
-  //         res.data !== null ? res.data.toString().padStart(3, "0") : "001";
-
-  //       // Increment the value by 1
-  //       setReferenceCode(codes);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
+  const [searchInput, setSearchInput] = useState("");
+  const handleInputChange = (inputValue) => {
+    setSearchInput(inputValue);
+  };
+  const filteredOptions = fetchProduct
+    .map((prod) => ({
+      value: `${prod.productID}_${prod.product_code}_Product`, // Indicate that it's a product
+      // label: (
+      //   <div>
+      //     Product Code:{" "}
+      //     <strong>{prod.product_code}</strong> / Product
+      //     Name: <strong>{prod.product_name}</strong> /
+      //     Quantity:{" "}
+      //     <strong>{prod.totalQuantity}</strong>
+      //   </div>
+      // ),
+      label: `(${prod.product_code}) - ${prod.product_name}`,
+      type: "Product",
+      values: prod.inventory_id,
+      product_id: prod.productID,
+      code: prod.product_code,
+      name: prod.product_name,
+      unit: prod.UOM,
+      quantity_available: prod.totalQuantity,
+      created: prod.createdAt,
+    }))
+    .filter((option) => {
+      const searchString = `${option.code.toLowerCase()} ${option.name.toLowerCase()} `;
+      return searchString.includes(searchInput.toLowerCase());
+    })
+    .slice(0, 5);
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -609,96 +626,8 @@ function CreateStockTransfer({ authrztn }) {
                       <div className="dropdown mt-3">
                         <Select
                           isMulti
-                          options={fetchProduct
-                            .map((prod) => ({
-                              value: `${prod.productID}_${prod.product_code}_Product`, // Indicate that it's a product
-                              label: (
-                                <div>
-                                  Product Code:{" "}
-                                  <strong>{prod.product_code}</strong> / Product
-                                  Name: <strong>{prod.product_name}</strong> /
-                                  Quantity:{" "}
-                                  <strong>{prod.totalQuantity}</strong>
-                                </div>
-                              ),
-                              type: "Product",
-                              values: prod.inventory_id,
-                              product_id: prod.productID,
-                              code: prod.product_code,
-                              name: prod.product_name,
-                              unit: prod.UOM,
-                              quantity_available: prod.totalQuantity,
-                              created: prod.createdAt,
-                            }))
-                            .concat(
-                              fetchAssembly.map((assembly) => ({
-                                value: `${assembly.productID}_${assembly.product_code}_Assembly`, // Indicate that it's an assembly
-                                label: (
-                                  <div>
-                                    Assembly Code:{" "}
-                                    <strong>{assembly.product_code}</strong> /
-                                    Assembly Name:{" "}
-                                    <strong>{assembly.product_name}</strong> /
-                                    Quantity:{" "}
-                                    <strong>{assembly.totalQuantity}</strong>
-                                  </div>
-                                ),
-                                type: "Assembly",
-                                values: assembly.inventory_id,
-                                product_id: assembly.productID,
-                                code: assembly.product_code,
-                                name: assembly.product_name,
-                                unit: assembly.UOM,
-                                quantity_available: assembly.totalQuantity,
-                                created: assembly.createdAt,
-                              }))
-                            )
-                            .concat(
-                              fetchSpare.map((spare) => ({
-                                value: `${spare.productID}_${spare.product_code}_Spare`, // Indicate that it's an Spare
-                                label: (
-                                  <div>
-                                    Product Part Code:{" "}
-                                    <strong>{spare.product_code}</strong> /
-                                    Product Part Name:{" "}
-                                    <strong>{spare.product_name}</strong> /
-                                    Quantity:{" "}
-                                    <strong>{spare.totalQuantity}</strong>
-                                  </div>
-                                ),
-                                type: "Spare",
-                                product_id: spare.productID,
-                                values: spare.inventory_id,
-                                code: spare.product_code,
-                                name: spare.product_name,
-                                unit: spare.UOM,
-                                quantity_available: spare.totalQuantity,
-                                created: spare.createdAt,
-                              }))
-                            )
-                            .concat(
-                              fetchSubPart.map((subPart) => ({
-                                value: `${subPart.productID}_${subPart.product_code}_SubPart`, // Indicate that it's an SubPart
-                                label: (
-                                  <div>
-                                    Product Sub-Part Code:{" "}
-                                    <strong>{subPart.product_code}</strong> /
-                                    Product Sub-Part Name:{" "}
-                                    <strong>{subPart.product_name}</strong> /
-                                    Quantity:{" "}
-                                    <strong>{subPart.totalQuantity}</strong>
-                                  </div>
-                                ),
-                                type: "SubPart",
-                                product_id: subPart.productID,
-                                values: subPart.inventory_id,
-                                code: subPart.product_code,
-                                name: subPart.product_name,
-                                unit: subPart.UOM,
-                                quantity_available: subPart.totalQuantity,
-                                created: subPart.createdAt,
-                              }))
-                            )}
+                          options={filteredOptions}
+                          onInputChange={handleInputChange}
                           onChange={selectProduct}
                         />
                       </div>
@@ -718,19 +647,19 @@ function CreateStockTransfer({ authrztn }) {
               </div>
 
               <div className="save-cancel">
-              {product && product.length > 0 ? (
-                <Button
-                  type="submit"
-                  className="btn btn-warning"
-                  size="md"
-                  style={{ fontSize: "20px", margin: "0px 5px" }}
-                >
-                  Save
-                </Button>
-              ):(
-                <></>
-              )}
-                
+                {product && product.length > 0 ? (
+                  <Button
+                    type="submit"
+                    className="btn btn-warning"
+                    size="md"
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                  >
+                    Save
+                  </Button>
+                ) : (
+                  <></>
+                )}
+
                 <Link
                   to="/stockManagement"
                   className="btn btn-secondary btn-md"

@@ -1,18 +1,18 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
+const PR_PO = sequelize.define("purchase_req_canvassed_prd", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id:{
+  pr_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  po_id:{
+  po_id: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -33,7 +33,7 @@ const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
     allowNull: true,
   },
   purchase_price: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   static_quantity: {
@@ -46,9 +46,8 @@ const PR_PO = sequelize.define('purchase_req_canvassed_prd', {
   },
   date_approved: {
     type: DataTypes.DATE,
-    allowNull: true
-  }
-  
+    allowNull: true,
+  },
 });
 
 module.exports = PR_PO;
