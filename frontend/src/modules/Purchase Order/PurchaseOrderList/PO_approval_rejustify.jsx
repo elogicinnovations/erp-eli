@@ -1028,23 +1028,33 @@ function POApprovalRejustify({ authrztn }) {
                             </span>
                           </div>
 
-                          <div className="midfourthrows">
+                          <div className="midrowsfourth">
                             {/* for product name */}
-                            {group.items.map((item, index) => (
-                              <div className="midfourthrows_div" key={index}>
-                                <span
-                                  title={`Product Name: ${item.supp_tag.name}`}
-                                >{`${item.supp_tag.name}`}</span>
-                                <span>
-                                  {item.supp_tag.part_number === null
-                                    ? "--"
-                                    : item.supp_tag.part_number === ""
-                                    ? "--"
-                                    : item.supp_tag.part_number}
-                                </span>
-                                <br />
-                              </div>
-                            ))}
+                            <span>
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label
+                                    title={`Product Name: ${item.supp_tag.name}`}
+                                  >{`${item.supp_tag.name}`}</label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
+
+                            <span>
+                              {group.items.map((item, index) => (
+                                <div key={index}>
+                                  <label>
+                                    {item.supp_tag.part_number === null
+                                      ? "--"
+                                      : item.supp_tag.part_number === ""
+                                      ? "--"
+                                      : item.supp_tag.part_number}
+                                  </label>
+                                  <br />
+                                </div>
+                              ))}
+                            </span>
                           </div>
 
                           <div className="rightfourthrows">

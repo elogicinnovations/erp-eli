@@ -4806,9 +4806,31 @@ span:nth-child(5) {
   font-weight: 500;
 }
 
+.midrowsfourth {
+  width: 59.9%;
+  display: flex;
+  flex-direction: row;
+}
+
+.midrowsfourth span:nth-child(1) {
+  width: 50%;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 1px;
+}
+
+.midrowsfourth span:nth-child(2) {
+  width: 50%;
+  font-family: Poppins, "Source Sans Pro";
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 1px;
+}
+
 .midfourthrows {
   width: 59.9%;
-  text-align: start;
+  display: flex;
 }
 
 /* .midfourthrows span {
@@ -4816,6 +4838,13 @@ span:nth-child(5) {
   font-family: Poppins, "Source Sans Pro";
   font-weight: bold;
 } */
+
+.midfourthrows span:nth-child(1) {
+  font-size: 12px;
+  font-family: Poppins, "Source Sans Pro";
+  width: 33.2%;
+  font-weight: 500;
+}
 
 .midfourthrows_div {
   width: 100%;
