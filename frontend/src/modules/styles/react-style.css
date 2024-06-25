@@ -4818,6 +4818,10 @@ span:nth-child(5) {
   font-size: 12px;
   font-weight: 500;
   margin-left: 1px;
+  white-space: nowrap; /* Prevent text from wrapping to the next line */
+  overflow: hidden; /* Hide the overflow text */
+  text-overflow: ellipsis; /* Add ellipsis (…) at the end of the text */
+  cursor: pointer;
 }
 
 .midrowsfourth span:nth-child(2) {

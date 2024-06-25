@@ -552,8 +552,10 @@ router.route("/approve_PO").post(async (req, res) => {
       formattedDateApproved,
       po_idApproval,
     } = req.body;
-    const gmailEmail = "sbfmailer@gmail.com";
-    const gmailPassword = "uoetasnknsroxwnq";
+    const gmailEmail = "purchasing@sbfdrilling.com";
+    const gmailPassword = "fwzunybngamowhuw";
+    // const gmailEmail = "sbfmailer@gmail.com";
+    //   const gmailPassword = "uoetasnknsroxwnq";
 
     const findEmail = await PR_PO.findAll({
       where: {
@@ -657,85 +659,5 @@ router.route("/approve_PO").post(async (req, res) => {
     res.status(500).send("An error occurred");
   }
 });
-
-// router.route('/approve_PO').post(async (req, res) => {
-//   try {
-//     const { id, POarray } = req.body;
-
-//     POarray.forEach(parent => {
-//       parent.items.forEach(child => {
-//         // Accessing properties from child.supp_tag array
-//         const code = child.supp_tag.code;
-//         const name = child.supp_tag.name;
-
-//         // Accessing quantity from child.item if it exists
-//         const quantity = child.item ? child.item.quantity : '2222';
-
-//         // Customize fields and header names
-//         const fields = ['code', 'name', 'quantity'];
-//         const header = ['ID', 'Product Name', 'Quantity'];
-
-//           // Create CSV content with header
-//           let csvContent = header.join(',') + '\n';
-//           csvContent += `${code},${name},${quantity}\n`;
-
-//           // Create a nodemailer transporter
-//           const gmailEmail = "sbfmailer@gmail.com";
-//           const gmailPassword = "uoetasnknsroxwnq";
-
-//         // Create a nodemailer transporter
-//         const transporter = nodemailer.createTransport({
-//           service: "gmail",
-//           auth: {
-//             user: gmailEmail,
-//             pass: gmailPassword,
-//           },
-//         });
-
-//         // Define email options
-//         const mailOptions = {
-//           from: gmailEmail,
-//           to: child.suppliers.supplier_email,
-//           subject: 'Invoice Request for Order - SBF',
-//           text: 'Attached is a CSV file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:',
-//           attachments: [
-//             {
-//               filename: 'dd.csv',
-//               content: csvContent,
-//             },
-//           ],
-//         };
-
-//         // Send the email
-//         transporter.sendMail(mailOptions, (error, info) => {
-//           if (error) {
-//             return console.log('Error sending email:', error);
-//           }
-//           // console.log('Email sent:', info.response);
-//         });
-//       });
-//     });
-
-//       // const PR_newData = await PR.update({
-//       //   status: 'To-Receive'
-//       // },
-//       // {
-//       //   where: { id: id }
-//       // });
-
-//       // const PR_historical = await PR_history.create({
-//       //   pr_id: id,
-//       //   status: 'To-Receive',
-//       // });
-
-//     //  return console.log(id)
-
-//     res.status(200).json();
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('An error occurred');
-//   }
-// });
 
 module.exports = router;

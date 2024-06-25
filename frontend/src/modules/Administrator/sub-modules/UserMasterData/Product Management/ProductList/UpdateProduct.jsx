@@ -541,8 +541,6 @@ function UpdateProduct({ authrztn }) {
   const handlethreshold = (event) => {
     if (event.target.value > 100) {
       setThresholds(100);
-    } else if (event.target.value === "0") {
-      setThresholds(1);
     } else {
       setThresholds(event.target.value);
     }

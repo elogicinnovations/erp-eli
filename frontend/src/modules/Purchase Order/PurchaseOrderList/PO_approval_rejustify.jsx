@@ -1206,7 +1206,8 @@ function POApprovalRejustify({ authrztn }) {
                             <div className="approvedsby">
                               <span>Approved By: </span>
 
-                              {current_status === "Approved" ? (
+                              {current_status === "To-Receive" ||
+                              current_status === "Received" ? (
                                 <span>
                                   <span>
                                     <img

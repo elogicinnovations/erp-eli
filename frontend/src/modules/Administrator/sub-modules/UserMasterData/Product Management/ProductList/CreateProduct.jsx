@@ -882,8 +882,6 @@ function CreateProduct({ authrztn }) {
                       onChange={(e) => {
                         if (e.target.value > 100) {
                           setThresholds(100);
-                        } else if (e.target.value === "0") {
-                          setThresholds(1);
                         } else {
                           setThresholds(e.target.value);
                         }

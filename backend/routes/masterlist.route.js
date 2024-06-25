@@ -20,9 +20,6 @@ router.use(
   })
 );
 
-
-
-
 // router.route("/login").post(async (req, res) => {
 //   const { username, password } = req.body;
 
@@ -88,7 +85,7 @@ router.use(
 //     // Invalidate the session by removing it from the activeSessions object
 //     if (decodedToken && decodedToken.id) {
 //       delete activeSessions[decodedToken.id];
-      
+
 //       // Create activity log for user logout
 //       await Activity_Log.create({
 //         masterlist_id: decodedToken.id,
@@ -129,21 +126,20 @@ router.route("/login").post(async (req, res) => {
 
     if (user && user.col_Pass === password) {
       // Check if user already has an active session
-      console.log(`activeSessions[user.col_id] ${activeSessions[user.col_id]}` )
+      console.log(`activeSessions[user.col_id] ${activeSessions[user.col_id]}`);
 
       if (activeSessions[user.col_id]) {
-        return res.status(409).json({ error: "User already logged in on another device" });
+        return res
+          .status(409)
+          .json({ error: "User already logged in on another device" });
       }
-
-
-      
 
       const userData = {
         username: user.col_username,
         id: user.col_id,
         Fname: user.col_Fname,
         userrole: user.userRole.col_rolename,
-        department_id: user.department_id
+        department_id: user.department_id,
       };
       const accessToken = jwt.sign(userData, process.env.ACCESS_SECRET_TOKEN);
       res.cookie("access-token", accessToken, {});
@@ -155,13 +151,13 @@ router.route("/login").post(async (req, res) => {
         masterlist_id: userData.id,
         action_taken: "User logged in",
       });
-       res
+      res
         .status(200)
         .json({ message: "Login Success", accessToken: accessToken });
-        for (const key in activeSessions) {
-          delete activeSessions[key];
-        }
-        return
+      for (const key in activeSessions) {
+        delete activeSessions[key];
+      }
+      return;
     } else {
       return res.status(202).json({ message: "Incorrect credentials" });
     }
@@ -264,8 +260,10 @@ router.route("/logout").post(async (req, res) => {
 
 //--------------------Forgot Password------------------//
 // Replace these with your Gmail credentials
-const gmailEmail = "sbfmailer@gmail.com";
-const gmailPassword = "uoetasnknsroxwnq";
+const gmailEmail = "purchasing@sbfdrilling.com";
+const gmailPassword = "fwzunybngamowhuw";
+// const gmailEmail = "sbfmailer@gmail.com";
+//   const gmailPassword = "uoetasnknsroxwnq";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -376,7 +374,7 @@ router.route("/masterTable").get(async (req, res) => {
         user_type: { [Op.ne]: "Superadmin" },
         col_status: { [Op.ne]: "Archive" },
       },
-      order: [['createdAt', 'DESC']],
+      order: [["createdAt", "DESC"]],
       include: [
         // {
         //   model: UserRole,
@@ -440,13 +438,11 @@ router.route("/createMaster").post(async (req, res) => {
 
       let UserType;
 
-      if(req.body.cpass === "" || req.body.cpass === null){
-      
-        UserType = "Employee"
-      }else{
-        UserType = "Standard User"
+      if (req.body.cpass === "" || req.body.cpass === null) {
+        UserType = "Employee";
+      } else {
+        UserType = "Standard User";
       }
-
 
       // Insert a new record into the table
       const newData = await MasterList.create({
@@ -517,11 +513,10 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
 
       let UserType;
 
-      if(req.body.col_Pass === "" || req.body.col_Pass === null){
-      
-        UserType = "Employee"
-      }else{
-        UserType = "Standard User"
+      if (req.body.col_Pass === "" || req.body.col_Pass === null) {
+        UserType = "Employee";
+      } else {
+        UserType = "Standard User";
       }
 
       // Update the record in the table
@@ -536,7 +531,7 @@ router.route("/updateMaster/:param_id").put(async (req, res) => {
           col_address: req.body.col_address,
           col_username: req.body.col_username,
           col_status: req.body.col_status,
-          user_type: UserType
+          user_type: UserType,
         },
         {
           where: { col_id: updatemasterID },
@@ -571,7 +566,7 @@ router.route("/archivemasterList/:param_id").put(async (req, res) => {
     const masterlistName = userName.col_Fname;
 
     const updatedRows = await MasterList.update(
-      { col_status: 'Archive' },
+      { col_status: "Archive" },
       { where: { col_id: id } }
     );
 
@@ -623,8 +618,6 @@ router.route("/archivemasterList/:param_id").put(async (req, res) => {
 //     });
 // });
 
-
-
 //CREATE
 // router.route('/add').post(async (req, res) => {
 //     const b = req.body
@@ -661,7 +654,6 @@ router.route("/archivemasterList/:param_id").put(async (req, res) => {
 //         res.status(409).json({errorMessage:err})
 //     });
 // });
-
 
 router.route("/viewAuthorization/:id").get(async (req, res) => {
   try {
