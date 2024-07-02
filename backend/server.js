@@ -9,7 +9,7 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: "http://180.232.37.193:8080",
+    origin: "http://180.232.37.193:3000",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -24,7 +24,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://180.232.37.193:8080");
+  res.header("Access-Control-Allow-Origin", "http://180.232.37.193:3000");
   res.header(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"

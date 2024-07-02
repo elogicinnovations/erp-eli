@@ -146,7 +146,7 @@ const Login = () => {
               <img src={SBFLOGO} alt="" srcset="" />
             </div>
             <div className="logintextaccount">
-              Test (8080) cross Login to your account
+              Test (3000) Login to your account
             </div>
           </div>
 
