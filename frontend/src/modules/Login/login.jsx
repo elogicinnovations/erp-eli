@@ -9,11 +9,8 @@ import { Link } from "react-router-dom";
 // import { useAuth } from '../authorize/AuthContext';
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa"; // Import icons
 import SBFLOGO from "../../assets/image/sbf_logoo_final.jpg";
-import { jwtDecode } from 'jwt-decode';
-import {
-  Eye,
-  EyeSlash,
-} from "@phosphor-icons/react";
+import { jwtDecode } from "jwt-decode";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -30,24 +27,23 @@ const Login = () => {
 
   useEffect(() => {
     // Access the token from localStorage
-    const accessToken = localStorage.getItem('accessToken');
-    console.log('Token:', accessToken);
+    const accessToken = localStorage.getItem("accessToken");
+    console.log("Token:", accessToken);
     try {
-      if(accessToken){
+      if (accessToken) {
         navigate("/dashboard");
       }
     } catch (error) {
-      console.error('Error decoding token:', error);
+      console.error("Error decoding token:", error);
     }
   }, []);
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
     axios
       .post(BASE_URL + "/masterList/login", { username, password })
       .then((response) => {
-        console.log("RESPONSE STATUS" + response.status)
+        console.log("RESPONSE STATUS" + response.status);
         if (response.status === 200) {
           // console.log(response.data.accessToken);
           localStorage.setItem("accessToken", response.data.accessToken);
@@ -68,7 +64,8 @@ const Login = () => {
             button: "OK",
           });
         }
-      }) .catch((error) => {
+      })
+      .catch((error) => {
         if (error.response && error.response.status === 409) {
           swal({
             title: "Login Denied",
@@ -86,14 +83,14 @@ const Login = () => {
           });
         }
       });
-      // .catch((error) => {
-      //   console.error(error.response.data);
-      //   swal({
-      //     title: "Something Went Wrong",
-      //     text: "Please contact our support team",
-      //     icon: "error",
-      //   }).then(() => {});
-      // });
+    // .catch((error) => {
+    //   console.error(error.response.data);
+    //   swal({
+    //     title: "Something Went Wrong",
+    //     text: "Please contact our support team",
+    //     icon: "error",
+    //   }).then(() => {});
+    // });
   };
 
   // Function to toggle password visibility
@@ -145,8 +142,10 @@ const Login = () => {
           </div>
 
           <div className="welcome-text">
-            <div className="logologin"><img src={SBFLOGO} alt="" srcset="" /></div>
-            <div className="logintextaccount">Login to your account</div>
+            <div className="logologin">
+              <img src={SBFLOGO} alt="" srcset="" />
+            </div>
+            <div className="logintextaccount">Test Login to your account</div>
           </div>
 
           <form className="loginform" onSubmit={handleLogin}>
@@ -162,7 +161,6 @@ const Login = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     maxLength={50} // Set the character limit to 50 characters
                     required
-                   
                   />
                   <FaEnvelope className="fa-envelope" />
                 </div>
@@ -179,7 +177,6 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     maxLength={50} // Set the character limit to 50 characters
                     required
-                   
                   />
                   {showPassword ? (
                     <EyeSlash
@@ -190,9 +187,12 @@ const Login = () => {
                     />
                   ) : (
                     <Eye
-                    size={32}
-                    color="#1a1a1a"
-                    weight="light" className="eye" onClick={togglePasswordVisibility} />
+                      size={32}
+                      color="#1a1a1a"
+                      weight="light"
+                      className="eye"
+                      onClick={togglePasswordVisibility}
+                    />
                   )}
                 </div>
               </div>
