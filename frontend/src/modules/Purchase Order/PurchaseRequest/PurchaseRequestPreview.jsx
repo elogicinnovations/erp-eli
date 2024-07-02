@@ -11,11 +11,10 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ArrowCircleLeft, Note, Smiley, Trash } from "@phosphor-icons/react";
+import { ArrowCircleLeft, Note, Smiley, Plus } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
-import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -33,10 +32,6 @@ function PurchaseRequestPreview({ authrztn }) {
   const [remarks, setRemarks] = useState("");
   const [product, setProduct] = useState([]); //para pag fetch ng mga registered products
 
-  const [inputValues, setInputValues] = useState({});
-
-  const [showDropdown, setShowDropdown] = useState(false);
-
   const [productSelectedFetch, setProductSelectedFetch] = useState([]); //para pag display sa product na selected sa pag create patungong table
   const [assemblySelectedFetch, setAssemblySelectedFetch] = useState([]); //para pag display sa assembly na selected sa pag create patungong table
   const [spareSelectedFetch, setSpareSelectedFetch] = useState([]); //para pag display sa spare na selected sa pag create
@@ -50,15 +45,11 @@ function PurchaseRequestPreview({ authrztn }) {
   const [rejectRemarks, setRejectRemarks] = useState("");
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [rejustifyHistory, setRejustifyHistory] = useState([]);
-
+  const [showDropdown, setShowDropdown] = useState(false);
   // const [files, setFiles] = useState([]);
   const [file, setFile] = useState(null);
   const [rejustifyRemarks, setRejustifyRemarks] = useState("");
 
-  const [ProductQuant, setProductQuant] = useState([]);
-  // const [Fname, setFname] = useState('');
-  // const [username, setUsername] = useState('');
-  // const [userRole, setUserRole] = useState('');
   const [userId, setuserId] = useState("");
 
   const decodeToken = () => {
@@ -89,6 +80,196 @@ function PurchaseRequestPreview({ authrztn }) {
     // for clicking the button can be editted not readonly
     setReadOnly(false);
   };
+  const displayDropdown = () => {
+    setShowDropdown(true);
+  };
+  const [fetchProduct, setFetchProduct] = useState([]);
+  const [inputValues, setInputValues] = useState({});
+  const [mergeOptions, setMergeOptions] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/product/fetchTable")
+      .then((res) => setFetchProduct(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleInputChangeSearch = (inputValue) => {
+    setSearchInput(inputValue);
+  };
+
+  const filteredOptions = fetchProduct
+    .map((prod) => ({
+      value: `${prod.product_id}_${prod.product_code}_Product`,
+      label: `(${prod.product_code}) - ${prod.product_name}`,
+      type: "Product",
+      values: prod.product_id,
+      code: prod.product_code,
+      name: prod.product_name,
+      created: prod.createdAt,
+    }))
+    .filter((option) => {
+      const searchString = `${option.code.toLowerCase()} ${option.name.toLowerCase()}`;
+      return searchString.includes(searchInput.toLowerCase());
+    })
+    .slice(0, 5);
+
+  const selectProduct = (selectedOptions) => {
+    setSelectedProducts(selectedOptions);
+
+    const newInputValues = {};
+    selectedOptions.forEach((selectedOption) => {
+      const { value } = selectedOption;
+      newInputValues[value] = {
+        quantity: inputValues[value]?.quantity || "", // Retain existing quantity
+        desc: inputValues[value]?.desc || "", // Retain existing description
+      };
+    });
+
+    setInputValues({ ...inputValues, ...newInputValues });
+  };
+
+  const handleInputChange = (value, productValue, inputType) => {
+    setInputValues((prevInputs) => ({
+      ...prevInputs,
+      [productValue]: {
+        ...prevInputs[productValue],
+        [inputType]: value,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + "/PR_product/fetchPrProduct", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+
+        const selectedProducts = data.map((row) => ({
+          value: `${row.product.product_id}_${row.product.product_code}_Product`,
+          label: `(${row.product.product_code}) - ${row.product.product_name}`,
+          type: "Product",
+          values: row.product.product_id,
+          code: row.product.product_code,
+          name: row.product.product_name,
+          uom: row.product.product_unitMeasurement,
+          quantity: row.quantity,
+          description: row.description,
+        }));
+
+        setSelectedProducts(selectedProducts);
+
+        const initialInputValues = {};
+        selectedProducts.forEach((product) => {
+          initialInputValues[product.value] = {
+            quantity: product.quantity,
+            desc: product.description,
+          };
+        });
+
+        setInputValues(initialInputValues);
+      })
+      .catch((err) => console.log(err));
+  }, [id]);
+
+  useEffect(() => {
+    const selectedProductValues = new Set(selectedProducts.map((p) => p.value));
+    const filteredOptions = fetchProduct
+      .map((prod) => ({
+        value: `${prod.product_id}_${prod.product_code}_Product`,
+        label: `(${prod.product_code}) - ${prod.product_name}`,
+        type: "Product",
+        values: prod.product_id,
+        code: prod.product_code,
+        name: prod.product_name,
+        uom: prod.product_unitMeasurement,
+        created: prod.createdAt,
+      }))
+      .filter((option) => {
+        const searchString = `${option.code.toLowerCase()} ${option.name.toLowerCase()}`;
+        return (
+          searchString.includes(searchInput.toLowerCase()) &&
+          !selectedProductValues.has(option.value)
+        );
+      })
+      .slice(0, 5);
+
+    setMergeOptions(filteredOptions);
+  }, [fetchProduct, selectedProducts, searchInput]);
+
+  const saveEdit = async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+      swal({
+        icon: "error",
+        title: "Fields are required",
+        text: "Please fill the red text fields",
+      });
+    } else {
+      try {
+        const updatedProducts = selectedProducts.map((product) => ({
+          product_id: product.values,
+          product_code: product.code,
+          product_name: product.name,
+          quantity: inputValues[product.value]?.quantity || "",
+          description: inputValues[product.value]?.desc || "",
+        }));
+
+        // console.log(`dsad`);
+        // console.log(updatedProducts);
+        const response = await axios.post(`${BASE_URL}/PR/pr_update`, {
+          dateNeed,
+          useFor,
+          remarks,
+          updatedProducts,
+          id,
+          userId,
+        });
+
+        // console.log(response);
+
+        if (response.status === 200) {
+          swal({
+            title: "Purchase Request Successfully Updated!",
+            text: "Your request for purchase has been successfully updated.",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            navigate("/purchaseRequest");
+          });
+        } else {
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+
+        swal({
+          icon: "error",
+          title: "Request failed",
+          text:
+            error.response?.data?.error ||
+            "Please select a Product to request!",
+        });
+      }
+    }
+
+    setValidated(true); // for validations
+  };
 
   const handleApproveClick = () => {
     swal({
@@ -108,7 +289,6 @@ function PurchaseRequestPreview({ authrztn }) {
               },
             })
             .then((res) => {
-              console.log(res);
               if (res.status === 200) {
                 swal({
                   title: "Purchase Request Approved",
@@ -192,27 +372,6 @@ function PurchaseRequestPreview({ authrztn }) {
       console.error("Error uploading files:", error);
     }
   };
-
-  //Where clause sa product PR
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/PR_product/fetchPrProduct", {
-        params: {
-          id: id,
-        },
-      })
-      .then((res) => {
-        const data = res.data;
-        setProductSelectedFetch(data);
-        // const selectedPRproduct = data.map((row) => ({
-        //   value: row.product_id,
-        //   label: `Product Code: ${row.product.product_code} / Name: ${row.product.product_name}`,
-        //   quants: row.quantity,
-        // }));
-        // setvaluePRproduct(selectedPRproduct);
-      })
-      .catch((err) => console.log(err));
-  }, [id]);
 
   //Where clause ng assembly
   useEffect(() => {
@@ -469,18 +628,6 @@ function PurchaseRequestPreview({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  //date format
-  function formatDatetime(datetime) {
-    const options = {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(datetime).toLocaleString("en-US", options);
-  }
-
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -517,7 +664,7 @@ function PurchaseRequestPreview({ authrztn }) {
               </div>
             </Col>
           </Row>
-          <Form noValidate validated={validated}>
+          <Form noValidate onSubmit={saveEdit} validated={validated}>
             <div
               className="gen-info"
               style={{
@@ -641,58 +788,109 @@ function PurchaseRequestPreview({ authrztn }) {
                   <thead>
                     <tr>
                       <th className="tableh">Product Code</th>
+                      <th className="tableh">Product Name</th>
                       <th className="tableh">Quantity</th>
                       <th className="tableh">U/M</th>
-                      <th className="tableh">Product Name</th>
                       <th className="tableh">Description</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {productSelectedFetch.map((data, i) => (
+                    {selectedProducts.map((product, i) => (
                       <tr key={i}>
-                        <td>{data.product.product_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.product.product_unitMeasurement}</td>
-                        <td>{data.product.product_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
-
-                    {assemblySelectedFetch.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.assembly.assembly_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.assembly.assembly_unitMeasurement}</td>
-                        <td>{data.assembly.assembly_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
-
-                    {spareSelectedFetch.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.sparePart.spareParts_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.sparePart.spareParts_unitMeasurement}</td>
-                        <td>{data.sparePart.spareParts_name}</td>
-                        <td>{data.description}</td>
-                      </tr>
-                    ))}
-
-                    {subPartSelectedFetch.map((data, i) => (
-                      <tr key={i}>
-                        <td>{data.subPart.subPart_code}</td>
-                        <td>{data.quantity}</td>
-                        <td>{data.subPart.subPart_unitMeasurement}</td>
-                        <td>{data.subPart.subPart_name}</td>
-                        <td>{data.description}</td>
+                        <td>{product.code}</td>
+                        <td>{product.name}</td>
+                        <td>
+                          <div className="d-flex flex-direction-row align-items-center">
+                            <Form.Control
+                              type="number"
+                              readOnly={!isReadOnly}
+                              required
+                              value={inputValues[product.value]?.quantity || ""}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  e.target.value,
+                                  product.value,
+                                  "quantity"
+                                )
+                              }
+                              onInput={(e) => {
+                                e.preventDefault();
+                                const validInput = e.target.value.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                ); // Replace non-numeric characters
+                                e.target.value = validInput;
+                              }}
+                              placeholder="Input quantity"
+                              style={{
+                                height: "40px",
+                                width: "120px",
+                                fontSize: "15px",
+                              }}
+                            />
+                          </div>
+                        </td>
+                        <td>{product.uom}</td>
+                        <td>
+                          <Form.Control
+                            type="text"
+                            readOnly={!isReadOnly}
+                            value={inputValues[product.value]?.desc || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                e.target.value,
+                                product.value,
+                                "desc"
+                              )
+                            }
+                            placeholder="Input description"
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
+
+                  {showDropdown && isReadOnly && (
+                    <div className="dropdown mt-3">
+                      <Select
+                        isMulti
+                        options={mergeOptions}
+                        value={selectedProducts}
+                        onChange={selectProduct}
+                        onInputChange={handleInputChangeSearch}
+                      />
+                    </div>
+                  )}
+
+                  {isReadOnly && (
+                    <div className="item">
+                      <div className="new_item">
+                        <button type="button" onClick={displayDropdown}>
+                          <span style={{ marginRight: "4px" }}></span>
+                          <Plus size={20} /> New Item
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </table>
               </div>
             </div>
 
             <div className="save-cancel">
+              {requestor === userId &&
+                !isReadOnly &&
+                (status === "For-Approval" || status === "Rejected") && (
+                  <Button
+                    type="button"
+                    variant="outline-warning"
+                    size="md"
+                    onClick={handleEditClick}
+                    style={{ fontSize: "20px", margin: "0px 5px" }}
+                  >
+                    Edit Request
+                  </Button>
+                )}
+
               {isReadOnly && (
                 <Button
                   type="submit"
@@ -742,7 +940,7 @@ function PurchaseRequestPreview({ authrztn }) {
               ) : (
                 <></>
               )}
- 
+
               {status !== "For-Approval" && status !== "Cancelled" ? (
                 <>
                   <Button

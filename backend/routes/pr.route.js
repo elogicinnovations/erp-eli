@@ -268,6 +268,61 @@ router.route("/fetchTable_PO_view").get(async (req, res) => {
     res.status(500).json("Error");
   }
 });
+router.route("/pr_update").post(async (req, res) => {
+  try {
+    const { dateNeed, useFor, remarks, updatedProducts, id, userId } = req.body;
+
+    const isUpdatedMother = await PR.update(
+      {
+        date_needed: dateNeed,
+        used_for: useFor,
+        remarks: remarks,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+
+    if (isUpdatedMother) {
+      await PR_product.destroy({
+        where: {
+          pr_id: id,
+        },
+      });
+
+      await Promise.all(
+        updatedProducts.map(async (data) => {
+          return await PR_product.create({
+            pr_id: id,
+            product_id: data.product_id,
+            quantity: data.quantity,
+            description: data.description,
+            isPO: false,
+          });
+        })
+
+        
+      );
+
+      await PR_history.create({
+        pr_id: id,
+        status: "For-Approval",
+        remarks: `Purchase Request: Edit the pr for ${id}`,
+      });
+     await Activity_Log.create({
+          masterlist_id: userId,
+          action_taken: `Purchase Request: Edit the pr for ${id}`,
+        });
+
+      return res.status(200).json();
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
 
 router.route("/fetchView").get(async (req, res) => {
   try {
