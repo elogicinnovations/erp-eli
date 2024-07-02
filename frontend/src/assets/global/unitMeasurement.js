@@ -28,6 +28,15 @@ const unitMeasurement = [
   "TIN/S",
   "UNIT/S",
   "YARD/S",
+  "BXS",
+  "GALS",
+  "ROLLS/S",
+  "KITS",
+  "PAIRS",
+  "PADS",
+  "PACKS",
+  "MTRS",
+  "MTS",
 ];
 
 export default unitMeasurement;
