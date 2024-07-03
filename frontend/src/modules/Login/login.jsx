@@ -145,9 +145,7 @@ const Login = () => {
             <div className="logologin">
               <img src={SBFLOGO} alt="" srcset="" />
             </div>
-            <div className="logintextaccount">
-              Test (88443 env) Login to your account
-            </div>
+            <div className="logintextaccount">Login to your account</div>
           </div>
 
           <form className="loginform" onSubmit={handleLogin}>
