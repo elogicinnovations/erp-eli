@@ -377,9 +377,7 @@ function PurchaseRequest({ authrztn }) {
     }).then(async (cancel) => {
       if (cancel) {
         try {
-          if (
-            row_status !== "For-Approval" 
-          ) {
+          if (row_status !== "For-Approval") {
             swal({
               icon: "error",
               title: "Cancel Prohibited",
@@ -581,9 +579,7 @@ function PurchaseRequest({ authrztn }) {
                       <option value="Rejustified">Rejustified</option>
                       <option value="For-Canvassing">For-Canvassing</option>
                       <option value="On-Canvass">For-PO</option>
-                      <option value="For-Approval (PO)">
-                        PO
-                      </option>
+                      <option value="For-Approval (PO)">PO</option>
                     </Form.Select>
                     <div className="pur-filt-container">
                       <button
@@ -750,7 +746,9 @@ function PurchaseRequest({ authrztn }) {
                                       >
                                         {data.status === "On-Canvass"
                                           ? "Pending PR"
-                                          : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
+                                          : data.status === "For-Approval (PO)"
+                                          ? "PO"
+                                          : data.status}
                                       </div>
                                     </>
                                   ) : (
@@ -768,7 +766,9 @@ function PurchaseRequest({ authrztn }) {
                                       >
                                         {data.status === "On-Canvass"
                                           ? "For-PO"
-                                          : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
+                                          : data.status === "For-Approval (PO)"
+                                          ? "PO"
+                                          : data.status}
                                       </div>
                                     </>
                                   )}
@@ -1061,7 +1061,10 @@ function PurchaseRequest({ authrztn }) {
                                           >
                                             {data.status === "On-Canvass"
                                               ? "Pending PR"
-                                              : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
+                                              : data.status ===
+                                                "For-Approval (PO)"
+                                              ? "PO"
+                                              : data.status}
                                           </div>
                                         </>
                                       ) : (
@@ -1079,7 +1082,10 @@ function PurchaseRequest({ authrztn }) {
                                           >
                                             {data.status === "On-Canvass"
                                               ? "For-PO"
-                                              : data.status === 'For-Approval (PO)' ? 'PO' : data.status}
+                                              : data.status ===
+                                                "For-Approval (PO)"
+                                              ? "PO"
+                                              : data.status}
                                           </div>
                                         </>
                                       )}

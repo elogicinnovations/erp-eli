@@ -55,17 +55,9 @@ router.route("/inventoryPRD").get(async (req, res) => {
     const manilaTimezone = "Asia/Manila";
     moment.tz.setDefault(manilaTimezone);
 
-    // Get the current date in Manila timezone
     const currentDate = moment();
-
-    // Get the first date of the current month
     const firstDateOfMonth = currentDate.clone().startOf("month");
-
-    // Get the last date of the current month
     const lastDateOfMonth = currentDate.clone().endOf("month");
-
-    // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
-    // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
 
     const data = await Inventory.findAll({
       include: [
@@ -76,7 +68,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
             {
               model: Product,
               required: true,
-            
             },
             {
               model: Supplier,
@@ -93,7 +84,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
 
     const groupedProductData = {};
 
-    // Define a function to calculate the total quantity from PR_PO
     const calculatePRQuantity = async (productID) => {
       const prItems = await PR_PO.findAll({
         include: [
@@ -101,7 +91,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
             model: ProductTAGSupplier,
             required: true,
             where: {
-              // Filter PR_PO by productID
               product_id: productID,
             },
           },
@@ -121,13 +110,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
         ],
       });
 
-      let totalPRQuantity = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPRQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
-      return totalPRQuantity;
+      return prItems.reduce((total, prItem) => total + prItem.quantity, 0);
     };
 
     const calculatePR_INtransit_Quantity = async (productID) => {
@@ -136,13 +119,11 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: PR_PO,
             required: true,
-
             include: [
               {
                 model: ProductTAGSupplier,
                 required: true,
                 where: {
-                  // Filter PR_PO by productID
                   product_id: productID,
                 },
               },
@@ -151,7 +132,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: Receiving_PO,
             required: true,
-
             where: {
               status: "In-transit",
               createdAt: {
@@ -165,13 +145,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
         ],
       });
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
+      return prItems.reduce((total, prItem) => total + prItem.received_quantity, 0);
     };
 
     const calculatePR_Approval_Quantity = async (productID) => {
@@ -180,13 +154,11 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: PR_PO,
             required: true,
-
             include: [
               {
                 model: ProductTAGSupplier,
                 required: true,
                 where: {
-                  // Filter PR_PO by productID
                   product_id: productID,
                 },
               },
@@ -195,7 +167,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: Receiving_PO,
             required: true,
-
             where: {
               status: "For Approval",
               createdAt: {
@@ -209,13 +180,7 @@ router.route("/inventoryPRD").get(async (req, res) => {
         ],
       });
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
+      return prItems.reduce((total, prItem) => total + prItem.received_quantity, 0);
     };
 
     const calculatePR_received_Quantity = async (productID) => {
@@ -224,13 +189,11 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: PR_PO,
             required: true,
-
             include: [
               {
                 model: ProductTAGSupplier,
                 required: true,
                 where: {
-                  // Filter PR_PO by productID
                   product_id: productID,
                 },
               },
@@ -239,10 +202,8 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: Receiving_PO,
             required: true,
-
             where: {
               status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
               createdAt: {
                 [Op.between]: [
                   firstDateOfMonth.format("YYYY-MM-DD"),
@@ -254,18 +215,11 @@ router.route("/inventoryPRD").get(async (req, res) => {
         ],
       });
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity = prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
+      return prItems.reduce((total, prItem) => total + prItem.received_quantity, 0);
     };
 
-    // Define a function to calculate the total quantity from issued
     const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveProduct.findAll({
+      const issuedItems = await IssuedApproveProduct.findAll({
         where: {
           createdAt: {
             [Op.between]: [
@@ -278,13 +232,11 @@ router.route("/inventoryPRD").get(async (req, res) => {
           {
             model: Inventory,
             required: true,
-
             include: [
               {
                 model: ProductTAGSupplier,
                 required: true,
                 where: {
-                  // Filter PR_PO by productID
                   product_id: productID,
                 },
               },
@@ -293,18 +245,9 @@ router.route("/inventoryPRD").get(async (req, res) => {
         ],
       });
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      console.log(
-        `Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`
-      );
-      return totalIssuedQuantity;
+      return issuedItems.reduce((total, issuedItem) => total + issuedItem.quantity, 0);
     };
 
-    // Loop through each inventory item
     for (const item of data) {
       const inventory_id = item.inventory_id;
       const warehouseId = item.warehouse_id;
@@ -314,7 +257,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
       const productName = item.product_tag_supplier?.product?.product_name;
       const UOM = item.product_tag_supplier?.product?.product_unitMeasurement;
       const createdAtt = item.product_tag_supplier?.product?.createdAt;
-      
       const Price = item.price;
 
       if (warehouseId && productCode && productName) {
@@ -329,7 +271,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
             warehouseId: warehouseId,
             product_code: productCode,
             product_name: productName,
-            
             totalQuantity: 0,
             totalPRQuantity: 0,
             totalPR_intransit_Quantity: 0,
@@ -342,27 +283,11 @@ router.route("/inventoryPRD").get(async (req, res) => {
           };
         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity = await calculatePRQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
-
-        groupedProductData[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData[key].totalPRQuantity += totalPRQuantity;
-        groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
+        groupedProductData[key].totalPR_received_Quantity += await calculatePR_received_Quantity(productID);
+        groupedProductData[key].totalPR_Approval_Quantity += await calculatePR_Approval_Quantity(productID);
+        groupedProductData[key].totalPR_intransit_Quantity += await calculatePR_INtransit_Quantity(productID);
+        groupedProductData[key].totalPRQuantity += await calculatePRQuantity(productID);
+        groupedProductData[key].totalIssuedQuantity += await calculateIssuanceQuantity(productID);
 
         groupedProductData[key].totalQuantity += item.quantity;
         groupedProductData[key].products.push(item);
@@ -370,7 +295,6 @@ router.route("/inventoryPRD").get(async (req, res) => {
     }
 
     const finalResult_PRD = Object.values(groupedProductData);
-
     return res.json(finalResult_PRD);
   } catch (err) {
     console.error(err);
@@ -378,987 +302,988 @@ router.route("/inventoryPRD").get(async (req, res) => {
   }
 });
 
-router.route("/inventoryASM").get(async (req, res) => {
-  try {
-    const manilaTimezone = "Asia/Manila";
-    moment.tz.setDefault(manilaTimezone);
 
-    // Get the current date in Manila timezone
-    const currentDate = moment();
+// router.route("/inventoryASM").get(async (req, res) => {
+//   try {
+//     const manilaTimezone = "Asia/Manila";
+//     moment.tz.setDefault(manilaTimezone);
 
-    // Get the first date of the current month
-    const firstDateOfMonth = currentDate.clone().startOf("month");
+//     // Get the current date in Manila timezone
+//     const currentDate = moment();
 
-    // Get the last date of the current month
-    const lastDateOfMonth = currentDate.clone().endOf("month");
+//     // Get the first date of the current month
+//     const firstDateOfMonth = currentDate.clone().startOf("month");
 
-    // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
-    // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
+//     // Get the last date of the current month
+//     const lastDateOfMonth = currentDate.clone().endOf("month");
 
-    const data_asm = await Inventory_Assembly.findAll({
-      include: [
-        {
-          model: Assembly_Supplier,
-          required: true,
-          include: [
-            {
-              model: Assembly,
-              required: true,
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//     // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
+//     // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
 
-    const groupedProductData_asm = {};
+//     const data_asm = await Inventory_Assembly.findAll({
+//       include: [
+//         {
+//           model: Assembly_Supplier,
+//           required: true,
+//           include: [
+//             {
+//               model: Assembly,
+//               required: true,
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    // Define a function to calculate the total quantity from issued
-    const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveAssembly.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [
-              firstDateOfMonth.format("YYYY-MM-DD"),
-              lastDateOfMonth.format("YYYY-MM-DD"),
-            ],
-          },
-        },
-        include: [
-          {
-            model: Inventory_Assembly,
-            required: true,
+//     const groupedProductData_asm = {};
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-        ],
-      });
+//     // Define a function to calculate the total quantity from issued
+//     const calculateIssuanceQuantity = async (productID) => {
+//       const IssuedItems = await IssuedApproveAssembly.findAll({
+//         where: {
+//           createdAt: {
+//             [Op.between]: [
+//               firstDateOfMonth.format("YYYY-MM-DD"),
+//               lastDateOfMonth.format("YYYY-MM-DD"),
+//             ],
+//           },
+//         },
+//         include: [
+//           {
+//             model: Inventory_Assembly,
+//             required: true,
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
-      return totalIssuedQuantity;
-    };
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       });
 
-    // Define a function to calculate the total quantity from PR_PO
-    const calculatePRQuantity_asm = async (productID) => {
-      const prItems_asm = await PR_PO_asmbly.findAll({
-        include: [
-          {
-            model: Assembly_Supplier,
-            required: true,
-            where: {
-              // Filter PR_PO by productID
-              assembly_id: productID,
-            },
-          },
-          {
-            model: PR,
-            required: true,
-            where: {
-              status: "To-Receive",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//       let totalIssuedQuantity = 0; // New variable for total quantity from issued
+//       // Sum up the quantity from issued
+//       IssuedItems.forEach((prItem) => {
+//         totalIssuedQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
+//       return totalIssuedQuantity;
+//     };
 
-      let totalPRQuantity_asm = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems_asm.forEach((prItem) => {
-        totalPRQuantity_asm += prItem.quantity;
-      });
-      console.log(
-        `Total Quantity for Product ID ${productID}: ${totalPRQuantity_asm}`
-      );
-      return totalPRQuantity_asm;
-    };
+//     // Define a function to calculate the total quantity from PR_PO
+//     const calculatePRQuantity_asm = async (productID) => {
+//       const prItems_asm = await PR_PO_asmbly.findAll({
+//         include: [
+//           {
+//             model: Assembly_Supplier,
+//             required: true,
+//             where: {
+//               // Filter PR_PO by productID
+//               assembly_id: productID,
+//             },
+//           },
+//           {
+//             model: PR,
+//             required: true,
+//             where: {
+//               status: "To-Receive",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-    const calculatePR_INtransit_Quantity = async (productID) => {
-      const prItems = await Receiving_initial_asm.findAll({
-        include: [
-          {
-            model: PR_PO_asmbly,
-            required: true,
+//       let totalPRQuantity_asm = 0; // New variable for total quantity from PR_PO
+//       // Sum up the quantity from PR_PO
+//       prItems_asm.forEach((prItem) => {
+//         totalPRQuantity_asm += prItem.quantity;
+//       });
+//       console.log(
+//         `Total Quantity for Product ID ${productID}: ${totalPRQuantity_asm}`
+//       );
+//       return totalPRQuantity_asm;
+//     };
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//     const calculatePR_INtransit_Quantity = async (productID) => {
+//       const prItems = await Receiving_initial_asm.findAll({
+//         include: [
+//           {
+//             model: PR_PO_asmbly,
+//             required: true,
 
-            where: {
-              status: "In-transit",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
-    };
+//             where: {
+//               status: "In-transit",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-    const calculatePR_Approval_Quantity = async (productID) => {
-      const prItems = await Receiving_Asm.findAll({
-        include: [
-          {
-            model: PR_PO_asmbly,
-            required: true,
+//       let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_intransit_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
+//       return totalPR_intransit_Quantity;
+//     };
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//     const calculatePR_Approval_Quantity = async (productID) => {
+//       const prItems = await Receiving_Asm.findAll({
+//         include: [
+//           {
+//             model: PR_PO_asmbly,
+//             required: true,
 
-            where: {
-              status: "For Approval",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
-    };
+//             where: {
+//               status: "For Approval",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-    const calculatePR_received_Quantity = async (productID) => {
-      const prItems = await Receiving_Asm.findAll({
-        include: [
-          {
-            model: PR_PO_asmbly,
-            required: true,
+//       let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_Approval_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_Approval_Quantity;
+//     };
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//     const calculatePR_received_Quantity = async (productID) => {
+//       const prItems = await Receiving_Asm.findAll({
+//         include: [
+//           {
+//             model: PR_PO_asmbly,
+//             required: true,
 
-            where: {
-              status: { [Op.ne]: "For Approval" },
-              status:{ [Op.ne]: 'In-transit'},
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity = prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
-    };
+//             where: {
+//               status: { [Op.ne]: "For Approval" },
+//               status:{ [Op.ne]: 'In-transit'},
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-    // Loop through each inventory item
-    for (const item of data_asm) {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.assembly_supplier?.assembly?.id;
-      const productCode = item.assembly_supplier?.assembly?.assembly_code;
-      const productName = item.assembly_supplier?.assembly?.assembly_name;
+//       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_received_Quantity = prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_received_Quantity;
+//     };
 
-      const Price = item.price;
+//     // Loop through each inventory item
+//     for (const item of data_asm) {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.assembly_supplier?.assembly?.id;
+//       const productCode = item.assembly_supplier?.assembly?.assembly_code;
+//       const productName = item.assembly_supplier?.assembly?.assembly_name;
 
-      const inventory_id = item.inventory_id;
-      const UOM = item.assembly_supplier?.assembly?.assembly_unitMeasurement;
-      const createdAtt = item.assembly_supplier?.assembly?.createdAt;
+//       const Price = item.price;
 
-      if (warehouseId && productCode && productName) {
-        const key = `${warehouseId}_${productCode}_${productName}`;
+//       const inventory_id = item.inventory_id;
+//       const UOM = item.assembly_supplier?.assembly?.assembly_unitMeasurement;
+//       const createdAtt = item.assembly_supplier?.assembly?.createdAt;
 
-        if (!groupedProductData_asm[key]) {
-          groupedProductData_asm[key] = {
-            createdAt: createdAtt,
-            UOM: UOM,
-            inventory_id: inventory_id,
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
+//       if (warehouseId && productCode && productName) {
+//         const key = `${warehouseId}_${productCode}_${productName}`;
+
+//         if (!groupedProductData_asm[key]) {
+//           groupedProductData_asm[key] = {
+//             createdAt: createdAtt,
+//             UOM: UOM,
+//             inventory_id: inventory_id,
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
             
-            totalQuantity: 0,
-            totalPRQuantity_asm: 0,
-            totalPR_intransit_Quantity: 0,
-            totalPR_Approval_Quantity: 0,
-            totalIssuedQuantity: 0,
-            totalPR_received_Quantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
+//             totalQuantity: 0,
+//             totalPRQuantity_asm: 0,
+//             totalPR_intransit_Quantity: 0,
+//             totalPR_Approval_Quantity: 0,
+//             totalIssuedQuantity: 0,
+//             totalPR_received_Quantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             products: [],
+//           };
+//         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity_asm = await calculatePRQuantity_asm(productID);
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
+//         // Calculate the total quantity from PR_PO
+//         const totalPRQuantity_asm = await calculatePRQuantity_asm(productID);
+//         const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
+//         const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
+//           productID
+//         );
+//         const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
+//           productID
+//         );
+//         const totalPR_received_Quantity = await calculatePR_received_Quantity(
+//           productID
+//         );
 
-        groupedProductData_asm[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData_asm[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData_asm[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData_asm[key].totalPRQuantity_asm += totalPRQuantity_asm; // Update the new variable
-        groupedProductData_asm[key].totalQuantity += item.quantity;
+//         groupedProductData_asm[key].totalPR_received_Quantity +=
+//           totalPR_received_Quantity;
+//         groupedProductData_asm[key].totalPR_Approval_Quantity +=
+//           totalPR_Approval_Quantity;
+//         groupedProductData_asm[key].totalPR_intransit_Quantity +=
+//           totalPR_intransit_Quantity;
+//         groupedProductData_asm[key].totalPRQuantity_asm += totalPRQuantity_asm; // Update the new variable
+//         groupedProductData_asm[key].totalQuantity += item.quantity;
 
-        groupedProductData_asm[key].totalIssuedQuantity += totalIssuedQuantity; // Update the new variable
-        groupedProductData_asm[key].products.push(item);
-      }
-    }
+//         groupedProductData_asm[key].totalIssuedQuantity += totalIssuedQuantity; // Update the new variable
+//         groupedProductData_asm[key].products.push(item);
+//       }
+//     }
 
-    const finalResult_asm = Object.values(groupedProductData_asm);
+//     const finalResult_asm = Object.values(groupedProductData_asm);
 
-    return res.json(finalResult_asm);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_asm);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/inventorySPR").get(async (req, res) => {
-  try {
-    const manilaTimezone = "Asia/Manila";
-    moment.tz.setDefault(manilaTimezone);
+// router.route("/inventorySPR").get(async (req, res) => {
+//   try {
+//     const manilaTimezone = "Asia/Manila";
+//     moment.tz.setDefault(manilaTimezone);
 
-    // Get the current date in Manila timezone
-    const currentDate = moment();
+//     // Get the current date in Manila timezone
+//     const currentDate = moment();
 
-    // Get the first date of the current month
-    const firstDateOfMonth = currentDate.clone().startOf("month");
+//     // Get the first date of the current month
+//     const firstDateOfMonth = currentDate.clone().startOf("month");
 
-    // Get the last date of the current month
-    const lastDateOfMonth = currentDate.clone().endOf("month");
+//     // Get the last date of the current month
+//     const lastDateOfMonth = currentDate.clone().endOf("month");
 
-    // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
-    // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
+//     // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
+//     // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
 
-    const data = await Inventory_Spare.findAll({
-      include: [
-        {
-          model: SparePart_Supplier,
-          required: true,
-          include: [
-            {
-              model: SparePart,
-              required: true,
+//     const data = await Inventory_Spare.findAll({
+//       include: [
+//         {
+//           model: SparePart_Supplier,
+//           required: true,
+//           include: [
+//             {
+//               model: SparePart,
+//               required: true,
              
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    const groupedProductData = {};
+//     const groupedProductData = {};
 
-    // Define a function to calculate the total quantity from PR_PO
-    const calculatePRQuantity = async (productID) => {
-      const prItems = await PR_PO_spare.findAll({
-        include: [
-          {
-            model: SparePart_Supplier,
-            required: true,
-            where: {
-              // Filter PR_PO by productID
-              sparePart_id: productID,
-            },
-          },
-          {
-            model: PR,
-            required: true,
-            where: {
-              status: "To-Receive",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//     // Define a function to calculate the total quantity from PR_PO
+//     const calculatePRQuantity = async (productID) => {
+//       const prItems = await PR_PO_spare.findAll({
+//         include: [
+//           {
+//             model: SparePart_Supplier,
+//             required: true,
+//             where: {
+//               // Filter PR_PO by productID
+//               sparePart_id: productID,
+//             },
+//           },
+//           {
+//             model: PR,
+//             required: true,
+//             where: {
+//               status: "To-Receive",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPRQuantity = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPRQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
-      return totalPRQuantity;
-    };
+//       let totalPRQuantity = 0; // New variable for total quantity from PR_PO
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPRQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
+//       return totalPRQuantity;
+//     };
 
-    // Define a function to calculate the total quantity from issued
-    const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveSpare.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [
-              firstDateOfMonth.format("YYYY-MM-DD"),
-              lastDateOfMonth.format("YYYY-MM-DD"),
-            ],
-          },
-        },
-        include: [
-          {
-            model: Inventory_Spare,
-            required: true,
+//     // Define a function to calculate the total quantity from issued
+//     const calculateIssuanceQuantity = async (productID) => {
+//       const IssuedItems = await IssuedApproveSpare.findAll({
+//         where: {
+//           createdAt: {
+//             [Op.between]: [
+//               firstDateOfMonth.format("YYYY-MM-DD"),
+//               lastDateOfMonth.format("YYYY-MM-DD"),
+//             ],
+//           },
+//         },
+//         include: [
+//           {
+//             model: Inventory_Spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       });
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
-      return totalIssuedQuantity;
-    };
+//       let totalIssuedQuantity = 0; // New variable for total quantity from issued
+//       // Sum up the quantity from issued
+//       IssuedItems.forEach((prItem) => {
+//         totalIssuedQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
+//       return totalIssuedQuantity;
+//     };
 
-    const calculatePR_INtransit_Quantity = async (productID) => {
-      const prItems = await Receiving_initial_spare.findAll({
-        include: [
-          {
-            model: PR_PO_spare,
-            required: true,
+//     const calculatePR_INtransit_Quantity = async (productID) => {
+//       const prItems = await Receiving_initial_spare.findAll({
+//         include: [
+//           {
+//             model: PR_PO_spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "In-transit",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "In-transit",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
-    };
+//       let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_intransit_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
+//       return totalPR_intransit_Quantity;
+//     };
 
-    const calculatePR_Approval_Quantity = async (productID) => {
-      const prItems = await Receiving_Spare.findAll({
-        include: [
-          {
-            model: PR_PO_spare,
-            required: true,
+//     const calculatePR_Approval_Quantity = async (productID) => {
+//       const prItems = await Receiving_Spare.findAll({
+//         include: [
+//           {
+//             model: PR_PO_spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "For Approval",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "For Approval",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
-    };
+//       let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_Approval_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_Approval_Quantity;
+//     };
 
-    const calculatePR_received_Quantity = async (productID) => {
-      const prItems = await Receiving_Spare.findAll({
-        include: [
-          {
-            model: PR_PO_spare,
-            required: true,
+//     const calculatePR_received_Quantity = async (productID) => {
+//       const prItems = await Receiving_Spare.findAll({
+//         include: [
+//           {
+//             model: PR_PO_spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: { [Op.ne]: "For Approval" },
+//               // status:{ [Op.ne]: 'In-transit'},
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity = prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
-    };
+//       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_received_Quantity = prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_received_Quantity;
+//     };
 
-    // Loop through each inventory item
-    for (const item of data) {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.sparepart_supplier?.sparePart?.id;
-      const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
-      const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
+//     // Loop through each inventory item
+//     for (const item of data) {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.sparepart_supplier?.sparePart?.id;
+//       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
+//       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
      
-      const Price = item.price;
-      const inventory_id = item.inventory_id;
-      const UOM =
-        item.sparepart_supplier?.sparePart?.spareParts_unitMeasurement;
-      const createdAtt = item.sparepart_supplier?.sparePart?.createdAt;
+//       const Price = item.price;
+//       const inventory_id = item.inventory_id;
+//       const UOM =
+//         item.sparepart_supplier?.sparePart?.spareParts_unitMeasurement;
+//       const createdAtt = item.sparepart_supplier?.sparePart?.createdAt;
 
-      if (warehouseId && productCode && productName) {
-        const key = `${warehouseId}_${productCode}_${productName}`;
+//       if (warehouseId && productCode && productName) {
+//         const key = `${warehouseId}_${productCode}_${productName}`;
 
-        if (!groupedProductData[key]) {
-          groupedProductData[key] = {
-            createdAt: createdAtt,
-            UOM: UOM,
-            inventory_id: inventory_id,
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
+//         if (!groupedProductData[key]) {
+//           groupedProductData[key] = {
+//             createdAt: createdAtt,
+//             UOM: UOM,
+//             inventory_id: inventory_id,
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
         
-            totalQuantity: 0,
-            totalPRQuantity: 0,
-            totalIssuedQuantity: 0,
-            totalPR_intransit_Quantity: 0,
-            totalPR_Approval_Quantity: 0,
-            totalPR_received_Quantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
+//             totalQuantity: 0,
+//             totalPRQuantity: 0,
+//             totalIssuedQuantity: 0,
+//             totalPR_intransit_Quantity: 0,
+//             totalPR_Approval_Quantity: 0,
+//             totalPR_received_Quantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             products: [],
+//           };
+//         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity = await calculatePRQuantity(productID);
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
+//         // Calculate the total quantity from PR_PO
+//         const totalPRQuantity = await calculatePRQuantity(productID);
+//         const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
+//         const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
+//           productID
+//         );
+//         const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
+//           productID
+//         );
+//         const totalPR_received_Quantity = await calculatePR_received_Quantity(
+//           productID
+//         );
 
-        groupedProductData[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
-        groupedProductData[key].totalPRQuantity += totalPRQuantity;
+//         groupedProductData[key].totalPR_received_Quantity +=
+//           totalPR_received_Quantity;
+//         groupedProductData[key].totalPR_Approval_Quantity +=
+//           totalPR_Approval_Quantity;
+//         groupedProductData[key].totalPR_intransit_Quantity +=
+//           totalPR_intransit_Quantity;
+//         groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
+//         groupedProductData[key].totalPRQuantity += totalPRQuantity;
 
-        groupedProductData[key].totalQuantity += item.quantity;
-        groupedProductData[key].products.push(item);
-      }
-    }
+//         groupedProductData[key].totalQuantity += item.quantity;
+//         groupedProductData[key].products.push(item);
+//       }
+//     }
 
-    const finalResult_spr = Object.values(groupedProductData);
+//     const finalResult_spr = Object.values(groupedProductData);
 
-    return res.json(finalResult_spr);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_spr);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/inventorySBP").get(async (req, res) => {
-  try {
-    const manilaTimezone = "Asia/Manila";
-    moment.tz.setDefault(manilaTimezone);
+// router.route("/inventorySBP").get(async (req, res) => {
+//   try {
+//     const manilaTimezone = "Asia/Manila";
+//     moment.tz.setDefault(manilaTimezone);
 
-    // Get the current date in Manila timezone
-    const currentDate = moment();
+//     // Get the current date in Manila timezone
+//     const currentDate = moment();
 
-    // Get the first date of the current month
-    const firstDateOfMonth = currentDate.clone().startOf("month");
+//     // Get the first date of the current month
+//     const firstDateOfMonth = currentDate.clone().startOf("month");
 
-    // Get the last date of the current month
-    const lastDateOfMonth = currentDate.clone().endOf("month");
+//     // Get the last date of the current month
+//     const lastDateOfMonth = currentDate.clone().endOf("month");
 
-    // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
-    // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
+//     // console.log("First date of current month:", firstDateOfMonth.format('YYYY-MM-DD'));
+//     // console.log("Last date of current month:", lastDateOfMonth.format('YYYY-MM-DD'));
 
-    const data = await Inventory_Subpart.findAll({
-      include: [
-        {
-          model: Subpart_supplier,
-          required: true,
-          include: [
-            {
-              model: SubPart,
-              required: true,
+//     const data = await Inventory_Subpart.findAll({
+//       include: [
+//         {
+//           model: Subpart_supplier,
+//           required: true,
+//           include: [
+//             {
+//               model: SubPart,
+//               required: true,
               
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    const groupedProductData = {};
+//     const groupedProductData = {};
 
-    // Define a function to calculate the total quantity from PR_PO
-    const calculatePRQuantity = async (productID) => {
-      const prItems = await PR_PO_subpart.findAll({
-        include: [
-          {
-            model: Subpart_supplier,
-            required: true,
-            where: {
-              // Filter PR_PO by productID
-              subpart_id: productID,
-            },
-          },
-          {
-            model: PR,
-            required: true,
-            where: {
-              status: "To-Receive",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//     // Define a function to calculate the total quantity from PR_PO
+//     const calculatePRQuantity = async (productID) => {
+//       const prItems = await PR_PO_subpart.findAll({
+//         include: [
+//           {
+//             model: Subpart_supplier,
+//             required: true,
+//             where: {
+//               // Filter PR_PO by productID
+//               subpart_id: productID,
+//             },
+//           },
+//           {
+//             model: PR,
+//             required: true,
+//             where: {
+//               status: "To-Receive",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPRQuantity = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPRQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
-      return totalPRQuantity;
-    };
+//       let totalPRQuantity = 0; // New variable for total quantity from PR_PO
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPRQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
+//       return totalPRQuantity;
+//     };
 
-    const calculatePR_INtransit_Quantity = async (productID) => {
-      const prItems = await Receiving_initial_subpart.findAll({
-        include: [
-          {
-            model: PR_PO_subpart,
-            required: true,
+//     const calculatePR_INtransit_Quantity = async (productID) => {
+//       const prItems = await Receiving_initial_subpart.findAll({
+//         include: [
+//           {
+//             model: PR_PO_subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "In-transit",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "In-transit",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
-    };
+//       let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_intransit_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
+//       return totalPR_intransit_Quantity;
+//     };
 
-    const calculatePR_Approval_Quantity = async (productID) => {
-      const prItems = await Receiving_Subpart.findAll({
-        include: [
-          {
-            model: PR_PO_subpart,
-            required: true,
+//     const calculatePR_Approval_Quantity = async (productID) => {
+//       const prItems = await Receiving_Subpart.findAll({
+//         include: [
+//           {
+//             model: PR_PO_subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "For Approval",
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "For Approval",
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
-    };
+//       let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_Approval_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_Approval_Quantity;
+//     };
 
-    const calculatePR_received_Quantity = async (productID) => {
-      const prItems = await Receiving_Subpart.findAll({
-        include: [
-          {
-            model: PR_PO_subpart,
-            required: true,
+//     const calculatePR_received_Quantity = async (productID) => {
+//       const prItems = await Receiving_Subpart.findAll({
+//         include: [
+//           {
+//             model: PR_PO_subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
-              createdAt: {
-                [Op.between]: [
-                  firstDateOfMonth.format("YYYY-MM-DD"),
-                  lastDateOfMonth.format("YYYY-MM-DD"),
-                ],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: { [Op.ne]: "For Approval" },
+//               // status:{ [Op.ne]: 'In-transit'},
+//               createdAt: {
+//                 [Op.between]: [
+//                   firstDateOfMonth.format("YYYY-MM-DD"),
+//                   lastDateOfMonth.format("YYYY-MM-DD"),
+//                 ],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity = prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
-    };
+//       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_received_Quantity = prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_received_Quantity;
+//     };
 
-    // Define a function to calculate the total quantity from issued
-    const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveSubpart.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [
-              firstDateOfMonth.format("YYYY-MM-DD"),
-              lastDateOfMonth.format("YYYY-MM-DD"),
-            ],
-          },
-        },
-        include: [
-          {
-            model: Inventory_Subpart,
-            required: true,
+//     // Define a function to calculate the total quantity from issued
+//     const calculateIssuanceQuantity = async (productID) => {
+//       const IssuedItems = await IssuedApproveSubpart.findAll({
+//         where: {
+//           createdAt: {
+//             [Op.between]: [
+//               firstDateOfMonth.format("YYYY-MM-DD"),
+//               lastDateOfMonth.format("YYYY-MM-DD"),
+//             ],
+//           },
+//         },
+//         include: [
+//           {
+//             model: Inventory_Subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       });
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
-      return totalIssuedQuantity;
-    };
+//       let totalIssuedQuantity = 0; // New variable for total quantity from issued
+//       // Sum up the quantity from issued
+//       IssuedItems.forEach((prItem) => {
+//         totalIssuedQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
+//       return totalIssuedQuantity;
+//     };
 
-    // Loop through each inventory item
-    for (const item of data) {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.subpart_supplier?.subPart?.id;
-      const productCode = item.subpart_supplier?.subPart?.subPart_code;
-      const productName = item.subpart_supplier?.subPart?.subPart_name;
+//     // Loop through each inventory item
+//     for (const item of data) {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.subpart_supplier?.subPart?.id;
+//       const productCode = item.subpart_supplier?.subPart?.subPart_code;
+//       const productName = item.subpart_supplier?.subPart?.subPart_name;
 
-      const Price = item.price;
+//       const Price = item.price;
 
-      const inventory_id = item.inventory_id;
-      const UOM = item.subpart_supplier?.subPart?.subPart_unitMeasurement;
-      const createdAtt = item.subpart_supplier?.subPart?.createdAt;
+//       const inventory_id = item.inventory_id;
+//       const UOM = item.subpart_supplier?.subPart?.subPart_unitMeasurement;
+//       const createdAtt = item.subpart_supplier?.subPart?.createdAt;
 
-      if (warehouseId && productCode && productName) {
-        const key = `${warehouseId}_${productCode}_${productName}`;
+//       if (warehouseId && productCode && productName) {
+//         const key = `${warehouseId}_${productCode}_${productName}`;
 
-        if (!groupedProductData[key]) {
-          groupedProductData[key] = {
-            createdAt: createdAtt,
-            UOM: UOM,
-            inventory_id: inventory_id,
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
+//         if (!groupedProductData[key]) {
+//           groupedProductData[key] = {
+//             createdAt: createdAtt,
+//             UOM: UOM,
+//             inventory_id: inventory_id,
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
 
-            totalQuantity: 0,
-            totalPRQuantity: 0,
-            totalIssuedQuantity: 0,
-            totalPR_intransit_Quantity: 0,
-            totalPR_Approval_Quantity: 0,
-            totalPR_received_Quantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
+//             totalQuantity: 0,
+//             totalPRQuantity: 0,
+//             totalIssuedQuantity: 0,
+//             totalPR_intransit_Quantity: 0,
+//             totalPR_Approval_Quantity: 0,
+//             totalPR_received_Quantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             products: [],
+//           };
+//         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity = await calculatePRQuantity(productID);
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
+//         // Calculate the total quantity from PR_PO
+//         const totalPRQuantity = await calculatePRQuantity(productID);
+//         const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
+//         const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
+//           productID
+//         );
+//         const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
+//           productID
+//         );
+//         const totalPR_received_Quantity = await calculatePR_received_Quantity(
+//           productID
+//         );
 
-        groupedProductData[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
-        groupedProductData[key].totalPRQuantity += totalPRQuantity;
+//         groupedProductData[key].totalPR_received_Quantity +=
+//           totalPR_received_Quantity;
+//         groupedProductData[key].totalPR_Approval_Quantity +=
+//           totalPR_Approval_Quantity;
+//         groupedProductData[key].totalPR_intransit_Quantity +=
+//           totalPR_intransit_Quantity;
+//         groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
+//         groupedProductData[key].totalPRQuantity += totalPRQuantity;
 
-        groupedProductData[key].totalQuantity += item.quantity;
-        groupedProductData[key].products.push(item);
-      }
-    }
+//         groupedProductData[key].totalQuantity += item.quantity;
+//         groupedProductData[key].products.push(item);
+//       }
+//     }
 
-    const finalResult_PRD = Object.values(groupedProductData);
+//     const finalResult_PRD = Object.values(groupedProductData);
 
-    return res.json(finalResult_PRD);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_PRD);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
 router.route("/Filtered_prd").get(async (req, res) => {
   try {
@@ -1698,970 +1623,970 @@ router.route("/Filtered_prd").get(async (req, res) => {
   }
 });
 
-router.route("/Filtered_asm").get(async (req, res) => {
-  try {
-    const { slctCategory, slctWarehouse, strDate, enDate } = req.query;
+// router.route("/Filtered_asm").get(async (req, res) => {
+//   try {
+//     const { slctCategory, slctWarehouse, strDate, enDate } = req.query;
 
-    const startDates = new Date(strDate);
-    startDates.setDate(startDates.getDate() + 1);
-    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+//     const startDates = new Date(strDate);
+//     startDates.setDate(startDates.getDate() + 1);
+//     const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
 
-    const endDates = new Date(enDate);
-    endDates.setDate(endDates.getDate() + 1);
-    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+//     const endDates = new Date(enDate);
+//     endDates.setDate(endDates.getDate() + 1);
+//     const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
 
-    const whereClause = {};
-    if (slctCategory !== "All") {
-      // whereClause.category_code = slctCategory;
-      whereClause["$Assembly_Supplier.Assembly.category_code$"] =
-        slctCategory;
-    }
+//     const whereClause = {};
+//     if (slctCategory !== "All") {
+//       // whereClause.category_code = slctCategory;
+//       whereClause["$Assembly_Supplier.Assembly.category_code$"] =
+//         slctCategory;
+//     }
 
-    // Check if slctWarehouse is not "All", then add it to whereClause
-    if (slctWarehouse !== "All") {
-      whereClause.warehouse_id = slctWarehouse;
-    }
+//     // Check if slctWarehouse is not "All", then add it to whereClause
+//     if (slctWarehouse !== "All") {
+//       whereClause.warehouse_id = slctWarehouse;
+//     }
 
-    const data_asm = await Inventory_Assembly.findAll({
-      where: whereClause,
-      include: [
-        {
-          model: Assembly_Supplier,
-          required: true,
-          include: [
-            {
-              model: Assembly,
-              required: true,
+//     const data_asm = await Inventory_Assembly.findAll({
+//       where: whereClause,
+//       include: [
+//         {
+//           model: Assembly_Supplier,
+//           required: true,
+//           include: [
+//             {
+//               model: Assembly,
+//               required: true,
               
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    const groupedProductData_asm = {};
+//     const groupedProductData_asm = {};
 
-    // Define a function to calculate the total quantity from issued
-    const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveAssembly.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [startDate, endDate],
-          },
-        },
-        include: [
-          {
-            model: Inventory_Assembly,
-            required: true,
+//     // Define a function to calculate the total quantity from issued
+//     const calculateIssuanceQuantity = async (productID) => {
+//       const IssuedItems = await IssuedApproveAssembly.findAll({
+//         where: {
+//           createdAt: {
+//             [Op.between]: [startDate, endDate],
+//           },
+//         },
+//         include: [
+//           {
+//             model: Inventory_Assembly,
+//             required: true,
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       });
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
-      return totalIssuedQuantity;
-    };
+//       let totalIssuedQuantity = 0; // New variable for total quantity from issued
+//       // Sum up the quantity from issued
+//       IssuedItems.forEach((prItem) => {
+//         totalIssuedQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
+//       return totalIssuedQuantity;
+//     };
 
-    // Define a function to calculate the total quantity from PR_PO
-    const calculatePRQuantity_asm = async (productID) => {
-      const prItems_asm = await PR_PO_asmbly.findAll({
-        include: [
-          {
-            model: Assembly_Supplier,
-            required: true,
-            where: {
-              // Filter PR_PO by productID
-              assembly_id: productID,
-            },
-          },
-          {
-            model: PR,
-            required: true,
-            where: {
-              status: "To-Receive",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//     // Define a function to calculate the total quantity from PR_PO
+//     const calculatePRQuantity_asm = async (productID) => {
+//       const prItems_asm = await PR_PO_asmbly.findAll({
+//         include: [
+//           {
+//             model: Assembly_Supplier,
+//             required: true,
+//             where: {
+//               // Filter PR_PO by productID
+//               assembly_id: productID,
+//             },
+//           },
+//           {
+//             model: PR,
+//             required: true,
+//             where: {
+//               status: "To-Receive",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPRQuantity_asm = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems_asm.forEach((prItem) => {
-        totalPRQuantity_asm += prItem.quantity;
-      });
-      console.log(
-        `Total Quantity for Product ID ${productID}: ${totalPRQuantity_asm}`
-      );
-      return totalPRQuantity_asm;
-    };
+//       let totalPRQuantity_asm = 0; // New variable for total quantity from PR_PO
+//       // Sum up the quantity from PR_PO
+//       prItems_asm.forEach((prItem) => {
+//         totalPRQuantity_asm += prItem.quantity;
+//       });
+//       console.log(
+//         `Total Quantity for Product ID ${productID}: ${totalPRQuantity_asm}`
+//       );
+//       return totalPRQuantity_asm;
+//     };
 
-    const calculatePR_INtransit_Quantity = async (productID) => {
-      const prItems = await Receiving_initial_asm.findAll({
-        include: [
-          {
-            model: PR_PO_asmbly,
-            required: true,
+//     const calculatePR_INtransit_Quantity = async (productID) => {
+//       const prItems = await Receiving_initial_asm.findAll({
+//         include: [
+//           {
+//             model: PR_PO_asmbly,
+//             required: true,
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "In-transit",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "In-transit",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
-    };
+//       let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_intransit_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
+//       return totalPR_intransit_Quantity;
+//     };
 
-    const calculatePR_Approval_Quantity = async (productID) => {
-      const prItems = await Receiving_Asm.findAll({
-        include: [
-          {
-            model: PR_PO_asmbly,
-            required: true,
+//     const calculatePR_Approval_Quantity = async (productID) => {
+//       const prItems = await Receiving_Asm.findAll({
+//         include: [
+//           {
+//             model: PR_PO_asmbly,
+//             required: true,
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "For Approval",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "For Approval",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
-    };
+//       let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_Approval_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_Approval_Quantity;
+//     };
 
-    const calculatePR_received_Quantity = async (productID) => {
-      const prItems = await Receiving_Asm.findAll({
-        include: [
-          {
-            model: PR_PO_asmbly,
-            required: true,
+//     const calculatePR_received_Quantity = async (productID) => {
+//       const prItems = await Receiving_Asm.findAll({
+//         include: [
+//           {
+//             model: PR_PO_asmbly,
+//             required: true,
 
-            include: [
-              {
-                model: Assembly_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  assembly_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Assembly_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   assembly_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: { [Op.ne]: "For Approval" },
+//               // status:{ [Op.ne]: 'In-transit'},
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
-    };
+//       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_received_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_received_Quantity;
+//     };
 
-    // Loop through each inventory item
-    for (const item of data_asm) {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.assembly_supplier?.assembly?.id;
-      const productCode = item.assembly_supplier?.assembly?.assembly_code;
-      const productName = item.assembly_supplier?.assembly?.assembly_name;
+//     // Loop through each inventory item
+//     for (const item of data_asm) {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.assembly_supplier?.assembly?.id;
+//       const productCode = item.assembly_supplier?.assembly?.assembly_code;
+//       const productName = item.assembly_supplier?.assembly?.assembly_name;
 
-      const Price = item.price;
+//       const Price = item.price;
 
-      const inventory_id = item.inventory_id;
-      const UOM = item.assembly_supplier?.assembly?.assembly_unitMeasurement;
-      const createdAtt = item.assembly_supplier?.assembly?.createdAt;
+//       const inventory_id = item.inventory_id;
+//       const UOM = item.assembly_supplier?.assembly?.assembly_unitMeasurement;
+//       const createdAtt = item.assembly_supplier?.assembly?.createdAt;
 
-      if (warehouseId && productCode && productName) {
-        const key = `${warehouseId}_${productCode}_${productName}`;
+//       if (warehouseId && productCode && productName) {
+//         const key = `${warehouseId}_${productCode}_${productName}`;
 
-        if (!groupedProductData_asm[key]) {
-          groupedProductData_asm[key] = {
-            createdAt: createdAtt,
-            UOM: UOM,
-            inventory_id: inventory_id,
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
+//         if (!groupedProductData_asm[key]) {
+//           groupedProductData_asm[key] = {
+//             createdAt: createdAtt,
+//             UOM: UOM,
+//             inventory_id: inventory_id,
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
             
-            totalQuantity: 0,
-            totalPRQuantity_asm: 0,
-            totalPR_intransit_Quantity: 0,
-            totalPR_Approval_Quantity: 0,
-            totalIssuedQuantity: 0,
-            totalPR_received_Quantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
+//             totalQuantity: 0,
+//             totalPRQuantity_asm: 0,
+//             totalPR_intransit_Quantity: 0,
+//             totalPR_Approval_Quantity: 0,
+//             totalIssuedQuantity: 0,
+//             totalPR_received_Quantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             products: [],
+//           };
+//         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity_asm = await calculatePRQuantity_asm(productID);
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
+//         // Calculate the total quantity from PR_PO
+//         const totalPRQuantity_asm = await calculatePRQuantity_asm(productID);
+//         const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
+//         const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
+//           productID
+//         );
+//         const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
+//           productID
+//         );
+//         const totalPR_received_Quantity = await calculatePR_received_Quantity(
+//           productID
+//         );
 
-        groupedProductData_asm[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData_asm[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData_asm[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData_asm[key].totalPRQuantity_asm += totalPRQuantity_asm; // Update the new variable
-        groupedProductData_asm[key].totalQuantity += item.quantity;
+//         groupedProductData_asm[key].totalPR_received_Quantity +=
+//           totalPR_received_Quantity;
+//         groupedProductData_asm[key].totalPR_Approval_Quantity +=
+//           totalPR_Approval_Quantity;
+//         groupedProductData_asm[key].totalPR_intransit_Quantity +=
+//           totalPR_intransit_Quantity;
+//         groupedProductData_asm[key].totalPRQuantity_asm += totalPRQuantity_asm; // Update the new variable
+//         groupedProductData_asm[key].totalQuantity += item.quantity;
 
-        groupedProductData_asm[key].totalIssuedQuantity += totalIssuedQuantity; // Update the new variable
-        groupedProductData_asm[key].products.push(item);
-      }
-    }
+//         groupedProductData_asm[key].totalIssuedQuantity += totalIssuedQuantity; // Update the new variable
+//         groupedProductData_asm[key].products.push(item);
+//       }
+//     }
 
-    const finalResult_asm = Object.values(groupedProductData_asm);
+//     const finalResult_asm = Object.values(groupedProductData_asm);
 
-    return res.json(finalResult_asm);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_asm);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/Filtered_spare").get(async (req, res) => {
-  try {
-    const { slctCategory, slctWarehouse, strDate, enDate } = req.query;
+// router.route("/Filtered_spare").get(async (req, res) => {
+//   try {
+//     const { slctCategory, slctWarehouse, strDate, enDate } = req.query;
 
-    const startDates = new Date(strDate);
-    startDates.setDate(startDates.getDate() + 1);
-    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+//     const startDates = new Date(strDate);
+//     startDates.setDate(startDates.getDate() + 1);
+//     const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
 
-    const endDates = new Date(enDate);
-    endDates.setDate(endDates.getDate() + 1);
-    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+//     const endDates = new Date(enDate);
+//     endDates.setDate(endDates.getDate() + 1);
+//     const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
 
-    const whereClause = {};
-    // Check if slctCategory is not "All", then add it to whereClause
-    if (slctCategory !== "All") {
-      // whereClause.category_code = slctCategory;
-      whereClause["$SparePart_Supplier.SparePart.category_code$"] =
-        slctCategory;
-    }
+//     const whereClause = {};
+//     // Check if slctCategory is not "All", then add it to whereClause
+//     if (slctCategory !== "All") {
+//       // whereClause.category_code = slctCategory;
+//       whereClause["$SparePart_Supplier.SparePart.category_code$"] =
+//         slctCategory;
+//     }
 
-    // Check if slctWarehouse is not "All", then add it to whereClause
-    if (slctWarehouse !== "All") {
-      whereClause.warehouse_id = slctWarehouse;
-    }
+//     // Check if slctWarehouse is not "All", then add it to whereClause
+//     if (slctWarehouse !== "All") {
+//       whereClause.warehouse_id = slctWarehouse;
+//     }
 
-    const data = await Inventory_Spare.findAll({
-      where: whereClause,
-      include: [
-        {
-          model: SparePart_Supplier,
-          required: true,
-          include: [
-            {
-              model: SparePart,
-              required: true,
-              // where: whereClause,
+//     const data = await Inventory_Spare.findAll({
+//       where: whereClause,
+//       include: [
+//         {
+//           model: SparePart_Supplier,
+//           required: true,
+//           include: [
+//             {
+//               model: SparePart,
+//               required: true,
+//               // where: whereClause,
             
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    const groupedProductData = {};
+//     const groupedProductData = {};
 
-    // Define a function to calculate the total quantity from PR_PO
-    const calculatePRQuantity = async (productID) => {
-      const prItems = await PR_PO_spare.findAll({
-        include: [
-          {
-            model: SparePart_Supplier,
-            required: true,
-            where: {
-              // Filter PR_PO by productID
-              sparePart_id: productID,
-            },
-          },
-          {
-            model: PR,
-            required: true,
-            where: {
-              status: "To-Receive",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//     // Define a function to calculate the total quantity from PR_PO
+//     const calculatePRQuantity = async (productID) => {
+//       const prItems = await PR_PO_spare.findAll({
+//         include: [
+//           {
+//             model: SparePart_Supplier,
+//             required: true,
+//             where: {
+//               // Filter PR_PO by productID
+//               sparePart_id: productID,
+//             },
+//           },
+//           {
+//             model: PR,
+//             required: true,
+//             where: {
+//               status: "To-Receive",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPRQuantity = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPRQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
-      return totalPRQuantity;
-    };
+//       let totalPRQuantity = 0; // New variable for total quantity from PR_PO
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPRQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
+//       return totalPRQuantity;
+//     };
 
-    // Define a function to calculate the total quantity from issued
-    const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveSpare.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [startDate, endDate],
-          },
-        },
-        include: [
-          {
-            model: Inventory_Spare,
-            required: true,
+//     // Define a function to calculate the total quantity from issued
+//     const calculateIssuanceQuantity = async (productID) => {
+//       const IssuedItems = await IssuedApproveSpare.findAll({
+//         where: {
+//           createdAt: {
+//             [Op.between]: [startDate, endDate],
+//           },
+//         },
+//         include: [
+//           {
+//             model: Inventory_Spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       });
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
-      return totalIssuedQuantity;
-    };
+//       let totalIssuedQuantity = 0; // New variable for total quantity from issued
+//       // Sum up the quantity from issued
+//       IssuedItems.forEach((prItem) => {
+//         totalIssuedQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
+//       return totalIssuedQuantity;
+//     };
 
-    const calculatePR_INtransit_Quantity = async (productID) => {
-      const prItems = await Receiving_initial_spare.findAll({
-        include: [
-          {
-            model: PR_PO_spare,
-            required: true,
+//     const calculatePR_INtransit_Quantity = async (productID) => {
+//       const prItems = await Receiving_initial_spare.findAll({
+//         include: [
+//           {
+//             model: PR_PO_spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "In-transit",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "In-transit",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
-    };
+//       let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_intransit_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
+//       return totalPR_intransit_Quantity;
+//     };
 
-    const calculatePR_Approval_Quantity = async (productID) => {
-      const prItems = await Receiving_Spare.findAll({
-        include: [
-          {
-            model: PR_PO_spare,
-            required: true,
+//     const calculatePR_Approval_Quantity = async (productID) => {
+//       const prItems = await Receiving_Spare.findAll({
+//         include: [
+//           {
+//             model: PR_PO_spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "For Approval",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "For Approval",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
-    };
+//       let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_Approval_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_Approval_Quantity;
+//     };
 
-    const calculatePR_received_Quantity = async (productID) => {
-      const prItems = await Receiving_Spare.findAll({
-        include: [
-          {
-            model: PR_PO_spare,
-            required: true,
+//     const calculatePR_received_Quantity = async (productID) => {
+//       const prItems = await Receiving_Spare.findAll({
+//         include: [
+//           {
+//             model: PR_PO_spare,
+//             required: true,
 
-            include: [
-              {
-                model: SparePart_Supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  sparePart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: SparePart_Supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   sparePart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: { [Op.ne]: "For Approval" },
+//               // status:{ [Op.ne]: 'In-transit'},
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
-    };
+//       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_received_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_received_Quantity;
+//     };
 
-    // Loop through each inventory item
-    for (const item of data) {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.sparepart_supplier?.sparePart?.id;
-      const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
-      const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
+//     // Loop through each inventory item
+//     for (const item of data) {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.sparepart_supplier?.sparePart?.id;
+//       const productCode = item.sparepart_supplier?.sparePart?.spareParts_code;
+//       const productName = item.sparepart_supplier?.sparePart?.spareParts_name;
    
-      const Price = item.price;
-      const inventory_id = item.inventory_id;
-      const UOM =
-        item.sparepart_supplier?.sparePart?.spareParts_unitMeasurement;
-      const createdAtt = item.sparepart_supplier?.sparePart?.createdAt;
+//       const Price = item.price;
+//       const inventory_id = item.inventory_id;
+//       const UOM =
+//         item.sparepart_supplier?.sparePart?.spareParts_unitMeasurement;
+//       const createdAtt = item.sparepart_supplier?.sparePart?.createdAt;
 
-      if (warehouseId && productCode && productName) {
-        const key = `${warehouseId}_${productCode}_${productName}`;
+//       if (warehouseId && productCode && productName) {
+//         const key = `${warehouseId}_${productCode}_${productName}`;
 
-        if (!groupedProductData[key]) {
-          groupedProductData[key] = {
-            createdAt: createdAtt,
-            UOM: UOM,
-            inventory_id: inventory_id,
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
+//         if (!groupedProductData[key]) {
+//           groupedProductData[key] = {
+//             createdAt: createdAtt,
+//             UOM: UOM,
+//             inventory_id: inventory_id,
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
         
-            totalQuantity: 0,
-            totalPRQuantity: 0,
-            totalIssuedQuantity: 0,
-            totalPR_intransit_Quantity: 0,
-            totalPR_Approval_Quantity: 0,
-            totalPR_received_Quantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
+//             totalQuantity: 0,
+//             totalPRQuantity: 0,
+//             totalIssuedQuantity: 0,
+//             totalPR_intransit_Quantity: 0,
+//             totalPR_Approval_Quantity: 0,
+//             totalPR_received_Quantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             products: [],
+//           };
+//         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity = await calculatePRQuantity(productID);
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
+//         // Calculate the total quantity from PR_PO
+//         const totalPRQuantity = await calculatePRQuantity(productID);
+//         const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
+//         const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
+//           productID
+//         );
+//         const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
+//           productID
+//         );
+//         const totalPR_received_Quantity = await calculatePR_received_Quantity(
+//           productID
+//         );
 
-        groupedProductData[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
-        groupedProductData[key].totalPRQuantity += totalPRQuantity;
+//         groupedProductData[key].totalPR_received_Quantity +=
+//           totalPR_received_Quantity;
+//         groupedProductData[key].totalPR_Approval_Quantity +=
+//           totalPR_Approval_Quantity;
+//         groupedProductData[key].totalPR_intransit_Quantity +=
+//           totalPR_intransit_Quantity;
+//         groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
+//         groupedProductData[key].totalPRQuantity += totalPRQuantity;
 
-        groupedProductData[key].totalQuantity += item.quantity;
-        groupedProductData[key].products.push(item);
-      }
-    }
+//         groupedProductData[key].totalQuantity += item.quantity;
+//         groupedProductData[key].products.push(item);
+//       }
+//     }
 
-    const finalResult_spr = Object.values(groupedProductData);
+//     const finalResult_spr = Object.values(groupedProductData);
 
-    return res.json(finalResult_spr);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_spr);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
-router.route("/Filtered_subpart").get(async (req, res) => {
-  try {
-    const { slctCategory, slctWarehouse, strDate, enDate } = req.query;
+// router.route("/Filtered_subpart").get(async (req, res) => {
+//   try {
+//     const { slctCategory, slctWarehouse, strDate, enDate } = req.query;
 
-    const startDates = new Date(strDate);
-    startDates.setDate(startDates.getDate() + 1);
-    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+//     const startDates = new Date(strDate);
+//     startDates.setDate(startDates.getDate() + 1);
+//     const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
 
-    const endDates = new Date(enDate);
-    endDates.setDate(endDates.getDate() + 1);
-    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+//     const endDates = new Date(enDate);
+//     endDates.setDate(endDates.getDate() + 1);
+//     const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
 
-    const whereClause = {};
-    // Check if slctCategory is not "All", then add it to whereClause
-    if (slctCategory !== "All") {
-      // whereClause.product_category = slctCategory;
-      whereClause["$Subpart_supplier.SubPart.category_code$"] =
-        slctCategory;
-    }
+//     const whereClause = {};
+//     // Check if slctCategory is not "All", then add it to whereClause
+//     if (slctCategory !== "All") {
+//       // whereClause.product_category = slctCategory;
+//       whereClause["$Subpart_supplier.SubPart.category_code$"] =
+//         slctCategory;
+//     }
 
-    // Check if slctWarehouse is not "All", then add it to whereClause
-    if (slctWarehouse !== "All") {
-      whereClause.warehouse_id = slctWarehouse;
-    }
+//     // Check if slctWarehouse is not "All", then add it to whereClause
+//     if (slctWarehouse !== "All") {
+//       whereClause.warehouse_id = slctWarehouse;
+//     }
 
-    const data = await Inventory_Subpart.findAll({
-      where: whereClause,
-      include: [
-        {
-          model: Subpart_supplier,
-          required: true,
-          include: [
-            {
-              model: SubPart,
-              required: true,
-              // where: whereClause,
+//     const data = await Inventory_Subpart.findAll({
+//       where: whereClause,
+//       include: [
+//         {
+//           model: Subpart_supplier,
+//           required: true,
+//           include: [
+//             {
+//               model: SubPart,
+//               required: true,
+//               // where: whereClause,
             
-            },
-            {
-              model: Supplier,
-              required: true,
-            },
-          ],
-        },
-        {
-          model: Warehouses,
-          required: true,
-        },
-      ],
-    });
+//             },
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//         {
+//           model: Warehouses,
+//           required: true,
+//         },
+//       ],
+//     });
 
-    const groupedProductData = {};
+//     const groupedProductData = {};
 
-    // Define a function to calculate the total quantity from PR_PO
-    const calculatePRQuantity = async (productID) => {
-      const prItems = await PR_PO_subpart.findAll({
-        include: [
-          {
-            model: Subpart_supplier,
-            required: true,
-            where: {
-              // Filter PR_PO by productID
-              subpart_id: productID,
-            },
-          },
-          {
-            model: PR,
-            required: true,
-            where: {
-              status: "To-Receive",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//     // Define a function to calculate the total quantity from PR_PO
+//     const calculatePRQuantity = async (productID) => {
+//       const prItems = await PR_PO_subpart.findAll({
+//         include: [
+//           {
+//             model: Subpart_supplier,
+//             required: true,
+//             where: {
+//               // Filter PR_PO by productID
+//               subpart_id: productID,
+//             },
+//           },
+//           {
+//             model: PR,
+//             required: true,
+//             where: {
+//               status: "To-Receive",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPRQuantity = 0; // New variable for total quantity from PR_PO
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPRQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
-      return totalPRQuantity;
-    };
+//       let totalPRQuantity = 0; // New variable for total quantity from PR_PO
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPRQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPRQuantity}`);
+//       return totalPRQuantity;
+//     };
 
-    const calculatePR_INtransit_Quantity = async (productID) => {
-      const prItems = await Receiving_initial_subpart.findAll({
-        include: [
-          {
-            model: PR_PO_subpart,
-            required: true,
+//     const calculatePR_INtransit_Quantity = async (productID) => {
+//       const prItems = await Receiving_initial_subpart.findAll({
+//         include: [
+//           {
+//             model: PR_PO_subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "In-transit",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "In-transit",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_intransit_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
-      return totalPR_intransit_Quantity;
-    };
+//       let totalPR_intransit_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_intransit_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_intransit_Quantity}`);
+//       return totalPR_intransit_Quantity;
+//     };
 
-    const calculatePR_Approval_Quantity = async (productID) => {
-      const prItems = await Receiving_Subpart.findAll({
-        include: [
-          {
-            model: PR_PO_subpart,
-            required: true,
+//     const calculatePR_Approval_Quantity = async (productID) => {
+//       const prItems = await Receiving_Subpart.findAll({
+//         include: [
+//           {
+//             model: PR_PO_subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: "For Approval",
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: "For Approval",
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_Approval_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_Approval_Quantity;
-    };
+//       let totalPR_Approval_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_Approval_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_Approval_Quantity;
+//     };
 
-    const calculatePR_received_Quantity = async (productID) => {
-      const prItems = await Receiving_Subpart.findAll({
-        include: [
-          {
-            model: PR_PO_subpart,
-            required: true,
+//     const calculatePR_received_Quantity = async (productID) => {
+//       const prItems = await Receiving_Subpart.findAll({
+//         include: [
+//           {
+//             model: PR_PO_subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-          {
-            model: Receiving_PO,
-            required: true,
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//           {
+//             model: Receiving_PO,
+//             required: true,
 
-            where: {
-              status: { [Op.ne]: "For Approval" },
-              // status:{ [Op.ne]: 'In-transit'},
-              createdAt: {
-                [Op.between]: [startDate, endDate],
-              },
-            },
-          },
-        ],
-      });
+//             where: {
+//               status: { [Op.ne]: "For Approval" },
+//               // status:{ [Op.ne]: 'In-transit'},
+//               createdAt: {
+//                 [Op.between]: [startDate, endDate],
+//               },
+//             },
+//           },
+//         ],
+//       });
 
-      let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
-      // Sum up the quantity from PR_PO
-      prItems.forEach((prItem) => {
-        totalPR_received_Quantity += prItem.received_quantity;
-      });
-      // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
-      return totalPR_received_Quantity;
-    };
+//       let totalPR_received_Quantity = 0; // New variable for total quantity from PR_PO received in davao
+//       // Sum up the quantity from PR_PO
+//       prItems.forEach((prItem) => {
+//         totalPR_received_Quantity += prItem.received_quantity;
+//       });
+//       // console.log(`Total Quantity for Product ID ${productID}: ${totalPR_received_Quantity}`);
+//       return totalPR_received_Quantity;
+//     };
 
-    // Define a function to calculate the total quantity from issued
-    const calculateIssuanceQuantity = async (productID) => {
-      const IssuedItems = await IssuedApproveSubpart.findAll({
-        where: {
-          createdAt: {
-            [Op.between]: [startDate, endDate],
-          },
-        },
-        include: [
-          {
-            model: Inventory_Subpart,
-            required: true,
+//     // Define a function to calculate the total quantity from issued
+//     const calculateIssuanceQuantity = async (productID) => {
+//       const IssuedItems = await IssuedApproveSubpart.findAll({
+//         where: {
+//           createdAt: {
+//             [Op.between]: [startDate, endDate],
+//           },
+//         },
+//         include: [
+//           {
+//             model: Inventory_Subpart,
+//             required: true,
 
-            include: [
-              {
-                model: Subpart_supplier,
-                required: true,
-                where: {
-                  // Filter PR_PO by productID
-                  subpart_id: productID,
-                },
-              },
-            ],
-          },
-        ],
-      });
+//             include: [
+//               {
+//                 model: Subpart_supplier,
+//                 required: true,
+//                 where: {
+//                   // Filter PR_PO by productID
+//                   subpart_id: productID,
+//                 },
+//               },
+//             ],
+//           },
+//         ],
+//       });
 
-      let totalIssuedQuantity = 0; // New variable for total quantity from issued
-      // Sum up the quantity from issued
-      IssuedItems.forEach((prItem) => {
-        totalIssuedQuantity += prItem.quantity;
-      });
-      // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
-      return totalIssuedQuantity;
-    };
+//       let totalIssuedQuantity = 0; // New variable for total quantity from issued
+//       // Sum up the quantity from issued
+//       IssuedItems.forEach((prItem) => {
+//         totalIssuedQuantity += prItem.quantity;
+//       });
+//       // console.log(`Total Quantity Issuance for Product ID ${productID}: ${totalIssuedQuantity}`);
+//       return totalIssuedQuantity;
+//     };
 
-    // Loop through each inventory item
-    for (const item of data) {
-      const warehouseId = item.warehouse_id;
-      const warehouse_name = item.warehouse?.warehouse_name;
-      const productID = item.subpart_supplier?.subPart?.id;
-      const productCode = item.subpart_supplier?.subPart?.subPart_code;
-      const productName = item.subpart_supplier?.subPart?.subPart_name;
+//     // Loop through each inventory item
+//     for (const item of data) {
+//       const warehouseId = item.warehouse_id;
+//       const warehouse_name = item.warehouse?.warehouse_name;
+//       const productID = item.subpart_supplier?.subPart?.id;
+//       const productCode = item.subpart_supplier?.subPart?.subPart_code;
+//       const productName = item.subpart_supplier?.subPart?.subPart_name;
 
-      const Price = item.price;
+//       const Price = item.price;
 
-      const inventory_id = item.inventory_id;
-      const UOM = item.subpart_supplier?.subPart?.subPart_unitMeasurement;
-      const createdAtt = item.subpart_supplier?.subPart?.createdAt;
+//       const inventory_id = item.inventory_id;
+//       const UOM = item.subpart_supplier?.subPart?.subPart_unitMeasurement;
+//       const createdAtt = item.subpart_supplier?.subPart?.createdAt;
 
-      if (warehouseId && productCode && productName) {
-        const key = `${warehouseId}_${productCode}_${productName}`;
+//       if (warehouseId && productCode && productName) {
+//         const key = `${warehouseId}_${productCode}_${productName}`;
 
-        if (!groupedProductData[key]) {
-          groupedProductData[key] = {
-            createdAt: createdAtt,
-            UOM: UOM,
-            inventory_id: inventory_id,
-            productID: productID,
-            warehouseId: warehouseId,
-            product_code: productCode,
-            product_name: productName,
+//         if (!groupedProductData[key]) {
+//           groupedProductData[key] = {
+//             createdAt: createdAtt,
+//             UOM: UOM,
+//             inventory_id: inventory_id,
+//             productID: productID,
+//             warehouseId: warehouseId,
+//             product_code: productCode,
+//             product_name: productName,
        
-            totalQuantity: 0,
-            totalPRQuantity: 0,
-            totalIssuedQuantity: 0,
-            totalPR_intransit_Quantity: 0,
-            totalPR_Approval_Quantity: 0,
-            totalPR_received_Quantity: 0,
-            warehouse_name: warehouse_name,
-            price: Price,
-            products: [],
-          };
-        }
+//             totalQuantity: 0,
+//             totalPRQuantity: 0,
+//             totalIssuedQuantity: 0,
+//             totalPR_intransit_Quantity: 0,
+//             totalPR_Approval_Quantity: 0,
+//             totalPR_received_Quantity: 0,
+//             warehouse_name: warehouse_name,
+//             price: Price,
+//             products: [],
+//           };
+//         }
 
-        // Calculate the total quantity from PR_PO
-        const totalPRQuantity = await calculatePRQuantity(productID);
-        const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
-        const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
-          productID
-        );
-        const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
-          productID
-        );
-        const totalPR_received_Quantity = await calculatePR_received_Quantity(
-          productID
-        );
+//         // Calculate the total quantity from PR_PO
+//         const totalPRQuantity = await calculatePRQuantity(productID);
+//         const totalIssuedQuantity = await calculateIssuanceQuantity(productID);
+//         const totalPR_Approval_Quantity = await calculatePR_Approval_Quantity(
+//           productID
+//         );
+//         const totalPR_intransit_Quantity = await calculatePR_INtransit_Quantity(
+//           productID
+//         );
+//         const totalPR_received_Quantity = await calculatePR_received_Quantity(
+//           productID
+//         );
 
-        groupedProductData[key].totalPR_received_Quantity +=
-          totalPR_received_Quantity;
-        groupedProductData[key].totalPR_Approval_Quantity +=
-          totalPR_Approval_Quantity;
-        groupedProductData[key].totalPR_intransit_Quantity +=
-          totalPR_intransit_Quantity;
-        groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
-        groupedProductData[key].totalPRQuantity += totalPRQuantity;
+//         groupedProductData[key].totalPR_received_Quantity +=
+//           totalPR_received_Quantity;
+//         groupedProductData[key].totalPR_Approval_Quantity +=
+//           totalPR_Approval_Quantity;
+//         groupedProductData[key].totalPR_intransit_Quantity +=
+//           totalPR_intransit_Quantity;
+//         groupedProductData[key].totalIssuedQuantity += totalIssuedQuantity;
+//         groupedProductData[key].totalPRQuantity += totalPRQuantity;
 
-        groupedProductData[key].totalQuantity += item.quantity;
-        groupedProductData[key].products.push(item);
-      }
-    }
+//         groupedProductData[key].totalQuantity += item.quantity;
+//         groupedProductData[key].products.push(item);
+//       }
+//     }
 
-    const finalResult_PRD = Object.values(groupedProductData);
+//     const finalResult_PRD = Object.values(groupedProductData);
 
-    return res.json(finalResult_PRD);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error");
-  }
-});
+//     return res.json(finalResult_PRD);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
 
 module.exports = router;

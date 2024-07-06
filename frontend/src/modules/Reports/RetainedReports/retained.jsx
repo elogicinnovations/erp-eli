@@ -4,7 +4,7 @@ import "../../styles/react-style.css";
 // import "../../assets/global/style.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import NoData from "../../../assets/image/NoData.png";
 import NoAccess from "../../../assets/image/NoAccess.png";
 import axios from "axios";
@@ -12,15 +12,14 @@ import BASE_URL from "../../../assets/global/url";
 import { jwtDecode } from "jwt-decode";
 import { CalendarBlank, XCircle, Export } from "@phosphor-icons/react";
 import DatePicker from "react-datepicker";
-import { IconButton, TextField, } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
 import swal from "sweetalert";
 import { jsPDF } from "jspdf";
 
-
 const Retained = ({ authrztn }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [retaineData, setRetaineData] = useState([])
-  const [cloneRetaineData, setCloneRetaineData] = useState([])
+  const [retaineData, setRetaineData] = useState([]);
+  const [cloneRetaineData, setCloneRetaineData] = useState([]);
 
   //filter useState
   const [startDate, setStartDate] = useState(null);
@@ -72,7 +71,6 @@ const Retained = ({ authrztn }) => {
     return pages;
   };
 
-
   const handlePageClick = (page) => {
     if (page === "...") return;
     setCurrentPage(page);
@@ -100,17 +98,17 @@ const Retained = ({ authrztn }) => {
     reloadTable();
   }, []);
 
-//fetching of masterlist in dropdown
- useEffect(() => {
+  //fetching of masterlist in dropdown
+  useEffect(() => {
     axios
-        .get(BASE_URL + "/activitylog/fetchmasterlist")
-        .then((response) => {
+      .get(BASE_URL + "/activitylog/fetchmasterlist")
+      .then((response) => {
         setmasterListuser(response.data);
-        })
-        .catch((error) => {
+      })
+      .catch((error) => {
         console.error("Error fetching user:", error);
-        });
-    }, []);
+      });
+  }, []);
 
   const handleXCircleClick = () => {
     setStartDate(null);
@@ -150,8 +148,7 @@ const Retained = ({ authrztn }) => {
         (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
 
       const isMatchingUser =
-        selecteduser === "All User" ||
-        data.retainee.col_Fname === selecteduser;
+        selecteduser === "All User" || data.retainee.col_Fname === selecteduser;
       return isWithinDateRange && isMatchingUser;
     });
     setRetaineData(filteredData);
@@ -162,11 +159,20 @@ const Retained = ({ authrztn }) => {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = cloneRetaineData.filter((data) => {
       return (
-        data.issuance.issuance_id.toString().toLowerCase().includes(searchTerm) || 
-        data.inventory_prd.product_tag_supplier.product.product_code.toLowerCase().includes(searchTerm) ||
-        data.inventory_prd.product_tag_supplier.product.product_name.toLowerCase().includes(searchTerm) ||
+        data.issuance.issuance_id
+          .toString()
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_prd.product_tag_supplier.product.product_code
+          .toLowerCase()
+          .includes(searchTerm) ||
+        data.inventory_prd.product_tag_supplier.product.product_name
+          .toLowerCase()
+          .includes(searchTerm) ||
         data.retainee.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.issuance.accountability_refcode.toLowerCase().includes(searchTerm) ||
+        data.issuance.accountability_refcode
+          .toLowerCase()
+          .includes(searchTerm) ||
         data.issuance.mrs.toLowerCase().includes(searchTerm) ||
         formatDate(data.date_retained).toLowerCase().includes(searchTerm)
       );
@@ -226,7 +232,15 @@ const Retained = ({ authrztn }) => {
       }
 
       if (dataForExport.length > 0) {
-        const headers = ["BIS", "Product Code", "Product Name", "Retained By", "Accountability Reference Code", "Mrs", "Date Retained"];
+        const headers = [
+          "BIS",
+          "Product Code",
+          "Product Name",
+          "Retained By",
+          "Accountability Reference Code",
+          "Mrs",
+          "Date Retained",
+        ];
         const csvContent =
           "data:text/csv;charset=utf-8," +
           headers.join(",") +
@@ -234,7 +248,13 @@ const Retained = ({ authrztn }) => {
           dataForExport
             .map((data) => {
               const accountabilityRefCode = `"="${data.issuance.accountability_refcode}""`; // Adding "=" ensures Excel treats it as a string
-              return `${data.issuance.issuance_id},${data.inventory_prd.product_tag_supplier.product.product_code},${data.inventory_prd.product_tag_supplier.product.product_name},${data.retainee.col_Fname},${accountabilityRefCode},${data.issuance.mrs},${formatDate(data.date_retained)}`;
+              return `${data.issuance.issuance_id},${
+                data.inventory_prd.product_tag_supplier.product.product_code
+              },${
+                data.inventory_prd.product_tag_supplier.product.product_name
+              },${data.retainee.col_Fname},${accountabilityRefCode},${
+                data.issuance.mrs
+              },${formatDate(data.date_retained)}`;
             })
             .join("\n");
 
@@ -258,7 +278,7 @@ const Retained = ({ authrztn }) => {
       const doc = new jsPDF();
       let res;
       let dataForExportPDF;
-  
+
       // Check if any filter is applied
       if (startDate || endDate || selecteduser) {
         // Filtered export
@@ -278,20 +298,39 @@ const Retained = ({ authrztn }) => {
         res = await axios.get(BASE_URL + "/retain/fetchDataForExport");
         dataForExportPDF = res.data;
       }
-  
+
       if (dataForExportPDF.length > 0) {
-        const headers =  ["BIS", "Product Code", "Product Name", "Retained By", "RefCode", "M.R.S", "Date Retained"]
+        const headers = [
+          "BIS",
+          "Product Code",
+          "Product Name",
+          "Retained By",
+          "RefCode",
+          "M.R.S",
+          "Date Retained",
+        ];
         const data = dataForExportPDF.map((retained) => {
           const BIS = retained.issuance.issuance_id;
-          const prodCode = retained.inventory_prd.product_tag_supplier.product.product_code;
-          const productName = retained.inventory_prd.product_tag_supplier.product.product_name;
+          const prodCode =
+            retained.inventory_prd.product_tag_supplier.product.product_code;
+          const productName =
+            retained.inventory_prd.product_tag_supplier.product.product_name;
           const retainedBy = retained.retainee.col_Fname;
-          const accountabilityRefCode = retained.issuance.accountability_refcode;
+          const accountabilityRefCode =
+            retained.issuance.accountability_refcode;
           const mrs = retained.issuance.mrs;
-          
-          return [BIS, prodCode, productName, retainedBy, accountabilityRefCode, mrs, formatDate(retained.date_retained)];
+
+          return [
+            BIS,
+            prodCode,
+            productName,
+            retainedBy,
+            accountabilityRefCode,
+            mrs,
+            formatDate(retained.date_retained),
+          ];
         });
-  
+
         doc.autoTable({
           head: [headers],
           body: data,
@@ -299,17 +338,17 @@ const Retained = ({ authrztn }) => {
           styles: { fontSize: 12, cellPadding: 2 },
           headStyles: { fillColor: [255, 200, 0] },
           columnStyles: {
-            0: { cellWidth: 15 }, 
-            1: { cellWidth: 30 }, 
-            2: { cellWidth: 30 }, 
-            3: { cellWidth: 40 }, 
-            4: { cellWidth: 25 }, 
-            5: { cellWidth: 18 }, 
-            6: { cellWidth: 35 }, 
-          }, 
+            0: { cellWidth: 15 },
+            1: { cellWidth: 30 },
+            2: { cellWidth: 30 },
+            3: { cellWidth: 40 },
+            4: { cellWidth: 25 },
+            5: { cellWidth: 18 },
+            6: { cellWidth: 35 },
+          },
           margin: { horizontal: 10 },
         });
-  
+
         doc.save("RetainedReports.pdf");
       } else {
         console.log("No data available for export.");
@@ -333,7 +372,7 @@ const Retained = ({ authrztn }) => {
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
-      {isLoading ? (
+        {isLoading ? (
           <div className="loading-container">
             <ReactLoading className="react-loading" type={"bubbles"} />
             Loading Data...
@@ -347,7 +386,7 @@ const Retained = ({ authrztn }) => {
                 </div>
 
                 <div className="button-create-side">
-                <div style={{ position: "relative", marginBottom: "15px" }}>
+                  <div style={{ position: "relative", marginBottom: "15px" }}>
                     <DatePicker
                       selected={startDate}
                       onChange={(date) => setStartDate(date)}
@@ -466,9 +505,7 @@ const Retained = ({ authrztn }) => {
                     >
                       FILTER
                     </button>
-                    <button className="Filterclear" 
-                    onClick={clearFilters}
-                    >
+                    <button className="Filterclear" onClick={clearFilters}>
                       Clear Filter
                     </button>
                   </div>
@@ -517,6 +554,7 @@ const Retained = ({ authrztn }) => {
                       <th>BIS #</th>
                       <th>Product Code</th>
                       <th>Product Name</th>
+                      <th>Quantity</th>
                       <th>Retained By</th>
                       <th>Accountability Refcode</th>
                       <th>M.R.S</th>
@@ -524,19 +562,30 @@ const Retained = ({ authrztn }) => {
                     </tr>
                   </thead>
                   {retaineData.length > 0 ? (
-                  <tbody>
-                    {currentItems.map((data, i) => (
-                    <tr key={i}>
-                      <td>{data.issuance.issuance_id}</td>
-                      <td>{data.inventory_prd.product_tag_supplier.product.product_code}</td>
-                      <td>{data.inventory_prd.product_tag_supplier.product.product_name}</td>
-                      <td>{data.retainee.col_Fname}</td>
-                      <td>{data.issuance.accountability_refcode}</td>
-                      <td>{data.issuance.mrs}</td>
-                      <td>{formatDate(data.date_retained)}</td>
-                    </tr>
-                    ))}
-                  </tbody>
+                    <tbody>
+                      {currentItems.map((data, i) => (
+                        <tr key={i}>
+                          <td>{data.issuance.issuance_id}</td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_code
+                            }
+                          </td>
+                          <td>
+                            {
+                              data.inventory_prd.product_tag_supplier.product
+                                .product_name
+                            }
+                          </td>
+                          <td>{data.quantity}</td>
+                          <td>{data.retainee.col_Fname}</td>
+                          <td>{data.issuance.accountability_refcode}</td>
+                          <td>{data.issuance.mrs}</td>
+                          <td>{formatDate(data.date_retained)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
                   ) : (
                     <div className="no-data">
                       <img src={NoData} alt="NoData" className="no-data-img" />
@@ -619,11 +668,11 @@ const Retained = ({ authrztn }) => {
             </div>
           </div>
         ) : (
-            <div className="no-access">
-              <img src={NoAccess} alt="NoAccess" className="no-access-img" />
-              <h3>You don't have access to this function.</h3>
-            </div>
-          )}
+          <div className="no-access">
+            <img src={NoAccess} alt="NoAccess" className="no-access-img" />
+            <h3>You don't have access to this function.</h3>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -39,12 +39,7 @@ function InventoryReports() {
 
   const [invetory_prd, setInvetory_prd] = useState([]);
   const [searchInventory, setSearchInventory] = useState([]);
-  const [invetory_assmbly, setInvetory_assmbly] = useState([]);
-  const [searchAssembly, setSearchAssembly] = useState([]);
-  const [invetory_spare, setInvetory_spare] = useState([]);
-  const [searchSpare, setSearchSpare] = useState([]);
-  const [invetory_subpart, setInvetory_subpart] = useState([]);
-  const [searchSub, setSearchSub] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
 
   const [warehouse, setWarehouse] = useState([]);
@@ -66,45 +61,7 @@ function InventoryReports() {
     endIndexInventory
   );
 
-  const totalPagesAssembly = Math.ceil(invetory_assmbly.length / pageSize);
-  const startIndexAssembly = (currentPage - 1) * pageSize;
-  const endIndexAssembly = Math.min(
-    startIndexAssembly + pageSize,
-    invetory_assmbly.length
-  );
-  const currentItemsAssembly = invetory_assmbly.slice(
-    startIndexAssembly,
-    endIndexAssembly
-  );
-
-  const totalPagesSpare = Math.ceil(invetory_spare.length / pageSize);
-  const startIndexSpare = (currentPage - 1) * pageSize;
-  const endIndexSpare = Math.min(
-    startIndexSpare + pageSize,
-    invetory_spare.length
-  );
-  const currentItemsSpare = invetory_spare.slice(
-    startIndexSpare,
-    endIndexSpare
-  );
-
-  const totalPagesSubpart = Math.ceil(invetory_subpart.length / pageSize);
-  const startIndexSubpart = (currentPage - 1) * pageSize;
-  const endIndexSubpart = Math.min(
-    startIndexSubpart + pageSize,
-    invetory_subpart.length
-  );
-  const currentItemsSubpart = invetory_subpart.slice(
-    startIndexSubpart,
-    endIndexSubpart
-  );
-
-  const totalPages = Math.max(
-    totalPagesInventory,
-    totalPagesAssembly,
-    totalPagesSpare,
-    totalPagesSubpart
-  );
+  const totalPages = Math.max(totalPagesInventory);
   const MAX_PAGES = 5;
 
   const generatePages = () => {
@@ -167,44 +124,10 @@ function InventoryReports() {
         });
 
       axios
-        .get(BASE_URL + "/report_inv/inventoryPRD")
+        .get(BASE_URL + "/report_inv/inventoryPRDds")
         .then((res) => {
           setInvetory_prd(res.data);
           setSearchInventory(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
-
-      axios
-        .get(BASE_URL + "/report_inv/inventoryASM")
-        .then((res) => {
-          setInvetory_assmbly(res.data);
-          setSearchAssembly(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
-
-      axios
-        .get(BASE_URL + "/report_inv/inventorySPR")
-        .then((res) => {
-          setInvetory_spare(res.data);
-          setSearchSpare(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
-
-      axios
-        .get(BASE_URL + "/report_inv/inventorySBP")
-        .then((res) => {
-          setInvetory_subpart(res.data);
-          setSearchSub(res.data);
-          setIsLoading(false);
         })
         .catch((err) => {
           console.log(err);
@@ -242,66 +165,6 @@ function InventoryReports() {
         data.warehouse_name.toLowerCase().includes(searchTerm)
     );
     setInvetory_prd(filteredInventory);
-
-    const filteredAssembly = searchAssembly.filter(
-      (data) =>
-        data.product_code.toLowerCase().includes(searchTerm) ||
-        data.product_name.toLowerCase().includes(searchTerm) ||
-        data.UOM.toLowerCase().includes(searchTerm) ||
-        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-        data.price *
-          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-        data.totalIssuedQuantity
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.totalPR_received_Quantity
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.warehouse_name.toLowerCase().includes(searchTerm)
-    );
-    setInvetory_assmbly(filteredAssembly);
-
-    const filteredSpare = searchSpare.filter(
-      (data) =>
-        data.product_code.toLowerCase().includes(searchTerm) ||
-        data.product_name.toLowerCase().includes(searchTerm) ||
-        data.UOM.toLowerCase().includes(searchTerm) ||
-        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-        data.price *
-          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-        data.totalIssuedQuantity
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.totalPR_received_Quantity
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.warehouse_name.toLowerCase().includes(searchTerm)
-    );
-    setInvetory_spare(filteredSpare);
-
-    const filteredSubpart = searchSub.filter(
-      (data) =>
-        data.product_code.toLowerCase().includes(searchTerm) ||
-        data.product_name.toLowerCase().includes(searchTerm) ||
-        data.UOM.toLowerCase().includes(searchTerm) ||
-        data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-        data.price *
-          data.totalQuantity.toString().toLowerCase().includes(searchTerm) ||
-        data.totalIssuedQuantity
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.totalPR_received_Quantity
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.warehouse_name.toLowerCase().includes(searchTerm)
-    );
-    setInvetory_subpart(filteredSubpart);
   };
 
   const [modalshow, setmodalShow] = useState(false);
@@ -364,72 +227,6 @@ function InventoryReports() {
       rows.push(rowData.join(","));
     });
 
-    invetory_assmbly.forEach((data) => {
-      const rowData = [
-        `"${data.product_code}"`,
-        `"${data.product_name}"`,
-        `"${data.UOM}"`,
-        `"${data.warehouse_name}"`,
-        `"${data.price}"`,
-        `"${data.totalQuantity}"`,
-        `"${data.price * data.totalQuantity}"`,
-        `"${data.totalIssuedQuantity}"`,
-        `"${
-          data.warehouse_name === "Main"
-            ? data.totalPRQuantity_asm +
-              data.totalPR_intransit_Quantity +
-              data.totalPR_Approval_Quantity
-            : "--"
-        }"`,
-        `"${data.totalPR_received_Quantity}"`,
-      ];
-      rows.push(rowData.join(","));
-    });
-
-    invetory_spare.forEach((data) => {
-      const rowData = [
-        `"${data.product_code}"`,
-        `"${data.product_name}"`,
-        `"${data.UOM}"`,
-        `"${data.warehouse_name}"`,
-        `"${data.price}"`,
-        `"${data.totalQuantity}"`,
-        `"${data.price * data.totalQuantity}"`,
-        `"${data.totalIssuedQuantity}"`,
-        `"${
-          data.warehouse_name === "Main"
-            ? data.totalPRQuantity +
-              data.totalPR_intransit_Quantity +
-              data.totalPR_Approval_Quantity
-            : "--"
-        }"`,
-        `"${data.totalPR_received_Quantity}"`,
-      ];
-      rows.push(rowData.join(","));
-    });
-
-    invetory_subpart.forEach((data) => {
-      const rowData = [
-        `"${data.product_code}"`,
-        `"${data.product_name}"`,
-        `"${data.UOM}"`,
-        `"${data.warehouse_name}"`,
-        `"${data.price}"`,
-        `"${data.totalQuantity}"`,
-        `"${data.price * data.totalQuantity}"`,
-        `"${data.totalIssuedQuantity}"`,
-        `"${
-          data.warehouse_name === "Main"
-            ? data.totalPRQuantity +
-              data.totalPR_intransit_Quantity +
-              data.totalPR_Approval_Quantity
-            : "--"
-        }"`,
-        `"${data.totalPR_received_Quantity}"`,
-      ];
-      rows.push(rowData.join(","));
-    });
-
     // Create a CSV string
     const csvContent = rows.join("\n");
 
@@ -458,7 +255,7 @@ function InventoryReports() {
       return;
     }
     axios
-      .get(BASE_URL + "/report_inv/Filtered_prd", {
+      .get(BASE_URL + "/report_inv/Filtered_prdds", {
         params: {
           slctCategory,
           slctWarehouse,
@@ -468,48 +265,6 @@ function InventoryReports() {
       })
       .then((res) => {
         setInvetory_prd(res.data);
-      })
-      .catch((err) => console.log(err));
-
-    axios
-      .get(BASE_URL + "/report_inv/Filtered_asm", {
-        params: {
-          slctCategory,
-          slctWarehouse,
-          strDate: startDate,
-          enDate: endDate,
-        },
-      })
-      .then((res) => {
-        setInvetory_assmbly(res.data);
-      })
-      .catch((err) => console.log(err));
-
-    axios
-      .get(BASE_URL + "/report_inv/Filtered_spare", {
-        params: {
-          slctCategory,
-          slctWarehouse,
-          strDate: startDate,
-          enDate: endDate,
-        },
-      })
-      .then((res) => {
-        setInvetory_spare(res.data);
-      })
-      .catch((err) => console.log(err));
-
-    axios
-      .get(BASE_URL + "/report_inv/Filtered_subpart", {
-        params: {
-          slctCategory,
-          slctWarehouse,
-          strDate: startDate,
-          enDate: endDate,
-        },
-      })
-      .then((res) => {
-        setInvetory_subpart(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -906,15 +661,12 @@ function InventoryReports() {
                       <th className="tableh">Unit Price</th>
                       <th className="tableh">Quantity</th>
                       <th className="tableh">Total</th>
-                      <th className="tableh">Issued (quantity)</th>
+                      {/* <th className="tableh">Issued (quantity)</th>
                       <th className="tableh">To Receive (quantity)</th>
-                      <th className="tableh">Received (quantity)</th>
+                      <th className="tableh">Received (quantity)</th> */}
                     </tr>
                   </thead>
-                  {invetory_prd.length > 0 ||
-                  invetory_assmbly.length > 0 ||
-                  invetory_spare.length > 0 ||
-                  invetory_subpart.length > 0 ? (
+                  {invetory_prd.length > 0 ? (
                     <tbody>
                       {currentItemsInventory.map((data, i) => (
                         <tr key={i}>
@@ -925,7 +677,7 @@ function InventoryReports() {
                           <td>{data.price}</td>
                           <td>{data.totalQuantity}</td>
                           <td>{data.price * data.totalQuantity}</td>
-                          <td>{data.totalIssuedQuantity}</td>
+                          {/* <td>{data.totalIssuedQuantity}</td>
                           <td>
                             {data.warehouse_name === "Main"
                               ? data.totalPRQuantity +
@@ -933,69 +685,7 @@ function InventoryReports() {
                                 data.totalPR_Approval_Quantity
                               : "--"}
                           </td>
-                          <td>{data.totalPR_received_Quantity}</td>
-                        </tr>
-                      ))}
-                      {currentItemsAssembly.map((data, i) => (
-                        <tr key={i}>
-                          <td>{data.product_code}</td>
-                          <td>{data.product_name}</td>
-                          <td>{data.UOM}</td>
-                          <td>{data.warehouse_name}</td>
-                          <td>{data.price}</td>
-                          <td>{data.totalQuantity}</td>
-                          <td>{data.price * data.totalQuantity}</td>
-                          <td>{data.totalIssuedQuantity}</td>
-                          <td>
-                            {data.warehouse_name === "Main"
-                              ? data.totalPRQuantity_asm +
-                                data.totalPR_intransit_Quantity +
-                                data.totalPR_Approval_Quantity
-                              : "--"}
-                          </td>
-                          <td>{data.totalPR_received_Quantity}</td>
-                        </tr>
-                      ))}
-
-                      {currentItemsSpare.map((data, i) => (
-                        <tr key={i}>
-                          <td>{data.product_code}</td>
-                          <td>{data.product_name}</td>
-                          <td>{data.UOM}</td>
-                          <td>{data.warehouse_name}</td>
-                          <td>{data.price}</td>
-                          <td>{data.totalQuantity}</td>
-                          <td>{data.price * data.totalQuantity}</td>
-                          <td>{data.totalIssuedQuantity}</td>
-                          <td>
-                            {data.warehouse_name === "Main"
-                              ? data.totalPRQuantity +
-                                data.totalPR_intransit_Quantity +
-                                data.totalPR_Approval_Quantity
-                              : "--"}
-                          </td>
-                          <td>{data.totalPR_received_Quantity}</td>
-                        </tr>
-                      ))}
-
-                      {currentItemsSubpart.map((data, i) => (
-                        <tr key={i}>
-                          <td>{data.product_code}</td>
-                          <td>{data.product_name}</td>
-                          <td>{data.UOM}</td>
-                          <td>{data.warehouse_name}</td>
-                          <td>{data.price}</td>
-                          <td>{data.totalQuantity}</td>
-                          <td>{data.price * data.totalQuantity}</td>
-                          <td>{data.totalIssuedQuantity}</td>
-                          <td>
-                            {data.warehouse_name === "Main"
-                              ? data.totalPRQuantity +
-                                data.totalPR_intransit_Quantity +
-                                data.totalPR_Approval_Quantity
-                              : "--"}
-                          </td>
-                          <td>{data.totalPR_received_Quantity}</td>
+                          <td>{data.totalPR_received_Quantity}</td> */}
                         </tr>
                       ))}
                     </tbody>

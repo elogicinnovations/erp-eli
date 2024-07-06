@@ -688,111 +688,13 @@ function POTransactionReports({ authrztn }) {
                     <tbody>
                       {currentItems.map((data, i) => (
                         <tr key={i}>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {data.pr_num}
-                          </td>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {formatDatetime(data.createdAt)}
-                          </td>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {data.date_needed}
-                          </td>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {data.used_for}
-                          </td>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {data.masterlist.col_Fname}
-                          </td>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {data.masterlist.department.department_name}
-                          </td>
-                          <td
-                            onClick={() =>
-                              data.status === "For-Canvassing"
-                                ? navigate(`/forCanvass/${data.id}`)
-                                : data.status === "On-Canvass"
-                                ? navigate(`/onCanvass/${data.id}`)
-                                : data.status === "For-Approval (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : data.status === "For-Rejustify (PO)"
-                                ? navigate(`/PO_approvalRejustify/${data.id}`)
-                                : navigate(`/purchaseRequestPreview/${data.id}`)
-                            }
-                          >
-                            {data.status}
-                          </td>
+                          <td>{data.pr_num}</td>
+                          <td>{formatDatetime(data.createdAt)}</td>
+                          <td>{data.date_needed}</td>
+                          <td>{data.used_for}</td>
+                          <td>{data.masterlist.col_Fname}</td>
+                          <td>{data.masterlist.department.department_name}</td>
+                          <td>{data.status}</td>
                         </tr>
                       ))}
                     </tbody>

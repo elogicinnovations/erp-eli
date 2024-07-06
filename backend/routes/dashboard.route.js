@@ -44,37 +44,41 @@ const ReceivingInitial_Prd = require("../db/models/receiving_initial_prd.model")
 
 // Get count all the issued products for DASHBOARD
 
-
-router.route('/fetchPrApproveProduct').get(async (req, res) => {
+router.route("/fetchPrApproveProduct").get(async (req, res) => {
   try {
     const data = await PR_PO.findAll({
-        include: [{
+      include: [
+        {
           model: PR,
-          required: true
-        },{
+          required: true,
+        },
+        {
           model: ProductTAGSupplier,
           required: true,
-          include: [{
-            model: Product,
-            required: true
-          },{
-            model: Supplier,
-            required: true
-          },
-         ]
-        }],
-        where: {
+          include: [
+            {
+              model: Product,
+              required: true,
+            },
+            {
+              model: Supplier,
+              required: true,
+            },
+          ],
+        },
+      ],
+      where: {
         date_approved: {
-            [Op.ne]: null
-          },
-          quantity: {
-            [Op.gt]: 0 // Quantity greater than 0
-          }
-        }
+          [Op.ne]: null,
+        },
+        quantity: {
+          [Op.gt]: 0, // Quantity greater than 0
+        },
+      },
     });
 
     if (data) {
-      console.log("asasa")
+      console.log("asasa");
       return res.json(data);
     } else {
       res.status(400);
@@ -87,195 +91,194 @@ router.route('/fetchPrApproveProduct').get(async (req, res) => {
 
 router.route("/Costing").post(async (req, res) => {
   try {
+    const { receiving_id, customFee, shippingFee, shippingFeeBool, ref_code } =
+      req.body;
 
-    const {receiving_id,
-            customFee,
-            shippingFee,
-            shippingFeeBool,
-            ref_code
-          } = req.body
+    console.log(
+      `shippingFeeBool ${shippingFeeBool} shippingFee${shippingFee} customFee${customFee}`
+    );
 
-
-console.log(`shippingFeeBool ${shippingFeeBool} shippingFee${shippingFee} customFee${customFee}`)
-
-let final_status
-if((shippingFee === '' || shippingFee === 0)  && (customFee === null || customFee === '')){
-  final_status = 'Delivered (Lack of Cost)'
-}
-else if (shippingFee === '' || shippingFee === 0 ){
-  final_status = 'Delivered (Lack of FreightCost)'
-}
-else if (customFee === null || customFee === '' ){
-  final_status = 'Delivered (Lack of CustomCost)'
-}
-else{
-  final_status = 'Delivered'
-}
-const inventory_fetch_sum = await Inventory.sum('static_quantity', {
-  where: {
-    reference_number: ref_code
-  }
-});
-
-const inventory_fetch_asm_sum = await Inventory_Assembly.sum('static_quantity', {
-  where: {
-    reference_number: ref_code
-  }
-});
-
-const inventory_fetch_spare_sum = await Inventory_Spare.sum('static_quantity', {
-  where: {
-    reference_number: ref_code
-  }
-});
-
-const inventory_fetch_subpart_sum = await Inventory_Subpart.sum('static_quantity', {
-  where: {
-    reference_number: ref_code
-  }
-});
-
-// Sum up the static_quantity values from all tables
-const total_static_quantity = inventory_fetch_sum + inventory_fetch_asm_sum + inventory_fetch_spare_sum + inventory_fetch_subpart_sum;
-
-// console.log("Total Static Quantity:", total_static_quantity);
-
-let finalCostFright
-
-if(shippingFeeBool === true){
-  finalCostFright = shippingFee
-}else{
-  finalCostFright = shippingFee / total_static_quantity
-}
-
-// console.log(`finalCostFright ${finalCostFright}`)
-
-const inventory_fetch = await Inventory.findAll({
-  where: {
-    reference_number: ref_code
-  }
-})
-
-const inventory_fetch_asm = await Inventory_Assembly.findAll({
-  where: {
-    reference_number: ref_code
-  }
-})
-
-const inventory_fetch_spare = await Inventory_Spare.findAll({
-  where: {
-    reference_number: ref_code
-  }
-})
-
-const inventory_fetch_subpart = await Inventory_Subpart.findAll({
-    where: {
-      reference_number: ref_code
+    let final_status;
+    if (
+      (shippingFee === "" || shippingFee === 0) &&
+      (customFee === null || customFee === "")
+    ) {
+      final_status = "Delivered (Lack of Cost)";
+    } else if (shippingFee === "" || shippingFee === 0) {
+      final_status = "Delivered (Lack of FreightCost)";
+    } else if (customFee === null || customFee === "") {
+      final_status = "Delivered (Lack of CustomCost)";
+    } else {
+      final_status = "Delivered";
     }
-  })
+    const inventory_fetch_sum = await Inventory.sum("static_quantity", {
+      where: {
+        reference_number: ref_code,
+      },
+    });
 
+    const inventory_fetch_asm_sum = await Inventory_Assembly.sum(
+      "static_quantity",
+      {
+        where: {
+          reference_number: ref_code,
+        },
+      }
+    );
 
+    const inventory_fetch_spare_sum = await Inventory_Spare.sum(
+      "static_quantity",
+      {
+        where: {
+          reference_number: ref_code,
+        },
+      }
+    );
 
-    inventory_fetch.forEach(item => {
-      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-    
+    const inventory_fetch_subpart_sum = await Inventory_Subpart.sum(
+      "static_quantity",
+      {
+        where: {
+          reference_number: ref_code,
+        },
+      }
+    );
+
+    // Sum up the static_quantity values from all tables
+    const total_static_quantity =
+      inventory_fetch_sum +
+      inventory_fetch_asm_sum +
+      inventory_fetch_spare_sum +
+      inventory_fetch_subpart_sum;
+
+    // console.log("Total Static Quantity:", total_static_quantity);
+
+    let finalCostFright;
+
+    if (shippingFeeBool === true) {
+      finalCostFright = shippingFee;
+    } else {
+      finalCostFright = shippingFee / total_static_quantity;
+    }
+
+    // console.log(`finalCostFright ${finalCostFright}`)
+
+    const inventory_fetch = await Inventory.findAll({
+      where: {
+        reference_number: ref_code,
+      },
+    });
+
+    const inventory_fetch_asm = await Inventory_Assembly.findAll({
+      where: {
+        reference_number: ref_code,
+      },
+    });
+
+    const inventory_fetch_spare = await Inventory_Spare.findAll({
+      where: {
+        reference_number: ref_code,
+      },
+    });
+
+    const inventory_fetch_subpart = await Inventory_Subpart.findAll({
+      where: {
+        reference_number: ref_code,
+      },
+    });
+
+    inventory_fetch.forEach((item) => {
+      console.log(
+        `inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `
+      );
+
       Inventory.update(
         {
           custom_cost: customFee,
-          freight_cost:finalCostFright
+          freight_cost: finalCostFright,
         },
-    
+
         {
           where: {
             inventory_id: item.inventory_id,
           },
         }
-      )
+      );
     });
 
+    inventory_fetch_asm.forEach((item) => {
+      console.log(
+        `inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `
+      );
 
-
-
-    inventory_fetch_asm.forEach(item => {
-      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-     
       Inventory_Assembly.update(
         {
           custom_cost: customFee,
-          freight_cost:finalCostFright
+          freight_cost: finalCostFright,
         },
-    
+
         {
           where: {
             inventory_id: item.inventory_id,
           },
         }
-      )
+      );
     });
 
+    inventory_fetch_spare.forEach((item) => {
+      console.log(
+        `inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `
+      );
 
-
-
-    inventory_fetch_spare.forEach(item => {
-      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-      
       Inventory_Spare.update(
         {
           custom_cost: customFee,
-          freight_cost:finalCostFright
+          freight_cost: finalCostFright,
         },
-    
+
         {
           where: {
             inventory_id: item.inventory_id,
           },
         }
-      )
+      );
     });
 
-
-    
-
-    inventory_fetch_subpart.forEach(item => {
-      console.log(`inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `)
-
-     
+    inventory_fetch_subpart.forEach((item) => {
+      console.log(
+        `inventory_id ${item.inventory_id} static_quantity ${item.static_quantity} `
+      );
 
       Inventory_Subpart.update(
         {
           custom_cost: customFee,
-          freight_cost:finalCostFright
+          freight_cost: finalCostFright,
         },
-    
+
         {
           where: {
             inventory_id: item.inventory_id,
           },
         }
-      )
+      );
     });
 
     const update = Receiving_PO.update(
       {
         status: final_status,
         customFee: customFee,
-        freight_cost: finalCostFright
-       
+        freight_cost: finalCostFright,
       },
       {
         where: { id: receiving_id },
       }
     );
 
-    if(update){
-      return res.status(200).json()
+    if (update) {
+      return res.status(200).json();
+    } else {
+      return res.status(500).json();
     }
-    else{
-      return res.status(500).json()
-    }
-  
-
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -318,74 +321,7 @@ router.route("/fetchCountIssued").get(async (req, res) => {
 
     // Similar counts for other tables (IssuedAssembly, IssuedSpare, IssuedSubpart)
 
-    const countAssembly = await IssuedAssembly.count({
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-      include: [
-        {
-          model: Issuance,
-          required: true,
-
-          where: {
-            status: "Approved",
-          },
-        },
-      ],
-    });
-
-    const countSpare = await IssuedSpare.count({
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-
-      include: [
-        {
-          model: Issuance,
-          required: true,
-
-          where: {
-            status: "Approved",
-          },
-        },
-      ],
-    });
-
-    const countSubpart = await IssuedSubpart.count({
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-      include: [
-        {
-          model: Issuance,
-          required: true,
-
-          where: {
-            status: "Approved",
-          },
-        },
-      ],
-    });
-
-    const totalIssuedCount =
-      countProduct + countAssembly + countSpare + countSubpart;
-
-    return res.json(totalIssuedCount);
+    return res.json(countProduct);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -417,44 +353,7 @@ router.route("/fetchCountInventory").get(async (req, res) => {
       },
     });
 
-    const sumAsmblyQuantity = await Inventory_Assembly.sum("quantity", {
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-    });
-    const sumSpareQuantity = await Inventory_Spare.sum("quantity", {
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-    });
-    const sumSubQuantity = await Inventory_Subpart.sum("quantity", {
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-    });
-
-    const totalInventoryCount =
-      countProductQuantity +
-      sumAsmblyQuantity +
-      sumSpareQuantity +
-      sumSubQuantity;
-
-    return res.json(totalInventoryCount);
+    return res.json(countProductQuantity === null ? 0 : countProductQuantity);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -476,9 +375,6 @@ router.route("/fetchValueInventory").get(async (req, res) => {
     const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     let sumPRD = 0;
-    let sumAsmbly = 0;
-    let sumSpare = 0;
-    let sumSub = 0;
 
     const invPrd = await Inventory.findAll({
       where: {
@@ -495,61 +391,8 @@ router.route("/fetchValueInventory").get(async (req, res) => {
       sumPRD += (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
     });
 
-    // -----------------------------------------------------
-
-    const invasm = await Inventory_Assembly.findAll({
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-    });
-
-    invasm.forEach((inv) => {
-      sumAsmbly +=
-        (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
-    });
-
-    // -----------------------------------------------------
-
-    const invspare = await Inventory_Spare.findAll({
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-    });
-
-    invspare.forEach((inv) => {
-      sumSpare +=
-        (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
-    });
-
-    // -----------------------------------------------------
-
-    const invSub = await Inventory_Subpart.findAll({
-      where: {
-        createdAt: {
-          [Op.between]: [
-            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-          ],
-        },
-      },
-    });
-
-    invSub.forEach((inv) => {
-      sumSub += (inv.price + inv.freight_cost + inv.custom_cost) * inv.quantity;
-    });
-
-    const totalValue = sumPRD + sumAsmbly + sumSpare + sumSub;
-    const formattedTotalValue = totalValue.toFixed(2).toLocaleString();
+    // const totalValue = sumPRD + sumAsmbly + sumSpare + sumSub;
+    const formattedTotalValue = sumPRD.toFixed(2).toLocaleString();
     res.json(formattedTotalValue);
   } catch (error) {
     console.error(error);
@@ -592,9 +435,6 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
   try {
     // ----------------Product on order ------------------
     let orderedCountPRD = 0;
-    let orderedCountASM = 0;
-    let orderedCountSPR = 0;
-    let orderedCountSBP = 0;
 
     const manilaTimezone = "Asia/Manila";
     moment.tz.setDefault(manilaTimezone);
@@ -607,19 +447,19 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
     const lastDateOfMonth = currentDate.clone().endOf("month").endOf("day");
 
     const ordered_canvassed = await PR_PO.findAll({
+      where: {
+        status: "To-Receive",
+        date_approved: {
+          [Op.between]: [
+            firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+            lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
+          ],
+        },
+      },
       include: [
         {
           model: PR,
           required: true,
-          where: {
-            status: "To-Receive",
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
         },
         {
           model: ProductTAGSupplier,
@@ -641,119 +481,7 @@ router.route("/fetchCountOrdered").get(async (req, res) => {
       }
     });
 
-    // ----------------Assembly on order ------------------
-
-    const ordered_canvassed_ASM = await PR_PO_asmbly.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          where: {
-            status: "To-Receive",
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
-        },
-        {
-          model: Assembly_Supplier,
-        },
-      ],
-    });
-
-    const ASMCount = {};
-    ordered_canvassed_ASM.forEach((order_quantity) => {
-      const product_id = order_quantity.assembly_supplier.assembly_id;
-
-      // Check if product_id already exists in ASMCount
-      if (!ASMCount[product_id]) {
-        // If not, increment orderedCountASM and mark the product_id as counted
-        orderedCountASM++;
-        ASMCount[product_id] = true;
-      }
-    });
-
-    // ----------------Sparepart on order ------------------
-
-    const ordered_canvassed_SPR = await PR_PO_spare.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          where: {
-            status: "To-Receive",
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
-        },
-        {
-          model: SparePart_Supplier,
-          required: true,
-        },
-      ],
-    });
-
-    const spareCount = {};
-
-    ordered_canvassed_SPR.forEach((order_quantity) => {
-      const product_id = order_quantity.sparepart_supplier.sparePart_id;
-
-      // Check if product_id already exists in spareCount
-      if (!spareCount[product_id]) {
-        // If not, increment orderedCountSPR and mark the product_id as counted
-        orderedCountSPR++;
-        spareCount[product_id] = true;
-      }
-    });
-
-    // ----------------Subpart on order ------------------
-
-    const ordered_canvassed_SBP = await PR_PO_subpart.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          where: {
-            status: "To-Receive",
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
-        },
-        {
-          model: Subpart_supplier,
-          required: true,
-        },
-      ],
-    });
-
-    const subpCount = {};
-
-    ordered_canvassed_SBP.forEach((order_quantity) => {
-      const product_id = order_quantity.subpart_supplier.subpart_id;
-
-      // Check if product_id already exists in subpCount
-      if (!subpCount[product_id]) {
-        // If not, increment orderedCountSBP and mark the product_id as counted
-        orderedCountSBP++;
-        subpCount[product_id] = true;
-      }
-    });
-
-    const totalOnOrder =
-      orderedCountPRD + orderedCountASM + orderedCountSPR + orderedCountSBP;
-
-    res.json(totalOnOrder);
+    res.json(orderedCountPRD);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1409,47 +1137,47 @@ router.route("/countInventoryGraph").get(async (req, res) => {
       },
     });
 
-    const dataCounts_asm = await Inventory_Assembly.findAll({
-      include: [
-        {
-          model: Assembly_Supplier,
-          required: true,
-        },
-      ],
-      where: {
-        createdAt: {
-          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
-        },
-      },
-    });
+    // const dataCounts_asm = await Inventory_Assembly.findAll({
+    //   include: [
+    //     {
+    //       model: Assembly_Supplier,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     createdAt: {
+    //       [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+    //     },
+    //   },
+    // });
 
-    const dataCounts_spare = await Inventory_Spare.findAll({
-      include: [
-        {
-          model: SparePart_Supplier,
-          required: true,
-        },
-      ],
-      where: {
-        createdAt: {
-          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
-        },
-      },
-    });
+    // const dataCounts_spare = await Inventory_Spare.findAll({
+    //   include: [
+    //     {
+    //       model: SparePart_Supplier,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     createdAt: {
+    //       [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+    //     },
+    //   },
+    // });
 
-    const dataCounts_subpart = await Inventory_Subpart.findAll({
-      include: [
-        {
-          model: Subpart_supplier,
-          required: true,
-        },
-      ],
-      where: {
-        createdAt: {
-          [Op.between]: [lastYear_StartDate, currentYear_EndDate],
-        },
-      },
-    });
+    // const dataCounts_subpart = await Inventory_Subpart.findAll({
+    //   include: [
+    //     {
+    //       model: Subpart_supplier,
+    //       required: true,
+    //     },
+    //   ],
+    //   where: {
+    //     createdAt: {
+    //       [Op.between]: [lastYear_StartDate, currentYear_EndDate],
+    //     },
+    //   },
+    // });
 
     // Array of month names
     const monthNames = [
@@ -1470,47 +1198,37 @@ router.route("/countInventoryGraph").get(async (req, res) => {
     const combinedQuantities = {};
 
     // Loop through each inventory item
-    [dataCounts, dataCounts_asm, dataCounts_spare, dataCounts_subpart].forEach(
-      (data) => {
-        data.forEach((item) => {
-          const inventoryQuantity = item.static_quantity;
-          const product_id = item.product_tag_supplier
-            ? item.product_tag_supplier.product_id
-            : item.assembly_supplier
-            ? item.assembly_supplier.assembly_id
-            : item.sparepart_supplier
-            ? item.sparepart_supplier.sparePart_id
-            : item.subpart_supplier.subpart_id; // Check if it's from Inventory or Inventory_Assembly
+    [dataCounts].forEach((data) => {
+      data.forEach((item) => {
+        const inventoryQuantity = item.static_quantity;
+        const product_id = item.product_tag_supplier.product_id;
 
-          // Get the year and month from the createdAt field of the inventory item
-          const createdAt = new Date(item.createdAt);
-          const currentYear = createdAt.getFullYear();
-          const month = createdAt.getMonth();
+        // Get the year and month from the createdAt field of the inventory item
+        const createdAt = new Date(item.createdAt);
+        const currentYear = createdAt.getFullYear();
+        const month = createdAt.getMonth();
 
-          // Determine if it's last year or this year
-          const yearLabel =
-            currentYear === new Date().getFullYear() ? "ThisYear" : "LastYear";
+        // Determine if it's last year or this year
+        const yearLabel =
+          currentYear === new Date().getFullYear() ? "ThisYear" : "LastYear";
 
-          if (!combinedQuantities[yearLabel]) {
-            combinedQuantities[yearLabel] = {};
-          }
+        if (!combinedQuantities[yearLabel]) {
+          combinedQuantities[yearLabel] = {};
+        }
 
-          if (!combinedQuantities[yearLabel][month]) {
-            combinedQuantities[yearLabel][month] = {};
-          }
+        if (!combinedQuantities[yearLabel][month]) {
+          combinedQuantities[yearLabel][month] = {};
+        }
 
-          if (!combinedQuantities[yearLabel][month][product_id]) {
-            // If the product_id is encountered for the first time in this year and month, initialize its quantity
-            combinedQuantities[yearLabel][month][product_id] =
-              inventoryQuantity;
-          } else {
-            // If the product_id already exists in this year and month, add the current quantity to it
-            combinedQuantities[yearLabel][month][product_id] +=
-              inventoryQuantity;
-          }
-        });
-      }
-    );
+        if (!combinedQuantities[yearLabel][month][product_id]) {
+          // If the product_id is encountered for the first time in this year and month, initialize its quantity
+          combinedQuantities[yearLabel][month][product_id] = inventoryQuantity;
+        } else {
+          // If the product_id already exists in this year and month, add the current quantity to it
+          combinedQuantities[yearLabel][month][product_id] += inventoryQuantity;
+        }
+      });
+    });
 
     // Create the array to hold the final result
     const array = [];
@@ -1561,13 +1279,15 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
   try {
     const productInfoArray = [];
     const ordered_canvassed = await PR_PO.findAll({
+      where: {
+        status: {
+          [Op.or]: ["To-Receive", "Received"],
+        },
+      },
       include: [
         {
           model: PR,
           required: true,
-          where: {
-            status: "To-Receive",
-          },
         },
         {
           model: ProductTAGSupplier,
@@ -1616,174 +1336,6 @@ router.route("/fetchMostReqItem").get(async (req, res) => {
       });
     }
 
-    const ordered_canvassed_asm = await PR_PO_asmbly.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          where: {
-            status: "To-Receive",
-          },
-        },
-        {
-          model: Assembly_Supplier,
-          required: true,
-          include: [
-            {
-              model: Assembly,
-              required: true,
-            },
-          ],
-        },
-      ],
-    });
-
-    // Create an array to store product information and counts
-
-    // Create an object to store counts of each product_id
-    const productCounts_asm = {};
-
-    ordered_canvassed_asm.forEach((order_quantity) => {
-      const product_id = order_quantity.assembly_supplier.assembly_id;
-
-      // Increment the count for the current product_id
-      if (productCounts_asm[product_id]) {
-        productCounts_asm[product_id]++;
-      } else {
-        productCounts_asm[product_id] = 1;
-      }
-    });
-
-    // Loop through the productCounts object to gather product information and counts
-    for (const productId in productCounts_asm) {
-      const productName = ordered_canvassed_asm.find(
-        (item) => item.assembly_supplier.assembly_id === parseInt(productId)
-      ).assembly_supplier.assembly.assembly_name;
-
-      const productCode = ordered_canvassed_asm.find(
-        (item) => item.assembly_supplier.assembly_id === parseInt(productId)
-      ).assembly_supplier.assembly.assembly_code;
-
-      // Push product information and count into the productInfoArray
-      productInfoArray.push({
-        productCode: productCode,
-        productName: productName,
-        count: productCounts_asm[productId],
-      });
-    }
-
-    const ordered_canvassed_spr = await PR_PO_spare.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          where: {
-            status: "To-Receive",
-          },
-        },
-        {
-          model: SparePart_Supplier,
-          required: true,
-          include: [
-            {
-              model: SparePart,
-              required: true,
-            },
-          ],
-        },
-      ],
-    });
-
-    // Create an array to store product information and counts
-
-    // Create an object to store counts of each product_id
-    const productCounts_spare = {};
-
-    ordered_canvassed_spr.forEach((order_quantity) => {
-      const product_id = order_quantity.sparepart_supplier.sparePart_id;
-
-      // Increment the count for the current product_id
-      if (productCounts_spare[product_id]) {
-        productCounts_spare[product_id]++;
-      } else {
-        productCounts_spare[product_id] = 1;
-      }
-    });
-
-    // Loop through the productCounts object to gather product information and counts
-    for (const productId in productCounts_spare) {
-      const productName = ordered_canvassed_spr.find(
-        (item) => item.sparepart_supplier.sparePart_id === parseInt(productId)
-      ).sparepart_supplier.sparePart.spareParts_name;
-
-      const productCode = ordered_canvassed_spr.find(
-        (item) => item.sparepart_supplier.sparePart_id === parseInt(productId)
-      ).sparepart_supplier.sparePart.spareParts_code;
-
-      // Push product information and count into the productInfoArray
-      productInfoArray.push({
-        productCode: productCode,
-        productName: productName,
-        count: productCounts_spare[productId],
-      });
-    }
-
-    const ordered_canvassed_sbp = await PR_PO_subpart.findAll({
-      include: [
-        {
-          model: PR,
-          required: true,
-          where: {
-            status: "To-Receive",
-          },
-        },
-        {
-          model: Subpart_supplier,
-          required: true,
-          include: [
-            {
-              model: SubPart,
-              required: true,
-            },
-          ],
-        },
-      ],
-    });
-
-    // Create an array to store product information and counts
-
-    // Create an object to store counts of each product_id
-    const productCounts_subpart = {};
-
-    ordered_canvassed_sbp.forEach((order_quantity) => {
-      const product_id = order_quantity.subpart_supplier.subpart_id;
-
-      // Increment the count for the current product_id
-      if (productCounts_subpart[product_id]) {
-        productCounts_subpart[product_id]++;
-      } else {
-        productCounts_subpart[product_id] = 1;
-      }
-    });
-
-    // Loop through the productCounts object to gather product information and counts
-    for (const productId in productCounts_subpart) {
-      const productName = ordered_canvassed_sbp.find(
-        (item) => item.subpart_supplier.subpart_id === parseInt(productId)
-      ).subpart_supplier.subPart.subPart_name;
-
-      const productCode = ordered_canvassed_sbp.find(
-        (item) => item.subpart_supplier.subpart_id === parseInt(productId)
-      ).subpart_supplier.subPart.subPart_code;
-
-      // Push product information and count into the productInfoArray
-      productInfoArray.push({
-        productCode: productCode,
-        productName: productName,
-        count: productCounts_subpart[productId],
-      });
-    }
-
     // // Now productInfoArray contains the required information
     // console.log(productInfoArray);
     productInfoArray.sort((a, b) => b.count - a.count);
@@ -1809,9 +1361,6 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
 
     // ----------------Product on order ------------------
     let orderedCountPRD = 0;
-    let orderedCountASM = 0;
-    let orderedCountSPR = 0;
-    let orderedCountSBP = 0;
 
     const ordered_canvassed = await Receiving_Prd.findAll({
       include: [
@@ -1860,156 +1409,7 @@ router.route("/fetchReceivedOrdered").get(async (req, res) => {
 
     // console.log(`orderedCountPRDsss ${orderedCountPRD}`)
 
-    // ----------------Assembly on order ------------------
-
-    const ordered_canvassed_ASM = await Receiving_Asm.findAll({
-      include: [
-        {
-          model: Receiving_PO,
-          required: true,
-          where: {
-            status: { [Op.ne]: "For Approval" },
-            status: { [Op.ne]: "In-transit" },
-            status: { [Op.ne]: "In-transit (Complete)" },
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
-        },
-        {
-          model: PR_PO_asmbly,
-          required: true,
-          include: [
-            {
-              model: Assembly_Supplier,
-              required: true,
-            },
-          ],
-        },
-      ],
-    });
-
-    const ASMCount = {};
-    ordered_canvassed_ASM.forEach((order_quantity) => {
-      const product_id =
-        order_quantity.purchase_req_canvassed_asmbly.assembly_supplier
-          .assembly_id;
-
-      // Check if product_id already exists in ASMCount
-      if (!ASMCount[product_id]) {
-        // If not, increment orderedCountASM and mark the product_id as counted
-        orderedCountASM++;
-        ASMCount[product_id] = true;
-      }
-    });
-
-    // console.log(`orderedCountASMsss ${orderedCountASM}`)
-
-    // ----------------Sparepart on order ------------------
-
-    const ordered_canvassed_SPR = await Receiving_Spare.findAll({
-      include: [
-        {
-          model: Receiving_PO,
-          required: true,
-          where: {
-            status: { [Op.ne]: "For Approval" },
-            status: { [Op.ne]: "In-transit" },
-            status: { [Op.ne]: "In-transit (Complete)" },
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
-        },
-        {
-          model: PR_PO_spare,
-          required: true,
-          include: [
-            {
-              model: SparePart_Supplier,
-              required: true,
-            },
-          ],
-        },
-      ],
-    });
-
-    const spareCount = {};
-
-    ordered_canvassed_SPR.forEach((order_quantity) => {
-      const product_id =
-        order_quantity.purchase_req_canvassed_spare.sparepart_supplier
-          .sparePart_id;
-
-      // Check if product_id already exists in spareCount
-      if (!spareCount[product_id]) {
-        // If not, increment orderedCountSPR and mark the product_id as counted
-        orderedCountSPR++;
-        spareCount[product_id] = true;
-      }
-    });
-
-    // console.log(`orderedCountSPRssss ${orderedCountSPR}`)
-
-    // ----------------Subpart on order ------------------
-
-    const ordered_canvassed_SBP = await Receiving_Subpart.findAll({
-      include: [
-        {
-          model: Receiving_PO,
-          required: true,
-          where: {
-            status: { [Op.ne]: "For Approval" },
-            status: { [Op.ne]: "In-transit" },
-            status: { [Op.ne]: "In-transit (Complete)" },
-            date_approved: {
-              [Op.between]: [
-                firstDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-                lastDateOfMonth.format("YYYY-MM-DD HH:mm:ss"),
-              ],
-            },
-          },
-        },
-        {
-          model: PR_PO_subpart,
-          required: true,
-          include: [
-            {
-              model: Subpart_supplier,
-              required: true,
-            },
-          ],
-        },
-      ],
-    });
-
-    const subpCount = {};
-
-    ordered_canvassed_SBP.forEach((order_quantity) => {
-      const product_id =
-        order_quantity.purchase_req_canvassed_subpart.subpart_supplier
-          .subpart_id;
-
-      // Check if product_id already exists in subpCount
-      if (!subpCount[product_id]) {
-        // If not, increment orderedCountSBP and mark the product_id as counted
-        orderedCountSBP++;
-        subpCount[product_id] = true;
-      }
-    });
-
-    console.log(`orderedCountSBPssss ${orderedCountSBP}`);
-
-    const totalOnOrder =
-      orderedCountPRD + orderedCountASM + orderedCountSPR + orderedCountSBP;
-
-    res.json(totalOnOrder);
+    res.json(orderedCountPRD);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -2063,6 +1463,12 @@ router.route("/countOrderGraph").get(async (req, res) => {
     ];
 
     const dataCounts_order = await PR_PO.findAll({
+      where: {
+        status: "To-Receive",
+        date_approved: {
+          [Op.between]: [currentYear_StartDate, currentYear_EndDate],
+        },
+      },
       include: [
         {
           model: ProductTAGSupplier,
@@ -2071,12 +1477,6 @@ router.route("/countOrderGraph").get(async (req, res) => {
         {
           model: PR,
           required: true,
-          where: {
-            status: "To-Receive",
-            date_approved: {
-              [Op.between]: [currentYear_StartDate, currentYear_EndDate],
-            },
-          },
         },
       ],
     });
@@ -2538,51 +1938,51 @@ router.route("/countSupplierLeadGraph").get(async (req, res) => {
           },
         ],
       },
-      {
-        model: PR_PO_asmbly,
-        include: [
-          {
-            model: Assembly_Supplier,
-            required: true,
-            include: [
-              {
-                model: Supplier,
-                required: true,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        model: PR_PO_spare,
-        include: [
-          {
-            model: SparePart_Supplier,
-            required: true,
-            include: [
-              {
-                model: Supplier,
-                required: true,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        model: PR_PO_subpart,
-        include: [
-          {
-            model: Subpart_supplier,
-            required: true,
-            include: [
-              {
-                model: Supplier,
-                required: true,
-              },
-            ],
-          },
-        ],
-      },
+      // {
+      //   model: PR_PO_asmbly,
+      //   include: [
+      //     {
+      //       model: Assembly_Supplier,
+      //       required: true,
+      //       include: [
+      //         {
+      //           model: Supplier,
+      //           required: true,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+      // {
+      //   model: PR_PO_spare,
+      //   include: [
+      //     {
+      //       model: SparePart_Supplier,
+      //       required: true,
+      //       include: [
+      //         {
+      //           model: Supplier,
+      //           required: true,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+      // {
+      //   model: PR_PO_subpart,
+      //   include: [
+      //     {
+      //       model: Subpart_supplier,
+      //       required: true,
+      //       include: [
+      //         {
+      //           model: Supplier,
+      //           required: true,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
     ];
 
     // Execute the queries for each table
@@ -2607,13 +2007,7 @@ router.route("/countSupplierLeadGraph").get(async (req, res) => {
     // Process each result
     results.forEach((suppliers, index) => {
       suppliers.forEach((supplier) => {
-        const supp_name = supplier.product_tag_supplier
-          ? supplier.product_tag_supplier.supplier.supplier_name
-          : supplier.assembly_supplier
-          ? supplier.assembly_supplier.supplier.supplier_name
-          : supplier.sparepart_supplier
-          ? supplier.sparepart_supplier.supplier.supplier_name
-          : supplier.subpart_supplier.supplier.supplier_name;
+        const supp_name = supplier.product_tag_supplier.supplier_name;
 
         const po_id = supplier.po_id; // Get PO ID from the result
 
@@ -2636,7 +2030,7 @@ router.route("/countSupplierLeadGraph").get(async (req, res) => {
     // console.log(`supplierData`);
     // console.log(supplierData); // Output the array
 
-    //filter only 5 supplier will push 
+    //filter only 5 supplier will push
     supplierData.sort((a, b) => a.days - b.days);
     const topFiveSuppliers = supplierData.slice(0, 5);
     return res.json(topFiveSuppliers);
@@ -2646,27 +2040,27 @@ router.route("/countSupplierLeadGraph").get(async (req, res) => {
   }
 });
 
-
 router.route("/receivingOverView").get(async (req, res) => {
-
-    const receiving_po = await Receiving_PO.findAll({
-      include: [{
+  const receiving_po = await Receiving_PO.findAll({
+    include: [
+      {
         model: PR,
-        required: true
-      }],
-      where: {
-        status: {
-          [Op.or]: [
-            "Delivered (Lack of Cost)",
-            "Delivered (Lack of FreightCost)",
-            "Delivered (Lack of CustomCost)",
-          ],
-        },
-      }
-    })
+        required: true,
+      },
+    ],
+    where: {
+      status: {
+        [Op.or]: [
+          "Delivered (Lack of Cost)",
+          "Delivered (Lack of FreightCost)",
+          "Delivered (Lack of CustomCost)",
+        ],
+      },
+    },
+  });
 
-    // console.log(receiving_po)
-    return res.json(receiving_po)
-})
+  // console.log(receiving_po)
+  return res.json(receiving_po);
+});
 
 module.exports = router;

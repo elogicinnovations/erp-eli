@@ -132,6 +132,7 @@ const Warehouse = require("./routes/warehouse.route");
 const Board = require("./routes/board.route");
 const Checker = require("./routes/checker.route");
 const Accountability = require("./routes/accountability.route");
+const Retain = require("./routes/retain.route");
 
 const authenticateToken = require("./middleware/token_authentication.middleware");
 
@@ -218,7 +219,7 @@ app.use("/board", Board);
 app.use("/checker", Checker);
 app.use("/accountability", Accountability);
 app.use("/warehouses", Warehouse);
-
+app.use("/retain", Retain);
 app.listen(port, () => {
   console.log(`listening to port ${port}`);
 });

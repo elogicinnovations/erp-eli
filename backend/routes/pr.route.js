@@ -35,6 +35,9 @@ router.use(
 router.route("/fetchTable").get(async (req, res) => {
   try {
     const data = await PR.findAll({
+      where: {
+        status: { [Op.ne]: "Cancelled" },
+      },
       include: [
         {
           model: MasterList,
@@ -302,8 +305,6 @@ router.route("/pr_update").post(async (req, res) => {
             isPO: false,
           });
         })
-
-        
       );
 
       await PR_history.create({
@@ -311,10 +312,10 @@ router.route("/pr_update").post(async (req, res) => {
         status: "For-Approval",
         remarks: `Purchase Request: Edit the pr for ${id}`,
       });
-     await Activity_Log.create({
-          masterlist_id: userId,
-          action_taken: `Purchase Request: Edit the pr for ${id}`,
-        });
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Purchase Request: Edit the pr for ${id}`,
+      });
 
       return res.status(200).json();
     }
