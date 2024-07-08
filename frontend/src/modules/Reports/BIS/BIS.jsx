@@ -175,9 +175,10 @@ function BIS({ authrztn }) {
       })
       .then((res) => {
         setBisContent(res.data.prd);
-        setBisContent_asm(res.data.asm);
-        setBisContent_spare(res.data.spare);
-        setBisContent_subpart(res.data.subpart);
+        setSearchBIS(res.data.prd);
+        // setBisContent_asm(res.data.asm);
+        // setBisContent_spare(res.data.spare);
+        // setBisContent_subpart(res.data.subpart);
       })
       .catch((err) => console.log(err));
   };
@@ -249,216 +250,6 @@ function BIS({ authrztn }) {
       );
     });
     setBisContent(filteredSearchBIS);
-
-    const filteredSearchBISasm = searchBISasm.filter((data) => {
-      return (
-        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-        formatDatetime(formatDatetime(data.createdAt))
-          .toLowerCase()
-          .includes(searchTerm) ||
-        (typeof data.issuance.issuance_id === "number" &&
-          data.issuance.issuance_id
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.issuance.mrs === "string" ||
-          typeof data.issuance.mrs === "number") &&
-          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
-        data.inventory_assembly.assembly_supplier.assembly.category.category_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.inventory_assembly.assembly_supplier.assembly.assembly_code
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.inventory_assembly.assembly_supplier.assembly.assembly_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        (typeof data.quantity === "number" &&
-          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
-        data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement
-          .toLowerCase()
-          .includes(searchTerm) ||
-        ((typeof data.inventory_assembly.price === "number" ||
-          typeof data.inventory_assembly.price === "string") &&
-          data.inventory_assembly.price
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_assembly.freight_cost === "number" ||
-          typeof data.inventory_assembly.freight_cost === "string") &&
-          data.inventory_assembly.freight_cost
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_assembly.custom_cost === "number" ||
-          typeof data.inventory_assembly.custom_cost === "string") &&
-          data.inventory_assembly.custom_cost
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        (
-          data.inventory_assembly.price +
-          data.inventory_assembly.freight_cost +
-          data.inventory_assembly.custom_cost
-        )
-          .toFixed(2)
-          .includes(searchTerm) ||
-        (
-          (data.inventory_assembly.price +
-            data.inventory_assembly.freight_cost +
-            data.inventory_assembly.custom_cost) *
-          data.quantity
-        )
-          .toFixed(2)
-          .includes(searchTerm)
-      );
-    });
-    setBisContent_asm(filteredSearchBISasm);
-
-    const filteredSearchBISspare = searchBISspare.filter((data) => {
-      return (
-        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-        formatDatetime(formatDatetime(data.createdAt))
-          .toLowerCase()
-          .includes(searchTerm) ||
-        (typeof data.issuance.issuance_id === "number" &&
-          data.issuance.issuance_id
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.issuance.mrs === "string" ||
-          typeof data.issuance.mrs === "number") &&
-          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
-        (data.inventory_spare &&
-          data.inventory_spare.sparepart_supplier &&
-          data.inventory_spare.sparepart_supplier.sparePart &&
-          data.inventory_spare.sparepart_supplier.sparePart.category &&
-          data.inventory_spare.sparepart_supplier.sparePart.category.category_name
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        (data.inventory_spare &&
-          data.inventory_spare.sparepart_supplier &&
-          data.inventory_spare.sparepart_supplier.sparePart &&
-          data.inventory_spare.sparepart_supplier.sparePart.spareParts_code
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        (data.inventory_spare &&
-          data.inventory_spare.sparepart_supplier &&
-          data.inventory_spare.sparepart_supplier.sparePart &&
-          data.inventory_spare.sparepart_supplier.sparePart.spareParts_name
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        (typeof data.quantity === "number" &&
-          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
-        (data.inventory_spare &&
-          data.inventory_spare.sparepart_supplier &&
-          data.inventory_spare.sparepart_supplier.sparePart &&
-          data.inventory_spare.sparepart_supplier.sparePart
-            .spareParts_unitMeasurement &&
-          data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_spare.price === "number" ||
-          typeof data.inventory_spare.price === "string") &&
-          data.inventory_spare.price
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_spare.freight_cost === "number" ||
-          typeof data.inventory_spare.freight_cost === "string") &&
-          data.inventory_spare.freight_cost
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_spare.custom_cost === "number" ||
-          typeof data.inventory_spare.custom_cost === "string") &&
-          data.inventory_spare.custom_cost
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        (
-          data.inventory_spare.price +
-          data.inventory_spare.freight_cost +
-          data.inventory_spare.custom_cost
-        )
-          .toFixed(2)
-          .includes(searchTerm) ||
-        (
-          (data.inventory_spare.price +
-            data.inventory_spare.freight_cost +
-            data.inventory_spare.custom_cost) *
-          data.quantity
-        )
-          .toFixed(2)
-          .includes(searchTerm)
-      );
-    });
-    setBisContent_spare(filteredSearchBISspare);
-
-    const filteredSearchBISsub = searchBISsub.filter((data) => {
-      return (
-        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-        formatDatetime(formatDatetime(data.createdAt))
-          .toLowerCase()
-          .includes(searchTerm) ||
-        (typeof data.issuance.issuance_id === "number" &&
-          data.issuance.issuance_id
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.issuance.mrs === "string" ||
-          typeof data.issuance.mrs === "number") &&
-          data.issuance.mrs.toString().toLowerCase().includes(searchTerm)) ||
-        data.inventory_subpart.subpart_supplier.subPart.category.category_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.inventory_subpart.subpart_supplier.subPart.subPart_code
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.inventory_subpart.subpart_supplier.subPart.subPart_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        (typeof data.quantity === "number" &&
-          data.quantity.toString().toLowerCase().includes(searchTerm)) ||
-        data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement
-          .toLowerCase()
-          .includes(searchTerm) ||
-        ((typeof data.inventory_subpart.price === "number" ||
-          typeof data.inventory_subpart.price === "string") &&
-          data.inventory_subpart.price
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_subpart.freight_cost === "number" ||
-          typeof data.inventory_subpart.freight_cost === "string") &&
-          data.inventory_subpart.freight_cost
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        ((typeof data.inventory_subpart.custom_cost === "number" ||
-          typeof data.inventory_subpart.custom_cost === "string") &&
-          data.inventory_subpart.custom_cost
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm)) ||
-        (
-          data.inventory_subpart.price +
-          data.inventory_subpart.freight_cost +
-          data.inventory_subpart.custom_cost
-        )
-          .toFixed(2)
-          .includes(searchTerm) ||
-        (
-          (data.inventory_subpart.price +
-            data.inventory_subpart.freight_cost +
-            data.inventory_subpart.custom_cost) *
-          data.quantity
-        )
-          .toFixed(2)
-          .includes(searchTerm)
-      );
-    });
-    setBisContent_subpart(filteredSearchBISsub);
   };
   //date format
   function formatDatetime(datetime) {
@@ -473,19 +264,19 @@ function BIS({ authrztn }) {
   }
 
   const exportToCSV = () => {
-    let shouldExport = true;
+    // let shouldExport = true;
 
     bisContent.forEach((item) => {
       if (item.inventory_prd && item.inventory_prd.freight_cost === 0) {
-        shouldExport = false; // Set the flag to false if condition is met
+        // shouldExport = false; // Set the flag to false if condition is met
         swal({
-          icon: "error",
-          title: "Oops...",
+          icon: "warning",
+          title: "Warning",
           text: "There's still product that has no Freight Cost",
         });
         return;
       } else if (item.inventory_prd && item.inventory_prd.custom_cost === 0) {
-        shouldExport = true;
+        // shouldExport = true;
         swal({
           icon: "warning",
           title: "Warning",
@@ -495,82 +286,10 @@ function BIS({ authrztn }) {
       }
     });
 
-    bisContent_asm.forEach((item) => {
-      if (
-        item.inventory_assembly &&
-        item.inventory_assembly.freight_cost === 0
-      ) {
-        shouldExport = false; // Set the flag to false if condition is met
-        swal({
-          icon: "error",
-          title: "Oops...",
-          text: "There's still product that has no Freight Cost",
-        });
-        return; // Exit the loop early if condition is met
-      } else if (
-        item.inventory_assembly &&
-        item.inventory_assembly.custom_cost === 0
-      ) {
-        shouldExport = true;
-        swal({
-          icon: "warning",
-          title: "Warning",
-          text: "There's a product that has no Duties & Custom Cost",
-        });
-        return;
-      }
-    });
-
-    bisContent_spare.forEach((item) => {
-      if (item.inventory_spare && item.inventory_spare.freight_cost === 0) {
-        shouldExport = false; // Set the flag to false if condition is met
-        swal({
-          icon: "error",
-          title: "Oops...",
-          text: "There's still product that has no Freight Cost",
-        });
-        return; // Exit the loop early if condition is met
-      } else if (
-        item.inventory_spare &&
-        item.inventory_spare.custom_cost === 0
-      ) {
-        shouldExport = true;
-        swal({
-          icon: "warning",
-          title: "Warning",
-          text: "There's a product that has no Duties & Custom Cost",
-        });
-        return;
-      }
-    });
-
-    bisContent_subpart.forEach((item) => {
-      if (item.inventory_subpart && item.inventory_subpart.freight_cost === 0) {
-        shouldExport = false; // Set the flag to false if condition is met
-        swal({
-          icon: "error",
-          title: "Oops...",
-          text: "There's still product that has no Freight Cost",
-        });
-        return; // Exit the loop early if condition is met
-      } else if (
-        item.inventory_subpart &&
-        item.inventory_subpart.custom_cost === 0
-      ) {
-        shouldExport = true;
-        swal({
-          icon: "warning",
-          title: "Warning",
-          text: "There's a product that has no Duties & Custom Cost",
-        });
-        return;
-      }
-    });
-
-    // Only export if the flag is true
-    if (!shouldExport) {
-      return;
-    }
+    // // Only export if the flag is true
+    // if (!shouldExport) {
+    //   return;
+    // }
 
     const rows = [];
     const columnStyles = [
@@ -629,91 +348,6 @@ function BIS({ authrztn }) {
           (data.inventory_prd.price +
             data.inventory_prd.freight_cost +
             data.inventory_prd.custom_cost) *
-          data.quantity
-        ).toFixed(2)}"`,
-      ];
-      rows.push(rowData.join(","));
-    });
-
-    bisContent_asm.forEach((data) => {
-      const rowData = [
-        `"${formatDatetime(data.createdAt)}"`,
-        `"${data.issuance.issuance_id}"`,
-        `\t${data.issuance.mrs}`,
-        `"${data.inventory_assembly.assembly_supplier.assembly.category.category_name}"`,
-        `\t${data.inventory_assembly.assembly_supplier.assembly.assembly_code}`,
-        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_assembly.assembly_supplier.assembly.assembly_unitMeasurement}"`,
-
-        `"${data.inventory_assembly.price}"`,
-        `"${data.inventory_assembly.freight_cost}"`,
-        `"${data.inventory_assembly.custom_cost}"`,
-        `"${(
-          data.inventory_assembly.price +
-          data.inventory_assembly.freight_cost +
-          data.inventory_assembly.custom_cost
-        ).toFixed(2)}"`,
-        `"${(
-          (data.inventory_assembly.price +
-            data.inventory_assembly.freight_cost +
-            data.inventory_assembly.custom_cost) *
-          data.quantity
-        ).toFixed(2)}"`,
-      ];
-      rows.push(rowData.join(","));
-    });
-
-    bisContent_spare.forEach((data) => {
-      const rowData = [
-        `"${formatDatetime(data.createdAt)}"`,
-        `"${data.issuance.issuance_id}"`,
-        `\t${data.issuance.mrs}`,
-        `"${data.inventory_spare.sparepart_supplier.sparePart.category.category_name}"`,
-        `\t${data.inventory_spare.sparepart_supplier.sparePart.spareParts_code}`,
-        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_spare.sparepart_supplier.sparePart.spareParts_unitMeasurement}"`,
-        `"${data.inventory_spare.price}"`,
-        `"${data.inventory_spare.freight_cost}"`,
-        `"${data.inventory_spare.custom_cost}"`,
-        `"${(
-          data.inventory_spare.price +
-          data.inventory_spare.freight_cost +
-          data.inventory_spare.custom_cost
-        ).toFixed(2)}"`,
-        `"${(
-          (data.inventory_spare.price +
-            data.inventory_spare.freight_cost +
-            data.inventory_spare.custom_cost) *
-          data.quantity
-        ).toFixed(2)}"`,
-      ];
-      rows.push(rowData.join(","));
-    });
-
-    bisContent_subpart.forEach((data) => {
-      const rowData = [
-        `"${formatDatetime(data.createdAt)}"`,
-        `"${data.issuance.issuance_id}"`,
-        `\t${data.issuance.mrs}`,
-        `"${data.inventory_subpart.subpart_supplier.subPart.category.category_name}"`,
-        `\t${data.inventory_subpart.subpart_supplier.subPart.subPart_code}`,
-        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_name}"`,
-        `"${data.quantity}"`,
-        `"${data.inventory_subpart.subpart_supplier.subPart.subPart_unitMeasurement}"`,
-        `"${data.inventory_subpart.price}"`,
-        `"${data.inventory_subpart.freight_cost}"`,
-        `"${data.inventory_subpart.custom_cost}"`,
-        `"${(
-          data.inventory_subpart.price +
-          data.inventory_subpart.freight_cost +
-          data.inventory_subpart.custom_cost
-        ).toFixed(2)}"`,
-        `"${(
-          (data.inventory_subpart.price +
-            data.inventory_subpart.freight_cost +
-            data.inventory_subpart.custom_cost) *
           data.quantity
         ).toFixed(2)}"`,
       ];
