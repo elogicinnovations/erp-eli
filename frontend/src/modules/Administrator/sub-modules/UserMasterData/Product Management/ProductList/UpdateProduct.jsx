@@ -778,7 +778,7 @@ function UpdateProduct({ authrztn }) {
               } else if (res.status === 201) {
                 swal({
                   icon: "error",
-                  title: "Product List Already Exists",
+                  title: "Product Code Already Exists",
                   text: "Please input a new product list",
                 });
               } else {

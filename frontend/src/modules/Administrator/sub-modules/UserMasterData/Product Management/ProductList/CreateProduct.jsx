@@ -513,7 +513,7 @@ function CreateProduct({ authrztn }) {
   };
   const Duplicate_Message = () => {
     swal({
-      title: "Product List is Already Exists",
+      title: "Product Code is Already Exists",
       text: "Please enter a new product list ",
       icon: "error",
     });
