@@ -934,7 +934,7 @@ function UpdateProduct({ authrztn }) {
                       required
                       type="text"
                       value={code}
-                      readOnly
+                      // readOnly
                       onChange={(e) => handleItemcode(e)}
                       style={{ height: "40px", fontSize: "15px" }}
                     />

@@ -594,7 +594,7 @@ function CreateProduct({ authrztn }) {
                       type="text"
                       onChange={(e) => setCode(e.target.value)}
                       value={code}
-                      readOnly
+                      // readOnly
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                   </Form.Group>
