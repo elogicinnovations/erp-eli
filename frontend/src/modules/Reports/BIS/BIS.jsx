@@ -61,45 +61,7 @@ function BIS({ authrztn }) {
     endIndexBISprod
   );
 
-  const totalPagesBISasm = Math.ceil(bisContent_asm.length / pageSize);
-  const startIndexBISasm = (currentPage - 1) * pageSize;
-  const endIndexBISasm = Math.min(
-    startIndexBISasm + pageSize,
-    bisContent_asm.length
-  );
-  const currentItemsBISasm = bisContent_asm.slice(
-    startIndexBISasm,
-    endIndexBISasm
-  );
-
-  const totalPagesBISspare = Math.ceil(bisContent_spare.length / pageSize);
-  const startIndexBISspare = (currentPage - 1) * pageSize;
-  const endIndexBISspare = Math.min(
-    startIndexBISspare + pageSize,
-    bisContent_spare.length
-  );
-  const currentItemsBISspare = bisContent_spare.slice(
-    startIndexBISspare,
-    endIndexBISspare
-  );
-
-  const totalPagesBISsubpart = Math.ceil(bisContent_subpart.length / pageSize);
-  const startIndexBISsubpart = (currentPage - 1) * pageSize;
-  const endIndexBISsubpart = Math.min(
-    startIndexBISsubpart + pageSize,
-    bisContent_subpart.length
-  );
-  const currentItemsBISsubpart = bisContent_subpart.slice(
-    startIndexBISsubpart,
-    endIndexBISsubpart
-  );
-
-  const totalPages = Math.max(
-    totalPagesBISProd,
-    totalPagesBISasm,
-    totalPagesBISspare,
-    totalPagesBISsubpart
-  );
+  const totalPages = Math.max(totalPagesBISProd);
 
   const MAX_PAGES = 5;
 
@@ -1034,10 +996,7 @@ function BIS({ authrztn }) {
                       <th className="tableh">Total</th>
                     </tr>
                   </thead>
-                  {bisContent.length > 0 ||
-                  bisContent_asm.length > 0 ||
-                  bisContent_spare.length > 0 ||
-                  bisContent_subpart.length > 0 ? (
+                  {bisContent.length > 0 ? (
                     <tbody>
                       {currentItemsBISprod.map((data, i) => (
                         <tr key={i}>
@@ -1084,162 +1043,6 @@ function BIS({ authrztn }) {
                               (data.inventory_prd.price +
                                 data.inventory_prd.freight_cost +
                                 data.inventory_prd.custom_cost) *
-                              data.quantity
-                            ).toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
-
-                      {currentItemsBISasm.map((data, i) => (
-                        <tr key={i}>
-                          <td>{formatDatetime(data.createdAt)}</td>
-                          <td>{data.issuance.issuance_id}</td>
-                          <td>{data.issuance.mrs}</td>
-                          <td>
-                            {
-                              data.inventory_assembly.assembly_supplier.assembly
-                                .category.category_name
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.inventory_assembly.assembly_supplier.assembly
-                                .assembly_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.inventory_assembly.assembly_supplier.assembly
-                                .assembly_name
-                            }
-                          </td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.inventory_assembly.assembly_supplier.assembly
-                                .assembly_unitMeasurement
-                            }
-                          </td>
-
-                          <td>{data.inventory_assembly.price}</td>
-                          <td>{data.inventory_assembly.freight_cost}</td>
-                          <td>{data.inventory_assembly.custom_cost}</td>
-                          <td>
-                            {(
-                              data.inventory_assembly.price +
-                              data.inventory_assembly.freight_cost +
-                              data.inventory_assembly.custom_cost
-                            ).toFixed(2)}
-                          </td>
-                          <td>
-                            {(
-                              (data.inventory_assembly.price +
-                                data.inventory_assembly.freight_cost +
-                                data.inventory_assembly.custom_cost) *
-                              data.quantity
-                            ).toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
-
-                      {currentItemsBISspare.map((data, i) => (
-                        <tr key={i}>
-                          <td>{formatDatetime(data.createdAt)}</td>
-                          <td>{data.issuance.issuance_id}</td>
-                          <td>{data.issuance.mrs}</td>
-                          <td>
-                            {
-                              data.inventory_spare.sparepart_supplier.sparePart
-                                .category.category_name
-                            }
-                          </td>
-
-                          <td>
-                            {
-                              data.inventory_spare.sparepart_supplier.sparePart
-                                .spareParts_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.inventory_spare.sparepart_supplier.sparePart
-                                .spareParts_name
-                            }
-                          </td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.inventory_spare.sparepart_supplier.sparePart
-                                .spareParts_unitMeasurement
-                            }
-                          </td>
-                          <td>{data.inventory_spare.price}</td>
-                          <td>{data.inventory_spare.freight_cost}</td>
-                          <td>{data.inventory_spare.custom_cost}</td>
-                          <td>
-                            {(
-                              data.inventory_spare.price +
-                              data.inventory_spare.freight_cost +
-                              data.inventory_spare.custom_cost
-                            ).toFixed(2)}
-                          </td>
-                          <td>
-                            {(
-                              (data.inventory_spare.price +
-                                data.inventory_spare.freight_cost +
-                                data.inventory_spare.custom_cost) *
-                              data.quantity
-                            ).toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
-
-                      {currentItemsBISsubpart.map((data, i) => (
-                        <tr key={i}>
-                          <td>{formatDatetime(data.createdAt)}</td>
-                          <td>{data.issuance.issuance_id}</td>
-                          <td>{data.issuance.mrs}</td>
-                          <td>
-                            {
-                              data.inventory_subpart.subpart_supplier.subPart
-                                .category.category_name
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.inventory_subpart.subpart_supplier.subPart
-                                .subPart_code
-                            }
-                          </td>
-                          <td>
-                            {
-                              data.inventory_subpart.subpart_supplier.subPart
-                                .subPart_name
-                            }
-                          </td>
-                          <td>{data.quantity}</td>
-                          <td>
-                            {
-                              data.inventory_subpart.subpart_supplier.subPart
-                                .subPart_unitMeasurement
-                            }
-                          </td>
-
-                          <td>{data.inventory_subpart.price}</td>
-                          <td>{data.inventory_subpart.freight_cost}</td>
-                          <td>{data.inventory_subpart.custom_cost}</td>
-                          <td>
-                            {(
-                              data.inventory_subpart.price +
-                              data.inventory_subpart.freight_cost +
-                              data.inventory_subpart.custom_cost
-                            ).toFixed(2)}
-                          </td>
-                          <td>
-                            {(
-                              (data.inventory_subpart.price +
-                                data.inventory_subpart.freight_cost +
-                                data.inventory_subpart.custom_cost) *
                               data.quantity
                             ).toFixed(2)}
                           </td>

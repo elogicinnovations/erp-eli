@@ -537,7 +537,8 @@ router.route("/filter").get(async (req, res) => {
     [data_prd].forEach((data) => {
       data.forEach((data) => {
         const costCenterId = data.issuance.cost_center.id;
-        const mappingCategoryCode = data.inventory_prd;
+        const mappingCategoryCode =
+          data.inventory_prd.product_tag_supplier.product;
 
         const categoryCode = mappingCategoryCode.category.category_code;
 
