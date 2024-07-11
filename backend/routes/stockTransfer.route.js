@@ -24,12 +24,12 @@ const {
   Subpart_supplier,
   Stock_Rejustify,
   Stock_History,
-  ST_REJECT
+  ST_REJECT,
 } = require("../db/models/associations");
 const session = require("express-session");
 const StockTransfer_subpart = require("../db/models/stockTransfer_subpart.model");
-const multer = require('multer');
-const moment = require('moment-timezone');
+const multer = require("multer");
+const moment = require("moment-timezone");
 // Multer configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -46,26 +46,26 @@ router.route("/generateRefCodess").get(async (req, res) => {
   try {
     const currentDate = moment().tz("Asia/Manila").toDate();
     const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
     const currentMonth = `${year}-${month}`;
 
     // Fetch the latest ref_code
     const latestReceiving = await StockTransfer.findOne({
       where: {
         reference_code: {
-          [Op.like]: `${currentMonth}%`
-        }
+          [Op.like]: `${currentMonth}%`,
+        },
       },
-      order: [['createdAt', 'DESC']]
+      order: [["createdAt", "DESC"]],
     });
 
     let newRefCode;
     if (latestReceiving && latestReceiving.reference_code) {
       const latestRefCode = latestReceiving.reference_code;
-      const refCodeParts = latestRefCode.split('-');
+      const refCodeParts = latestRefCode.split("-");
       if (refCodeParts.length === 3 && !isNaN(refCodeParts[2])) {
         const latestSequence = parseInt(refCodeParts[2], 10);
-        const newSequence = String(latestSequence + 1).padStart(5, '0');
+        const newSequence = String(latestSequence + 1).padStart(5, "0");
         newRefCode = `${currentMonth}-${newSequence}`;
       } else {
         // If the refCode doesn't split correctly or sequence is not a number
@@ -75,8 +75,7 @@ router.route("/generateRefCodess").get(async (req, res) => {
       newRefCode = `${currentMonth}-00001`;
     }
 
-
-    console.log(newRefCode)
+    console.log(newRefCode);
     res.json({ refCode: newRefCode });
   } catch (error) {
     console.error(error);
@@ -93,22 +92,22 @@ router.route("/fetchTable").get(async (req, res) => {
           as: "SourceWarehouse", // alias for the source warehouse
           attributes: ["warehouse_name"],
           foreignKey: "source",
-          required: true
+          required: true,
         },
         {
           model: Warehouses,
           as: "DestinationWarehouse", // alias for the destination warehouse
           attributes: ["warehouse_name"],
           foreignKey: "destination",
-          required: true
+          required: true,
         },
         {
           model: MasterList,
           as: "requestor",
           attributes: ["col_Fname"],
           foreignKey: "col_id",
-          required: true
-        }
+          required: true,
+        },
       ],
     });
 
@@ -135,22 +134,83 @@ router.route("/fetchTableReceiving").get(async (req, res) => {
           as: "SourceWarehouse", // alias for the source warehouse
           attributes: ["warehouse_name"],
           foreignKey: "source",
-          required: true
+          required: true,
         },
         {
           model: Warehouses,
           as: "DestinationWarehouse", // alias for the destination warehouse
           attributes: ["warehouse_name"],
           foreignKey: "destination",
-          required: true
+          required: true,
         },
         {
           model: MasterList,
           as: "approver",
           attributes: ["col_Fname"],
           foreignKey: "masterlist_id",
-          required: true
-        }
+          required: true,
+        },
+      ],
+    });
+
+    if (data) {
+      return res.json(data);
+    } else {
+      res.status(400);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
+});
+
+router.route("/filterStatus").get(async (req, res) => {
+  const { strDate, enDate, selectedStatus } = req.query;
+  console.log(strDate);
+  console.log(enDate);
+  const startDates = new Date(strDate);
+  startDates.setDate(startDates.getDate() + 1);
+  const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+
+  const endDates = new Date(enDate);
+  endDates.setDate(endDates.getDate() + 1);
+  const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+
+  let whereClause = {
+    createdAt: {
+      [Op.between]: [startDate, endDate],
+    },
+  };
+
+  if (selectedStatus !== "All") {
+    whereClause["$stock_transfer.status$"] = selectedStatus;
+  }
+
+  try {
+    const data = await StockTransfer.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Warehouses,
+          as: "SourceWarehouse", // alias for the source warehouse
+          attributes: ["warehouse_name"],
+          foreignKey: "source",
+          required: true,
+        },
+        {
+          model: Warehouses,
+          as: "DestinationWarehouse", // alias for the destination warehouse
+          attributes: ["warehouse_name"],
+          foreignKey: "destination",
+          required: true,
+        },
+        {
+          model: MasterList,
+          as: "approver",
+          attributes: ["col_Fname"],
+          foreignKey: "masterlist_id",
+          required: true,
+        },
       ],
     });
 
@@ -254,16 +314,16 @@ router.route("/fetchProdutsPreview").get(async (req, res) => {
   }
 });
 
-router.route('/fetchRejustifyRemarks').get(async (req, res) => {
+router.route("/fetchRejustifyRemarks").get(async (req, res) => {
   try {
     const { stock_id } = req.query;
     const data = await Stock_Rejustify.findOne({
       where: {
-        stockTransfer_id: stock_id 
-      },  
+        stockTransfer_id: stock_id,
+      },
     });
 
-   res.json(data)
+    res.json(data);
   } catch (err) {
     console.error(err);
   }
@@ -365,8 +425,6 @@ router.route("/create").post(async (req, res) => {
       status: "Pending",
     });
 
-
-
     // console.log("Warehouse IDdsadsadasdsa" + destination);
     const createdID = StockTransfer_newData.stock_id;
 
@@ -374,113 +432,117 @@ router.route("/create").post(async (req, res) => {
       stockTransfer_id: createdID,
       status: "Pending",
       remarks: remarks,
-    })
-    
-      for (const prod of addProductbackend) {
-        const prod_id = prod.product_id;
-        const prod_quantity = prod.quantity;
-        const prod_desc = prod.desc;
-        const prod_type = prod.type;
-  
-        let productName;
-  
-        // console.log(`dddddksdkskd ${prod_id}`);
-        if (prod_type === "Product") {
-          await StockTransfer_prod.create({
-            stockTransfer_id: createdID,
-            product_id: prod_id,
-            quantity: prod_quantity,
-            description: prod_desc,
-          });
-  
-          const getProdName = await StockTransfer_prod.findOne({
-            where: {
-              stockTransfer_id: createdID
-            },
-            include: [{
-                  model: Product,
-                  required: true
-              }],
-          });
-  
-          productName = getProdName.product.product_name;
-  
-          console.log("Product name" + productName);
-  
-        } else if (prod_type === "Assembly") {
-          await StockTransfer_assembly.create({
-            stockTransfer_id: createdID,
-            product_id: prod_id,
-            quantity: prod_quantity,
-            description: prod_desc,
-          });
-  
-          const getAssemblyName = await StockTransfer_assembly.findOne({
-            where: {
-              stockTransfer_id: createdID
-            },
-            include: [{
-                model: Assembly,
-                required: true
-              }],
-          });
-  
-          productName = getAssemblyName.assembly.assembly_name;
-  
-        } else if (prod_type === "Spare") {
-          await StockTransfer_spare.create({
-            stockTransfer_id: createdID,
-            product_id: prod_id,
-            quantity: prod_quantity,
-            description: prod_desc,
-          });
-  
-          const getSpareName = await StockTransfer_spare.findOne({
-            where: {
-              stockTransfer_id: createdID
-            },
-            include: [{
-                model: SparePart
-              }],
-          });
-  
-          productName = getSpareName.sparePart.spareParts_name;
-  
-        } else if (prod_type === "SubPart") {
-          await StockTransfer_subpart.create({
-            stockTransfer_id: createdID,
-            product_id: prod_id,
-            quantity: prod_quantity,
-            description: prod_desc,
-          });
-  
-          const getSubName = await StockTransfer_subpart.findOne({
-            where: {
-              stockTransfer_id: createdID
-            },
-            include: [{
-                model: SubPart,
-                required: true
-              }],
-          });
-  
-          productName = getSubName.subPart.subPart_name;
-        }
-  
-        const Warehousename = await Warehouses.findOne({
+    });
+
+    for (const prod of addProductbackend) {
+      const prod_id = prod.product_id;
+      const prod_quantity = prod.quantity;
+      const prod_desc = prod.desc;
+      const prod_type = prod.type;
+
+      let productName;
+
+      // console.log(`dddddksdkskd ${prod_id}`);
+      if (prod_type === "Product") {
+        await StockTransfer_prod.create({
+          stockTransfer_id: createdID,
+          product_id: prod_id,
+          quantity: prod_quantity,
+          description: prod_desc,
+        });
+
+        const getProdName = await StockTransfer_prod.findOne({
           where: {
-            id: destination,
+            stockTransfer_id: createdID,
           },
+          include: [
+            {
+              model: Product,
+              required: true,
+            },
+          ],
         });
-  
-        const warename = Warehousename.warehouse_name;
-  
-        await Activity_Log.create({
-          masterlist_id: userId,
-          action_taken: `Stock Transfer: Product ${productName} with quantity ${prod_quantity} is being transfer on ${warename} with reference code ${referenceCode}`,
+
+        productName = getProdName.product.product_name;
+
+        console.log("Product name" + productName);
+      } else if (prod_type === "Assembly") {
+        await StockTransfer_assembly.create({
+          stockTransfer_id: createdID,
+          product_id: prod_id,
+          quantity: prod_quantity,
+          description: prod_desc,
         });
+
+        const getAssemblyName = await StockTransfer_assembly.findOne({
+          where: {
+            stockTransfer_id: createdID,
+          },
+          include: [
+            {
+              model: Assembly,
+              required: true,
+            },
+          ],
+        });
+
+        productName = getAssemblyName.assembly.assembly_name;
+      } else if (prod_type === "Spare") {
+        await StockTransfer_spare.create({
+          stockTransfer_id: createdID,
+          product_id: prod_id,
+          quantity: prod_quantity,
+          description: prod_desc,
+        });
+
+        const getSpareName = await StockTransfer_spare.findOne({
+          where: {
+            stockTransfer_id: createdID,
+          },
+          include: [
+            {
+              model: SparePart,
+            },
+          ],
+        });
+
+        productName = getSpareName.sparePart.spareParts_name;
+      } else if (prod_type === "SubPart") {
+        await StockTransfer_subpart.create({
+          stockTransfer_id: createdID,
+          product_id: prod_id,
+          quantity: prod_quantity,
+          description: prod_desc,
+        });
+
+        const getSubName = await StockTransfer_subpart.findOne({
+          where: {
+            stockTransfer_id: createdID,
+          },
+          include: [
+            {
+              model: SubPart,
+              required: true,
+            },
+          ],
+        });
+
+        productName = getSubName.subPart.subPart_name;
       }
-    
+
+      const Warehousename = await Warehouses.findOne({
+        where: {
+          id: destination,
+        },
+      });
+
+      const warename = Warehousename.warehouse_name;
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `Stock Transfer: Product ${productName} with quantity ${prod_quantity} is being transfer on ${warename} with reference code ${referenceCode}`,
+      });
+    }
 
     res.status(200).json();
   } catch (err) {
@@ -553,7 +615,7 @@ router.route("/viewToReceiveStockTransfer").get(async (req, res) => {
       include: [
         {
           model: MasterList,
-          as: "approver", 
+          as: "approver",
           attributes: ["col_Fname"],
           foreignKey: "masterlist_id",
           required: true,
@@ -650,16 +712,15 @@ router.route("/approve").post(async (req, res) => {
   try {
     const manilaTimezone = "Asia/Manila";
     moment.tz.setDefault(manilaTimezone);
-  
-  // Get the current datetime in Manila timezone
-  const currentDateTimeInManila = moment();
 
+    // Get the current datetime in Manila timezone
+    const currentDateTimeInManila = moment();
 
     const approve = await StockTransfer.update(
       {
         status: "To-Receive",
         date_approved: currentDateTimeInManila,
-        masterlist_id: req.query.userId
+        masterlist_id: req.query.userId,
       },
       {
         where: { stock_id: req.query.id },
@@ -669,23 +730,21 @@ router.route("/approve").post(async (req, res) => {
     await Stock_History.create({
       stockTransfer_id: req.query.id,
       status: "To-Receive",
-      remarks: req.query.remarks
-    })
+      remarks: req.query.remarks,
+    });
 
     const findStock = await StockTransfer.findOne({
       where: {
         stock_id: req.query.id,
       },
-    })
+    });
 
     const stockRefcode = findStock.reference_code;
 
-  
     await Activity_Log.create({
       masterlist_id: req.query.userId,
-      action_taken: `Stock transfer: Approved the stock transfer requested with the reference code of ${stockRefcode}`
+      action_taken: `Stock transfer: Approved the stock transfer requested with the reference code of ${stockRefcode}`,
     });
-
 
     res.status(200).json();
   } catch (err) {
@@ -705,46 +764,39 @@ router.route("/reject").post(async (req, res) => {
       }
     );
 
-    if (reject){
-
+    if (reject) {
       await ST_REJECT.create({
         stocktransfer_id: req.query.id,
         masterlist_id: req.query.userId,
         status: "Rejected",
-        remarks: req.query.remarks
-      })
+        remarks: req.query.remarks,
+      });
 
       await Stock_History.create({
         stockTransfer_id: req.query.id,
         status: "Rejected",
-        remarks: req.query.remarks
-      })
+        remarks: req.query.remarks,
+      });
 
       const findStock = await StockTransfer.findOne({
         where: {
           stock_id: req.query.id,
         },
-      })
-  
+      });
+
       const stockRefcode = findStock.reference_code;
-  
-    
+
       await Activity_Log.create({
         masterlist_id: req.query.userId,
-        action_taken: `Stock transfer: Rejected the stock transfer requested with the reference code of ${stockRefcode}`
+        action_taken: `Stock transfer: Rejected the stock transfer requested with the reference code of ${stockRefcode}`,
       });
       res.status(200).json();
     }
-
-   
-
-   
   } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred");
   }
 });
-
 
 router.route("/fetchRejectHistory").get(async (req, res) => {
   try {
@@ -754,7 +806,6 @@ router.route("/fetchRejectHistory").get(async (req, res) => {
       where: { stocktransfer_id: id },
       include: [{ model: MasterList, required: true }],
     });
-
 
     const RejustifyData = await Stock_Rejustify.findAll({
       where: { stockTransfer_id: id },
@@ -767,17 +818,13 @@ router.route("/fetchRejectHistory").get(async (req, res) => {
       source: "REJECTION",
     }));
 
-
     const RejustifyValues = RejustifyData.map((item) => ({
       ...item.dataValues,
       source: `REJUSTIFICATION`,
     }));
 
     // Combine the dataValues into one array
-    const combinedData = [
-      ...RejectValues,
-      ...RejustifyValues,
-    ];
+    const combinedData = [...RejectValues, ...RejustifyValues];
 
     // Sort the combined data by createdAt column in ascending order
     combinedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -790,45 +837,45 @@ router.route("/fetchRejectHistory").get(async (req, res) => {
   }
 });
 
-router.post('/rejustifystock', upload.single('file'), async (req, res) => {
+router.post("/rejustifystock", upload.single("file"), async (req, res) => {
   try {
     const { id, remarks, userId } = req.body;
     const file = req.file;
 
     const mimeType = file.mimetype;
-    const fileExtension = file.originalname.split('.').pop();
+    const fileExtension = file.originalname.split(".").pop();
 
     const result = await Stock_Rejustify.create({
       file: file.buffer,
-      stockTransfer_id: id,  
+      stockTransfer_id: id,
       masterlist_id: userId,
-      remarks: remarks, 
+      remarks: remarks,
       mimeType: mimeType,
       fileExtension: fileExtension,
     });
 
-    
     const stock_historical = await Stock_History.create({
       stockTransfer_id: id,
-      status: 'Rejustified',
-      remarks: remarks
+      status: "Rejustified",
+      remarks: remarks,
     });
 
+    const stock_newData = await StockTransfer.update(
+      {
+        status: "Rejustified",
+      },
+      {
+        where: {
+          stock_id: id,
+        },
+      }
+    );
 
-    const stock_newData = await StockTransfer.update({
-      status: 'Rejustified'
-    },
-    {
-      where: { 
-        stock_id: id
-       }
-    }); 
-
-    if(stock_newData){
+    if (stock_newData) {
       const forStock = await StockTransfer.findOne({
         where: {
           stock_id: id,
-        }
+        },
       });
 
       const StockRef = forStock.reference_code;
@@ -836,14 +883,14 @@ router.post('/rejustifystock', upload.single('file'), async (req, res) => {
       await Activity_Log.create({
         masterlist_id: userId,
         action_taken: `Stock transfer requested has been rejustified with reference code ${StockRef}`,
-    });
-  }
+      });
+    }
 
-    console.log('File data and additional data inserted successfully');
+    console.log("File data and additional data inserted successfully");
     res.status(200).json();
   } catch (error) {
-    console.error('Error handling file upload:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error handling file upload:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -857,7 +904,7 @@ router.route("/receivingProducts").post(async (req, res) => {
       addAsmbackend,
       addSparebackend,
       addSubpartbackend,
-      userId
+      userId,
     } = req.query;
 
     if (addProductbackend && addProductbackend.length > 0) {
@@ -890,8 +937,6 @@ router.route("/receivingProducts").post(async (req, res) => {
             },
           ],
         });
-
-
 
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
@@ -932,7 +977,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -940,14 +985,15 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
             const toWarehouseName = findWarehouseto.warehouse_name;
 
-            const productName = inventory.product_tag_supplier.product.product_name;
-            
+            const productName =
+              inventory.product_tag_supplier.product.product_name;
+
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
 
@@ -979,11 +1025,9 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${productName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${productName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
             break; // Break the loop since remainingQuantity is now 0
-
-
           } else {
             console.log(
               `Not enough inventory in inventory ${inventory.inventory_id}. Deducting ${inventory.quantity}.`
@@ -1020,7 +1064,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1028,14 +1072,15 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
             const toWarehouseName = findWarehouseto.warehouse_name;
 
-            const productName = inventory.product_tag_supplier.product.product_name;
-            console.log("PRODUCT NAME checkPrd" + productName)
+            const productName =
+              inventory.product_tag_supplier.product.product_name;
+            console.log("PRODUCT NAME checkPrd" + productName);
 
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
@@ -1067,7 +1112,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${productName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${productName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
           }
         }
@@ -1112,9 +1157,6 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
-
-        
-
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
@@ -1154,7 +1196,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1162,14 +1204,14 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
             const toWarehouseName = findWarehouseto.warehouse_name;
 
-
-            const AssemblyName = inventory.assembly_supplier.assembly.assembly_name;
+            const AssemblyName =
+              inventory.assembly_supplier.assembly.assembly_name;
 
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
@@ -1203,7 +1245,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${AssemblyName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${AssemblyName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
             break; // Break the loop since remainingQuantity is now 0
           } else {
@@ -1242,7 +1284,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1250,14 +1292,14 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
             const toWarehouseName = findWarehouseto.warehouse_name;
 
-
-            const AssemblyName = inventory.assembly_supplier.assembly.assembly_name;
+            const AssemblyName =
+              inventory.assembly_supplier.assembly.assembly_name;
 
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
@@ -1289,7 +1331,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${AssemblyName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${AssemblyName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
           }
         }
@@ -1334,9 +1376,6 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
-
-
-
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
@@ -1376,7 +1415,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1384,13 +1423,14 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
             const toWarehouseName = findWarehouseto.warehouse_name;
 
-            const Sparename = inventory.sparepart_supplier.sparePart.spareParts_name;
+            const Sparename =
+              inventory.sparepart_supplier.sparePart.spareParts_name;
 
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
@@ -1423,7 +1463,7 @@ router.route("/receivingProducts").post(async (req, res) => {
             remainingQuantity = 0;
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${Sparename} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${Sparename} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
             break; // Break the loop since remainingQuantity is now 0
           } else {
@@ -1462,7 +1502,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1470,13 +1510,14 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
             const toWarehouseName = findWarehouseto.warehouse_name;
 
-            const Sparename = inventory.sparepart_supplier.sparePart.spareParts_name;
+            const Sparename =
+              inventory.sparepart_supplier.sparePart.spareParts_name;
 
             if (inserting && inserting > 0) {
               const inv_id = inserting.inventory_id;
@@ -1508,7 +1549,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${Sparename} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${Sparename} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
           }
         }
@@ -1553,9 +1594,6 @@ router.route("/receivingProducts").post(async (req, res) => {
           ],
         });
 
-
-
-
         for (const inventory of checkPrd) {
           // console.log(`Inventory ID: ${inventory.inventory_id}, Quantity: ${inventory.quantity}, Warehouse: ${inventory.warehouse.warehouse_name}`);
           if (remainingQuantity <= inventory.quantity) {
@@ -1595,7 +1633,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1603,7 +1641,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
@@ -1642,7 +1680,7 @@ router.route("/receivingProducts").post(async (req, res) => {
             remainingQuantity = 0;
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${subpartName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${subpartName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
             break; // Break the loop since remainingQuantity is now 0
           } else {
@@ -1679,10 +1717,9 @@ router.route("/receivingProducts").post(async (req, res) => {
               ],
             });
 
-
             const findWarehousefrom = await Warehouses.findOne({
               where: {
-                id: fromWarehouse_id
+                id: fromWarehouse_id,
               },
             });
 
@@ -1690,7 +1727,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             const findWarehouseto = await Warehouses.findOne({
               where: {
-                id: toWarehouse_id
+                id: toWarehouse_id,
               },
             });
 
@@ -1728,7 +1765,7 @@ router.route("/receivingProducts").post(async (req, res) => {
 
             await Activity_Log.create({
               masterlist_id: userId,
-              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${subpartName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `
+              action_taken: `Stock transfer: Received the ${inventory.quantity} quantities of product ${subpartName} requested to transfer from ${fromWarehouseName} into ${toWarehouseName} `,
             });
           }
         }
@@ -1753,9 +1790,8 @@ router.route("/receivingProducts").post(async (req, res) => {
       }
     );
 
-
-    if (update){
-      res.status(200).json()
+    if (update) {
+      res.status(200).json();
     }
   } catch (err) {
     console.error(err);

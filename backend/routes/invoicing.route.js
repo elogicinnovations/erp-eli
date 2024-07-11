@@ -46,7 +46,7 @@ router.route("/lastPONumber").get(async (req, res) => {
     let nextPoId = (parseInt(maxPoId, 10) + 1).toString().padStart(8, "0");
     console.log("nextPoId:", nextPoId);
 
-    res.json({ nextPoId });
+    res.status(200).json({ nextPoId });
   } catch (err) {
     console.error(err);
     res.status(500).json("Error");
@@ -72,6 +72,16 @@ router.route("/save").post(async (req, res) => {
         const ToDays = child.daysto;
 
         if (type === "product") {
+          const isPOIdExist = await PR_PO.findOne({
+            where: {
+              po_id: po_number,
+            },
+          });
+
+          if (isPOIdExist) {
+            return res.status(202).json();
+          }
+
           PR_PO.create({
             pr_id: PR_id,
             po_id: po_number,

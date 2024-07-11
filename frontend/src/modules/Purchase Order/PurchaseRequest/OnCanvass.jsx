@@ -820,6 +820,14 @@ function PurchaseOrderListPreview() {
             }).then(() => {
               navigate("/purchaseOrderList");
             });
+          }
+          if (res.status === 202) {
+            swal({
+              title: "PO number already registered",
+              text: "Please reload the browser to fetch the available po number",
+              icon: "error",
+              button: "OK",
+            });
           } else {
             swal({
               icon: "error",

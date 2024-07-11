@@ -112,15 +112,18 @@ function ReceivingStockTransfer({ authrztn }) {
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = searchPR.filter((data) => {
       return (
-        data.stock_id.toLowerCase().includes(searchTerm) ||
-        data.remarks.toLowerCase().includes(searchTerm) ||
-        data.SourceWarehouse.warehouse_name
-          .toLowerCase()
-          .includes(searchTerm) ||
-        data.reference_code.toLowerCase().includes(searchTerm) ||
-        data.DestinationWarehouse.warehouse_name
-          .toLowerCase()
-          .includes(searchTerm)
+        (data?.stock_id &&
+          typeof data.stock_id === "string" &&
+          data.stock_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (data?.reference_code?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.SourceWarehouse?.warehouse_name?.toLowerCase() || "").includes(
+          searchTerm
+        ) ||
+        (
+          data?.DestinationWarehouse?.warehouse_name?.toLowerCase() || ""
+        ).includes(searchTerm) ||
+        (data?.approver.col_Fname?.toLowerCase() || "").includes(searchTerm) ||
+        (data?.date_approved?.toLowerCase() || "").includes(searchTerm)
       );
     });
 
@@ -159,24 +162,47 @@ function ReceivingStockTransfer({ authrztn }) {
       });
       return;
     }
+    setIsLoading(true);
+    const delay = setTimeout(() => {
+      axios
+        .get(BASE_URL + "/StockTransfer/filterStatus", {
+          params: {
+            selectedStatus,
+            strDate: startDate,
+            enDate: endDate,
+          },
+        })
+        .then((res) => {
+          setStockTransfer(res.data);
+          setFilteredPR(res.data);
+          setSearchPR(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }, 1000);
 
-    const filteredData = stockTransfer.filter((data) => {
-      const createdAt = new Date(data.createdAt);
-      console.log("startDate:", startDate);
-      console.log("endDate:", endDate);
-      console.log("createdAt:", createdAt);
+    return () => clearTimeout(delay);
 
-      const isWithinDateRange =
-        (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
-        (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
+    // const filteredData = stockTransfer.filter((data) => {
+    //   const createdAt = new Date(data.createdAt);
+    //   console.log("startDate:", startDate);
+    //   console.log("endDate:", endDate);
+    //   console.log("createdAt:", createdAt);
 
-      const isMatchingStatus =
-        selectedStatus === "All Status" || data.status === selectedStatus;
+    //   const isWithinDateRange =
+    //     (!startDate || createdAt >= startDate.setHours(0, 0, 0, 0)) &&
+    //     (!endDate || createdAt <= endDate.setHours(23, 59, 59, 999));
 
-      return isWithinDateRange && isMatchingStatus;
-    });
+    //   const isMatchingStatus =
+    //     selectedStatus === "All Status" || data.status === selectedStatus;
 
-    setFilteredPR(filteredData);
+    //   return isWithinDateRange && isMatchingStatus;
+    // });
+
+    // setFilteredPR(filteredData);
   };
 
   //function when user click the clear filter button
@@ -352,11 +378,8 @@ function ReceivingStockTransfer({ authrztn }) {
                       Select Status
                     </option>
                     <option value="All Status">All Status</option>
-                    <option value="For-Approval">For-Approval</option>
-                    <option value="For-Rejustify">For-Rejustify</option>
-                    <option value="For-Canvassing">For-Canvassing</option>
-                    <option value="To-Received">To-Received</option>
-                    <option value="Cancelled">Cancelled</option>
+                    <option value="To-Receive">To-Receive</option>
+                    <option value="Delivered">Delivered</option>
                   </Form.Select>
                   <div className="pur-filt-container">
                     <button
@@ -464,7 +487,6 @@ function ReceivingStockTransfer({ authrztn }) {
                           >
                             {formatDatetime(data.date_approved)}
                           </td>
-                          
                         </tr>
                       ))}
                     </tbody>
