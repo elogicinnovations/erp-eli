@@ -773,7 +773,7 @@ function POApprovalRejustify({ authrztn }) {
                       style={{ height: "40px", fontSize: "15px" }}
                     />
                     {userId === 11 ||
-                      (userId === 2 && (
+                      (userId === 3 && (
                         <InputGroup.Text id="basic-addon1">
                           {editUsedFor === true ? (
                             <Button
@@ -820,7 +820,7 @@ function POApprovalRejustify({ authrztn }) {
                       }}
                     />
                     {userId === 11 ||
-                      (userId === 2 && (
+                      (userId === 3 && (
                         <InputGroup.Text id="basic-addon1">
                           {editRemarks === true ? (
                             <Button
