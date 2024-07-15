@@ -1,2 +1,2 @@
-const BASE_URL = "http://localhost:8083";
+const BASE_URL = "http://sbfpdrc.com:8083";
 export default BASE_URL;
