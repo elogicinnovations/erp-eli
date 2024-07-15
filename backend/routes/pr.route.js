@@ -51,7 +51,7 @@ router.route("/fetchTable").get(async (req, res) => {
           ],
         },
       ],
-      order: [["createdAt", "ASC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     if (data) {
@@ -125,7 +125,6 @@ router.route("/fetchTable_PO").get(async (req, res) => {
         {
           model: PR,
           required: true,
-
           include: [
             {
               model: MasterList,
@@ -164,9 +163,26 @@ router.route("/fetchTable_PO").get(async (req, res) => {
         return false;
       });
 
+      // Sort the unique data: first by status null, then by status "To-receive"
+      uniqueData.sort((a, b) => {
+        if (a.status === null && b.status !== null) {
+          return -1;
+        }
+        if (a.status !== null && b.status === null) {
+          return 1;
+        }
+        if (a.status === "To-Receive" && b.status !== "To-Receive") {
+          return -1;
+        }
+        if (a.status !== "To-Receive" && b.status === "To-Receive") {
+          return 1;
+        }
+        return 0;
+      });
+
       return res.json(uniqueData);
     } else {
-      res.status(400);
+      res.status(400).json("No data found");
     }
   } catch (err) {
     console.error(err);

@@ -11,6 +11,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import InputGroup from "react-bootstrap/InputGroup";
 import {
   ArrowCircleLeft,
   ShoppingCart,
@@ -18,6 +19,8 @@ import {
   NotePencil,
   XCircle,
   CalendarBlank,
+  PencilSimple,
+  Check,
 } from "@phosphor-icons/react";
 import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
@@ -28,7 +31,8 @@ import { jwtDecode } from "jwt-decode";
 function PurchaseOrderListPreview() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [editRemarks, setEditRemarks] = useState(false);
+  const [editUsedFor, setEditUsedFor] = useState(false);
   const [dateNeeded, setDateNeeded] = useState(null);
   const [prNum, setPRnum] = useState("");
   const [useFor, setUseFor] = useState("");
@@ -787,6 +791,79 @@ function PurchaseOrderListPreview() {
     });
   };
 
+  const handleSaveEditUsedFOr = () => {
+    swal({
+      title: `Are you sure?`,
+      text: "You want to change details of 'To be Used For'",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        axios
+          .post(`${BASE_URL}/invoice/editUsedFor`, {
+            pr_id: id,
+            useFor,
+          })
+          .then((res) => {
+            // console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: "Success",
+                text: "You successfully edit the of 'To be Used For'",
+                icon: "success",
+                button: "OK",
+              }).then(() => {
+                setEditUsedFor(false);
+              });
+            } else {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please contact our support",
+              });
+            }
+          });
+      }
+    });
+  };
+  const handleSaveEditRemarks = () => {
+    swal({
+      title: `Are you sure?`,
+      text: "You want to change details of 'Remarks'",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        axios
+          .post(`${BASE_URL}/invoice/editRemarks`, {
+            pr_id: id,
+            remarks,
+          })
+          .then((res) => {
+            // console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: "Success",
+                text: "You successfully edit the of 'Remarks'",
+                icon: "success",
+                button: "OK",
+              }).then(() => {
+                setEditRemarks(false);
+              });
+            } else {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please contact our support",
+              });
+            }
+          });
+      }
+    });
+  };
+
   const add = async (e) => {
     e.preventDefault();
 
@@ -802,40 +879,49 @@ function PurchaseOrderListPreview() {
         text: "Please fill the red text fields",
       });
     } else {
-      axios
-        .post(`${BASE_URL}/invoice/save`, {
-          arrayPO: addPObackend,
-          pr_id: id,
-          userId,
-          selected_PR_Prod_array,
-        })
-        .then((res) => {
-          // console.log(res);
-          if (res.status === 200) {
-            swal({
-              title: "The Purchase sucessfully request!",
-              text: "The Purchase Request has been added successfully.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate("/purchaseOrderList");
+      swal({
+        title: `Are you sure want to save this new purchase Order?`,
+        text: "This action cannot be undo.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (approve) => {
+        if (approve) {
+          axios
+            .post(`${BASE_URL}/invoice/save`, {
+              arrayPO: addPObackend,
+              pr_id: id,
+              userId,
+              selected_PR_Prod_array,
+            })
+            .then((res) => {
+              // console.log(res);
+              if (res.status === 200) {
+                swal({
+                  title: "The Purchase sucessfully request!",
+                  text: "The Purchase Request has been added successfully.",
+                  icon: "success",
+                  button: "OK",
+                }).then(() => {
+                  navigate("/purchaseOrderList");
+                });
+              } else if (res.status === 202) {
+                swal({
+                  title: "PO number already registered",
+                  text: "Please reload the browser to fetch the available po number",
+                  icon: "error",
+                  button: "OK",
+                });
+              } else {
+                swal({
+                  icon: "error",
+                  title: "Something went wrong",
+                  text: "Please contact our support",
+                });
+              }
             });
-          }
-          if (res.status === 202) {
-            swal({
-              title: "PO number already registered",
-              text: "Please reload the browser to fetch the available po number",
-              icon: "error",
-              button: "OK",
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
-          }
-        });
+        }
+      });
     }
     setValidated(true); //for validations
   };
@@ -925,12 +1011,36 @@ function PurchaseOrderListPreview() {
                   <Form.Label style={{ fontSize: "20px" }}>
                     To be used for:{" "}
                   </Form.Label>
-                  <Form.Control
-                    readOnly
-                    value={useFor}
-                    type="text"
-                    style={{ height: "40px", fontSize: "15px" }}
-                  />
+
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      readOnly={!editUsedFor}
+                      value={useFor}
+                      onChange={(e) => setUseFor(e.target.value)}
+                      type="text"
+                      style={{ height: "40px", fontSize: "15px" }}
+                    />
+                    {userId === 11 ||
+                      (userId === 3 && (
+                        <InputGroup.Text id="basic-addon1">
+                          {editUsedFor === true ? (
+                            <Button
+                              onClick={() => handleSaveEditUsedFOr()}
+                              variant={"success"}
+                            >
+                              <Check size={20} />
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => setEditUsedFor(true)}
+                              variant={"success"}
+                            >
+                              <PencilSimple size={20} />
+                            </Button>
+                          )}
+                        </InputGroup.Text>
+                      ))}
+                  </InputGroup>
                 </Form.Group>
               </div>
             </div>
@@ -940,20 +1050,44 @@ function PurchaseOrderListPreview() {
                   <Form.Label style={{ fontSize: "20px" }}>
                     Remarks:{" "}
                   </Form.Label>
-                  <Form.Control
-                    readOnly
-                    value={remarks}
-                    as="textarea"
-                    rows={3}
-                    style={{
-                      fontFamily: "Poppins, Source Sans Pro",
-                      fontSize: "16px",
-                      height: "150px",
-                      maxHeight: "150px",
-                      resize: "none",
-                      overflowY: "auto",
-                    }}
-                  />
+
+                  <InputGroup className="mb-3">
+                    <Form.Control
+                      readOnly={!editRemarks}
+                      value={remarks}
+                      onChange={(e) => setRemarks(e.target.value)}
+                      as="textarea"
+                      rows={3}
+                      style={{
+                        fontFamily: "Poppins, Source Sans Pro",
+                        fontSize: "16px",
+                        height: "150px",
+                        maxHeight: "150px",
+                        resize: "none",
+                        overflowY: "auto",
+                      }}
+                    />
+                    {userId === 11 ||
+                      (userId === 3 && (
+                        <InputGroup.Text id="basic-addon1">
+                          {editRemarks === true ? (
+                            <Button
+                              onClick={() => handleSaveEditRemarks()}
+                              variant={"success"}
+                            >
+                              <Check size={20} />
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => setEditRemarks(true)}
+                              variant={"success"}
+                            >
+                              <PencilSimple size={20} />
+                            </Button>
+                          )}
+                        </InputGroup.Text>
+                      ))}
+                  </InputGroup>
                 </Form.Group>
               </div>
               <div className="col-6"></div>

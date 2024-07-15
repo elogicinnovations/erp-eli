@@ -52,6 +52,47 @@ router.route("/lastPONumber").get(async (req, res) => {
     res.status(500).json("Error");
   }
 });
+router.route("/editUsedFor").post(async (req, res) => {
+  const { pr_id, useFor } = req.body;
+
+  const isUpdate = await PR.update(
+    {
+      used_for: useFor,
+    },
+    {
+      where: {
+        id: pr_id,
+      },
+    }
+  );
+
+  if (isUpdate) {
+    return res.status(200).json();
+  } else {
+    return res.status(201).json();
+  }
+});
+
+router.route("/editRemarks").post(async (req, res) => {
+  const { pr_id, remarks } = req.body;
+
+  const isUpdate = await PR.update(
+    {
+      remarks: remarks,
+    },
+    {
+      where: {
+        id: pr_id,
+      },
+    }
+  );
+
+  if (isUpdate) {
+    return res.status(200).json();
+  } else {
+    return res.status(201).json();
+  }
+});
 
 router.route("/save").post(async (req, res) => {
   try {
@@ -565,7 +606,7 @@ router.route("/approve_PO").post(async (req, res) => {
     const gmailEmail = "purchasing@sbfdrilling.com";
     const gmailPassword = "fwzunybngamowhuw";
     // const gmailEmail = "sbfmailer@gmail.com";
-    //   const gmailPassword = "uoetasnknsroxwnq";
+    // const gmailPassword = "uoetasnknsroxwnq";
 
     const findEmail = await PR_PO.findAll({
       where: {
