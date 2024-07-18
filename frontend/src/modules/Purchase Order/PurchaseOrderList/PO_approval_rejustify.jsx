@@ -844,88 +844,6 @@ function POApprovalRejustify({ authrztn }) {
               </div>
               <div className="col-6"></div>
             </div>
-
-            <div
-              className="gen-info"
-              style={{
-                fontSize: "20px",
-                position: "relative",
-                paddingTop: "20px",
-                fontFamily: "Poppins, Source Sans Pro",
-              }}
-            >
-              <p className="h2"> {supplierName} </p>
-              <span
-                style={{
-                  position: "absolute",
-                  height: "0.5px",
-                  width: "-webkit-fill-available",
-                  background: "#FFA500",
-                  top: "81%",
-                  left: "11rem",
-                  transform: "translateY(-50%)",
-                }}
-              ></span>
-            </div>
-            <div className="table-containss">
-              <div className="main-of-all-tables">
-                <table id="">
-                  <thead>
-                    <tr>
-                      <th className="tableh">Product Code</th>
-                      <th className="tableh">Product Name</th>
-                      <th className="tableh">UOM</th>
-                      <th className="tableh">Needed Quantity</th>
-                      {status === "Rejected" ? (
-                        <>
-                          <th className="tableh">Action</th>
-                        </>
-                      ) : (
-                        <></>
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {POarray.map(
-                      (data, i) =>
-                        data.items &&
-                        data.items.map(
-                          (item, j) =>
-                            item.supp_tag &&
-                            item.item && (
-                              <tr key={`${i}-${j}`}>
-                                <td>{item.supp_tag.code}</td>
-                                <td>{item.supp_tag.name}</td>
-                                <td>{item.supp_tag.uom}</td>
-                                <td>{item.item.quantity}</td>
-                                {status === "Rejected" ? (
-                                  <>
-                                    <td>
-                                      <Button
-                                        variant
-                                        onClick={() =>
-                                          handleRemovePoProduct(
-                                            item.item.id,
-                                            item.supp_tag.name
-                                          )
-                                        }
-                                      >
-                                        <Trash size={32} />
-                                      </Button>
-                                    </td>
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                              </tr>
-                            )
-                        )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
             <div className="save-cancel">
               {status !== null ? ( // if status is equal to "Rejected", "Rejustified", "Approved" it is visible
                 <Button
@@ -983,6 +901,87 @@ function POApprovalRejustify({ authrztn }) {
             >
               Approve
             </Button> */}
+            </div>
+            <div
+              className="gen-info"
+              style={{
+                fontSize: "20px",
+                position: "relative",
+                paddingTop: "20px",
+                fontFamily: "Poppins, Source Sans Pro",
+              }}
+            >
+              <p className="h2"> {supplierName} </p>
+              <span
+                style={{
+                  position: "absolute",
+                  height: "0.5px",
+                  width: "-webkit-fill-available",
+                  background: "#FFA500",
+                  top: "81%",
+                  left: "11rem",
+                  transform: "translateY(-50%)",
+                }}
+              ></span>
+            </div>
+
+            <div className="table-containss">
+              <div className="main-of-all-tables">
+                <table id="">
+                  <thead>
+                    <tr>
+                      <th className="tableh">Product Code</th>
+                      <th className="tableh">Product Name</th>
+                      <th className="tableh">UOM</th>
+                      <th className="tableh">Needed Quantity</th>
+                      {status === "Rejected" ? (
+                        <>
+                          <th className="tableh">Action</th>
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {POarray.map(
+                      (data, i) =>
+                        data.items &&
+                        data.items.map(
+                          (item, j) =>
+                            item.supp_tag &&
+                            item.item && (
+                              <tr key={`${i}-${j}`}>
+                                <td>{item.supp_tag.code}</td>
+                                <td>{item.supp_tag.name}</td>
+                                <td>{item.supp_tag.uom}</td>
+                                <td>{item.item.quantity}</td>
+                                {status === "Rejected" ? (
+                                  <>
+                                    <td>
+                                      <Button
+                                        variant
+                                        onClick={() =>
+                                          handleRemovePoProduct(
+                                            item.item.id,
+                                            item.supp_tag.name
+                                          )
+                                        }
+                                      >
+                                        <Trash size={32} />
+                                      </Button>
+                                    </td>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </tr>
+                            )
+                        )
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <Modal
