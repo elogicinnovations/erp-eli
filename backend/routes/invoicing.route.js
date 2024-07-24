@@ -135,7 +135,7 @@ router.route("/save").post(async (req, res) => {
         const FromDays = child.daysfrom;
         const ToDays = child.daysto;
         const usedFor = child.usedFor;
-        const isSend = child.sendEmail;
+        // const isSend = child.sendEmail;
         const isPOIdExist = await PR_PO.findOne({
           where: {
             po_id: po_number,
@@ -157,7 +157,7 @@ router.route("/save").post(async (req, res) => {
             static_quantity: quantity,
             purchase_price: prod_supp_price,
             usedFor: usedFor,
-            isEmailSend: isSend,
+            // isEmailSend: isSend,
           });
         }
       }
@@ -622,13 +622,136 @@ router.route("/approve_PO").post(async (req, res) => {
   try {
     const {
       prID,
-      imageData,
+      // imageData,
       prNum,
       userId,
       POarray,
-      isSendEmail,
+      // isSendEmail,
       formattedDateApproved,
       po_idApproval,
+    } = req.body;
+    // const gmailEmail = "purchasing@sbfdrilling.com";
+    // const gmailPassword = "fwzunybngamowhuw";
+    // const gmailEmail = "sbfmailer@gmail.com";
+    // const gmailPassword = "uoetasnknsroxwnq";
+
+    // const findEmail = await PR_PO.findAll({
+    //   where: {
+    //     po_id: po_idApproval,
+    //   },
+    //   include: [
+    //     {
+    //       model: ProductTAGSupplier,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Supplier,
+    //           required: true,
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // });
+
+    // let toSendEmail = findEmail[0].product_tag_supplier.supplier.supplier_email;
+    // // console.log(`findEmail`)
+
+    // // console.log(toSendEmail)
+
+    // if (isSendEmail === "true" || isSendEmail === 1) {
+    //   // Convert base64 image data to binary buffer
+    //   const imageDatas = imageData.split(";base64,").pop();
+    //   const imageBuffer = Buffer.from(imageDatas, "base64");
+
+    //   // Create a PDF document
+    //   const doc = new PDFDocument();
+    //   const pdfBuffers = [];
+
+    //   // Add the image to the PDF
+    //   doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
+    //   doc.on("data", (chunk) => pdfBuffers.push(chunk));
+
+    //   // Listen for the end of the document
+    //   doc.on("end", () => {
+    //     // Create a nodemailer transporter
+    //     const transporter = nodemailer.createTransport({
+    //       service: "gmail",
+    //       auth: {
+    //         user: gmailEmail,
+    //         pass: gmailPassword,
+    //       },
+    //     });
+
+    //     // Define email options
+    //     const mailOptions = {
+    //       from: gmailEmail,
+    //       to: toSendEmail,
+    //       subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+    //       text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
+    //       attachments: [
+    //         {
+    //           filename: `purchase_order.pdf`, // Unique filename for each PDF
+    //           content: Buffer.concat(pdfBuffers),
+    //         },
+    //       ],
+    //     };
+
+    //     // Send the email
+    //     transporter.sendMail(mailOptions, (error, info) => {
+    //       if (error) {
+    //         console.log("Error sending email:", error);
+    //       } else {
+    //         console.log("Email Sent:", info);
+    //       }
+    //     });
+    //   });
+
+    //   doc.end();
+    // } else {
+    //   console.log(`emailnotsent ${po_idApproval}`);
+    // }
+
+    const PO_Approved = await PR_PO.update(
+      {
+        status: "To-Receive",
+        date_approved: formattedDateApproved,
+      },
+      {
+        where: { po_id: po_idApproval },
+      }
+    );
+
+    if (PO_Approved) {
+      const PR_historical = await PR_history.create({
+        pr_id: prID,
+        status: "To-Receive",
+        isRead: 1,
+        date_approved: formattedDateApproved,
+        remarks: `The Purchase Order number ${po_idApproval} is being approved with pr number ${prNum}`,
+      });
+
+      await Activity_Log.create({
+        masterlist_id: userId,
+        action_taken: `The Purchase Order number ${po_idApproval} is being approved with pr number ${prNum}`,
+      });
+    }
+    res.status(200).json();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred");
+  }
+});
+
+router.route("/send_PO").post(async (req, res) => {
+  try {
+    const {
+      prID,
+      POarray,
+      imageData,
+      prNum,
+      userId,
+      po_idApproval,
+      // isSendEmail,
     } = req.body;
     const gmailEmail = "purchasing@sbfdrilling.com";
     const gmailPassword = "fwzunybngamowhuw";
@@ -658,63 +781,58 @@ router.route("/approve_PO").post(async (req, res) => {
 
     // console.log(toSendEmail)
 
-    if (isSendEmail === "true" || isSendEmail === 1) {
-      // Convert base64 image data to binary buffer
-      const imageDatas = imageData.split(";base64,").pop();
-      const imageBuffer = Buffer.from(imageDatas, "base64");
+    // Convert base64 image data to binary buffer
+    const imageDatas = imageData.split(";base64,").pop();
+    const imageBuffer = Buffer.from(imageDatas, "base64");
 
-      // Create a PDF document
-      const doc = new PDFDocument();
-      const pdfBuffers = [];
+    // Create a PDF document
+    const doc = new PDFDocument();
+    const pdfBuffers = [];
 
-      // Add the image to the PDF
-      doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
-      doc.on("data", (chunk) => pdfBuffers.push(chunk));
+    // Add the image to the PDF
+    doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
+    doc.on("data", (chunk) => pdfBuffers.push(chunk));
 
-      // Listen for the end of the document
-      doc.on("end", () => {
-        // Create a nodemailer transporter
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: gmailEmail,
-            pass: gmailPassword,
-          },
-        });
-
-        // Define email options
-        const mailOptions = {
-          from: gmailEmail,
-          to: toSendEmail,
-          subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
-          text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
-          attachments: [
-            {
-              filename: `purchase_order.pdf`, // Unique filename for each PDF
-              content: Buffer.concat(pdfBuffers),
-            },
-          ],
-        };
-
-        // Send the email
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log("Error sending email:", error);
-          } else {
-            console.log("Email Sent:", info);
-          }
-        });
+    // Listen for the end of the document
+    doc.on("end", () => {
+      // Create a nodemailer transporter
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: gmailEmail,
+          pass: gmailPassword,
+        },
       });
 
-      doc.end();
-    } else {
-      console.log(`emailnotsent ${po_idApproval}`);
-    }
+      // Define email options
+      const mailOptions = {
+        from: gmailEmail,
+        to: toSendEmail,
+        subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+        text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
+        attachments: [
+          {
+            filename: `purchase_order.pdf`, // Unique filename for each PDF
+            content: Buffer.concat(pdfBuffers),
+          },
+        ],
+      };
+
+      // Send the email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("Error sending email:", error);
+        } else {
+          console.log("Email Sent:", info);
+        }
+      });
+    });
+
+    doc.end();
 
     const PO_Approved = await PR_PO.update(
       {
-        status: "To-Receive",
-        date_approved: formattedDateApproved,
+        isEmailSend: true,
       },
       {
         where: { po_id: po_idApproval },
@@ -726,13 +844,13 @@ router.route("/approve_PO").post(async (req, res) => {
         pr_id: prID,
         status: "To-Receive",
         isRead: 1,
-        date_approved: formattedDateApproved,
-        remarks: `The Purchase Order number ${po_idApproval} is being approved with pr number ${prNum}`,
+        // date_approved: formattedDateApproved,
+        remarks: `The Purchase Order number ${po_idApproval} is being sent to supplier with pr number ${prNum}`,
       });
 
       await Activity_Log.create({
         masterlist_id: userId,
-        action_taken: `The Purchase Order number ${po_idApproval} is being approved with pr number ${prNum}`,
+        action_taken: `The Purchase Order number ${po_idApproval} is being sent to supplier with pr number ${prNum}`,
       });
     }
     res.status(200).json();

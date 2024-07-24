@@ -311,39 +311,39 @@ function POApprovalRejustify({ authrztn }) {
         // setsignatureTriggered(true);
         setLoadAprrove(true);
         try {
-          const div = document.getElementById(
-            `content-to-capture-${po_idApproval}`
-          );
+          // const div = document.getElementById(
+          //   `content-to-capture-${po_idApproval}`
+          // );
 
-          const canvas = await html2canvas(div);
-          const imageData = canvas.toDataURL("image/png");
-          // Convert the image to a PDF
-          const pdfDoc = await PDFDocument.create();
-          const page = pdfDoc.addPage([canvas.width, canvas.height]);
-          const pngImage = await pdfDoc.embedPng(imageData);
-          page.drawImage(pngImage, {
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height,
-            // width: 480,
-            // height: 700,
-          });
+          // const canvas = await html2canvas(div);
+          // const imageData = canvas.toDataURL("image/png");
+          // // Convert the image to a PDF
+          // const pdfDoc = await PDFDocument.create();
+          // const page = pdfDoc.addPage([canvas.width, canvas.height]);
+          // const pngImage = await pdfDoc.embedPng(imageData);
+          // page.drawImage(pngImage, {
+          //   x: 0,
+          //   y: 0,
+          //   width: canvas.width,
+          //   height: canvas.height,
+          //   // width: 480,
+          //   // height: 700,
+          // });
 
-          const pdfBytes = await pdfDoc.save();
+          // const pdfBytes = await pdfDoc.save();
 
           // Download the PDF
-          const blob = new Blob([pdfBytes], { type: "application/pdf" });
-          const downloadLink = document.createElement("a");
-          downloadLink.href = URL.createObjectURL(blob);
-          downloadLink.download = `purchase_order_${po_idApproval}.pdf`;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
+          // const blob = new Blob([pdfBytes], { type: "application/pdf" });
+          // const downloadLink = document.createElement("a");
+          // downloadLink.href = URL.createObjectURL(blob);
+          // downloadLink.download = `purchase_order_${po_idApproval}.pdf`;
+          // document.body.appendChild(downloadLink);
+          // downloadLink.click();
+          // document.body.removeChild(downloadLink);
           const response = await axios.post(BASE_URL + `/invoice/approve_PO`, {
             prID,
             POarray,
-            imageData,
+            // imageData,
             prNum,
             userId,
             formattedDateApproved,
@@ -418,6 +418,94 @@ function POApprovalRejustify({ authrztn }) {
           document.body.appendChild(downloadLink);
           downloadLink.click();
           document.body.removeChild(downloadLink);
+        } catch (err) {
+          swal({
+            icon: "error",
+            title: "Something went wrong",
+            text: "Please contact our support",
+          });
+        }
+      } else {
+        setShowSignature(false);
+      }
+    });
+  };
+
+  const handleSend = async (po_idss) => {
+    const po_idApproval = po_idss;
+    let textTOEmail;
+    if (isSendEmail === "true") {
+      textTOEmail = `An email has already been sent. Do you still want to send it?`;
+    } else {
+      textTOEmail = `Are you sure want to send this purchase Order?`;
+    }
+
+    swal({
+      title: textTOEmail,
+      text: "This action cannot be undone.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          const div = document.getElementById(
+            `content-to-capture-${po_idApproval}`
+          );
+
+          const canvas = await html2canvas(div);
+          const imageData = canvas.toDataURL("image/png");
+          // Convert the image to a PDF
+          const pdfDoc = await PDFDocument.create();
+          const page = pdfDoc.addPage([canvas.width, canvas.height]);
+          const pngImage = await pdfDoc.embedPng(imageData);
+          page.drawImage(pngImage, {
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height,
+            // width: 480,
+            // height: 700,
+          });
+
+          const pdfBytes = await pdfDoc.save();
+
+          // Download the PDF
+          // const blob = new Blob([pdfBytes], { type: "application/pdf" });
+          // const downloadLink = document.createElement("a");
+          // downloadLink.href = URL.createObjectURL(blob);
+          // downloadLink.download = `purchase_order_${po_idApproval}.pdf`;
+          // document.body.appendChild(downloadLink);
+          // downloadLink.click();
+          // document.body.removeChild(downloadLink);
+
+          const response = await axios.post(BASE_URL + `/invoice/send_PO`, {
+            prID,
+            POarray,
+            imageData,
+            prNum,
+            userId,
+            po_idApproval,
+          });
+
+          if (response.status === 200) {
+            swal({
+              title: "Sent Successfully",
+              text: "The P.O has been sent successfully",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate("/purchaseOrderList");
+              // setIsLoading(false)
+              setLoadAprrove(false);
+            });
+          } else {
+            swal({
+              icon: "error",
+              title: "Something went wrong",
+              text: "Please contact our support",
+            });
+          }
         } catch (err) {
           swal({
             icon: "error",
@@ -1491,26 +1579,51 @@ function POApprovalRejustify({ authrztn }) {
                                 className="react-loading"
                                 type={"bubbles"}
                               />
-                              Sending Email Invoice Please Wait...
+                              Please Wait...
                             </div>
                           </>
                         )}
                       </>
                     ) : current_status === "To-Receive" ||
                       current_status === "Received" ? (
-                      <div className="save-cancel po-btn-modal">
-                        <Button
-                          type="button"
-                          className="btn btn-warning"
-                          size="md"
-                          style={{ fontSize: "20px", margin: "0px 5px" }}
-                          onClick={() => {
-                            handlePrint(group.title);
-                          }}
-                        >
-                          Print
-                        </Button>
-                      </div>
+                      <>
+                        {!loadAprrove ? (
+                          <div className="save-cancel po-btn-modal">
+                            <Button
+                              type="button"
+                              className="btn btn-warning"
+                              size="md"
+                              style={{ fontSize: "20px", margin: "0px 5px" }}
+                              onClick={() => {
+                                handlePrint(group.title);
+                              }}
+                            >
+                              Print
+                            </Button>
+                            {current_status === "To-Receive" && (
+                              <Button
+                                type="button"
+                                className="btn btn-primary"
+                                size="md"
+                                style={{ fontSize: "20px", margin: "0px 5px" }}
+                                onClick={() => {
+                                  handleSend(group.title);
+                                }}
+                              >
+                                Email to Supplier
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="loading-container">
+                            <ReactLoading
+                              className="react-loading"
+                              type={"bubbles"}
+                            />
+                            Please Wait...
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <></>
                     )}

@@ -186,7 +186,7 @@ function PurchaseOrderListPreview() {
   const [addPObackend, setAddPObackend] = useState([]);
   const [quantityInputs, setQuantityInputs] = useState({});
   const [daysInputs, setDaysInputs] = useState({});
-  const [isSend, setIsSend] = useState({});
+  // const [isSend, setIsSend] = useState({});
   const [toBeUsedFor, setToBeUsedFor] = useState({});
 
   // const handleQuantityChange = (title, type, supplier_prod_id, value) => {
@@ -304,19 +304,19 @@ function PurchaseOrderListPreview() {
     });
   };
 
-  const handleClickISSend = (title, value) => {
-    setIsSend((prevInputs) => {
-      const updatedInputs = {
-        ...prevInputs,
-        [`${title}`]: {
-          ...prevInputs[`${title}`],
-          isSendEmail: value,
-        },
-      };
-      updateAddPOBackend(title);
-      return updatedInputs;
-    });
-  };
+  // const handleClickISSend = (title, value) => {
+  //   setIsSend((prevInputs) => {
+  //     const updatedInputs = {
+  //       ...prevInputs,
+  //       [`${title}`]: {
+  //         ...prevInputs[`${title}`],
+  //         isSendEmail: value,
+  //       },
+  //     };
+  //     updateAddPOBackend(title);
+  //     return updatedInputs;
+  //   });
+  // };
 
   const updateAddPOBackend = (supplierTitle) => {
     const serializedParent = parentArray.map(
@@ -333,7 +333,7 @@ function PurchaseOrderListPreview() {
             daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
             daysto: daysInputs[`${title}`]?.DaysTo || "",
             usedFor: toBeUsedFor[`${title}`]?.toBeUsedFor || "",
-            sendEmail: isSend[`${title}`]?.isSendEmail || false,
+            // sendEmail: isSend[`${title}`]?.isSendEmail || false,
           })),
         };
       }
@@ -346,7 +346,7 @@ function PurchaseOrderListPreview() {
 
   useEffect(() => {
     updateAddPOBackend();
-  }, [quantityInputs, daysInputs, selected_PR_Prod_array, toBeUsedFor, isSend]);
+  }, [quantityInputs, daysInputs, selected_PR_Prod_array, toBeUsedFor]);
 
   const handleAddToTable = (product, type, code, name, supp_email) => {
     setSelected_PR_Prod_array((prevArray) =>
@@ -1306,7 +1306,7 @@ function PurchaseOrderListPreview() {
                     >
                       <div className="canvass-supplier-content">
                         <div className="d-flex flex-row p-0 align-items-center ">
-                          <div className="form-check form-switch">
+                          {/* <div className="form-check form-switch">
                             <span className="fs-3 " htmlFor="status">
                               {isSend[`${title}`]?.isSendEmail === true
                                 ? "Email will send upon approval"
@@ -1322,7 +1322,7 @@ function PurchaseOrderListPreview() {
                               role="switch"
                               id="status"
                             />
-                          </div>
+                          </div> */}
                         </div>
                         <div className="POand-daysDeliver">
                           <div className="PO-nums">
