@@ -186,6 +186,8 @@ function PurchaseOrderListPreview() {
   const [addPObackend, setAddPObackend] = useState([]);
   const [quantityInputs, setQuantityInputs] = useState({});
   const [daysInputs, setDaysInputs] = useState({});
+  const [isSend, setIsSend] = useState({});
+  const [toBeUsedFor, setToBeUsedFor] = useState({});
 
   // const handleQuantityChange = (title, type, supplier_prod_id, value) => {
   //   setQuantityInputs((prevInputs) => {
@@ -287,6 +289,35 @@ function PurchaseOrderListPreview() {
     });
   };
 
+  const handleUsedForChange = (title, value) => {
+    setToBeUsedFor((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [`${title}`]: {
+          ...prevInputs[`${title}`],
+          toBeUsedFor: value,
+        },
+      };
+      updateAddPOBackend(title);
+      // console.log(updatedInputs);
+      return updatedInputs;
+    });
+  };
+
+  const handleClickISSend = (title, value) => {
+    setIsSend((prevInputs) => {
+      const updatedInputs = {
+        ...prevInputs,
+        [`${title}`]: {
+          ...prevInputs[`${title}`],
+          isSendEmail: value,
+        },
+      };
+      updateAddPOBackend(title);
+      return updatedInputs;
+    });
+  };
+
   const updateAddPOBackend = (supplierTitle) => {
     const serializedParent = parentArray.map(
       ({ title, supplierCode, array }) => {
@@ -301,18 +332,21 @@ function PurchaseOrderListPreview() {
             prod_supplier_price: item.product.product_price,
             daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
             daysto: daysInputs[`${title}`]?.DaysTo || "",
+            usedFor: toBeUsedFor[`${title}`]?.toBeUsedFor || "",
+            sendEmail: isSend[`${title}`]?.isSendEmail || false,
           })),
         };
       }
     );
     setAddPObackend(serializedParent);
     // console.log("Products:", parentArray);
-    // console.log("Selected Products:", serializedParent);
+    console.log("Selected Products:", serializedParent);
+    // return serializedParent;
   };
 
   useEffect(() => {
     updateAddPOBackend();
-  }, [quantityInputs, daysInputs, selected_PR_Prod_array]);
+  }, [quantityInputs, daysInputs, selected_PR_Prod_array, toBeUsedFor, isSend]);
 
   const handleAddToTable = (product, type, code, name, supp_email) => {
     setSelected_PR_Prod_array((prevArray) =>
@@ -1271,6 +1305,25 @@ function PurchaseOrderListPreview() {
                       key={supplierCode}
                     >
                       <div className="canvass-supplier-content">
+                        <div className="d-flex flex-row p-0 align-items-center ">
+                          <div className="form-check form-switch">
+                            <span className="fs-3 " htmlFor="status">
+                              {isSend[`${title}`]?.isSendEmail === true
+                                ? "Email will send upon approval"
+                                : "Won't send email"}
+                            </span>
+                            <input
+                              checked={isSend[`${title}`]?.isSendEmail || false}
+                              onChange={(e) =>
+                                handleClickISSend(title, e.target.checked)
+                              }
+                              className="form-check-input fs-3"
+                              type="checkbox"
+                              role="switch"
+                              id="status"
+                            />
+                          </div>
+                        </div>
                         <div className="POand-daysDeliver">
                           <div className="PO-nums">
                             <p>{`PO #: ${title}`}</p>
@@ -1343,6 +1396,27 @@ function PurchaseOrderListPreview() {
                           <div className="canvass-title">
                             <div className="supplier-info">
                               <p>{`Supplier : ${supplierCode} - ${array[0].supplierName}`}</p>
+                            </div>
+                            <div className="desc">
+                              <Form.Control
+                                type="text"
+                                required
+                                placeholder="To be used for"
+                                value={
+                                  toBeUsedFor[`${title}`]?.toBeUsedFor || ""
+                                }
+                                onChange={(e) => {
+                                  handleUsedForChange(title, e.target.value);
+                                }}
+                                style={{
+                                  height: "30px",
+                                  width: "150px",
+                                  fontSize: "14px",
+                                  fontFamily: "Poppins, Source Sans Pro",
+                                  marginTop: "2px",
+                                  fontSize: "12px",
+                                }}
+                              />
                             </div>
                           </div>
                         )}

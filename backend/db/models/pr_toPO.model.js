@@ -32,6 +32,10 @@ const PR_PO = sequelize.define("purchase_req_canvassed_prd", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  usedFor: {
+    type: DataTypes.STRING(2000),
+    allowNull: true,
+  },
   purchase_price: {
     type: DataTypes.DOUBLE,
     allowNull: true,
@@ -47,6 +51,10 @@ const PR_PO = sequelize.define("purchase_req_canvassed_prd", {
   date_approved: {
     type: DataTypes.DATE,
     allowNull: true,
+  },
+  isEmailSend: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 });
 

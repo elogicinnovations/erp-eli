@@ -135,7 +135,7 @@ function CreatePurchaseRequest() {
     } else {
       try {
         const response = await axios.post(`${BASE_URL}/PR/create`, {
-          prNum,
+          pr_num: prNum,
           dateNeed,
           useFor,
           remarks,
@@ -153,6 +153,13 @@ function CreatePurchaseRequest() {
             button: "OK",
           }).then(() => {
             navigate("/purchaseRequest");
+          });
+        } else if (response.status === 201) {
+          swal({
+            title: "Oopps!",
+            text: "PR number already exist. Please input another number or Reload the browser to get the latest available number",
+            icon: "error",
+            button: "OK",
           });
         } else {
           swal({
@@ -287,7 +294,7 @@ function CreatePurchaseRequest() {
                   <Form.Control
                     type="text"
                     value={prNum}
-                    readOnly
+                    onChange={(e) => setPrNum(e.target.value)}
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>

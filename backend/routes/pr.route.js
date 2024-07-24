@@ -289,10 +289,32 @@ router.route("/fetchTable_PO_view").get(async (req, res) => {
 });
 router.route("/pr_update").post(async (req, res) => {
   try {
-    const { dateNeed, useFor, remarks, updatedProducts, id, userId } = req.body;
+    const { pr_num, dateNeed, useFor, remarks, updatedProducts, id, userId } =
+      req.body;
+
+    function padWithZeros(num, totalLength) {
+      return String(num).padStart(totalLength, "0");
+    }
+
+    // Convert prNum to the desired format
+    const prNum = padWithZeros(pr_num, 8);
+
+    const isPrExist = await PR.findOne({
+      where: {
+        pr_num: prNum,
+        id: {
+          [Op.ne]: id,
+        },
+      },
+    });
+
+    if (isPrExist) {
+      return res.status(201).json();
+    }
 
     const isUpdatedMother = await PR.update(
       {
+        pr_num: prNum,
         date_needed: dateNeed,
         used_for: useFor,
         remarks: remarks,
@@ -401,8 +423,26 @@ router.route("/lastPRNumber").get(async (req, res) => {
 
 router.route("/create").post(async (req, res) => {
   try {
-    const { prNum, dateNeed, useFor, remarks, addProductbackend, userId } =
+    const { pr_num, dateNeed, useFor, remarks, addProductbackend, userId } =
       req.body;
+
+    // Function to pad the number with leading zeros
+    function padWithZeros(num, totalLength) {
+      return String(num).padStart(totalLength, "0");
+    }
+
+    // Convert prNum to the desired format
+    const prNum = padWithZeros(pr_num, 8);
+
+    const isPrExist = await PR.findOne({
+      where: {
+        pr_num: prNum,
+      },
+    });
+
+    if (isPrExist) {
+      return res.status(201).json();
+    }
 
     const PR_newData = await PR.create({
       pr_num: prNum,

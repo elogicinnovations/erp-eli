@@ -73,6 +73,28 @@ router.route("/editUsedFor").post(async (req, res) => {
   }
 });
 
+router.route("/editUsedForPO").post(async (req, res) => {
+  const { po_id, pr_id, POUsedFor } = req.body;
+
+  const isUpdate = await PR_PO.update(
+    {
+      usedFor: POUsedFor,
+    },
+    {
+      where: {
+        pr_id: pr_id,
+        po_id: po_id,
+      },
+    }
+  );
+
+  if (isUpdate) {
+    return res.status(200).json();
+  } else {
+    return res.status(201).json();
+  }
+});
+
 router.route("/editRemarks").post(async (req, res) => {
   const { pr_id, remarks } = req.body;
 
@@ -96,6 +118,7 @@ router.route("/editRemarks").post(async (req, res) => {
 
 router.route("/save").post(async (req, res) => {
   try {
+    // test ko if napasok sa po ang used for
     const arrayPO = req.body.arrayPO;
     const PR_id = req.body.pr_id;
     const userId = req.body.userId;
@@ -111,18 +134,19 @@ router.route("/save").post(async (req, res) => {
         const prod_supp_price = child.prod_supplier_price;
         const FromDays = child.daysfrom;
         const ToDays = child.daysto;
+        const usedFor = child.usedFor;
+        const isSend = child.sendEmail;
+        const isPOIdExist = await PR_PO.findOne({
+          where: {
+            po_id: po_number,
+            product_tag_supplier_ID: prod_supp_id,
+          },
+        });
 
+        if (isPOIdExist) {
+          return res.status(202).json();
+        }
         if (type === "product") {
-          const isPOIdExist = await PR_PO.findOne({
-            where: {
-              po_id: po_number,
-            },
-          });
-
-          if (isPOIdExist) {
-            return res.status(202).json();
-          }
-
           PR_PO.create({
             pr_id: PR_id,
             po_id: po_number,
@@ -132,6 +156,8 @@ router.route("/save").post(async (req, res) => {
             days_to: ToDays,
             static_quantity: quantity,
             purchase_price: prod_supp_price,
+            usedFor: usedFor,
+            isEmailSend: isSend,
           });
         }
       }
@@ -600,6 +626,7 @@ router.route("/approve_PO").post(async (req, res) => {
       prNum,
       userId,
       POarray,
+      isSendEmail,
       formattedDateApproved,
       po_idApproval,
     } = req.body;
@@ -631,54 +658,58 @@ router.route("/approve_PO").post(async (req, res) => {
 
     // console.log(toSendEmail)
 
-    // Convert base64 image data to binary buffer
-    const imageDatas = imageData.split(";base64,").pop();
-    const imageBuffer = Buffer.from(imageDatas, "base64");
+    if (isSendEmail === "true" || isSendEmail === 1) {
+      // Convert base64 image data to binary buffer
+      const imageDatas = imageData.split(";base64,").pop();
+      const imageBuffer = Buffer.from(imageDatas, "base64");
 
-    // Create a PDF document
-    const doc = new PDFDocument();
-    const pdfBuffers = [];
+      // Create a PDF document
+      const doc = new PDFDocument();
+      const pdfBuffers = [];
 
-    // Add the image to the PDF
-    doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
-    doc.on("data", (chunk) => pdfBuffers.push(chunk));
+      // Add the image to the PDF
+      doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
+      doc.on("data", (chunk) => pdfBuffers.push(chunk));
 
-    // Listen for the end of the document
-    doc.on("end", () => {
-      // Create a nodemailer transporter
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: gmailEmail,
-          pass: gmailPassword,
-        },
-      });
-
-      // Define email options
-      const mailOptions = {
-        from: gmailEmail,
-        to: toSendEmail,
-        subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
-        text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
-        attachments: [
-          {
-            filename: `purchase_order.pdf`, // Unique filename for each PDF
-            content: Buffer.concat(pdfBuffers),
+      // Listen for the end of the document
+      doc.on("end", () => {
+        // Create a nodemailer transporter
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: gmailEmail,
+            pass: gmailPassword,
           },
-        ],
-      };
+        });
 
-      // Send the email
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log("Error sending email:", error);
-        } else {
-          console.log("Email Sent:", info);
-        }
+        // Define email options
+        const mailOptions = {
+          from: gmailEmail,
+          to: toSendEmail,
+          subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+          text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
+          attachments: [
+            {
+              filename: `purchase_order.pdf`, // Unique filename for each PDF
+              content: Buffer.concat(pdfBuffers),
+            },
+          ],
+        };
+
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log("Error sending email:", error);
+          } else {
+            console.log("Email Sent:", info);
+          }
+        });
       });
-    });
 
-    doc.end();
+      doc.end();
+    } else {
+      console.log(`emailnotsent ${po_idApproval}`);
+    }
 
     const PO_Approved = await PR_PO.update(
       {

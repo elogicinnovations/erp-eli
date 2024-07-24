@@ -229,6 +229,7 @@ function PurchaseRequestPreview({ authrztn }) {
         // console.log(`dsad`);
         // console.log(updatedProducts);
         const response = await axios.post(`${BASE_URL}/PR/pr_update`, {
+          pr_num: prNum,
           dateNeed,
           useFor,
           remarks,
@@ -247,6 +248,13 @@ function PurchaseRequestPreview({ authrztn }) {
             button: "OK",
           }).then(() => {
             navigate("/purchaseRequest");
+          });
+        } else if (response.status === 201) {
+          swal({
+            title: "Oopps!",
+            text: "PR number already exist. Please input another number or Reload the browser to get the latest available number",
+            icon: "error",
+            button: "OK",
           });
         } else {
           swal({
@@ -693,8 +701,9 @@ function PurchaseRequestPreview({ authrztn }) {
                   <Form.Label style={{ fontSize: "20px" }}>PR #: </Form.Label>
                   <Form.Control
                     type="text"
+                    readOnly={!isReadOnly}
                     value={prNum}
-                    readOnly
+                    onChange={(e) => setPrNum(e.target.value)}
                     style={{ height: "40px", fontSize: "15px" }}
                   />
                 </Form.Group>

@@ -38,6 +38,8 @@ function POApprovalRejustify({ authrztn }) {
   const navigate = useNavigate();
   const [editRemarks, setEditRemarks] = useState(false);
   const [editUsedFor, setEditUsedFor] = useState(false);
+  const [editPOUsedFor, setPOEditUsedFor] = useState(false);
+  const [POUsedFor, setPOUsedFor] = useState("");
   const [dateNeeded, setDateNeeded] = useState(null);
   const [prID, setPrID] = useState("");
   const [prNum, setPRnum] = useState("");
@@ -45,6 +47,7 @@ function POApprovalRejustify({ authrztn }) {
   const [remarks, setRemarks] = useState("");
   const [status, setStatus] = useState("");
   const [supplierName, setSupplierName] = useState("");
+  const [isSendEmail, setIsSendEmail] = useState(false);
 
   //   const [validated, setValidated] = useState(false);
   const [rejustifyHistory, setRejustifyHistory] = useState([]);
@@ -186,6 +189,7 @@ function POApprovalRejustify({ authrztn }) {
         setStatus(res.data.status);
         setDepartmentPO(res.data);
         setSupplierName(res.data.product_tag_supplier.supplier.supplier_name);
+        setIsSendEmail(res.data.isEmailSend === false ? "false" : "true");
       })
       .catch((err) => {
         console.error(err);
@@ -343,6 +347,7 @@ function POApprovalRejustify({ authrztn }) {
             prNum,
             userId,
             formattedDateApproved,
+            isSendEmail,
             po_idApproval,
           });
 
@@ -565,6 +570,45 @@ function POApprovalRejustify({ authrztn }) {
     });
   };
 
+  const handleSaveEditUsedFOrPO = () => {
+    swal({
+      title: `Are you sure?`,
+      text: "You want to change details of 'To be Used For'",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        axios
+          .post(`${BASE_URL}/invoice/editUsedForPO`, {
+            po_id: id,
+            pr_id: prID,
+            POUsedFor,
+          })
+          .then((res) => {
+            // console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: "Success",
+                text: "You successfully edit the of 'To be Used For'",
+                icon: "success",
+                button: "OK",
+              }).then(() => {
+                setPOEditUsedFor(false);
+                reloadTable();
+              });
+            } else {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please contact our support",
+              });
+            }
+          });
+      }
+    });
+  };
+
   const handleSaveEditUsedFOr = () => {
     swal({
       title: `Are you sure?`,
@@ -577,7 +621,7 @@ function POApprovalRejustify({ authrztn }) {
         axios
           .post(`${BASE_URL}/invoice/editUsedFor`, {
             pr_id: prID,
-            useFor,
+            id,
           })
           .then((res) => {
             // console.log(res);
@@ -692,7 +736,7 @@ function POApprovalRejustify({ authrztn }) {
                   <Link style={{ fontSize: "1.5rem" }} to="/purchaseOrderList">
                     <ArrowCircleLeft size={44} color="#60646c" weight="fill" />
                   </Link>
-                  <h1>Purchase Order List Approval</h1>
+                  <h1>Purchase Order List Approval </h1>
                 </div>
               </Col>
             </Row>
@@ -1246,11 +1290,49 @@ function POApprovalRejustify({ authrztn }) {
                                 <span style={{ color: "red" }}>
                                   To be used for:
                                 </span>{" "}
-                                <strong
-                                  style={{ fontSize: "12px" }}
-                                >{`${useFor}`}</strong>
+                                {editPOUsedFor === true ? (
+                                  <React.Fragment>
+                                    <Form.Control
+                                      value={POUsedFor}
+                                      onChange={(e) =>
+                                        setPOUsedFor(e.target.value)
+                                      }
+                                    />
+                                  </React.Fragment>
+                                ) : (
+                                  <React.Fragment>
+                                    <strong style={{ fontSize: "12px" }}>{`${
+                                      group.items[0].item.usedFor === null
+                                        ? "--"
+                                        : group.items[0].item.usedFor
+                                    }`}</strong>
+                                  </React.Fragment>
+                                )}
+                                {editPOUsedFor === true ? (
+                                  <Button
+                                    onClick={() => handleSaveEditUsedFOrPO()}
+                                    variant={"success"}
+                                  >
+                                    <Check size={10} />
+                                  </Button>
+                                ) : (
+                                  status === null &&
+                                  (userId === 11 || userId === 3) && (
+                                    <Button
+                                      onClick={() => {
+                                        setPOUsedFor(
+                                          group.items[0].item.usedFor
+                                        );
+                                        setPOEditUsedFor(true);
+                                      }}
+                                      variant={"success"}
+                                    >
+                                      <PencilSimple size={10} />
+                                    </Button>
+                                  )
+                                )}
                               </div>
-                              <span>TERMS AND CONDITIONS: </span>
+                              <span>TERMS AND CONDITIONS: {status}</span>
                               <span>
                                 1. Acceptance of this order is an acceptance of
                                 all conditions herein.

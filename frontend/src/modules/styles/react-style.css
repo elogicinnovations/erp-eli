@@ -4122,7 +4122,7 @@ div#ordered-listing_length label {
 
 .canvass-title {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   border-bottom: 4px solid #cfcece;
   padding-top: 18px;
 }
@@ -5007,6 +5007,8 @@ span:nth-child(5) {
 
 .tobeUsed {
   height: 20%;
+  display: flex;
+  flex-direction: row;
 }
 .conditionsection span:nth-child(1) {
   font-family: Poppins, "Source Sans Pro";
