@@ -118,6 +118,79 @@ router.route("/PRfilter").get(async (req, res) => {
   }
 });
 
+// router.route("/fetchTable_PO").get(async (req, res) => {
+//   try {
+//     const data = await PR_PO.findAll({
+//       include: [
+//         {
+//           model: PR,
+//           required: true,
+//           include: [
+//             {
+//               model: MasterList,
+//               required: true,
+//               include: [
+//                 {
+//                   model: Department,
+//                   required: true,
+//                 },
+//               ],
+//             },
+//           ],
+//         },
+//         {
+//           model: ProductTAGSupplier,
+//           required: true,
+//           include: [
+//             {
+//               model: Supplier,
+//               required: true,
+//             },
+//           ],
+//         },
+//       ],
+//     });
+
+//     if (data) {
+//       console.log(data);
+//       const uniquePoMap = new Map();
+
+//       // Filter data to ensure only unique po_ids and exclude those with status "Received"
+//       const uniqueData = data.filter((item) => {
+//         if (item.status !== "Received" && !uniquePoMap.has(item.po_id)) {
+//           uniquePoMap.set(item.po_id, true);
+//           return true;
+//         }
+//         return false;
+//       });
+
+//       // Sort the unique data: first by status null, then by status "To-receive"
+//       uniqueData.sort((a, b) => {
+//         if (a.status === null && b.status !== null) {
+//           return -1;
+//         }
+//         if (a.status !== null && b.status === null) {
+//           return 1;
+//         }
+//         if (a.status === "To-Receive" && b.status !== "To-Receive") {
+//           return -1;
+//         }
+//         if (a.status !== "To-Receive" && b.status === "To-Receive") {
+//           return 1;
+//         }
+//         return 0;
+//       });
+
+//       return res.json(uniqueData);
+//     } else {
+//       res.status(400).json("No data found");
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json("Error");
+//   }
+// });
+
 router.route("/fetchTable_PO").get(async (req, res) => {
   try {
     const data = await PR_PO.findAll({
@@ -152,16 +225,29 @@ router.route("/fetchTable_PO").get(async (req, res) => {
     });
 
     if (data) {
-      const uniquePoMap = new Map();
+      const poMap = new Map();
 
-      // Filter data to ensure only unique po_ids and exclude those with status "Received"
-      const uniqueData = data.filter((item) => {
-        if (item.status !== "Received" && !uniquePoMap.has(item.po_id)) {
-          uniquePoMap.set(item.po_id, true);
-          return true;
+      // Process data to sum purchase_price * static_quantity for same po_id
+      data.forEach((item) => {
+        if (item.status !== "Received") {
+          const poId = item.po_id;
+          const itemTotal = item.purchase_price * item.static_quantity;
+
+          if (poMap.has(poId)) {
+            const existingItem = poMap.get(poId);
+            existingItem.total += itemTotal;
+            existingItem.static_quantity += item.static_quantity;
+          } else {
+            poMap.set(poId, {
+              ...item.toJSON(),
+              total: itemTotal,
+            });
+          }
         }
-        return false;
       });
+
+      // Convert Map to array
+      let uniqueData = Array.from(poMap.values());
 
       // Sort the unique data: first by status null, then by status "To-receive"
       uniqueData.sort((a, b) => {
@@ -179,7 +265,7 @@ router.route("/fetchTable_PO").get(async (req, res) => {
         }
         return 0;
       });
-
+      console.log(uniqueData);
       return res.json(uniqueData);
     } else {
       res.status(400).json("No data found");

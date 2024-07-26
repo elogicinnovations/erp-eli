@@ -449,6 +449,8 @@ function Create_role() {
     }));
 
     setSelectedCheckboxes(updatedCheckboxes);
+
+    console.log(updatedCheckboxes);
   };
 
   const handleUnselectAll = () => {
@@ -3499,7 +3501,6 @@ function Create_role() {
                           </div>
                         </td>
                       </tr>
-
                       <td>
                         <h3 className="role-head">Accountability Module</h3>
                       </td>
@@ -3614,7 +3615,9 @@ function Create_role() {
                                   item.value === "Accountability - Approval"
                               )}
                               onChange={() =>
-                                handleCheckboxChange("Accountability - Approval")
+                                handleCheckboxChange(
+                                  "Accountability - Approval"
+                                )
                               }
                             />
                             <label
@@ -3647,7 +3650,6 @@ function Create_role() {
                           </div>
                         </td>
                       </tr>
-
                       <td>
                         <h3 className="role-head">Price Checker Module</h3>
                       </td>
@@ -3795,8 +3797,6 @@ function Create_role() {
                           </div>
                         </td>
                       </tr>
-
-
                       <td>
                         <h3 className="role-head">Activity Module</h3>
                       </td>

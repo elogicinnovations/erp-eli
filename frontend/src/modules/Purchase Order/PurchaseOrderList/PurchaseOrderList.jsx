@@ -524,7 +524,8 @@ function PurchaseOrderList({ authrztn }) {
                       <th className="tableh">Requestor</th>
                       <th className="tableh">Department</th>
                       <th className="tableh">Status</th>
-                      <th className="pr-column">Date Approved</th>
+                      <th className="pr-column">Date Prepare</th>
+                      <th className="pr-column">Total PO Cost</th>
                       <th className="tableh">Remarks</th>
                     </tr>
                   </thead>
@@ -651,9 +652,23 @@ function PurchaseOrderList({ authrztn }) {
                                     )
                                   }
                                 >
-                                  {formatDatetime(data.updatedAt)}
+                                  {formatDatetime(data.createdAt)}
                                 </td>
-
+                                <td
+                                  onClick={() =>
+                                    navigate(
+                                      `/PO_approvalRejustify/${data.po_id}`
+                                    )
+                                  }
+                                >
+                                  {(
+                                    (data.product_tag_supplier.supplier
+                                      .supplier_vat /
+                                      100 +
+                                      1) *
+                                    data.total
+                                  ).toFixed(2)}
+                                </td>
                                 <td
                                   onClick={() =>
                                     navigate(
@@ -892,7 +907,32 @@ function PurchaseOrderList({ authrztn }) {
                                         )
                                       }
                                     >
-                                      {formatDatetime(data.updatedAt)}
+                                      {formatDatetime(data.createdAt)}
+                                    </td>
+
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {(
+                                        (data.product_tag_supplier.supplier
+                                          .supplier_vat /
+                                          100 +
+                                          1) *
+                                        data.total
+                                      ).toFixed(2)}
+                                    </td>
+                                    <td
+                                      onClick={() =>
+                                        navigate(
+                                          `/PO_approvalRejustify/${data.po_id}`
+                                        )
+                                      }
+                                    >
+                                      {data.total}
                                     </td>
 
                                     <td
