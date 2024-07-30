@@ -395,17 +395,33 @@ function POApprovalRejustify({ authrztn }) {
 
           const canvas = await html2canvas(div);
           const imageData = canvas.toDataURL("image/png");
+
           // Convert the image to a PDF
           const pdfDoc = await PDFDocument.create();
-          const page = pdfDoc.addPage([canvas.width, canvas.height]);
+
+          // Create a portrait page by swapping width and height
+          const page = pdfDoc.addPage([canvas.height, canvas.width]);
+
           const pngImage = await pdfDoc.embedPng(imageData);
+
+          // Calculate scaling factors to fit the image on the portrait page
+          const scaleWidth = canvas.height / canvas.width;
+          const scaleHeight = canvas.width / canvas.height;
+          const scale = Math.min(scaleWidth, scaleHeight);
+
+          // Calculate new dimensions
+          const newWidth = canvas.width * scale;
+          const newHeight = canvas.height * scale;
+
+          // Calculate position to center the image
+          const x = (canvas.height - newWidth) / 2;
+          const y = (canvas.width - newHeight) / 2;
+
           page.drawImage(pngImage, {
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height,
-            // width: 480,
-            // height: 700,
+            x,
+            y,
+            width: newWidth,
+            height: newHeight,
           });
 
           const pdfBytes = await pdfDoc.save();

@@ -5480,6 +5480,11 @@ span:nth-child(5) {
 
 .templatestable-content table {
   border-collapse: collapse;
+  overflow: none !important;
+
+  display: block;
+  max-height: none;
+  min-height: none;
 }
 
 .templatestable-content table thead {

@@ -293,59 +293,74 @@ router.route("/save").post(async (req, res) => {
     const gmailEmail = "purchasing@sbfdrilling.com";
     const gmailPassword = "fwzunybngamowhuw";
     // const gmailEmail = "sbfmailer@gmail.com";
-    //   const gmailPassword = "uoetasnknsroxwnq";
+    // const gmailPassword = "uoetasnknsroxwnq";
 
     // Loop through each supplier's products
-    productArrays.forEach(async (products, index) => {
-      const toSendEmail = products.product.supplier.supplier_email;
-      // // Loop through each product
+    // First, group products by supplier email
+    const groupedProducts = productArrays.reduce((acc, product) => {
+      const email = product.product.supplier.supplier_email;
+      if (!acc[email]) {
+        acc[email] = [];
+      }
+      acc[email].push(product);
+      return acc;
+    }, {});
 
-      // Check if imageData exists and is valid
-      const imageData = products.imageData.split(";base64,").pop();
-      const imageBuffer = Buffer.from(imageData, "base64");
+    // Now process each group of products
+    Object.entries(groupedProducts).forEach(
+      async ([supplierEmail, products]) => {
+        const doc = new PDFDocument();
+        const pdfBuffers = [];
 
-      const doc = new PDFDocument();
-      const pdfBuffers = [];
-
-      doc.image(imageBuffer, { fit: [480, 700] }); // Adjust width and height as needed
-      doc.on("data", (chunk) => pdfBuffers.push(chunk));
-
-      doc.on("end", () => {
-        // Create Nodemailer transporter
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: gmailEmail,
-            pass: gmailPassword,
-          },
-        });
-
-        // Create email options
-        const mailOptions = {
-          from: gmailEmail,
-          to: toSendEmail, // Use the email of the first product's supplier
-          subject: `PR number: ${prNum}. Price Inquiry`,
-          text: `We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached PDF file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.`,
-          attachments: [
-            {
-              filename: "canvassing.pdf",
-              content: Buffer.concat(pdfBuffers),
-            },
-          ],
-        };
-
-        // Send the email
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log("Error sending email:", error);
-          } else {
-            console.log("Email Sent:", info);
+        // Add all products to the PDF
+        products.forEach((product, index) => {
+          if (index > 0) {
+            doc.addPage();
           }
+          const imageData = product.imageData.split(";base64,").pop();
+          const imageBuffer = Buffer.from(imageData, "base64");
+          doc.image(imageBuffer, { fit: [480, 700] });
         });
-      });
-      doc.end();
-    });
 
+        doc.on("data", (chunk) => pdfBuffers.push(chunk));
+
+        doc.on("end", () => {
+          // Create Nodemailer transporter
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: gmailEmail,
+              pass: gmailPassword,
+            },
+          });
+
+          // Create email options
+          const mailOptions = {
+            from: gmailEmail,
+            to: supplierEmail,
+            subject: `PR number: ${prNum}. Price Inquiry`,
+            text: `We appreciate the quality and reliability of the products we have sourced from your company in the past. As we continue to explore ways to enhance our product offerings, we are currently reviewing our pricing strategy. \n\n Could you please provide us with the most up-to-date pricing information for the products listed in the attached PDF file? Your prompt response will be immensely helpful as we assess and finalize our procurement plans.`,
+            attachments: [
+              {
+                filename: "canvassing.pdf",
+                content: Buffer.concat(pdfBuffers),
+              },
+            ],
+          };
+
+          // Send the email
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.log("Error sending email:", error);
+            } else {
+              console.log("Email Sent:", info);
+            }
+          });
+        });
+
+        doc.end();
+      }
+    );
     const PR_update = PR.update(
       {
         status: "On-Canvass",

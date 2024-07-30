@@ -453,52 +453,68 @@ function PurchaseOrderListPreview() {
         text: "Please fill the red text fields",
       });
     } else {
-      setsendEmail(true);
-      const updatedPOarray = [];
+      swal({
+        title: `Are you sure want to send canvass to supplier/s?`,
+        text: "This action cannot be undo.",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (approve) => {
+        if (approve) {
+          setsendEmail(true);
+          const updatedPOarray = [];
 
-      for (const supplierProducts of Object.values(productArrays)) {
-        for (const product of supplierProducts) {
-          const supplierCode = product.product.supplier.supplier_code;
-          const div = document.getElementById(`content-to-pdf-${supplierCode}`);
-          const canvas = await html2canvas(div);
-          const imageData = canvas.toDataURL("image/png");
+          for (const supplierProducts of Object.values(productArrays)) {
+            for (const product of supplierProducts) {
+              const supplierCode = product.product.supplier.supplier_code;
+              const div = document.getElementById(
+                `content-to-pdf-${supplierCode}`
+              );
+              const canvas = await html2canvas(div);
+              const imageData = canvas.toDataURL("image/png");
 
-          const updatedGroup = {
-            ...product,
-            imageData: imageData,
-          };
+              const updatedGroup = {
+                ...product,
+                imageData: imageData,
+              };
 
-          updatedPOarray.push(updatedGroup);
-        }
-      }
-
-      axios
-        .post(`${BASE_URL}/PR_PO/save`, {
-          prNum,
-          productArrays: updatedPOarray,
-          id,
-          userId,
-        })
-        .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            swal({
-              title: "Product On-Canvassed",
-              text: "You have successfully marked this product on canvassing.",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate("/purchaseRequest");
-              setsendEmail(false);
-            });
-          } else {
-            swal({
-              icon: "error",
-              title: "Something went wrong",
-              text: "Please contact our support",
-            });
+              updatedPOarray.push(updatedGroup);
+            }
           }
-        });
+
+          console.log(updatedPOarray);
+
+          axios
+            .post(`${BASE_URL}/PR_PO/save`, {
+              prNum,
+              productArrays: updatedPOarray,
+              id,
+              userId,
+            })
+            .then((res) => {
+              console.log(res);
+              if (res.status === 200) {
+                swal({
+                  title: "Product On-Canvassed",
+                  text: "You have successfully marked this product on canvassing.",
+                  icon: "success",
+                  button: "OK",
+                }).then(() => {
+                  navigate("/purchaseRequest");
+                  setsendEmail(false);
+                });
+              } else {
+                swal({
+                  icon: "error",
+                  title: "Something went wrong",
+                  text: "Please contact our support",
+                });
+              }
+            });
+        } else {
+          setsendEmail(false);
+        }
+      });
     }
 
     setValidated(true); //for validations

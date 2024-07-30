@@ -127,6 +127,22 @@ router.route("/save").post(async (req, res) => {
     for (const parent of arrayPO) {
       const po_number = parent.title;
 
+      console.log(po_number);
+
+      const isPOIdExist = await PR_PO.findOne({
+        where: {
+          po_id: po_number,
+        },
+      });
+
+      if (isPOIdExist) {
+        // console.log(`PO ${po_number} already exists. Skipping to next PO.`);
+        // continue;
+        return res.status(202).json();
+      }
+
+      const insertPromises = [];
+
       for (const child of parent.serializedArray) {
         const quantity = child.quantity;
         const type = child.type;
@@ -135,40 +151,38 @@ router.route("/save").post(async (req, res) => {
         const FromDays = child.daysfrom;
         const ToDays = child.daysto;
         const usedFor = child.usedFor;
-        // const isSend = child.sendEmail;
-        const isPOIdExist = await PR_PO.findOne({
-          where: {
-            po_id: po_number,
-            product_tag_supplier_ID: prod_supp_id,
-          },
-        });
 
-        if (isPOIdExist) {
-          return res.status(202).json();
-        }
         if (type === "product") {
-          PR_PO.create({
-            pr_id: PR_id,
-            po_id: po_number,
-            quantity: quantity,
-            product_tag_supplier_ID: prod_supp_id,
-            days_from: FromDays,
-            days_to: ToDays,
-            static_quantity: quantity,
-            purchase_price: prod_supp_price,
-            usedFor: usedFor,
-            // isEmailSend: isSend,
-          });
+          insertPromises.push(
+            PR_PO.create({
+              pr_id: PR_id,
+              po_id: po_number,
+              quantity: quantity,
+              product_tag_supplier_ID: prod_supp_id,
+              days_from: FromDays,
+              days_to: ToDays,
+              static_quantity: quantity,
+              purchase_price: prod_supp_price,
+              usedFor: usedFor,
+            })
+          );
         }
       }
+
+      // Wait for all inserts to complete
+      await Promise.all(insertPromises);
+
+      // console.log(`All entries for PO ${po_number} have been inserted.`);
     }
+
+    // console.log("All POs have been processed.");
 
     let pr_status, prComplete;
 
     const allTrue = POarray_checker.every((item) => item.isPO === true);
 
     POarray_checker.forEach((data) => {
-      console.log(data);
+      // console.log(data);
       PR_product.update(
         {
           isPO: data.isPO,
