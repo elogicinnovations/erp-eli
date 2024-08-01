@@ -3,6 +3,7 @@ const { where, Op, col, fn } = require("sequelize");
 const nodemailer = require("nodemailer");
 //master Model
 // const MasterList = require('../db/models/masterlist.model')
+const emailConfig = require("../db/config/email_config");
 const {
   MasterList,
   UserRole,
@@ -260,10 +261,8 @@ router.route("/logout").post(async (req, res) => {
 
 //--------------------Forgot Password------------------//
 // Replace these with your Gmail credentials
-const gmailEmail = "purchasing@sbfdrilling.com";
-const gmailPassword = "fwzunybngamowhuw";
-// const gmailEmail = "sbfmailer@gmail.com";
-//   const gmailPassword = "uoetasnknsroxwnq";
+const gmailEmail = emailConfig.email;
+const gmailPassword = emailConfig.password;
 
 const transporter = nodemailer.createTransport({
   service: "gmail",

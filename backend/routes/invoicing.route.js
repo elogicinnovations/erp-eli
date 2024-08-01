@@ -29,6 +29,7 @@ const session = require("express-session");
 const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
+const emailConfig = require("../db/config/email_config");
 
 router.route("/lastPONumber").get(async (req, res) => {
   try {
@@ -644,10 +645,8 @@ router.route("/approve_PO").post(async (req, res) => {
       formattedDateApproved,
       po_idApproval,
     } = req.body;
-    // const gmailEmail = "purchasing@sbfdrilling.com";
-    // const gmailPassword = "fwzunybngamowhuw";
-    // const gmailEmail = "sbfmailer@gmail.com";
-    // const gmailPassword = "uoetasnknsroxwnq";
+    // const gmailEmail = emailConfig.email;
+    // const gmailPassword = emailConfig.password;
 
     // const findEmail = await PR_PO.findAll({
     //   where: {
@@ -767,10 +766,8 @@ router.route("/send_PO").post(async (req, res) => {
       po_idApproval,
       // isSendEmail,
     } = req.body;
-    const gmailEmail = "purchasing@sbfdrilling.com";
-    const gmailPassword = "fwzunybngamowhuw";
-    // const gmailEmail = "sbfmailer@gmail.com";
-    // const gmailPassword = "uoetasnknsroxwnq";
+    const gmailEmail = emailConfig.email;
+    const gmailPassword = emailConfig.password;
 
     const findEmail = await PR_PO.findAll({
       where: {

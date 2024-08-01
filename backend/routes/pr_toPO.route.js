@@ -5,6 +5,7 @@ const fs = require("fs");
 const { Parser } = require("json2csv");
 const nodemailer = require("nodemailer");
 // const PR_PO = require('../db/models/pr_toPO.model')
+const emailConfig = require("../db/config/email_config");
 const {
   PR,
   PR_PO,
@@ -290,10 +291,9 @@ router.route("/fetchCanvassedSupplier_spare").get(async (req, res) => {
 router.route("/save").post(async (req, res) => {
   try {
     const { id, productArrays, userId, prNum } = req.body;
-    const gmailEmail = "purchasing@sbfdrilling.com";
-    const gmailPassword = "fwzunybngamowhuw";
-    // const gmailEmail = "sbfmailer@gmail.com";
-    // const gmailPassword = "uoetasnknsroxwnq";
+
+    const gmailEmail = emailConfig.email;
+    const gmailPassword = emailConfig.password;
 
     // Loop through each supplier's products
     // First, group products by supplier email

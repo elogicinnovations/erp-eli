@@ -1103,7 +1103,7 @@ function POApprovalRejustify({ authrztn }) {
                                 <td>{item.supp_tag.code}</td>
                                 <td>{item.supp_tag.name}</td>
                                 <td>{item.supp_tag.uom}</td>
-                                <td>{item.item.quantity}</td>
+                                <td>{item.item.static_quantity}</td>
                                 {status === "Rejected" ? (
                                   <>
                                     <td>
@@ -1162,11 +1162,13 @@ function POApprovalRejustify({ authrztn }) {
                 let vat = group.items[0].suppliers.supplier_vat;
 
                 group.items.forEach((item, index) => {
-                  totalSum += item.item.purchase_price * item.item.quantity;
+                  totalSum +=
+                    (item.item.purchase_price * (vat / 100 + 1)).toFixed(2) *
+                    item.item.static_quantity;
                 });
 
                 vatAmount = totalSum * (vat / 100);
-                TotalAmount = (vatAmount + totalSum).toFixed(2);
+                TotalAmount = (totalSum - vatAmount).toFixed(2);
 
                 vatAmount = vatAmount.toFixed(2);
                 totalSum = totalSum.toFixed(2);
@@ -1285,7 +1287,7 @@ function POApprovalRejustify({ authrztn }) {
                               {" "}
                               {group.items.map((item, index) => (
                                 <div key={index}>
-                                  <label>{`${item.item.quantity}`}</label>
+                                  <label>{`${item.item.static_quantity}`}</label>
                                   <br />
                                 </div>
                               ))}
@@ -1337,7 +1339,10 @@ function POApprovalRejustify({ authrztn }) {
                               {" "}
                               {group.items.map((item, index) => (
                                 <div key={index}>
-                                  <label>{`${item.item.purchase_price}`}</label>
+                                  <label>{`${(
+                                    item.item.purchase_price *
+                                    (vat / 100 + 1)
+                                  ).toFixed(2)}`}</label>
                                   <br />
                                 </div>
                               ))}
@@ -1350,8 +1355,10 @@ function POApprovalRejustify({ authrztn }) {
                                 <div key={index}>
                                   <label>
                                     {(
-                                      item.item.purchase_price *
-                                      item.item.quantity
+                                      (
+                                        item.item.purchase_price *
+                                        (vat / 100 + 1)
+                                      ).toFixed(2) * item.item.static_quantity
                                     ).toLocaleString(undefined, {
                                       minimumFractionDigits: 2,
                                     })}
@@ -1488,15 +1495,15 @@ function POApprovalRejustify({ authrztn }) {
                             <div className="totalamount">
                               <div className="vatandAmounttotal">
                                 <div className="vatamounts">
-                                  <span>VAT ({`${vat}%`})</span>
+                                  <span>Total (w/o vat)</span>
                                   <span>
-                                    <strong>{`${vatAmount}`}</strong>
+                                    <strong>{`${TotalAmount}`}</strong>
                                   </span>
                                 </div>
                                 <div className="totalAmounts">
-                                  <span>Total Amount</span>
+                                  <span>VAT ({`${vat}%`})</span>
                                   <span>
-                                    <strong>{`${totalSum}`}</strong>
+                                    <strong>{`${vatAmount}`}</strong>
                                   </span>
                                 </div>
                               </div>
@@ -1504,7 +1511,7 @@ function POApprovalRejustify({ authrztn }) {
                               <div className="overallTotal">
                                 <span>
                                   Overall Total:{" "}
-                                  <strong>{`${currency} ${TotalAmount}`}</strong>
+                                  <strong>{`${currency} ${totalSum}`}</strong>
                                 </span>
                               </div>
                             </div>
