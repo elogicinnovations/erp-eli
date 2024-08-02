@@ -3557,13 +3557,14 @@ tr {
   width: 100pc;
 }
 
-table {
+/* default table */
+/* table {
   display: block;
   max-height: 400px;
   min-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
-}
+} */
 
 thead {
   position: sticky;
@@ -4490,6 +4491,151 @@ div#ordered-listing_length label {
   height: auto;
   display: flex;
   flex-direction: column;
+}
+
+.po-orders {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.po-header {
+  width: 100%;
+  display: flex;
+}
+
+.vendor-info {
+  border: 1px solid #000;
+  width: 20%;
+}
+
+.plain-info {
+  width: 60%;
+  border-bottom: 1px solid #000;
+  border-top: 1px solid #fff;
+}
+
+.plain-info .hideText {
+  color: white;
+}
+.order-info {
+  width: 20%;
+  border: 1px solid #000;
+}
+
+.highlight {
+  font-weight: bold;
+  color: red;
+  font-size: 12px;
+}
+
+.po-mid {
+  border-top: none;
+  width: 100%;
+}
+
+.po-thirdline {
+  border-top: none;
+  width: 100%;
+}
+
+.order-list {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+.order-header {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.order-header .firstgroup {
+  width: 20%;
+  display: flex;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.order-header .firstgroup div:nth-child(1) {
+  width: 33%;
+  padding: 5px;
+}
+
+.order-header .firstgroup div:nth-child(2) {
+  width: 33%;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  padding: 5px;
+}
+
+.order-header .firstgroup div:nth-child(3) {
+  width: 33%;
+  padding: 5px;
+}
+
+.order-header .secondgroup {
+  width: 60%;
+  display: flex;
+  border-bottom: 1px solid #000;
+}
+
+.order-header .secondgroup div:nth-child(1) {
+  width: 50%;
+  padding: 5px;
+}
+
+.order-header .secondgroup div:nth-child(2) {
+  width: 50%;
+  padding: 5px;
+}
+
+.order-header .thirdgroup {
+  width: 20%;
+  display: flex;
+  border-bottom: 1px solid #000;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.order-header .thirdgroup div:nth-child(1) {
+  width: 50%;
+  padding: 5px;
+}
+
+.order-header .thirdgroup div:nth-child(2) {
+  width: 50%;
+  padding: 5px;
+}
+
+/* para sa item ng po  */
+.order-header-item {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 20px;
+}
+
+.order-header-item .item-firstgroup {
+  width: 20%;
+  display: flex;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.order-header-item .item-firstgroup div:nth-child(1) {
+  width: 33%;
+}
+
+.order-header-item .item-firstgroup div:nth-child(2) {
+  width: 33%;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+}
+
+.order-header .item-firstgroup div:nth-child(3) {
+  width: 33%;
 }
 
 .receipt-header {

@@ -821,6 +821,27 @@ function POApprovalRejustify({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
+  const items = [
+    {
+      itemNo: "018528",
+      quantity: 1,
+      unit: "BOX/ES",
+      description: "dwas",
+      partNumber: "--",
+      unitPrice: 11.2,
+      total: 11.2,
+    },
+    {
+      itemNo: "018526",
+      quantity: 1,
+      unit: "BUCKET/s",
+      description: "dadwda",
+      partNumber: "--",
+      unitPrice: 44.8,
+      total: 44.8,
+    },
+    // Add more items here
+  ];
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -1208,354 +1229,142 @@ function POApprovalRejustify({ authrztn }) {
                           <div className="spacesbf"></div>
                         </div>
 
-                        <div className="po-number-container">
-                          <div className="shippedto">
-                            {/* <span>SHIPPED TO:</span> */}
-                          </div>
-                          <div className="blank"></div>
-                          <div className="po-content">
-                            <span>PURCHASE ORDER</span>
-                            <span>
-                              P.O-NO.{" "}
-                              <label style={{ fontSize: 14, color: "red" }}>
-                                {group.title}
-                              </label>
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="secondrowes">
-                          <div className="leftsecondrows">
-                            {/* <span>FOB</span>
-                            <span>VIA</span> */}
-                          </div>
-
-                          <div className="midsecondrows">
-                            <span>VENDOR</span>
-                            <span>
-                              {group.items[0].suppliers.supplier_name}
-                            </span>
-                          </div>
-
-                          <div className="rightsecondrows">
-                            <span>
-                              PR NO.
-                              <label style={{ fontSize: 14, color: "red" }}>
-                                {prNum}
-                              </label>
-                            </span>
-                            <span>
-                              DATE PREPARED:{" "}
-                              <strong>{`${date.toLocaleDateString(
-                                "en-PH"
-                              )}`}</strong>
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="thirdrowes">
-                          <div className="thirdleftrows">
-                            <span>ITEM NO.</span>
-                            <span>QUANTITY</span>
-                            <span>UNIT</span>
-                          </div>
-
-                          <div className="thirdmidrows ">
-                            <span>DESCRIPTION</span>
-                            <span className="">Part Number</span>
-                          </div>
-
-                          <div className="thirdrightrows">
-                            <span>{`UNIT PRICE`}</span>
-                            <span>TOTAL</span>
-                          </div>
-                        </div>
-
-                        <div className="fourthrowes">
-                          <div className="leftfourthrows">
-                            {/* for product code */}
-                            <span>
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label>{`${item.supp_tag.code}`}</label>
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-                            {/* for product quantity */}
-                            <span>
-                              {" "}
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label>{`${item.item.static_quantity}`}</label>
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-
-                            {/* for product unit of measurement */}
-                            <span>
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label>{`${item.supp_tag.uom}`}</label>
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-                          </div>
-
-                          <div className="midrowsfourth">
-                            {/* for product name */}
-                            <span>
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label
-                                    title={`Product Name: ${item.supp_tag.name}`}
-                                  >{`${item.supp_tag.name}`}</label>
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-
-                            <span>
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label>
-                                    {item.supp_tag.part_number === null
-                                      ? "--"
-                                      : item.supp_tag.part_number === ""
-                                      ? "--"
-                                      : item.supp_tag.part_number}
-                                  </label>
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-                          </div>
-
-                          <div className="rightfourthrows">
-                            {/* for unit price */}
-                            <span>
-                              {" "}
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label>{`${(
-                                    item.item.purchase_price *
-                                    (vat / 100 + 1)
-                                  ).toFixed(2)}`}</label>
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-
-                            {/* for unit price total */}
-                            <span>
-                              {" "}
-                              {group.items.map((item, index) => (
-                                <div key={index}>
-                                  <label>
-                                    {(
-                                      (
-                                        item.item.purchase_price *
-                                        (vat / 100 + 1)
-                                      ).toFixed(2) * item.item.static_quantity
-                                    ).toLocaleString(undefined, {
-                                      minimumFractionDigits: 2,
-                                    })}
-                                  </label>
-
-                                  <br />
-                                </div>
-                              ))}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="fifthrowes">
-                          <div className="fifthleftrows">
-                            <div className="received-section">
-                              <span>P.O RECEIVED BY: </span>
-                            </div>
-                            <div className="deliverydate">
-                              <span>DELIVERY DATE: </span>
-                              <span></span>
-                            </div>
-                            <div className="terms">
-                              <span>TERMS: </span>
-                              <span>{`${group.items[0].suppliers.supplier_terms}`}</span>
-                            </div>
-                            <div className="preparedby">
-                              <span>PREPARED BY: </span>
-                              <span>
-                                {
-                                  POdepartmentUser?.purchase_req?.masterlist
-                                    ?.col_Fname
-                                }
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="fifthmidrows">
-                            <div className="conditionsection">
-                              <div className="tobeUsed">
-                                <span style={{ color: "red" }}>
-                                  To be used for:
-                                </span>{" "}
-                                {editPOUsedFor === true ? (
-                                  <React.Fragment>
-                                    <Form.Control
-                                      value={POUsedFor}
-                                      onChange={(e) =>
-                                        setPOUsedFor(e.target.value)
-                                      }
-                                    />
-                                  </React.Fragment>
-                                ) : (
-                                  <React.Fragment>
-                                    <strong style={{ fontSize: "12px" }}>{`${
-                                      group.items[0].item.usedFor === null
-                                        ? "--"
-                                        : group.items[0].item.usedFor
-                                    }`}</strong>
-                                  </React.Fragment>
-                                )}
-                                {editPOUsedFor === true ? (
-                                  <Button
-                                    onClick={() => handleSaveEditUsedFOrPO()}
-                                    variant={"success"}
-                                  >
-                                    <Check size={10} />
-                                  </Button>
-                                ) : (
-                                  status === null &&
-                                  (userId === 11 || userId === 3) && (
-                                    <Button
-                                      onClick={() => {
-                                        setPOUsedFor(
-                                          group.items[0].item.usedFor
-                                        );
-                                        setPOEditUsedFor(true);
-                                      }}
-                                      variant={"success"}
-                                    >
-                                      <PencilSimple size={10} />
-                                    </Button>
-                                  )
-                                )}
+                        <div className="po-orders">
+                          <div className="po-header">
+                            <div className="vendor-info"></div>
+                            <div className="plain-info">
+                              <div className="text-center p-2 fw-bold fs-4 border-bottom border-white">
+                                <span className="hideText">.</span>
                               </div>
-                              <span>TERMS AND CONDITIONS: {status}</span>
-                              <span>
-                                1. Acceptance of this order is an acceptance of
-                                all conditions herein.
-                              </span>
-                              <span>
-                                2. Make all deliveries to receiving, However
-                                subject to count, weight and specification
-                                approval of SBF Philippines Drilling Resources
-                                Corporation.
-                              </span>
-                              <span>
-                                3. The original purchase order copy and
-                                suppliers original invoice must accompany
-                                delivery.
-                              </span>
-                              <span>
-                                4. In case the supplier fails to deliver goods
-                                on delivery date specified herein, SBF
-                                Philippines Drilling Resources Corporation has
-                                the right to cancel this order or demand penalty
-                                charged as stated.
-                              </span>
-                              <span>
-                                5. Problems encountered related to your supply
-                                should immediately brought to the attention of
-                                the purchasing manager.
-                              </span>
-                            </div>
-                            <div className="checkedsection">
-                              <div className="notedby">
-                                <span>Checked by: </span>
-                                <span>
-                                  <img
-                                    src={sigAllan}
-                                    alt="ESignature"
-                                    className="signature-image"
-                                  />
-                                </span>
-                                <span>ALLAN JUEN</span>
-                              </div>
-                              <div className="recommending">
-                                {/* <span>RECOMMENDING APPROVAL</span> */}
-                                <span></span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="fifthrightrows">
-                            <div className="totalamount">
-                              <div className="vatandAmounttotal">
-                                <div className="vatamounts">
-                                  <span>Total (w/o vat)</span>
-                                  <span>
-                                    <strong>{`${TotalAmount}`}</strong>
-                                  </span>
-                                </div>
-                                <div className="totalAmounts">
-                                  <span>VAT ({`${vat}%`})</span>
-                                  <span>
-                                    <strong>{`${vatAmount}`}</strong>
+                              <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal hideText">
+                                    .
                                   </span>
                                 </div>
                               </div>
-
-                              <div className="overallTotal">
-                                <span>
-                                  Overall Total:{" "}
-                                  <strong>{`${currency} ${totalSum}`}</strong>
-                                </span>
+                              <div className="p-1 fs-6 text-center border-bottom border-dark">
+                                <span className="fs-5 fw-normal">P.O. NO</span>
+                              </div>
+                              <div className="p-1 fs-6 text-center">
+                                <span className="fs-5 fw-normal">P.O. NO</span>
                               </div>
                             </div>
 
-                            <div className="codesection">
-                              <span>Date Approved:</span>
-                              <span>
-                                {dateApproved.toLocaleDateString("en-PH")}
-                              </span>
-                            </div>
-                            <div className="approvedsby">
-                              <span>Approved By: </span>
-
-                              {current_status === "To-Receive" ||
-                              current_status === "Received" ? (
-                                <span>
-                                  <span>
-                                    <img
-                                      src={sigDan}
-                                      alt="ESignature"
-                                      className="signature-image"
-                                    />
+                            <div className="order-info">
+                              <div className="text-center p-2 fw-bold fs-4 border-bottom border-dark">
+                                PURCHASE ORDER
+                              </div>
+                              <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal">
+                                    P.O. NO
                                   </span>
-                                </span>
-                              ) : (
-                                <>
-                                  {showSignature && (
-                                    <span>
-                                      <img
-                                        src={sigDan}
-                                        style={{
-                                          maxHeight: "75px",
-                                          maxWidth: "75px",
-                                        }}
-                                        alt="ESignature"
-                                        className="signature-image img-fluid"
-                                      />
-                                    </span>
-                                  )}
-                                </>
-                              )}
-
-                              <span>Daniel Byron S. Afdal</span>
+                                </div>
+                                <div className="w-50">
+                                  <span className="highlight">00000037</span>
+                                </div>
+                              </div>
+                              <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal">
+                                    P.O. NO
+                                  </span>
+                                </div>
+                                <div className="w-50">
+                                  <span className="highlight">00000037</span>
+                                </div>
+                              </div>
+                              <div className="p-1 fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal">
+                                    P.O. NO
+                                  </span>
+                                </div>
+                                <div className="w-50">
+                                  <span className="highlight">00000037</span>
+                                </div>
+                              </div>
                             </div>
+                          </div>
+
+                          <div className="po-mid">
+                            <ul className="order-list">
+                              <li className="order-header">
+                                <div className="firstgroup">
+                                  <div className="text-center fw-bold">
+                                    <span className="fs-6">ITEM NO.</span>
+                                  </div>
+                                  <div className="text-center fw-bold">
+                                    <span className="fs-6">QUANTITY</span>
+                                  </div>
+                                  <div className="text-center fw-bold">
+                                    <span className="fs-6">UNIT</span>
+                                  </div>
+                                </div>
+                                <div className="secondgroup">
+                                  <div className="fw-bold">
+                                    <span className="fs-6">DESCRIPTION</span>
+                                  </div>
+                                  <div className="fw-bold">
+                                    <span className="fs-6">Part Number</span>
+                                  </div>
+                                </div>
+                                <div className="thirdgroup">
+                                  <div className="text-center fw-bold">
+                                    <span className="fs-6">UNIT PRICE</span>
+                                  </div>
+                                  <div className="text-center fw-bold">
+                                    <span className="fs-6">TOTAL</span>
+                                  </div>
+                                </div>
+                              </li>
+                              <div className="po-thirdline p-0">
+                                {items.map((item, index) => (
+                                  <li key={index} className="order-header-item">
+                                    <div className="item-firstgroup">
+                                      <div className="text-center">
+                                        <span className="fs-6">ITEM NO.</span>
+                                      </div>
+                                      <div className="text-center">
+                                        <span className="fs-6">ITEM NO.</span>
+                                      </div>
+                                      <div className="text-center">
+                                        <span className="fs-6">ITEM NO.</span>
+                                      </div>
+                                    </div>
+
+                                    <div className="item-secondgroup">
+                                      <div className="fw-bold">
+                                        <span className="fs-6">
+                                          DESCRIPTION
+                                        </span>
+                                      </div>
+                                      <div className="fw-bold">
+                                        <span className="fs-6">
+                                          Part Number
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="item-thirdgroup">
+                                      <div className="text-center fw-bold">
+                                        <span className="fs-6">UNIT PRICE</span>
+                                      </div>
+                                      <div className="text-center fw-bold">
+                                        <span className="fs-6">TOTAL</span>
+                                      </div>
+                                    </div>
+                                    {/* <span>{item.itemNo}</span>
+                                    <span>{item.quantity}</span>
+                                    <span>{item.unit}</span>
+                                    <span>{item.description}</span>
+                                    <span>{item.partNumber}</span>
+                                    <span>{item.unitPrice.toFixed(2)}</span>
+                                    <span>{item.total.toFixed(2)}</span> */}
+                                  </li>
+                                ))}
+                              </div>
+                            </ul>
                           </div>
                         </div>
                       </div>
