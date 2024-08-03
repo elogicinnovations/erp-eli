@@ -1262,7 +1262,7 @@ function POApprovalRejustify({ authrztn }) {
                                   </span>
                                 </div>
                                 <div className="w-50">
-                                  <span className="highlight">00000037</span>
+                                  <span className="highlights">00000037</span>
                                 </div>
                               </div>
                               <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
@@ -1272,7 +1272,7 @@ function POApprovalRejustify({ authrztn }) {
                                   </span>
                                 </div>
                                 <div className="w-50">
-                                  <span className="highlight">00000037</span>
+                                  <span className="highlights">00000037</span>
                                 </div>
                               </div>
                               <div className="p-1 fs-6 d-flex flex-row">
@@ -1282,13 +1282,13 @@ function POApprovalRejustify({ authrztn }) {
                                   </span>
                                 </div>
                                 <div className="w-50">
-                                  <span className="highlight">00000037</span>
+                                  <span className="highlights">00000037</span>
                                 </div>
                               </div>
                             </div>
                           </div>
 
-                          <div className="po-mid">
+                          
                             <ul className="order-list">
                               <li className="order-header">
                                 <div className="firstgroup">
@@ -1296,7 +1296,7 @@ function POApprovalRejustify({ authrztn }) {
                                     <span className="fs-6">ITEM NO.</span>
                                   </div>
                                   <div className="text-center fw-bold">
-                                    <span className="fs-6">QUANTITY</span>
+                                    <span className="fs-6">QTY</span>
                                   </div>
                                   <div className="text-center fw-bold">
                                     <span className="fs-6">UNIT</span>
@@ -1320,29 +1320,52 @@ function POApprovalRejustify({ authrztn }) {
                                 </div>
                               </li>
                               <div className="po-thirdline p-0">
-                                {items.map((item, index) => (
-                                  <li key={index} className="order-header-item">
+                                  <li className="order-header-item">
                                     <div className="item-firstgroup">
                                       <div className="text-center">
-                                        <span className="fs-6">ITEM NO.</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
                                       </div>
                                       <div className="text-center">
-                                        <span className="fs-6">ITEM NO.</span>
+                                        <span className="fs-6">Data 2</span>
                                       </div>
                                       <div className="text-center">
-                                        <span className="fs-6">ITEM NO.</span>
+                                        <span className="fs-6">Data 3</span>
                                       </div>
                                     </div>
 
                                     <div className="item-secondgroup">
                                       <div className="fw-bold">
                                         <span className="fs-6">
-                                          DESCRIPTION
+                                          product name
                                         </span>
                                       </div>
                                       <div className="fw-bold">
                                         <span className="fs-6">
-                                          Part Number
+                                          000001
                                         </span>
                                       </div>
                                     </div>
@@ -1354,18 +1377,101 @@ function POApprovalRejustify({ authrztn }) {
                                         <span className="fs-6">TOTAL</span>
                                       </div>
                                     </div>
-                                    {/* <span>{item.itemNo}</span>
-                                    <span>{item.quantity}</span>
-                                    <span>{item.unit}</span>
-                                    <span>{item.description}</span>
-                                    <span>{item.partNumber}</span>
-                                    <span>{item.unitPrice.toFixed(2)}</span>
-                                    <span>{item.total.toFixed(2)}</span> */}
                                   </li>
-                                ))}
+                                
                               </div>
-                            </ul>
+                            <div className="po-calculation">
+                            <div className="po-received-by">
+                            <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                <span className="fs-4 fw-bold">Received By:</span>
+                                <span className="fs-4 fw-normal">Chester Clenn Abrantes Minoza</span>
+                              </div>
+                              <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                <span className="fs-4 fw-bold">Delivery Date:</span>
+                                <span className="fs-4 fw-normal">January 25, 2025</span>
+                              </div>
+                              <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-bold">Terms:</span>
+                                <span className="fs-4 fw-normal">No Video, No Refund Policy</span>
+                              </div>
+                            </div>
+                            <div className="po-terms-condition">
+                            <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-bold">Used For: </span>
+                                <span className="fs-4 fw-normal">Maintaining the machine</span>
+                              </div>
+                              <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-bold">Terms and Condition:</span>
+                                <span  className="fs-5 fw-normal">
+                                1. Acceptance of this order is an acceptance of
+                                all conditions herein.
+                              </span>
+                              <span  className="fs-5 fw-normal">
+                                2. Make all deliveries to receiving, However
+                                subject to count, weight and specification
+                                approval of SBF Philippines Drilling Resources
+                                Corporation.
+                              </span>
+                              <span  className="fs-5 fw-normal">
+                                3. The original purchase order copy and
+                                suppliers original invoice must accompany
+                                delivery.
+                              </span>
+                              <span  className="fs-5 fw-normal">
+                                4. In case the supplier fails to deliver goods
+                                on delivery date specified herein, SBF
+                                Philippines Drilling Resources Corporation has
+                                the right to cancel this order or demand penalty
+                                charged as stated.
+                              </span>
+                              <span  className="fs-5 fw-normal">
+                                5. Problems encountered related to your supply
+                                should immediately brought to the attention of
+                                the purchasing manager.
+                              </span>
+                              </div>
+                            </div>
+
+                            <div className="po-overall-total">
+                              <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                <span className="fs-4 fw-normal">Total (w/o VAT):</span>
+                                <span className="fs-4 fw-bold">10,000,000.00</span>
+                              </div>
+                              <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                <span className="fs-4 fw-normal">VAT(12%)</span>
+                                <span className="fs-4 fw-bold">5,000,000.00</span>
+                              </div>
+                              <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-normal">Overall Total:</span>
+                                <span className="fs-4 fw-bold">8,000,000.00</span>
+                              </div>
+                            </div>
                           </div>
+
+                          <div className="po-footer">
+                            <div className="po-prepared-by">
+                            <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-bold">Prepared By:</span>
+                                <span className="fs-4 fw-normal">Joseph Gerald Rago Jumaday</span>
+                              </div>
+                            </div>
+                            <div className="po-checked-by">
+                             <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-normal">Checked By: </span>
+                                <span className="fs-4 fw-bold">Gerard Luis Martin</span>
+                              </div>
+                            </div>
+
+                            <div className="po-approved-by">
+                              <div className="p-3 d-flex flex-column">
+                                <span className="fs-4 fw-normal">Approved By: </span>
+                                <span className="fs-4 fw-bold">Dao ming zhu</span>
+                              </div>
+                            </div>
+                          </div>
+                       </ul>
+                          
+
                         </div>
                       </div>
                     </div>
