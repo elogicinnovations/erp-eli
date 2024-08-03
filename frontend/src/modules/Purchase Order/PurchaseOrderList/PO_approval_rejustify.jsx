@@ -1348,33 +1348,296 @@ function POApprovalRejustify({ authrztn }) {
                                         <span className="fs-6">Data 1</span>
                                         <span className="fs-6">Data 1</span>
                                         <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
+                                        <span className="fs-6">Data 1</span>
                                       </div>
                                       <div className="text-center">
                                         <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        <span className="fs-6">Data 2</span>
+                                        
                                       </div>
                                       <div className="text-center">
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
+                                        <span className="fs-6">Data 3</span>
                                         <span className="fs-6">Data 3</span>
                                       </div>
                                     </div>
 
                                     <div className="item-secondgroup">
-                                      <div className="fw-bold">
+                                      <div className="fw-bold d-flex flex-column">
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
+                                        <span className="fs-6">
+                                          product name
+                                        </span>
                                         <span className="fs-6">
                                           product name
                                         </span>
                                       </div>
-                                      <div className="fw-bold">
+                                      <div className="fw-bold d-flex flex-column">
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
+                                        <span className="fs-6">
+                                          000001
+                                        </span>
                                         <span className="fs-6">
                                           000001
                                         </span>
                                       </div>
                                     </div>
                                     <div className="item-thirdgroup">
-                                      <div className="text-center fw-bold">
-                                        <span className="fs-6">UNIT PRICE</span>
+                                      <div className="text-center fw-bold d-flex flex-column">
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
+                                        <span className="fs-6">10,000.00</span>
                                       </div>
-                                      <div className="text-center fw-bold">
-                                        <span className="fs-6">TOTAL</span>
+                                      <div className="text-center fw-bold d-flex flex-column">
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
+                                        <span className="fs-6">50,000.00</span>
                                       </div>
                                     </div>
                                   </li>
