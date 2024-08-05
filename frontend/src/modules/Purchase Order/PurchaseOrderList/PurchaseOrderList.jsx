@@ -218,6 +218,10 @@ function PurchaseOrderList({ authrztn }) {
         ) ||
         (data?.remarks?.toLowerCase() || "").includes(searchTerm) ||
         (
+          data?.product_tag_supplier?.supplier?.supplier_name.toLowerCase() ||
+          ""
+        ).includes(searchTerm) ||
+        (
           data?.purchase_req?.masterlist?.col_Fname?.toLowerCase() || ""
         ).includes(searchTerm) ||
         (
