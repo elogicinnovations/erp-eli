@@ -56,6 +56,10 @@ function PurchaseOrderListPreview() {
     decodeToken();
   }, []);
 
+  const onInputFloat = (e) => {
+    e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+  };
+
   //para sa assembly data na e canvass
 
   // for PRoduct canvassing
@@ -1451,7 +1455,7 @@ function PurchaseOrderListPreview() {
                                   onInput={(e) => {
                                     e.preventDefault();
                                     const validInput = e.target.value.replace(
-                                      /[^0-9]/g,
+                                      /[^0-9.]/g,
                                       ""
                                     ); // Replace non-numeric characters
                                     e.target.value = validInput;

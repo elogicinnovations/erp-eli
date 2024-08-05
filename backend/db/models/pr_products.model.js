@@ -1,23 +1,23 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes } = require("sequelize");
 
-const PR_product = sequelize.define('purchase_req_product', {
+const PR_product = sequelize.define("purchase_req_product", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_id:{
+  pr_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  product_id:{
+  product_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
   quantity: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DOUBLE,
     allowNull: false,
   },
   description: {
@@ -27,7 +27,7 @@ const PR_product = sequelize.define('purchase_req_product', {
   isPO: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
-  }
+  },
 });
 
 module.exports = PR_product;

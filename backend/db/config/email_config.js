@@ -3,5 +3,5 @@ module.exports = {
   password: "fwzunybngamowhuw",
 
   // email: "sbfmailer@gmail.com",
-  // password: "uoetasnknsroxwnq",
+  //   password: "uoetasnknsroxwnq",
 };

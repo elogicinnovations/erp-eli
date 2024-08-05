@@ -17,7 +17,7 @@ const PR_PO = sequelize.define("purchase_req_canvassed_prd", {
     allowNull: false,
   },
   quantity: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   product_tag_supplier_ID: {
@@ -41,7 +41,7 @@ const PR_PO = sequelize.define("purchase_req_canvassed_prd", {
     allowNull: true,
   },
   static_quantity: {
-    type: DataTypes.STRING,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   status: {

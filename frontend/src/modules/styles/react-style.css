@@ -4582,12 +4582,12 @@ div#ordered-listing_length label {
 }
 
 .order-header .secondgroup div:nth-child(1) {
-  width: 50%;
+  width: 75%;
   padding: 5px;
 }
 
 .order-header .secondgroup div:nth-child(2) {
-  width: 50%;
+  width: 25%;
   padding: 5px;
 }
 
@@ -4614,6 +4614,7 @@ div#ordered-listing_length label {
   display: flex;
   flex-direction: row;
   width: 100%;
+  /* min-height: 200px; */
   height: auto;
 }
 
@@ -4655,12 +4656,15 @@ div#ordered-listing_length label {
 }
 
 .order-header-item .item-secondgroup div:nth-child(1) {
-  width: 50%;
+  width: 75%;
   padding: 5px;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .order-header-item .item-secondgroup div:nth-child(2) {
-  width: 50%;
+  width: 25%;
   padding: 5px;
 }
 
@@ -4702,7 +4706,7 @@ div#ordered-listing_length label {
   border-bottom: 1px solid #000;
 }
 
-.po-overall-total{
+.po-overall-total {
   width: 20%;
   border-right: 1px solid #000;
   border-bottom: 1px solid #000;
@@ -4728,15 +4732,13 @@ div#ordered-listing_length label {
   border-bottom: 1px solid #000;
 }
 
-.po-approved-by{
+.po-approved-by {
   width: 20%;
   border-right: 1px solid #000;
   border-bottom: 1px solid #000;
   border-left: 1px solid #000;
 }
 /* para sa footer ng p.o form  */
-
-
 
 .receipt-header {
   display: flex;

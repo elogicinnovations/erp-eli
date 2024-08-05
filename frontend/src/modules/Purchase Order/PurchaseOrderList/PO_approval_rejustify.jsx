@@ -821,27 +821,6 @@ function POApprovalRejustify({ authrztn }) {
     return new Date(datetime).toLocaleString("en-US", options);
   }
 
-  const items = [
-    {
-      itemNo: "018528",
-      quantity: 1,
-      unit: "BOX/ES",
-      description: "dwas",
-      partNumber: "--",
-      unitPrice: 11.2,
-      total: 11.2,
-    },
-    {
-      itemNo: "018526",
-      quantity: 1,
-      unit: "BUCKET/s",
-      description: "dadwda",
-      partNumber: "--",
-      unitPrice: 44.8,
-      total: 44.8,
-    },
-    // Add more items here
-  ];
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -1244,10 +1223,12 @@ function POApprovalRejustify({ authrztn }) {
                                 </div>
                               </div>
                               <div className="p-1 fs-6 text-center border-bottom border-dark">
-                                <span className="fs-5 fw-normal">P.O. NO</span>
+                                <span className="fs-5 fw-normal">Vendor</span>
                               </div>
                               <div className="p-1 fs-6 text-center">
-                                <span className="fs-5 fw-normal">P.O. NO</span>
+                                <span className="fs-5 fw-normal">
+                                  {group.items[0].suppliers.supplier_name}
+                                </span>
                               </div>
                             </div>
 
@@ -1257,484 +1238,364 @@ function POApprovalRejustify({ authrztn }) {
                               </div>
                               <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
                                 <div className="text-center w-50">
-                                  <span className="fs-5 fw-normal">
-                                    P.O. NO
-                                  </span>
+                                  <span className="fs-5 fw-normal">P.O NO</span>
                                 </div>
                                 <div className="w-50">
-                                  <span className="highlights">00000037</span>
+                                  <span className="highlights">
+                                    {group.title}
+                                  </span>
                                 </div>
                               </div>
                               <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
                                 <div className="text-center w-50">
                                   <span className="fs-5 fw-normal">
-                                    P.O. NO
+                                    P.R. NO
                                   </span>
                                 </div>
                                 <div className="w-50">
-                                  <span className="highlights">00000037</span>
+                                  <span className="highlights">{prNum}</span>
                                 </div>
                               </div>
                               <div className="p-1 fs-6 d-flex flex-row">
                                 <div className="text-center w-50">
                                   <span className="fs-5 fw-normal">
-                                    P.O. NO
+                                    DATE PREPARED:
                                   </span>
                                 </div>
                                 <div className="w-50">
-                                  <span className="highlights">00000037</span>
+                                  <span className="highlights">
+                                    {formatDatetime(
+                                      group.items[0].item.createdAt
+                                    )}
+                                  </span>
                                 </div>
                               </div>
                             </div>
                           </div>
 
-                          
-                            <ul className="order-list">
-                              <li className="order-header">
-                                <div className="firstgroup">
-                                  <div className="text-center fw-bold">
-                                    <span className="fs-6">ITEM NO.</span>
+                          <ul className="order-list">
+                            <li className="order-header">
+                              <div className="firstgroup">
+                                <div className="text-center fw-bold">
+                                  <span className="fs-6">ITEM NO.</span>
+                                </div>
+                                <div className="text-center fw-bold">
+                                  <span className="fs-6">QTY</span>
+                                </div>
+                                <div className="text-center fw-bold">
+                                  <span className="fs-6">UNIT</span>
+                                </div>
+                              </div>
+                              <div className="secondgroup">
+                                <div className="fw-bold">
+                                  <span className="fs-6">DESCRIPTION</span>
+                                </div>
+                                <div className="fw-bold">
+                                  <span className="fs-6">Part Number</span>
+                                </div>
+                              </div>
+                              <div className="thirdgroup">
+                                <div className="text-center fw-bold">
+                                  <span className="fs-6">UNIT PRICE</span>
+                                </div>
+                                <div className="text-center fw-bold">
+                                  <span className="fs-6">TOTAL</span>
+                                </div>
+                              </div>
+                            </li>
+                            <div className="po-thirdline p-0">
+                              <li className="order-header-item">
+                                <div className="item-firstgroup">
+                                  <div className="text-center">
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">{`${item.supp_tag.code}`}</span>
+                                    ))}
                                   </div>
-                                  <div className="text-center fw-bold">
-                                    <span className="fs-6">QTY</span>
+
+                                  {/* for product quantity */}
+                                  <div className="text-center">
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">{`${item.item.static_quantity}`}</span>
+                                    ))}
                                   </div>
-                                  <div className="text-center fw-bold">
-                                    <span className="fs-6">UNIT</span>
+                                  {/* for product unit of measurement */}
+                                  <div className="text-center">
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">{`${item.supp_tag.uom}`}</span>
+                                    ))}
                                   </div>
                                 </div>
-                                <div className="secondgroup">
-                                  <div className="fw-bold">
-                                    <span className="fs-6">DESCRIPTION</span>
+
+                                <div className="item-secondgroup">
+                                  {/* for product name */}
+                                  <div className="fw-bold d-flex flex-column">
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">{`${item.supp_tag.name}`}</span>
+                                    ))}
                                   </div>
-                                  <div className="fw-bold">
-                                    <span className="fs-6">Part Number</span>
+
+                                  <div className="fw-bold d-flex flex-column">
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">
+                                        {item.supp_tag.part_number === null
+                                          ? "--"
+                                          : item.supp_tag.part_number === ""
+                                          ? "--"
+                                          : item.supp_tag.part_number}
+                                      </span>
+                                    ))}
                                   </div>
                                 </div>
-                                <div className="thirdgroup">
-                                  <div className="text-center fw-bold">
-                                    <span className="fs-6">UNIT PRICE</span>
+
+                                <div className="item-thirdgroup">
+                                  <div className="text-center fw-bold d-flex flex-column">
+                                    {/* for unit price */}
+
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">{`${(
+                                        item.item.purchase_price *
+                                        (vat / 100 + 1)
+                                      ).toFixed(2)}`}</span>
+                                    ))}
                                   </div>
-                                  <div className="text-center fw-bold">
-                                    <span className="fs-6">TOTAL</span>
+                                  <div className="text-center fw-bold d-flex flex-column">
+                                    {group.items.map((item, index) => (
+                                      <span className="fs-6">
+                                        {(
+                                          (
+                                            item.item.purchase_price *
+                                            (vat / 100 + 1)
+                                          ).toFixed(2) *
+                                          item.item.static_quantity
+                                        ).toLocaleString(undefined, {
+                                          minimumFractionDigits: 2,
+                                        })}
+                                      </span>
+                                    ))}
                                   </div>
                                 </div>
                               </li>
-                              <div className="po-thirdline p-0">
-                                  <li className="order-header-item">
-                                    <div className="item-firstgroup">
-                                      <div className="text-center">
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                        <span className="fs-6">Data 1</span>
-                                      </div>
-                                      <div className="text-center">
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        <span className="fs-6">Data 2</span>
-                                        
-                                      </div>
-                                      <div className="text-center">
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                        <span className="fs-6">Data 3</span>
-                                      </div>
-                                    </div>
-
-                                    <div className="item-secondgroup">
-                                      <div className="fw-bold d-flex flex-column">
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                        <span className="fs-6">
-                                          product name
-                                        </span>
-                                      </div>
-                                      <div className="fw-bold d-flex flex-column">
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                        <span className="fs-6">
-                                          000001
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className="item-thirdgroup">
-                                      <div className="text-center fw-bold d-flex flex-column">
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                        <span className="fs-6">10,000.00</span>
-                                      </div>
-                                      <div className="text-center fw-bold d-flex flex-column">
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                        <span className="fs-6">50,000.00</span>
-                                      </div>
-                                    </div>
-                                  </li>
-                                
-                              </div>
+                            </div>
                             <div className="po-calculation">
-                            <div className="po-received-by">
-                            <div className="p-3 d-flex flex-column border-bottom border-dark">
-                                <span className="fs-4 fw-bold">Received By:</span>
-                                <span className="fs-4 fw-normal">Chester Clenn Abrantes Minoza</span>
+                              <div className="po-received-by">
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-bold">
+                                    P.O Received By:
+                                  </span>
+                                  <span className="fs-4 fw-normal"></span>
+                                </div>
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-bold">
+                                    Delivery Date:
+                                  </span>
+                                  <span className="fs-4 fw-normal"></span>
+                                </div>
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">Terms:</span>
+                                  <span className="fs-4 fw-normal">
+                                    {`${group.items[0].suppliers.supplier_terms}`}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="p-3 d-flex flex-column border-bottom border-dark">
-                                <span className="fs-4 fw-bold">Delivery Date:</span>
-                                <span className="fs-4 fw-normal">January 25, 2025</span>
+                              <div className="po-terms-condition">
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">
+                                    Used For:{" "}
+                                  </span>
+
+                                  {editPOUsedFor === true ? (
+                                    <React.Fragment>
+                                      <Form.Control
+                                        value={POUsedFor}
+                                        onChange={(e) =>
+                                          setPOUsedFor(e.target.value)
+                                        }
+                                      />
+                                    </React.Fragment>
+                                  ) : (
+                                    <React.Fragment>
+                                      <span className="fs-4 fw-normal">
+                                        {`${
+                                          group.items[0].item.usedFor === null
+                                            ? "--"
+                                            : group.items[0].item.usedFor
+                                        }`}
+                                      </span>
+                                    </React.Fragment>
+                                  )}
+                                  {editPOUsedFor === true ? (
+                                    <Button
+                                      onClick={() => handleSaveEditUsedFOrPO()}
+                                      variant={"success"}
+                                    >
+                                      <Check size={10} />
+                                    </Button>
+                                  ) : (
+                                    status === null &&
+                                    (userId === 11 || userId === 3) && (
+                                      <Button
+                                        onClick={() => {
+                                          setPOUsedFor(
+                                            group.items[0].item.usedFor
+                                          );
+                                          setPOEditUsedFor(true);
+                                        }}
+                                        variant={"success"}
+                                      >
+                                        <PencilSimple size={10} />
+                                      </Button>
+                                    )
+                                  )}
+                                </div>
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">
+                                    Terms and Condition:
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    1. Acceptance of this order is an acceptance
+                                    of all conditions herein.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    2. Make all deliveries to receiving, However
+                                    subject to count, weight and specification
+                                    approval of SBF Philippines Drilling
+                                    Resources Corporation.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    3. The original purchase order copy and
+                                    suppliers original invoice must accompany
+                                    delivery.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    4. In case the supplier fails to deliver
+                                    goods on delivery date specified herein, SBF
+                                    Philippines Drilling Resources Corporation
+                                    has the right to cancel this order or demand
+                                    penalty charged as stated.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    5. Problems encountered related to your
+                                    supply should immediately brought to the
+                                    attention of the purchasing manager.
+                                  </span>
+                                </div>
                               </div>
-                              <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-bold">Terms:</span>
-                                <span className="fs-4 fw-normal">No Video, No Refund Policy</span>
-                              </div>
-                            </div>
-                            <div className="po-terms-condition">
-                            <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-bold">Used For: </span>
-                                <span className="fs-4 fw-normal">Maintaining the machine</span>
-                              </div>
-                              <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-bold">Terms and Condition:</span>
-                                <span  className="fs-5 fw-normal">
-                                1. Acceptance of this order is an acceptance of
-                                all conditions herein.
-                              </span>
-                              <span  className="fs-5 fw-normal">
-                                2. Make all deliveries to receiving, However
-                                subject to count, weight and specification
-                                approval of SBF Philippines Drilling Resources
-                                Corporation.
-                              </span>
-                              <span  className="fs-5 fw-normal">
-                                3. The original purchase order copy and
-                                suppliers original invoice must accompany
-                                delivery.
-                              </span>
-                              <span  className="fs-5 fw-normal">
-                                4. In case the supplier fails to deliver goods
-                                on delivery date specified herein, SBF
-                                Philippines Drilling Resources Corporation has
-                                the right to cancel this order or demand penalty
-                                charged as stated.
-                              </span>
-                              <span  className="fs-5 fw-normal">
-                                5. Problems encountered related to your supply
-                                should immediately brought to the attention of
-                                the purchasing manager.
-                              </span>
+
+                              <div className="po-overall-total">
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-normal">
+                                    Total (w/o VAT):
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {TotalAmount}
+                                  </span>
+                                </div>
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-normal">
+                                    VAT({`${vat}%`})
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {vatAmount}
+                                  </span>
+                                </div>
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-normal">
+                                    Overall Total:
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {`${currency} ${totalSum}`}
+                                  </span>
+                                </div>
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-normal">
+                                    Date Approved:
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {dateApproved.toLocaleDateString("en-PH")}
+                                  </span>
+                                </div>
                               </div>
                             </div>
 
-                            <div className="po-overall-total">
-                              <div className="p-3 d-flex flex-column border-bottom border-dark">
-                                <span className="fs-4 fw-normal">Total (w/o VAT):</span>
-                                <span className="fs-4 fw-bold">10,000,000.00</span>
+                            <div className="po-footer">
+                              <div className="po-prepared-by">
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">
+                                    Prepared By:
+                                  </span>
+                                  <span className="fs-4 fw-normal">
+                                    {
+                                      POdepartmentUser?.purchase_req?.masterlist
+                                        ?.col_Fname
+                                    }
+                                  </span>
+                                </div>
                               </div>
-                              <div className="p-3 d-flex flex-column border-bottom border-dark">
-                                <span className="fs-4 fw-normal">VAT(12%)</span>
-                                <span className="fs-4 fw-bold">5,000,000.00</span>
-                              </div>
-                              <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-normal">Overall Total:</span>
-                                <span className="fs-4 fw-bold">8,000,000.00</span>
-                              </div>
-                            </div>
-                          </div>
+                              <div className="po-checked-by">
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-normal">
+                                    Checked By:{" "}
+                                  </span>
+                                  <span className="fs-4">
+                                    <img
+                                      src={sigAllan}
+                                      alt="ESignature"
+                                      style={{
+                                        maxHeight: "100px",
+                                        maxWidth: "100px",
+                                      }}
+                                      className="signature-image"
+                                    />
+                                  </span>
 
-                          <div className="po-footer">
-                            <div className="po-prepared-by">
-                            <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-bold">Prepared By:</span>
-                                <span className="fs-4 fw-normal">Joseph Gerald Rago Jumaday</span>
+                                  <span className="fs-4 fw-bold">
+                                    ALLAN JUEN
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                            <div className="po-checked-by">
-                             <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-normal">Checked By: </span>
-                                <span className="fs-4 fw-bold">Gerard Luis Martin</span>
-                              </div>
-                            </div>
 
-                            <div className="po-approved-by">
-                              <div className="p-3 d-flex flex-column">
-                                <span className="fs-4 fw-normal">Approved By: </span>
-                                <span className="fs-4 fw-bold">Dao ming zhu</span>
+                              <div className="po-approved-by">
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-normal">
+                                    Approved By:{" "}
+                                  </span>
+
+                                  {current_status === "To-Receive" ||
+                                  current_status === "Received" ? (
+                                    <span>
+                                      <span className="fs-4 fw-bold">
+                                        <img
+                                          src={sigDan}
+                                          alt="ESignature"
+                                          className="signature-image"
+                                        />
+                                      </span>
+                                    </span>
+                                  ) : (
+                                    <>
+                                      {showSignature && (
+                                        <span className="fs-4 fw-bold">
+                                          <img
+                                            src={sigDan}
+                                            style={{
+                                              maxHeight: "100px",
+                                              maxWidth: "100px",
+                                            }}
+                                            alt="ESignature"
+                                            className="signature-image img-fluid"
+                                          />
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
+
+                                  <span className="fs-4 fw-bold">
+                                    Daniel Byron S. Afdal
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                       </ul>
-                          
-
+                          </ul>
                         </div>
                       </div>
                     </div>
