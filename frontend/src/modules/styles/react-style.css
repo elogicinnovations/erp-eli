@@ -3344,7 +3344,7 @@ input.form-control {
 .item {
   padding-top: 10px;
   display: flex;
-  flex-direction: row-reverse;
+  /* flex-direction: row-reverse; */
 }
 
 .new_item button {

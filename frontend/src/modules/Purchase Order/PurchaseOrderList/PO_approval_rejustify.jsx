@@ -1161,14 +1161,20 @@ function POApprovalRejustify({ authrztn }) {
                 let supp_name = group.items[0].suppliers.supplier_name;
                 let vat = group.items[0].suppliers.supplier_vat;
 
+                // group.items.forEach((item, index) => {
+                //   totalSum +=
+                //     (item.item.purchase_price * (vat / 100 + 1)).toFixed(2) *
+                //     item.item.static_quantity;
+                // });
+
                 group.items.forEach((item, index) => {
                   totalSum +=
-                    (item.item.purchase_price * (vat / 100 + 1)).toFixed(2) *
+                    item.item.purchase_price.toFixed(2) *
                     item.item.static_quantity;
                 });
 
                 vatAmount = totalSum * (vat / 100);
-                TotalAmount = (totalSum - vatAmount).toFixed(2);
+                TotalAmount = (totalSum + vatAmount).toFixed(2);
 
                 vatAmount = vatAmount.toFixed(2);
                 totalSum = totalSum.toFixed(2);
@@ -1487,7 +1493,7 @@ function POApprovalRejustify({ authrztn }) {
                                     Total (w/o VAT):
                                   </span>
                                   <span className="fs-4 fw-bold">
-                                    {TotalAmount}
+                                    {totalSum}
                                   </span>
                                 </div>
                                 <div className="p-3 d-flex flex-column border-bottom border-dark">
@@ -1503,7 +1509,7 @@ function POApprovalRejustify({ authrztn }) {
                                     Overall Total:
                                   </span>
                                   <span className="fs-4 fw-bold">
-                                    {`${currency} ${totalSum}`}
+                                    {`${currency} ${TotalAmount}`}
                                   </span>
                                 </div>
                                 <div className="p-3 d-flex flex-column">
