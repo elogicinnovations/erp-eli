@@ -352,84 +352,103 @@ function PurchaseOrderListPreview() {
     updateAddPOBackend();
   }, [quantityInputs, daysInputs, selected_PR_Prod_array, toBeUsedFor]);
 
-  const handleAddToTable = (product, type, code, name, supp_email) => {
-    setSelected_PR_Prod_array((prevArray) =>
-      prevArray.map((item) =>
-        item.id === selected_PR_Prod ? { ...item, isPO: true } : item
-      )
-    );
-
-    setProductArrays((prevArrays) => {
-      const supplierCode = product.supplier.supplier_code;
-      const supplierName = product.supplier.supplier_name;
-
-      const newArray = (prevArrays[supplierCode] || []).slice();
-      const isProductAlreadyAdded = newArray.some(
-        (item) => item.product.id === product.id && item.type === type
+  const handleAddToTable = (
+    product,
+    type,
+    code,
+    name,
+    supp_email,
+    product_price
+  ) => {
+    if (
+      product_price === "" ||
+      product_price === null ||
+      parseFloat(product_price) === 0
+    ) {
+      swal({
+        title: "Oppss!",
+        text: "Please input price first",
+        icon: "error",
+      });
+    } else {
+      setSelected_PR_Prod_array((prevArray) =>
+        prevArray.map((item) =>
+          item.id === selected_PR_Prod ? { ...item, isPO: true } : item
+        )
       );
 
-      if (!isProductAlreadyAdded) {
-        setIsArray(true);
+      setProductArrays((prevArrays) => {
+        const supplierCode = product.supplier.supplier_code;
+        const supplierName = product.supplier.supplier_name;
 
-        newArray.push({
-          type: type,
-          product: product,
-          code: code,
-          name: name,
-          supp_email: supp_email,
-          supplierName: supplierName,
-        });
-
-        newArray.sort((a, b) => {
-          const codeA = a.product.product_code || "";
-          const codeB = b.product.product_code || "";
-          return codeA.localeCompare(codeB);
-        });
-
-        // Check if there is an existing container for the supplier
-        const existingContainerIndex = parentArray.findIndex(
-          (container) => container.supplierCode === supplierCode
+        const newArray = (prevArrays[supplierCode] || []).slice();
+        const isProductAlreadyAdded = newArray.some(
+          (item) => item.product.id === product.id && item.type === type
         );
 
-        if (existingContainerIndex !== -1) {
-          // If the container exists, update it
-          const updatedParentArray = [...parentArray];
-          updatedParentArray[existingContainerIndex].array = newArray;
+        if (!isProductAlreadyAdded) {
+          setIsArray(true);
 
-          setParentArray(updatedParentArray);
+          newArray.push({
+            type: type,
+            product: product,
+            code: code,
+            name: name,
+            supp_email: supp_email,
+            supplierName: supplierName,
+          });
+
+          newArray.sort((a, b) => {
+            const codeA = a.product.product_code || "";
+            const codeB = b.product.product_code || "";
+            return codeA.localeCompare(codeB);
+          });
+
+          // Check if there is an existing container for the supplier
+          const existingContainerIndex = parentArray.findIndex(
+            (container) => container.supplierCode === supplierCode
+          );
+
+          if (existingContainerIndex !== -1) {
+            // If the container exists, update it
+            const updatedParentArray = [...parentArray];
+            updatedParentArray[existingContainerIndex].array = newArray;
+
+            setParentArray(updatedParentArray);
+          } else {
+            // If the container doesn't exist, create a new one
+            const newTitle = (parseInt(latestCount, 10) + titleCounter)
+              // const newTitle = (parseInt(latestCount, 10))
+              .toString()
+              .padStart(8, "0");
+            const newParentArray = [
+              ...parentArray,
+              {
+                title: newTitle,
+                supplierCode: supplierCode,
+                array: newArray,
+              },
+            ];
+
+            // Increment the title counter
+            setTitleCounter(titleCounter + 1);
+
+            // Update the state with the new parent array and supplier array
+            setParentArray(newParentArray);
+          }
+
+          console.log("Parent Array:", parentArray);
+          return { ...prevArrays, [supplierCode]: newArray };
         } else {
-          // If the container doesn't exist, create a new one
-          const newTitle = (parseInt(latestCount, 10) + titleCounter)
-            // const newTitle = (parseInt(latestCount, 10))
-            .toString()
-            .padStart(8, "0");
-          const newParentArray = [
-            ...parentArray,
-            {
-              title: newTitle,
-              supplierCode: supplierCode,
-              array: newArray,
-            },
-          ];
-
-          // Increment the title counter
-          setTitleCounter(titleCounter + 1);
-
-          // Update the state with the new parent array and supplier array
-          setParentArray(newParentArray);
+          swal({
+            title: "Duplicate Product",
+            text: "This product is already in the array.",
+            icon: "error",
+          });
+          return prevArrays;
         }
-
-        console.log("Parent Array:", parentArray);
-        return { ...prevArrays, [supplierCode]: newArray };
-      } else {
-        swal({
-          title: "Duplicate Product",
-          text: "This product is already in the array.",
-          icon: "error",
-        });
-        return prevArrays;
-      }
-    });
+      });
+    }
   };
 
   // useEffect(() => {
@@ -707,9 +726,15 @@ function PurchaseOrderListPreview() {
 
     // console.log(product_id)
   };
-  const handleAddToTablePO = (productId, code, name, supp_email) => {
+  const handleAddToTablePO = (
+    productId,
+    code,
+    name,
+    supp_email,
+    product_price
+  ) => {
     const product = suppProducts.find((data) => data.id === productId);
-    handleAddToTable(product, "product", code, name, supp_email);
+    handleAddToTable(product, "product", code, name, supp_email, product_price);
   };
 
   //------------------------------------------------Assembly rendering data ------------------------------------------------//
@@ -1437,7 +1462,7 @@ function PurchaseOrderListPreview() {
                               </div>
                               <div className="prodinputs">
                                 <Form.Control
-                                  type="number"
+                                  type="text"
                                   placeholder="Quantity"
                                   value={
                                     quantityInputs[
@@ -1453,12 +1478,13 @@ function PurchaseOrderListPreview() {
                                     );
                                   }}
                                   onInput={(e) => {
-                                    e.preventDefault();
-                                    const validInput = e.target.value.replace(
-                                      /[^0-9.]/g,
-                                      ""
-                                    ); // Replace non-numeric characters
-                                    e.target.value = validInput;
+                                    // e.preventDefault();
+                                    // const validInput = e.target.value.replace(
+                                    //   /[^0-9.]/g,
+                                    //   ""
+                                    // ); // Replace non-numeric characters
+                                    // e.target.value = validInput;
+                                    onInputFloat(e);
                                   }}
                                   required
                                   onKeyDown={(e) => {
@@ -1593,7 +1619,8 @@ function PurchaseOrderListPreview() {
                                         data.id,
                                         data.product.product_code,
                                         data.product.product_name,
-                                        data.supplier.supplier_email
+                                        data.supplier.supplier_email,
+                                        data.product_price
                                       )
                                     }
                                   >
