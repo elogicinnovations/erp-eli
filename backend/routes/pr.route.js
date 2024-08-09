@@ -265,7 +265,7 @@ router.route("/fetchTable_PO").get(async (req, res) => {
         }
         return 0;
       });
-      console.log(uniqueData);
+      // console.log(uniqueData);
       return res.json(uniqueData);
     } else {
       res.status(400).json("No data found");

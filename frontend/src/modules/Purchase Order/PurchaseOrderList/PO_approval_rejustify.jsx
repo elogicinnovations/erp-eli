@@ -1152,7 +1152,7 @@ function POApprovalRejustify({ authrztn }) {
               </Modal.Header>
               {POarray.map((group) => {
                 let totalSum = 0;
-                let TotalAmount = 0;
+                let amountWOvat = 0;
                 let vatTotal = 0;
                 let vatAmount = 0;
                 let currency = group.items[0].suppliers.supplier_currency;
@@ -1161,31 +1161,36 @@ function POApprovalRejustify({ authrztn }) {
                 let supp_name = group.items[0].suppliers.supplier_name;
                 let vat = group.items[0].suppliers.supplier_vat;
 
-                // group.items.forEach((item, index) => {
-                //   totalSum +=
-                //     (item.item.purchase_price * (vat / 100 + 1)).toFixed(2) *
-                //     item.item.static_quantity;
-                // });
-
                 group.items.forEach((item, index) => {
                   totalSum +=
-                    item.item.purchase_price.toFixed(2) *
+                    (item.item.purchase_price * (vat / 100 + 1)).toFixed(2) *
                     item.item.static_quantity;
                 });
 
-                vatAmount = totalSum * (vat / 100);
-                TotalAmount = (totalSum + vatAmount).toFixed(2);
+                // group.items.forEach((item, index) => {
+                //   TotalAmount +=
+                //     (item.item.purchase_price * (vat / 100 + 1)) *
+                //     item.item.static_quantity;
+                // });
 
-                vatAmount = vatAmount.toFixed(2);
+                // (
+                //   (
+                //     item.item.purchase_price *
+                //     (vat / 100 + 1)
+                //   ).toFixed(2) *
+                //   item.item.static_quantity
+                // ).toLocaleString(undefined, {
+                //   minimumFractionDigits: 2,
+                // })
+
+                amountWOvat = (totalSum / (1 + vat / 100)).toFixed(2);
+
                 totalSum = totalSum.toFixed(2);
+                vatAmount = (totalSum - amountWOvat).toFixed(2);
 
-                TotalAmount = parseFloat(TotalAmount).toLocaleString("en-US");
-                vatAmount = parseFloat(vatAmount).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                });
-                totalSum = parseFloat(totalSum).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                });
+                amountWOvat = parseFloat(amountWOvat).toLocaleString("en-US");
+                vatAmount = parseFloat(vatAmount).toLocaleString("en-US");
+                totalSum = parseFloat(totalSum).toLocaleString("en-US");
 
                 return (
                   <Modal.Body
@@ -1493,7 +1498,7 @@ function POApprovalRejustify({ authrztn }) {
                                     Total (w/o VAT):
                                   </span>
                                   <span className="fs-4 fw-bold">
-                                    {totalSum}
+                                    {amountWOvat}
                                   </span>
                                 </div>
                                 <div className="p-3 d-flex flex-column border-bottom border-dark">
@@ -1509,7 +1514,7 @@ function POApprovalRejustify({ authrztn }) {
                                     Overall Total:
                                   </span>
                                   <span className="fs-4 fw-bold">
-                                    {`${currency} ${TotalAmount}`}
+                                    {`${currency} ${totalSum}`}
                                   </span>
                                 </div>
                                 <div className="p-3 d-flex flex-column">
