@@ -819,7 +819,7 @@ router.route("/send_PO").post(async (req, res) => {
       const mailOptions = {
         from: gmailEmail,
         to: toSendEmail,
-        subject: `PR number: ${prNum}. Invoice Request for Order - SBF`,
+        subject: `PO number: ${po_idApproval}. Invoice Request for Order - SBF`,
         text: "Attached is a PDF file outlining the products we wish to order from your company. \n Could you please provide an invoice for these items, including:",
         attachments: [
           {

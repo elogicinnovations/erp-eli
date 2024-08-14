@@ -227,6 +227,12 @@ function PurchaseOrderList({ authrztn }) {
         (
           data?.purchase_req?.masterlist?.department?.department_name?.toLowerCase() ||
           ""
+        ).includes(searchTerm) ||
+        (
+          data?.product_tag_supplier?.product?.product_code.toLowerCase() || ""
+        ).includes(searchTerm) ||
+        (
+          data?.product_tag_supplier?.product?.product_name.toLowerCase() || ""
         ).includes(searchTerm)
       );
     });
@@ -254,6 +260,7 @@ function PurchaseOrderList({ authrztn }) {
       axios
         .get(BASE_URL + "/PR/fetchTable_PO")
         .then((res) => {
+          console.log(res.data[0]);
           setPr_req(res.data);
           setAllPR(res.data);
           setFilteredPR(res.data);
@@ -665,13 +672,14 @@ function PurchaseOrderList({ authrztn }) {
                                     )
                                   }
                                 >
-                                  {(
-                                    (data.product_tag_supplier.supplier
-                                      .supplier_vat /
-                                      100 +
-                                      1) *
-                                    data.total
-                                  ).toFixed(2)}
+                                  {data// (data.product_tag_supplier.supplier
+                                  //   .supplier_vat /
+                                  //   100) *
+                                  .total
+                                    .toFixed(2)
+                                    .toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                    })}
                                 </td>
                                 <td
                                   onClick={() =>

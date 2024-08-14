@@ -1288,29 +1288,29 @@ function POApprovalRejustify({ authrztn }) {
                             <li className="order-header">
                               <div className="firstgroup">
                                 <div className="text-center fw-bold">
-                                  <span className="fs-6">ITEM NO.</span>
+                                  <span className="fs-5">ITEM NO.</span>
                                 </div>
                                 <div className="text-center fw-bold">
-                                  <span className="fs-6">QTY</span>
+                                  <span className="fs-5">QTY</span>
                                 </div>
                                 <div className="text-center fw-bold">
-                                  <span className="fs-6">UNIT</span>
+                                  <span className="fs-5">UNIT</span>
                                 </div>
                               </div>
                               <div className="secondgroup">
                                 <div className="fw-bold">
-                                  <span className="fs-6">DESCRIPTION</span>
+                                  <span className="fs-5">DESCRIPTION</span>
                                 </div>
                                 <div className="fw-bold">
-                                  <span className="fs-6">Part Number</span>
+                                  <span className="fs-5">Part Number</span>
                                 </div>
                               </div>
                               <div className="thirdgroup">
                                 <div className="text-center fw-bold">
-                                  <span className="fs-6">UNIT PRICE</span>
+                                  <span className="fs-5">UNIT PRICE</span>
                                 </div>
                                 <div className="text-center fw-bold">
-                                  <span className="fs-6">TOTAL</span>
+                                  <span className="fs-5">TOTAL</span>
                                 </div>
                               </div>
                             </li>
@@ -1319,35 +1319,35 @@ function POApprovalRejustify({ authrztn }) {
                                 <div className="item-firstgroup">
                                   <div className="text-center">
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">{`${item.supp_tag.code}`}</span>
+                                      <span className="fs-5 fw-bold">{`${item.supp_tag.code}`}</span>
                                     ))}
                                   </div>
 
                                   {/* for product quantity */}
                                   <div className="text-center">
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">{`${item.item.static_quantity}`}</span>
+                                      <span className="fs-5 fw-bold">{`${item.item.static_quantity}`}</span>
                                     ))}
                                   </div>
                                   {/* for product unit of measurement */}
                                   <div className="text-center">
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">{`${item.supp_tag.uom}`}</span>
+                                      <span className="fs-5 fw-bold">{`${item.supp_tag.uom}`}</span>
                                     ))}
                                   </div>
                                 </div>
 
                                 <div className="item-secondgroup">
                                   {/* for product name */}
-                                  <div className="fw-bold d-flex flex-column">
+                                  <div className=" d-flex flex-column">
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">{`${item.supp_tag.name}`}</span>
+                                      <span className="fs-5 fw-bold">{`${item.supp_tag.name}`}</span>
                                     ))}
                                   </div>
 
-                                  <div className="fw-bold d-flex flex-column">
+                                  <div className="d-flex flex-column">
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">
+                                      <span className="fs-5 fw-bold ">
                                         {item.supp_tag.part_number === null
                                           ? "--"
                                           : item.supp_tag.part_number === ""
@@ -1363,7 +1363,7 @@ function POApprovalRejustify({ authrztn }) {
                                     {/* for unit price */}
 
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">{`${(
+                                      <span className="fs-5 fw-bold">{`${(
                                         item.item.purchase_price *
                                         (vat / 100 + 1)
                                       ).toFixed(2)}`}</span>
@@ -1371,7 +1371,7 @@ function POApprovalRejustify({ authrztn }) {
                                   </div>
                                   <div className="text-center fw-bold d-flex flex-column">
                                     {group.items.map((item, index) => (
-                                      <span className="fs-6">
+                                      <span className="fs-5 fw-bold">
                                         {(
                                           (
                                             item.item.purchase_price *

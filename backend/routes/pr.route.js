@@ -21,6 +21,7 @@ const {
   PO_REJECT,
   PR_REJECT,
   Supplier,
+  Product,
 } = require("../db/models/associations");
 const session = require("express-session");
 const moment = require("moment-timezone");
@@ -46,6 +47,17 @@ router.route("/fetchTable").get(async (req, res) => {
           include: [
             {
               model: Department,
+              required: true,
+            },
+          ],
+        },
+        {
+          model: PR_product,
+          required: false,
+
+          include: [
+            {
+              model: Product,
               required: true,
             },
           ],
@@ -102,8 +114,19 @@ router.route("/PRfilter").get(async (req, res) => {
             },
           ],
         },
+        {
+          model: PR_product,
+          required: false,
+
+          include: [
+            {
+              model: Product,
+              required: true,
+            },
+          ],
+        },
       ],
-      order: [["createdAt", "ASC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     if (data) {
@@ -219,6 +242,10 @@ router.route("/fetchTable_PO").get(async (req, res) => {
               model: Supplier,
               required: true,
             },
+            {
+              model: Product,
+              required: true,
+            },
           ],
         },
       ],
@@ -231,7 +258,11 @@ router.route("/fetchTable_PO").get(async (req, res) => {
       data.forEach((item) => {
         if (item.status !== "Received") {
           const poId = item.po_id;
-          const itemTotal = item.purchase_price * item.static_quantity;
+
+          const vat_value = item.product_tag_supplier.supplier.supplier_vat;
+          const itemTotal =
+            item.static_quantity *
+            (item.purchase_price * (vat_value / 100 + 1)).toFixed(2);
 
           if (poMap.has(poId)) {
             const existingItem = poMap.get(poId);
@@ -325,6 +356,10 @@ router.route("/PO_filter").get(async (req, res) => {
           include: [
             {
               model: Supplier,
+              required: true,
+            },
+            {
+              model: Product,
               required: true,
             },
           ],

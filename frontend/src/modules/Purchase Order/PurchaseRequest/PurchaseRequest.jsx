@@ -261,6 +261,7 @@ function PurchaseRequest({ authrztn }) {
       axios
         .get(BASE_URL + "/PR/fetchTable")
         .then((res) => {
+          // console.log(res.data[0]);
           setAllPR(res.data);
           setFilteredPR(res.data);
           setIsLoading(false);
@@ -277,11 +278,22 @@ function PurchaseRequest({ authrztn }) {
   useEffect(() => {
     reloadTable();
   }, []);
-
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
     const filteredData = allPR.filter((data) => {
+      // Check if any product code matches the search term
+      const productCodeMatch = data.purchase_req_products.some((product) =>
+        (product.product?.product_code?.toLowerCase() || "").includes(
+          searchTerm
+        )
+      );
+
+      const productNameMatch = data.purchase_req_products.some((product) =>
+        (product.product?.product_name?.toLowerCase() || "").includes(
+          searchTerm
+        )
+      );
       return (
         (data?.pr_num?.toLowerCase() || "").includes(searchTerm) ||
         (data?.masterlist?.col_Fname?.toLowerCase() || "").includes(
@@ -294,7 +306,9 @@ function PurchaseRequest({ authrztn }) {
         (formatDatetime(data?.createdAt)?.toLowerCase() || "").includes(
           searchTerm
         ) ||
-        (data?.remarks?.toLowerCase() || "").includes(searchTerm)
+        (data?.remarks?.toLowerCase() || "").includes(searchTerm) ||
+        productCodeMatch ||
+        productNameMatch
       );
     });
 
