@@ -1363,10 +1363,15 @@ function POApprovalRejustify({ authrztn }) {
                                     {/* for unit price */}
 
                                     {group.items.map((item, index) => (
-                                      <span className="fs-5 fw-bold">{`${(
-                                        item.item.purchase_price *
-                                        (vat / 100 + 1)
-                                      ).toFixed(2)}`}</span>
+                                      <span className="fs-5 fw-bold">
+                                        {(
+                                          item.item.purchase_price *
+                                          (vat / 100 + 1)
+                                        ).toLocaleString(undefined, {
+                                          minimumFractionDigits: 2,
+                                          maximumFractionDigits: 2,
+                                        })}
+                                      </span>
                                     ))}
                                   </div>
                                   <div className="text-center fw-bold d-flex flex-column">

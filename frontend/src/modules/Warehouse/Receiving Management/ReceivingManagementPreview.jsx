@@ -278,6 +278,9 @@ function ReceivingManagementPreview({ authrztn }) {
   const [customFee, setcustomFee] = useState("");
   const [shippingFee, setShippingFee] = useState("");
 
+  const [SI, setSI] = useState("");
+  const [DR, setDR] = useState("");
+
   const handleDutiesChange = () => {
     setIsD_C_applicable((prevState) => {
       const newApplicable = !prevState;
@@ -465,6 +468,8 @@ function ReceivingManagementPreview({ authrztn }) {
                 refCode,
                 isSF_applicable,
                 isD_C_applicable,
+                SI,
+                DR,
               }
             );
 
@@ -862,6 +867,37 @@ function ReceivingManagementPreview({ authrztn }) {
           </Modal.Header>
 
           <Modal.Body>
+            <div className="row mb-5">
+              {productImages.length > 0 && (
+                <Carousel
+                  data-bs-theme="dark"
+                  interval={3000}
+                  wrap={true}
+                  className="custom-carousel"
+                >
+                  {productImages.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className=""
+                        style={{
+                          width: "auto",
+                          height: "auto",
+                          margin: "auto",
+                          display: "block",
+                          maxHeight: "250px",
+                          minHeight: "250px",
+                        }}
+                        src={`data:image/png;base64,${image.image}`}
+                        alt={`subpart-img-${image.id}`}
+                      />
+                      <Carousel.Caption>
+                        {/* Caption content */}
+                      </Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
+            </div>
             <div className="row p-0">
               <div className="col-6 align-items-center">
                 <div className="d-flex w-100 rmp-pad">
@@ -964,35 +1000,40 @@ function ReceivingManagementPreview({ authrztn }) {
             </div>
 
             <div className="row mb-5">
-              {productImages.length > 0 && (
-                <Carousel
-                  data-bs-theme="dark"
-                  interval={3000}
-                  wrap={true}
-                  className="custom-carousel"
+              <div className="col-sm">
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
                 >
-                  {productImages.map((image, index) => (
-                    <Carousel.Item key={index}>
-                      <img
-                        className=""
-                        style={{
-                          width: "auto",
-                          height: "auto",
-                          margin: "auto",
-                          display: "block",
-                          maxHeight: "250px",
-                          minHeight: "250px",
-                        }}
-                        src={`data:image/png;base64,${image.image}`}
-                        alt={`subpart-img-${image.id}`}
-                      />
-                      <Carousel.Caption>
-                        {/* Caption content */}
-                      </Carousel.Caption>
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              )}
+                  <Form.Label className="h4">SI No. :</Form.Label>
+                  <Form.Control
+                    value={SI}
+                    onChange={(e) => setSI(e.target.value)}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    type="text"
+                    placeholder="abcd12345678"
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-sm">
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
+                >
+                  <Form.Label className="h4">DR No. :</Form.Label>
+                  <Form.Control
+                    value={DR}
+                    onChange={(e) => setDR(e.target.value)}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    type="text"
+                    placeholder="abcd12345678"
+                  />
+                </Form.Group>
+              </div>
             </div>
 
             {products_receive.map((parent, parentIndex) =>

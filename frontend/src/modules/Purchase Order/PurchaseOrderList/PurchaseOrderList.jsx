@@ -206,40 +206,39 @@ function PurchaseOrderList({ authrztn }) {
   const handleSearch = (event) => {
     setCurrentPage(1);
     const searchTerm = event.target.value.toLowerCase();
+
+    console.log(allPR);
     const filteredData = allPR.filter((data) => {
+      const productCodeMatch = (
+        data.product_tag_supplier?.product?.product_code.toLowerCase() || ""
+      ).includes(searchTerm);
+
+      const productNameMatch = (
+        data.product_tag_supplier?.product?.product_name.toLowerCase() || ""
+      ).includes(searchTerm);
+
       return (
-        (data?.po_id?.toLowerCase() || "").includes(searchTerm) ||
-        (data?.purchase_req?.pr_num?.toLowerCase() || "").includes(
-          searchTerm
-        ) ||
-        (data?.status?.toLowerCase() || "").includes(searchTerm) ||
-        (formatDatetime(data?.createdAt)?.toLowerCase() || "").includes(
-          searchTerm
-        ) ||
-        (data?.remarks?.toLowerCase() || "").includes(searchTerm) ||
-        (
-          data?.product_tag_supplier?.supplier?.supplier_name.toLowerCase() ||
-          ""
-        ).includes(searchTerm) ||
-        (
-          data?.purchase_req?.masterlist?.col_Fname?.toLowerCase() || ""
-        ).includes(searchTerm) ||
-        (
-          data?.purchase_req?.masterlist?.department?.department_name?.toLowerCase() ||
-          ""
-        ).includes(searchTerm) ||
-        (
-          data?.product_tag_supplier?.product?.product_code.toLowerCase() || ""
-        ).includes(searchTerm) ||
-        (
-          data?.product_tag_supplier?.product?.product_name.toLowerCase() || ""
-        ).includes(searchTerm)
+        data.po_id?.toLowerCase().includes(searchTerm) ||
+        data.purchase_req?.pr_num?.toLowerCase().includes(searchTerm) ||
+        data.status?.toLowerCase().includes(searchTerm) ||
+        formatDatetime(data.createdAt)?.toLowerCase().includes(searchTerm) ||
+        data.remarks?.toLowerCase().includes(searchTerm) ||
+        data.product_tag_supplier?.supplier?.supplier_name
+          ?.toLowerCase()
+          .includes(searchTerm) ||
+        data.purchase_req?.masterlist?.col_Fname
+          ?.toLowerCase()
+          .includes(searchTerm) ||
+        data.purchase_req?.masterlist?.department?.department_name
+          ?.toLowerCase()
+          .includes(searchTerm) ||
+        productCodeMatch ||
+        productNameMatch
       );
     });
 
     setFilteredPR(filteredData);
   };
-
   // const reloadTable = () => {
   //   axios
   //     .get(BASE_URL + "/PR/fetchTable_PO")
@@ -672,11 +671,8 @@ function PurchaseOrderList({ authrztn }) {
                                     )
                                   }
                                 >
-                                  {data// (data.product_tag_supplier.supplier
-                                  //   .supplier_vat /
-                                  //   100) *
-                                  .total
-                                    .toFixed(2)
+                                  {data.total //   100) * //   .supplier_vat / // (data.product_tag_supplier.supplier
+
                                     .toLocaleString(undefined, {
                                       minimumFractionDigits: 2,
                                     })}
@@ -929,13 +925,11 @@ function PurchaseOrderList({ authrztn }) {
                                         )
                                       }
                                     >
-                                      {(
-                                        (data.product_tag_supplier.supplier
-                                          .supplier_vat /
-                                          100 +
-                                          1) *
-                                        data.total
-                                      ).toFixed(2)}
+                                      {data.total //   100) * //   .supplier_vat / // (data.product_tag_supplier.supplier
+
+                                        .toLocaleString(undefined, {
+                                          minimumFractionDigits: 2,
+                                        })}
                                     </td>
                                     <td
                                       onClick={() =>

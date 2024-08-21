@@ -29,6 +29,7 @@ const Receiving = sequelize.define("receiving_po", {
     allowNull: true,
   },
   ref_code: {
+    // system reference no.
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -47,7 +48,7 @@ const Receiving = sequelize.define("receiving_po", {
   isComplete: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
-    defaultValue: false
+    defaultValue: false,
   },
   masterlist_id: {
     type: DataTypes.INTEGER,
@@ -55,6 +56,14 @@ const Receiving = sequelize.define("receiving_po", {
   },
   date_approved: {
     type: DataTypes.DATE,
+    allowNull: true,
+  },
+  DR: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  SI: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
 });

@@ -35,34 +35,32 @@ const {
   Inventory_Subpart,
 } = require("../db/models/associations");
 const session = require("express-session");
-const moment = require('moment-timezone');
-
-
+const moment = require("moment-timezone");
 
 router.route("/generateRefCodess").get(async (req, res) => {
   try {
     const currentDate = moment().tz("Asia/Manila").toDate();
     const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
     const currentMonth = `${year}-${month}`;
 
     // Fetch the latest ref_code
     const latestReceiving = await Receiving_PO.findOne({
       where: {
         ref_code: {
-          [Op.like]: `${currentMonth}%`
-        }
+          [Op.like]: `${currentMonth}%`,
+        },
       },
-      order: [['createdAt', 'DESC']]
+      order: [["createdAt", "DESC"]],
     });
 
     let newRefCode;
     if (latestReceiving && latestReceiving.ref_code) {
       const latestRefCode = latestReceiving.ref_code;
-      const refCodeParts = latestRefCode.split('-');
+      const refCodeParts = latestRefCode.split("-");
       if (refCodeParts.length === 3 && !isNaN(refCodeParts[2])) {
         const latestSequence = parseInt(refCodeParts[2], 10);
-        const newSequence = String(latestSequence + 1).padStart(5, '0');
+        const newSequence = String(latestSequence + 1).padStart(5, "0");
         newRefCode = `${currentMonth}-${newSequence}`;
       } else {
         // If the refCode doesn't split correctly or sequence is not a number
@@ -82,22 +80,24 @@ router.route("/generateRefCodess").get(async (req, res) => {
 router.route("/viewToReceive").get(async (req, res) => {
   try {
     const data = await PR_PO.findAll({
-      include: [{
-        model: PR,
-        required: true,
+      include: [
+        {
+          model: PR,
+          required: true,
           include: [
-          {
-            model: MasterList,
-            required: true,
-            include: [
-              {
-                model: Department,
-                required: true,
-              },
-            ],
-          },
-        ],
-      }],
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+      ],
       where: {
         po_id: req.query.po_id,
       },
@@ -118,22 +118,24 @@ router.route("/viewToReceive").get(async (req, res) => {
 router.route("/viewToReceiveIntransit").get(async (req, res) => {
   try {
     const data = await Receiving_PO.findAll({
-      include: [{
-        model: PR,
-        required: true,
+      include: [
+        {
+          model: PR,
+          required: true,
           include: [
-          {
-            model: MasterList,
-            required: true,
-            include: [
-              {
-                model: Department,
-                required: true,
-              },
-            ],
-          },
-        ],
-      }],
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+      ],
       where: {
         id: req.query.id,
       },
@@ -156,28 +158,30 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
     const pr_data = await PR_PO.findAll({
       include: [
         {
-         model: PR,
-         required: true,
+          model: PR,
+          required: true,
 
-          include: [{
-            model: MasterList,
-            required: true,
-            include: [
-              {
-                model: Department,
-                required: true,
-              },
-            ],
-          }]
+          include: [
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
         },
       ],
       where: {
         // status: {
         //   [Op.or]: ["To-Receive", "Delivered", "To-Receive (Partial)"],
         // },
-        status: "To-Receive"
+        status: "To-Receive",
       },
-    }); 
+    });
 
     // Create a map to keep track of unique po_ids
     const uniquePoMap = new Map();
@@ -208,10 +212,11 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
               ],
             },
           ],
-        },{
+        },
+        {
           model: MasterList,
-          required: true
-        }
+          required: true,
+        },
       ],
       where: {
         status: {
@@ -220,19 +225,19 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
       },
     });
 
-    const po = uniqueDataPR.map(item => ({
+    const po = uniqueDataPR.map((item) => ({
       ...item.dataValues,
-      source: 'PO'
+      source: "PO",
     }));
-    const po_receive = ReceivingPO.map(item => ({
+    const po_receive = ReceivingPO.map((item) => ({
       ...item.dataValues,
-      source: 'ReceivingPO'
+      source: "ReceivingPO",
     }));
-  // Combine the dataValues into one array
-  const combinedData = [...po, ...po_receive];
-  
-  // Sort the combined data by createdAt column in descending order
-  combinedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Combine the dataValues into one array
+    const combinedData = [...po, ...po_receive];
+
+    // Sort the combined data by createdAt column in descending order
+    combinedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return res.json({
       prData: combinedData,
@@ -243,56 +248,56 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
   }
 });
 
-
 router.route("/fetchTableToReceive_filter").get(async (req, res) => {
- const { strDate, enDate, selectedStatus } = req.query;
+  const { strDate, enDate, selectedStatus } = req.query;
 
-    const startDates = new Date(strDate);
-    startDates.setDate(startDates.getDate() + 1);
-    const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
+  const startDates = new Date(strDate);
+  startDates.setDate(startDates.getDate() + 1);
+  const startDate = startDates.toISOString().slice(0, 10) + " 00:00:00";
 
-    const endDates = new Date(enDate);
-    endDates.setDate(endDates.getDate() + 1);
-    const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
+  const endDates = new Date(enDate);
+  endDates.setDate(endDates.getDate() + 1);
+  const endDate = endDates.toISOString().slice(0, 10) + " 23:59:59";
 
-    let whereClause = {
-      createdAt: {
-        [Op.between]: [startDate, endDate],
-      },
-      status: "To-Receive",
-    };
+  let whereClause = {
+    createdAt: {
+      [Op.between]: [startDate, endDate],
+    },
+    status: "To-Receive",
+  };
 
-    let whereClauseReceiving = {
-      createdAt: {
-        [Op.between]: [startDate, endDate],
-      },
-      status: {
-        [Op.or]: ["For Approval", "In-transit", "Delivered",]
-      },
-    };
-
+  let whereClauseReceiving = {
+    createdAt: {
+      [Op.between]: [startDate, endDate],
+    },
+    status: {
+      [Op.or]: ["For Approval", "In-transit", "Delivered"],
+    },
+  };
 
   try {
     const pr_data = await PR_PO.findAll({
       include: [
         {
-         model: PR,
-         required: true,
+          model: PR,
+          required: true,
 
-          include: [{
-            model: MasterList,
-            required: true,
-            include: [
-              {
-                model: Department,
-                required: true,
-              },
-            ],
-          }]
+          include: [
+            {
+              model: MasterList,
+              required: true,
+              include: [
+                {
+                  model: Department,
+                  required: true,
+                },
+              ],
+            },
+          ],
         },
       ],
-      where: whereClause
-    }); 
+      where: whereClause,
+    });
 
     // Create a map to keep track of unique po_ids
     const uniquePoMap = new Map();
@@ -323,107 +328,119 @@ router.route("/fetchTableToReceive_filter").get(async (req, res) => {
               ],
             },
           ],
-        },{
+        },
+        {
           model: MasterList,
-          required: true
-        }
+          required: true,
+        },
       ],
-      where: whereClauseReceiving
+      where: whereClauseReceiving,
     });
 
-    const po = uniqueDataPR.map(item => ({
+    const po = uniqueDataPR.map((item) => ({
       ...item.dataValues,
-      source: 'PO'
+      source: "PO",
     }));
-    const po_receive = ReceivingPO.map(item => ({
+    const po_receive = ReceivingPO.map((item) => ({
       ...item.dataValues,
-      source: 'ReceivingPO'
+      source: "ReceivingPO",
     }));
-   // Combine the dataValues into one array
-   const combinedData = [...po, ...po_receive];
-  
-   // Sort the combined data by createdAt column in descending order
-   combinedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
- 
-   // Filter the combined data based on the selectedStatus received from the client
-   let filteredData;
-   if (selectedStatus && selectedStatus !== "All Status") {
-     filteredData = combinedData.filter(item => item.status === selectedStatus);
-   } else {
-     filteredData = combinedData;
-   }
- 
-   return res.json({
-     prData: filteredData,
-   });
- } catch (err) {
-   console.error(err);
-   res.status(500).json("Error");
- }
+    // Combine the dataValues into one array
+    const combinedData = [...po, ...po_receive];
+
+    // Sort the combined data by createdAt column in descending order
+    combinedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // Filter the combined data based on the selectedStatus received from the client
+    let filteredData;
+    if (selectedStatus && selectedStatus !== "All Status") {
+      filteredData = combinedData.filter(
+        (item) => item.status === selectedStatus
+      );
+    } else {
+      filteredData = combinedData;
+    }
+
+    return res.json({
+      prData: filteredData,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
 });
 
-
-router.route("/PO_products_primary").get(async (req, res) => { // pinakaunang na received selection if from davao or main agad
+router.route("/PO_products_primary").get(async (req, res) => {
+  // pinakaunang na received selection if from davao or main agad
   try {
-      const po_id = req.query.po_id;
-      // Fetch data from all four tables with the specified pr_id
-      const prPoData = await PR_PO.findAll({
-        include: [{
+    const po_id = req.query.po_id;
+    // Fetch data from all four tables with the specified pr_id
+    const prPoData = await PR_PO.findAll({
+      include: [
+        {
           model: ProductTAGSupplier,
           required: true,
 
-            include: [{
+          include: [
+            {
               model: Product,
               required: true,
               attributes: [
-                ['product_code', 'code'],
-                ['product_name', 'name'],
-                ['UOM_set', 'isSubUnit'],
-                ['product_unitMeasurement', 'UOM']
+                ["product_code", "code"],
+                ["product_name", "name"],
+                ["UOM_set", "isSubUnit"],
+                ["product_unitMeasurement", "UOM"],
               ],
-            
             },
             {
               model: Supplier,
-              required: true
-            }] 
-        }],
-        where: { 
-          po_id: po_id
-       },
-      });
-  
-     
-      // Consolidate data into an object with po_id as keys
-      const consolidatedObject = {};
-  
-      prPoData.forEach(item => {
-        const po_id = item.po_id;
-        consolidatedObject[po_id] = consolidatedObject[po_id] || { title: `${po_id}`, items: [] };
-        consolidatedObject[po_id].items.push({item, supp_tag: item.product_tag_supplier.product, suppliers: item.product_tag_supplier.supplier, type: 'Product'});
-      });
-  
-      // Convert the object values back to an array
-      const consolidatedArray = Object.values(consolidatedObject);
-  
-
-      const Image = await Receiving_Image.findAll({
-        where: {
-            // pr_id: pr_id,
-            po_num: po_id
+              required: true,
+            },
+          ],
         },
-      });
+      ],
+      where: {
+        po_id: po_id,
+      },
+    });
 
-      // console.log(Image)
-  
-      res.status(200).json({
-        consolidatedArray: consolidatedArray,
-        image_receiving: Image
+    // Consolidate data into an object with po_id as keys
+    const consolidatedObject = {};
+
+    prPoData.forEach((item) => {
+      const po_id = item.po_id;
+      consolidatedObject[po_id] = consolidatedObject[po_id] || {
+        title: `${po_id}`,
+        items: [],
+      };
+      consolidatedObject[po_id].items.push({
+        item,
+        supp_tag: item.product_tag_supplier.product,
+        suppliers: item.product_tag_supplier.supplier,
+        type: "Product",
       });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json("Error");
-    }
+    });
+
+    // Convert the object values back to an array
+    const consolidatedArray = Object.values(consolidatedObject);
+
+    const Image = await Receiving_Image.findAll({
+      where: {
+        // pr_id: pr_id,
+        po_num: po_id,
+      },
+    });
+
+    // console.log(Image)
+
+    res.status(200).json({
+      consolidatedArray: consolidatedArray,
+      image_receiving: Image,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Error");
+  }
 });
 
 router.route("/insertReceived").post(async (req, res) => {
@@ -454,6 +471,8 @@ router.route("/insertReceived").post(async (req, res) => {
   const refCode = req.body.refCode;
   const isSF_applicable = req.body.isSF_applicable;
   const isD_C_applicable = req.body.isD_C_applicable;
+  const SI = req.body.SI;
+  const DR = req.body.DR;
 
   let status = "";
   let totalReceived = 0;
@@ -462,8 +481,8 @@ router.route("/insertReceived").post(async (req, res) => {
   let freighCost;
   let custom_cost_value;
   let initialReceiveStatus = "";
-  let isComplete = false
-  
+  let isComplete = false;
+
   // let finalSF;
 
   // if (shippingFee === "") {
@@ -474,11 +493,9 @@ router.route("/insertReceived").post(async (req, res) => {
 
   if (receving_site === "Davao City") {
     status = "In-transit";
-    isComplete
+    isComplete;
   } else if (receving_site === "Agusan Del Sur") {
     status = "For Approval";
-
-   
   }
 
   // Output the formatted current date and time in Manila time zone
@@ -487,51 +504,52 @@ router.route("/insertReceived").post(async (req, res) => {
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
       totalReceived += parseInt(child.Received_quantity || 0);
-      totalReceived_toCompute += parseInt((child.Received_quantity * child.set_quantity) || 0);
+      totalReceived_toCompute += parseInt(
+        child.Received_quantity * child.set_quantity || 0
+      );
       totalRemaining += parseInt(child.Remaining_quantity);
       // console.log(`child.Received_quantity ${child.Received_quantity}`)
     }
   }
   if (totalRemaining === 0) {
     initialReceiveStatus = "Complete";
-    isComplete = true
+    isComplete = true;
   } else {
     initialReceiveStatus = "Incomplete";
-    isComplete = false
+    isComplete = false;
   }
 
-  if(isD_C_applicable === false){
-    custom_cost_value = 0
-  }else{
-    custom_cost_value = customFee
+  if (isD_C_applicable === false) {
+    custom_cost_value = 0;
+  } else {
+    custom_cost_value = customFee;
   }
 
-  if(isSF_applicable === false){
-    freighCost = 0
-  }else{
-    if (shippingFee === '' || shippingFee === null){
-      freighCost = null
-    }else{
+  if (isSF_applicable === false) {
+    freighCost = 0;
+  } else {
+    if (shippingFee === "" || shippingFee === null) {
+      freighCost = null;
+    } else {
       freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
     }
   }
 
   // console.log(`customFee ${custom_cost_value}`)
   // console.log(`customFee ${isD_C_applicable}`)
-  // console.log(`freighCost ${freighCost}`) 
-  // console.log(`freighCost ${isSF_applicable}`) 
-
+  // console.log(`freighCost ${freighCost}`)
+  // console.log(`freighCost ${isSF_applicable}`)
 
   const updateReceivingPOS = await PR_PO.update(
     {
-      status: isComplete === true ? 'Received' : 'To-Receive',
+      status: isComplete === true ? "Received" : "To-Receive",
     },
     {
       where: { po_id: po_id },
     }
   );
 
-  if(updateReceivingPOS){
+  if (updateReceivingPOS) {
     const received_PO = await Receiving_PO.create({
       pr_id: pr_id,
       po_id: po_id,
@@ -542,11 +560,13 @@ router.route("/insertReceived").post(async (req, res) => {
       status: status,
       receivedSite: receving_site,
       initialReceive: initialReceiveStatus,
-      masterlist_id: userId
+      masterlist_id: userId,
+      SI: SI === "" ? null : SI,
+      DR: DR === "" ? null : DR,
     });
-  
+
     // console.log('dwadwa' + received_PO.id)
-  
+
     if (receving_site === "Agusan Del Sur") {
       for (const parent of parentArray) {
         for (const child of parent.serializedArray) {
@@ -554,11 +574,9 @@ router.route("/insertReceived").post(async (req, res) => {
           // console.log(child);
           if (!isNaN(receivedQuantity)) {
             let productName;
-  
+
             if (child.type === "Product") {
-  
-              if(child.Received_quantity !== '0'){
-  
+              if (child.Received_quantity !== "0") {
                 const update = PR_PO.update(
                   {
                     quantity: child.ordered_quantity - child.Received_quantity,
@@ -567,43 +585,45 @@ router.route("/insertReceived").post(async (req, res) => {
                     where: { id: child.canvassed_ID },
                   }
                 );
-    
+
                 if (update) {
-                  
-                    Receiving_Prd.create({
-                      receiving_po_id: received_PO.id,
-                      canvassed_id: child.canvassed_ID,
-                      set_quantity: child.set_quantity,
-                      received_quantity: child.Received_quantity,
-                      remaining_quantity: child.Remaining_quantity,
-                    });
-      
-                    const getProdName = await PR_PO.findOne({
-                      where: {
-                        id: child.canvassed_ID
+                  Receiving_Prd.create({
+                    receiving_po_id: received_PO.id,
+                    canvassed_id: child.canvassed_ID,
+                    set_quantity: child.set_quantity,
+                    received_quantity: child.Received_quantity,
+                    remaining_quantity: child.Remaining_quantity,
+                  });
+
+                  const getProdName = await PR_PO.findOne({
+                    where: {
+                      id: child.canvassed_ID,
+                    },
+                    include: [
+                      {
+                        model: ProductTAGSupplier,
+                        required: true,
+
+                        include: [
+                          {
+                            model: Product,
+                            required: true,
+                          },
+                        ],
                       },
-                      include: [{
-                          model: ProductTAGSupplier,
-                          required: true,
-      
-                            include: [{
-                              model: Product,
-                              required: true
-                            }]
-                        }],
-                    });
-      
-                    productName = getProdName.product_tag_supplier.product.product_name;
-                  
+                    ],
+                  });
+
+                  productName =
+                    getProdName.product_tag_supplier.product.product_name;
                 }
               }
-    
+
               await Activity_Log.create({
                 masterlist_id: userId,
                 action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
               });
-              }
-              
+            }
           }
         }
       }
@@ -614,9 +634,9 @@ router.route("/insertReceived").post(async (req, res) => {
           // console.log(child);
           if (!isNaN(receivedQuantity)) {
             let productName;
-  
+
             if (child.type === "Product") {
-              if(child.Received_quantity !== '0'){
+              if (child.Received_quantity !== "0") {
                 const update = PR_PO.update(
                   {
                     quantity: child.ordered_quantity - child.Received_quantity,
@@ -625,56 +645,57 @@ router.route("/insertReceived").post(async (req, res) => {
                     where: { id: child.canvassed_ID },
                   }
                 );
-    
+
                 if (update) {
-    
-                  
-                    Receiving_initial_prd.create({
-                      receiving_po_id: received_PO.id,
-                      canvassed_id: child.canvassed_ID,
-                      set_quantity: child.set_quantity || 0,
-                      received_quantity: child.Received_quantity,
-                      remaining_quantity: child.Remaining_quantity,
-                    });
-      
-                    const getProdName = await PR_PO.findOne({
-                      where: {
-                        id: child.canvassed_ID
+                  Receiving_initial_prd.create({
+                    receiving_po_id: received_PO.id,
+                    canvassed_id: child.canvassed_ID,
+                    set_quantity: child.set_quantity || 0,
+                    received_quantity: child.Received_quantity,
+                    remaining_quantity: child.Remaining_quantity,
+                  });
+
+                  const getProdName = await PR_PO.findOne({
+                    where: {
+                      id: child.canvassed_ID,
+                    },
+                    include: [
+                      {
+                        model: ProductTAGSupplier,
+                        required: true,
+
+                        include: [
+                          {
+                            model: Product,
+                            required: true,
+                          },
+                        ],
                       },
-                      include: [{
-                          model: ProductTAGSupplier,
-                          required: true,
-      
-                            include: [{
-                              model: Product,
-                              required: true
-                            }]
-                        }],
-                    });
-      
-                    productName = getProdName.product_tag_supplier.product.product_name;  
-                  
+                    ],
+                  });
+
+                  productName =
+                    getProdName.product_tag_supplier.product.product_name;
                 }
-              } 
-    
-                await Activity_Log.create({
-                  masterlist_id: userId,
-                  action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
-                });
               }
-              
+
+              await Activity_Log.create({
+                masterlist_id: userId,
+                action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
+              });
+            }
           }
         }
       }
     }
-  
+
     const deleteproductImage = Receiving_Image.destroy({
       where: {
         pr_id: pr_id,
         po_num: po_id,
       },
     });
-  
+
     if (deleteproductImage) {
       if (productImages && productImages.length > 0) {
         productImages.forEach(async (i) => {
@@ -688,13 +709,12 @@ router.route("/insertReceived").post(async (req, res) => {
     } else {
       console.log("adwjkd");
     }
-  
+
     // console.log(`Total Received: ${totalReceived}`);
     // console.log(`Fr ${freighCost}`);
-  
+
     return res.status(200).json();
   }
-  
 });
 
 router.route("/insertReceived_Intransit").post(async (req, res) => {
@@ -723,10 +743,12 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   const po_id = req.body.poID;
   const userId = req.body.userId;
 
-  const refCodes = req.body.refCodes
+  const refCodes = req.body.refCodes;
   const isSF_applicable = req.body.isSF_applicable;
   const isD_C_applicable = req.body.isD_C_applicable;
   const receivingPOS_ID = req.body.id;
+  const SI = req.body.SI;
+  const DR = req.body.DR;
 
   let status = "";
   let totalReceived = 0;
@@ -755,8 +777,10 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
 
   for (const parent of parentArray) {
     for (const child of parent.serializedArray) {
-      totalReceived += parseInt(child.Received_quantity  || 0);
-      totalReceived_toCompute += parseInt((child.Received_quantity * child.set_quantity) || 0);
+      totalReceived += parseInt(child.Received_quantity || 0);
+      totalReceived_toCompute += parseInt(
+        child.Received_quantity * child.set_quantity || 0
+      );
       totalRemaining += parseInt(child.Remaining_quantity);
       // console.log(`child.Received_quantity ${child.Received_quantity}`)
     }
@@ -764,39 +788,41 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   if (totalRemaining === 0) {
     initialReceiveStatus = "Complete";
     status = "In-transit (Complete)";
-    isComplete = true
+    isComplete = true;
   } else {
     initialReceiveStatus = "Incomplete";
     status = "In-transit";
-    isComplete = false
+    isComplete = false;
   }
 
-  if(isD_C_applicable === false){
-    custom_cost_value = 0
-  }else{
-    custom_cost_value = customFee
+  if (isD_C_applicable === false) {
+    custom_cost_value = 0;
+  } else {
+    custom_cost_value = customFee;
   }
 
-  if(isSF_applicable === false){
-    freighCost = 0
-  }else{
-    if (shippingFee === '' || shippingFee === null){
-      freighCost = null
-    }else{
+  if (isSF_applicable === false) {
+    freighCost = 0;
+  } else {
+    if (shippingFee === "" || shippingFee === null) {
+      freighCost = null;
+    } else {
       freighCost = (shippingFee / totalReceived_toCompute).toFixed(2);
     }
   }
 
   //  console.log(`customFee ${custom_cost_value}`)
   // console.log(`customFee ${isD_C_applicable}`)
-  // console.log(`shippingFee ${shippingFee}`) 
-  // console.log(`freighCost ${freighCost}`) 
-  // console.log(`freighCost ${isSF_applicable}`) 
+  // console.log(`shippingFee ${shippingFee}`)
+  // console.log(`freighCost ${freighCost}`)
+  // console.log(`freighCost ${isSF_applicable}`)
 
   const updateReceivingPOS = Receiving_PO.update(
     {
       status: status,
       isComplete: isComplete,
+      SI: SI === "" ? null : SI,
+      DR: DR === "" ? null : DR,
     },
     {
       where: { id: receivingPOS_ID },
@@ -811,10 +837,12 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
       customFee: custom_cost_value,
       totalReceived: totalReceived,
       ref_code: refCodes,
-      status: 'For Approval',
+      status: "For Approval",
       initialReceive: initialReceiveStatus,
       receivedSite: receving_site,
-      masterlist_id: userId
+      masterlist_id: userId,
+      SI: SI === "" ? null : SI,
+      DR: DR === "" ? null : DR,
     });
 
     for (const parent of parentArray) {
@@ -825,7 +853,7 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
           let productName;
 
           if (child.type === "Product") {
-            if(child.Received_quantity !== '0'){
+            if (child.Received_quantity !== "0") {
               const update = Receiving_initial_prd.update(
                 {
                   received_quantity:
@@ -836,7 +864,7 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
                   where: { id: child.initialTB_id },
                 }
               );
-  
+
               if (update) {
                 Receiving_Prd.create({
                   receiving_po_id: received_PO.id,
@@ -848,35 +876,37 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
                   // ref_code: `PRD-${formattedDate}`,
                   // status: status,
                 });
-  
+
                 const getProdName = await PR_PO.findOne({
                   where: {
-                    id: child.canvassed_ID
+                    id: child.canvassed_ID,
                   },
-                  include: [{
+                  include: [
+                    {
                       model: ProductTAGSupplier,
                       required: true,
-  
-                        include: [{
+
+                      include: [
+                        {
                           model: Product,
-                          required: true
-                        }]
-                    }],
+                          required: true,
+                        },
+                      ],
+                    },
+                  ],
                 });
-  
-                productName = getProdName.product_tag_supplier.product.product_name;
+
+                productName =
+                  getProdName.product_tag_supplier.product.product_name;
                 // console.log("PRODUCT NAME AGUSAN" + productName)
               }
-  
+
               await Activity_Log.create({
                 masterlist_id: userId,
                 action_taken: `Product ${productName} received in ${receving_site} with quantity ${child.Received_quantity} and remaining ${child.Remaining_quantity}`,
               });
             }
-            
-          } 
-
-          
+          }
         }
       }
     }
@@ -911,8 +941,6 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
 
 router.route("/fetchTransaction").get(async (req, res) => {
   try {
-
-    
     const PRD = await Receiving_Prd.findAll({
       include: [
         {
@@ -935,19 +963,17 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-         
-        },{
+        },
+        {
           model: Receiving_PO,
           required: true,
           where: {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
-
 
     const PRD_dv = await Receiving_initial_prd.findAll({
       include: [
@@ -971,16 +997,15 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-         
-        },{
+        },
+        {
           model: Receiving_PO,
           required: true,
           where: {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
 
@@ -1006,8 +1031,6 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-         
         },
         {
           model: Receiving_PO,
@@ -1016,10 +1039,9 @@ router.route("/fetchTransaction").get(async (req, res) => {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
-
 
     const ASM_dv = await Receiving_initial_asm.findAll({
       include: [
@@ -1043,8 +1065,6 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-         
         },
         {
           model: Receiving_PO,
@@ -1053,7 +1073,7 @@ router.route("/fetchTransaction").get(async (req, res) => {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
 
@@ -1079,8 +1099,6 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-        
         },
         {
           model: Receiving_PO,
@@ -1089,7 +1107,7 @@ router.route("/fetchTransaction").get(async (req, res) => {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
 
@@ -1115,8 +1133,6 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-        
         },
         {
           model: Receiving_PO,
@@ -1125,7 +1141,7 @@ router.route("/fetchTransaction").get(async (req, res) => {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
 
@@ -1151,8 +1167,6 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-        
         },
         {
           model: Receiving_PO,
@@ -1161,7 +1175,7 @@ router.route("/fetchTransaction").get(async (req, res) => {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
 
@@ -1187,8 +1201,6 @@ router.route("/fetchTransaction").get(async (req, res) => {
               ],
             },
           ],
-
-        
         },
         {
           model: Receiving_PO,
@@ -1197,7 +1209,7 @@ router.route("/fetchTransaction").get(async (req, res) => {
             pr_id: req.query.pr_id,
             po_id: req.query.po_num,
           },
-        }
+        },
       ],
     });
 
@@ -1383,11 +1395,8 @@ router.route("/primaryData").get(async (req, res) => {
   }
 });
 
-
 router.route("/secondaryData").get(async (req, res) => {
   try {
-
-   
     const products = await Receiving_Prd.findAll({
       where: {
         receiving_po_id: req.query.receivingParent_id,
@@ -1420,109 +1429,109 @@ router.route("/secondaryData").get(async (req, res) => {
       ],
     });
 
-    const assembly = await Receiving_Asm.findAll({
-      where: {
-        receiving_po_id: req.query.receivingParent_id,
-      },
-      include: [
-        {
-          model: PR_PO_asmbly,
-          required: true,
-          include: [
-            {
-              model: Assembly_Supplier,
-              required: true,
-              include: [
-                {
-                  model: Assembly,
-                  required: true,
-                },
+    // const assembly = await Receiving_Asm.findAll({
+    //   where: {
+    //     receiving_po_id: req.query.receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO_asmbly,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Assembly_Supplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: Assembly,
+    //               required: true,
+    //             },
 
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
-    const spare = await Receiving_Spare.findAll({
-      where: {
-        receiving_po_id: req.query.receivingParent_id,
-      },
-      include: [
-        {
-          model: PR_PO_spare,
-          required: true,
-          include: [
-            {
-              model: SparePart_Supplier,
-              required: true,
-              include: [
-                {
-                  model: SparePart,
-                  required: true,
-                },
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
+    // const spare = await Receiving_Spare.findAll({
+    //   where: {
+    //     receiving_po_id: req.query.receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO_spare,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: SparePart_Supplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: SparePart,
+    //               required: true,
+    //             },
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
-    const subpart = await Receiving_Subpart.findAll({
-      where: {
-        receiving_po_id: req.query.receivingParent_id,
-      },
-      include: [
-        {
-          model: PR_PO_subpart,
-          required: true,
-          include: [
-            {
-              model: Subpart_supplier,
-              required: true,
-              include: [
-                {
-                  model: SubPart,
-                  required: true,
-                },
+    // const subpart = await Receiving_Subpart.findAll({
+    //   where: {
+    //     receiving_po_id: req.query.receivingParent_id,
+    //   },
+    //   include: [
+    //     {
+    //       model: PR_PO_subpart,
+    //       required: true,
+    //       include: [
+    //         {
+    //           model: Subpart_supplier,
+    //           required: true,
+    //           include: [
+    //             {
+    //               model: SubPart,
+    //               required: true,
+    //             },
 
-                {
-                  model: Supplier,
-                  required: true,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          model: Receiving_PO,
-          required: true,
-        },
-      ],
-    });
+    //             {
+    //               model: Supplier,
+    //               required: true,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       model: Receiving_PO,
+    //       required: true,
+    //     },
+    //   ],
+    // });
 
     return res.json({
       product: products,
-      assembly: assembly,
-      spare: spare,
-      subpart: subpart,
+      // assembly: assembly,
+      // spare: spare,
+      // subpart: subpart,
     });
   } catch (error) {
     console.error(error);
@@ -1614,7 +1623,6 @@ router.route("/fetchPOarray").post(async (req, res) => {
       ],
     });
 
-
     // Consolidate data into an object with po_id as keys
     const consolidatedObject = {};
 
@@ -1632,8 +1640,6 @@ router.route("/fetchPOarray").post(async (req, res) => {
         suppPrice: item.purchase_req_canvassed_prd.product_tag_supplier,
       });
     });
-
-
 
     // Convert the object values back to an array
     const consolidatedArray = Object.values(consolidatedObject);
@@ -1672,8 +1678,8 @@ router.route("/PO_products").get(async (req, res) => {
                   attributes: [
                     ["product_code", "code"],
                     ["product_name", "name"],
-                    ['UOM_set', 'isSubUnit'],
-                    ['product_unitMeasurement', 'UOM']
+                    ["UOM_set", "isSubUnit"],
+                    ["product_unitMeasurement", "UOM"],
                   ],
                 },
                 {
@@ -1691,7 +1697,6 @@ router.route("/PO_products").get(async (req, res) => {
       ],
     });
 
-  
     // Consolidate data into an object with po_id as keys
     const consolidatedObject = {};
 
@@ -1709,8 +1714,6 @@ router.route("/PO_products").get(async (req, res) => {
         type: "Product",
       });
     });
-
-
 
     // Convert the object values back to an array
     const consolidatedArray = Object.values(consolidatedObject);
@@ -1745,44 +1748,39 @@ router.route("/approval").post(async (req, res) => {
   const receiving_po_id = req.query.id;
   const productsArray = req.query.prod;
 
-
   const manilaTimezone = "Asia/Manila";
   moment.tz.setDefault(manilaTimezone);
 
-// Get the current datetime in Manila timezone
-const currentDateTimeInManila = moment();
+  // Get the current datetime in Manila timezone
+  const currentDateTimeInManila = moment();
 
   // console.log(productsArray)
-  let final_status
+  let final_status;
 
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
       // console.log(`freight_cost ${product.freight_cost}`)
       // console.log(`customFee ${product.customFee}`)
 
-    
-      if(product.freight_cost === undefined  && product.customFee === undefined ){
-        final_status = 'Delivered (Lack of Cost)'
-      }
-      else if (product.freight_cost === undefined  ){
-        final_status = 'Delivered (Lack of FreightCost)'
-      }
-      else if (product.customFee === undefined ){
-        final_status = 'Delivered (Lack of CustomCost)'
-      }
-      else{
-        final_status = 'Delivered'
+      if (
+        product.freight_cost === undefined &&
+        product.customFee === undefined
+      ) {
+        final_status = "Delivered (Lack of Cost)";
+      } else if (product.freight_cost === undefined) {
+        final_status = "Delivered (Lack of FreightCost)";
+      } else if (product.customFee === undefined) {
+        final_status = "Delivered (Lack of CustomCost)";
+      } else {
+        final_status = "Delivered";
       }
 
       // console.log(final_status)
     }
   }
 
-
-
   if (productsArray && productsArray.length > 0) {
     for (const product of productsArray) {
-
       await Inventory.create({
         product_tag_supp_id: product.product_tag_supp_id,
         reference_number: product.ref_code,
@@ -1807,11 +1805,9 @@ const currentDateTimeInManila = moment();
     }
   );
 
-  if(update){
-    res.status(200).json()
+  if (update) {
+    res.status(200).json();
   }
-
- 
 });
 
 module.exports = router;

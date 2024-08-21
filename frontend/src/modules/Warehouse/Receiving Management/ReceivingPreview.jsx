@@ -67,6 +67,9 @@ function ReceivingPreview({ authrztn }) {
 
   const [userId, setuserId] = useState("");
 
+  const [SI, setSI] = useState("");
+  const [DR, setDR] = useState("");
+
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -310,7 +313,8 @@ function ReceivingPreview({ authrztn }) {
           setRequestPr(res.data.primary.purchase_req.createdAt);
 
           setApproveddate(res.data.primary.purchase_req.date_approved);
-
+          setSI(res.data.primary.SI);
+          setDR(res.data.primary.DR);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -862,7 +866,8 @@ function ReceivingPreview({ authrztn }) {
                 >
                   <div className="right" style={{ float: "right" }}>
                     <li>{`PR Number: ${prNumber}`}</li>
-                    <li>{`PO Date: ${formatDatetime(approvedPRDate)}`} </li>
+                    <li>{`SI No. : ${SI === null ? "--" : SI}`} </li>
+                    <li>{`DR No. : ${DR === null ? "--" : DR}`} </li>
                   </div>
                 </div>
               </div>
@@ -1077,9 +1082,12 @@ function ReceivingPreview({ authrztn }) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleApprove} className="button bg-warning">
-            Approve
-          </Button>
+          {status !== "Delivered" && (
+            <Button onClick={handleApprove} className="button bg-warning">
+              Approve
+            </Button>
+          )}
+
           <Button onClick={exportToPDF}>Export to PDF</Button>
           <Button onClick={exportToExcel}>Download Excel</Button>
         </Modal.Footer>

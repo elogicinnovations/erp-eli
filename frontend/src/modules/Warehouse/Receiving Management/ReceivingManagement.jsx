@@ -439,6 +439,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -454,6 +456,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -469,6 +473,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -484,6 +490,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -501,6 +509,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -516,6 +526,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -534,6 +546,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )
@@ -549,6 +563,8 @@ function ReceivingManagement({ authrztn }) {
                                 navigate(`/receivingPreview/${data.id}`)
                               ) : data.status === "In-transit" ? (
                                 navigate(`/receivingIntransit/${data.id}`)
+                              ) : data.status === "Delivered" ? (
+                                navigate(`/receivingPreview/${data.id}`)
                               ) : (
                                 <></>
                               )

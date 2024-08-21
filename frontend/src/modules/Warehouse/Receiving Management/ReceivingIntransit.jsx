@@ -155,6 +155,9 @@ function ReceivingIntransit({ authrztn }) {
           setRequestedBy(res.data[0].purchase_req.masterlist.col_Fname);
           setStatus(res.data[0].status);
           setDateCreated(res.data[0].createdAt); // kung kelan na received sa davao
+          setSI(res.data[0].SI);
+          setDR(res.data[0].DR);
+
           setIsLoading(false);
         })
         .catch((err) => {
@@ -197,6 +200,8 @@ function ReceivingIntransit({ authrztn }) {
   const [supplier_code, setSupplier_code] = useState("");
   const [prod_name, setProd_name] = useState([]);
   const [refCodes, setRefCodes] = useState("");
+  const [SI, setSI] = useState("");
+  const [DR, setDR] = useState("");
 
   const handleReceived = () => {
     setIsLoading(true);
@@ -449,6 +454,8 @@ function ReceivingIntransit({ authrztn }) {
                 prID,
                 id,
                 userId,
+                SI,
+                DR,
               }
             );
 
@@ -803,6 +810,37 @@ function ReceivingIntransit({ authrztn }) {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <div className="row mb-5">
+              {productImages.length > 0 && (
+                <Carousel
+                  data-bs-theme="dark"
+                  interval={3000}
+                  wrap={true}
+                  className="custom-carousel"
+                >
+                  {productImages.map((image, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className=""
+                        style={{
+                          width: "auto",
+                          height: "auto",
+                          margin: "auto",
+                          display: "block",
+                          maxHeight: "250px",
+                          minHeight: "250px",
+                        }}
+                        src={`data:image/png;base64,${image.image}`}
+                        alt={`subpart-img-${image.id}`}
+                      />
+                      <Carousel.Caption>
+                        {/* Caption content */}
+                      </Carousel.Caption>
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              )}
+            </div>
             <div className="row p-0">
               <div className="col-6 align-items-center">
                 <div className="d-flex w-100">
@@ -905,35 +943,40 @@ function ReceivingIntransit({ authrztn }) {
             </div>
 
             <div className="row mb-5">
-              {productImages.length > 0 && (
-                <Carousel
-                  data-bs-theme="dark"
-                  interval={3000}
-                  wrap={true}
-                  className="custom-carousel"
+              <div className="col-sm">
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
                 >
-                  {productImages.map((image, index) => (
-                    <Carousel.Item key={index}>
-                      <img
-                        className=""
-                        style={{
-                          width: "auto",
-                          height: "auto",
-                          margin: "auto",
-                          display: "block",
-                          maxHeight: "250px",
-                          minHeight: "250px",
-                        }}
-                        src={`data:image/png;base64,${image.image}`}
-                        alt={`subpart-img-${image.id}`}
-                      />
-                      <Carousel.Caption>
-                        {/* Caption content */}
-                      </Carousel.Caption>
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              )}
+                  <Form.Label className="h4">SI No. :</Form.Label>
+                  <Form.Control
+                    value={SI}
+                    onChange={(e) => setSI(e.target.value)}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    type="text"
+                    placeholder="Input SI ..."
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-sm">
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
+                >
+                  <Form.Label className="h4">DR :</Form.Label>
+                  <Form.Control
+                    value={DR}
+                    onChange={(e) => setDR(e.target.value)}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    type="text"
+                    placeholder="Input DR ..."
+                  />
+                </Form.Group>
+              </div>
             </div>
 
             {products_receive.map((parent, parentIndex) =>
