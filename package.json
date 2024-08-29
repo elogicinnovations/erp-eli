@@ -1,1 +1,89 @@
-{}
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
+    "@fortawesome/free-regular-svg-icons": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mui/icons-material": "^5.14.13",
+    "@mui/material": "^5.14.15",
+    "@mui/system": "^5.14.12",
+    "@phosphor-icons/react": "^2.1.5",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "antd": "^5.10.1",
+    "axios": "^1.5.1",
+    "bootstrap": "^5.3.2",
+    "bootstrap-icons": "^1.11.2",
+    "buffer": "^6.0.3",
+    "datatables.net": "^1.13.6",
+    "emoji-mart": "^5.6.0",
+    "file-saver": "^2.0.5",
+    "file-type": "^19.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.1",
+    "jwt-decode": "^4.0.0",
+    "mdbreact": "^5.2.0",
+    "multiselect-react-dropdown": "^2.0.25",
+    "pdf-lib": "^1.17.1",
+    "phosphor-react": "^1.4.1",
+    "primereact": "^10.6.2",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.9.1",
+    "react-csv": "^2.2.2",
+    "react-data-table-component": "^7.5.4",
+    "react-datepicker": "^4.24.0",
+    "react-datetime-picker": "^5.5.3",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-icons": "^4.11.0",
+    "react-loading": "^2.0.3",
+    "react-multi-select-component": "^4.3.4",
+    "react-pdf": "^7.7.1",
+    "react-router-dom": "^6.17.0",
+    "react-scripts": "5.0.1",
+    "react-select": "^5.8.0",
+    "react-table": "^7.8.0",
+    "recharts": "^2.10.3",
+    "styled-components": "^6.1.0",
+    "sweetalert": "^2.1.2",
+    "virtual-select-plugin": "^1.0.42",
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
+    "zustand": "^4.5.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "prod": "npm run-script build && serve build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

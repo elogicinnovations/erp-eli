@@ -3365,27 +3365,12 @@ tbody {
   font-size: 15px;
 }
 
-/* td.dropdown {
-  padding: 0px 15px 10px 15px;
-}
-
-/* .dropdown {
-  max-height: 1000px;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.dropdown.active {
-  height: 200px;
-  transition: max-height 0.3s ease;
-} */
-
 th.theadD {
   height: 20px;
   font-size: 15px;
   background-color: antiquewhite;
 }
-*/ td.tbodyD {
+td.tbodyD {
   height: 20px;
   font-size: 13px;
 }
@@ -5727,7 +5712,7 @@ span:nth-child(5) {
 }
 
 .templatestable-content table {
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
   overflow: none !important;
 
   display: block;

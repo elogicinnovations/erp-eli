@@ -319,7 +319,7 @@ router.route("/save").post(async (req, res) => {
           }
           const imageData = product.imageData.split(";base64,").pop();
           const imageBuffer = Buffer.from(imageData, "base64");
-          doc.image(imageBuffer, { fit: [480, 700] });
+          doc.image(imageBuffer, { fit: [480, 500] });
         });
 
         doc.on("data", (chunk) => pdfBuffers.push(chunk));
@@ -361,6 +361,7 @@ router.route("/save").post(async (req, res) => {
         doc.end();
       }
     );
+
     const PR_update = PR.update(
       {
         status: "On-Canvass",

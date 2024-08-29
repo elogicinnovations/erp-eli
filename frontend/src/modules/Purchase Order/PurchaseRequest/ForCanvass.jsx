@@ -25,7 +25,8 @@ import swal from "sweetalert";
 import SBFLOGO from "../../../assets/image/SBF.png";
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
-import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image-more";
 import ReactLoading from "react-loading";
 import InputGroup from "react-bootstrap/InputGroup";
 
@@ -454,7 +455,7 @@ function PurchaseOrderListPreview() {
       });
     } else {
       swal({
-        title: `Are you sure want to send canvass to supplier/s?`,
+        title: "Are you sure want to send canvass to supplier/s?",
         text: "This action cannot be undo.",
         icon: "warning",
         buttons: true,
@@ -464,20 +465,20 @@ function PurchaseOrderListPreview() {
           setsendEmail(true);
           const updatedPOarray = [];
 
-          for (const supplierProducts of Object.values(productArrays)) {
-            for (const product of supplierProducts) {
-              const supplierCode = product.product.supplier.supplier_code;
-              const div = document.getElementById(
-                `content-to-pdf-${supplierCode}`
-              );
-              const canvas = await html2canvas(div);
-              const imageData = canvas.toDataURL("image/png");
+          for (const [supplierCode, supplierProducts] of Object.entries(
+            productArrays
+          )) {
+            // Get the container for this supplier
+            const div = document.getElementById(
+              `content-to-pdf-${supplierCode}`
+            );
+            const imageData = await domtoimage.toPng(div); // Generate image once per supplier
 
+            for (const product of supplierProducts) {
               const updatedGroup = {
                 ...product,
-                imageData: imageData,
+                imageData: imageData, // Use the image generated for the supplier
               };
-
               updatedPOarray.push(updatedGroup);
             }
           }
@@ -517,134 +518,8 @@ function PurchaseOrderListPreview() {
       });
     }
 
-    setValidated(true); //for validations
+    setValidated(true); // for validations
   };
-
-  //  const add = async e => {
-  //     e.preventDefault();
-
-  //     const form = e.currentTarget;
-  //     if (form.checkValidity() === false) {
-  //       e.preventDefault();
-  //       e.stopPropagation();
-  //         swal({
-  //             icon: 'error',
-  //             title: 'Fields are required',
-  //             text: 'Please fill the red text fields'
-  //           });
-  //     }
-  //     else{
-  //       const updatedPOarray = [];
-
-  //       for (const supplierProducts of Object.values(productArrays)) {
-  //         for (const product of supplierProducts) {
-  //           if (product && product.supplier && product.supplier.supplier_code) {
-  //             const supplierCode = product.supplier.supplier_code;
-  //             const div = document.getElementById(`content-to-pdf-${supplierCode}`);
-  //             const canvas = await html2canvas(div);
-  //             const imageData = canvas.toDataURL('image/png');
-
-  //             updatedPOarray.push({ ...product, imageData: imageData });
-
-  // console.log(supplierCode)
-  //           }
-  //         }
-  //       }
-
-  //       axios.post(`${BASE_URL}/PR_PO/save` , {
-  //         prNum,
-  //         productArrays: updatedPOarray,
-  //         id,
-  //         userId,
-  //       })
-  //       .then((res) => {
-  //         console.log(res);
-  //         if (res.status === 200) {
-  //           swal({
-  //             title: 'The Purchase successfully requested!',
-  //             text: 'The Purchase Request has been added successfully.',
-  //             icon: 'success',
-  //             button: 'OK'
-  //           }).then(() => {
-  //             navigate('/purchaseRequest')
-  //           });
-  //         } else {
-  //           swal({
-  //             icon: 'error',
-  //             title: 'Something went wrong',
-  //             text: 'Please contact our support'
-  //           });
-  //         }
-  //       });
-
-  //     }
-
-  //     setValidated(true); //for validations
-  // };
-
-  // const add = async e => {
-  //   e.preventDefault();
-
-  //   const form = e.currentTarget;
-  //   if (form.checkValidity() === false) {
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //       swal({
-  //           icon: 'error',
-  //           title: 'Fields are required',
-  //           text: 'Please fill the red text fields'
-  //         });
-  //   }
-  //   else{
-
-  //     const updatedPOarray = [];
-
-  //     // Assuming productArrays is defined elsewhere in your code
-  //     for (const product of productArrays) {
-  //       const supplierCode = product.supplier.supplier_code;
-  //       const div = document.getElementById(`content-to-pdf-${supplierCode}`);
-  //       const canvas = await html2canvas(div);
-  //       const imageData = canvas.toDataURL('image/png');
-
-  //       updatedPOarray.push({ ...product, imageData: imageData });
-  //     }
-
-  //         console.log("Sending request .....");
-  //   console.log("PR Number:", prNum);
-  //   console.log("Product Arrays:", productArrays);
-  //   console.log("User ID:", userId);
-
-  //     axios.post(`${BASE_URL}/PR_PO/save`, {
-  //       prNum,
-  //       productArrays,
-  //       id: id,
-  //       userId,
-  //     })
-  //     .then((res) => {
-  //       console.log(res);
-  //       if (res.status === 200) {
-  //         swal({
-  //           title: 'The Purchase sucessfully request!',
-  //           text: 'The Purchase Request has been added successfully.',
-  //           icon: 'success',
-  //           button: 'OK'
-  //         }).then(() => {
-  //           navigate('/purchaseRequest')
-
-  //         });
-  //       } else {
-  //         swal({
-  //           icon: 'error',
-  //           title: 'Something went wrong',
-  //           text: 'Please contact our support'
-  //         });
-  //       }
-  //     });
-
-  //   }
-
-  //   setValidated(true); //for validations
-  // };
 
   const [showPreview, setPreviewShow] = useState(false);
 
@@ -1090,10 +965,10 @@ function PurchaseOrderListPreview() {
                 </Modal.Header>
                 {Object.entries(productArrays).map(
                   ([supplierCode, products]) => (
-                    <Modal.Body id={`content-to-pdf-${supplierCode}`}>
+                    <Modal.Body key={supplierCode}>
                       <div
-                        className="canvassing-templates-container"
-                        key={supplierCode}
+                        className="canvassing-templates-container mt-5"
+                        id={`content-to-pdf-${supplierCode}`} // Only one div per supplier
                       >
                         <div className="canvassing-content-templates">
                           <div className="templates-header">
@@ -1138,7 +1013,7 @@ function PurchaseOrderListPreview() {
 
                           <div className="templates-table-section">
                             <div className="templatestable-content">
-                              <Table>
+                              <table>
                                 <thead>
                                   <tr>
                                     <th className="canvassth">ITEM</th>
@@ -1148,18 +1023,23 @@ function PurchaseOrderListPreview() {
                                     <th>PRICE</th>
                                   </tr>
                                 </thead>
-                                {products.map((item, index) => (
-                                  <tbody>
+                                <tbody>
+                                  {products.map((item, index) => (
                                     <tr key={index}>
                                       <td>{item.code}</td>
                                       <td>{item.quantity}</td>
-                                      <td>PCS</td>
+                                      <td>
+                                        {
+                                          item.product.product
+                                            .product_unitMeasurement
+                                        }
+                                      </td>
                                       <td>{item.name}</td>
                                       <td></td>
                                     </tr>
-                                  </tbody>
-                                ))}
-                              </Table>
+                                  ))}
+                                </tbody>
+                              </table>
                             </div>
                           </div>
 
@@ -1196,6 +1076,7 @@ function PurchaseOrderListPreview() {
                     </Modal.Body>
                   )
                 )}
+
                 <Modal.Footer>
                   <>
                     {!sendEmail ? (
