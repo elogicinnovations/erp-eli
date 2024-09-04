@@ -26,7 +26,8 @@ import SBFLOGO from "../../../assets/image/SBF.png";
 import * as $ from "jquery";
 import { jwtDecode } from "jwt-decode";
 // import html2canvas from "html2canvas";
-import domtoimage from "dom-to-image-more";
+// import domtoimage from "dom-to-image-more";
+import { toPng } from "html-to-image";
 import ReactLoading from "react-loading";
 import InputGroup from "react-bootstrap/InputGroup";
 
@@ -456,14 +457,14 @@ function PurchaseOrderListPreview() {
     } else {
       swal({
         title: "Are you sure want to send canvass to supplier/s?",
-        text: "This action cannot be undo.",
+        text: "This action cannot be undone.",
         icon: "warning",
         buttons: true,
         dangerMode: true,
       }).then(async (approve) => {
         if (approve) {
-          setsendEmail(true);
           const updatedPOarray = [];
+          setsendEmail(true);
 
           for (const [supplierCode, supplierProducts] of Object.entries(
             productArrays
@@ -472,18 +473,27 @@ function PurchaseOrderListPreview() {
             const div = document.getElementById(
               `content-to-pdf-${supplierCode}`
             );
-            const imageData = await domtoimage.toPng(div); // Generate image once per supplier
+            try {
+              const imageData = await toPng(div); // Generate image once per supplier
 
-            for (const product of supplierProducts) {
-              const updatedGroup = {
-                ...product,
-                imageData: imageData, // Use the image generated for the supplier
-              };
-              updatedPOarray.push(updatedGroup);
+              for (const product of supplierProducts) {
+                const updatedGroup = {
+                  ...product,
+                  imageData: imageData, // Use the image generated for the supplier
+                };
+                updatedPOarray.push(updatedGroup);
+              }
+            } catch (error) {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Failed to generate image.",
+              });
+              console.error("Failed to generate image:", error);
+              setsendEmail(false);
+              return; // Exit early if image generation fails
             }
           }
-
-          console.log(updatedPOarray);
 
           axios
             .post(`${BASE_URL}/PR_PO/save`, {
