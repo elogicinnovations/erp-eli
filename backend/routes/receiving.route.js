@@ -473,6 +473,7 @@ router.route("/insertReceived").post(async (req, res) => {
   const isD_C_applicable = req.body.isD_C_applicable;
   const SI = req.body.SI;
   const DR = req.body.DR;
+  const date_received = req.body.date_received;
 
   let status = "";
   let totalReceived = 0;
@@ -563,6 +564,7 @@ router.route("/insertReceived").post(async (req, res) => {
       masterlist_id: userId,
       SI: SI === "" ? null : SI,
       DR: DR === "" ? null : DR,
+      date_received: date_received,
     });
 
     // console.log('dwadwa' + received_PO.id)
@@ -749,6 +751,7 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
   const receivingPOS_ID = req.body.id;
   const SI = req.body.SI;
   const DR = req.body.DR;
+  const date_received = req.body.date_received;
 
   let status = "";
   let totalReceived = 0;
@@ -843,6 +846,7 @@ router.route("/insertReceived_Intransit").post(async (req, res) => {
       masterlist_id: userId,
       SI: SI === "" ? null : SI,
       DR: DR === "" ? null : DR,
+      date_received: date_received,
     });
 
     for (const parent of parentArray) {

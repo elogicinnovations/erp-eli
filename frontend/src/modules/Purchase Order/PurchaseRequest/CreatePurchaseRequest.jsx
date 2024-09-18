@@ -173,10 +173,8 @@ function CreatePurchaseRequest() {
 
         swal({
           icon: "error",
-          title: "Request failed",
-          text:
-            error.response?.data?.error ||
-            "Please select a Product to request!",
+          title: "Something went wrong",
+          text: "Please contact your support immediately",
         });
       }
     }

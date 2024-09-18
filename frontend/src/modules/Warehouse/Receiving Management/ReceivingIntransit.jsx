@@ -157,7 +157,7 @@ function ReceivingIntransit({ authrztn }) {
           setDateCreated(res.data[0].createdAt); // kung kelan na received sa davao
           setSI(res.data[0].SI);
           setDR(res.data[0].DR);
-
+          setDate_received(res.data[0].date_received);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -202,6 +202,7 @@ function ReceivingIntransit({ authrztn }) {
   const [refCodes, setRefCodes] = useState("");
   const [SI, setSI] = useState("");
   const [DR, setDR] = useState("");
+  const [date_received, setDate_received] = useState("");
 
   const handleReceived = () => {
     setIsLoading(true);
@@ -456,13 +457,14 @@ function ReceivingIntransit({ authrztn }) {
                 userId,
                 SI,
                 DR,
+                date_received,
               }
             );
 
             if (response.status === 200) {
               swal({
-                title: "Purchase Request Add Succesful!",
-                text: "The Purchase Request has been Added Successfully.",
+                title: "Product Received Successful!",
+                text: "The Product has been received successfully.",
                 icon: "success",
                 button: "OK",
               }).then(() => {
@@ -943,6 +945,25 @@ function ReceivingIntransit({ authrztn }) {
             </div>
 
             <div className="row mb-5">
+              <div className="col-sm">
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
+                >
+                  <Form.Label className="h4">Date Received :</Form.Label>
+                  <Form.Control
+                    required
+                    readOnly
+                    value={date_received}
+                    onChange={(e) => setDate_received(e.target.value)}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    type="date"
+                    // placeholder="abcd12345678"
+                  />
+                </Form.Group>
+              </div>
               <div className="col-sm">
                 <Form.Group
                   className="mb-3"

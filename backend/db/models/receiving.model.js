@@ -66,6 +66,10 @@ const Receiving = sequelize.define("receiving_po", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  date_received: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
 });
 
 module.exports = Receiving;

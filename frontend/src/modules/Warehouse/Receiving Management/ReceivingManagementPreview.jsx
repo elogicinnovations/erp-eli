@@ -280,6 +280,7 @@ function ReceivingManagementPreview({ authrztn }) {
 
   const [SI, setSI] = useState("");
   const [DR, setDR] = useState("");
+  const [date_received, setDate_received] = useState("");
 
   const handleDutiesChange = () => {
     setIsD_C_applicable((prevState) => {
@@ -470,6 +471,7 @@ function ReceivingManagementPreview({ authrztn }) {
                 isD_C_applicable,
                 SI,
                 DR,
+                date_received,
               }
             );
 
@@ -1000,6 +1002,24 @@ function ReceivingManagementPreview({ authrztn }) {
             </div>
 
             <div className="row mb-5">
+              <div className="col-sm">
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
+                >
+                  <Form.Label className="h4">Date Received :</Form.Label>
+                  <Form.Control
+                    required
+                    value={date_received}
+                    onChange={(e) => setDate_received(e.target.value)}
+                    style={{
+                      fontFamily: "Poppins, Source Sans Pro",
+                    }}
+                    type="date"
+                    // placeholder="abcd12345678"
+                  />
+                </Form.Group>
+              </div>
               <div className="col-sm">
                 <Form.Group
                   className="mb-3"

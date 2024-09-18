@@ -57,7 +57,8 @@ function ReceivingPreview({ authrztn }) {
   const [supplierCode, setSupplierCode] = useState();
   const [supplierTerms, setSupplierTerms] = useState();
   const [requestPr, setRequestPr] = useState();
-
+  const [date_received, setDate_received] = useState();
+  const [date_receivedTOedit, setDate_receivedTOedit] = useState(); // para if wala pa anf date received pwede nila ma setan ng date received
   const [approvedPRDate, setApproveddate] = useState();
 
   const [products, setproducts] = useState([]);
@@ -311,7 +312,7 @@ function ReceivingPreview({ authrztn }) {
           setPoNum(res.data.primary.po_id);
           setRefnum(res.data.primary.ref_code);
           setRequestPr(res.data.primary.purchase_req.createdAt);
-
+          setDate_received(res.data.primary.date_received);
           setApproveddate(res.data.primary.purchase_req.date_approved);
           setSI(res.data.primary.SI);
           setDR(res.data.primary.DR);
@@ -442,6 +443,44 @@ function ReceivingPreview({ authrztn }) {
 
   // Format the date and time according to the options
   const formattedDate = currentDate.toLocaleDateString("en-PH", options);
+
+  const handleSetDate = () => {
+    if (date_receivedTOedit) {
+      swal({
+        title: "Are you sure?",
+        text: "Changes cannot be undone",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (approve) => {
+        if (approve) {
+          try {
+            await axios.post(BASE_URL + "/receiving/approval", {
+              params: {
+                id,
+              },
+            });
+          } catch (error) {
+            console.log(error);
+            swal({
+              title: "Something went wrong",
+              text: "Please contact your support immediately",
+              icon: "error",
+              dangerMode: true,
+            });
+          }
+        }
+      });
+    } else {
+      swal({
+        title: "Oppss",
+        text: "Please input receiving date first",
+        icon: "error",
+        buttons: true,
+        dangerMode: true,
+      });
+    }
+  };
 
   // useEffect(() => {
   //   // Initialize DataTable when role data is available
@@ -819,7 +858,39 @@ function ReceivingPreview({ authrztn }) {
               </div>
 
               <div className="col-3 rcv-date">
-                <li className="fs-3">{`Date: ${formattedDate}`} </li>
+                {date_received === null ? (
+                  <>
+                    <Form.Group controlId="exampleForm.ControlInput1">
+                      <Form.Label className="fs-3">
+                        Please input actual date received :
+                      </Form.Label>
+
+                      <div className="d-flex flex-row p-0">
+                        <Form.Control
+                          onChange={(e) =>
+                            setDate_receivedTOedit(e.target.value)
+                          }
+                          type="date"
+                          value={date_receivedTOedit}
+                          style={{
+                            fontFamily: "Poppins, Source Sans Pro",
+                            fontSize: "16px",
+                          }}
+                        />
+                        <Button onClick={handleSetDate} className="mx-2 fs-3">
+                          Set
+                        </Button>
+                      </div>
+                    </Form.Group>
+                  </>
+                ) : (
+                  <>
+                    <li className="fs-3">
+                      {`Date Received: ${date_received}`}{" "}
+                    </li>
+                  </>
+                )}
+
                 <li className="fs-3">
                   {`Request Date: ${formatDatetime(requestPr)}`}{" "}
                 </li>

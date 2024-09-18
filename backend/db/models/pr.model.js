@@ -1,14 +1,14 @@
-const sequelize = require('../config/sequelize.config');
-const { DataTypes, BOOLEAN } = require('sequelize');
+const sequelize = require("../config/sequelize.config");
+const { DataTypes, BOOLEAN } = require("sequelize");
 
-const PR = sequelize.define('purchase_req', {
+const PR = sequelize.define("purchase_req", {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  pr_num:{
+  pr_num: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -25,7 +25,7 @@ const PR = sequelize.define('purchase_req', {
     allowNull: true,
   },
   remarks: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(3000),
     allowNull: true,
   },
   status: {
@@ -34,16 +34,16 @@ const PR = sequelize.define('purchase_req', {
   },
   date_approved: {
     type: DataTypes.DATE,
-    allowNull: true
+    allowNull: true,
   },
   isPRcomplete: {
     type: DataTypes.BOOLEAN,
-    allowNull: true
+    allowNull: true,
   },
   isPOcomplete: {
     type: DataTypes.BOOLEAN,
-    allowNull: true
-  }
+    allowNull: true,
+  },
 });
 
 module.exports = PR;
