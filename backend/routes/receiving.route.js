@@ -220,7 +220,14 @@ router.route("/fetchTableToReceive").get(async (req, res) => {
       ],
       where: {
         status: {
-          [Op.or]: ["For Approval", "In-transit"],
+          [Op.or]: [
+            "For Approval",
+            "In-transit",
+            "Delivered",
+            "Delivered (Lack of Cost)",
+            "Delivered (Lack of FreightCost)",
+            "Delivered (Lack of CustomCost)",
+          ],
         },
       },
     });
@@ -271,7 +278,14 @@ router.route("/fetchTableToReceive_filter").get(async (req, res) => {
       [Op.between]: [startDate, endDate],
     },
     status: {
-      [Op.or]: ["For Approval", "In-transit", "Delivered"],
+      [Op.or]: [
+        "For Approval",
+        "In-transit",
+        "Delivered",
+        "Delivered (Lack of Cost)",
+        "Delivered (Lack of FreightCost)",
+        "Delivered (Lack of CustomCost)",
+      ],
     },
   };
 
@@ -1811,6 +1825,30 @@ router.route("/approval").post(async (req, res) => {
 
   if (update) {
     res.status(200).json();
+  }
+});
+
+router.route("/setDate").post(async (req, res) => {
+  const { id, date_received } = req.query;
+
+  try {
+    const isUpdate = await Receiving_PO.update(
+      {
+        date_received: date_received,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+
+    if (isUpdate) {
+      return res.status(200).json();
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json();
   }
 });
 

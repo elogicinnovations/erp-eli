@@ -455,11 +455,32 @@ function ReceivingPreview({ authrztn }) {
       }).then(async (approve) => {
         if (approve) {
           try {
-            await axios.post(BASE_URL + "/receiving/approval", {
-              params: {
-                id,
-              },
-            });
+            await axios
+              .post(BASE_URL + "/receiving/setDate", null, {
+                params: {
+                  id,
+                  date_received: date_receivedTOedit,
+                },
+              })
+              .then((res) => {
+                if (res.status === 200) {
+                  swal({
+                    title: "Success",
+                    text: "Date received successfully updated",
+                    icon: "success",
+                  }).then(() => {
+                    setDate_received(date_receivedTOedit);
+                    // window.location.reload();
+                  });
+                } else {
+                  swal({
+                    title: "Something went wrong",
+                    text: "Please contact your support immediately",
+                    icon: "error",
+                    dangerMode: true,
+                  });
+                }
+              });
           } catch (error) {
             console.log(error);
             swal({
@@ -659,9 +680,7 @@ function ReceivingPreview({ authrztn }) {
                       <div className="receiving_list_right d-flex flex-direction-column">
                         <ul>
                           <li>
-                            <p className="h4">{`Received date: ${formatDatetime(
-                              dateCreated
-                            )}`}</p>
+                            <p className="h4">{`Received date: ${date_received}`}</p>
                           </li>
 
                           <li>

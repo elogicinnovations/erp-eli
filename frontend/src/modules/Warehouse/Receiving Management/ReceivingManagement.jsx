@@ -427,74 +427,66 @@ function ReceivingManagement({ authrztn }) {
                       <th className="tableh">Received Date</th>
                     </tr>
                   </thead>
-                  {PurchaseRequest.length > 0 ? (
+                  {currentItemsPR.length > 0 ? (
                     <tbody>
                       {currentItemsPR.map((data, i) => (
                         <tr key={i}>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.po_id}
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.purchase_req.pr_num}
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.source === "PO" ? "n/a" : data.ref_code}
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.source === "PO"
@@ -503,34 +495,30 @@ function ReceivingManagement({ authrztn }) {
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.purchase_req.masterlist.col_Fname}
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {
@@ -540,34 +528,30 @@ function ReceivingManagement({ authrztn }) {
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.status}
                           </td>
                           <td
                             onClick={() =>
-                              data.source === "PO" ? (
-                                navigate(`/viewToReceive/${data.po_id}`)
-                              ) : data.status === "For Approval" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : data.status === "In-transit" ? (
-                                navigate(`/receivingIntransit/${data.id}`)
-                              ) : data.status === "Delivered" ? (
-                                navigate(`/receivingPreview/${data.id}`)
-                              ) : (
-                                <></>
-                              )
+                              data.source === "PO"
+                                ? navigate(`/viewToReceive/${data.po_id}`)
+                                : data.status === "For Approval"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : data.status === "In-transit"
+                                ? navigate(`/receivingIntransit/${data.id}`)
+                                : data.status === "Delivered"
+                                ? navigate(`/receivingPreview/${data.id}`)
+                                : navigate(`/receivingPreview/${data.id}`)
                             }
                           >
                             {data.source === "PO"
