@@ -60,7 +60,7 @@ function ReceivingPreview({ authrztn }) {
   const [date_received, setDate_received] = useState();
   const [date_receivedTOedit, setDate_receivedTOedit] = useState(); // para if wala pa anf date received pwede nila ma setan ng date received
   const [approvedPRDate, setApproveddate] = useState();
-
+  const [isPOComplete, setIsPOComplete] = useState();
   const [products, setproducts] = useState([]);
   const [assembly, setassembly] = useState([]);
   const [spare, setspare] = useState([]);
@@ -316,6 +316,7 @@ function ReceivingPreview({ authrztn }) {
           setApproveddate(res.data.primary.purchase_req.date_approved);
           setSI(res.data.primary.SI);
           setDR(res.data.primary.DR);
+          setIsPOComplete(res.data.primary.initialReceive);
           setIsLoading(false);
         })
         .catch((err) => {
@@ -653,7 +654,7 @@ function ReceivingPreview({ authrztn }) {
             </div>
 
             <div className="row">
-              <div className="col-6 ">
+              <div className="col-sm">
                 <Form.Label
                   style={{
                     fontSize: "20px",
@@ -682,6 +683,9 @@ function ReceivingPreview({ authrztn }) {
                           <li>
                             <p className="h4">{`Received date: ${date_received}`}</p>
                           </li>
+                          <li>
+                            <p className="h4">{`PO products: ${isPOComplete}`}</p>
+                          </li>
 
                           <li>
                             <div
@@ -704,7 +708,7 @@ function ReceivingPreview({ authrztn }) {
                   </div>
                 </div>
               </div>
-              <div className="col-6">
+              {/* <div className="col-6">
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label
                     style={{
@@ -731,7 +735,7 @@ function ReceivingPreview({ authrztn }) {
                     }}
                   />
                 </Form.Group>
-              </div>
+              </div> */}
             </div>
 
             <div

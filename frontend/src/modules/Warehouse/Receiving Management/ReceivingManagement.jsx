@@ -556,7 +556,9 @@ function ReceivingManagement({ authrztn }) {
                           >
                             {data.source === "PO"
                               ? "n/a"
-                              : formatDatetime(data.createdAt)}
+                              : data.date_received === null
+                              ? "n/a"
+                              : data.date_received}
                           </td>
                         </tr>
                       ))}
