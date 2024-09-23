@@ -12,7 +12,7 @@ import {
   ChartLineUp,
   Scroll,
   X,
-  Tag 
+  Tag,
 } from "@phosphor-icons/react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 // import Drawer from '@mui/material/Drawer';
@@ -862,6 +862,21 @@ function Sidebar({ authrztn }) {
             </NavLink>
 
             <NavLink
+              to="/Receiving"
+              style={{ textDecoration: "none", color: "inherit" }}
+              activeClassName="active"
+            >
+              <ListItem
+                button
+                className={`adminsub-menu ${
+                  location.pathname.startsWith("/Receiving") ? "active" : ""
+                }`}
+              >
+                <ListItemText primary="Receiving Report" />
+              </ListItem>
+            </NavLink>
+
+            <NavLink
               to="/retain"
               style={{ textDecoration: "none", color: "inherit" }}
               activeClassName="active"
@@ -909,7 +924,7 @@ function Sidebar({ authrztn }) {
                 }`}
                 onClick={toggleOff}
               >
-                <Tag  size={20} />
+                <Tag size={20} />
                 <ListItemText primary="Price Checker" />
               </ListItem>
             </NavLink>

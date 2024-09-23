@@ -67,6 +67,7 @@ import ReceivingIntransit from "./modules/Warehouse/Receiving Management/Receivi
 import ReceivingPreview from "./modules/Warehouse/Receiving Management/ReceivingPreview";
 import ReceivingStockTransferPreview from "./modules/Warehouse/Receiving Stock Transfer/ReceivingStockTransferPreview";
 import POTransactionReports from "./modules/Reports/POTransactionReports/POTransactionReports";
+import ReceivingReport from "./modules/Reports/Receiving/receivingreport";
 import InventoryReports from "./modules/Reports/InventoryReports/InventoryReports";
 import Retained from "./modules/Reports/RetainedReports/retained.jsx";
 import BIS from "./modules/Reports/BIS/BIS";
@@ -78,7 +79,7 @@ import ProtectedRoutes from "./hooks/protectedRoute";
 import Header from "./modules/Sidebar/header";
 import GuestRoute from "./hooks/guestRoute";
 import StockTransfer from "./modules/Warehouse/Stock Management/StockManagement";
-import ActivityLog from "./modules/ActivityModule/ActivityLog"
+import ActivityLog from "./modules/ActivityModule/ActivityLog";
 import Checker from "./modules/Price_Checker/checker.jsx";
 import Accountability from "./modules/AccountabilityModule/accountability.jsx";
 import stockManagementPreview from "./modules/Warehouse/Stock Management/StockManagementPreview";
@@ -733,6 +734,14 @@ function App() {
                     }
                   />
                   <Route
+                    path="/Receiving"
+                    element={
+                      <Roles>
+                        {(authrztn) => <ReceivingReport authrztn={authrztn} />}
+                      </Roles>
+                    }
+                  />
+                  <Route
                     path="/BIS"
                     element={
                       <Roles>{(authrztn) => <BIS authrztn={authrztn} />}</Roles>
@@ -748,10 +757,12 @@ function App() {
                     }
                   />
 
-                <Route
+                  <Route
                     path="/retain"
                     element={
-                      <Roles>{(authrztn) => <Retained authrztn={authrztn} />}</Roles>
+                      <Roles>
+                        {(authrztn) => <Retained authrztn={authrztn} />}
+                      </Roles>
                     }
                   />
 
@@ -770,8 +781,6 @@ function App() {
 
                   <Route path="/settingView/:id" element={<SystemSettings />} />
                   <Route path="/board" element={<WhiteBoard />} />
-
-                  
 
                   <Route
                     path="/accountability"
