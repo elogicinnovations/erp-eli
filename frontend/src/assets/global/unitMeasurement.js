@@ -37,6 +37,7 @@ const unitMeasurement = [
   "PACKS",
   "MTRS",
   "MTS",
+  "QRT",
 ];
 
 export default unitMeasurement;

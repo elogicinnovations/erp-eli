@@ -6,15 +6,16 @@ import axios from "axios";
 import BASE_URL from "../../../assets/global/url";
 import swal from "sweetalert";
 import { Link, useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
+import { Form, Modal } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import { CalendarBlank, Export, XCircle } from "@phosphor-icons/react";
 import { TextField } from "@mui/material";
 import NoData from "../../../../src/assets/image/NoData.png";
 import NoAccess from "../../../../src/assets/image/NoAccess.png";
+import { toPng } from "html-to-image";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 import "../../../assets/skydash/vendors/feather/feather.css";
 import "../../../assets/skydash/vendors/css/vendor.bundle.base.css";
@@ -33,6 +34,7 @@ import Header from "../../../partials/header";
 function ReceivingReport({ authrztn }) {
   const tableRef = useRef();
   const navigate = useNavigate();
+
   const [department, setDepartment] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState(null);
@@ -49,6 +51,9 @@ function ReceivingReport({ authrztn }) {
   const endIndex = Math.min(startIndex + pageSize, requestsPR.length);
   const currentItems = requestsPR.slice(startIndex, endIndex);
   const MAX_PAGES = 5;
+
+  const [show, setShow] = useState(false);
+  const [receivingDetails, setReceivingDetails] = useState([]);
 
   const generatePages = () => {
     const pages = [];
@@ -88,17 +93,6 @@ function ReceivingReport({ authrztn }) {
     setCurrentPage(page);
   };
 
-  useEffect(() => {
-    axios
-      .get(BASE_URL + "/department/fetchtableDepartment")
-      .then((res) => {
-        setDepartment(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
   const handleGenerate = () => {
     if (!startDate || !endDate || !selectedDepartment || !selectedStatus) {
       swal({
@@ -122,6 +116,135 @@ function ReceivingReport({ authrztn }) {
         setRequestsPR(res.data); // Update requestsPR state with filtered data
       })
       .catch((err) => console.log(err));
+  };
+  const [selected_data, setSelectedData] = useState([]); // for modal supplier name with po id
+  const [isExporting, setIsExporting] = useState(false);
+  const handleShow = (data) => {
+    setSelectedData(data);
+
+    axios
+      .get(`${BASE_URL}/pr_history/getReceivingDetails`, {
+        params: { po_id: data.receiving_po.po_id },
+      })
+      .then((response) => {
+        setShow(true);
+        setReceivingDetails(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching receiving details:", error);
+        swal({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to fetch receiving details. Please try again.",
+        });
+      });
+  };
+
+  const exportToPDF = async () => {
+    setIsExporting(true);
+    const div = document.getElementById(`content-to-pdf`);
+
+    const SupplierName =
+      selected_data.purchase_req_canvassed_prd.product_tag_supplier.supplier
+        .supplier_name;
+    const POID = selected_data.receiving_po.po_id;
+
+    try {
+      const imageData = await toPng(div);
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // Add a background color
+      pdf.setFillColor(240, 240, 240);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+      // Add a header
+      pdf.setFillColor(51, 122, 183);
+      pdf.rect(0, 0, pageWidth, 40, "F");
+
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.setFont(undefined, "bold");
+      pdf.text("Receiving History", pageWidth / 2, 25, { align: "center" });
+
+      // Add report details
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, "normal");
+      const currentDate = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Manila",
+      });
+      pdf.text(`Supplier: ${SupplierName}`, 15, 50);
+      pdf.text(`PO ID: ${POID}`, 15, 60);
+      pdf.text(`Exported: ${currentDate}`, 15, 70);
+
+      // Add the table
+      const tableData = receivingDetails.map((data) => [
+        data.product_code,
+        data.product_name,
+        data.static_quantity,
+        data.purchase_price,
+        data.received_quantity,
+        data.qty_balance,
+      ]);
+
+      pdf.autoTable({
+        head: [
+          [
+            "Product Code",
+            "Product Name",
+            "Qty Ordered",
+            "Purchase Price",
+            "Qty Delivered",
+            "Qty Balance",
+          ],
+        ],
+        body: tableData,
+        startY: 80,
+        theme: "grid",
+        headStyles: { fillColor: [51, 122, 183], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+      });
+
+      // Add a footer
+      const pageCount = pdf.internal.getNumberOfPages();
+      pdf.setFontSize(10);
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth - 20, pageHeight - 10, {
+          align: "right",
+        });
+      }
+
+      pdf.save("receiving_report.pdf");
+
+      swal({
+        icon: "success",
+        title: "Success",
+        text: "PDF generated successfully.",
+      });
+
+      setIsExporting(false);
+    } catch (error) {
+      swal({
+        icon: "error",
+        title: "Something went wrong",
+        text: "Failed to generate PDF.",
+      });
+      console.error("Failed to generate PDF:", error);
+    }
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    // setSelectedData(null);
   };
 
   const reloadTable = () => {
@@ -208,20 +331,36 @@ function ReceivingReport({ authrztn }) {
 
   const handleSearch = (event) => {
     setCurrentPage(1);
-    const searchTerm = event.target.value.toLowerCase();
+    const searchTerm = event.target.value.toLowerCase().trim();
+
+    // Use the full dataset (searchRequestPR) for filtering
     const filteredData = searchRequestPR.filter((data) => {
+      // Safely access nested properties
+      const productName =
+        data.purchase_req_canvassed_prd?.product_tag_supplier?.product?.product_name?.toLowerCase() ||
+        "";
+      const productCode =
+        data.purchase_req_canvassed_prd?.product_tag_supplier?.product?.product_code?.toLowerCase() ||
+        "";
+      const poId = data.receiving_po?.po_id?.toLowerCase() || "";
+      const supplierName =
+        data.purchase_req_canvassed_prd?.product_tag_supplier?.supplier?.supplier_name?.toLowerCase() ||
+        "";
+      const dateReceived = data.receiving_po?.date_received
+        ? formatDatetime(data.receiving_po.date_received).toLowerCase()
+        : "";
+
       return (
-        data.pr_num.toLowerCase().includes(searchTerm) ||
-        data.status.toLowerCase().includes(searchTerm) ||
-        formatDatetime(data.createdAt).toLowerCase().includes(searchTerm) ||
-        data.date_needed.toLowerCase().includes(searchTerm) ||
-        data.used_for.toLowerCase().includes(searchTerm) ||
-        data.masterlist.col_Fname.toLowerCase().includes(searchTerm) ||
-        data.masterlist.department.department_name
-          .toLowerCase()
-          .includes(searchTerm)
+        poId.includes(searchTerm) ||
+        supplierName.includes(searchTerm) ||
+        dateReceived.includes(searchTerm) ||
+        productName.includes(searchTerm) ||
+        productCode.includes(searchTerm)
       );
     });
+
+    console.log("Search term:", searchTerm);
+    console.log("Filtered data:", filteredData);
 
     setRequestsPR(filteredData);
   };
@@ -267,176 +406,11 @@ function ReceivingReport({ authrztn }) {
             <div className="Employeetext-button">
               <div className="employee-and-button">
                 <div className="emp-text-side ">
-                  <p className="potr-text">Receiving Report</p>
+                  <p className="potr-text">Receiving History Report</p>
                 </div>
 
                 <div className="" style={{ marginTop: "5px" }}>
-                  <div className="filtering-section">
-                    <div className="filter-sect">
-                      <div className="date-section-filter">
-                        <div
-                          style={{ position: "relative", marginBottom: "15px" }}
-                        >
-                          <DatePicker
-                            selected={startDate}
-                            onChange={(date) => setStartDate(date)}
-                            placeholderText="Choose Date From"
-                            dateFormat="yyyy-MM-dd"
-                            wrapperClassName="custom-datepicker-wrapper"
-                            popperClassName="custom-popper"
-                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                          />
-                          <CalendarBlank
-                            size={20}
-                            weight="thin"
-                            style={{
-                              position: "absolute",
-                              left: "8px",
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                              cursor: "pointer",
-                            }}
-                          />
-                          {startDate && (
-                            <XCircle
-                              size={16}
-                              weight="thin"
-                              style={{
-                                position: "absolute",
-                                right: "19px",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                cursor: "pointer",
-                              }}
-                              onClick={handleXCircleClick}
-                            />
-                          )}
-                        </div>
-
-                        <div
-                          style={{ position: "relative", marginBottom: "15px" }}
-                        >
-                          <DatePicker
-                            selected={endDate}
-                            onChange={(date) => setEndDate(date)}
-                            placeholderText="Choose Date To"
-                            dateFormat="yyyy-MM-dd"
-                            wrapperClassName="custom-datepicker-wrapper"
-                            popperClassName="custom-popper"
-                            style={{ fontFamily: "Poppins, Source Sans Pro" }}
-                          />
-                          <CalendarBlank
-                            size={20}
-                            weight="thin"
-                            selected={endDate}
-                            onChange={(date) => setEndDate(date)}
-                            style={{
-                              position: "absolute",
-                              left: "8px",
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                              cursor: "pointer",
-                            }}
-                          />
-                          {endDate && (
-                            <XCircle
-                              size={16}
-                              weight="thin"
-                              style={{
-                                position: "absolute",
-                                right: "19px",
-                                top: "50%",
-                                transform: "translateY(-50%)",
-                                cursor: "pointer",
-                              }}
-                              onClick={handleXClick}
-                            />
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="warehouse-product-filter">
-                        <div className="">
-                          <Form.Select
-                            aria-label="item status"
-                            onChange={(e) =>
-                              setSelectedDepartment(e.target.value)
-                            }
-                            value={selectedDepartment}
-                            style={{
-                              width: "274px",
-                              height: "40px",
-                              fontSize: "15px",
-                              marginBottom: "15px",
-                              fontFamily: "Poppins, Source Sans Pro",
-                            }}
-                            className="select-inv-rep"
-                          >
-                            <option disabled value="" selected>
-                              Select Department
-                            </option>
-                            <option value={"All"}>All</option>
-                            {department.map((dept) => (
-                              <option key={dept.id} value={dept.id}>
-                                {dept.department_name}
-                              </option>
-                            ))}
-                          </Form.Select>
-                        </div>
-                        <div className="">
-                          <Form.Select
-                            aria-label="item status"
-                            onChange={(e) => setSelectedStatus(e.target.value)}
-                            style={{
-                              width: "284px",
-                              height: "40px",
-                              fontSize: "15px",
-                              marginBottom: "15px",
-                              fontFamily: "Poppins, Source Sans Pro",
-                            }}
-                            className="select-inv-rep"
-                            value={selectedStatus}
-                          >
-                            <option value="" disabled selected>
-                              Select Status
-                            </option>
-                            <option value={"All"}>All</option>
-                            <option value="For-Approval">For-Approval</option>
-
-                            <option value="For-Rejustify">For-Rejustify</option>
-
-                            <option value="For-Canvassing">
-                              For-Canvassing
-                            </option>
-
-                            <option value="On-Canvass">On-Canvass</option>
-
-                            <option value="For-Approval (PO)">
-                              For-Approval (PO)
-                            </option>
-                            <option value="For-Rejustify (PO)">
-                              For-Rejustify (PO)
-                            </option>
-                          </Form.Select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pur-filt-container my-4 cus-wid">
-                      <button
-                        onClick={handleGenerate}
-                        className="goesButton cust-height"
-                      >
-                        FILTER
-                      </button>
-                      <button
-                        className="actualclearfilter Filterclear  cust-height"
-                        onClick={clearFilters}
-                      >
-                        Clear Filter
-                      </button>
-                    </div>
-                  </div>
+                  <div className="filtering-section"></div>
                 </div>
               </div>
             </div>
@@ -444,9 +418,9 @@ function ReceivingReport({ authrztn }) {
               <div className="main-of-all-tables">
                 <div className="searchandexport">
                   <div className="exportfield">
-                    <button className="export" onClick={exportToCSV}>
+                    {/* <button className="export" onClick={exportToCSV}>
                       <Export size={20} weight="bold" /> <p1>Export</p1>
-                    </button>
+                    </button> */}
                   </div>
                   <div className="searchfield">
                     <TextField
@@ -481,7 +455,10 @@ function ReceivingReport({ authrztn }) {
                   {requestsPR.length > 0 ? (
                     <tbody>
                       {currentItems.map((data, i) => (
-                        <tr key={i}>
+                        <tr
+                          key={`${data.receiving_po.po_id}-${i}`}
+                          onClick={() => handleShow(data)}
+                        >
                           <td>{data.receiving_po.po_id}</td>
                           <td>
                             {
@@ -506,6 +483,88 @@ function ReceivingReport({ authrztn }) {
                 </table>
               </div>
             </div>
+
+            <Modal backdrop="static" size="xl" show={show} onHide={handleClose}>
+              <Modal.Header closeButton className="bg-light">
+                <Modal.Title className="h4 font-weight-bold">
+                  {`${selected_data?.purchase_req_canvassed_prd?.product_tag_supplier?.supplier?.supplier_name} - ${selected_data?.receiving_po?.po_id}`}
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div id="content-to-pdf">
+                  <div className="table-responsive">
+                    <table className="table table-hover table-striped table-bordered">
+                      <thead className="thead-light">
+                        <tr>
+                          <th className="fs-4 align-middle">Product Code</th>
+                          <th className="fs-4 align-middle">Product Name</th>
+                          <th className="fs-4 align-middle">Qty Ordered</th>
+                          <th className="fs-4 align-middle">Purchase Price</th>
+                          <th className="fs-4 align-middle">Qty Delivered</th>
+                          <th className="fs-4 align-middle">Qty Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {receivingDetails.map((data, i) => (
+                          <tr key={i}>
+                            <td className=" fs-5 align-middle">
+                              {data.product_code}
+                            </td>
+                            <td
+                              title={data.product_name}
+                              className="fs-5 align-middle"
+                              style={{
+                                maxWidth: "300px",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {data.product_name}
+                            </td>
+                            <td className=" fs-5 align-middle">
+                              {data.static_quantity}
+                            </td>
+                            <td className=" fs-5 align-middle">
+                              {data.purchase_price}
+                            </td>
+                            <td className=" fs-5 align-middle">
+                              {data.received_quantity}
+                            </td>
+                            <td className=" fs-5 align-middle">
+                              {data.qty_balance}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                {isExporting === true ? (
+                  <button className="btn btn-primary btn-lg me-2">
+                    Exporting...
+                  </button>
+                ) : (
+                  <React.Fragment>
+                    <button
+                      className="btn btn-primary btn-lg me-2"
+                      onClick={exportToPDF}
+                    >
+                      Export to PDF
+                    </button>
+                    <button
+                      className="btn btn-secondary btn-lg"
+                      onClick={handleClose}
+                    >
+                      Close
+                    </button>
+                  </React.Fragment>
+                )}
+              </Modal.Footer>
+            </Modal>
+
             <nav style={{ marginTop: "15px" }}>
               <ul className="pagination" style={{ float: "right" }}>
                 <li

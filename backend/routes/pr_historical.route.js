@@ -672,6 +672,7 @@ router.route("/fetchRejustifyRemarks").get(async (req, res) => {
 router.route("/fetchReportReceivingData").get(async (req, res) => {
   try {
     const isReceivingPOfetch = await Receiving_Prd.findAll({
+      order: [["createdAt", "DESC"]],
       include: [
         {
           model: Receiving_PO,
@@ -687,6 +688,10 @@ router.route("/fetchReportReceivingData").get(async (req, res) => {
               include: [
                 {
                   model: Supplier,
+                  required: true,
+                },
+                {
+                  model: Product,
                   required: true,
                 },
               ],
@@ -719,6 +724,77 @@ router.route("/fetchReportReceivingData").get(async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+router.route("/getReceivingDetails").get(async (req, res) => {
+  const { po_id } = req.query;
+
+  try {
+    const data = await Receiving_Prd.findAll({
+      include: [
+        {
+          model: Receiving_PO,
+          required: true,
+          where: {
+            po_id: po_id,
+          },
+        },
+        {
+          model: PR_PO,
+          required: true,
+          include: [
+            {
+              model: ProductTAGSupplier,
+              required: true,
+              include: [
+                {
+                  model: Product,
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      raw: true,
+      nest: true,
+    });
+
+    if (data && data.length > 0) {
+      const aggregatedData = data.reduce((acc, item) => {
+        const key =
+          item.purchase_req_canvassed_prd.product_tag_supplier.product
+            .product_code;
+        if (!acc[key]) {
+          acc[key] = {
+            product_code:
+              item.purchase_req_canvassed_prd.product_tag_supplier.product
+                .product_code,
+            product_name:
+              item.purchase_req_canvassed_prd.product_tag_supplier.product
+                .product_name,
+            static_quantity: item.purchase_req_canvassed_prd.static_quantity,
+            purchase_price: item.purchase_req_canvassed_prd.purchase_price,
+            received_quantity: 0,
+          };
+        }
+        acc[key].received_quantity += parseFloat(item.received_quantity);
+        return acc;
+      }, {});
+
+      const result = Object.values(aggregatedData).map((item) => ({
+        ...item,
+        qty_balance: item.static_quantity - item.received_quantity,
+      }));
+
+      return res.json(result);
+    } else {
+      res.status(404).json({ message: "No data found" });
+    }
+  } catch (error) {
+    console.error("Error in getReceivingDetails:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
