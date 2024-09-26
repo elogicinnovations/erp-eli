@@ -1852,4 +1852,137 @@ router.route("/setDate").post(async (req, res) => {
   }
 });
 
+router.route("/rejection").post(async (req, res) => {
+  const { id, prod, refnum } = req.query;
+
+  try {
+    // Check if prod array exists and has items
+    if (prod && prod.length > 0) {
+      // Map over each product in prod array
+      const updatePromises = prod.map(async (product) => {
+        // Find the corresponding canvassed product
+        const fetchCanvassed = await PR_PO.findOne({
+          where: {
+            id: product.canvassed_id,
+          },
+        });
+
+        if (fetchCanvassed) {
+          // Update the quantity of the canvassed product
+          await fetchCanvassed.update(
+            {
+              quantity:
+                parseFloat(fetchCanvassed.quantity) +
+                parseFloat(product.quantityTOReject),
+              status: "To-Receive",
+            },
+            {
+              where: {
+                id: product.canvassed_id,
+              },
+            }
+          );
+
+          // Delete the corresponding receiving product
+          await Receiving_Prd.destroy({
+            where: {
+              receiving_po_id: id,
+              canvassed_id: product.canvassed_id,
+            },
+          });
+        }
+      });
+
+      // Wait for all updates and deletions to complete
+      await Promise.all(updatePromises);
+
+      // Delete the main receiving purchase order
+      await Receiving_PO.destroy({
+        where: {
+          ref_code: refnum,
+        },
+      });
+    }
+
+    // Send a success response
+    return res.status(200).json();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json();
+  }
+});
+
+router.route("/retrack").post(async (req, res) => {
+  try {
+    const inventories = await Inventory.findAll({
+      where: {
+        reference_number: { [Op.ne]: null },
+      },
+    });
+
+    if (inventories) {
+      for (const itemInventory of inventories) {
+        const receiving_prd = await Receiving_Prd.findAll({
+          include: [
+            {
+              model: PR_PO,
+              required: true,
+              where: {
+                product_tag_supplier_ID: itemInventory.product_tag_supp_id,
+              },
+              include: [
+                {
+                  model: ProductTAGSupplier,
+                  required: true,
+                  include: [
+                    {
+                      model: Supplier,
+                      required: true,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              model: Receiving_PO,
+              required: true,
+              where: {
+                ref_code: itemInventory.reference_number,
+              },
+            },
+          ],
+        });
+
+        if (receiving_prd) {
+          for (const itemReceivingPrd of receiving_prd) {
+            await itemInventory.update(
+              {
+                price: (
+                  parseFloat(
+                    itemReceivingPrd.purchase_req_canvassed_prd.purchase_price
+                  ) *
+                  parseFloat(
+                    itemReceivingPrd.purchase_req_canvassed_prd
+                      .product_tag_supplier.supplier.supplier_vat /
+                      100 +
+                      1
+                  )
+                ).toFixed(2),
+              },
+              {
+                where: {
+                  product_tag_supp_id: itemReceivingPrd.product_tag_supplier_ID,
+                },
+              }
+            );
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json();
+  }
+});
+
 module.exports = router;

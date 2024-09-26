@@ -89,24 +89,44 @@ function ReceivingPreview({ authrztn }) {
   }, []);
 
   const exportToPDF = () => {
-    const input = document.getElementById("modal-body"); // Assuming you give an id to your Modal.Body container
-    html2canvas(input).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF();
-      const imgWidth = 210;
-      const pageHeight = 295;
+    const input = document.getElementById("modal-body");
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/jpeg", 1.0);
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth - 20; // 10mm margins on each side
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
       let heightLeft = imgHeight;
-      let position = 0;
+      let position = 10; // Start 10mm from the top
 
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      // Add header
+      pdf.setFontSize(18);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text("Receiving Report", pageWidth / 2, 10, { align: "center" });
 
+      // Add image
+      pdf.addImage(imgData, "JPEG", 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight - 20;
+
+      // Add more pages if needed
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        pdf.addImage(imgData, "JPEG", 10, 10, imgWidth, imgHeight);
+        heightLeft -= pageHeight - 20;
+      }
+
+      // Add footer with page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(150);
+        pdf.text(`Page ${i} of ${pageCount}`, pageWidth / 2, pageHeight - 10, {
+          align: "center",
+        });
       }
 
       pdf.save("receivingReport.pdf");
@@ -127,51 +147,84 @@ function ReceivingPreview({ authrztn }) {
     // Get worksheet
     const ws = wb.Sheets["Sheet1"];
 
-    // Apply styles to header row
-    const range = XLSX.utils.decode_range(ws["!ref"]);
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-      const address = XLSX.utils.encode_cell({ c: C, r: 0 });
-      if (!ws[address]) continue;
-      ws[address].s = {
-        font: {
-          bold: true,
-          color: { rgb: "FFFFFF" },
-        },
-        fill: {
-          fgColor: { rgb: "4F81BD" },
-        },
-        border: {
-          top: { style: "thin", color: { rgb: "000000" } },
-          bottom: { style: "thin", color: { rgb: "000000" } },
-          left: { style: "thin", color: { rgb: "000000" } },
-          right: { style: "thin", color: { rgb: "000000" } },
-        },
-        alignment: {
-          vertical: "center",
-          horizontal: "center",
-        },
-      };
-    }
+    // Define styles
+    const headerStyle = {
+      font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12, name: "Arial" },
+      fill: { fgColor: { rgb: "4472C4" } },
+      border: {
+        top: { style: "medium", color: { rgb: "000000" } },
+        bottom: { style: "medium", color: { rgb: "000000" } },
+        left: { style: "medium", color: { rgb: "000000" } },
+        right: { style: "medium", color: { rgb: "000000" } },
+      },
+      alignment: { vertical: "center", horizontal: "center", wrapText: true },
+    };
 
-    // Apply formatting to cells
+    const bodyStyle = {
+      font: { color: { rgb: "000000" }, sz: 11, name: "Arial" },
+      border: {
+        top: { style: "thin", color: { rgb: "D9D9D9" } },
+        bottom: { style: "thin", color: { rgb: "D9D9D9" } },
+        left: { style: "thin", color: { rgb: "D9D9D9" } },
+        right: { style: "thin", color: { rgb: "D9D9D9" } },
+      },
+      alignment: { vertical: "center", horizontal: "center", wrapText: true },
+    };
+
+    const alternateRowStyle = {
+      ...bodyStyle,
+      fill: { fgColor: { rgb: "F2F2F2" } },
+    };
+
+    // Apply styles to cells
+    const range = XLSX.utils.decode_range(ws["!ref"]);
     for (let R = range.s.r; R <= range.e.r; ++R) {
       for (let C = range.s.c; C <= range.e.c; ++C) {
         const address = XLSX.utils.encode_cell({ c: C, r: R });
         if (!ws[address]) continue;
-        ws[address].s = {
-          border: {
-            top: { style: "thin", color: { rgb: "000000" } },
-            bottom: { style: "thin", color: { rgb: "000000" } },
-            left: { style: "thin", color: { rgb: "000000" } },
-            right: { style: "thin", color: { rgb: "000000" } },
-          },
-          alignment: {
-            vertical: "center",
-            horizontal: "center",
-          },
-        };
+
+        if (R === 0) {
+          // Header row
+          ws[address].s = headerStyle;
+        } else {
+          // Body rows
+          ws[address].s = R % 2 === 0 ? bodyStyle : alternateRowStyle;
+        }
       }
     }
+
+    // Auto-size columns
+    const colWidths = range.e.c - range.s.c + 1;
+    ws["!cols"] = [];
+    for (let i = 0; i < colWidths; i++) {
+      ws["!cols"].push({ wch: 15 }); // Set a default width, adjust as needed
+    }
+
+    // Add a title row
+    XLSX.utils.sheet_add_aoa(ws, [["Receiving Report"]], { origin: "A1" });
+    ws["A1"].s = {
+      font: { bold: true, color: { rgb: "000000" }, sz: 16, name: "Arial" },
+      alignment: { vertical: "center", horizontal: "center" },
+    };
+    ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: range.e.c } }];
+
+    // Shift all existing content down by one row
+    for (let R = range.e.r; R >= 0; --R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_cell({ c: C, r: R });
+        const newAddress = XLSX.utils.encode_cell({ c: C, r: R + 1 });
+        if (ws[address]) {
+          ws[newAddress] = ws[address];
+          if (R === 0) ws[newAddress].s = headerStyle;
+        }
+      }
+    }
+
+    // Update the range to include the new title row
+    ws["!ref"] = XLSX.utils.encode_range({
+      s: { c: range.s.c, r: 0 },
+      e: { c: range.e.c, r: range.e.r + 1 },
+    });
 
     const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     saveAs(
@@ -379,7 +432,13 @@ function ReceivingPreview({ authrztn }) {
               id: id,
               prod: products.map((data) => {
                 let purchase_price =
-                  data.purchase_req_canvassed_prd.purchase_price;
+                  parseFloat(data.purchase_req_canvassed_prd.purchase_price) *
+                  (parseFloat(
+                    data.purchase_req_canvassed_prd.product_tag_supplier
+                      .supplier.supplier_vat
+                  ) /
+                    100 +
+                    1);
                 let Base_quantity = data.received_quantity;
                 let set_quantity = data.set_quantity;
                 let product_tag_id =
@@ -395,7 +454,7 @@ function ReceivingPreview({ authrztn }) {
                   product_tag_supp_id: product_tag_id,
                   quantity: Base_quantity * set_quantity,
                   set_quantity: set_quantity,
-                  perPiece_price: perPiece_price,
+                  perPiece_price: perPiece_price.toFixed(2),
                   ref_code: ref_code,
                   freight_cost: freight_cost,
                   customFee: customFee,
@@ -407,12 +466,118 @@ function ReceivingPreview({ authrztn }) {
 
         if (response.status === 200) {
           swal({
-            title: "Approved Successfully",
-            text: "",
+            title: "Success",
+            text: "Receiving report approved successfully",
             icon: "success",
           }).then(() => {
             navigate("/receivingManagement");
           });
+        } else {
+          swal({
+            title: "Something went wrong",
+            text: "Please contact your support immediately",
+            icon: "error",
+            dangerMode: true,
+          });
+        }
+      }
+    });
+  };
+
+  const handleReject = () => {
+    swal({
+      title: "Reject this receiving report?",
+      text: "Once rejected, you cannot undo this action.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          await axios
+            .post(BASE_URL + "/receiving/rejection", null, {
+              params: {
+                id: id,
+                refnum: refnum,
+                prod: products.map((data) => {
+                  let canvassed_id = data.purchase_req_canvassed_prd.id;
+                  let quantity = data.received_quantity;
+
+                  return {
+                    canvassed_id: canvassed_id,
+                    quantityTOReject: quantity,
+                  };
+                }),
+              },
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                swal({
+                  title: "Success",
+                  text: "Receiving report rejected successfully",
+                  icon: "success",
+                }).then(() => {
+                  navigate("/receivingManagement");
+                });
+              } else {
+                swal({
+                  title: "Something went wrong",
+                  text: "Please contact your support immediately",
+                  icon: "error",
+                  dangerMode: true,
+                });
+              }
+            });
+        } catch (error) {
+          swal({
+            title: "Something went wrong",
+            text: "Please contact your support immediately",
+            icon: "error",
+            dangerMode: true,
+          });
+          console.log(error);
+        }
+      }
+    });
+  };
+
+  const handleRetrack = () => {
+    swal({
+      title: "Are you sure?",
+      text: "You are attempting to retack the inventory price",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          await axios
+            .post(BASE_URL + "/receiving/retrack")
+
+            .then((res) => {
+              if (res.status === 200) {
+                swal({
+                  title: "Success",
+                  text: "Inventory price retacked successfully",
+                  icon: "success",
+                });
+              } else {
+                swal({
+                  title: "Something went wrong",
+                  text: "Please contact your support immediately",
+                  icon: "error",
+                  dangerMode: true,
+                });
+              }
+            });
+        } catch (error) {
+          swal({
+            title: "Something went wrong",
+            text: "Please contact your support immediately",
+            icon: "error",
+            dangerMode: true,
+          });
+          console.log(error);
         }
       }
     });
@@ -653,6 +818,12 @@ function ReceivingPreview({ authrztn }) {
               ></span>
             </div>
 
+            {userId === 1 && (
+              <Button variant="warning" onClick={handleRetrack}>
+                Retrack
+              </Button> // this is for retracting the inventory price. it must wiith vat added already
+            )}
+
             <div className="row">
               <div className="col-sm">
                 <Form.Label
@@ -801,20 +972,39 @@ function ReceivingPreview({ authrztn }) {
                           <td>{data.received_quantity}</td>
 
                           <td>
-                            {
+                            {(
                               data.purchase_req_canvassed_prd
-                                .product_tag_supplier.product_price
-                            }
+                                .product_tag_supplier.product_price *
+                              (data.purchase_req_canvassed_prd
+                                .product_tag_supplier.supplier.supplier_vat /
+                                100 +
+                                1)
+                            ).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
                           </td>
                           <td>
                             {data.receiving_po.freight_cost === null
                               ? "Pending Cost"
-                              : data.receiving_po.freight_cost}
+                              : data.receiving_po.freight_cost.toLocaleString(
+                                  undefined,
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}
                           </td>
                           <td>
                             {data.receiving_po.customFee === null
                               ? "Pending Cost"
-                              : data.receiving_po.customFee}
+                              : data.receiving_po.customFee.toLocaleString(
+                                  undefined,
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}
                           </td>
                         </tr>
                       ))}
@@ -984,9 +1174,9 @@ function ReceivingPreview({ authrztn }) {
                           <th className="tableh">
                             Duties & Customs Cost (/qty)
                           </th>
-                          <th className="tableh">Landed Cost (qty)</th>
+                          <th className="tableh">Landed Cost (/qty)</th>
                           <th className="tableh">Total Landed Cost</th>
-                          <th className="tableh">VAT</th>
+                          {/* <th className="tableh">VAT</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -1010,7 +1200,6 @@ function ReceivingPreview({ authrztn }) {
                                 product_tag_supplier: { product },
                                 purchase_price,
                               },
-
                               purchase_req_canvassed_prd: {
                                 product_tag_supplier: { supplier },
                               },
@@ -1020,21 +1209,24 @@ function ReceivingPreview({ authrztn }) {
                               receiving_po: { freight_cost, customFee },
                             } = data;
 
-                            const customFeeValue =
-                              customFee === null ? 0 : customFee;
-                            const freight_cost_value =
-                              freight_cost === null ? 0 : freight_cost;
+                            const VAT = supplier.supplier_vat || 0;
+                            const purchasePriceWithVAT = (
+                              purchase_price *
+                              (VAT / 100 + 1)
+                            ).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            });
 
-                            const VAT =
-                              supplier.supplier_vat === null
-                                ? 0
-                                : supplier.supplier_vat;
+                            const customFeeValue = customFee || 0;
+                            const freight_cost_value = freight_cost || 0;
 
                             const unitCost = product.UOM_set
-                              ? purchase_price / set_quantity +
+                              ? parseFloat(purchasePriceWithVAT) /
+                                  set_quantity +
                                 freight_cost_value +
                                 customFeeValue
-                              : purchase_price +
+                              : parseFloat(purchasePriceWithVAT) +
                                 freight_cost_value +
                                 customFeeValue;
 
@@ -1042,21 +1234,20 @@ function ReceivingPreview({ authrztn }) {
                               ? unitCost * set_quantity * received_quantity
                               : unitCost * received_quantity;
 
-                            const vatPrice =
-                              totalLandedCost * (VAT / 100) + totalLandedCost;
+                            const vatPrice = totalLandedCost;
 
                             // Update totals
                             totalInitialReceived += transfered_quantity || 0;
                             totalReceived += received_quantity || 0;
                             totalSet += set_quantity === 1 ? 0 : set_quantity;
-                            totalPurchasedPrice += purchase_price || 0;
+                            totalPurchasedPrice +=
+                              parseFloat(purchasePriceWithVAT) || 0;
                             totalTotalPrice +=
-                              received_quantity * purchase_price || 0;
+                              received_quantity * purchasePriceWithVAT || 0;
                             totalFreightCost += freight_cost_value || 0;
                             totalCustomFee += customFeeValue || 0;
                             totalLandedCostOverAll += unitCost || 0;
                             totalTotalLandedCost += totalLandedCost || 0;
-
                             totalVat += vatPrice;
 
                             return (
@@ -1073,16 +1264,13 @@ function ReceivingPreview({ authrztn }) {
                                 <td>
                                   {set_quantity === 1 ? "N/A" : set_quantity}
                                 </td>
-                                <td>
-                                  {purchase_price.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                  })}
-                                </td>
+                                <td>{purchasePriceWithVAT}</td>
                                 <td>
                                   {(
-                                    received_quantity * purchase_price
+                                    purchasePriceWithVAT * received_quantity
                                   ).toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                   })}
                                 </td>
                                 <td>
@@ -1090,30 +1278,34 @@ function ReceivingPreview({ authrztn }) {
                                     undefined,
                                     {
                                       minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
                                     }
                                   )}
-                                  {/* {freight_cost_value} */}
                                 </td>
                                 <td>
                                   {customFeeValue.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                   })}
                                 </td>
                                 <td>
                                   {unitCost.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                   })}
                                 </td>
                                 <td>
                                   {totalLandedCost.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                   })}
                                 </td>
-                                <td>
+                                {/* <td>
                                   {vatPrice.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
                                   })}
-                                </td>
+                                </td> */}
                               </tr>
                             );
                           });
@@ -1128,40 +1320,51 @@ function ReceivingPreview({ authrztn }) {
                               <td>
                                 {totalPurchasedPrice.toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
                                 })}
                               </td>
                               <td>
                                 {totalTotalPrice.toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
                                 })}
                               </td>
                               <td>
                                 {totalFreightCost.toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
                                 })}
                               </td>
                               <td>
                                 {totalCustomFee.toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
                                 })}
                               </td>
                               <td>
                                 {totalLandedCostOverAll.toLocaleString(
                                   undefined,
-                                  { minimumFractionDigits: 2 }
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
                                 )}
                               </td>
                               <td>
                                 {totalTotalLandedCost.toLocaleString(
                                   undefined,
-                                  { minimumFractionDigits: 2 }
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
                                 )}
                               </td>
-                              <td>
+                              {/* <td>
                                 {totalVat.toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
                                 })}
-                              </td>
+                              </td> */}
                             </tr>
                           );
 
@@ -1175,15 +1378,42 @@ function ReceivingPreview({ authrztn }) {
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          {status !== "Delivered" && (
-            <Button onClick={handleApprove} className="button bg-warning">
-              Approve
+        <Modal.Footer className="d-flex justify-content-between align-items-center">
+          <div>
+            <Button
+              onClick={exportToPDF}
+              className="btn btn-primary me-2"
+              style={{ fontSize: "16px", padding: "10px 20px" }}
+            >
+              <i className="fas fa-file-pdf me-2"></i>Export to PDF
             </Button>
-          )}
+            <Button
+              onClick={exportToExcel}
+              className="btn btn-success"
+              style={{ fontSize: "16px", padding: "10px 20px" }}
+            >
+              <i className="fas fa-file-excel me-2"></i>Download Excel
+            </Button>
+          </div>
 
-          <Button onClick={exportToPDF}>Export to PDF</Button>
-          <Button onClick={exportToExcel}>Download Excel</Button>
+          {status !== "Delivered" && (
+            <div>
+              <Button
+                onClick={handleApprove}
+                className="btn btn-warning me-2"
+                style={{ fontSize: "16px", padding: "10px 20px" }}
+              >
+                Approve
+              </Button>
+              <Button
+                onClick={handleReject}
+                className="btn btn-danger"
+                style={{ fontSize: "16px", padding: "10px 20px" }}
+              >
+                Reject
+              </Button>
+            </div>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

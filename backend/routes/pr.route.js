@@ -256,25 +256,25 @@ router.route("/fetchTable_PO").get(async (req, res) => {
 
       // Process data to sum purchase_price * static_quantity for same po_id
       data.forEach((item) => {
-        if (item.status !== "Received") {
-          const poId = item.po_id;
+        // if (item.status !== "") {
+        const poId = item.po_id;
 
-          const vat_value = item.product_tag_supplier.supplier.supplier_vat;
-          const itemTotal =
-            item.static_quantity *
-            (item.purchase_price * (vat_value / 100 + 1)).toFixed(2);
+        const vat_value = item.product_tag_supplier.supplier.supplier_vat;
+        const itemTotal =
+          item.static_quantity *
+          (item.purchase_price * (vat_value / 100 + 1)).toFixed(2);
 
-          if (poMap.has(poId)) {
-            const existingItem = poMap.get(poId);
-            existingItem.total += itemTotal;
-            existingItem.static_quantity += item.static_quantity;
-          } else {
-            poMap.set(poId, {
-              ...item.toJSON(),
-              total: itemTotal,
-            });
-          }
+        if (poMap.has(poId)) {
+          const existingItem = poMap.get(poId);
+          existingItem.total += itemTotal;
+          existingItem.static_quantity += item.static_quantity;
+        } else {
+          poMap.set(poId, {
+            ...item.toJSON(),
+            total: itemTotal,
+          });
         }
+        // }
       });
 
       // Convert Map to array
