@@ -540,7 +540,7 @@ function ReceivingPreview({ authrztn }) {
       }
     });
   };
-//wag paki alaman paki usap -chester
+  //wag paki alaman paki usap -chester
   // const handleRetrack = () => {
   //   swal({
   //     title: "Are you sure?",
@@ -1210,23 +1210,19 @@ function ReceivingPreview({ authrztn }) {
                             } = data;
 
                             const VAT = supplier.supplier_vat || 0;
-                            const purchasePriceWithVAT = (
-                              purchase_price *
-                              (VAT / 100 + 1)
-                            ).toLocaleString(undefined, {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            });
+                            // Assume purchasePriceWithVAT is already rounded to 2 decimal places
+                            const purchasePriceWithVAT = parseFloat(
+                              (purchase_price * (VAT / 100 + 1)).toFixed(2)
+                            );
 
                             const customFeeValue = customFee || 0;
                             const freight_cost_value = freight_cost || 0;
 
                             const unitCost = product.UOM_set
-                              ? parseFloat(purchasePriceWithVAT) /
-                                  set_quantity +
+                              ? purchasePriceWithVAT / set_quantity +
                                 freight_cost_value +
                                 customFeeValue
-                              : parseFloat(purchasePriceWithVAT) +
+                              : purchasePriceWithVAT +
                                 freight_cost_value +
                                 customFeeValue;
 
@@ -1234,21 +1230,19 @@ function ReceivingPreview({ authrztn }) {
                               ? unitCost * set_quantity * received_quantity
                               : unitCost * received_quantity;
 
-                            const vatPrice = totalLandedCost;
+                            const totalPrice =
+                              purchasePriceWithVAT * received_quantity;
 
                             // Update totals
                             totalInitialReceived += transfered_quantity || 0;
                             totalReceived += received_quantity || 0;
                             totalSet += set_quantity === 1 ? 0 : set_quantity;
-                            totalPurchasedPrice +=
-                              parseFloat(purchasePriceWithVAT) || 0;
-                            totalTotalPrice +=
-                              received_quantity * purchasePriceWithVAT || 0;
+                            totalPurchasedPrice += purchasePriceWithVAT || 0;
+                            totalTotalPrice += totalPrice || 0;
                             totalFreightCost += freight_cost_value || 0;
                             totalCustomFee += customFeeValue || 0;
                             totalLandedCostOverAll += unitCost || 0;
                             totalTotalLandedCost += totalLandedCost || 0;
-                            totalVat += vatPrice;
 
                             return (
                               <tr key={i}>
@@ -1264,42 +1258,12 @@ function ReceivingPreview({ authrztn }) {
                                 <td>
                                   {set_quantity === 1 ? "N/A" : set_quantity}
                                 </td>
-                                <td>{purchasePriceWithVAT}</td>
-                                <td>
-                                  {(
-                                    purchasePriceWithVAT * received_quantity
-                                  ).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}
-                                </td>
-                                <td>
-                                  {freight_cost_value.toLocaleString(
-                                    undefined,
-                                    {
-                                      minimumFractionDigits: 2,
-                                      maximumFractionDigits: 2,
-                                    }
-                                  )}
-                                </td>
-                                <td>
-                                  {customFeeValue.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}
-                                </td>
-                                <td>
-                                  {unitCost.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}
-                                </td>
-                                <td>
-                                  {totalLandedCost.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}
-                                </td>
+                                <td>{purchasePriceWithVAT.toFixed(2)}</td>
+                                <td>{totalPrice.toFixed(2)}</td>
+                                <td>{freight_cost_value.toFixed(2)}</td>
+                                <td>{customFeeValue.toFixed(2)}</td>
+                                <td>{unitCost.toFixed(2)}</td>
+                                <td>{totalLandedCost.toFixed(2)}</td>
                                 {/* <td>
                                   {vatPrice.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
