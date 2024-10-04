@@ -12,6 +12,7 @@ import Col from "react-bootstrap/Col";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputGroup from "react-bootstrap/InputGroup";
+import SBFLOGO from "../../../assets/image/sbf_logoo_final.jpg";
 import {
   ArrowCircleLeft,
   ShoppingCart,
@@ -43,7 +44,8 @@ function PurchaseOrderListPreview() {
   const [validated, setValidated] = useState(false);
   const [editMode, setEditMode] = useState({});
   const [userId, setuserId] = useState("");
-
+  const [departmentName, setDepartmentName] = useState("");
+  const [requestedBy, setRequestedBy] = useState("");
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
     if (typeof token === "string") {
@@ -85,12 +87,19 @@ function PurchaseOrderListPreview() {
   const [showModalSpare, setShowModalspare] = useState(false); //for spare modal
   const [showModalSubpart, setShowModalSubpart] = useState(false); //for assembly modal
 
+  const [showPreview, setShowPreview] = useState(false); //for assembly modal
+
   const handleClose = () => {
     setShowModal(false);
     setShowModalAS(false);
     setShowModalspare(false);
     setShowModalSubpart(false);
     setEditMode(false);
+    setShowPreview(false);
+  };
+
+  const handleShowPreview = () => {
+    setShowPreview(true);
   };
 
   useEffect(() => {
@@ -156,10 +165,11 @@ function PurchaseOrderListPreview() {
         // Update this line to parse the date string correctly
         const parsedDate = new Date(res.data.date_needed);
         setDateNeeded(parsedDate);
-
         setUseFor(res.data.used_for);
         setRemarks(res.data.remarks);
         setStatus(res.data.status);
+        setDepartmentName(res.data.masterlist.department.department_name);
+        setRequestedBy(res.data.masterlist.col_Fname);
       })
       .catch((err) => {
         console.error(err);
@@ -337,13 +347,25 @@ function PurchaseOrderListPreview() {
             daysfrom: daysInputs[`${title}`]?.DaysFrom || "",
             daysto: daysInputs[`${title}`]?.DaysTo || "",
             usedFor: toBeUsedFor[`${title}`]?.toBeUsedFor || "",
-            // sendEmail: isSend[`${title}`]?.isSendEmail || false,
+            code: item.code,
+            name: item.name,
+            supp_email: item.supp_email,
+            supplierName: item.supplierName,
+            // product_data: item.product,
+            uom: item.product.product.product_unitMeasurement,
+            part_number:
+              item.product.product.part_number === ""
+                ? "--"
+                : item.product.product.part_number,
+            supplier_vat: item.product.supplier.supplier_vat,
+            supplier_terms: item.product.supplier.supplier_terms,
+            supplier_currency: item.product.supplier.supplier_currency,
           })),
         };
       }
     );
     setAddPObackend(serializedParent);
-    // console.log("Products:", parentArray);
+    console.log("Products:", parentArray);
     console.log("Selected Products:", serializedParent);
     // return serializedParent;
   };
@@ -989,6 +1011,9 @@ function PurchaseOrderListPreview() {
     setValidated(true); //for validations
   };
 
+  console.log(`parentArray`);
+  console.log(parentArray);
+
   return (
     <div className="main-of-containers">
       <div className="right-of-main-containers">
@@ -1334,25 +1359,7 @@ function PurchaseOrderListPreview() {
                       key={supplierCode}
                     >
                       <div className="canvass-supplier-content">
-                        <div className="d-flex flex-row p-0 align-items-center ">
-                          {/* <div className="form-check form-switch">
-                            <span className="fs-3 " htmlFor="status">
-                              {isSend[`${title}`]?.isSendEmail === true
-                                ? "Email will send upon approval"
-                                : "Won't send email"}
-                            </span>
-                            <input
-                              checked={isSend[`${title}`]?.isSendEmail || false}
-                              onChange={(e) =>
-                                handleClickISSend(title, e.target.checked)
-                              }
-                              className="form-check-input fs-3"
-                              type="checkbox"
-                              role="switch"
-                              id="status"
-                            />
-                          </div> */}
-                        </div>
+                        <div className="d-flex flex-row p-0 align-items-center "></div>
                         <div className="POand-daysDeliver">
                           <div className="PO-nums">
                             <p>{`PO #: ${title}`}</p>
@@ -1507,7 +1514,395 @@ function PurchaseOrderListPreview() {
                     </div>
                   ))}
                 </div>
+              </>
+            )}
+            <div className="save-cancel">
+              <Button
+                type="button"
+                className="btn btn-warning"
+                onClick={handleShowPreview}
+                size="md"
+                style={{ fontSize: "20px", margin: "0px 5px" }}
+              >
+                Preview PO
+              </Button>
+            </div>
 
+            <Modal
+              show={showPreview}
+              onHide={handleClose}
+              backdrop="static"
+              keyboard={false}
+              size="xl"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title style={{ fontSize: "25px" }}>
+                  DEPARTMENT: <strong>{departmentName}</strong>
+                </Modal.Title>
+              </Modal.Header>
+
+              {addPObackend.map((data, index) => {
+                let vat = data.serializedArray[0].supplier_vat;
+
+                let vat_decimal = vat / 100 + 1;
+                let overallTotal = 0;
+                let amountWOvat = 0;
+                let vatAmount = 0;
+
+                data.serializedArray.forEach((item, index) => {
+                  overallTotal +=
+                    item.prod_supplier_price * vat_decimal * item.quantity;
+                });
+
+                amountWOvat = overallTotal / vat_decimal;
+                vatAmount = overallTotal - amountWOvat;
+                return (
+                  <Modal.Body
+                    // id={`content-to-capture-${group.title}`}
+                    className="po-rece-modal"
+                  >
+                    <div
+                      // id={`content-to-capture-${group.title}`}
+                      // key={group.title}
+                      className="receipt-main-container"
+                    >
+                      <div className="receipt-content">
+                        <div className="receipt-header">
+                          <div className="sbflogoes">
+                            <img src={SBFLOGO} alt="" />
+                          </div>
+                          <div className="sbftexts">
+                            <span>SBF PHILIPPINES DRILLING </span>
+                            <span>RESOURCES CORPORATION</span>
+                            <span>
+                              Padigusan, Sta.Cruz, Rosario, Agusan del sur
+                            </span>
+                            <span>Landline No. 0920-949-3373</span>
+                            <span>Email Address: sbfpdrc@gmail.com</span>
+                          </div>
+                          <div className="spacesbf"></div>
+                        </div>
+
+                        <div className="po-orders">
+                          <div className="po-header">
+                            <div className="vendor-info"></div>
+                            <div className="plain-info">
+                              <div className="text-center p-2 fw-bold fs-4 border-bottom border-white">
+                                <span className="hideText">.</span>
+                              </div>
+                              <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal hideText">
+                                    .
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="p-1 fs-6 text-center border-bottom border-dark">
+                                <span className="fs-5 fw-normal">Vendor</span>
+                              </div>
+                              <div className="p-1 fs-6 text-center">
+                                <span className="fs-5 fw-normal">
+                                  {data.serializedArray[0].supplierName}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="order-info">
+                              <div className="text-center p-2 fw-bold fs-4 border-bottom border-dark">
+                                PURCHASE ORDER
+                              </div>
+                              <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal">P.O NO</span>
+                                </div>
+                                <div className="w-50">
+                                  <span className="highlights">
+                                    {data.title}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="p-1 border-bottom border-dark fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal">
+                                    P.R. NO
+                                  </span>
+                                </div>
+                                <div className="w-50">
+                                  <span className="highlights">{prNum}</span>
+                                </div>
+                              </div>
+                              <div className="p-1 fs-6 d-flex flex-row">
+                                <div className="text-center w-50">
+                                  <span className="fs-5 fw-normal">
+                                    DATE PREPARED:
+                                  </span>
+                                </div>
+                                <div className="w-50">
+                                  <span className="highlights">
+                                    {new Date().toLocaleDateString("en-PH", {
+                                      timeZone: "Asia/Manila",
+                                    })}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <ul className="order-list">
+                            <li className="order-header">
+                              <div className="firstgroup">
+                                <div className="text-center fw-bold">
+                                  <span className="fs-5">ITEM NO.</span>
+                                </div>
+                                <div className="text-center fw-bold">
+                                  <span className="fs-5">QTY</span>
+                                </div>
+                                <div className="text-center fw-bold">
+                                  <span className="fs-5">UNIT</span>
+                                </div>
+                              </div>
+                              <div className="secondgroup">
+                                <div className="fw-bold">
+                                  <span className="fs-5">DESCRIPTION</span>
+                                </div>
+                                <div className="fw-bold">
+                                  <span className="fs-5">Part Number</span>
+                                </div>
+                              </div>
+                              <div className="thirdgroup">
+                                <div className="text-center fw-bold">
+                                  <span className="fs-5">UNIT PRICE</span>
+                                </div>
+                                <div className="text-center fw-bold">
+                                  <span className="fs-5">TOTAL</span>
+                                </div>
+                              </div>
+                            </li>
+                            <div className="po-thirdline p-0">
+                              <li className="order-header-item">
+                                <div className="item-firstgroup">
+                                  <div className="text-center">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${item.code}`}</span>
+                                    ))}
+                                  </div>
+
+                                  {/* for product quantity */}
+                                  <div className="text-center">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${item.quantity}`}</span>
+                                    ))}
+                                  </div>
+                                  {/* for product unit of measurement */}
+                                  <div className="text-center">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${item.uom}`}</span>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div className="item-secondgroup">
+                                  {/* for product name */}
+                                  <div className=" d-flex flex-column">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${item.name}`}</span>
+                                    ))}
+                                  </div>
+
+                                  <div className="d-flex flex-column">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${item.part_number}`}</span>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div className="item-thirdgroup">
+                                  <div className="text-center fw-bold d-flex flex-column">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${(
+                                        item.prod_supplier_price * vat_decimal
+                                      ).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      })}`}</span>
+                                    ))}
+                                  </div>
+                                  <div className="text-center fw-bold d-flex flex-column">
+                                    {data.serializedArray.map((item, index) => (
+                                      <span
+                                        key={index}
+                                        className="fs-5 fw-bold"
+                                      >{`${(
+                                        item.prod_supplier_price *
+                                        vat_decimal *
+                                        item.quantity
+                                      ).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      })}`}</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </li>
+                            </div>
+                            <div className="po-calculation">
+                              <div className="po-received-by">
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-bold">
+                                    P.O Received By: N/A
+                                  </span>
+                                  <span className="fs-4 fw-normal"></span>
+                                </div>
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-bold">
+                                    Delivery Date: N/A
+                                  </span>
+                                  <span className="fs-4 fw-normal"></span>
+                                </div>
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">Terms:</span>
+                                  <span className="fs-4 fw-normal">
+                                    <span
+                                      key={index}
+                                      className="fs-5 fw-bold"
+                                    >{`${data.serializedArray[0].supplier_terms}`}</span>
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="po-terms-condition">
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">
+                                    Used For:{" "}
+                                  </span>
+                                  {`${data.serializedArray[0].usedFor}`}
+                                </div>
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">
+                                    Terms and Condition:
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    1. Acceptance of this order is an acceptance
+                                    of all conditions herein.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    2. Make all deliveries to receiving, However
+                                    subject to count, weight and specification
+                                    approval of SBF Philippines Drilling
+                                    Resources Corporation.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    3. The original purchase order copy and
+                                    suppliers original invoice must accompany
+                                    delivery.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    4. In case the supplier fails to deliver
+                                    goods on delivery date specified herein, SBF
+                                    Philippines Drilling Resources Corporation
+                                    has the right to cancel this order or demand
+                                    penalty charged as stated.
+                                  </span>
+                                  <span className="fs-5 fw-normal">
+                                    5. Problems encountered related to your
+                                    supply should immediately brought to the
+                                    attention of the purchasing manager.
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="po-overall-total">
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-normal">
+                                    Total (w/o VAT):
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {`${amountWOvat.toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}`}
+                                  </span>
+                                </div>
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-normal">
+                                    VAT({`${vat}%`})
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {`${vatAmount.toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}`}
+                                  </span>
+                                </div>
+                                <div className="p-3 d-flex flex-column border-bottom border-dark">
+                                  <span className="fs-4 fw-normal">
+                                    Overall Total:
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {`${
+                                      data.serializedArray[0].supplier_currency
+                                    } ${overallTotal.toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}`}
+                                  </span>
+                                </div>
+                                <div className="p-3 d-flex flex-column">
+                                  <span className="fs-4 fw-normal">
+                                    {/* Date Approved: */}
+                                  </span>
+                                  <span className="fs-4 fw-bold">
+                                    {/* {dateApproved.toLocaleDateString("en-PH")} */}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="po-footer">
+                              <div className="po-prepared-by">
+                                <div className="p-5 d-flex flex-column">
+                                  <span className="fs-4 fw-bold">
+                                    Requested By:
+                                  </span>
+                                  <span className="fs-4 fw-normal">
+                                    {requestedBy}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="po-checked-by">
+                                <div className="p-5 d-flex flex-column"></div>
+                              </div>
+
+                              <div className="po-approved-by">
+                                <div className="p-5 d-flex flex-column"></div>
+                              </div>
+                            </div>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </Modal.Body>
+                );
+              })}
+
+              <Modal.Footer>
                 <div className="save-cancel">
                   <Button
                     type="submit"
@@ -1517,17 +1912,9 @@ function PurchaseOrderListPreview() {
                   >
                     Save
                   </Button>
-                  {/* <Button 
-                                    type='button'  
-                                    className='btn btn-danger' 
-                                    size="md" style={{ fontSize: '20px', margin: '0px 5px' }}
-                                    onClick={() => handleCancel(status, id)}
-                                  >
-                                    Cancel Purchase Order
-                                  </Button>                         */}
                 </div>
-              </>
-            )}
+              </Modal.Footer>
+            </Modal>
           </Form>
           <Modal show={showModal} onHide={handleClose} size="xl">
             <Modal.Header closeButton>

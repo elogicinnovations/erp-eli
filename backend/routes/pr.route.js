@@ -521,6 +521,18 @@ router.route("/pr_update").post(async (req, res) => {
 router.route("/fetchView").get(async (req, res) => {
   try {
     const data = await PR.findOne({
+      include: [
+        {
+          model: MasterList,
+          required: true,
+          include: [
+            {
+              model: Department,
+              required: true,
+            },
+          ],
+        },
+      ],
       where: {
         id: req.query.id,
       },
