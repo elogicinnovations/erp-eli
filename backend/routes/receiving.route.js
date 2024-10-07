@@ -1957,17 +1957,9 @@ router.route("/retrack").post(async (req, res) => {
           for (const itemReceivingPrd of receiving_prd) {
             await itemInventory.update(
               {
-                price: (
-                  parseFloat(
-                    itemReceivingPrd.purchase_req_canvassed_prd.purchase_price
-                  ) *
-                  parseFloat(
-                    itemReceivingPrd.purchase_req_canvassed_prd
-                      .product_tag_supplier.supplier.supplier_vat /
-                      100 +
-                      1
-                  )
-                ).toFixed(2),
+                price: parseFloat(
+                  itemReceivingPrd.purchase_req_canvassed_prd.purchase_price
+                ),
               },
               {
                 where: {

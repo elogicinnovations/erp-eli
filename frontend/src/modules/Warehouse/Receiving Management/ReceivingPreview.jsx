@@ -541,47 +541,47 @@ function ReceivingPreview({ authrztn }) {
     });
   };
   //wag paki alaman paki usap -chester
-  // const handleRetrack = () => {
-  //   swal({
-  //     title: "Are you sure?",
-  //     text: "You are attempting to retack the inventory price",
-  //     icon: "warning",
-  //     buttons: true,
-  //     dangerMode: true,
-  //   }).then(async (approve) => {
-  //     if (approve) {
-  //       try {
-  //         await axios
-  //           .post(BASE_URL + "/receiving/retrack")
+  const handleRetrack = () => {
+    swal({
+      title: "Are you sure?",
+      text: "You are attempting to retack the inventory price",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        try {
+          await axios
+            .post(BASE_URL + "/receiving/retrack")
 
-  //           .then((res) => {
-  //             if (res.status === 200) {
-  //               swal({
-  //                 title: "Success",
-  //                 text: "Inventory price retacked successfully",
-  //                 icon: "success",
-  //               });
-  //             } else {
-  //               swal({
-  //                 title: "Something went wrong",
-  //                 text: "Please contact your support immediately",
-  //                 icon: "error",
-  //                 dangerMode: true,
-  //               });
-  //             }
-  //           });
-  //       } catch (error) {
-  //         swal({
-  //           title: "Something went wrong",
-  //           text: "Please contact your support immediately",
-  //           icon: "error",
-  //           dangerMode: true,
-  //         });
-  //         console.log(error);
-  //       }
-  //     }
-  //   });
-  // };
+            .then((res) => {
+              if (res.status === 200) {
+                swal({
+                  title: "Success",
+                  text: "Inventory price retacked successfully",
+                  icon: "success",
+                });
+              } else {
+                swal({
+                  title: "Something went wrong",
+                  text: "Please contact your support immediately",
+                  icon: "error",
+                  dangerMode: true,
+                });
+              }
+            });
+        } catch (error) {
+          swal({
+            title: "Something went wrong",
+            text: "Please contact your support immediately",
+            icon: "error",
+            dangerMode: true,
+          });
+          console.log(error);
+        }
+      }
+    });
+  };
 
   //date format
   function formatDatetime(datetime) {
@@ -818,11 +818,11 @@ function ReceivingPreview({ authrztn }) {
               ></span>
             </div>
             {/* wag pakialaman -chester */}
-            {/* {userId === 1 && (
+            {userId === 1 && (
               <Button variant="warning" onClick={handleRetrack}>
                 Retrack
               </Button> // this is for retracting the inventory price. it must wiith vat added already
-            )} */}
+            )}
 
             <div className="row">
               <div className="col-sm">

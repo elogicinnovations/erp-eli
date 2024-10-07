@@ -249,6 +249,9 @@ function CreatePurchaseRequest() {
     };
     return new Date(datetime).toLocaleString("en-US", options);
   }
+  const onInputFloat = (e) => {
+    e.target.value = e.target.value.replace(/[^0-9.]/g, "");
+  };
 
   return (
     <div className="main-of-containers">
@@ -418,7 +421,7 @@ function CreatePurchaseRequest() {
                           <td>
                             <div className="d-flex flex-direction-row align-items-center">
                               <Form.Control
-                                type="number"
+                                type="text"
                                 value={
                                   inputValues[product.value]?.quantity || ""
                                 }
@@ -429,14 +432,7 @@ function CreatePurchaseRequest() {
                                     "quantity"
                                   )
                                 }
-                                onInput={(e) => {
-                                  e.preventDefault();
-                                  const validInput = e.target.value.replace(
-                                    /[^0-9]/g,
-                                    ""
-                                  ); // Replace non-numeric characters
-                                  e.target.value = validInput;
-                                }}
+                                onInput={onInputFloat}
                                 required
                                 placeholder="Input quantity"
                                 style={{

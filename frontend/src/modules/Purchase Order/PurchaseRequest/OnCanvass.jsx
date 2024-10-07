@@ -949,7 +949,7 @@ function PurchaseOrderListPreview() {
     });
   };
 
-  const add = async (e) => {
+  const handlePreview = (e) => {
     e.preventDefault();
 
     const form = e.currentTarget;
@@ -964,51 +964,56 @@ function PurchaseOrderListPreview() {
         text: "Please fill the red text fields",
       });
     } else {
-      swal({
-        title: `Are you sure want to save this new purchase Order?`,
-        text: "This action cannot be undo.",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      }).then(async (approve) => {
-        if (approve) {
-          axios
-            .post(`${BASE_URL}/invoice/save`, {
-              arrayPO: addPObackend,
-              pr_id: id,
-              userId,
-              selected_PR_Prod_array,
-            })
-            .then((res) => {
-              // console.log(res);
-              if (res.status === 200) {
-                swal({
-                  title: "The Purchase sucessfully request!",
-                  text: "The Purchase Request has been added successfully.",
-                  icon: "success",
-                  button: "OK",
-                }).then(() => {
-                  navigate("/purchaseOrderList");
-                });
-              } else if (res.status === 202) {
-                swal({
-                  title: "PO number already registered",
-                  text: "Please reload the browser to fetch the available po number",
-                  icon: "error",
-                  button: "OK",
-                });
-              } else {
-                swal({
-                  icon: "error",
-                  title: "Something went wrong",
-                  text: "Please contact our support",
-                });
-              }
-            });
-        }
-      });
+      handleShowPreview();
     }
+
     setValidated(true); //for validations
+  };
+
+  const add = async (e) => {
+    swal({
+      title: `Are you sure want to save this new purchase Order?`,
+      text: "This action cannot be undo.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (approve) => {
+      if (approve) {
+        axios
+          .post(`${BASE_URL}/invoice/save`, {
+            arrayPO: addPObackend,
+            pr_id: id,
+            userId,
+            selected_PR_Prod_array,
+          })
+          .then((res) => {
+            // console.log(res);
+            if (res.status === 200) {
+              swal({
+                title: "The Purchase sucessfully request!",
+                text: "The Purchase Request has been added successfully.",
+                icon: "success",
+                button: "OK",
+              }).then(() => {
+                navigate("/purchaseOrderList");
+              });
+            } else if (res.status === 202) {
+              swal({
+                title: "PO number already registered",
+                text: "Please reload the browser to fetch the available po number",
+                icon: "error",
+                button: "OK",
+              });
+            } else {
+              swal({
+                icon: "error",
+                title: "Something went wrong",
+                text: "Please contact our support",
+              });
+            }
+          });
+      }
+    });
   };
 
   console.log(`parentArray`);
@@ -1031,7 +1036,7 @@ function PurchaseOrderListPreview() {
               </div>
             </Col>
           </Row>
-          <Form noValidate validated={validated} onSubmit={add}>
+          <Form noValidate validated={validated} onSubmit={handlePreview}>
             <div
               className="gen-info"
               style={{
@@ -1516,17 +1521,20 @@ function PurchaseOrderListPreview() {
                 </div>
               </>
             )}
-            <div className="save-cancel">
-              <Button
-                type="button"
-                className="btn btn-warning"
-                onClick={handleShowPreview}
-                size="md"
-                style={{ fontSize: "20px", margin: "0px 5px" }}
-              >
-                Preview PO
-              </Button>
-            </div>
+
+            {addPObackend.length > 0 && (
+              <div className="save-cancel">
+                <Button
+                  type="submit"
+                  className="btn btn-warning"
+                  // onClick={handleShowPreview}
+                  size="md"
+                  style={{ fontSize: "20px", margin: "0px 5px" }}
+                >
+                  Preview PO
+                </Button>
+              </div>
+            )}
 
             <Modal
               show={showPreview}
@@ -1905,7 +1913,8 @@ function PurchaseOrderListPreview() {
               <Modal.Footer>
                 <div className="save-cancel">
                   <Button
-                    type="submit"
+                    type="button"
+                    onClick={add}
                     className="btn btn-warning"
                     size="md"
                     style={{ fontSize: "20px", margin: "0px 5px" }}
