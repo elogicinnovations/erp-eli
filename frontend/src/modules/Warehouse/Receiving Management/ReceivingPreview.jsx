@@ -818,11 +818,11 @@ function ReceivingPreview({ authrztn }) {
               ></span>
             </div>
             {/* wag pakialaman -chester */}
-            {userId === 1 && (
+            {/* {userId === 1 && (
               <Button variant="warning" onClick={handleRetrack}>
                 Retrack
               </Button> // this is for retracting the inventory price. it must wiith vat added already
-            )}
+            )} */}
 
             <div className="row">
               <div className="col-sm">

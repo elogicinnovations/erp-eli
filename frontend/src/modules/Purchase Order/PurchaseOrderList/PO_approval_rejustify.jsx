@@ -108,6 +108,18 @@ function POApprovalRejustify({ authrztn }) {
     .slice(0, 19)
     .replace("T", " ");
 
+  //format for data from database
+  function formatDatetime(datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(datetime).toLocaleString("en-US", options);
+  }
+
   const decodeToken = () => {
     var token = localStorage.getItem("accessToken");
     if (typeof token === "string") {
@@ -1160,6 +1172,7 @@ function POApprovalRejustify({ authrztn }) {
                 let supp_code = group.items[0].suppliers.supplier_code;
                 let supp_name = group.items[0].suppliers.supplier_name;
                 let vat = group.items[0].suppliers.supplier_vat;
+                let date_approved_sirDan = group.items[0].item.date_approved;
 
                 group.items.forEach((item, index) => {
                   totalSum +=
@@ -1527,7 +1540,12 @@ function POApprovalRejustify({ authrztn }) {
                                     Date Approved:
                                   </span>
                                   <span className="fs-4 fw-bold">
-                                    {dateApproved.toLocaleDateString("en-PH")}
+                                    {current_status === "To-Receive" ||
+                                    current_status === "Received"
+                                      ? formatDatetime(date_approved_sirDan)
+                                      : dateApproved.toLocaleDateString(
+                                          "en-PH"
+                                        )}
                                   </span>
                                 </div>
                               </div>
