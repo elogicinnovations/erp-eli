@@ -1558,9 +1558,9 @@ function PurchaseOrderListPreview() {
                 let vatAmount = 0;
 
                 data.serializedArray.forEach((item, index) => {
-                  overallTotal += Math.round(
-                    item.prod_supplier_price * vat_decimal * item.quantity
-                  );
+                  overallTotal +=
+                    (item.prod_supplier_price * vat_decimal).toFixed(2) *
+                    item.quantity;
                 });
 
                 amountWOvat = overallTotal / vat_decimal;
@@ -1759,13 +1759,13 @@ function PurchaseOrderListPreview() {
                                       <span
                                         key={index}
                                         className="fs-5 fw-bold"
-                                      >{`${Math.round(
-                                        item.prod_supplier_price *
-                                          vat_decimal *
-                                          item.quantity
+                                      >{`${(
+                                        (
+                                          item.prod_supplier_price * vat_decimal
+                                        ).toFixed(2) * item.quantity
                                       ).toLocaleString(undefined, {
-                                        maximumFractionDigits: 2,
                                         minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
                                       })}`}</span>
                                     ))}
                                   </div>
